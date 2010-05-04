@@ -3,6 +3,7 @@
 ===Current Work===
 
 *Version 5.3 (2010)*
+  * Code Fixes
   * Fix C++ Builder Compatibility by Removing Abstract Methods
   * Adjust Compile-Time Options
   * PurePascal Port of ASM-only functions  
@@ -13,7 +14,7 @@
 
 ===Under Consideration===
 
-*Version 5.4 (2011+)*
+*Version 5.4 (2010/2011+)*
   * Implement additional Ciphers
   * Implement additional Hash Functions
   * Implement additional PRNGs
