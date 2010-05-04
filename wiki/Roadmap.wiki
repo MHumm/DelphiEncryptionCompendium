@@ -1,6 +1,21 @@
 #summary Project Roadmap for the Delphi Encryption Compendium
 
-Version 5.3 (2010)
+===Current Work===
+
+*Version 5.3 (2010)*
   * Fix C++ Builder Compatibility by Removing Abstract Methods
   * Adjust Compile-Time Options
+  * PurePascal Port of ASM-only functions  
   * Source Review and Code Formatting
+  * Enhance Unicode Examples
+  * Introduce Unittests  
+  * Create a Demo
+
+===Under Consideration===
+
+*Version 5.4 (2011+)*
+  * Implement additional Ciphers
+  * Implement additional Hash Functions
+  * Implement additional PRNGs
+  * Extend CRC functionality
+  * FreePascal Port
