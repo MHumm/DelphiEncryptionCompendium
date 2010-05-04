@@ -1,0 +1,6 @@
+#summary Project Roadmap for the Delphi Encryption Compendium
+
+Version 5.3 (2010)
+  * Fix C++ Builder Compatibility by Removing Abstract Methods
+  * Adjust Compile-Time Options
+  * Source Review and Code Formatting
