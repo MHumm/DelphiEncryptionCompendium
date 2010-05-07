@@ -1,4 +1,4 @@
-#summary Project Roadmap for the Delphi Encryption Compendium
+#summary Project Roadmap
 
 ===Current Work===
 
