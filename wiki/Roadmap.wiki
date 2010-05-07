@@ -3,14 +3,18 @@
 ===Current Work===
 
 *Version 5.3 (2010)*
-  * Code Fixes
-  * Fix C++ Builder Compatibility by Removing Abstract Methods
-  * Adjust Compile-Time Options
-  * PurePascal Port of ASM-only functions  
-  * Source Review and Code Formatting
-  * Enhance Unicode Examples
-  * Introduce Unittests  
-  * Create a Demo
+  * ~~Minor Code Fixes (not Security related)~~
+  * ~~Fix C++ Builder Compatibility (removing abstract methods)~~
+  * ~~Adjust Compile-Time Options~~
+  * Source Review and Code Formatting (70% done)
+  * ~~Enhance Unicode Examples~~
+  * Rewrite of the String/Data Handling
+  * Rewrite of the Format Encoding/Decoding
+  * PurePascal Port of ASM-only functions
+  * Create a GUI-based Demo (40% done)
+  * Introduce Unittests
+
+~~strikeout~~ = done
 
 ===Under Consideration===
 
