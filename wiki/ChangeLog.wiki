@@ -1,0 +1,12 @@
+#summary Change Log
+
+*Version 5.1 (2006)*
+  * Complete Rewrite by Hagen Reddmann which introduced a lot of breaking changes 
+  * Security and Design Flaws fixed (compared to the previous DEC 3)
+
+*Version 5.2 (2008)*
+  * Initial Delphi 2009 Port by Arvid Winkelsdorf
+  * First Unicode Examples
+  * Fix for CRC Calculation in Delphi 2009 and newer (CRC Table was not correctly initialized with disabled Optimizations)
+
+See RoadMap for current development
