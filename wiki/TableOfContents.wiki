@@ -1,3 +1,2 @@
-* User's Guide
-  * [ChangeLog ChangeLog]
-  * [Roadmap Roadmap]
+* [ChangeLog ChangeLog]
+* [Roadmap Roadmap]
