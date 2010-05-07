@@ -8,5 +8,5 @@ See [Roadmap] for current development
   * Fix for CRC Calculation in Delphi 2009 and newer (CRC Table was not correctly initialized with disabled Optimizations)
 
 *Version 5.1 (2006)*
-  * Complete Rewrite by Hagen Reddmann which introduced a lot of breaking changes 
+  * Rewrite by Hagen Reddmann based on DEC 3 with focus on OOP
   * Security and Design Flaws fixed (compared to the previous DEC 3)
