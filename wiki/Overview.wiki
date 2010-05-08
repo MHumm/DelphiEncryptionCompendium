@@ -8,7 +8,7 @@ Initially developed by *Hagen Reddmann* with major releases between 1999 and 200
 
 = License =
 
-This project is licensed under a MIT license. You are free to use the library for personal and commercial use but at your own risk. See [License] for details.
+This project is licensed under a MIT/Freeware license. You are free to use the library for personal and commercial use but at your own risk. See [License] for details.
 
 *Import & Export Restrictions*
 
