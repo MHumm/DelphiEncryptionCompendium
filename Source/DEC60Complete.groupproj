@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{46A7B5B1-D413-4DB1-A118-2403457B463A}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DEC60.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Unit Tests\DECDUnitXTestSuite.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Unit Tests\DECDUnitTestSuite.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DEC60">
+        <MSBuild Projects="DEC60.dproj"/>
+    </Target>
+    <Target Name="DEC60:Clean">
+        <MSBuild Projects="DEC60.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DEC60:Make">
+        <MSBuild Projects="DEC60.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DECDUnitXTestSuite">
+        <MSBuild Projects="..\Unit Tests\DECDUnitXTestSuite.dproj"/>
+    </Target>
+    <Target Name="DECDUnitXTestSuite:Clean">
+        <MSBuild Projects="..\Unit Tests\DECDUnitXTestSuite.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DECDUnitXTestSuite:Make">
+        <MSBuild Projects="..\Unit Tests\DECDUnitXTestSuite.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DECDUnitTestSuite">
+        <MSBuild Projects="..\Unit Tests\DECDUnitTestSuite.dproj"/>
+    </Target>
+    <Target Name="DECDUnitTestSuite:Clean">
+        <MSBuild Projects="..\Unit Tests\DECDUnitTestSuite.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DECDUnitTestSuite:Make">
+        <MSBuild Projects="..\Unit Tests\DECDUnitTestSuite.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

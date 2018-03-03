@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.714,D:\Projekte\Unit1.pas=D:\Projekte\DECPurePascalRedesigned\Unit Tests\DUnitX\TestDECCRC.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.290,D:\Projekte\Project1.dproj=D:\Projekte\DECPurePascalRedesigned\Unit Tests\DUnitX\DECDUnitXTestSuite.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
