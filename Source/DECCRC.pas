@@ -945,5 +945,4 @@ finalization
 
   if FCRC32 <> nil then
     FreeMem(FCRC32);
-
 end.

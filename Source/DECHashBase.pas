@@ -147,7 +147,33 @@ type
     /// </returns>
     function CalcBytes(const Data: TBytes): TBytes;
 
+    /// <summary>
+    ///   Calculates the hash value (digest) for a given unicode string
+    /// </summary>
+    /// <param name="Value">
+    ///   The string the hash shall be calculated on
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class from DECFormat. The formatting will be applied to the
+    ///   returned digest value
+    /// </param>
+    /// <returns>
+    ///   string with the calculated hash value
+    /// </returns>
     function CalcString(const Value: string; Format: TDECFormatClass = nil): string; overload;
+    /// <summary>
+    ///   Calculates the hash value (digest) for a given rawbytestring
+    /// </summary>
+    /// <param name="Value">
+    ///   The string the hash shall be calculated on
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class from DECFormat. The formatting will be applied to the
+    ///   returned digest value
+    /// </param>
+    /// <returns>
+    ///   string with the calculated hash value
+    /// </returns>
     function CalcString(const Value: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
 
     procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
@@ -390,17 +416,33 @@ begin
   Result := '';
   if Length(Value) > 0 then
   begin
-    Size := Length(Value) * SizeOf(Value[1]);
+    Size := Length(Value) * SizeOf(Value[low(Value)]);
     Data := CalcBuffer(Value[low(Value)], Size);
     result := System.SysUtils.StringOf(ValidFormat(Format).Encode(Data));
+  end
+  else
+  begin
+    SetLength(Data, 0);
+    result := System.SysUtils.StringOf(ValidFormat(Format).Encode(CalcBuffer(Data, 0)));
   end;
 end;
 
 function TDECHash.CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString;
+var
+  Buf : TBytes;
 begin
   Result := '';
   if Length(Value) > 0 then
-    result := ValidFormat(Format).Encode(Value);
+    result := BytesToRawString(
+                ValidFormat(Format).Encode(
+                  CalcBuffer(Value[low(Value)],
+                             Length(Value) * SizeOf(Value[low(Value)]))))
+  else
+  begin
+    SetLength(Buf, 0);
+    result := BytesToRawString(ValidFormat(Format).Encode(CalcBuffer(Buf, 0)));
+  end;
+
 //    Encode(CalcBuffer(Value[1], Length(Value) * SizeOf(Value[1])), Result);
 end;
 

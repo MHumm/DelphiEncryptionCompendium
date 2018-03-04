@@ -547,6 +547,9 @@ type
 
 implementation
 
+{$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
+{$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
+
 uses
   System.SysUtils, DECData;
 
@@ -577,6 +580,7 @@ begin
   S := FUser;
 { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
   P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // PAnsiChar for Pointer Math
+
   Move(Blowfish_Data, S^, SizeOf(Blowfish_Data));
   Move(Blowfish_Key, P^, Sizeof(Blowfish_Key));
   J := 0;
@@ -590,6 +594,7 @@ begin
       J := (J + 4) mod Size;
     end;
   FillChar(B, SizeOf(B), 0);
+
   for I := 0 to 8 do
   begin
     DoEncode(@B, @B, SizeOf(B));
@@ -658,7 +663,8 @@ var
   P: PUInt32Array;
   D: PBlowfish;
 begin
-  Assert(Size = Context.BlockSize, 'Size does not equal block size of ' + IntToStr(Context.BlockSize));
+  Assert(Size = Context.BlockSize, 'Size of ' + IntToStr(Size) + ' does not equal '+
+                                   'block size of ' + IntToStr(Context.BlockSize));
 
   D := FUser;
 { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }

@@ -75,7 +75,7 @@ uses
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
-  DECBaseClass, DECHash, Classes, SysUtils, DECUtil, DECFormatBase;
+  DECBaseClass, DECHash, DECHashBase, Classes, SysUtils, DECUtil, DECFormatBase;
 
 type
   /// <summary>
@@ -104,11 +104,23 @@ type
     Enabled    : Boolean;
   end;
 
+  THash_TestBase = class(TTestCase)
+  strict protected
+    FTestData : array of THashTestRec;
+
+    procedure DoTestCalcBuffer(HashClass:TDECHash);
+    procedure DoTestCalcBytes(HashClass:TDECHash);
+    procedure DoTestCalcStream(HashClass:TDECHash);
+//    procedure TestCalcUnicodeString;
+    procedure DoTestCalcRawByteString(HashClass:TDECHash);
+
+  published
+  end;
+
   // Test methods for class THash_MD2
-  TestTHash_MD2 = class(TTestCase)
+  TestTHash_MD2 = class(THash_TestBase)
   strict private
     FHash_MD2: THash_MD2;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -116,6 +128,8 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcUnicodeString;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -124,10 +138,9 @@ type
   end;
 
   // Test methods for class THash_MD4
-  TestTHash_MD4 = class(TTestCase)
+  TestTHash_MD4 = class(THash_TestBase)
   strict private
     FHash_MD4: THash_MD4;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -135,16 +148,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_MD5
-  TestTHash_MD5 = class(TTestCase)
+  TestTHash_MD5 = class(THash_TestBase)
   strict private
     FHash_MD5: THash_MD5;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -152,16 +165,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_RipeMD128
-  TestTHash_RipeMD128 = class(TTestCase)
+  TestTHash_RipeMD128 = class(THash_TestBase)
   strict private
     FHash_RipeMD128: THash_RipeMD128;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -169,16 +182,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_RipeMD160
-  TestTHash_RipeMD160 = class(TTestCase)
+  TestTHash_RipeMD160 = class(THash_TestBase)
   strict private
     FHash_RipeMD160: THash_RipeMD160;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -186,15 +199,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_RipeMD256
-  TestTHash_RipeMD256 = class(TTestCase)
+  TestTHash_RipeMD256 = class(THash_TestBase)
   strict private
     FHash_RipeMD256: THash_RipeMD256;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -202,15 +215,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_RipeMD320
-  TestTHash_RipeMD320 = class(TTestCase)
+  TestTHash_RipeMD320 = class(THash_TestBase)
   strict private
     FHash_RipeMD320: THash_RipeMD320;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -218,15 +231,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_SHA
-  TestTHash_SHA = class(TTestCase)
+  TestTHash_SHA = class(THash_TestBase)
   strict private
     FHash_SHA: THash_SHA;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -234,15 +247,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_SHA256
-  TestTHash_SHA256 = class(TTestCase)
+  TestTHash_SHA256 = class(THash_TestBase)
   strict private
     FHash_SHA256: THash_SHA256;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -250,15 +263,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_SHA384
-  TestTHash_SHA384 = class(TTestCase)
+  TestTHash_SHA384 = class(THash_TestBase)
   strict private
     FHash_SHA384: THash_SHA384;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -266,16 +279,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_SHA512
-  TestTHash_SHA512 = class(TTestCase)
+  TestTHash_SHA512 = class(THash_TestBase)
   strict private
     FHash_SHA512: THash_SHA512;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -283,15 +296,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Haval128
-  TestTHash_Haval128 = class(TTestCase)
+  TestTHash_Haval128 = class(THash_TestBase)
   strict private
     FHash_Haval128: THash_Haval128;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -299,15 +312,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Haval160
-  TestTHash_Haval160 = class(TTestCase)
+  TestTHash_Haval160 = class(THash_TestBase)
   strict private
     FHash_Haval160: THash_Haval160;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -315,15 +328,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Haval192
-  TestTHash_Haval192 = class(TTestCase)
+  TestTHash_Haval192 = class(THash_TestBase)
   strict private
     FHash_Haval192: THash_Haval192;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -331,15 +344,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Haval224
-  TestTHash_Haval224 = class(TTestCase)
+  TestTHash_Haval224 = class(THash_TestBase)
   strict private
     FHash_Haval224: THash_Haval224;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -347,15 +360,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Haval256
-  TestTHash_Haval256 = class(TTestCase)
+  TestTHash_Haval256 = class(THash_TestBase)
   strict private
     FHash_Haval256: THash_Haval256;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -363,15 +376,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Tiger
-  TestTHash_Tiger_3Rounds = class(TTestCase)
+  TestTHash_Tiger_3Rounds = class(THash_TestBase)
   strict private
     FHash_Tiger: THash_Tiger;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -379,15 +392,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Tiger
-  TestTHash_Tiger_4Rounds = class(TTestCase)
+  TestTHash_Tiger_4Rounds = class(THash_TestBase)
   strict private
     FHash_Tiger: THash_Tiger;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -395,15 +408,15 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
 
   // Test methods for class THash_Panama
-  TestTHash_Panama = class(TTestCase)
+  TestTHash_Panama = class(THash_TestBase)
   strict private
     FHash_Panama: THash_Panama;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -412,16 +425,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Whirlpool
-  TestTHash_Whirlpool = class(TTestCase)
+  TestTHash_Whirlpool = class(THash_TestBase)
   strict private
     FHash_Whirlpool: THash_Whirlpool;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -429,16 +442,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Whirlpool1
-  TestTHash_Whirlpool1 = class(TTestCase)
+  TestTHash_Whirlpool1 = class(THash_TestBase)
   strict private
     FHash_Whirlpool1: THash_Whirlpool1;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -446,16 +459,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Square
-  TestTHash_Square = class(TTestCase)
+  TestTHash_Square = class(THash_TestBase)
   strict private
     FHash_Square: THash_Square;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -463,16 +476,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Snefru128
-  TestTHash_Snefru128 = class(TTestCase)
+  TestTHash_Snefru128 = class(THash_TestBase)
   strict private
     FHash_Snefru128: THash_Snefru128;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -480,16 +493,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Snefru256
-  TestTHash_Snefru256 = class(TTestCase)
+  TestTHash_Snefru256 = class(THash_TestBase)
   strict private
     FHash_Snefru256: THash_Snefru256;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -497,16 +510,16 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
   end;
 
   // Test methods for class THash_Sapphire
-  TestTHash_Sapphire = class(TTestCase)
+  TestTHash_Sapphire = class(THash_TestBase)
   strict private
     FHash_Sapphire: THash_Sapphire;
-    FTestData : array of THashTestRec;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -514,6 +527,7 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcRawByteString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -579,60 +593,36 @@ begin
 end;
 
 procedure TestTHash_MD2.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(RawByteString(FTestData[i].Input));
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_MD2);
 end;
 
 procedure TestTHash_MD2.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))));
+  DoTestCalcBytes(FHash_MD2);
+end;
+
+procedure TestTHash_MD2.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_MD2);
 end;
 
 procedure TestTHash_MD2.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
+  DoTestCalcStream(FHash_MD2);
+end;
 
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
+procedure TestTHash_MD2.TestCalcUnicodeString;
+//var
+//  i : Integer;
+begin
+{ TODO : Unicode String Version braucht andere Testdaten, da ja ein zeichen
+  aus 2 Byte besteht }
 
-        FHash_MD2.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+//  for i := Low(FTestData) to High(FTestData) do
+//    if FTestData[i].Enabled then
+//      CheckEquals(string(FTestData[i].Output),
+//                  FHash_MD2.CalcString(string(FTestData[i].Input), TFormat_HEXL));
 end;
 
 procedure TestTHash_MD4.SetUp;
@@ -699,60 +689,23 @@ begin
 end;
 
 procedure TestTHash_MD4.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD4.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD4.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_MD4);
 end;
 
 procedure TestTHash_MD4.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_MD4.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_MD4);
+end;
+
+procedure TestTHash_MD4.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_MD4);
 end;
 
 procedure TestTHash_MD4.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_MD4.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_MD4);
 end;
 
 procedure TestTHash_MD4.TestDigestSize;
@@ -824,32 +777,18 @@ begin
 end;
 
 procedure TestTHash_MD5.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD5.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_MD5.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_MD5);
 end;
 
 procedure TestTHash_MD5.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_MD5.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_MD5);
+end;
+
+procedure TestTHash_MD5.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_MD5);
 end;
 
 procedure TestTHash_MD5.TestDigestSize;
@@ -858,31 +797,8 @@ begin
 end;
 
 procedure TestTHash_MD5.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_MD5.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_MD5);
 end;
 
 procedure TestTHash_RipeMD128.SetUp;
@@ -952,32 +868,18 @@ begin
 end;
 
 procedure TestTHash_RipeMD128.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD128.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD128.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_RipeMD128);
 end;
 
 procedure TestTHash_RipeMD128.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD128.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_RipeMD128);
+end;
+
+procedure TestTHash_RipeMD128.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_RipeMD128);
 end;
 
 procedure TestTHash_RipeMD128.TestDigestSize;
@@ -986,31 +888,8 @@ begin
 end;
 
 procedure TestTHash_RipeMD128.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_RipeMD128.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_RipeMD128);
 end;
 
 procedure TestTHash_RipeMD160.SetUp;
@@ -1080,60 +959,23 @@ begin
 end;
 
 procedure TestTHash_RipeMD160.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD160.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD160.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_RipeMD160);
 end;
 
 procedure TestTHash_RipeMD160.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD160.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_RipeMD160);
+end;
+
+procedure TestTHash_RipeMD160.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_RipeMD160);
 end;
 
 procedure TestTHash_RipeMD160.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_RipeMD160.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_RipeMD160);
 end;
 
 procedure TestTHash_RipeMD256.SetUp;
@@ -1203,60 +1045,23 @@ begin
 end;
 
 procedure TestTHash_RipeMD256.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD256.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD256.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_RipeMD256);
 end;
 
 procedure TestTHash_RipeMD256.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD256.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_RipeMD256);
+end;
+
+procedure TestTHash_RipeMD256.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_RipeMD256);
 end;
 
 procedure TestTHash_RipeMD256.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_RipeMD256.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_RipeMD256);
 end;
 
 procedure TestTHash_RipeMD320.SetUp;
@@ -1326,60 +1131,23 @@ begin
 end;
 
 procedure TestTHash_RipeMD320.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD320.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD320.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_RipeMD320);
 end;
 
 procedure TestTHash_RipeMD320.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_RipeMD320.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_RipeMD320);
+end;
+
+procedure TestTHash_RipeMD320.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_RipeMD320);
 end;
 
 procedure TestTHash_RipeMD320.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_RipeMD320.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_RipeMD320);
 end;
 
 procedure TestTHash_SHA.SetUp;
@@ -1427,60 +1195,23 @@ begin
 end;
 
 procedure TestTHash_SHA.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_SHA);
 end;
 
 procedure TestTHash_SHA.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_SHA.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_SHA);
+end;
+
+procedure TestTHash_SHA.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_SHA);
 end;
 
 procedure TestTHash_SHA.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_SHA.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_SHA);
 end;
 
 procedure TestTHash_SHA256.SetUp;
@@ -1519,60 +1250,23 @@ begin
 end;
 
 procedure TestTHash_SHA256.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA256.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA256.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_SHA256);
 end;
 
 procedure TestTHash_SHA256.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_SHA256.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_SHA256);
+end;
+
+procedure TestTHash_SHA256.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_SHA256);
 end;
 
 procedure TestTHash_SHA256.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_SHA256.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_SHA256);
 end;
 
 procedure TestTHash_SHA384.SetUp;
@@ -1612,32 +1306,18 @@ begin
 end;
 
 procedure TestTHash_SHA384.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA384.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA384.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_SHA384);
 end;
 
 procedure TestTHash_SHA384.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_SHA384.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_SHA384);
+end;
+
+procedure TestTHash_SHA384.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_SHA384);
 end;
 
 procedure TestTHash_SHA384.TestDigestSize;
@@ -1651,31 +1331,8 @@ begin
 end;
 
 procedure TestTHash_SHA384.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_SHA384.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_SHA384);
 end;
 
 procedure TestTHash_SHA512.SetUp;
@@ -1724,60 +1381,23 @@ begin
 end;
 
 procedure TestTHash_SHA512.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA512.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_SHA512.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_SHA512);
 end;
 
 procedure TestTHash_SHA512.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_SHA512.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_SHA512);
+end;
+
+procedure TestTHash_SHA512.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_SHA512);
 end;
 
 procedure TestTHash_SHA512.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_SHA512.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_SHA512);
 end;
 
 procedure TestTHash_Haval128.SetUp;
@@ -1889,37 +1509,18 @@ begin
 end;
 
 procedure TestTHash_Haval128.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-      FHash_Haval128.PaddingByte := FTestData[i].PaddingByte;
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval128.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval128.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_HAVAL128);
 end;
 
 procedure TestTHash_Haval128.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      FHash_Haval128.PaddingByte := FTestData[i].PaddingByte;
+  DoTestCalcBytes(FHash_HAVAL128);
+end;
 
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Haval128.CalcBytes(BytesOf(FTestData[i].Input)))));
-    end;
+procedure TestTHash_Haval128.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Haval128);
 end;
 
 procedure TestTHash_Haval128.TestDigestSize;
@@ -1928,32 +1529,8 @@ begin
 end;
 
 procedure TestTHash_Haval128.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Haval128.PaddingByte := FTestData[i].PaddingByte;
-        FHash_Haval128.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Haval128);
 end;
 
 procedure TestTHash_Haval160.SetUp;
@@ -2065,37 +1642,18 @@ begin
 end;
 
 procedure TestTHash_Haval160.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-      FHash_Haval160.PaddingByte := FTestData[i].PaddingByte;
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval160.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval160.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_HAVAL160);
 end;
 
 procedure TestTHash_Haval160.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      FHash_Haval160.PaddingByte := FTestData[i].PaddingByte;
+  DoTestCalcBytes(FHash_HAVAL160);
+end;
 
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Haval160.CalcBytes(BytesOf(FTestData[i].Input)))));
-    end;
+procedure TestTHash_Haval160.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Haval160);
 end;
 
 procedure TestTHash_Haval160.TestDigestSize;
@@ -2104,32 +1662,8 @@ begin
 end;
 
 procedure TestTHash_Haval160.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Haval160.PaddingByte := FTestData[i].PaddingByte;
-        FHash_Haval160.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Haval160);
 end;
 
 procedure TestTHash_Haval192.SetUp;
@@ -2241,37 +1775,18 @@ begin
 end;
 
 procedure TestTHash_Haval192.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-      FHash_Haval192.PaddingByte := FTestData[i].PaddingByte;
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval192.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval192.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_HAVAL192);
 end;
 
 procedure TestTHash_Haval192.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      FHash_Haval192.PaddingByte := FTestData[i].PaddingByte;
+  DoTestCalcBytes(FHash_HAVAL192);
+end;
 
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Haval192.CalcBytes(BytesOf(FTestData[i].Input)))));
-    end;
+procedure TestTHash_Haval192.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Haval192);
 end;
 
 procedure TestTHash_Haval192.TestDigestSize;
@@ -2280,32 +1795,8 @@ begin
 end;
 
 procedure TestTHash_Haval192.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Haval192.PaddingByte := FTestData[i].PaddingByte;
-        FHash_Haval192.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Haval192);
 end;
 
 procedure TestTHash_Haval224.SetUp;
@@ -2417,37 +1908,18 @@ begin
 end;
 
 procedure TestTHash_Haval224.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-      FHash_Haval224.PaddingByte := FTestData[i].PaddingByte;
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval224.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval224.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_HAVAL224);
 end;
 
 procedure TestTHash_Haval224.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      FHash_Haval224.PaddingByte := FTestData[i].PaddingByte;
+  DoTestCalcBytes(FHash_HAVAL224);
+end;
 
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Haval224.CalcBytes(BytesOf(FTestData[i].Input)))));
-    end;
+procedure TestTHash_Haval224.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Haval224);
 end;
 
 procedure TestTHash_Haval224.TestDigestSize;
@@ -2456,32 +1928,8 @@ begin
 end;
 
 procedure TestTHash_Haval224.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Haval224.PaddingByte := FTestData[i].PaddingByte;
-        FHash_Haval224.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Haval224);
 end;
 
 procedure TestTHash_Haval256.SetUp;
@@ -2605,37 +2053,18 @@ begin
 end;
 
 procedure TestTHash_Haval256.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-      FHash_Haval256.PaddingByte := FTestData[i].PaddingByte;
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval256.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Haval256.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_HAVAL256);
 end;
 
 procedure TestTHash_Haval256.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      FHash_Haval256.PaddingByte := FTestData[i].PaddingByte;
+  DoTestCalcBytes(FHash_HAVAL256);
+end;
 
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Haval256.CalcBytes(BytesOf(FTestData[i].Input)))));
-    end;
+procedure TestTHash_Haval256.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Haval256);
 end;
 
 procedure TestTHash_Haval256.TestDigestSize;
@@ -2644,32 +2073,8 @@ begin
 end;
 
 procedure TestTHash_Haval256.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Haval256.PaddingByte := FTestData[i].PaddingByte;
-        FHash_Haval256.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Haval256);
 end;
 
 procedure TestTHash_Tiger_3Rounds.SetUp;
@@ -2723,32 +2128,18 @@ begin
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Tiger);
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Tiger);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Tiger);
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestDigestSize;
@@ -2757,31 +2148,8 @@ begin
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Tiger.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Tiger);
 end;
 
 procedure TestTHash_Tiger_4Rounds.SetUp;
@@ -2835,32 +2203,18 @@ begin
 end;
 
 procedure TestTHash_Tiger_4Rounds.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Tiger);
 end;
 
 procedure TestTHash_Tiger_4Rounds.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Tiger.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Tiger);
+end;
+
+procedure TestTHash_Tiger_4Rounds.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Tiger);
 end;
 
 procedure TestTHash_Tiger_4Rounds.TestDigestSize;
@@ -2869,31 +2223,8 @@ begin
 end;
 
 procedure TestTHash_Tiger_4Rounds.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Tiger.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Tiger);
 end;
 
 procedure TestTHash_Panama.SetUp;
@@ -2956,60 +2287,23 @@ begin
 end;
 
 procedure TestTHash_Panama.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Panama.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Panama.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Panama);
 end;
 
 procedure TestTHash_Panama.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Panama.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Panama);
+end;
+
+procedure TestTHash_Panama.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Panama);
 end;
 
 procedure TestTHash_Panama.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Panama.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Panama);
 end;
 
 procedure TestTHash_Whirlpool.SetUp;
@@ -3104,32 +2398,18 @@ begin
 end;
 
 procedure TestTHash_Whirlpool.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Whirlpool);
 end;
 
 procedure TestTHash_Whirlpool.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Whirlpool);
+end;
+
+procedure TestTHash_Whirlpool.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Whirlpool);
 end;
 
 procedure TestTHash_Whirlpool.TestDigestSize;
@@ -3138,31 +2418,8 @@ begin
 end;
 
 procedure TestTHash_Whirlpool.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Whirlpool.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Whirlpool);
 end;
 
 procedure TestTHash_Whirlpool1.SetUp;
@@ -3257,32 +2514,18 @@ begin
 end;
 
 procedure TestTHash_Whirlpool1.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool1.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool1.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Whirlpool1);
 end;
 
 procedure TestTHash_Whirlpool1.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Whirlpool1.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Whirlpool1);
+end;
+
+procedure TestTHash_Whirlpool1.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Whirlpool1);
 end;
 
 procedure TestTHash_Whirlpool1.TestDigestSize;
@@ -3291,31 +2534,8 @@ begin
 end;
 
 procedure TestTHash_Whirlpool1.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Whirlpool1.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Whirlpool1);
 end;
 
 procedure TestTHash_Square.SetUp;
@@ -3379,60 +2599,23 @@ begin
 end;
 
 procedure TestTHash_Square.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Square.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Square.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Square);
 end;
 
 procedure TestTHash_Square.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Square.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Square);
+end;
+
+procedure TestTHash_Square.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Square);
 end;
 
 procedure TestTHash_Square.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Square.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Square);
 end;
 
 procedure TestTHash_Snefru128.SetUp;
@@ -3526,60 +2709,23 @@ begin
 end;
 
 procedure TestTHash_Snefru128.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru128.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru128.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Snefru128);
 end;
 
 procedure TestTHash_Snefru128.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru128.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Snefru128);
+end;
+
+procedure TestTHash_Snefru128.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Snefru128);
 end;
 
 procedure TestTHash_Snefru128.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Snefru128.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Snefru128);
 end;
 
 procedure TestTHash_Snefru256.SetUp;
@@ -3661,60 +2807,23 @@ begin
 end;
 
 procedure TestTHash_Snefru256.TestCalcBuffer;
-var
-  i   : Integer;
-  Buf : TBytes;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-    begin
-      Buf := BytesOf(FTestData[i].Input);
-
-      if Length(FTestData[i].Input) > 0 then
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru256.CalcBuffer(Buf[0], Length(Buf)))))
-      else
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru256.CalcBuffer(Buf, Length(Buf)))));
-    end;
+  DoTestCalcBuffer(FHash_Snefru256);
 end;
 
 procedure TestTHash_Snefru256.TestCalcBytes;
-var
-  i : Integer;
 begin
-  for i := Low(FTestData) to High(FTestData) do
-    if FTestData[i].Enabled then
-      CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(FHash_Snefru256.CalcBytes(BytesOf(FTestData[i].Input)))));
+  DoTestCalcBytes(FHash_Snefru256);
+end;
+
+procedure TestTHash_Snefru256.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash_Snefru256);
 end;
 
 procedure TestTHash_Snefru256.TestCalcStream;
-var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
 begin
-  s := TMemoryStream.Create;
-
-  try
-    for i := Low(FTestData) to High(FTestData) do
-      if FTestData[i].Enabled then
-      begin
-        Buf := BytesOf(FTestData[i].Input);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
-
-        FHash_Snefru256.CalcStream(s, Length(Buf), Hash);
-
-        CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
-      end;
-  finally
-    s.Free;
-  end;
+  DoTestCalcStream(FHash_Snefru256);
 end;
 
 procedure TestTHash_Sapphire.SetUp;
@@ -3872,6 +2981,21 @@ begin
     end;
 end;
 
+procedure TestTHash_Sapphire.TestCalcRawByteString;
+var
+  i : Integer;
+begin
+  for i := Low(FTestData) to High(FTestData) do
+    if FTestData[i].Enabled then
+    begin
+      FHash_Sapphire.PaddingByte := FTestData[i].PaddingByte;
+      FHash_Sapphire.RequestedDigestSize := FTestData[i].ReqDigSize;
+
+      CheckEquals(FTestData[i].Output,
+                  FHash_Sapphire.CalcString(FTestData[i].Input, TFormat_HEXL));
+    end;
+end;
+
 procedure TestTHash_Sapphire.TestCalcStream;
 var
   s    : TMemoryStream;
@@ -3899,6 +3023,84 @@ begin
   finally
     s.Free;
   end;
+end;
+
+{ THash_TestBase }
+
+procedure THash_TestBase.DoTestCalcBuffer(HashClass: TDECHash);
+var
+  i   : Integer;
+  Buf : TBytes;
+begin
+  for i := Low(FTestData) to High(FTestData) do
+    if FTestData[i].Enabled then
+    begin
+      Buf := BytesOf(RawByteString(FTestData[i].Input));
+      HashClass.PaddingByte := FTestData[i].PaddingByte;
+
+      if Length(FTestData[i].Input) > 0 then
+        CheckEquals(FTestData[i].Output,
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))))
+      else
+        CheckEquals(FTestData[i].Output,
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))));
+    end;
+end;
+
+procedure THash_TestBase.DoTestCalcBytes(HashClass: TDECHash);
+var
+  i : Integer;
+begin
+  for i := Low(FTestData) to High(FTestData) do
+    if FTestData[i].Enabled then
+    begin
+      HashClass.PaddingByte := FTestData[i].PaddingByte;
+
+      CheckEquals(FTestData[i].Output,
+                  BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))));
+    end;
+end;
+
+procedure THash_TestBase.DoTestCalcStream(HashClass: TDECHash);
+var
+  s    : TMemoryStream;
+  i    : Integer;
+  Buf  : TBytes;
+  Hash : TBytes;
+begin
+  s := TMemoryStream.Create;
+
+  try
+    for i := Low(FTestData) to High(FTestData) do
+      if FTestData[i].Enabled then
+      begin
+        Buf := BytesOf(FTestData[i].Input);
+        s.Clear;
+        s.Write(Buf, Length(Buf));
+        s.Position := 0;
+
+        HashClass.PaddingByte := FTestData[i].PaddingByte;
+        HashClass.CalcStream(s, Length(Buf), Hash);
+
+        CheckEquals(FTestData[i].Output,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
+      end;
+  finally
+    s.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
+var
+  i : Integer;
+begin
+  for i := Low(FTestData) to High(FTestData) do
+    if FTestData[i].Enabled then
+    begin
+      HashClass.PaddingByte := FTestData[i].PaddingByte;
+      CheckEquals(FTestData[i].Output,
+                  HashClass.CalcString(FTestData[i].Input, TFormat_HEXL));
+    end;
 end;
 
 initialization
@@ -3957,4 +3159,3 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Sapphire);
   {$ENDIF}
 end.
-

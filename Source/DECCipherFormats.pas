@@ -402,6 +402,8 @@ procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileN
 var
   S, D: TStream;
 begin
+  assert(SourceFileName <> DestFileName, 'Source and Dest file name may not be equal');
+
   S := TFileStream.Create(SourceFileName, fmOpenRead or fmShareDenyNone);
   try
     D := TFileStream.Create(DestFileName, fmCreate);

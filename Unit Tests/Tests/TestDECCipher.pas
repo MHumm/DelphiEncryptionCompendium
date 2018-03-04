@@ -1368,12 +1368,22 @@ var
   Data   : TCipherTestData;
   Result : TBytes;
 begin
+{ TODO :
+Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
+ja immer von einem bestimmten CipherModus ausgehen, und nicht die
+einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
+wir die bisherigen Vektoren testen können. Dann können wir die nötigen
+Daten synthetisieren. }
   for Data in FTestData do
   begin
-    Result := EncodeFunct(BytesOf(Data.OutputData), TFormat_HEXL);
+//    Result := EncodeFunct(BytesOf(Data.OutputData), TFormat_HEXL);
+    Result := EncodeFunct(BytesOf(Data.InputData), TFormat_HEXL);
 
-    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData))),
+//    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData))),
+//                BytesToRawString(Result));
+    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.OutputData))),
                 BytesToRawString(Result));
+
   end;
 end;
 

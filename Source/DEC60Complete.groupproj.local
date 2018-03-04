@@ -2,8 +2,9 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.500,D:\Projekte\DECPurePascalRededigned\Source\DEC60Complete.groupproj=D:\Projekte\ProjectGroup1.groupproj</Transaction>
+    <Transaction>2018.03.03 22:17:51.053,D:\Projekte\DECGit\Source\DEC60Complete.groupproj=D:\Projekte\DECGit\Source\DEC60Complete.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="D:\Projekte\DECPurePascalRedesigned\Unit Tests\DECDUnitTestSuite.dproj"/>
+		<Projects ActiveProject="D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj"/>
 	</Default.Personality>
 </BorlandProject>
