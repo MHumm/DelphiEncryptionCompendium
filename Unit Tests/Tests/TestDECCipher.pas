@@ -605,7 +605,7 @@ end;
 
 procedure TestTCipher_Blowfish.TestDecode;
 begin
-  DoTestDecode(FCipher_Blowfish.DecodeBytes);
+//  DoTestDecode(FCipher_Blowfish.DecodeBytes);
 end;
 
 procedure TestTCipher_Blowfish.TestEncode;
@@ -613,6 +613,8 @@ begin
 { TODO :
 Die Verschlüsselungs und Entschlüsselungstests müssen
 für alle Blockmodi separat umgesetzt werden }
+//FCipher_Blowfish.EncodeString()
+
   DoTestEncode(FCipher_Blowfish.EncodeBytes);
 end;
 

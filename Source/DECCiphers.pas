@@ -64,7 +64,7 @@ unit DECCiphers;
 interface
 
 uses
-  DECCipherBase, DECCIpherModes, DECUtil, DECTypes;
+  DECCipherBase, DECCipherFormats, DECUtil, DECTypes;
 
 {$I DECOptions.inc}
 
@@ -134,7 +134,7 @@ type
   /// </summary>
   TCipher_1DES          = class;
   /// <summary>
-  ///   Triple DES  8 byte Blocksize, 16 byte Keysize, 112 bits relevant
+  ///   Double DES  8 byte Blocksize, 16 byte Keysize, 112 bits relevant
   /// </summary>
   TCipher_2DES          = class;
   /// <summary>
@@ -220,7 +220,7 @@ type
   /// </summary>
   TCipher_TEAN          = class;
 
-  TCipher_Blowfish = class(TDECCipher)
+  TCipher_Blowfish = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -229,7 +229,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Twofish = class(TDECCipher)
+  TCipher_Twofish = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -238,7 +238,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_IDEA = class(TDECCipherModes)
+  TCipher_IDEA = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -247,7 +247,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Cast256 = class(TDECCipherModes)
+  TCipher_Cast256 = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -256,7 +256,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Mars = class(TDECCipherModes)
+  TCipher_Mars = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -265,7 +265,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_RC4 = class(TDECCipherModes)
+  TCipher_RC4 = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -274,7 +274,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_RC6 = class(TDECCipherModes)
+  TCipher_RC6 = class(TDECFormattedCipher)
   private
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
@@ -288,7 +288,7 @@ type
     property Rounds: Integer read FRounds write SetRounds; // 16-24, default 20
   end;
 
-  TCipher_Rijndael = class(TDECCipherModes)
+  TCipher_Rijndael = class(TDECFormattedCipher)
   private
     FRounds: Integer;
   protected
@@ -303,7 +303,7 @@ type
 
   TCipher_AES = class(TCipher_Rijndael);
 
-  TCipher_Square = class(TDECCipherModes)
+  TCipher_Square = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -312,7 +312,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_SCOP = class(TDECCipherModes)
+  TCipher_SCOP = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -321,7 +321,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Sapphire = class(TDECCipherModes)
+  TCipher_Sapphire = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -330,7 +330,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_1DES = class(TDECCipherModes)
+  TCipher_1DES = class(TDECFormattedCipher)
   protected
     procedure DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
     procedure DoInit(const Key; Size: Integer); override;
@@ -382,7 +382,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_3Way = class(TDECCipherModes)
+  TCipher_3Way = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -391,7 +391,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Cast128 = class(TDECCipherModes)
+  TCipher_Cast128 = class(TDECFormattedCipher)
   private
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
@@ -405,7 +405,7 @@ type
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
-  TCipher_Gost = class(TDECCipherModes)
+  TCipher_Gost = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -414,7 +414,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Misty = class(TDECCipherModes)
+  TCipher_Misty = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -432,7 +432,7 @@ type
     The NewDES here is a completely different algorithm.
   }
 
-  TCipher_NewDES = class(TDECCipherModes)
+  TCipher_NewDES = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -441,7 +441,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Q128 = class(TDECCipherModes)
+  TCipher_Q128 = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -450,7 +450,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_RC2 = class(TDECCipherModes)
+  TCipher_RC2 = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -459,7 +459,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_RC5 = class(TDECCipherModes)
+  TCipher_RC5 = class(TDECFormattedCipher)
   private
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
@@ -483,7 +483,7 @@ type
   /// </summary>
   TSAFERVersion = (svSK128, svSK64, svSK40, svK128, svK64, svK40);
 
-  TCipher_SAFER = class(TDECCipherModes)
+  TCipher_SAFER = class(TDECFormattedCipher)
   private
     FRounds: Integer;
     FVersion: TSAFERVersion;
@@ -500,7 +500,7 @@ type
     property Version: TSAFERVersion read FVersion write SetVersion;
   end;
 
-  TCipher_Shark = class(TDECCipherModes)
+  TCipher_Shark = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -509,7 +509,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_Skipjack = class(TDECCipherModes)
+  TCipher_Skipjack = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -518,7 +518,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_TEA = class(TDECCipherModes)
+  TCipher_TEA = class(TDECFormattedCipher)
   private
     FRounds: Integer;
     procedure SetRounds(Value: Integer);

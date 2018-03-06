@@ -209,7 +209,8 @@ type
       /// <summary>
       ///   Maximum number of chars for one line of message text
       /// </summary>
-      CharsPerLine: UInt32 = 80;
+{ TODO : Umbauen in Property und auf 76 begrenzen, wegen RFC4880, Default ist 76 }
+      CharsPerLine: UInt32 = 76;
 
 //    property CharsPerLine: UInt32
 //      read   FCharsPerLine
