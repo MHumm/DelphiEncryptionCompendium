@@ -224,6 +224,23 @@ type
     /// </returns>
     function EncodeString(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
     /// <summary>
+    ///   Encrypts the contents of the passed RawByteString
+    /// </summary>
+    /// <param name="Source">
+    ///   String to encrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Encoded will be the encrypted data, not the
+    ///   source data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Encrypted string as a byte array
+    /// </returns>
+    function EncodeString(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
+    /// <summary>
     ///   Decrypts the contents of the passed encrypted unicode string
     /// </summary>
     /// <param name="Source">
@@ -240,6 +257,23 @@ type
     ///   Decrypted string as a byte array
     /// </returns>
     function DecodeString(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
+    /// <summary>
+    ///   Decrypts the contents of the passed encrypted RawByteString
+    /// </summary>
+    /// <param name="Source">
+    ///   String to decrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Decoded will be the still encrypted data, not the
+    ///   encrypted data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Decrypted string as a byte array
+    /// </returns>
+    function DecodeString(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
 
 {$IFNDEF NEXTGEN}
     /// <summary>
@@ -443,7 +477,41 @@ begin
     SetLength(Result, 0);
 end;
 
+function TDECFormattedCipher.EncodeString(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes;
+var
+  Len: Integer;
+begin
+  if Length(Source) > 0 then
+  begin
+    Len := Length(Source) * SizeOf(Source[low(Source)]);
+    SetLength(Result, Len);
+    Encode(Source[low(Source)], Result[0], Len);
+
+    Result := ValidFormat(Format).Encode(Result);
+//    Result := ValidFormat(Format).Encode(System.SysUtils.BytesOf(Source));
+  end
+  else
+    SetLength(Result, 0);
+end;
+
 function TDECFormattedCipher.DecodeString(const Source: string; Format: TDECFormatClass = nil): TBytes;
+var
+  Len: Integer;
+  Src: TBytes;
+begin
+  if Length(Source) > 0 then
+  begin
+    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+
+    Len := Length(Src);
+    SetLength(Result, Len);
+    Decode(Src[0], Result[0], Len);
+  end
+  else
+    SetLength(Result, 0);
+end;
+
+function TDECFormattedCipher.DecodeString(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
   Src: TBytes;

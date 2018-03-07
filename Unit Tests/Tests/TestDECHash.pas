@@ -85,23 +85,27 @@ type
     /// <summary>
     ///   Data to be put in
     /// </summary>
-    Input     : RawByteString;
+    Input            : RawByteString;
     /// <summary>
     ///   Data to be returned from the called test method
     /// </summary>
-    Output    : RawByteString;
+    Output           : RawByteString;
+    /// <summary>
+    ///   Data to be returned from the called Unicode String test method
+    /// </summary>
+    OutputUTFStrTest : RawByteString;
     /// <summary>
     ///   Requested Digest Size is only being needed for the THashSapphire tests
     /// </summary>
-    ReqDigSize : Integer;
+    ReqDigSize       : Integer;
     /// <summary>
     ///   Padding Byte for the Haval Hash Tests
     /// </summary>
-    PaddingByte: Byte;
+    PaddingByte      : Byte;
     /// <summary>
     ///   when true this tes twill run, otherwise not
     /// </summary>
-    Enabled    : Boolean;
+    Enabled          : Boolean;
   end;
 
   THash_TestBase = class(TTestCase)
@@ -111,7 +115,7 @@ type
     procedure DoTestCalcBuffer(HashClass:TDECHash);
     procedure DoTestCalcBytes(HashClass:TDECHash);
     procedure DoTestCalcStream(HashClass:TDECHash);
-//    procedure TestCalcUnicodeString;
+    procedure DoTestCalcUnicodeString(HashClass:TDECHash);
     procedure DoTestCalcRawByteString(HashClass:TDECHash);
 
   published
@@ -149,6 +153,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -518,7 +523,7 @@ type
 
   // Test methods for class THash_Sapphire
   TestTHash_Sapphire = class(THash_TestBase)
-  strict private
+ strict private
     FHash_Sapphire: THash_Sapphire;
   public
     procedure SetUp; override;
@@ -543,17 +548,20 @@ begin
   FHash_MD2 := THash_MD2.Create;
   SetLength(FTestData, 3);
 
-  FTestData[ 0].Output := '8350e5a3e24c153df2275c9f80692773';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '8350e5a3e24c153df2275c9f80692773';
+  FTestData[ 0].OutputUTFStrTest := '8350e5a3e24c153df2275c9f80692773';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '8415570a6653a06314f09b023612a92d';
-  FTestData[ 1].Input  := 'Franz jagt im komplett verwahrlosten Taxi quer durch Bayern';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '8415570a6653a06314f09b023612a92d';
+  FTestData[ 1].OutputUTFStrTest := '9d76631406e8be4ed7284613edf23fd5';
+  FTestData[ 1].Input            := 'Franz jagt im komplett verwahrlosten Taxi quer durch Bayern';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'b0e27e91b84246bc4c38bc3008f00374';
-  FTestData[ 2].Input  := 'Frank jagt im komplett verwahrlosten Taxi quer durch Bayern';
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := 'b0e27e91b84246bc4c38bc3008f00374';
+  FTestData[ 2].OutputUTFStrTest := 'b2ea09572c2fcfb278afd72155bc28e7';
+  FTestData[ 2].Input            := 'Frank jagt im komplett verwahrlosten Taxi quer durch Bayern';
+  FTestData[ 2].Enabled          := true;
 end;
 
 procedure TestTHash_MD2.TearDown;
@@ -614,15 +622,28 @@ end;
 
 procedure TestTHash_MD2.TestCalcUnicodeString;
 //var
-//  i : Integer;
-begin
-{ TODO : Unicode String Version braucht andere Testdaten, da ja ein zeichen
-  aus 2 Byte besteht }
-
+//  i      : Integer;
+//  InpStr : string;
+//
+//  InpBuffer: TBytes;
+//  Data : RawByteString;
+//begin
 //  for i := Low(FTestData) to High(FTestData) do
 //    if FTestData[i].Enabled then
-//      CheckEquals(string(FTestData[i].Output),
-//                  FHash_MD2.CalcString(string(FTestData[i].Input), TFormat_HEXL));
+//    begin
+//      InpStr := string(FTestData[i].Input);
+//
+//      FHash_MD2.PaddingByte := FTestData[i].PaddingByte;
+//      InpBuffer := TEncoding.Unicode.GetBytes(InpStr);
+////      InpBuffer := System.SysUtils.BytesOf(UnicodeString(InpStr));
+//
+//      data := BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBytes(InpBuffer)));
+//
+//      CheckEquals(BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBytes(InpBuffer))),
+//                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(FHash_MD2.CalcString(InpStr)))));
+//    end;
+begin
+  DoTestCalcUnicodeString(FHash_MD2);
 end;
 
 procedure TestTHash_MD4.SetUp;
@@ -631,47 +652,58 @@ begin
 
   SetLength(FTestData, 11);
 
-  FTestData[ 0].Output := '31d6cfe0d16ae931b73c59d7e0c089c0';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '31d6cfe0d16ae931b73c59d7e0c089c0';
+  FTestData[ 0].OutputUTFStrTest := '31d6cfe0d16ae931b73c59d7e0c089c0';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'bde52cb31de33e46245e05fbdbd6fb24';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'bde52cb31de33e46245e05fbdbd6fb24';
+  FTestData[ 1].OutputUTFStrTest := '186cb09181e2c2ecaac768c47c729904';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'a448017aaf21d8525fc10ae87aa6729d';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'a448017aaf21d8525fc10ae87aa6729d';
+//  FTestData[ 2].OutputUTFStrTest := ;
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := 'd9130a8164549fe818874806e1c7014b';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'd9130a8164549fe818874806e1c7014b';
+  FTestData[ 3].OutputUTFStrTest := '94a8a6cc36108b93db330de54b90bd4b';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'd79e1c308aa5bbcdeea8ed63df412da9';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'd79e1c308aa5bbcdeea8ed63df412da9';
+//  FTestData[ 4].OutputUTFStrTest := ;
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := '043f8582f241db351ce627e153e7f0e4';
-  FTestData[ 5].Input  := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := '043f8582f241db351ce627e153e7f0e4';
+//  FTestData[ 5].OutputUTFStrTest := ;
+  FTestData[ 5].Input            := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := 'e33b4ddc9c38f2199c3e7b164fcc0536';
-  FTestData[ 6].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := 'e33b4ddc9c38f2199c3e7b164fcc0536';
+  FTestData[ 6].OutputUTFStrTest := 'cf17b1ae2606afa964193690df7543b1';
+  FTestData[ 6].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '186767a4d851893b823e6824c6efda62';
-  FTestData[ 7].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '186767a4d851893b823e6824c6efda62';
+  FTestData[ 7].OutputUTFStrTest := '720710bdf5588ff54a1541168c49ffbc';
+  FTestData[ 7].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := 'adba72c3baf834d091eb59f18d022549';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := 'adba72c3baf834d091eb59f18d022549';
+  FTestData[ 8].OutputUTFStrTest := '077ff2742a36a53d86774f01e4911f46';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
-  FTestData[ 9].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[ 9].Enabled:= false;
+  FTestData[ 9].Output           := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
+//  FTestData[ 9].OutputUTFStrTest :=
+  FTestData[ 9].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[ 9].Enabled          := false;
 
-  FTestData[10].Output := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
+  FTestData[10].Output           := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
+  FTestData[10].OutputUTFStrTest := '29830de36ff8d3c23c73535ed6d1c69f';
   SetLength(FTestData[10].Input, 1000000);
   FillChar(FTestData[10].Input[low(FTestData[10].Input)], 1000000, 'a');
   FTestData[10].Enabled:= true;
@@ -706,6 +738,11 @@ end;
 procedure TestTHash_MD4.TestCalcStream;
 begin
   DoTestCalcStream(FHash_MD4);
+end;
+
+procedure TestTHash_MD4.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_MD4);
 end;
 
 procedure TestTHash_MD4.TestDigestSize;
@@ -3088,6 +3125,26 @@ begin
   finally
     s.Free;
   end;
+end;
+
+procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
+var
+  i      : Integer;
+  InpStr : string;
+
+  InpBuffer: TBytes;
+  Data : RawByteString;
+begin
+  for i := Low(FTestData) to High(FTestData) do
+    if FTestData[i].Enabled then
+    begin
+      InpStr := string(FTestData[i].Input);
+
+      HashClass.PaddingByte := FTestData[i].PaddingByte;
+
+      CheckEquals(FTestData[i].OutputUTFStrTest,
+                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))));
+    end;
 end;
 
 procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);

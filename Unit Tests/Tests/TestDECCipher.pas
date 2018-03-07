@@ -107,7 +107,7 @@ type
 
   // A function with these parameters has to be passed to DoTestEncode/Decode to
   // make that one generic
-  TEncodeDecodeFunc = function (const Source: TBytes; Format: TDECFormatClass = nil): TBytes of Object;
+  TEncodeDecodeFunc = function (const Source: RawByteString; Format: TDECFormatClass = nil): TBytes of Object;
 
   // All known testvectors use the same filler byte and the same cmCTSx mode
   TCipherTestData = record
@@ -565,14 +565,14 @@ end;
 
 procedure TestTCipher_Blowfish.SetUp;
 var
-  Password: string;
+  Password: RawByteString;
 begin
   FCipher_Blowfish      := TCipher_Blowfish.Create;
 //  FCipher_Blowfish.Context.
 
   Password := 'TCipher_Blowfish';
   if Length(Password) > FCipher_Blowfish.Context.KeySize then
-    Password := Password.Remove(FCipher_Blowfish.Context.KeySize, Password.Length);
+    Delete(Password, FCipher_Blowfish.Context.KeySize, length(Password));
 
   FCipher_Blowfish.Mode := cmCTSx;
   FCipher_Blowfish.Init(Password, '', $FF);
@@ -613,9 +613,7 @@ begin
 { TODO :
 Die Verschlüsselungs und Entschlüsselungstests müssen
 für alle Blockmodi separat umgesetzt werden }
-//FCipher_Blowfish.EncodeString()
-
-  DoTestEncode(FCipher_Blowfish.EncodeBytes);
+  DoTestEncode(FCipher_Blowfish.EncodeString);
 end;
 
 procedure TestTCipher_Twofish.SetUp;
@@ -1355,7 +1353,7 @@ var
 begin
   for Data in FTestData do
   begin
-    Result := DecodeFunct(BytesOf(Data.OutputData), TFormat_HEXL);
+    Result := DecodeFunct(Data.OutputData, TFormat_HEXL);
 
     Res := BytesToRawString(Result);
     Exp := BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData)));
@@ -1379,7 +1377,10 @@ Daten synthetisieren. }
   for Data in FTestData do
   begin
 //    Result := EncodeFunct(BytesOf(Data.OutputData), TFormat_HEXL);
-    Result := EncodeFunct(BytesOf(Data.InputData), TFormat_HEXL);
+
+// Verdacht: Input und Output Daten sind vertauscht, das kann aber nicht alles sein,
+// da es schon probiert wurde und trotzdem nicht richtig war
+    Result := EncodeFunct(Data.InputData, TFormat_HEXL);
 
 //    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData))),
 //                BytesToRawString(Result));
