@@ -117,7 +117,6 @@ type
     procedure DoTestCalcStream(HashClass:TDECHash);
     procedure DoTestCalcUnicodeString(HashClass:TDECHash);
     procedure DoTestCalcRawByteString(HashClass:TDECHash);
-
   published
   end;
 
@@ -171,6 +170,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -188,6 +188,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -205,6 +206,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -221,6 +223,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -237,6 +240,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -253,6 +257,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -269,6 +274,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -285,6 +291,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -302,6 +309,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -318,6 +326,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -334,6 +343,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -350,6 +360,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -366,6 +377,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -382,6 +394,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -398,6 +411,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -414,6 +428,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
   end;
@@ -431,6 +446,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -448,6 +464,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -465,6 +482,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -482,6 +500,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -499,6 +518,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -516,6 +536,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -533,6 +554,7 @@ type
     procedure TestCalcBytes;
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
+    procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -756,47 +778,58 @@ begin
 
   SetLength(FTestData, 11);
 
-  FTestData[ 0].Output := 'd41d8cd98f00b204e9800998ecf8427e';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := 'd41d8cd98f00b204e9800998ecf8427e';
+  FTestData[ 0].OutputUTFStrTest := 'd41d8cd98f00b204e9800998ecf8427e';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '0cc175b9c0f1b6a831c399e269772661';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '0cc175b9c0f1b6a831c399e269772661';
+  FTestData[ 1].OutputUTFStrTest := '4144e195f46de78a3623da7364d04f11';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := '900150983cd24fb0d6963f7d28e17f72';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := '900150983cd24fb0d6963f7d28e17f72';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := 'f96b697d7cb7938d525a2f31aaf161d0';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'f96b697d7cb7938d525a2f31aaf161d0';
+  FTestData[ 3].OutputUTFStrTest := '6f9ab83227f65f9b86c380e2c9c33031';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'c3fcd3d76192e4007dfb496cca67e13b';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'c3fcd3d76192e4007dfb496cca67e13b';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := 'd174ab98d277d9f5a5611c2c9f419d9f';
-  FTestData[ 5].Input  := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := 'd174ab98d277d9f5a5611c2c9f419d9f';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := '57edf4a22be3c955ac49da2e2107b67a';
-  FTestData[ 6].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := '57edf4a22be3c955ac49da2e2107b67a';
+  FTestData[ 6].OutputUTFStrTest := '903f43f5c1f384fc267110bf07caec04';
+  FTestData[ 6].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := 'e6810238956987dec0d7bfcbcd4caab8';
-  FTestData[ 7].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := 'e6810238956987dec0d7bfcbcd4caab8';
+  FTestData[ 7].OutputUTFStrTest := 'a36d511965e2c68794b5fbfe54d74b8c';
+  FTestData[ 7].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := '637d2777ed733d5d33b5bfc140f118c5';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := '637d2777ed733d5d33b5bfc140f118c5';
+  FTestData[ 8].OutputUTFStrTest := '3995d2a93d5df46406ef04b34d06b177';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '7707d6ae4e027c70eea2a935c2296f21';
-  FTestData[ 9].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[ 9].Enabled:= false;
+  FTestData[ 9].Output           := '7707d6ae4e027c70eea2a935c2296f21';
+//  FTestData[ 9].OutputUTFStrTest := '';
+  FTestData[ 9].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[ 9].Enabled          := false;
 
-  FTestData[10].Output := '7707d6ae4e027c70eea2a935c2296f21';
+  FTestData[10].Output           := '7707d6ae4e027c70eea2a935c2296f21';
+  FTestData[10].OutputUTFStrTest := '168f7302c596180bb5372f5015098742';
   SetLength(FTestData[10].Input, 1000000);
   FillChar(FTestData[10].Input[low(FTestData[10].Input)], 1000000, 'a');
   FTestData[10].Enabled:= true;
@@ -838,56 +871,73 @@ begin
   DoTestCalcStream(FHash_MD5);
 end;
 
+procedure TestTHash_MD5.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_MD5);
+end;
+
 procedure TestTHash_RipeMD128.SetUp;
 begin
   FHash_RipeMD128 := THash_RipeMD128.Create;
   SetLength(FTestData, 12);
 
   FTestData[ 0].Output := 'cdf26213a150dc3ecb610f18f6b38b46';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].OutputUTFStrTest := 'cdf26213a150dc3ecb610f18f6b38b46';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '86be7afa339d0fc7cfc785e72f578d33';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '86be7afa339d0fc7cfc785e72f578d33';
+  FTestData[ 1].OutputUTFStrTest := 'b7d45de39098253a3c98c2756101f5aa';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'c14a12199c66e4ba84636b0f69144c77';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'c14a12199c66e4ba84636b0f69144c77';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '9e327b3d6e523062afc1132d7df9d1b8';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '9e327b3d6e523062afc1132d7df9d1b8';
+  FTestData[ 3].OutputUTFStrTest := '8adb8445ef4925f7483e0b1738f3e6b3';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'fd2aa607f71dc8f510714922b371834e';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'fd2aa607f71dc8f510714922b371834e';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := 'a1aa0689d0fafa2ddc22e88b49133a06';
-  FTestData[ 5].Input  := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := 'a1aa0689d0fafa2ddc22e88b49133a06';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := 'd1e959eb179c911faea4624c60c5c702';
-  FTestData[ 6].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 6].Enabled:= false;
+  FTestData[ 6].Output           := 'd1e959eb179c911faea4624c60c5c702';
+//  FTestData[ 6].OutputUTFStrTest := '';
+  FTestData[ 6].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 6].Enabled          := false;
 
-  FTestData[ 7].Output := '3f45ef194732c2dbb2c4a2c769795fa3';
-  FTestData[ 7].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '3f45ef194732c2dbb2c4a2c769795fa3';
+  FTestData[ 7].OutputUTFStrTest := '48c714a46e60f21802adef5c60b5b63e';
+  FTestData[ 7].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := 'a4137d8c40fa51152905b3747acc0ff4';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := 'a4137d8c40fa51152905b3747acc0ff4';
+  FTestData[ 8].OutputUTFStrTest := 'd08312b9507ea0edbc38c4b1d421e0f1';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '243988f60681af64730a7ee6b5f0406b';
-  FTestData[ 9].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := '243988f60681af64730a7ee6b5f0406b';
+  FTestData[ 9].OutputUTFStrTest := 'c227947947ad2085bd35817cf94be3d3';
+  FTestData[ 9].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '4a7f5723f954eba1216c9d8f6320431f';
-  FTestData[10].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[10].Enabled:= false;
+  FTestData[10].Output           := '4a7f5723f954eba1216c9d8f6320431f';
+//  FTestData[10].OutputUTFStrTest := '';
+  FTestData[10].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[10].Enabled          := false;
 
-  FTestData[11].Output := '4a7f5723f954eba1216c9d8f6320431f';
+  FTestData[11].Output           := '4a7f5723f954eba1216c9d8f6320431f';
+  FTestData[11].OutputUTFStrTest := 'c8c6d2c7e48fc3788ef778426d4382e0';
   SetLength(FTestData[11].Input, 1000000);
   FillChar(FTestData[11].Input[low(FTestData[11].Input)], 1000000, 'a');
   FTestData[11].Enabled:= true;
@@ -929,56 +979,73 @@ begin
   DoTestCalcStream(FHash_RipeMD128);
 end;
 
+procedure TestTHash_RipeMD128.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_RipeMD128);
+end;
+
 procedure TestTHash_RipeMD160.SetUp;
 begin
   FHash_RipeMD160 := THash_RipeMD160.Create;
   SetLength(FTestData, 12);
 
-  FTestData[ 0].Output := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
+  FTestData[ 0].OutputUTFStrTest := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '0bdc9d2d256b3ee9daae347be6f4dc835a467ffe';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '0bdc9d2d256b3ee9daae347be6f4dc835a467ffe';
+  FTestData[ 1].OutputUTFStrTest := '3213d398bb951aa09625539093524fa528848bd0';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := '8eb208f7e05d987a9b044a8e98c6b087f15a0bfc';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := '8eb208f7e05d987a9b044a8e98c6b087f15a0bfc';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '5d0689ef49d2fae572b881b123a85ffa21595f36';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '5d0689ef49d2fae572b881b123a85ffa21595f36';
+  FTestData[ 3].OutputUTFStrTest := '3648d57f2b151f9bd2ef3f3d8d16efa869bb7552';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'f71c27109c692c1b56bbdceb5b9d2865b3708dbc';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'f71c27109c692c1b56bbdceb5b9d2865b3708dbc';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := '12a053384a9c0c88e405a06c27dcf49ada62eb2b';
-  FTestData[ 5].Input  := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := '12a053384a9c0c88e405a06c27dcf49ada62eb2b';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := 'b0e20b6e3116640286ed3a87a5713079b21f5189';
-  FTestData[ 6].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 6].Enabled:= false;
+  FTestData[ 6].Output           := 'b0e20b6e3116640286ed3a87a5713079b21f5189';
+//  FTestData[ 6].OutputUTFStrTest := '';
+  FTestData[ 6].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 6].Enabled          := false;
 
-  FTestData[ 7].Output := '9b752e45573d4b39f4dbd3323cab82bf63326bfb';
-  FTestData[ 7].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '9b752e45573d4b39f4dbd3323cab82bf63326bfb';
+  FTestData[ 7].OutputUTFStrTest := '5b9333be43b8900e33224375f3a22b66a4d77388';
+  FTestData[ 7].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := 'b8c681512ad02967243bb93d181b5783eb501f2f';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := 'b8c681512ad02967243bb93d181b5783eb501f2f';
+  FTestData[ 8].OutputUTFStrTest := '99079db8b7532db2699a69ca200dab8eeb8be77e';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := 'e94a9d107e49e4ea81b22cfaa4075437175d383c';
-  FTestData[ 9].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := 'e94a9d107e49e4ea81b22cfaa4075437175d383c';
+  FTestData[ 9].OutputUTFStrTest := 'a9a5a0eb2c69ddb61774054cbf800256f7eb4ac9';
+  FTestData[ 9].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '52783243c1697bdbe16d37f97f68f08325dc1528';
-  FTestData[10].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[10].Enabled:= false;
+  FTestData[10].Output           := '52783243c1697bdbe16d37f97f68f08325dc1528';
+//  FTestData[10].OutputUTFStrTest := '';
+  FTestData[10].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[10].Enabled          := false;
 
-  FTestData[11].Output := '52783243c1697bdbe16d37f97f68f08325dc1528';
+  FTestData[11].Output           := '52783243c1697bdbe16d37f97f68f08325dc1528';
+  FTestData[11].OutputUTFStrTest := '98182142d06b9952b1c7568fd0d178100e61c098';
   SetLength(FTestData[11].Input, 1000000);
   FillChar(FTestData[11].Input[low(FTestData[11].Input)], 1000000, 'a');
   FTestData[11].Enabled:= true;
@@ -1015,56 +1082,73 @@ begin
   DoTestCalcStream(FHash_RipeMD160);
 end;
 
+procedure TestTHash_RipeMD160.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_RipeMD160);
+end;
+
 procedure TestTHash_RipeMD256.SetUp;
 begin
   FHash_RipeMD256 := THash_RipeMD256.Create;
   SetLength(FTestData, 12);
 
-  FTestData[ 0].Output := '02ba4c4e5f8ecd1877fc52d64d30e37a2d9774fb1e5d026380ae0168e3c5522d';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '02ba4c4e5f8ecd1877fc52d64d30e37a2d9774fb1e5d026380ae0168e3c5522d';
+  FTestData[ 0].OutputUTFStrTest := '02ba4c4e5f8ecd1877fc52d64d30e37a2d9774fb1e5d026380ae0168e3c5522d';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'f9333e45d857f5d90a91bab70a1eba0cfb1be4b0783c9acfcd883a9134692925';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'f9333e45d857f5d90a91bab70a1eba0cfb1be4b0783c9acfcd883a9134692925';
+  FTestData[ 1].OutputUTFStrTest := '9085ecd33f28d345d80830edb9bc9dbdf864810e51538db16b14f229fcce02c2';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'afbd6e228b9d8cbbcef5ca2d03e6dba10ac0bc7dcbe4680e1e42d2e975459b65';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'afbd6e228b9d8cbbcef5ca2d03e6dba10ac0bc7dcbe4680e1e42d2e975459b65';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '87e971759a1ce47a514d5c914c392c9018c7c46bc14465554afcdf54a5070c0e';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '87e971759a1ce47a514d5c914c392c9018c7c46bc14465554afcdf54a5070c0e';
+  FTestData[ 3].OutputUTFStrTest := '8456b94a8564fca0356765e9e3e0ccda4af6cd486e65ce1259559143c44ba0ea';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := '649d3034751ea216776bf9a18acc81bc7896118a5197968782dd1fd97d8d5133';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := '649d3034751ea216776bf9a18acc81bc7896118a5197968782dd1fd97d8d5133';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := '3843045583aac6c8c8d9128573e7a9809afb2a0f34ccc36ea9e72f16f6368e3f';
-  FTestData[ 5].Input  := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := '3843045583aac6c8c8d9128573e7a9809afb2a0f34ccc36ea9e72f16f6368e3f';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := '5740a408ac16b720b84424ae931cbb1fe363d1d0bf4017f1a89f7ea6de77a0b8';
-  FTestData[ 6].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 6].Enabled:= false;
+  FTestData[ 6].Output           := '5740a408ac16b720b84424ae931cbb1fe363d1d0bf4017f1a89f7ea6de77a0b8';
+//  FTestData[ 6].OutputUTFStrTest := '';
+  FTestData[ 6].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 6].Enabled          := false;
 
-  FTestData[ 7].Output := '06fdcc7a409548aaf91368c06a6275b553e3f099bf0ea4edfd6778df89a890dd';
-  FTestData[ 7].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '06fdcc7a409548aaf91368c06a6275b553e3f099bf0ea4edfd6778df89a890dd';
+  FTestData[ 7].OutputUTFStrTest := '67e959944ad20f439af5cffa4893b5913536bba2e151b7c5bd01da6707fd331c';
+  FTestData[ 7].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := 'ce2a12e4361b03bf914ce35267628a9f26d54ed82b764c903958f29e652e0f5d';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := 'ce2a12e4361b03bf914ce35267628a9f26d54ed82b764c903958f29e652e0f5d';
+  FTestData[ 8].OutputUTFStrTest := 'fc0f03e8f9666aa901ddb32482eef939b1abc86d311439ed022b4ece5194363c';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '5b622dfcf325aa4476bcdeff971f961120a19bf7642b85cbdd422f46d7c7bad8';
-  FTestData[ 9].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := '5b622dfcf325aa4476bcdeff971f961120a19bf7642b85cbdd422f46d7c7bad8';
+  FTestData[ 9].OutputUTFStrTest := '3015a97978ad2824ab545aabc411f78b4b6e44acb23a865af696ef5777f7703a';
+  FTestData[ 9].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := 'ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978';
-  FTestData[10].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[10].Enabled:= false;
+  FTestData[10].Output           := 'ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978';
+//  FTestData[10].OutputUTFStrTest := '';
+  FTestData[10].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[10].Enabled          := false;
 
-  FTestData[11].Output := 'ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978';
+  FTestData[11].Output           := 'ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978';
+  FTestData[11].OutputUTFStrTest := 'bcda054f27f32fedeb8374ee93d01fbc0783c30b9e71cc3e2a463265eac08f76';
   SetLength(FTestData[11].Input, 1000000);
   FillChar(FTestData[11].Input[low(FTestData[11].Input)], 1000000, 'a');
   FTestData[11].Enabled:= true;
@@ -1083,7 +1167,7 @@ end;
 
 procedure TestTHash_RipeMD256.TestCalcBuffer;
 begin
-  DoTestCalcBuffer(FHash_RipeMD256);
+ DoTestCalcBuffer(FHash_RipeMD256);
 end;
 
 procedure TestTHash_RipeMD256.TestCalcBytes;
@@ -1101,56 +1185,73 @@ begin
   DoTestCalcStream(FHash_RipeMD256);
 end;
 
+procedure TestTHash_RipeMD256.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_RipeMD256);
+end;
+
 procedure TestTHash_RipeMD320.SetUp;
 begin
   FHash_RipeMD320 := THash_RipeMD320.Create;
   SetLength(FTestData, 12);
 
-  FTestData[ 0].Output := '22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8';
+  FTestData[ 0].OutputUTFStrTest := '22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'ce78850638f92658a5a585097579926dda667a5716562cfcf6fbe77f63542f99b04705d6970dff5d';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'ce78850638f92658a5a585097579926dda667a5716562cfcf6fbe77f63542f99b04705d6970dff5d';
+  FTestData[ 1].OutputUTFStrTest := 'becac9657471217026a3e463c4e4198d0a35a628d5b33ea9ce3bfe2e1ec03c8e48d4c71bac843224';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'de4c01b3054f8930a79d09ae738e92301e5a17085beffdc1b8d116713e74f82fa942d64cdbc4682d';
-  FTestData[ 2].Input  := 'ab,c ';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'de4c01b3054f8930a79d09ae738e92301e5a17085beffdc1b8d116713e74f82fa942d64cdbc4682d';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c ';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '3a8e28502ed45d422f68844f9dd316e7b98533fa3f2a91d29f84d425c88d6b4eff727df66a7c0197';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '3a8e28502ed45d422f68844f9dd316e7b98533fa3f2a91d29f84d425c88d6b4eff727df66a7c0197';
+  FTestData[ 3].OutputUTFStrTest := 'f18db73fd25af066beeb55389f10f21b0598075bc2febd0fb30f30293e4f08e8d4af496d38103f83';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'cabdb1810b92470a2093aa6bce05952c28348cf43ff60841975166bb40ed234004b8824463e6b009';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'cabdb1810b92470a2093aa6bce05952c28348cf43ff60841975166bb40ed234004b8824463e6b009';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := 'd034a7950cf722021ba4b84df769a5de2060e259df4c9bb4a4268c0e935bbc7470a969c9d072a1ac';
-  FTestData[ 5].Input  := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := 'd034a7950cf722021ba4b84df769a5de2060e259df4c9bb4a4268c0e935bbc7470a969c9d072a1ac';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'abcdbcdecdefdefg,efghfghighijhijki,jkljklmklmnlmnomnopnopq';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := 'ed544940c86d67f250d232c30b7b3e5770e0c60c8cb9a4cafe3b11388af9920e1b99230b843c86a4';
-  FTestData[ 6].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 6].Enabled:= false;
+  FTestData[ 6].Output           := 'ed544940c86d67f250d232c30b7b3e5770e0c60c8cb9a4cafe3b11388af9920e1b99230b843c86a4';
+//  FTestData[ 6].OutputUTFStrTest := '';
+  FTestData[ 6].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 6].Enabled          := false;
 
-  FTestData[ 7].Output := '557888af5f6d8ed62ab66945c6d2a0a47ecd5341e915eb8fea1d0524955f825dc717e4a008ab2d42';
-  FTestData[ 7].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '557888af5f6d8ed62ab66945c6d2a0a47ecd5341e915eb8fea1d0524955f825dc717e4a008ab2d42';
+  FTestData[ 7].OutputUTFStrTest := '2de7b865e6692c84c0f23116e609fc99b5717a2c38028e45cdb00cbd5df70fcac63f23aa6493a3a3';
+  FTestData[ 7].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := '83254b7c45b10b0f1c7cd9d6bdf1c318d4e807731b7ce21b348ac0ee17e4ee7feb1f49fc3aea7d16';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := '83254b7c45b10b0f1c7cd9d6bdf1c318d4e807731b7ce21b348ac0ee17e4ee7feb1f49fc3aea7d16';
+  FTestData[ 8].OutputUTFStrTest := '32c9e60055988f4d00284a9a1e6c0d27eb10fc5429dfb2a168fc6016b32759c442586c566f30d941';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '77d7e20be0672bc74ed1cb4d9f56cf455c5e86a045c18db84e2d7bba53b21788575d6d7baa3d3469';
-  FTestData[ 9].Input  := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := '77d7e20be0672bc74ed1cb4d9f56cf455c5e86a045c18db84e2d7bba53b21788575d6d7baa3d3469';
+  FTestData[ 9].OutputUTFStrTest := 'df1d29aec8620e470c45cf77852c7b917877c80d2f63a279b41cc0d65fc5c93c5bd35c08cf08db91';
+  FTestData[ 9].Input            := 'This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := 'bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66';
-  FTestData[10].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[10].Enabled:= false;
+  FTestData[10].Output           := 'bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66';
+//  FTestData[10].OutputUTFStrTest := '';
+  FTestData[10].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[10].Enabled          := false;
 
-  FTestData[11].Output := 'bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66';
+  FTestData[11].Output           := 'bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66';
+  FTestData[11].OutputUTFStrTest := '532260a4e62a359a9d1561a1e6cfd1f6988447a3ef4f810a252f69483e4ad5d7f95fc1609d29bb1a';
   SetLength(FTestData[11].Input, 1000000);
   FillChar(FTestData[11].Input[low(FTestData[11].Input)], 1000000, 'a');
   FTestData[11].Enabled:= true;
@@ -1187,34 +1288,45 @@ begin
   DoTestCalcStream(FHash_RipeMD320);
 end;
 
+procedure TestTHash_RipeMD320.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_RipeMD320);
+end;
+
 procedure TestTHash_SHA.SetUp;
 begin
   FHash_SHA := THash_SHA.Create;
   SetLength(FTestData, 6);
 
-  FTestData[ 0].Output := '0164b8a914cd2a5e74c4f7ff082c4d97f1edf880';
-  FTestData[ 0].Input  := 'abc';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '0164b8a914cd2a5e74c4f7ff082c4d97f1edf880';
+  FTestData[ 0].OutputUTFStrTest := 'e286e14cff397cd7e37f755e00af6a8e1b00bc55';
+  FTestData[ 0].Input            := 'abc';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'd2516ee1acfa5baf33dfc1c471e438449ef134c8';
-  FTestData[ 1].Input  := 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'd2516ee1acfa5baf33dfc1c471e438449ef134c8';
+  FTestData[ 1].OutputUTFStrTest := '97163d17d936aa26b97bfad5d8ae1e328e29c532';
+  FTestData[ 1].Input            := 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'f79e92290e9f519a62467812ea56920850354796';
-  FTestData[ 2].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 119 bytes';
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := 'f79e92290e9f519a62467812ea56920850354796';
+  FTestData[ 2].OutputUTFStrTest := '53f1df401054ccfa66250ace1454b34d55059e3c';
+  FTestData[ 2].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 119 bytes';
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := 'e644dc674505c8260e58e32f6b8bcf565b2fafc4';
-  FTestData[ 3].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'e644dc674505c8260e58e32f6b8bcf565b2fafc4';
+  FTestData[ 3].OutputUTFStrTest := '29a30604bfbd1c23545fd02faf4c6bbce9947377';
+  FTestData[ 3].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := '3232affa48628a26653b5aaa44541fd90d690603';
-  FTestData[ 4].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := '3232affa48628a26653b5aaa44541fd90d690603';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := '3232affa48628a26653b5aaa44541fd90d690603';
+  FTestData[ 5].Output           := '3232affa48628a26653b5aaa44541fd90d690603';
+  FTestData[ 5].OutputUTFStrTest := '209d48020a6dff914d1503e2a760d4ef4ad4c8fe';
   SetLength(FTestData[ 5].Input, 1000000);
   FillChar(FTestData[ 5].Input[low(FTestData[ 5].Input)], 1000000, 'a');
   FTestData[ 5].Enabled:= true;
@@ -1251,28 +1363,37 @@ begin
   DoTestCalcStream(FHash_SHA);
 end;
 
+procedure TestTHash_SHA.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_SHA);
+end;
+
 procedure TestTHash_SHA256.SetUp;
 begin
   FHash_SHA256 := THash_SHA256.Create;
   SetLength(FTestData, 4);
 
-  FTestData[ 0].Output := 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad';
-  FTestData[ 0].Input  := 'ab,c';
-  FTestData[ 0].Enabled:= false;
+  FTestData[ 0].Output           := 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad';
+//  FTestData[ 0].OutputUTFStrTest := '';
+  FTestData[ 0].Input            := 'ab,c';
+  FTestData[ 0].Enabled          := false;
 
-  FTestData[ 1].Output := '248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1';
-  FTestData[ 1].Input  := 'abcdbcdecdefdef,gefghfghighijhijki,jkljklmklmnlmnomnopnop,q';
-  FTestData[ 1].Enabled:= false;
+  FTestData[ 1].Output           := '248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1';
+//  FTestData[ 1].OutputUTFStrTest := '';
+  FTestData[ 1].Input            := 'abcdbcdecdefdef,gefghfghighijhijki,jkljklmklmnlmnomnopnop,q';
+  FTestData[ 1].Enabled          := false;
 
-  FTestData[ 2].Output := '85c0f2421bdffd1dc9568cd815175fe286e5c18a4c4e0308114f534442c6dc3c';
-  FTestData[ 2].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 119 bytes';
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := '85c0f2421bdffd1dc9568cd815175fe286e5c18a4c4e0308114f534442c6dc3c';
+  FTestData[ 2].OutputUTFStrTest := 'c4ccadb4452fd1e52ca9e90e4447a2f093b4bf2acd5a1e2293ef622e0a166b53';
+  FTestData[ 2].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 119 bytes';
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := 'c8a0bcda5fec642e44488fd7b782821d478ef17e651eaec0e43f9036388340bb';
-  FTestData[ 3].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'c8a0bcda5fec642e44488fd7b782821d478ef17e651eaec0e43f9036388340bb';
+  FTestData[ 3].OutputUTFStrTest := '2f8aa82881b1140af41e95bf96ded6d034654492007b7302e1bd9231ce99bdf3';
+  FTestData[ 3].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 3].Enabled          := true;
 end;
 
 procedure TestTHash_SHA256.TearDown;
@@ -1306,34 +1427,46 @@ begin
   DoTestCalcStream(FHash_SHA256);
 end;
 
+procedure TestTHash_SHA256.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_SHA256);
+end;
+
 procedure TestTHash_SHA384.SetUp;
 begin
   FHash_SHA384 := THash_SHA384.Create;
   SetLength(FTestData, 4);
 
-  FTestData[ 0].Output := 'cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8' +
-                         'b605a43ff5bed8086072ba1e7cc2358baeca134c825a7';
-  FTestData[ 0].Input  := 'abc';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := 'cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8' +
+                                    'b605a43ff5bed8086072ba1e7cc2358baeca134c825a7';
+  FTestData[ 0].OutputUTFStrTest := '9b7ce7c7af46e400a37c8099cb4bbb5d0408061dd74cdb5dac7' +
+                                    '661bed1e53724bd07f299e265f400802a48d2e0b2092c';
+  FTestData[ 0].Input            := 'abc';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa' +
-                         '08086e3b0f712fcc7c71a557e2db966c3e9fa91746039';
-  FTestData[ 1].Input  := 'abcdefghbcdefghicdefghijdefghij,kefghijklfghijklmgh' +
-                         'ijklmn,hijklmnoijklmnopjklmnopqklmnopqrlmnopqr,smno' +
-                         'pqrstnopqrst,u';
-  FTestData[ 1].Enabled:= false;
+  FTestData[ 1].Output           := '09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa' +
+                                    '08086e3b0f712fcc7c71a557e2db966c3e9fa91746039';
+//  FTestData[ 1].OutputUTFStrTest := '';
+  FTestData[ 1].Input            := 'abcdefghbcdefghicdefghijdefghij,kefghijklfghijklmgh' +
+                                    'ijklmn,hijklmnoijklmnopjklmnopqklmnopqrlmnopqr,smno' +
+                                    'pqrstnopqrst,u';
+  FTestData[ 1].Enabled          := false;
 
-  FTestData[ 2].Output := 'cdbb41d1164ef06788b8b3f0fcb157de981311f0bc76752c952' +
-                         '075fcb14d1c133b27ddc7ad6b6b8c180346d0fe18694b';
-  FTestData[ 2].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. It has total length 111 bytes';
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := 'cdbb41d1164ef06788b8b3f0fcb157de981311f0bc76752c952' +
+                                    '075fcb14d1c133b27ddc7ad6b6b8c180346d0fe18694b';
+  FTestData[ 2].OutputUTFStrTest := '2cbf89df082d30f912fc15415e3e0ee75cf2d5ebdd2b32626d6' +
+                                    'a94ff86e40c68cce673c5a28b59a1ab5f879d11698bdb';
+  FTestData[ 2].Input            := 'This test vector intended to detect last zeroized block ' +
+                                    'necessity decision error. It has total length 111 bytes';
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := '49b8d662fc136462591f9a96a64d28ea8fb03b7b943dd3400f2' +
-                         '633effcab37502927736f19bdeecce842801f41ab3e26';
-  FTestData[ 3].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. It has total length 112 bytes.';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '49b8d662fc136462591f9a96a64d28ea8fb03b7b943dd3400f2' +
+                                    '633effcab37502927736f19bdeecce842801f41ab3e26';
+  FTestData[ 3].OutputUTFStrTest := '32a077958cdd604f0224941d17c52b37d441152ab0b19bf7594' +
+                                    '50f39a3c94f1d8521c20e5add06cbb5f56082265f43c5';
+  FTestData[ 3].Input            := 'This test vector intended to detect last zeroized block ' +
+                                    'necessity decision error. It has total length 112 bytes.';
+  FTestData[ 3].Enabled          := true;
 end;
 
 procedure TestTHash_SHA384.TearDown;
@@ -1372,38 +1505,51 @@ begin
   DoTestCalcStream(FHash_SHA384);
 end;
 
+procedure TestTHash_SHA384.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_SHA384);
+end;
+
 procedure TestTHash_SHA512.SetUp;
 begin
   FHash_SHA512 := THash_SHA512.Create;
   SetLength(FTestData, 4);
 
-  FTestData[ 0].Output := 'ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9' +
-                         'eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d44' +
-                         '23643ce80e2a9ac94fa54ca49f';
-  FTestData[ 0].Input  := 'ab,c';
-  FTestData[ 0].Enabled:= false;
+  FTestData[ 0].Output           := 'ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9' +
+                                    'eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d44' +
+                                    '23643ce80e2a9ac94fa54ca49f';
+//  FTestData[ 0].OutputUTFStrTest := '';
+  FTestData[ 0].Input            := 'ab,c';
+  FTestData[ 0].Enabled          := false;
 
-  FTestData[ 1].Output := '8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa1729' +
-                         '9aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329' +
-                         'eeb6dd26545e96e55b874be909';
-  FTestData[ 1].Input  := 'abcdefghbcdefghicdefghijdefghij,kefghijklfghijklmgh' +
-                         'ijklmn,hijklmnoijklmnopjklmnopqklmnopqrlmnopqr,smno' +
-                         'pqrstnopqrst,u';
-  FTestData[ 1].Enabled:= false;
+  FTestData[ 1].Output           := '8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa1729' +
+                                    '9aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329' +
+                                    'eeb6dd26545e96e55b874be909';
+//  FTestData[ 1].OutputUTFStrTest := '';
+  FTestData[ 1].Input            := 'abcdefghbcdefghicdefghijdefghij,kefghijklfghijklmgh' +
+                                    'ijklmn,hijklmnoijklmnopjklmnopqklmnopqrlmnopqr,smno' +
+                                    'pqrstnopqrst,u';
+  FTestData[ 1].Enabled          := false;
 
-  FTestData[ 2].Output := 'b4dd09998c54420c9445fb0706715f595435880da13fc56d2f5' +
-                         '5b47a86cd9e59a5ee9564f3bc8e91ed9ab6b2a5db2561a3bd56' +
-                         'e21defda4faf831da96210104d';
-  FTestData[ 2].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. It has total length 111 bytes';
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := 'b4dd09998c54420c9445fb0706715f595435880da13fc56d2f5' +
+                                    '5b47a86cd9e59a5ee9564f3bc8e91ed9ab6b2a5db2561a3bd56' +
+                                    'e21defda4faf831da96210104d';
+  FTestData[ 2].OutputUTFStrTest := 'a3c375fd0d3c264e4197cb4a7087e854d487c1d6e1011408b3d' +
+                                    'a60e48d51596c950566215cf8bc917354862c7de4e38f155aed' +
+                                    '1ee9f3f3416c5364782a534ac2';
+  FTestData[ 2].Input            := 'This test vector intended to detect last zeroized block ' +
+                                    'necessity decision error. It has total length 111 bytes';
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := 'ad80509dcad277f40647311294f9b007165ae8456829d4befdf' +
-                         'd0de536c05c8ceec7dbe6d9dac88578fa3037d37b81382c0ae1' +
-                         '4c2fd9388fde50105ad1d7d993';
-  FTestData[ 3].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. It has total length 112 bytes.';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'ad80509dcad277f40647311294f9b007165ae8456829d4befdf' +
+                                    'd0de536c05c8ceec7dbe6d9dac88578fa3037d37b81382c0ae1' +
+                                    '4c2fd9388fde50105ad1d7d993';
+  FTestData[ 3].OutputUTFStrTest := 'f5fd5871f5d7c55b230fae0d48d054dd6732aa35a0b72074721' +
+                                    'b3a28fb685ed5560dad9864a35c16f237696666503bada6cc77' +
+                                    '082258f65f265c501b31dcf92b';
+  FTestData[ 3].Input            := 'This test vector intended to detect last zeroized block ' +
+                                    'necessity decision error. It has total length 112 bytes.';
+  FTestData[ 3].Enabled          := true;
 end;
 
 procedure TestTHash_SHA512.TearDown;
@@ -1437,106 +1583,129 @@ begin
   DoTestCalcStream(FHash_SHA512);
 end;
 
+procedure TestTHash_SHA512.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_SHA512);
+end;
+
 procedure TestTHash_Haval128.SetUp;
 begin
   FHash_Haval128 := THash_Haval128.Create;
   SetLength(FTestData, 18);
 
-  FTestData[ 0].Output := 'c68f39913f901f3ddf44c707357a7d70';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].PaddingByte := 1;
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := 'c68f39913f901f3ddf44c707357a7d70';
+  FTestData[ 0].OutputUTFStrTest := 'c68f39913f901f3ddf44c707357a7d70';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].PaddingByte      := 1;
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '0cd40739683e15f01ca5dbceef4059f1';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].PaddingByte := 1;
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '0cd40739683e15f01ca5dbceef4059f1';
+  FTestData[ 1].OutputUTFStrTest := 'f2ac5ac2aae01fc184ef399da42d5865';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].PaddingByte      := 1;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'dc1f3c893d17cc4edd9ae94af76a0af0';
-  FTestData[ 2].Input  := 'HAVAL';
-  FTestData[ 2].PaddingByte := 1;
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := 'dc1f3c893d17cc4edd9ae94af76a0af0';
+  FTestData[ 2].OutputUTFStrTest := 'b0b47bdc3c2434256b49c77675bd0aab';
+  FTestData[ 2].Input            := 'HAVAL';
+  FTestData[ 2].PaddingByte      := 1;
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := 'd4be2164ef387d9f4d46ea8efb180cf5';
-  FTestData[ 3].Input  := '0123456789';
-  FTestData[ 3].PaddingByte := 1;
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'd4be2164ef387d9f4d46ea8efb180cf5';
+  FTestData[ 3].OutputUTFStrTest := 'a74975d492868f80184a785e163d6a1a';
+  FTestData[ 3].Input            := '0123456789';
+  FTestData[ 3].PaddingByte      := 1;
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'dc502247fb3eb8376109eda32d361d82';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].PaddingByte := 1;
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'dc502247fb3eb8376109eda32d361d82';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].PaddingByte      := 1;
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := 'de5eb3f7d9eb08fae7a07d68e3047ec6';
-  FTestData[ 5].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  FTestData[ 5].PaddingByte := 1;
-  FTestData[ 5].Enabled:= true;
+  FTestData[ 5].Output           := 'de5eb3f7d9eb08fae7a07d68e3047ec6';
+  FTestData[ 5].OutputUTFStrTest := 'f68c39679f1660c0504feaa4d5958587';
+  FTestData[ 5].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  FTestData[ 5].PaddingByte      := 1;
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output := '4806b64dae93d3606308310a439e2a3a';
-  FTestData[ 6].Input  := 'This test vector intended to detect last zeroized ' +
-                          'block necessity decision error. For this detection' +
-                          ' it is 117 bytes.';
-  FTestData[ 6].PaddingByte := 1;
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := '4806b64dae93d3606308310a439e2a3a';
+  FTestData[ 6].OutputUTFStrTest := 'dc48ac538e085f81571d4a64aca44fe4';
+  FTestData[ 6].Input            := 'This test vector intended to detect last zeroized ' +
+                                    'block necessity decision error. For this detection' +
+                                    ' it is 117 bytes.';
+  FTestData[ 6].PaddingByte      := 1;
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '8beaa7dd5bb591c8009e429d79041813';
-  FTestData[ 7].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[ 7].PaddingByte := 1;
-  FTestData[ 7].Enabled:= false;
+  FTestData[ 7].Output           := '8beaa7dd5bb591c8009e429d79041813';
+//  FTestData[ 7].OutputUTFStrTest := '';
+  FTestData[ 7].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[ 7].PaddingByte      := 1;
+  FTestData[ 7].Enabled          := false;
 
-  FTestData[ 8].Output := '8beaa7dd5bb591c8009e429d79041813';
+  FTestData[ 8].Output           := '8beaa7dd5bb591c8009e429d79041813';
+  FTestData[ 8].OutputUTFStrTest := '7669b7e0b3a872b8f4f48c5351c4c9c5';
   SetLength(FTestData[ 8].Input, 1000000);
   FillChar(FTestData[ 8].Input[low(FTestData[ 8].Input)], 1000000, 'a');
-  FTestData[ 8].PaddingByte := 1;
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].PaddingByte      := 1;
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '1bdc556b29ad02ec09af8c66477f2a87';
-  FTestData[ 9].Input  := '';
-  FTestData[ 9].PaddingByte := 128;
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := '1bdc556b29ad02ec09af8c66477f2a87';
+  FTestData[ 9].OutputUTFStrTest := '1bdc556b29ad02ec09af8c66477f2a87';
+  FTestData[ 9].Input            := '';
+  FTestData[ 9].PaddingByte      := 128;
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '24d2bc955a219e3e06462c91b555cfa1';
-  FTestData[10].Input  := 'a';
-  FTestData[10].PaddingByte := 128;
-  FTestData[10].Enabled:= true;
+  FTestData[10].Output           := '24d2bc955a219e3e06462c91b555cfa1';
+  FTestData[10].OutputUTFStrTest := 'fa53172579efb3ba63cf4b32e4f66bdd';
+  FTestData[10].Input            := 'a';
+  FTestData[10].PaddingByte      := 128;
+  FTestData[10].Enabled          := true;
 
-  FTestData[11].Output := '16c743e5eefd3266ed50deac6c30313e';
-  FTestData[11].Input  := 'HAVAL';
-  FTestData[11].PaddingByte := 128;
-  FTestData[11].Enabled:= true;
+  FTestData[11].Output           := '16c743e5eefd3266ed50deac6c30313e';
+  FTestData[11].OutputUTFStrTest := 'c0716b442299437c01885a4e6335b2c2';
+  FTestData[11].Input            := 'HAVAL';
+  FTestData[11].PaddingByte      := 128;
+  FTestData[11].Enabled          := true;
 
-  FTestData[12].Output := '82d163440f6e853229a97007ec4af0e5';
-  FTestData[12].Input  := '0123456789';
-  FTestData[12].PaddingByte := 128;
-  FTestData[12].Enabled:= true;
+  FTestData[12].Output           := '82d163440f6e853229a97007ec4af0e5';
+  FTestData[12].OutputUTFStrTest := '9eb5e08841eb1cdab920d91660339340';
+  FTestData[12].Input            := '0123456789';
+  FTestData[12].PaddingByte      := 128;
+  FTestData[12].Enabled          := true;
 
-  FTestData[13].Output := '92e8ec9ad7fd209d97e9ce21b50440e9';
-  FTestData[13].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[13].PaddingByte := 128;
-  FTestData[13].Enabled:= false;
+  FTestData[13].Output           := '92e8ec9ad7fd209d97e9ce21b50440e9';
+//  FTestData[13].OutputUTFStrTest := '';
+  FTestData[13].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[13].PaddingByte      := 128;
+  FTestData[13].Enabled          := false;
 
-  FTestData[14].Output := '4ae2f37cef9275cce0d73f6a1eb9cdd8';
-  FTestData[14].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  FTestData[14].PaddingByte := 128;
-  FTestData[14].Enabled:= true;
+  FTestData[14].Output           := '4ae2f37cef9275cce0d73f6a1eb9cdd8';
+  FTestData[14].OutputUTFStrTest := '821ea5eb3f12c7cb429eb4f44c60112c';
+  FTestData[14].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  FTestData[14].PaddingByte      := 128;
+  FTestData[14].Enabled          := true;
 
-  FTestData[15].Output := '3e1846cda3c9542944672b7150d0f38c';
-  FTestData[15].Input  := 'This test vector intended to detect last zeroized ' +
-                          'block necessity decision error. For this detection' +
-                          ' it is 117 bytes.';
-  FTestData[15].PaddingByte := 128;
-  FTestData[15].Enabled:= true;
+  FTestData[15].Output           := '3e1846cda3c9542944672b7150d0f38c';
+  FTestData[15].OutputUTFStrTest := '67c7f95b227d60218508df6c7b4b9fe2';
+  FTestData[15].Input            := 'This test vector intended to detect last zeroized ' +
+                                    'block necessity decision error. For this detection' +
+                                    ' it is 117 bytes.';
+  FTestData[15].PaddingByte      := 128;
+  FTestData[15].Enabled          := true;
 
-  FTestData[16].Output := '41b74ec225c9fb7a8e24840a98141b39';
-  FTestData[16].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[16].PaddingByte := 128;
-  FTestData[16].Enabled:= false;
+  FTestData[16].Output           := '41b74ec225c9fb7a8e24840a98141b39';
+  //FTestData[16].OutputUTFStrTest := '';
+  FTestData[16].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[16].PaddingByte      := 128;
+  FTestData[16].Enabled          := false;
 
-  FTestData[17].Output := '41b74ec225c9fb7a8e24840a98141b39';
+  FTestData[17].Output           := '41b74ec225c9fb7a8e24840a98141b39';
+  FTestData[17].OutputUTFStrTest := '85b87eb2cfdf9dc3e6bf25b654c28f5c';
   SetLength(FTestData[17].Input, 1000000);
   FillChar(FTestData[17].Input[low(FTestData[17].Input)], 1000000, 'a');
-  FTestData[17].PaddingByte := 128;
-  FTestData[17].Enabled:= true;
+  FTestData[17].PaddingByte      := 128;
+  FTestData[17].Enabled          := true;
 end;
 
 procedure TestTHash_Haval128.TearDown;
@@ -1570,106 +1739,129 @@ begin
   DoTestCalcStream(FHash_Haval128);
 end;
 
+procedure TestTHash_Haval128.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Haval128);
+end;
+
 procedure TestTHash_Haval160.SetUp;
 begin
   FHash_Haval160 := THash_Haval160.Create;
   SetLength(FTestData, 18);
 
-  FTestData[ 0].Output := 'd353c3ae22a25401d257643836d7231a9a95f953';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].PaddingByte := 1;
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := 'd353c3ae22a25401d257643836d7231a9a95f953';
+  FTestData[ 0].OutputUTFStrTest := 'd353c3ae22a25401d257643836d7231a9a95f953';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].PaddingByte      := 1;
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '4da08f514a7275dbc4cece4a347385983983a830';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].PaddingByte := 1;
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '4da08f514a7275dbc4cece4a347385983983a830';
+  FTestData[ 1].OutputUTFStrTest := 'd976681ea27160c08ebab0032a76653fae848376';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].PaddingByte      := 1;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := '8822bc6f3e694e73798920c77ce3245120dd8214';
-  FTestData[ 2].Input  := 'HAVAL';
-  FTestData[ 2].PaddingByte := 1;
-  FTestData[ 2].Enabled:= true;
+  FTestData[ 2].Output           := '8822bc6f3e694e73798920c77ce3245120dd8214';
+  FTestData[ 2].OutputUTFStrTest := 'cb5a03288450a452caec0e9154cb56ccaa007361';
+  FTestData[ 2].Input            := 'HAVAL';
+  FTestData[ 2].PaddingByte      := 1;
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output := 'be68981eb3ebd3f6748b081ee5d4e1818f9ba86c';
-  FTestData[ 3].Input  := '0123456789';
-  FTestData[ 3].PaddingByte := 1;
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'be68981eb3ebd3f6748b081ee5d4e1818f9ba86c';
+  FTestData[ 3].OutputUTFStrTest := '5433add25965d4cef4158530ea11d9cabf5dfae0';
+  FTestData[ 3].Input            := '0123456789';
+  FTestData[ 3].PaddingByte      := 1;
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'eba9fa6050f24c07c29d1834a60900ea4e32e61b';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].PaddingByte := 1;
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'eba9fa6050f24c07c29d1834a60900ea4e32e61b';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].PaddingByte      := 1;
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := '97dc988d97caae757be7523c4e8d4ea63007a4b9';
-  FTestData[ 5].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  FTestData[ 5].PaddingByte := 1;
-  FTestData[ 5].Enabled:= true;
+  FTestData[ 5].Output           := '97dc988d97caae757be7523c4e8d4ea63007a4b9';
+  FTestData[ 5].OutputUTFStrTest := 'e7052bbd65c7608cf0589f6471d85d7c0f02a6fd';
+  FTestData[ 5].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  FTestData[ 5].PaddingByte      := 1;
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output := 'ba27e0d51b9ba140804252413c52b42dfe97214b';
-  FTestData[ 6].Input  := 'This test vector intended to detect last zeroized ' +
-                          'block necessity decision error. For this detection' +
-                          ' it is 117 bytes.';
-  FTestData[ 6].PaddingByte := 1;
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := 'ba27e0d51b9ba140804252413c52b42dfe97214b';
+  FTestData[ 6].OutputUTFStrTest := '1eecea4c278e9a797bbcfce396dcebca7243623b';
+  FTestData[ 6].Input            := 'This test vector intended to detect last zeroized ' +
+                                    'block necessity decision error. For this detection' +
+                                    ' it is 117 bytes.';
+  FTestData[ 6].PaddingByte      := 1;
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '5ea7fa9a0236aad66a1da8f161985c6e3dae2b81';
-  FTestData[ 7].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[ 7].PaddingByte := 1;
-  FTestData[ 7].Enabled:= false;
+  FTestData[ 7].Output           := '5ea7fa9a0236aad66a1da8f161985c6e3dae2b81';
+//  FTestData[ 7].OutputUTFStrTest := '';
+  FTestData[ 7].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[ 7].PaddingByte      := 1;
+  FTestData[ 7].Enabled          := false;
 
-  FTestData[ 8].Output := '5ea7fa9a0236aad66a1da8f161985c6e3dae2b81';
+  FTestData[ 8].Output           := '5ea7fa9a0236aad66a1da8f161985c6e3dae2b81';
+  FTestData[ 8].OutputUTFStrTest := 'b0de8db36f55ea32b57d4333114d4a9d47ce53cd';
   SetLength(FTestData[ 8].Input, 1000000);
   FillChar(FTestData[ 8].Input[low(FTestData[ 8].Input)], 1000000, 'a');
-  FTestData[ 8].PaddingByte := 1;
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].PaddingByte      := 1;
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := 'fe79d0a044ffb75d5354668d664e4f4b9cc33477';
-  FTestData[ 9].Input  := '';
-  FTestData[ 9].PaddingByte := 128;
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := 'fe79d0a044ffb75d5354668d664e4f4b9cc33477';
+  FTestData[ 9].OutputUTFStrTest := 'fe79d0a044ffb75d5354668d664e4f4b9cc33477';
+  FTestData[ 9].Input            := '';
+  FTestData[ 9].PaddingByte      := 128;
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '5e1610fced1d3adb0bb18e92ac2b11f0bd99d8ed';
-  FTestData[10].Input  := 'a';
-  FTestData[10].PaddingByte := 128;
-  FTestData[10].Enabled:= true;
+  FTestData[10].Output           := '5e1610fced1d3adb0bb18e92ac2b11f0bd99d8ed';
+  FTestData[10].OutputUTFStrTest := '871624bcbb8c01039b10dbd18f4e85ef2847beec';
+  FTestData[10].Input            := 'a';
+  FTestData[10].PaddingByte      := 128;
+  FTestData[10].Enabled          := true;
 
-  FTestData[11].Output := '8e568ad6ccd58d17e0a11e92183232e0d1d2e9bf';
-  FTestData[11].Input  := 'HAVAL';
-  FTestData[11].PaddingByte := 128;
-  FTestData[11].Enabled:= true;
+  FTestData[11].Output           := '8e568ad6ccd58d17e0a11e92183232e0d1d2e9bf';
+  FTestData[11].OutputUTFStrTest := '53374669cfde8f3a5013ff3ba218ce84d4fe0764';
+  FTestData[11].Input            := 'HAVAL';
+  FTestData[11].PaddingByte      := 128;
+  FTestData[11].Enabled          := true;
 
-  FTestData[12].Output := '700d43a9b5e38300303fd4e25a6a326beb4a2241';
-  FTestData[12].Input  := '0123456789';
-  FTestData[12].PaddingByte := 128;
-  FTestData[12].Enabled:= true;
+  FTestData[12].Output           := '700d43a9b5e38300303fd4e25a6a326beb4a2241';
+  FTestData[12].OutputUTFStrTest := '92acab606db474de51c93cb812b125f0a71c413b';
+  FTestData[12].Input            := '0123456789';
+  FTestData[12].PaddingByte      := 128;
+  FTestData[12].Enabled          := true;
 
-  FTestData[13].Output := '1dd40aeab9610585fcae7492ff3b893c2a018f4e';
-  FTestData[13].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[13].PaddingByte := 1;
-  FTestData[13].Enabled:= false;
+  FTestData[13].Output           := '1dd40aeab9610585fcae7492ff3b893c2a018f4e';
+//  FTestData[13].OutputUTFStrTest := '';
+  FTestData[13].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[13].PaddingByte      := 1;
+  FTestData[13].Enabled          := false;
 
-  FTestData[14].Output := '485abb76ed2f5ac8bb86ddeb8cb4c54cf5bb077b';
-  FTestData[14].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  FTestData[14].PaddingByte := 128;
-  FTestData[14].Enabled:= true;
+  FTestData[14].Output           := '485abb76ed2f5ac8bb86ddeb8cb4c54cf5bb077b';
+  FTestData[14].OutputUTFStrTest := '82424bfabb7afd551fb01478e0bc26099300cd1b';
+  FTestData[14].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  FTestData[14].PaddingByte      := 128;
+  FTestData[14].Enabled          := true;
 
-  FTestData[15].Output := '7e3ec827726ae5ce4f4f67614395aa1c0602551a';
-  FTestData[15].Input  := 'This test vector intended to detect last zeroized ' +
-                          'block necessity decision error. For this detection' +
-                          ' it is 117 bytes.';
-  FTestData[15].PaddingByte := 128;
-  FTestData[15].Enabled:= true;
+  FTestData[15].Output           := '7e3ec827726ae5ce4f4f67614395aa1c0602551a';
+  FTestData[15].OutputUTFStrTest := '297a10aab083211007ffa25be84fcfdb9cb8a94d';
+  FTestData[15].Input            := 'This test vector intended to detect last zeroized ' +
+                                    'block necessity decision error. For this detection' +
+                                    ' it is 117 bytes.';
+  FTestData[15].PaddingByte      := 128;
+  FTestData[15].Enabled          := true;
 
-  FTestData[16].Output := '687e9073f7ec5f01ea4744b86ef40e13aaacf0a4';
-  FTestData[16].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[16].PaddingByte := 128;
-  FTestData[16].Enabled:= false;
+  FTestData[16].Output           := '687e9073f7ec5f01ea4744b86ef40e13aaacf0a4';
+//  FTestData[16].OutputUTFStrTest := '';
+  FTestData[16].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[16].PaddingByte      := 128;
+  FTestData[16].Enabled          := false;
 
-  FTestData[17].Output := '687e9073f7ec5f01ea4744b86ef40e13aaacf0a4';
+  FTestData[17].Output           := '687e9073f7ec5f01ea4744b86ef40e13aaacf0a4';
+  FTestData[17].OutputUTFStrTest := 'd65ef2dcb081c97494e84407033cb29415a80730';
   SetLength(FTestData[17].Input, 1000000);
   FillChar(FTestData[17].Input[low(FTestData[17].Input)], 1000000, 'a');
-  FTestData[17].PaddingByte := 128;
-  FTestData[17].Enabled:= true;
+  FTestData[17].PaddingByte      := 128;
+  FTestData[17].Enabled          := true;
 end;
 
 procedure TestTHash_Haval160.TearDown;
@@ -1701,6 +1893,11 @@ end;
 procedure TestTHash_Haval160.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Haval160);
+end;
+
+procedure TestTHash_Haval160.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Haval160);
 end;
 
 procedure TestTHash_Haval192.SetUp;
@@ -1836,6 +2033,11 @@ begin
   DoTestCalcStream(FHash_Haval192);
 end;
 
+procedure TestTHash_Haval192.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Haval192);
+end;
+
 procedure TestTHash_Haval224.SetUp;
 begin
   FHash_Haval224 := THash_Haval224.Create;
@@ -1967,6 +2169,11 @@ end;
 procedure TestTHash_Haval224.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Haval224);
+end;
+
+procedure TestTHash_Haval224.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Haval224);
 end;
 
 procedure TestTHash_Haval256.SetUp;
@@ -2114,6 +2321,11 @@ begin
   DoTestCalcStream(FHash_Haval256);
 end;
 
+procedure TestTHash_Haval256.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Haval256);
+end;
+
 procedure TestTHash_Tiger_3Rounds.SetUp;
 begin
   FHash_Tiger        := THash_Tiger.Create;
@@ -2189,6 +2401,11 @@ begin
   DoTestCalcStream(FHash_Tiger);
 end;
 
+procedure TestTHash_Tiger_3Rounds.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Tiger);
+end;
+
 procedure TestTHash_Tiger_4Rounds.SetUp;
 begin
   FHash_Tiger        := THash_Tiger.Create;
@@ -2262,6 +2479,11 @@ end;
 procedure TestTHash_Tiger_4Rounds.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Tiger);
+end;
+
+procedure TestTHash_Tiger_4Rounds.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Tiger);
 end;
 
 procedure TestTHash_Panama.SetUp;
@@ -2341,6 +2563,11 @@ end;
 procedure TestTHash_Panama.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Panama);
+end;
+
+procedure TestTHash_Panama.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Panama);
 end;
 
 procedure TestTHash_Whirlpool.SetUp;
@@ -2459,6 +2686,11 @@ begin
   DoTestCalcStream(FHash_Whirlpool);
 end;
 
+procedure TestTHash_Whirlpool.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Whirlpool);
+end;
+
 procedure TestTHash_Whirlpool1.SetUp;
 begin
   FHash_Whirlpool1 := THash_Whirlpool1.Create;
@@ -2575,6 +2807,11 @@ begin
   DoTestCalcStream(FHash_Whirlpool1);
 end;
 
+procedure TestTHash_Whirlpool1.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Whirlpool1);
+end;
+
 procedure TestTHash_Square.SetUp;
 begin
   FHash_Square := THash_Square.Create;
@@ -2653,6 +2890,11 @@ end;
 procedure TestTHash_Square.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Square);
+end;
+
+procedure TestTHash_Square.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Square);
 end;
 
 procedure TestTHash_Snefru128.SetUp;
@@ -2765,6 +3007,11 @@ begin
   DoTestCalcStream(FHash_Snefru128);
 end;
 
+procedure TestTHash_Snefru128.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Snefru128);
+end;
+
 procedure TestTHash_Snefru256.SetUp;
 begin
   FHash_Snefru256 := THash_Snefru256.Create;
@@ -2861,6 +3108,11 @@ end;
 procedure TestTHash_Snefru256.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Snefru256);
+end;
+
+procedure TestTHash_Snefru256.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Snefru256);
 end;
 
 procedure TestTHash_Sapphire.SetUp;
@@ -3060,6 +3312,11 @@ begin
   finally
     s.Free;
   end;
+end;
+
+procedure TestTHash_Sapphire.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash_Sapphire);
 end;
 
 { THash_TestBase }
