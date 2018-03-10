@@ -643,27 +643,6 @@ begin
 end;
 
 procedure TestTHash_MD2.TestCalcUnicodeString;
-//var
-//  i      : Integer;
-//  InpStr : string;
-//
-//  InpBuffer: TBytes;
-//  Data : RawByteString;
-//begin
-//  for i := Low(FTestData) to High(FTestData) do
-//    if FTestData[i].Enabled then
-//    begin
-//      InpStr := string(FTestData[i].Input);
-//
-//      FHash_MD2.PaddingByte := FTestData[i].PaddingByte;
-//      InpBuffer := TEncoding.Unicode.GetBytes(InpStr);
-////      InpBuffer := System.SysUtils.BytesOf(UnicodeString(InpStr));
-//
-//      data := BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBytes(InpBuffer)));
-//
-//      CheckEquals(BytesToRawString(TFormat_HEXL.Encode(FHash_MD2.CalcBytes(InpBuffer))),
-//                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(FHash_MD2.CalcString(InpStr)))));
-//    end;
 begin
   DoTestCalcUnicodeString(FHash_MD2);
 end;
@@ -3566,15 +3545,15 @@ begin
         CheckEquals(FTestData[i].Output,
                     BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))),
                     'Index: ' + IntToStr(i) + ' - expected: <' +
-                    FTestData[i].Output + '> but was: <' +
-                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))) + '>')
+                    string(FTestData[i].Output) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>')
 
       else
         CheckEquals(FTestData[i].Output,
                     BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))),
                     'Index: ' + IntToStr(i) + ' - expected: <' +
-                    FTestData[i].Output + '> but was: <' +
-                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))) + '>');
+                    string(FTestData[i].Output) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf))))) + '>');
     end;
 end;
 
@@ -3590,8 +3569,8 @@ begin
       CheckEquals(FTestData[i].Output,
                   BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))),
                   'Index: ' + IntToStr(i) + ' - expected: <' +
-                  FTestData[i].Output + '> but was: <' +
-                  BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))) + '>');
+                  string(FTestData[i].Output) + '> but was: <' +
+                  string(BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input)))))) + '>');
     end;
 end;
 
@@ -3619,8 +3598,8 @@ begin
         CheckEquals(FTestData[i].Output,
                     BytesToRawString(TFormat_HEXL.Encode(Hash)),
                     'Index: ' + IntToStr(i) + ' - expected: <' +
-                    FTestData[i].Output + '> but was: <' +
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)) + '>');
+                    string(FTestData[i].Output) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
       end;
   finally
     s.Free;
@@ -3631,9 +3610,6 @@ procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
 var
   i      : Integer;
   InpStr : string;
-
-  InpBuffer: TBytes;
-  Data : RawByteString;
 begin
   for i := Low(FTestData) to High(FTestData) do
     if FTestData[i].Enabled then
@@ -3645,8 +3621,8 @@ begin
       CheckEquals(FTestData[i].OutputUTFStrTest,
                   BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
                   'Index: ' + IntToStr(i) + ' - expected: <' +
-                  FTestData[i].OutputUTFStrTest + '> but was: <' +
-                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))) + '>');
+                  string(FTestData[i].OutputUTFStrTest) + '> but was: <' +
+                  string(BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
     end;
 end;
 
@@ -3661,8 +3637,8 @@ begin
       CheckEquals(FTestData[i].Output,
                   HashClass.CalcString(FTestData[i].Input, TFormat_HEXL),
                   'Index: ' + IntToStr(i) + ' - expected: <' +
-                  FTestData[i].Output + '> but was: <' +
-                  HashClass.CalcString(FTestData[i].Input, TFormat_HEXL) + '>');
+                  string(FTestData[i].Output) + '> but was: <' +
+                  string(HashClass.CalcString(FTestData[i].Input, TFormat_HEXL)) + '>');
     end;
 end;
 
