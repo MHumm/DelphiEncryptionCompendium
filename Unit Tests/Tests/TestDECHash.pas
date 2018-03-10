@@ -2809,79 +2809,111 @@ begin
   FHash_Whirlpool1 := THash_Whirlpool1.Create;
   SetLength(FTestData, 12);
 
-  FTestData[ 0].Output := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
-                         'ad550a089dc0feea7aa40f6c2aaab71c6ebd076e43c7cfca0ad' +
-                         '32567897dcb5969861049a0f5a';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
+                                    'ad550a089dc0feea7aa40f6c2aaab71c6ebd076e43c7cfca0ad' +
+                                    '32567897dcb5969861049a0f5a';
+  FTestData[ 0].OutputUTFStrTest := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
+                                    'ad550a089dc0feea7aa40f6c2aaab71c6ebd076e43c7cfca0ad' +
+                                    '32567897dcb5969861049a0f5a';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'ebaa1df2e97113be187eb0303c660f6e643e2c090ef2cda9a2e' +
-                         'a6dcf5002147d1d0e1e9d996e879cef9d26896630a5db3308d5' +
-                         'a0dc235b199c38923be2259e03';
-  FTestData[ 1].Input  := #$00;
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'ebaa1df2e97113be187eb0303c660f6e643e2c090ef2cda9a2e' +
+                                    'a6dcf5002147d1d0e1e9d996e879cef9d26896630a5db3308d5' +
+                                    'a0dc235b199c38923be2259e03';
+  FTestData[ 1].OutputUTFStrTest := '5777fc1f8467a1c004cd9130439403ccdaa9fdc86092d9cffe3' +
+                                    '39e6008612374d04c8fc0c724707feae6f7ceb1e030cabf652a' +
+                                    '673da1849b02654af76eee24a7';
+  FTestData[ 1].Input            := #$00;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'a8583b83929bd46f0006e8401f87767ff0e23b96cd4cb2fe377' +
-                         '4901ee6eeed91f43ab569fb908122c53a264a35687b40a0590d' +
-                         '83e69fa82724380bae82a1caa0';
-  FTestData[ 2].Input  := '<\x80>,63!<\x00>';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'a8583b83929bd46f0006e8401f87767ff0e23b96cd4cb2fe377' +
+                                    '4901ee6eeed91f43ab569fb908122c53a264a35687b40a0590d' +
+                                    '83e69fa82724380bae82a1caa0';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := '<\x80>,63!<\x00>';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := 'b290e0e7931025ed37043ad568f0036b40e6bff8f7455868780' +
-                         'f47ef7b5d693e62448029a9351cd85ac29cb0725e4cfeb996a9' +
-                         '2f2b8da8768483ac58ec0e492c';
-  FTestData[ 3].Input  := 'a';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'b290e0e7931025ed37043ad568f0036b40e6bff8f7455868780' +
+                                    'f47ef7b5d693e62448029a9351cd85ac29cb0725e4cfeb996a9' +
+                                    '2f2b8da8768483ac58ec0e492c';
+  FTestData[ 3].OutputUTFStrTest := '528f3f670d4dfed05ff342f36d16b8a5a0d884da737dbc1b55c' +
+                                    '2575362b5fbf9df895013bccc3a72dd7d78c157c52609b42633' +
+                                    'a48affdd58297f44b3f40c5626';
+  FTestData[ 3].Input            := 'a';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := '8afc0527dcc0a19623860ef2369d0e25de8ebe2abaa40f598af' +
-                         'af6b07c002ed73e4fc0fc220fd4f54f74b5d6b07aa57764c3db' +
-                         'dcc2cdd919d89fa8155a34b841';
-  FTestData[ 4].Input  := 'abc';
-  FTestData[ 4].Enabled:= true;
+  FTestData[ 4].Output           := '8afc0527dcc0a19623860ef2369d0e25de8ebe2abaa40f598af' +
+                                    'af6b07c002ed73e4fc0fc220fd4f54f74b5d6b07aa57764c3db' +
+                                    'dcc2cdd919d89fa8155a34b841';
+  FTestData[ 4].OutputUTFStrTest := '5e812e973466dde1b43dfcd752ec1828f53ecb0e330f6937311' +
+                                    '159d6eded439994ccafa867a034266bc16ce73057343a01742d' +
+                                    '8b13053aa1d4ce82f52f312fce';
+  FTestData[ 4].Input            := 'abc';
+  FTestData[ 4].Enabled          := true;
 
-  FTestData[ 5].Output := '817eadf8efca5afbc11f71d0814e03a8d569c90f748c8603597' +
-                         'a7a0de3c8d55f528199010218249517b58b14bee52351560875' +
-                         '4b53a3cca35c0865ba5e361431';
-  FTestData[ 5].Input  := 'message digest';
-  FTestData[ 5].Enabled:= true;
+  FTestData[ 5].Output           := '817eadf8efca5afbc11f71d0814e03a8d569c90f748c8603597' +
+                                    'a7a0de3c8d55f528199010218249517b58b14bee52351560875' +
+                                    '4b53a3cca35c0865ba5e361431';
+  FTestData[ 5].OutputUTFStrTest := '5fb89db25c24f3c3d222302ead771d6c371c8fa0af40f62a422' +
+                                    'cf092cf6af6bf0ab4c6707e25c34680bfdbf92973de78d37d9f' +
+                                    'af2bed23dd9b27d53ed02ea473';
+  FTestData[ 5].Input            := 'message digest';
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output := '4afc2b07bddc8417635fcb43e695e16f45e116c226dd84339eb' +
-                         '95c2ccb39e7acbe1af8f7b1f3bd380077e71929498bc9682003' +
-                         '71f9299015434d1df109a0aa1d';
-  FTestData[ 6].Input  := 'abcdefghijklmnopqrstuvwxyz';
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := '4afc2b07bddc8417635fcb43e695e16f45e116c226dd84339eb' +
+                                    '95c2ccb39e7acbe1af8f7b1f3bd380077e71929498bc9682003' +
+                                    '71f9299015434d1df109a0aa1d';
+  FTestData[ 6].OutputUTFStrTest := '1925d2d0eaa3e76ed1cd7d95b0bdd03152f9d2193376f6348c0' +
+                                    '64fc5115233f88a26610428bea98935464cce2078af9e81ca3f' +
+                                    '31bdd5b5c5d5f3775c85569c1f';
+  FTestData[ 6].Input            := 'abcdefghijklmnopqrstuvwxyz';
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '0f960ec9ab7d0c7e355a423d1ef4911a39797c836a71414276a' +
-                         'feb8fa475dba0c348547143162f3212edf1fb8d8c652a11a579' +
-                         'a399c2dbd837fe8608f5096131';
-  FTestData[ 7].Input  := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '0f960ec9ab7d0c7e355a423d1ef4911a39797c836a71414276a' +
+                                    'feb8fa475dba0c348547143162f3212edf1fb8d8c652a11a579' +
+                                    'a399c2dbd837fe8608f5096131';
+  FTestData[ 7].OutputUTFStrTest := 'c8176962d4e58e8e6174a3e3eecd1ab012345f3fa04ff06515b' +
+                                    'b225bcdfa13ccbe5c53c357534aade7db3a46ff24c6c86bd5d3' +
+                                    '465930c5d4ba0b734efcf8b43b';
+  FTestData[ 7].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := '6ae43784c69d01c273bba40f8411495167909e0c1acc241473d' +
-                         '44e27bc8641e646535d38fce20604941988c387c201cff199c8' +
-                         'fa2afbedd036d66202892a7eee';
-  FTestData[ 8].Input  := '12345678901234567890123456789012345678901234567890'+
-                         '123456789012345678901234567890';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := '6ae43784c69d01c273bba40f8411495167909e0c1acc241473d' +
+                                    '44e27bc8641e646535d38fce20604941988c387c201cff199c8' +
+                                    'fa2afbedd036d66202892a7eee';
+  FTestData[ 8].OutputUTFStrTest := '0fb6cadc695c10b27f8dc5a591e7856acc8edb22459060dfa28' +
+                                    'd9f9532e1f7b2206b8b297f9d89f85570f73439592a45fd6475' +
+                                    'd0a83923cead6eb443d3f69bb1';
+  FTestData[ 8].Input            := '12345678901234567890123456789012345678901234567890'+
+                                    '123456789012345678901234567890';
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := '7da3991ff3d40e0beed44b89c83bed5b085cc390a2df47765c9' +
-                         '9ae2ddb0a1e2e094ef0e8b0cf7ba4733afd756ef8eef59b9181' +
-                         '29fe2efe0b00024d6c4e56dc45';
-  FTestData[ 9].Input  := 'abcdbcdecdefdefgefghfghighijhijk';
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := '7da3991ff3d40e0beed44b89c83bed5b085cc390a2df47765c9' +
+                                    '9ae2ddb0a1e2e094ef0e8b0cf7ba4733afd756ef8eef59b9181' +
+                                    '29fe2efe0b00024d6c4e56dc45';
+  FTestData[ 9].OutputUTFStrTest := '5586a2f7b714de8301412ff72d7bc8d4def56cece16ce4adc48' +
+                                    'b3a6ef5b46ab17c979f8e1aedae3cbf4b74a4ea0e8b02e02032' +
+                                    'a782094ff00fea088b78759ab9';
+  FTestData[ 9].Input            := 'abcdbcdecdefdefgefghfghighijhijk';
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
-                         '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
-                         '71856c4a7924f9b0e4044d9112';
-  FTestData[10].Input  := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-  FTestData[10].Enabled:= false;
+  FTestData[10].Output           := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
+                                    '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
+                                    '71856c4a7924f9b0e4044d9112';
+//  FTestData[10].OutputUTFStrTest := '';
+  FTestData[10].Input            := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  FTestData[10].Enabled          := false;
 
-  FTestData[11].Output := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
-                         '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
-                         '71856c4a7924f9b0e4044d9112';
+  FTestData[11].Output           := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
+                                    '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
+                                    '71856c4a7924f9b0e4044d9112';
+  FTestData[11].OutputUTFStrTest := '6449537a67085f0ac0d80956d7d92d0cf0ec48cebde1728ad13' +
+                                    'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
+                                    '51d19010a7c43802a0495ccd68';
   SetLength(FTestData[11].Input, 1000000);
   FillChar(FTestData[11].Input[low(FTestData[11].Input)], 1000000, 'a');
-  FTestData[11].Enabled:= true;
+  FTestData[11].Enabled          := true;
 end;
 
 procedure TestTHash_Whirlpool1.TearDown;
@@ -2930,43 +2962,52 @@ begin
   FHash_Square := THash_Square.Create;
   SetLength(FTestData, 9);
 
-  FTestData[ 0].Output := '417b878eaf7d8ca82414e6e4c4a95149';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '417b878eaf7d8ca82414e6e4c4a95149';
+  FTestData[ 0].OutputUTFStrTest := '417b878eaf7d8ca82414e6e4c4a95149';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '62148aad7927998c545c6f0e5feca9f0';
-  FTestData[ 1].Input  := 'a';
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '62148aad7927998c545c6f0e5feca9f0';
+  FTestData[ 1].OutputUTFStrTest := 'bb806953f163a83880789c5793df24ff';
+  FTestData[ 1].Input            := 'a';
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := '931b73d1a404f6f18880068056f6fc12';
-  FTestData[ 2].Input  := 'ab,c';
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := '931b73d1a404f6f18880068056f6fc12';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := 'ab,c';
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '2068598052889ea245b4906f621f398c';
-  FTestData[ 3].Input  := 'message digest';
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '2068598052889ea245b4906f621f398c';
+  FTestData[ 3].OutputUTFStrTest := '3f1a4493b8bc057a279b9aa38917fb07';
+  FTestData[ 3].Input            := 'message digest';
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'fc356316c8a28b7dbfe0ff3fef52bf53';
-  FTestData[ 4].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[ 4].Enabled:= false;
+  FTestData[ 4].Output           := 'fc356316c8a28b7dbfe0ff3fef52bf53';
+//  FTestData[ 4].OutputUTFStrTest := '';
+  FTestData[ 4].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[ 4].Enabled          := false;
 
-  FTestData[ 5].Output := 'b8654c7c554f18541bb28794a17f0c09';
-  FTestData[ 5].Input  := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[ 5].Enabled:= false;
+  FTestData[ 5].Output           := 'b8654c7c554f18541bb28794a17f0c09';
+//  FTestData[ 5].OutputUTFStrTest := '';
+  FTestData[ 5].Input            := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[ 5].Enabled          := false;
 
-  FTestData[ 6].Output := '0c004c5b7066610e2a2dd2eecaee3186';
-  FTestData[ 6].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := '0c004c5b7066610e2a2dd2eecaee3186';
+  FTestData[ 6].OutputUTFStrTest := '1b1a00a69f0f19e887574b1f6a792412';
+  FTestData[ 6].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := 'c3ba10de37cdec5e99def41475f1df5d';
-  FTestData[ 7].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 119 bytes';
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := 'c3ba10de37cdec5e99def41475f1df5d';
+  FTestData[ 7].OutputUTFStrTest := 'fd99b6eda660c726d0a4e47e13018cfb';
+  FTestData[ 7].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 119 bytes';
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := '058a1da3a62f3e6a8ba9135373a089ca';
-  FTestData[ 8].Input  := 'This test vector intended to detect last zeroized block ' +
-                         'necessity decision error. This block has total length 120 bytes.';
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := '058a1da3a62f3e6a8ba9135373a089ca';
+  FTestData[ 8].OutputUTFStrTest := '9148d4fc4379235a5a065ef88a51cb1d';
+  FTestData[ 8].Input            := 'This test vector intended to detect last zeroized block ' +
+                                   'necessity decision error. This block has total length 120 bytes.';
+  FTestData[ 8].Enabled          := true;
 end;
 
 procedure TestTHash_Square.TearDown;
@@ -3015,73 +3056,90 @@ begin
   FHash_Snefru128 := THash_Snefru128.Create;
   SetLength(FTestData, 17);
 
-  FTestData[ 0].Output := '8617f366566a011837f4fb4ba5bedea2';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '8617f366566a011837f4fb4ba5bedea2';
+  FTestData[ 0].OutputUTFStrTest := '8617f366566a011837f4fb4ba5bedea2';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := 'd9fcb3171c097fbba8c8f12aa0906bad';
-  FTestData[ 1].Input  := #$0A;
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := 'd9fcb3171c097fbba8c8f12aa0906bad';
+  FTestData[ 1].OutputUTFStrTest := 'ab3974fcd9f1caa6a2ae226c2974fb0c';
+  FTestData[ 1].Input            := #$0A;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := '44ec420ce99c1f62feb66c53c24ae453';
-  FTestData[ 2].Input  := '1' + #$0A;
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := '44ec420ce99c1f62feb66c53c24ae453';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := '1' + #$0A;
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := '7182051aa852ef6fba4b6c9c9b79b317';
-  FTestData[ 3].Input  := '12' + #$0A;
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := '7182051aa852ef6fba4b6c9c9b79b317';
+  FTestData[ 3].OutputUTFStrTest := '3e34c975f5308c71523b3fc39a3692e6';
+  FTestData[ 3].Input            := '12' + #$0A;
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := 'bc3a50af82bf56d6a64732bc7b050a93';
-  FTestData[ 4].Input  := '123' + #$0A;
-  FTestData[ 4].Enabled:= true;
+  FTestData[ 4].Output           := 'bc3a50af82bf56d6a64732bc7b050a93';
+  FTestData[ 4].OutputUTFStrTest := 'e71945a2fcd0f0d992b5d24b6a49547f';
+  FTestData[ 4].Input            := '123' + #$0A;
+  FTestData[ 4].Enabled          := true;
 
-  FTestData[ 5].Output := 'c5b8a04985a8eadfb4331a8988752b77';
-  FTestData[ 5].Input  := '1234' + #$0A;
-  FTestData[ 5].Enabled:= true;
+  FTestData[ 5].Output           := 'c5b8a04985a8eadfb4331a8988752b77';
+  FTestData[ 5].OutputUTFStrTest := 'ad32e4eb4cbf5c482194596f28902240';
+  FTestData[ 5].Input            := '1234' + #$0A;
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output := 'd559a2b62f6f44111324f85208723707';
-  FTestData[ 6].Input  := '12345' + #$0A;
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := 'd559a2b62f6f44111324f85208723707';
+  FTestData[ 6].OutputUTFStrTest := 'a8b025b7cddd0555b9241dcf16fbd798';
+  FTestData[ 6].Input            := '12345' + #$0A;
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '6cfb5e8f1da02bd167b01e4816686c30';
-  FTestData[ 7].Input  := '123456' + #$0A;
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '6cfb5e8f1da02bd167b01e4816686c30';
+  FTestData[ 7].OutputUTFStrTest := '73b7248a11bbb8425863eec60e5d8a43';
+  FTestData[ 7].Input            := '123456' + #$0A;
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := '29aa48325f275a8a7a01ba1543c54ba5';
-  FTestData[ 8].Input  := '1234567' + #$0A;
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := '29aa48325f275a8a7a01ba1543c54ba5';
+  FTestData[ 8].OutputUTFStrTest := 'd5c92cb71197ee91fd4f347b8fbac655';
+  FTestData[ 8].Input            := '1234567' + #$0A;
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := 'be862a6b68b7df887ebe00319cbc4a47';
-  FTestData[ 9].Input  := '12345678' + #$0A;
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := 'be862a6b68b7df887ebe00319cbc4a47';
+  FTestData[ 9].OutputUTFStrTest := '8b7b3408b144335774eb6c276ded6e00';
+  FTestData[ 9].Input            := '12345678' + #$0A;
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '6103721ccd8ad565d68e90b0f8906163';
-  FTestData[10].Input  := '123456789' + #$0A;
-  FTestData[10].Enabled:= true;
+  FTestData[10].Output           := '6103721ccd8ad565d68e90b0f8906163';
+  FTestData[10].OutputUTFStrTest := '1a624aa607071a337558911531a0dde6';
+  FTestData[10].Input            := '123456789' + #$0A;
+  FTestData[10].Enabled          := true;
 
-  FTestData[11].Output := '553d0648928299a0f22a275a02c83b10';
-  FTestData[11].Input  := 'abc';
-  FTestData[11].Enabled:= true;
+  FTestData[11].Output           := '553d0648928299a0f22a275a02c83b10';
+  FTestData[11].OutputUTFStrTest := '94f3567822b3fe5299c0e109dff4fa70';
+  FTestData[11].Input            := 'abc';
+  FTestData[11].Enabled          := true;
 
-  FTestData[12].Output := '7840148a66b91c219c36f127a0929606';
-  FTestData[12].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[12].Enabled:= false;
+  FTestData[12].Output           := '7840148a66b91c219c36f127a0929606';
+//  FTestData[12].OutputUTFStrTest := '';
+  FTestData[12].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[12].Enabled          := false;
 
-  FTestData[13].Output := 'd9204ed80bb8430c0b9c244fe485814a';
-  FTestData[13].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[13].Enabled:= true;
+  FTestData[13].Output           := 'd9204ed80bb8430c0b9c244fe485814a';
+  FTestData[13].OutputUTFStrTest := '9a92c0b5e89851f4a5faaa441c250931';
+  FTestData[13].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[13].Enabled          := true;
 
-  FTestData[14].Output := 'dd0d1ab288c3c36671044f41c5077ad6';
-  FTestData[14].Input  := 'Test message for buffer workflow test(47 bytes)';
-  FTestData[14].Enabled:= true;
+  FTestData[14].Output           := 'dd0d1ab288c3c36671044f41c5077ad6';
+  FTestData[14].OutputUTFStrTest := '150c6230252f8497c64f6ccff97928f8';
+  FTestData[14].Input            := 'Test message for buffer workflow test(47 bytes)';
+  FTestData[14].Enabled          := true;
 
-  FTestData[15].Output := 'e7054f05bd72d7e86a052153a17c741d';
-  FTestData[15].Input  := 'Test message for buffer workflow test(48 bytes).';
-  FTestData[15].Enabled:= true;
+  FTestData[15].Output           := 'e7054f05bd72d7e86a052153a17c741d';
+  FTestData[15].OutputUTFStrTest := '3ab419c9af627272b2e2cdafed2b7150';
+  FTestData[15].Input            := 'Test message for buffer workflow test(48 bytes).';
+  FTestData[15].Enabled          := true;
 
-  FTestData[16].Output := '9b34204833422df13c83e10a0c6d080a';
-  FTestData[16].Input  := 'Test message for buffer workflow test(49 bytes)..';
-  FTestData[16].Enabled:= true;
+  FTestData[16].Output           := '9b34204833422df13c83e10a0c6d080a';
+  FTestData[16].OutputUTFStrTest := '906816013ee57f3d2ae1562b9590d82f';
+  FTestData[16].Input            := 'Test message for buffer workflow test(49 bytes)..';
+  FTestData[16].Enabled          := true;
 end;
 
 procedure TestTHash_Snefru128.TearDown;
@@ -3130,61 +3188,75 @@ begin
   FHash_Snefru256 := THash_Snefru256.Create;
   SetLength(FTestData, 14);
 
-  FTestData[ 0].Output := '8617f366566a011837f4fb4ba5bedea2b892f3ed8b894023d16ae344b2be5881';
-  FTestData[ 0].Input  := '';
-  FTestData[ 0].Enabled:= true;
+  FTestData[ 0].Output           := '8617f366566a011837f4fb4ba5bedea2b892f3ed8b894023d16ae344b2be5881';
+  FTestData[ 0].OutputUTFStrTest := '8617f366566a011837f4fb4ba5bedea2b892f3ed8b894023d16ae344b2be5881';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output := '2e02687f0d45d5b9b50cb68c3f33e6843d618a1aca2d06893d3eb4e3026b5732';
-  FTestData[ 1].Input  := #$0A;
-  FTestData[ 1].Enabled:= true;
+  FTestData[ 1].Output           := '2e02687f0d45d5b9b50cb68c3f33e6843d618a1aca2d06893d3eb4e3026b5732';
+  FTestData[ 1].OutputUTFStrTest := 'ea81f0d664c9f14b5af04103212ea129001da9c3c421b6e340bdb9ece6c90244';
+  FTestData[ 1].Input            := #$0A;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output := 'bfea4a05a2a2ef15c736d114598a20b9d9bd4d66b661e6b05ecf6a7737bdc58c';
-  FTestData[ 2].Input  := '1' + #$0A;
-  FTestData[ 2].Enabled:= false;
+  FTestData[ 2].Output           := 'bfea4a05a2a2ef15c736d114598a20b9d9bd4d66b661e6b05ecf6a7737bdc58c';
+//  FTestData[ 2].OutputUTFStrTest := '';
+  FTestData[ 2].Input            := '1' + #$0A;
+  FTestData[ 2].Enabled          := false;
 
-  FTestData[ 3].Output := 'ac677d69761ade3f189c7aef106d5fe7392d324e19cc76d5db4a2c05f2cc2cc5';
-  FTestData[ 3].Input  := '12' + #$0A;
-  FTestData[ 3].Enabled:= true;
+  FTestData[ 3].Output           := 'ac677d69761ade3f189c7aef106d5fe7392d324e19cc76d5db4a2c05f2cc2cc5';
+  FTestData[ 3].OutputUTFStrTest := 'f3530df84977152b8a38867acf14c9a46cfae162f9543c986a500cf32d5a7359';
+  FTestData[ 3].Input            := '12' + #$0A;
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output := '061c76aa1db4a22c0e42945e26c48499b5400162e08c640be05d3c007c44793d';
-  FTestData[ 4].Input  := '123' + #$0A;
-  FTestData[ 4].Enabled:= true;
+  FTestData[ 4].Output           := '061c76aa1db4a22c0e42945e26c48499b5400162e08c640be05d3c007c44793d';
+  FTestData[ 4].OutputUTFStrTest := '25987aee97eeee4d4e3914e8245ecdfe69e45cbe0e728175cb4411e046091fd4';
+  FTestData[ 4].Input            := '123' + #$0A;
+  FTestData[ 4].Enabled          := true;
 
-  FTestData[ 5].Output := '1e87fe1d9c927e9e24be85e3cc73359873541640a6261793ce5a974953113f5e';
-  FTestData[ 5].Input  := '1234' + #$0A;
-  FTestData[ 5].Enabled:= true;
+  FTestData[ 5].Output           := '1e87fe1d9c927e9e24be85e3cc73359873541640a6261793ce5a974953113f5e';
+  FTestData[ 5].OutputUTFStrTest := 'b76fbfabada71bf38decdd3b4e19ec39292a496dd23c29755c4a96caf77d4b13';
+  FTestData[ 5].Input            := '1234' + #$0A;
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output := '1b59927d85a9349a87796620fe2ff401a06a7ba48794498ebab978efc3a68912';
-  FTestData[ 6].Input  := '12345' + #$0A;
-  FTestData[ 6].Enabled:= true;
+  FTestData[ 6].Output           := '1b59927d85a9349a87796620fe2ff401a06a7ba48794498ebab978efc3a68912';
+  FTestData[ 6].OutputUTFStrTest := '6598676a170cf7075cee8b54da5844a824c0e1cb9830773ba9728ca2c65f7fe5';
+  FTestData[ 6].Input            := '12345' + #$0A;
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output := '28e9d9bc35032b68faeda88101ecb2524317e9da111b0e3e7094107212d9cf72';
-  FTestData[ 7].Input  := '123456' + #$0A;
-  FTestData[ 7].Enabled:= true;
+  FTestData[ 7].Output           := '28e9d9bc35032b68faeda88101ecb2524317e9da111b0e3e7094107212d9cf72';
+  FTestData[ 7].OutputUTFStrTest := '062cc2b932500825575447e87a9416f38d561b0b3111b36011a9e6ef773cf54b';
+  FTestData[ 7].Input            := '123456' + #$0A;
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output := 'f7fff4ee74fd1b8d6b3267f84e47e007f029d13b8af7e37e34d13b469b8f248f';
-  FTestData[ 8].Input  := '1234567' + #$0A;
-  FTestData[ 8].Enabled:= true;
+  FTestData[ 8].Output           := 'f7fff4ee74fd1b8d6b3267f84e47e007f029d13b8af7e37e34d13b469b8f248f';
+  FTestData[ 8].OutputUTFStrTest := '45b05d5126783c33b68f9a813cb3010f84cc9c1d6b133391a88ae61b43c89cc5';
+  FTestData[ 8].Input            := '1234567' + #$0A;
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output := 'ee7d64b0102b2205e98926613b200185559d08be6ad787da717c968744e11af3';
-  FTestData[ 9].Input  := '12345678' + #$0A;
-  FTestData[ 9].Enabled:= true;
+  FTestData[ 9].Output           := 'ee7d64b0102b2205e98926613b200185559d08be6ad787da717c968744e11af3';
+  FTestData[ 9].OutputUTFStrTest := '9e614b25cd9d6b260c2fdeb59b1d6de8e8329157aa581a9f63424b4c012bd0df';
+  FTestData[ 9].Input            := '12345678' + #$0A;
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output := '4ca72639e40e9ab9c0c3f523c4449b3911632d374c124d7702192ec2e4e0b7a3';
-  FTestData[10].Input  := '123456789' + #$0A;
-  FTestData[10].Enabled:= true;
+  FTestData[10].Output           := '4ca72639e40e9ab9c0c3f523c4449b3911632d374c124d7702192ec2e4e0b7a3';
+  FTestData[10].OutputUTFStrTest := '7dde03a5c268df01f5cdc408dc1807a677954e6aaf9ad0d6235809b758ef7691';
+  FTestData[10].Input            := '123456789' + #$0A;
+  FTestData[10].Enabled          := true;
 
-  FTestData[11].Output := '7d033205647a2af3dc8339f6cb25643c33ebc622d32979c4b612b02c4903031b';
-  FTestData[11].Input  := 'abc';
-  FTestData[11].Enabled:= true;
+  FTestData[11].Output           := '7d033205647a2af3dc8339f6cb25643c33ebc622d32979c4b612b02c4903031b';
+  FTestData[11].OutputUTFStrTest := '116509bcc4ec01f1b14d7769241cdb2438073bf9ed2031b11efb52913c0a635c';
+  FTestData[11].Input            := 'abc';
+  FTestData[11].Enabled          := true;
 
-  FTestData[12].Output := '9304bb2f876d9c4f54546cf7ec59e0a006bead745f08c642f25a7c808e0bf86e';
-  FTestData[12].Input  := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[12].Enabled:= false;
+  FTestData[12].Output           := '9304bb2f876d9c4f54546cf7ec59e0a006bead745f08c642f25a7c808e0bf86e';
+//  FTestData[12].OutputUTFStrTest := '';
+  FTestData[12].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[12].Enabled          := false;
 
-  FTestData[13].Output := 'd5fce38a152a2d9b83ab44c29306ee45ab0aed0e38c957ec431dab6ed6bb71b8';
-  FTestData[13].Input  := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[13].Enabled:= true;
+  FTestData[13].Output           := 'd5fce38a152a2d9b83ab44c29306ee45ab0aed0e38c957ec431dab6ed6bb71b8';
+  FTestData[13].OutputUTFStrTest := '5fa0a6e55b18b8db6f17280bf1312f1b9651664a849feecb34fd792c392f0ae6';
+  FTestData[13].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[13].Enabled          := true;
 end;
 
 procedure TestTHash_Snefru256.TearDown;
@@ -3233,100 +3305,145 @@ begin
   FHash_Sapphire := THash_Sapphire.Create;
   SetLength(FTestData, 19);
 
-  FTestData[ 0].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436a';
-  FTestData[ 0].Input      := '';
-  FTestData[ 0].ReqDigSize := 16;
-  FTestData[ 0].Enabled    := true;
+  FTestData[ 0].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436a';
+  FTestData[ 0].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436a' +
+                                    'd29c9fe54b096f54a2a128bb08c9651f' +
+                                    '34606520fa7a5ad780e1d9c176234650' +
+                                    'ad6af1a70d871d7d63d09af96692775a';
+  FTestData[ 0].Input            := '';
+  FTestData[ 0].ReqDigSize       := 16;
+  FTestData[ 0].Enabled          := true;
 
-  FTestData[ 1].Output     := '4acf17d911781571f053ce82e2f70cce';
-  FTestData[ 1].Input      := 'abc';
-  FTestData[ 1].ReqDigSize := 16;
-  FTestData[ 1].Enabled    := true;
+  FTestData[ 1].Output           := '4acf17d911781571f053ce82e2f70cce';
+  FTestData[ 1].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822' +
+                                    'c7a6d25ced55ad8ddc81aad5cba2e6d3' +
+                                    '7eb8dbc44c70af770ade17ccc224edd2' +
+                                    'ddcd93d396a986eb5beac360adcc4df1';
+  FTestData[ 1].Input            := 'abc';
+  FTestData[ 1].ReqDigSize       := 16;
+  FTestData[ 1].Enabled          := true;
 
-  FTestData[ 2].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe5';
-  FTestData[ 2].Input      := '';
-  FTestData[ 2].ReqDigSize := 20;
-  FTestData[ 2].Enabled    := true;
+  FTestData[ 2].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe5';
+  FTestData[ 2].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe5' +
+                                    '4b096f54a2a128bb08c9651f34606520fa7a5ad7' +
+                                    '80e1d9c176234650ad6af1a70d871d7d63d09af96692775a';
+  FTestData[ 2].Input            := '';
+  FTestData[ 2].ReqDigSize       := 20;
+  FTestData[ 2].Enabled          := true;
 
-  FTestData[ 3].Output     := '4acf17d911781571f053ce82e2f70cce5470f410';
-  FTestData[ 3].Input      := 'abc';
-  FTestData[ 3].ReqDigSize := 20;
-  FTestData[ 3].Enabled    := true;
+  FTestData[ 3].Output           := '4acf17d911781571f053ce82e2f70cce5470f410';
+  FTestData[ 3].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25c' +
+                                    'ed55ad8ddc81aad5cba2e6d37eb8dbc44c70af77' +
+                                    '0ade17ccc224edd2ddcd93d396a986eb5beac360adcc4df1';
+  FTestData[ 3].Input            := 'abc';
+  FTestData[ 3].ReqDigSize       := 20;
+  FTestData[ 3].Enabled          := true;
 
-  FTestData[ 4].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54';
-  FTestData[ 4].Input      := '';
-  FTestData[ 4].ReqDigSize := 24;
-  FTestData[ 4].Enabled    := true;
+  FTestData[ 4].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54';
+  FTestData[ 4].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54' +
+                                    'a2a128bb08c9651f34606520fa7a5ad780e1d9c176234650' +
+                                    'ad6af1a70d871d7d63d09af96692775a';
+  FTestData[ 4].Input            := '';
+  FTestData[ 4].ReqDigSize       := 24;
+  FTestData[ 4].Enabled          := true;
 
-  FTestData[ 5].Output     := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a6';
-  FTestData[ 5].Input      := 'abc';
-  FTestData[ 5].ReqDigSize := 24;
-  FTestData[ 5].Enabled    := true;
+  FTestData[ 5].Output           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a6';
+  FTestData[ 5].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8d' +
+                                    'dc81aad5cba2e6d37eb8dbc44c70af770ade17ccc224edd2' +
+                                    'ddcd93d396a986eb5beac360adcc4df1';
+  FTestData[ 5].Input            := 'abc';
+  FTestData[ 5].ReqDigSize       := 24;
+  FTestData[ 5].Enabled          := true;
 
-  FTestData[ 6].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb';
-  FTestData[ 6].Input      := '';
-  FTestData[ 6].ReqDigSize := 28;
-  FTestData[ 6].Enabled    := true;
+  FTestData[ 6].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb';
+  FTestData[ 6].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb'+
+                                    '08c9651f34606520fa7a5ad780e1d9c176234650ad6af1a70d871d7d' +
+                                    '63d09af96692775a';
+  FTestData[ 6].Input            := '';
+  FTestData[ 6].ReqDigSize       := 28;
+  FTestData[ 6].Enabled          := true;
 
-  FTestData[ 7].Output     := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814';
-  FTestData[ 7].Input      := 'abc';
-  FTestData[ 7].ReqDigSize := 28;
-  FTestData[ 7].Enabled    := true;
+  FTestData[ 7].Output           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814';
+  FTestData[ 7].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5' +
+                                    'cba2e6d37eb8dbc44c70af770ade17ccc224edd2ddcd93d396a986eb' +
+                                    '5beac360adcc4df1';
+  FTestData[ 7].Input            := 'abc';
+  FTestData[ 7].ReqDigSize       := 28;
+  FTestData[ 7].Enabled          := true;
 
-  FTestData[ 8].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f';
-  FTestData[ 8].Input      := '';
-  FTestData[ 8].ReqDigSize := 32;
-  FTestData[ 8].Enabled    := true;
+  FTestData[ 8].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f';
+  FTestData[ 8].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f' +
+                                    '34606520fa7a5ad780e1d9c176234650ad6af1a70d871d7d63d09af96692775a';
+  FTestData[ 8].Input            := '';
+  FTestData[ 8].ReqDigSize       := 32;
+  FTestData[ 8].Enabled          := true;
 
-  FTestData[ 9].Output     := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f32';
-  FTestData[ 9].Input      := 'abc';
-  FTestData[ 9].ReqDigSize := 32;
-  FTestData[ 9].Enabled    := true;
+  FTestData[ 9].Output           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f32';
+  FTestData[ 9].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5cba2e6d3' +
+                                    '7eb8dbc44c70af770ade17ccc224edd2ddcd93d396a986eb5beac360adcc4df1';
+  FTestData[ 9].Input            := 'abc';
+  FTestData[ 9].ReqDigSize       := 32;
+  FTestData[ 9].Enabled          := true;
 
-  FTestData[10].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520';
-  FTestData[10].Input      := '';
-  FTestData[10].ReqDigSize := 36;
-  FTestData[10].Enabled    := true;
+  FTestData[10].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520';
+  FTestData[10].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520' +
+                                    'fa7a5ad780e1d9c176234650ad6af1a70d871d7d63d09af96692775a';
+  FTestData[10].Input            := '';
+  FTestData[10].ReqDigSize       := 36;
+  FTestData[10].Enabled          := true;
 
-  FTestData[11].Output     := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773';
-  FTestData[11].Input      := 'abc';
-  FTestData[11].ReqDigSize := 36;
-  FTestData[11].Enabled    := true;
+  FTestData[11].Output           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773';
+  FTestData[11].OutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5cba2e6d37eb8dbc4' +
+                                    '4c70af770ade17ccc224edd2ddcd93d396a986eb5beac360adcc4df1';
+  FTestData[11].Input            := 'abc';
+  FTestData[11].ReqDigSize       := 36;
+  FTestData[11].Enabled          := true;
 
-  FTestData[12].Output     := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520fa7a5ad7';
-  FTestData[12].Input      := '';
-  FTestData[12].ReqDigSize := 40;
-  FTestData[12].Enabled    := true;
+  FTestData[12].Output           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520fa7a5ad7';
+  FTestData[12].OutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520fa7a5ad7' +
+                                    '80e1d9c176234650ad6af1a70d871d7d63d09af96692775a';
+  FTestData[12].Input            := '';
+  FTestData[12].ReqDigSize       := 40;
+  FTestData[12].Enabled          := true;
 
-  FTestData[13].Output     := '8b3763c9e423995743a702a37cc4a82c9771c7ac04fe44990d2cf64a311715406a59cf62b0b4edc9';
-  FTestData[13].Input      := 'a';
-  FTestData[13].ReqDigSize := 40;
-  FTestData[13].Enabled    := true;
+  FTestData[13].Output           := '8b3763c9e423995743a702a37cc4a82c9771c7ac04fe44990d2cf64a311715406a59cf62b0b4edc9';
+  FTestData[13].OutputUTFStrTest := 'a947fdf3a224bcd948c426cec358e84c8468ff42af47dd558979953ee426213ac2f415b0c3c9d476' +
+                                    'ad8739529ed87335e5bdb740809b246cbc41b6b117d2fb02';
+  FTestData[13].Input            := 'a';
+  FTestData[13].ReqDigSize       := 40;
+  FTestData[13].Enabled          := true;
 
-  FTestData[14].Output     := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773fc59830b';
-  FTestData[14].Input      := 'ab,c';
-  FTestData[14].ReqDigSize := 40;
-  FTestData[14].Enabled    := false;
+  FTestData[14].Output           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773fc59830b';
+//  FTestData[14].OutputUTFStrTest := '';
+  FTestData[14].Input            := 'ab,c';
+  FTestData[14].ReqDigSize       := 40;
+  FTestData[14].Enabled          := false;
 
-  FTestData[15].Output     := 'e0affc0f16c9303c9938dbc9b1e6be3a3dcb75a2879ef8227fdd42595980793c94e7d3e33ce0a20a';
-  FTestData[15].Input      := 'message digest';
-  FTestData[15].ReqDigSize := 40;
-  FTestData[15].Enabled    := true;
+  FTestData[15].Output           := 'e0affc0f16c9303c9938dbc9b1e6be3a3dcb75a2879ef8227fdd42595980793c94e7d3e33ce0a20a';
+  FTestData[15].OutputUTFStrTest := 'f8ddc0058786d1094b005901927e6743ec8a46ba69a8c0e3821086510dfc338ec839fb729a733c3b' +
+                                    '53d26592ec0395903db16fdc06283024146f5259616feb1f';
+  FTestData[15].Input            := 'message digest';
+  FTestData[15].ReqDigSize       := 40;
+  FTestData[15].Enabled          := true;
 
-  FTestData[16].Output     := '23b86cf1a67c6870b90e594be9b4eda4c3862036edf1efb03c86863c274585cf5837429f1ff6f4b0';
-  FTestData[16].Input      := 'abcdefghijklm,nopqrstuvwxyz';
-  FTestData[16].ReqDigSize := 40;
-  FTestData[16].Enabled    := false;
+  FTestData[16].Output           := '23b86cf1a67c6870b90e594be9b4eda4c3862036edf1efb03c86863c274585cf5837429f1ff6f4b0';
+//  FTestData[16].OutputUTFStrTest := '';
+  FTestData[16].Input            := 'abcdefghijklm,nopqrstuvwxyz';
+  FTestData[16].ReqDigSize       := 40;
+  FTestData[16].Enabled          := false;
 
-  FTestData[17].Output     := '341530ae3c1f715197847eddd38b4f58cc9a13c3e65f890772c9c561b103d2bf41340dff2af0335f';
-  FTestData[17].Input      := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
-  FTestData[17].ReqDigSize := 40;
-  FTestData[17].Enabled    := false;
+  FTestData[17].Output           := '341530ae3c1f715197847eddd38b4f58cc9a13c3e65f890772c9c561b103d2bf41340dff2af0335f';
+//  FTestData[17].OutputUTFStrTest := '';
+  FTestData[17].Input            := 'A,BCDEFGHIJKLMNOPQRS,TUVWXYZabcdefghijklmnopqrstuvwxyz012345678,9';
+  FTestData[17].ReqDigSize       := 40;
+  FTestData[17].Enabled          := false;
 
-  FTestData[18].Output     := '5bb5a1bd1ad4974042aa74992489fbdec857212a29cedc67b1fc79ddc9f139c3f52044be4e6f8588';
-  FTestData[18].Input      := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
-  FTestData[18].ReqDigSize := 40;
-  FTestData[18].Enabled    := true;
+  FTestData[18].Output           := '5bb5a1bd1ad4974042aa74992489fbdec857212a29cedc67b1fc79ddc9f139c3f52044be4e6f8588';
+  FTestData[18].OutputUTFStrTest := '87b0a006a73261011c4df04dc164216cfe566e54f92f161fec529c3cc956929955b1dc1cbe0215fa' +
+                                    '29f6718f69bdee4de5bba6dece94bb8e7861b917c6e67632';
+  FTestData[18].Input            := '12345678901234567890123456789012345678901234567890123456789012345678901234567890';
+  FTestData[18].ReqDigSize       := 40;
+  FTestData[18].Enabled          := true;
 end;
 
 procedure TestTHash_Sapphire.TearDown;
@@ -3447,10 +3564,17 @@ begin
 
       if Length(FTestData[i].Input) > 0 then
         CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))))
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    FTestData[i].Output + '> but was: <' +
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)))) + '>')
+
       else
         CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))));
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    FTestData[i].Output + '> but was: <' +
+                    BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)))) + '>');
     end;
 end;
 
@@ -3464,7 +3588,10 @@ begin
       HashClass.PaddingByte := FTestData[i].PaddingByte;
 
       CheckEquals(FTestData[i].Output,
-                  BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))));
+                  BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))),
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  FTestData[i].Output + '> but was: <' +
+                  BytesToRawString(TFormat_HEXL.Encode(HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].Input))))) + '>');
     end;
 end;
 
@@ -3490,7 +3617,10 @@ begin
         HashClass.CalcStream(s, Length(Buf), Hash);
 
         CheckEquals(FTestData[i].Output,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)));
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    FTestData[i].Output + '> but was: <' +
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)) + '>');
       end;
   finally
     s.Free;
@@ -3513,7 +3643,10 @@ begin
       HashClass.PaddingByte := FTestData[i].PaddingByte;
 
       CheckEquals(FTestData[i].OutputUTFStrTest,
-                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))));
+                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  FTestData[i].OutputUTFStrTest + '> but was: <' +
+                  BytesToRawString(TFormat_HEXL.Encode(System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))) + '>');
     end;
 end;
 
@@ -3526,7 +3659,10 @@ begin
     begin
       HashClass.PaddingByte := FTestData[i].PaddingByte;
       CheckEquals(FTestData[i].Output,
-                  HashClass.CalcString(FTestData[i].Input, TFormat_HEXL));
+                  HashClass.CalcString(FTestData[i].Input, TFormat_HEXL),
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  FTestData[i].Output + '> but was: <' +
+                  HashClass.CalcString(FTestData[i].Input, TFormat_HEXL) + '>');
     end;
 end;
 
