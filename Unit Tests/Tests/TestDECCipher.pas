@@ -1337,7 +1337,7 @@ begin
       for i := 0 to sl.Count - 1 do
       begin
         sl[i] := '0x' + sl[i];
-        Result[i] := sl[i].ToInteger;
+        Result[i] := StrToInt(sl[i]);
       end;
     finally
       sl.Free;
