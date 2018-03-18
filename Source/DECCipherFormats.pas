@@ -487,7 +487,8 @@ begin
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
 
-    Result := ValidFormat(Format).Encode(Result);
+//    Result := ValidFormat(Format).Encode(Result);
+    Result := ValidFormat(Format).Encode(System.SysUtils.BytesOf(Source));
 //    Result := ValidFormat(Format).Encode(System.SysUtils.BytesOf(Source));
   end
   else

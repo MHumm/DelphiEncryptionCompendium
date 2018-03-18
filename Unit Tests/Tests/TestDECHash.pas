@@ -407,6 +407,9 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestSetRounds;
+    procedure TestSet2Rounds;
+    procedure TestSet33Rounds;
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
@@ -424,6 +427,9 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestSetRounds;
+    procedure TestSet2Rounds;
+    procedure TestSet33Rounds;
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
@@ -2440,6 +2446,24 @@ begin
   CheckEquals(24, FHash_Tiger.DigestSize);
 end;
 
+procedure TestTHash_Tiger_3Rounds.TestSet2Rounds;
+begin
+  FHash_Tiger.Rounds := 2;
+  CheckEquals(3, FHash_Tiger.Rounds);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestSet33Rounds;
+begin
+  FHash_Tiger.Rounds := 33;
+  CheckEquals(32, FHash_Tiger.Rounds);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestSetRounds;
+begin
+  FHash_Tiger.Rounds := 5;
+  CheckEquals(5, FHash_Tiger.Rounds);
+end;
+
 procedure TestTHash_Tiger_3Rounds.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Tiger);
@@ -2501,6 +2525,24 @@ begin
   FTestData[ 8].OutputUTFStrTest := '21073aaf37e4a7bb0ccdaed0705a188f0c19c01f5c8bf7ce';
   FTestData[ 8].Input            := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-';
   FTestData[ 8].Enabled          := true;
+end;
+
+procedure TestTHash_Tiger_4Rounds.TestSet2Rounds;
+begin
+  FHash_Tiger.Rounds := 2;
+  CheckEquals(3, FHash_Tiger.Rounds);
+end;
+
+procedure TestTHash_Tiger_4Rounds.TestSet33Rounds;
+begin
+  FHash_Tiger.Rounds := 33;
+  CheckEquals(32, FHash_Tiger.Rounds);
+end;
+
+procedure TestTHash_Tiger_4Rounds.TestSetRounds;
+begin
+  FHash_Tiger.Rounds := 5;
+  CheckEquals(5, FHash_Tiger.Rounds);
 end;
 
 procedure TestTHash_Tiger_4Rounds.TearDown;

@@ -236,6 +236,13 @@ type
     function Digest: PByteArray; override;
     class function BlockSize: Integer; override;
   published
+    /// <summary>
+    ///   Defines the number of rounds the algorithm performs on the input data.
+    ///   The range for this parameter is 3-5 rounds. If a value outside this
+    ///   range is assigned, the value used depends on the DigestSize. For 
+    ///   DigestSizes <= 20 it will be set to 3, for values <= 28 to 4 and for
+    ///   bigger values to 5.
+    /// </summary>
     property Rounds: Integer read FRounds write SetRounds; // 3 - 5
   end;
 
@@ -274,6 +281,11 @@ type
   public
     class function DigestSize: Integer; override;
   published
+    /// <summary>
+    ///   Defines the number of rounds the algorithm will perform on the data
+    ///   passed. Valid values are in the range from 3-32 rounds and values
+    ///   outside this range will lead to a rounds value of 3 to be used.
+    /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
@@ -446,6 +458,18 @@ resourcestring
 
 var
   FDefaultHashClass: TDECHashClass = nil;
+
+const
+  /// <summary>
+  ///   Minimum number of rounds for the Tigher hash function. Trying to set a 
+  ///   lower one sets the rounds to this value.
+  /// </summary>
+  cTigerMinRounds = 3;
+  /// <summary>
+  ///   Maximum number of rounds for the Tigher hash function. Trying to set a 
+  ///   higher one sets the rounds to this value.
+  /// </summary>  
+  cTigerMaxRounds = 32;  
 
 function ValidHash(HashClass: TDECHashClass): TDECHashClass;
 begin
@@ -2333,8 +2357,12 @@ end;
 
 procedure THash_Tiger.SetRounds(Value: Integer);
 begin
-  if (Value < 3) or (Value > 32) then
-    Value := 3;
+  if (Value < cTigerMinRounds) then
+    Value := cTigerMinRounds;
+    
+  if (Value > cTigerMaxRounds) then
+    Value := cTigerMaxRounds;
+    
   FRounds := Value;
 end;
 
