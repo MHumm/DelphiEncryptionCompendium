@@ -115,6 +115,9 @@ type
     OutputData : RawByteString;
   end;
 
+  TInitProc = procedure Of Object;
+  TDoneProc = procedure of Object;
+
   // Basic class all Cipher test classes should inherit from
   TCipherBasis = class(TTestCase)
   strict protected
@@ -132,7 +135,7 @@ type
     /// </summary>
     function  ConvertHexVectorToBytes(Vector: string): TBytes;
 
-    procedure DoTestEncode(EncodeFunct: TEncodeDecodeFunc);
+    procedure DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
     procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc);
   end;
 
@@ -144,6 +147,9 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+
+    procedure Init;
+    procedure Done;
   published
     procedure TestContext;
     procedure TestEncode;
@@ -272,14 +278,19 @@ type
 
   // Testmethoden für Klasse TCipher_1DES
   [TestFixture]
-  TestTCipher_1DES = class(TTestCase)
+  TestTCipher_1DES = class(TCipherBasis)
   strict private
     FCipher_1DES: TCipher_1DES;
   public
     procedure SetUp; override;
     procedure TearDown; override;
+
+    procedure Init;
+    procedure Done;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
   end;
 
   // Testmethoden für Klasse TCipher_2DES
@@ -563,24 +574,46 @@ begin
   FCipher_Null := nil;
 end;
 
-procedure TestTCipher_Blowfish.SetUp;
+procedure TestTCipher_Blowfish.Done;
+begin
+  FCipher_Blowfish.Done;
+end;
+
+procedure TestTCipher_Blowfish.Init;
 var
   Password: RawByteString;
 begin
-  FCipher_Blowfish      := TCipher_Blowfish.Create;
-//  FCipher_Blowfish.Context.
-
   Password := 'TCipher_Blowfish';
   if Length(Password) > FCipher_Blowfish.Context.KeySize then
     Delete(Password, FCipher_Blowfish.Context.KeySize, length(Password));
 
   FCipher_Blowfish.Mode := cmCTSx;
-  FCipher_Blowfish.Init(Password, '', $FF);
+//  FCipher_Blowfish.Init(Password, '', $FF);
+  FCipher_Blowfish.Init(BytesOf(Password), BytesOf(#$FF#$FF#$FF#$FF#$FF#$FF#$FF#$FF), $FF);
+end;
+
+procedure TestTCipher_Blowfish.SetUp;
+var
+  Password: RawByteString;
+  Data : Tbytes;
+begin
+  FCipher_Blowfish      := TCipher_Blowfish.Create;
+//  FCipher_Blowfish.Context.
+
+//  Password := 'TCipher_Blowfish';
+//  if Length(Password) > FCipher_Blowfish.Context.KeySize then
+//    Delete(Password, FCipher_Blowfish.Context.KeySize, length(Password));
+//
+//  FCipher_Blowfish.Mode := cmCTSx;
+//  FCipher_Blowfish.Init(Password, '', $FF);
 
   SetLength(FTestData, 1);
-  FTestData[0].InputData  := '\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2\xEB' +
-                             '\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD\xF5\x60' +
-                             '\xC2\xB8\x58\xA1\x91\xF9\x81\xB1';
+
+  Data := System.SysUtils.BytesOf('\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2\xEB' +
+                                  '\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD\xF5\x60' +
+                                  '\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
+
+  FTestData[0].InputData  := StringOf(TFormat_ESCAPE.Decode(Data));
   FTestData[0].OutputData := '1971cacd2b9c8529da8147b7ebce16c6910e1dc840123e3570edbc964c13d0b8';
 end;
 
@@ -613,7 +646,7 @@ begin
 { TODO :
 Die Verschlüsselungs und Entschlüsselungstests müssen
 für alle Blockmodi separat umgesetzt werden }
-  DoTestEncode(FCipher_Blowfish.EncodeString);
+  DoTestEncode(FCipher_Blowfish.EncodeString, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Twofish.SetUp;
@@ -856,9 +889,38 @@ begin
   CheckEquals(true,  ReturnValue.UserSave);
 end;
 
+procedure TestTCipher_1DES.Done;
+begin
+  FCipher_1DES.Done;
+end;
+
+procedure TestTCipher_1DES.Init;
+var
+  Password: RawByteString;
+begin
+  Password := 'TCipher_1DES';
+  if Length(Password) > FCipher_1DES.Context.KeySize then
+    Delete(Password, FCipher_1DES.Context.KeySize+1, length(Password));
+
+  FCipher_1DES.Mode := cmCTSx;
+  FCipher_1DES.Init(BytesOf(Password), BytesOf(#$FF#$FF#$FF#$FF#$FF#$FF#$FF#$FF), $FF);
+end;
+
 procedure TestTCipher_1DES.SetUp;
+var
+  Password: RawByteString;
+  Data : Tbytes;
 begin
   FCipher_1DES := TCipher_1DES.Create;
+
+  SetLength(FTestData, 1);
+
+  Data := System.SysUtils.BytesOf('\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2'+
+                                  '\xEB\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD'+
+                                  '\xF5\x60\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
+
+  FTestData[0].InputData  := StringOf(TFormat_ESCAPE.Decode(Data));
+  FTestData[0].OutputData := 'ad6942bbf668204d53cdc762139398c0300d850be2aa72096fdb5f8ed3e4cf8a';
 end;
 
 procedure TestTCipher_1DES.TearDown;
@@ -878,6 +940,16 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+end;
+
+procedure TestTCipher_1DES.TestDecode;
+begin
+
+end;
+
+procedure TestTCipher_1DES.TestEncode;
+begin
+  DoTestEncode(FCipher_1DES.EncodeString, self.Init, self.Done);
 end;
 
 procedure TestTCipher_2DES.SetUp;
@@ -1363,10 +1435,11 @@ begin
   end;
 end;
 
-procedure TCipherBasis.DoTestEncode(EncodeFunct: TEncodeDecodeFunc);
+procedure TCipherBasis.DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
 var
   Data   : TCipherTestData;
   Result : TBytes;
+  Temp : RawByteString;
 begin
 { TODO :
 Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
@@ -1380,19 +1453,25 @@ Daten synthetisieren. }
 
 // Verdacht: Input und Output Daten sind vertauscht, das kann aber nicht alles sein,
 // da es schon probiert wurde und trotzdem nicht richtig war
-    Result := EncodeFunct(Data.InputData, TFormat_HEXL);
+//    Result := EncodeFunct(Data.InputData, TFormat_HEXL);
+    InitProc;
+    Result := EncodeFunct(RawByteString(Data.InputData), TFormat_COPY);
+    DoneProc;
+
+    Temp := TFormat_HEXL.Encode(Result, length(Result));
 
 //    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData))),
 //                BytesToRawString(Result));
-    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.OutputData))),
-                BytesToRawString(Result));
+    CheckEquals(Data.OutputData, Temp);
+//    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.OutputData))),
+//                Temp);
+//                BytesToRawString(Result));
 
   end;
 end;
 
 initialization
   // Register all test classes
-//  RegisterTest(TestTDECCipher.Suite);
   {$IFNDEF DUnitX}
   RegisterTests('DECCipher', [TestTCipher_Null.Suite,
                               TestTCipher_Blowfish.Suite,

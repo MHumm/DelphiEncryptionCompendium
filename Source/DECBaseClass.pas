@@ -67,7 +67,7 @@ interface
 {$I DECOptions.inc}
 
 uses
-  SysUtils, Classes;
+  SysUtils, Classes, Generics.Collections;
 
 type
   TDECClass = class of TDECObject;
@@ -109,6 +109,8 @@ type
     procedure FreeInstance; override;
     {$ENDIF X86ASM}
     class function SelfTest: Boolean; virtual;
+
+    class procedure Register;
   end;
 
   /// <summary>
@@ -177,6 +179,8 @@ var
   /// </summary>
   NullStr: PString = @EmptyStr;
   {$ENDIF}
+
+  DECClassList : TDictionary<Int64, TDECClass>;
 
 implementation
 
@@ -336,6 +340,11 @@ begin
   {$ENDIF !DEC52_IDENTITY}
 end;
 
+class procedure TDECObject.Register;
+begin
+  DECClassList.Add(Identity, self);
+end;
+
 {$IFDEF X86ASM}
 procedure TDECObject.FreeInstance;
 // Override FreeInstance to fill allocated Object with zeros, that is
@@ -390,10 +399,13 @@ initialization
   {$ENDIF DELPHIORBCB}
   FClasses := TList.Create;
 
+  DECClassList := TDictionary<Int64, TDECClass>.Create;
+
 finalization
   {$IFDEF DELPHIORBCB}
   RemoveModuleUnloadProc(ModuleUnload);
   {$ENDIF DELPHIORBCB}
   FClasses.Free;
 
+  DECClassList.Free;
 end.

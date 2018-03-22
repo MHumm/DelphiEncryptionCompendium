@@ -3453,4 +3453,33 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+initialization
+  THash_MD2.Register;
+  THash_MD4.Register;
+  THash_MD5.Register;
+  THash_RipeMD128.Register;
+  THash_RipeMD160.Register;
+  THash_RipeMD256.Register;
+  THash_RipeMD320.Register;
+  THash_SHA.Register;
+  THash_SHA1.Register;
+  THash_SHA256.Register;
+  THash_SHA384.Register;
+  THash_SHA512.Register;
+  THash_Haval128.Register;
+  THash_Haval160.Register;
+  THash_Haval192.Register;
+  THash_Haval224.Register;
+  THash_Haval256.Register;
+  THash_Tiger.Register;
+  THash_Panama.Register;
+  THash_Whirlpool.Register;
+  THash_Whirlpool1.Register;
+  THash_Square.Register;
+  THash_Snefru128.Register;
+  THash_Snefru256.Register;
+  THash_Sapphire.Register;
+
+finalization
+
 end.

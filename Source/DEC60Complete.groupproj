@@ -12,6 +12,9 @@
         <Projects Include="..\Unit Tests\DECDUnitTestSuite.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\Demos\Hash_FMX\Hash_FMX.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
     <Target Name="DECDUnitTestSuite:Make">
         <MSBuild Projects="..\Unit Tests\DECDUnitTestSuite.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Hash_FMX">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj"/>
+    </Target>
+    <Target Name="Hash_FMX:Clean">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Hash_FMX:Make">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite"/>
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
