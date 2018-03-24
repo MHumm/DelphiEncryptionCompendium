@@ -70,12 +70,36 @@ uses
   SysUtils, Classes, Generics.Collections;
 
 type
+  /// <summary>
+  ///   Class type for the base class from which all other DEC classes inherit
+  ///   in order to be able to create lists of classes, pick an entry of such a
+  ///   list and construct an object out of it
+  /// </summary>
   TDECClass = class of TDECObject;
+
+  /// <summary>
+  ///   Generic list of DEC Classes with the identity as key
+  /// </summary>
+  TDECClassList = class(TDictionary<Int64, TDECClass>)
+  public
+    /// <summary>
+    ///   Tries to find a class type by its name
+    /// </summary>
+    /// <param name="Name">
+    ///   Name to look for in the list
+    /// </param>
+    /// <returns>
+    ///   Returns the class type if found. if it could not be found a
+    ///   EDECClassNotRegisteredException will be thrown
+    /// </returns>
+    function ClassByName(const Name: string): TDECClass;
+  end;
 
   /// <summary>
   ///   Parent class of all cryptography and hash implementations
   /// </summary>
   TDECObject = class(TPersistent)
+  strict protected
   public
     /// <summary>
     ///   Overrideable but otherwise empty constructor (calls his parent
@@ -108,9 +132,28 @@ type
     /// </summary>
     procedure FreeInstance; override;
     {$ENDIF X86ASM}
+
     class function SelfTest: Boolean; virtual;
 
-    class procedure Register;
+    /// <summary>
+    ///   Registers this class type in the list of DEC classes (ClassList).
+    ///   Trying to register an already registered class will raise an exception.
+    /// </summary>
+    /// <param name="ClassList">
+    ///   List to which the own class type shall be added. This allows subclasses
+    ///   to have their own lists
+    /// </param>
+    class procedure RegisterClass(ClassList : TDECClassList);
+    /// <summary>
+    ///   Removes tthis class type from the list of registered DEC classes
+    ///   (ClassList). Trying to unregister a non registered class is a do nothing
+    ///   operation.
+    /// </summary>
+    /// <param name="ClassList">
+    ///   List from which the own class type shall be removed. This allows
+    ///   subclasses to have their own lists
+    /// </param>
+    class procedure UnregisterClass(ClassList : TDECClassList);
   end;
 
   /// <summary>
@@ -179,8 +222,6 @@ var
   /// </summary>
   NullStr: PString = @EmptyStr;
   {$ENDIF}
-
-  DECClassList : TDictionary<Int64, TDECClass>;
 
 implementation
 
@@ -340,9 +381,9 @@ begin
   {$ENDIF !DEC52_IDENTITY}
 end;
 
-class procedure TDECObject.Register;
+class procedure TDECObject.RegisterClass(ClassList : TDECClassList);
 begin
-  DECClassList.Add(Identity, self);
+  ClassList.Add(Identity, self);
 end;
 
 {$IFDEF X86ASM}
@@ -377,6 +418,11 @@ begin
   raise EDECAbstractError.Create(Self);
 end;
 
+class procedure TDECObject.UnregisterClass(ClassList : TDECClassList);
+begin
+  ClassList.Remove(Identity);
+end;
+
 {$IFDEF DELPHIORBCB}
 procedure ModuleUnload(Instance: NativeInt);
 var // automaticaly deregistration/releasing
@@ -393,19 +439,49 @@ begin
 end;
 {$ENDIF DELPHIORBCB}
 
+{ TDECClassList }
+
+function TDECClassList.ClassByName(const Name: string): TDECClass;
+var
+  FindNameShort : Boolean;
+  Pair          : TPair<Int64, TDECCLass>;
+begin
+  if Length(Name) > 0 then
+  begin
+    FindNameShort := GetShortClassName(Name) = Name;
+
+    for Pair in self do
+    begin
+      if FindNameShort then
+      begin
+        if DoFindNameShort(Name, Pair.Value) then
+        begin
+          result := Pair.Value;
+          break;
+        end;
+      end
+      else
+        if DoFindNameLong(Name, Pair.Value) then
+        begin
+          result := Pair.Value;
+          break;
+        end;
+    end;
+  end;
+
+  if Result = nil then
+    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [Name]);
+end;
+
 initialization
   {$IFDEF DELPHIORBCB}
   AddModuleUnloadProc(ModuleUnload);
   {$ENDIF DELPHIORBCB}
   FClasses := TList.Create;
 
-  DECClassList := TDictionary<Int64, TDECClass>.Create;
-
 finalization
   {$IFDEF DELPHIORBCB}
   RemoveModuleUnloadProc(ModuleUnload);
   {$ENDIF DELPHIORBCB}
   FClasses.Free;
-
-  DECClassList.Free;
 end.

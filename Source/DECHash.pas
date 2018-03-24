@@ -3454,32 +3454,34 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
-  THash_MD2.Register;
-  THash_MD4.Register;
-  THash_MD5.Register;
-  THash_RipeMD128.Register;
-  THash_RipeMD160.Register;
-  THash_RipeMD256.Register;
-  THash_RipeMD320.Register;
-  THash_SHA.Register;
-  THash_SHA1.Register;
-  THash_SHA256.Register;
-  THash_SHA384.Register;
-  THash_SHA512.Register;
-  THash_Haval128.Register;
-  THash_Haval160.Register;
-  THash_Haval192.Register;
-  THash_Haval224.Register;
-  THash_Haval256.Register;
-  THash_Tiger.Register;
-  THash_Panama.Register;
-  THash_Whirlpool.Register;
-  THash_Whirlpool1.Register;
-  THash_Square.Register;
-  THash_Snefru128.Register;
-  THash_Snefru256.Register;
-  THash_Sapphire.Register;
+  THash_MD2.RegisterClass(TDECHash.ClassList);
+  THash_MD4.RegisterClass(TDECHash.ClassList);
+  THash_MD5.RegisterClass(TDECHash.ClassList);
+  THash_RipeMD128.RegisterClass(TDECHash.ClassList);
+  THash_RipeMD160.RegisterClass(TDECHash.ClassList);
+  THash_RipeMD256.RegisterClass(TDECHash.ClassList);
+  THash_RipeMD320.RegisterClass(TDECHash.ClassList);
+  THash_SHA.RegisterClass(TDECHash.ClassList);
+  THash_SHA1.RegisterClass(TDECHash.ClassList);
+  THash_SHA256.RegisterClass(TDECHash.ClassList);
+  THash_SHA384.RegisterClass(TDECHash.ClassList);
+  THash_SHA512.RegisterClass(TDECHash.ClassList);
+  THash_Haval128.RegisterClass(TDECHash.ClassList);
+  THash_Haval160.RegisterClass(TDECHash.ClassList);
+  THash_Haval192.RegisterClass(TDECHash.ClassList);
+  THash_Haval224.RegisterClass(TDECHash.ClassList);
+  THash_Haval256.RegisterClass(TDECHash.ClassList);
+  THash_Tiger.RegisterClass(TDECHash.ClassList);
+  THash_Panama.RegisterClass(TDECHash.ClassList);
+  THash_Whirlpool.RegisterClass(TDECHash.ClassList);
+  THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+  THash_Square.RegisterClass(TDECHash.ClassList);
+  THash_Snefru128.RegisterClass(TDECHash.ClassList);
+  THash_Snefru256.RegisterClass(TDECHash.ClassList);
+  THash_Sapphire.RegisterClass(TDECHash.ClassList);
 
 finalization
+  // No need to unregister the hash classes, as the list is being freed 
+  // in finalization of DECBaseClass unit
 
 end.

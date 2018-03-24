@@ -3,7 +3,7 @@
   Delphi Encryption Compendium (DEC)
   Version 6.0
 
-  Copyright (c) 2016 - 2017 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+  Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
   Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
   Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
   All rights reserved.
@@ -61,7 +61,7 @@
 *****************************************************************************}
 
 /// <summary>
-///   Declarations of various datatypes, some of thos in part have not been
+///   Declarations of various datatypes, some of those have not been
 ///   declared for certain platforms but are used in DEC and some do change
 ///   meanings between platforms like PLongWord where LongWord is 32 bit on
 ///   Windows and Android but 64 bit on iOS for instance

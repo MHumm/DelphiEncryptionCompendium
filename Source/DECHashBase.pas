@@ -70,7 +70,8 @@ interface
 {$I DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECFormatBase, DECUtil, DECTypes;
+  SysUtils, Classes, Generics.Collections,
+  DECBaseClass, DECFormatBase, DECUtil, DECTypes;
 
 type
   TDECHashClass = class of TDECHash;
@@ -120,6 +121,11 @@ type
     ///   on in byte. Needs to be overridden in concrete hash implementations.
     /// </summary>
     class function BlockSize: Integer; virtual;
+
+    /// <summary>
+    ///   List of registered DEC classes. Key is the Identity of the class.
+    /// </summary>
+    class var ClassList : TDECClassList;
 
     // hash calculation wrappers
 
@@ -689,4 +695,9 @@ begin
   Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
 end;
 
+initialization
+  TDECHash.ClassList := TDECClassList.Create;
+
+finalization
+  TDECHash.ClassList.Free;
 end.

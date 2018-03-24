@@ -159,6 +159,11 @@ type
     ///   the result will be -1. The index is 0 based.
     /// </returns>
     class function TableFindBinary(Value: Byte; Table: TBytes; Len: Integer): Integer;
+
+    /// <summary>
+    ///   List of registered DEC classes. Key is the Identity of the class.
+    /// </summary>
+    class var ClassList : TDECClassList;
   end;
 
   /// <summary>
@@ -412,5 +417,13 @@ class function TFormat_Copy.DoIsValid(const Data; Size: Integer): Boolean;
 begin
   Result := Size >= 0;
 end;
+
+initialization
+  TDECFormat.ClassList := TDECClassList.Create;
+
+  TFormat_Copy.RegisterClass(TDECFormat.ClassList);
+
+finalization
+  TDECFormat.ClassList.Free;
 
 end.

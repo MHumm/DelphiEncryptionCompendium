@@ -3,7 +3,7 @@
   Delphi Encryption Compendium (DEC)
   Version 6.0
 
-  Copyright (c) 2016 - 2017 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+  Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
   Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
   Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
   All rights reserved.
@@ -1131,17 +1131,20 @@ initialization
   ESCAPE_CodesU[5] := $46;
   ESCAPE_CodesU[6] := $52;
 
-//  TFormat_HEX.Register;
-//  TFormat_HEXL.Register;
-//  TFormat_DECMIME32.Register;
-//  TFormat_Base64.Register;
-//  TFormat_PGP.Register;
-//  TFormat_UU.Register;
-//  TFormat_XX.Register;
-//  TFormat_ESCAPE.Register;
+  TFormat_HEX.RegisterClass(TDECFormat.ClassList);
+  TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
+  TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
+  TFormat_Base64.RegisterClass(TDECFormat.ClassList);
+  TFormat_PGP.RegisterClass(TDECFormat.ClassList);
+  TFormat_UU.RegisterClass(TDECFormat.ClassList);
+  TFormat_XX.RegisterClass(TDECFormat.ClassList);
+  TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
 
 
 finalization
+
+  // No need to unregister the hash classes, as the list is being freed
+  // in finalization of DECBaseClass unit
 
 //
 //
