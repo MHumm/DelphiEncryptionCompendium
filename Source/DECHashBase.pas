@@ -74,6 +74,10 @@ uses
   DECBaseClass, DECFormatBase, DECUtil, DECTypes;
 
 type
+  /// <summary>
+  ///   Meta class for all the hashing classes in order to support the
+  ///   registration mechanism
+  /// </summary>
   TDECHashClass = class of TDECHash;
 
   /// <summary>
@@ -126,6 +130,18 @@ type
     ///   List of registered DEC classes. Key is the Identity of the class.
     /// </summary>
     class var ClassList : TDECClassList;
+
+    /// <summary>
+    ///   Tries to find a class type by its name
+    /// </summary>
+    /// <param name="Name">
+    ///   Name to look for in the list
+    /// </param>
+    /// <returns>
+    ///   Returns the class type if found. if it could not be found a
+    ///   EDECClassNotRegisteredException will be thrown
+    /// </returns>
+    class function ClassByName(const Name: string): TDECHashClass;
 
     // hash calculation wrappers
 
@@ -450,6 +466,11 @@ begin
   end;
 
 //    Encode(CalcBuffer(Value[1], Length(Value) * SizeOf(Value[1])), Result);
+end;
+
+class function TDECHash.ClassByName(const Name: string): TDECHashClass;
+begin
+  result := TDECHashClass(ClassList.ClassByName(Name));
 end;
 
 procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;

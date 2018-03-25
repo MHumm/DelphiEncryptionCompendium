@@ -95,6 +95,23 @@ type
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); virtual;
     class function DoIsValid(const Data; Size: Integer): Boolean; virtual;
   public
+    /// <summary>
+    ///   List of registered DEC classes. Key is the Identity of the class.
+    /// </summary>
+    class var ClassList : TDECClassList;
+
+    /// <summary>
+    ///   Tries to find a class type by its name
+    /// </summary>
+    /// <param name="Name">
+    ///   Name to look for in the list
+    /// </param>
+    /// <returns>
+    ///   Returns the class type if found. if it could not be found a
+    ///   EDECClassNotRegisteredException will be thrown
+    /// </returns>
+    class function ClassByName(const Name: string): TDECFormatClass;
+
     class function Encode(const Data: RawByteString): RawByteString; overload; deprecated; // please use TBytes variant now
     class function Encode(const Data; Size: Integer): RawByteString; overload; deprecated; // please use TBytes variant now
 
@@ -159,11 +176,6 @@ type
     ///   the result will be -1. The index is 0 based.
     /// </returns>
     class function TableFindBinary(Value: Byte; Table: TBytes; Len: Integer): Integer;
-
-    /// <summary>
-    ///   List of registered DEC classes. Key is the Identity of the class.
-    /// </summary>
-    class var ClassList : TDECClassList;
   end;
 
   /// <summary>
@@ -328,6 +340,11 @@ begin
   end
   else
     SetLength(Result, 0);
+end;
+
+class function TDECFormat.ClassByName(const Name: string): TDECFormatClass;
+begin
+  result := TDECFormatClass(ClassList.ClassByName(Name));
 end;
 
 class function TDECFormat.Decode(const Data: TBytes): TBytes;

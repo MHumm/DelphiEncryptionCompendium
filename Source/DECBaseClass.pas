@@ -78,7 +78,7 @@ type
   TDECClass = class of TDECObject;
 
   /// <summary>
-  ///   Generic list of DEC Classes with the identity as key
+  ///   Generic list of DEC classes with the identity as key
   /// </summary>
   TDECClassList = class(TDictionary<Int64, TDECClass>)
   public
