@@ -110,6 +110,10 @@ type
     destructor Destroy; override;
     procedure Init;
     procedure Calc(const Data; DataSize: Integer); virtual;
+    /// <summary>
+    ///   Frees dynamically allocated buffers in a way which safeguards agains
+    ///   data stealing by other methods which afterwards might allocate this memory.
+    /// </summary>
     procedure Done;
 
     function DigestAsBytes: TBytes; virtual;
