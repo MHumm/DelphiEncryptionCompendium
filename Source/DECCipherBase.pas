@@ -211,6 +211,23 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
   public
     /// <summary>
+    ///   List of registered DEC classes. Key is the Identity of the class.
+    /// </summary>
+    class var ClassList : TDECClassList;
+
+    /// <summary>
+    ///   Tries to find a class type by its name
+    /// </summary>
+    /// <param name="Name">
+    ///   Name to look for in the list
+    /// </param>
+    /// <returns>
+    ///   Returns the class type if found. if it could not be found a
+    ///   EDECClassNotRegisteredException will be thrown
+    /// </returns>
+    class function ClassByName(const Name: string): TDECCipherClass;
+
+    /// <summary>
     ///   Initializes the instance. Relies in parts on information given by the
     ///   Context class function.
     /// </summary>
@@ -611,6 +628,11 @@ begin
       s := sInvalidState;
     raise EDECCipherException.CreateRes(@s);
   end;
+end;
+
+class function TDECCipher.ClassByName(const Name: string): TDECCipherClass;
+begin
+  result := TDECCipherClass(ClassList.ClassByName(Name));
 end;
 
 class function TDECCipher.Context: TCipherContext;

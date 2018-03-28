@@ -103,7 +103,7 @@ object MainForm: TMainForm
         Position.X = 16.000000000000000000
         Position.Y = 44.000000000000000000
         Size.Width = 400.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 0
@@ -113,7 +113,7 @@ object MainForm: TMainForm
         Position.X = 16.000000000000000000
         Position.Y = 108.000000000000000000
         Size.Width = 400.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 1
@@ -123,7 +123,7 @@ object MainForm: TMainForm
         Position.X = 16.000000000000000000
         Position.Y = 172.000000000000000000
         Size.Width = 400.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 2

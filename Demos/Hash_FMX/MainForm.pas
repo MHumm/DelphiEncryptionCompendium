@@ -53,7 +53,6 @@ uses
   DECBaseClass, DECHashBase, DECHash, DECFormatBase, DECFormat, Generics.Collections;
 
 {$R *.fmx}
-{$R *.SmXhdpiPh.fmx ANDROID}
 
 procedure TMainForm.ButtonCalcClick(Sender: TObject);
 var

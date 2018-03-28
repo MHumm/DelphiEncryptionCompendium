@@ -5702,4 +5702,41 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+initialization
+  TCipher_Blowfish.RegisterClass(TDECCipher.ClassList);
+  TCipher_Twofish.RegisterClass(TDECCipher.ClassList);
+  TCipher_IDEA.RegisterClass(TDECCipher.ClassList);
+  TCipher_Cast256.RegisterClass(TDECCipher.ClassList);
+  TCipher_Mars.RegisterClass(TDECCipher.ClassList);
+  TCipher_RC4.RegisterClass(TDECCipher.ClassList);
+  TCipher_RC6.RegisterClass(TDECCipher.ClassList);
+{ TODO : Diesen wirklich registrieren? Ist doch AES! }
+  TCipher_Rijndael.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES.RegisterClass(TDECCipher.ClassList);
+  TCipher_Square.RegisterClass(TDECCipher.ClassList);
+  TCipher_SCOP.RegisterClass(TDECCipher.ClassList);
+  TCipher_Sapphire.RegisterClass(TDECCipher.ClassList);
+  TCipher_1DES.RegisterClass(TDECCipher.ClassList);
+  TCipher_2DES.RegisterClass(TDECCipher.ClassList);
+  TCipher_3DES.RegisterClass(TDECCipher.ClassList);
+  TCipher_2DDES.RegisterClass(TDECCipher.ClassList);
+  TCipher_3DDES.RegisterClass(TDECCipher.ClassList);
+  TCipher_3TDES.RegisterClass(TDECCipher.ClassList);
+  TCipher_3Way.RegisterClass(TDECCipher.ClassList);
+  TCipher_Cast128.RegisterClass(TDECCipher.ClassList);
+  TCipher_Gost.RegisterClass(TDECCipher.ClassList);
+  TCipher_Misty.RegisterClass(TDECCipher.ClassList);
+  TCipher_NewDES.RegisterClass(TDECCipher.ClassList);
+  TCipher_Q128.RegisterClass(TDECCipher.ClassList);
+  TCipher_RC2.RegisterClass(TDECCipher.ClassList);
+  TCipher_RC5.RegisterClass(TDECCipher.ClassList);
+  TCipher_SAFER.RegisterClass(TDECCipher.ClassList);
+  TCipher_Shark.RegisterClass(TDECCipher.ClassList);
+  TCipher_Skipjack.RegisterClass(TDECCipher.ClassList);
+  TCipher_TEA.RegisterClass(TDECCipher.ClassList);
+  TCipher_XTEA.RegisterClass(TDECCipher.ClassList);
+  TCipher_TEAN.RegisterClass(TDECCipher.ClassList);
+
+finalization
+
 end.
