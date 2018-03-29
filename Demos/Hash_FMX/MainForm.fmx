@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   BorderStyle = Single
   Caption = 'DEC hash demo'
-  ClientHeight = 489
+  ClientHeight = 525
   ClientWidth = 427
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,13 +14,13 @@ object MainForm: TMainForm
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 427.000000000000000000
-    Size.Height = 489.000000000000000000
+    Size.Height = 525.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     Viewport.Width = 427.000000000000000000
-    Viewport.Height = 489.000000000000000000
+    Viewport.Height = 525.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 264.000000000000000000
+      Position.Y = 296.000000000000000000
       Size.Width = 427.000000000000000000
       Size.Height = 225.000000000000000000
       Size.PlatformDefault = False
@@ -95,7 +95,7 @@ object MainForm: TMainForm
     end
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
-      Size.Height = 265.000000000000000000
+      Size.Height = 297.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object ComboBoxHashFunction: TComboBox
@@ -107,6 +107,7 @@ object MainForm: TMainForm
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 0
+        OnChange = ComboBoxHashFunctionChange
       end
       object ComboBoxInputFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
@@ -169,8 +170,20 @@ object MainForm: TMainForm
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 3
+        TabOrder = 4
         Text = 'Live calculation'
+      end
+      object CheckBoxIsPasswordHash: TCheckBox
+        Anchors = [akLeft, akTop, akRight]
+        Enabled = False
+        Position.X = 16.000000000000000000
+        Position.Y = 264.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'checkboxstyle'
+        TabOrder = 3
+        Text = 'Is password hash algorithm'
       end
     end
   end

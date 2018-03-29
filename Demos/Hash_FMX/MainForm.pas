@@ -26,11 +26,13 @@ type
     LayoutTop: TLayout;
     CheckBoxLiveCalc: TCheckBox;
     Label1: TLabel;
+    CheckBoxIsPasswordHash: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
     procedure EditInputKeyDown(Sender: TObject; var Key: Word;
       var KeyChar: Char; Shift: TShiftState);
+    procedure ComboBoxHashFunctionChange(Sender: TObject);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -96,6 +98,13 @@ begin
       Hash.Free;
     end;
   end;
+end;
+
+procedure TMainForm.ComboBoxHashFunctionChange(Sender: TObject);
+begin
+  CheckBoxIsPasswordHash.IsChecked :=
+    TDECHash.ClassByName(
+      ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).IsPasswordHash;
 end;
 
 procedure TMainForm.EditInputKeyDown(Sender: TObject; var Key: Word;
