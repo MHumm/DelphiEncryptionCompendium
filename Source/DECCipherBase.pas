@@ -843,4 +843,10 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+initialization
+
+  TCipher_Null.RegisterClass(TDECCipher.ClassList);
+
+finalization
+
 end.
