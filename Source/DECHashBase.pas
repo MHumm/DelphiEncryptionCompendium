@@ -146,6 +146,15 @@ type
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
     class function ClassByName(const Name: string): TDECHashClass;
+    /// <summary>
+    ///   Detects whether the given hash class is one particularily suited
+    ///   for storing hashes of passwords
+    /// </summary>
+    /// <returns>
+    ///   true if it's a hash class specifically designed to store password
+    ///   hashes, false for ordinary hash algorithms.
+    /// </returns>
+    class function IsPasswordHash: Boolean;
 
     // hash calculation wrappers
 
@@ -229,6 +238,14 @@ type
     property PaddingByte: Byte read FPaddingByte write FPaddingByte;
   end;
 
+  /// <summary>
+  ///   All hash classes with hash algorithms specially developed for password
+  ///   hashing should inherit from this class in order to be able to distinguish
+  ///   those from normal hash algorithms not really meant to be used for password
+  ///   hashing.
+  /// </summary>
+  TDECPasswordHash = class(TDECHash);
+
 implementation
 
 type
@@ -259,6 +276,11 @@ begin
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
   DoInit;
+end;
+
+class function TDECHash.IsPasswordHash: Boolean;
+begin
+  result := ClassParent = TDECPasswordHash;
 end;
 
 procedure TDECHash.Increment8(var Value; Add: UInt32);
