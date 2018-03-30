@@ -628,7 +628,7 @@ begin
     Dest := @Result[0];
     for I := 0 to Rounds - 1 do
     begin
-      Count := SwapLong(I);
+      Count := SwapUInt32(I);
       HashInstance.Init;
       HashInstance.Calc(Data, DataSize);
       HashInstance.Calc(Count, SizeOf(Count));
@@ -691,7 +691,7 @@ begin
   Assert(DigestSize >= 0);
 
   SetLength(Result, MaskSize);
-  Index := SwapLong(Index);
+  Index := SwapUInt32(Index);
 
   HashInstance := TDECHashstype(self).Create;
   try
@@ -699,17 +699,17 @@ begin
     begin
       HashInstance.Init;
 
-      Count := SwapLong(I);
+      Count := SwapUInt32(I);
       HashInstance.Calc(Count, SizeOf(Count));
       HashInstance.Calc(Result[0], I);
 
       HashInstance.Calc(Index, SizeOf(Index));
 
-      Count := SwapLong(SeedSize);
+      Count := SwapUInt32(SeedSize);
       HashInstance.Calc(Count, SizeOf(Count));
       HashInstance.Calc(Seed, SeedSize);
 
-      Count := SwapLong(DataSize);
+      Count := SwapUInt32(DataSize);
       HashInstance.Calc(Count, SizeOf(Count));
       HashInstance.Calc(Data, DataSize);
 

@@ -170,7 +170,7 @@ var
   i: Integer;
 begin
   for i := 0 to Length(SwapLongArray) - 1 do
-    CheckEquals(SwapLongArray[i].Result, DECUtil.SwapLong(SwapLongArray[i].Input));
+    CheckEquals(SwapLongArray[i].Result, DECUtil.SwapUInt32(SwapLongArray[i].Input));
 end;
 
 procedure TTestBitTwiddling.SwapLongBuffer;
@@ -191,7 +191,7 @@ begin
   for i := Low(SwapLongArray) to High(SwapLongArray) do
     SrcBuf[i] := SwapLongArray[i].Input;
 
-  DECUtil.SwapLongBuffer(SrcBuf, DestBuf, Length(SrcBuf));
+  DECUtil.SwapUInt32Buffer(SrcBuf, DestBuf, Length(SrcBuf));
 
   for i := Low(SwapLongArray) to High(SwapLongArray) do
     CheckEquals(SwapLongArray[i].Result, DestBuf[i]);

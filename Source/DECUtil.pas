@@ -186,7 +186,7 @@ procedure SwapBytes(var Buffer; Size: Integer);
 /// <returns>
 ///   value of the passed vallue with reversed byte order
 /// </returns>
-function  SwapLong(Source: UInt32): UInt32;
+function  SwapUInt32(Source: UInt32): UInt32;
 /// <summary>
 ///   Reverses the byte order for all entries of a passed array of UInt32 values
 /// </summary>
@@ -201,7 +201,7 @@ function  SwapLong(Source: UInt32): UInt32;
 /// <param name="Count">
 ///   Number of values to be reversed
 /// </param>
-procedure SwapLongBuffer(const Source; var Dest; Count: Integer);
+procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
 /// <summary>
 ///   Reverses the byte order of an Int64 value
 /// </summary>
@@ -322,10 +322,6 @@ procedure ProtectString(var Source: WideString); overload;
 /// </remarks>
 function BytesToRawString(const Source: TBytes): RawByteString;
 
-{ TODO : Ausdesignen, dient der Fehlersuche im Unittest für das MIME32 Format }
-var
-  LogFile: TStringList;
-
 implementation
 
 {$IFDEF FMXTranslateableExceptions}
@@ -419,7 +415,7 @@ begin
 end;
 {$ENDIF !X86ASM}
 
-function SwapLong(Source: UInt32): UInt32;
+function SwapUInt32(Source: UInt32): UInt32;
 {$IF defined(X86ASM) or defined(X64ASM)}
   asm
   {$IFDEF X64ASM}
@@ -436,7 +432,7 @@ begin
 end;
 {$ENDIF PUREPASCAL}
 
-procedure SwapLongBuffer(const Source; var Dest; Count: Integer);
+procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
 {$IFDEF X86ASM}
 asm
       TEST    ECX,ECX

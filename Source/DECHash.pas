@@ -1643,7 +1643,7 @@ var
   W: array[0..79] of UInt32;
   I: Integer;
 begin
-  SwapLongBuffer(Buffer[0], W, 16);
+  SwapUInt32Buffer(Buffer[0], W, 16);
   if ClassType = THash_SHA then
   begin
     for I := 16 to 79 do
@@ -1774,10 +1774,10 @@ begin
     FBufferIndex := 0;
   end;
   FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapLong(FCount[1]);
-  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapLong(FCount[0]);
+  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
+  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
   DoTransform(Pointer(FBuffer));
-  SwapLongBuffer(FDigest, FDigest, SizeOf(FDigest) div 4);
+  SwapUInt32Buffer(FDigest, FDigest, SizeOf(FDigest) div 4);
 end;
 
 class function THash_SHA.DigestSize: Integer;
@@ -1807,7 +1807,7 @@ var
   T1, T2: UInt32;
   W: array[0..63] of UInt32;
 begin
-  SwapLongBuffer(Buffer[0], W, 16);
+  SwapUInt32Buffer(Buffer[0], W, 16);
 
   for I := 16 to 63 do
   begin
@@ -1937,7 +1937,7 @@ begin
     FBufferIndex := 0;
   end;
   FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  SwapLongBuffer(FCount, FCount, 4);
+  SwapUInt32Buffer(FCount, FCount, 4);
   PUInt32(@FBuffer[FBufferSize - 16])^ := FCount[3];
   PUInt32(@FBuffer[FBufferSize - 12])^ := FCount[2];
   PUInt32(@FBuffer[FBufferSize -  8])^ := FCount[1];
@@ -3224,10 +3224,10 @@ begin
     FBufferIndex := 0;
   end;
   FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapLong(FCount[1]);
-  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapLong(FCount[0]);
+  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
+  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
   DoTransform(Pointer(FBuffer));
-  SwapLongBuffer(FDigest, FDigest, 8);
+  SwapUInt32Buffer(FDigest, FDigest, 8);
 end;
 
 function THashBaseSnefru.Digest: PByteArray;
@@ -3246,7 +3246,7 @@ var
   D, Box0, Box1: PUInt32Array;
 begin
   D := @FDigest;
-  SwapLongBuffer(Buffer[0], D[4], 12);
+  SwapUInt32Buffer(Buffer[0], D[4], 12);
   Move(D[0], D[16], 16);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];
@@ -3306,7 +3306,7 @@ var
   D, Box0, Box1: PUInt32Array;
 begin
   D := @FDigest;
-  SwapLongBuffer(Buffer[0], D[8], 8);
+  SwapUInt32Buffer(Buffer[0], D[8], 8);
   Move(D[0], D[16], 32);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];

@@ -598,15 +598,15 @@ begin
   for I := 0 to 8 do
   begin
     DoEncode(@B, @B, SizeOf(B));
-    P[I * 2 + 0] := SwapLong(B[0]);
-    P[I * 2 + 1] := SwapLong(B[1]);
+    P[I * 2 + 0] := SwapUInt32(B[0]);
+    P[I * 2 + 1] := SwapUInt32(B[1]);
   end;
   for I := 0 to 3 do
     for J := 0 to 127 do
     begin
       DoEncode(@B, @B, SizeOf(B));
-      S[I, J * 2 + 0] := SwapLong(B[0]);
-      S[I, J * 2 + 1] := SwapLong(B[1]);
+      S[I, J * 2 + 0] := SwapUInt32(B[0]);
+      S[I, J * 2 + 1] := SwapUInt32(B[1]);
     end;
   FillChar(B, SizeOf(B), 0);
 end;
@@ -669,8 +669,8 @@ begin
   D := FUser;
 { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
   P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // PAnsiChar for Pointer Math
-  A := SwapLong(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
-  B := SwapLong(PUInt32Array(Source)[1]);
+  A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
+  B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
   begin
     B := B xor P[0] xor (D[0, A shr 24        ] +
@@ -684,8 +684,8 @@ begin
                          D[3, B        and $FF]);
     P := @P[2];
   end;
-  PUInt32Array(Dest)[0] := SwapLong(B xor P[0]);
-  PUInt32Array(Dest)[1] := SwapLong(A);
+  PUInt32Array(Dest)[0] := SwapUInt32(B xor P[0]);
+  PUInt32Array(Dest)[1] := SwapUInt32(A);
 end;
 {$ENDIF !X86ASM}
 
@@ -744,8 +744,8 @@ begin
   D := FUser;
 { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist und SizeOf(Integer) müsste wohl SizeOf(Int32) sein?}
   P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
-  A := SwapLong(PUInt32Array(Source)[0]) xor P[0];
-  B := SwapLong(PUInt32Array(Source)[1]);
+  A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0];
+  B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
   begin
     Dec(PUInt32(P), 2);
@@ -759,8 +759,8 @@ begin
                          D[3, B        and $FF]);
   end;
   Dec(PUInt32(P));
-  PUInt32Array(Dest)[0] := SwapLong(B xor P[0]);
-  PUInt32Array(Dest)[1] := SwapLong(A);
+  PUInt32Array(Dest)[0] := SwapUInt32(B xor P[0]);
+  PUInt32Array(Dest)[1] := SwapUInt32(A);
 end;
 {$ENDIF !X86ASM}
 
@@ -1220,10 +1220,10 @@ var
   I: UInt32;
   X, Y, A, B, C, D: UInt32;
 begin
-  I := SwapLong(Source[0]);
+  I := SwapUInt32(Source[0]);
   A := I shr 16;
   B := I and $FFFF;
-  I := SwapLong(Source[1]);
+  I := SwapUInt32(Source[1]);
   C := I shr 16;
   D := I and $FFFF;
   for I := 0 to 7 do
@@ -1244,8 +1244,8 @@ begin
     C := Y;
     Key := @Key[6];
   end;
-  Dest[0] := SwapLong(IDEAMul(A, Key[0]) shl 16 or (C + Key[1]) and $FFFF);
-  Dest[1] := SwapLong((B + Key[2]) shl 16 or IDEAMul(D, Key[3]) and $FFFF);
+  Dest[0] := SwapUInt32(IDEAMul(A, Key[0]) shl 16 or (C + Key[1]) and $FFFF);
+  Dest[1] := SwapUInt32((B + Key[2]) shl 16 or IDEAMul(D, Key[3]) and $FFFF);
 end;
 
 procedure TCipher_IDEA.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -1281,7 +1281,7 @@ var
 begin
   FillChar(X, SizeOf(X), 0);
   Move(Key, X, Size);
-  SwapLongBuffer(X, X, 8);
+  SwapUInt32Buffer(X, X, 8);
   K := FUser;
   M := $5A827999;
   R := 19;
@@ -1389,7 +1389,7 @@ begin
   Assert(Size = Context.BlockSize);
 
   K := FUser;
-  SwapLongBuffer(Source^, Dest^, 4);
+  SwapUInt32Buffer(Source^, Dest^, 4);
   A := PUInt32Array(Dest)[0];
   B := PUInt32Array(Dest)[1];
   C := PUInt32Array(Dest)[2];
@@ -1454,7 +1454,7 @@ begin
   PUInt32Array(Dest)[1] := B;
   PUInt32Array(Dest)[2] := C;
   PUInt32Array(Dest)[3] := D;
-  SwapLongBuffer(Dest^, Dest^, 4);
+  SwapUInt32Buffer(Dest^, Dest^, 4);
 end;
 
 procedure TCipher_Cast256.DoDecode(Source, Dest: Pointer; Size: Integer);
@@ -1465,7 +1465,7 @@ begin
   Assert(Size = Context.BlockSize);
 
   K := @PUInt32Array(FUser)[44];
-  SwapLongBuffer(Source^, Dest^, 4);
+  SwapUInt32Buffer(Source^, Dest^, 4);
   A := PUInt32Array(Dest)[0];
   B := PUInt32Array(Dest)[1];
   C := PUInt32Array(Dest)[2];
@@ -1530,7 +1530,7 @@ begin
   PUInt32Array(Dest)[1] := B;
   PUInt32Array(Dest)[2] := C;
   PUInt32Array(Dest)[3] := D;
-  SwapLongBuffer(Dest^, Dest^, 4);
+  SwapUInt32Buffer(Dest^, Dest^, 4);
 end;
 
 { TCipher_Mars }
@@ -3017,8 +3017,8 @@ procedure DES_Func(Source, Dest, Key: PUInt32Array);
 var
   L, R, X, Y, I: UInt32;
 begin
-  L := SwapLong(Source[0]);
-  R := SwapLong(Source[1]);
+  L := SwapUInt32(Source[0]);
+  R := SwapUInt32(Source[1]);
 
   X := (L shr  4 xor R) and $0F0F0F0F; R := R xor X; L := L xor X shl  4;
   X := (L shr 16 xor R) and $0000FFFF; R := R xor X; L := L xor X shl 16;
@@ -3060,8 +3060,8 @@ begin
   X := (R shr 16 xor L) and $0000FFFF; L := L xor X; R := R xor X shl 16;
   X := (R shr  4 xor L) and $0F0F0F0F; L := L xor X; R := R xor X shl  4;
 
-  Dest[0] := SwapLong(R);
-  Dest[1] := SwapLong(L);
+  Dest[0] := SwapUInt32(R);
+  Dest[1] := SwapUInt32(L);
 end;
 
 class function TCipher_1DES.Context: TCipherContext;
@@ -3615,7 +3615,7 @@ begin
   K := FUser;
   FillChar(X, SizeOf(X), 0);
   Move(Key, X, Size);
-  SwapLongBuffer(X, X, 4);
+  SwapUInt32Buffer(X, X, 4);
   I := 0;
   while I < 32 do
   begin
@@ -3761,8 +3761,8 @@ begin
   Assert(Size = Context.BufferSize);
 
   K := FUser;
-  A := SwapLong(PUInt32Array(Source)[0]);
-  B := SwapLong(PUInt32Array(Source)[1]);
+  A := SwapUInt32(PUInt32Array(Source)[0]);
+  B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 2 do
   begin
     T := K[0] + B;
@@ -3807,8 +3807,8 @@ begin
       Break;
     K := @K[6];
   end;
-  PUInt32Array(Dest)[0] := SwapLong(B);
-  PUInt32Array(Dest)[1] := SwapLong(A);
+  PUInt32Array(Dest)[0] := SwapUInt32(B);
+  PUInt32Array(Dest)[1] := SwapUInt32(A);
 end;
 
 procedure TCipher_Cast128.DoDecode(Source, Dest: Pointer; Size: Integer);
@@ -3821,8 +3821,8 @@ begin
   JumpStart := False;
 
   K := @PUInt32Array(FUser)[12];
-  B := SwapLong(PUInt32Array(Source)[0]);
-  A := SwapLong(PUInt32Array(Source)[1]);
+  B := SwapUInt32(PUInt32Array(Source)[0]);
+  A := SwapUInt32(PUInt32Array(Source)[1]);
   I := 2;
 
   if FRounds <= 12 then
@@ -3878,8 +3878,8 @@ begin
     Dec(PUInt32(K), 6);
   end;
 
-  PUInt32Array(Dest)[0] := SwapLong(A);
-  PUInt32Array(Dest)[1] := SwapLong(B);
+  PUInt32Array(Dest)[0] := SwapUInt32(A);
+  PUInt32Array(Dest)[1] := SwapUInt32(B);
 end;
 
 { TCipher_Gost }
@@ -4969,7 +4969,7 @@ var
   begin
     Move(A.R, K[0], 4);
     Move(A.L, K[4], 4);
-    SwapLongBuffer(K, K, 2);
+    SwapUInt32Buffer(K, K, 2);
     for I := 0 to 7 do
     begin
       T[I] := Mul(Shark_I[I, 0], K[0]);

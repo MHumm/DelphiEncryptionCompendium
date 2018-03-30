@@ -946,9 +946,6 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_ESCAPE);
   {$ENDIF}
 
-  LogFile := TStringList.Create;
 finalization
-  LogFile.SaveToFile('c:\temp\DECTest.txt');
-  LogFile.Free;
 end.
 
