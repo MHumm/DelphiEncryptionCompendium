@@ -189,6 +189,9 @@ type
   /// </summary>
   THash_SHA1 = class(THash_SHA);
 
+  /// <summary>
+  ///   This algorithm is part of the SHA2 series of hash algorithms.
+  /// </summary>
   THash_SHA256 = class(THash_SHA)
   protected
     procedure DoInit; override;
@@ -197,6 +200,9 @@ type
     class function DigestSize: Integer; override;
   end;
 
+  /// <summary>
+  ///   This algorithm is part of the SHA2 series of hash algorithms.
+  /// </summary>
   THash_SHA384 = class(TDECHash)
   private
     FDigest: array[0..7] of Int64;
@@ -210,6 +216,9 @@ type
     class function BlockSize: Integer; override; // 128
   end;
 
+  /// <summary>
+  ///   This algorithm is part of the SHA2 series of hash algorithms.
+  /// </summary>
   THash_SHA512 = class(THash_SHA384)
   protected
     procedure DoInit; override;

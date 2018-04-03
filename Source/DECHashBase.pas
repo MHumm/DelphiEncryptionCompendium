@@ -209,7 +209,7 @@ type
     /// <returns>
     ///   string with the calculated hash value
     /// </returns>
-    function CalcString(const Value: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
+    function CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString; overload;
 
     procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
     function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil; const Progress: IDECProgress = nil): RawByteString; overload;

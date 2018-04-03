@@ -844,9 +844,11 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  TDECCipher.ClassList := TDECClassList.Create;
 
   TCipher_Null.RegisterClass(TDECCipher.ClassList);
 
 finalization
+  TDECCipher.ClassList.Free;
 
 end.

@@ -1140,7 +1140,6 @@ initialization
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
 
-
 finalization
 
   // No need to unregister the hash classes, as the list is being freed
