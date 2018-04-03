@@ -68,7 +68,8 @@ object MainForm: TMainForm
         Size.Width = 401.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        OnKeyDown = EditInputKeyDown
+        OnChangeTracking = EditInputChangeTracking
+        OnKeyUp = EditInputKeyUp
       end
       object EditOutput: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]

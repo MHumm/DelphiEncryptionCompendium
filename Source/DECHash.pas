@@ -130,11 +130,19 @@ type
     class function BlockSize: Integer; override;
   end;
 
+  /// <summary>
+  ///   The MD4 algorithm is being considered to be unsafe. Support is only
+  ///   being provided for backward compatibility.
+  /// </summary>
   THash_MD4 = class(THashBaseMD4)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
   end;
 
+  /// <summary>
+  ///   The MD5 algorithm is being considered to be unsafe. Support is only
+  ///   being provided for backward compatibility.
+  /// </summary>
   THash_MD5 = class(THashBaseMD4)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -250,9 +258,10 @@ type
     ///   The range for this parameter is 3-5 rounds. If a value outside this
     ///   range is assigned, the value used depends on the DigestSize. For 
     ///   DigestSizes <= 20 it will be set to 3, for values <= 28 to 4 and for
-    ///   bigger values to 5.
+    ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
+    ///   as in 2003 collisions could be found with a setting of 3 rounds only.
     /// </summary>
-    property Rounds: Integer read FRounds write SetRounds; // 3 - 5
+    property Rounds: Integer read FRounds write SetRounds;
   end;
 
   THash_Haval128 = class(THashBaseHaval)
@@ -298,6 +307,10 @@ type
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
+  /// <summary>
+  ///   The Panama algorithm is being considered to be unsafe. Support is only
+  ///   being provided for backward compatibility.
+  /// </summary>
   THash_Panama = class(TDECHash)
   private
     FLFSRBuffer: array[0..31, 0..7] of UInt32;
@@ -352,7 +365,8 @@ type
   end;
 
   /// <summary>
-  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
+  ///   Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
   THashBaseSnefru = class(TDECHash)
   private
@@ -368,11 +382,16 @@ type
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
     ///   algorithm will use. With the default of 8 rounds it is being considered
-    ///   as safe as of spring 2016.
+    ///   as safe as of spring 2016, with less rounds this algorithm is considered
+    ///   to be unsafe.
     /// </summary>
     property SecurityLevel: Integer read FSecurityLevel write SetSecurityLevel;
   end;
 
+  /// <summary>
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
+  ///   Be sure to set SecurityLevel to at least 8. See remark there.
+  /// </summary>
   THash_Snefru128 = class(THashBaseSnefru)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -381,6 +400,10 @@ type
     class function BlockSize: Integer; override; // 48
   end;
 
+  /// <summary>
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
+  ///   Be sure to set SecurityLevel to at least 8. See remark there.
+  /// </summary>
   THash_Snefru256 = class(THashBaseSnefru)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;

@@ -30,9 +30,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
-    procedure EditInputKeyDown(Sender: TObject; var Key: Word;
-      var KeyChar: Char; Shift: TShiftState);
     procedure ComboBoxHashFunctionChange(Sender: TObject);
+    procedure EditInputChangeTracking(Sender: TObject);
+    procedure EditInputKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -88,7 +89,7 @@ begin
       ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).Create;
 
     try
-      Hash.Init;
+//      Hash.Init;
 // Problem: zumindest unter Windows konvertiert BytesOf via ANSI?!
       InputText := StringOf(InputFormatting.Encode(System.SysUtils.BytesOf(EditInput.Text)));
       EditOutput.Text := Hash.CalcString(InputText, OutputFormatting);
@@ -107,12 +108,16 @@ begin
       ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).IsPasswordHash;
 end;
 
-procedure TMainForm.EditInputKeyDown(Sender: TObject; var Key: Word;
+procedure TMainForm.EditInputChangeTracking(Sender: TObject);
+begin
+  if CheckBoxLiveCalc.IsChecked then
+    ButtonCalcClick(self);
+end;
+
+procedure TMainForm.EditInputKeyUp(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
-  // KeyDownEvent is being used because when continously pressing the backspace
-  // key KeyUp is only fired after releasing it
-  if (Key = vkReturn) or CheckBoxLiveCalc.IsChecked then
+  if (Key = vkReturn) then
     ButtonCalcClick(self);
 end;
 
