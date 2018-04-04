@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.942,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj</Transaction>
+    <Transaction>2018.04.03 17:21:06.008,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
+    <Transaction>2018.04.03 17:21:06.024,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
+    <Transaction>2018.04.03 17:21:06.044,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
+    <Transaction>2018.04.03 17:21:06.078,=D:\Projekte\DECGit\Source\DECHash.pas</Transaction>
+    <Transaction>2018.04.03 17:21:06.109,=D:\Projekte\DECGit\Source\DECHashBase.pas</Transaction>
+    <Transaction>2018.04.03 17:21:06.140,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
+    <Transaction>2018.04.03 17:22:50.982,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
+    <Transaction>2018.04.03 17:23:15.834,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
+    <Transaction>2018.04.03 17:23:31.572,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
+  </Transactions>
+</BorlandProject>

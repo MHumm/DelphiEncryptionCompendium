@@ -136,6 +136,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
 
     procedure TestKDF2;
   end;
@@ -156,6 +157,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_MD5
@@ -174,6 +176,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_RipeMD128
@@ -192,6 +195,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_RipeMD160
@@ -209,6 +213,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_RipeMD256
@@ -226,6 +231,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_RipeMD320
@@ -243,6 +249,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_SHA
@@ -260,6 +267,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_SHA256
@@ -277,6 +285,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_SHA384
@@ -295,6 +304,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_SHA512
@@ -312,6 +322,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Haval128
@@ -329,6 +340,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Haval160
@@ -346,6 +358,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Haval192
@@ -363,6 +376,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Haval224
@@ -380,6 +394,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Haval256
@@ -397,6 +412,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Tiger
@@ -417,6 +433,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Tiger
@@ -437,6 +454,7 @@ type
     procedure TestCalcUnicodeString;
 //    procedure TestCalcFile;
     procedure TestDigestSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Panama
@@ -456,6 +474,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Whirlpool
@@ -474,6 +493,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Whirlpool1
@@ -492,6 +512,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Square
@@ -510,6 +531,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Snefru128
@@ -528,6 +550,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Snefru256
@@ -546,6 +569,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
   // Test methods for class THash_Sapphire
@@ -564,6 +588,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestBlockSize;
+    procedure TestIsPasswordHash;
   end;
 
 implementation
@@ -601,6 +626,11 @@ end;
 procedure TestTHash_MD2.TestDigestSize;
 begin
   CheckEquals(16, FHash_MD2.DigestSize);
+end;
+
+procedure TestTHash_MD2.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_MD2.IsPasswordHash);
 end;
 
 procedure TestTHash_MD2.TestKDF2;
@@ -757,6 +787,11 @@ begin
   CheckEquals(16, FHash_MD4.DigestSize);
 end;
 
+procedure TestTHash_MD4.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_MD4.IsPasswordHash);
+end;
+
 procedure TestTHash_MD5.SetUp;
 begin
   FHash_MD5 := THash_MD5.Create;
@@ -849,6 +884,11 @@ end;
 procedure TestTHash_MD5.TestDigestSize;
 begin
   CheckEquals(16, FHash_MD5.DigestSize);
+end;
+
+procedure TestTHash_MD5.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_MD5.IsPasswordHash);
 end;
 
 procedure TestTHash_MD5.TestCalcStream;
@@ -959,6 +999,11 @@ begin
   CheckEquals(16, FHash_RipeMD128.DigestSize);
 end;
 
+procedure TestTHash_RipeMD128.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_RipeMD128.IsPasswordHash);
+end;
+
 procedure TestTHash_RipeMD128.TestCalcStream;
 begin
   DoTestCalcStream(FHash_RipeMD128);
@@ -1045,6 +1090,11 @@ end;
 procedure TestTHash_RipeMD160.TestDigestSize;
 begin
   CheckEquals(20, FHash_RipeMD160.DigestSize);
+end;
+
+procedure TestTHash_RipeMD160.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_RipeMD160.IsPasswordHash);
 end;
 
 procedure TestTHash_RipeMD160.TestCalcBuffer;
@@ -1150,6 +1200,11 @@ begin
   CheckEquals(32, FHash_RipeMD256.DigestSize);
 end;
 
+procedure TestTHash_RipeMD256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_RipeMD256.IsPasswordHash);
+end;
+
 procedure TestTHash_RipeMD256.TestCalcBuffer;
 begin
  DoTestCalcBuffer(FHash_RipeMD256);
@@ -1253,6 +1308,11 @@ begin
   CheckEquals(40, FHash_RipeMD320.DigestSize);
 end;
 
+procedure TestTHash_RipeMD320.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_RipeMD320.IsPasswordHash);
+end;
+
 procedure TestTHash_RipeMD320.TestCalcBuffer;
 begin
   DoTestCalcBuffer(FHash_RipeMD320);
@@ -1328,6 +1388,11 @@ begin
   CheckEquals(20, FHash_SHA.DigestSize);
 end;
 
+procedure TestTHash_SHA.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_SHA.IsPasswordHash);
+end;
+
 procedure TestTHash_SHA.TestCalcBuffer;
 begin
   DoTestCalcBuffer(FHash_SHA);
@@ -1390,6 +1455,11 @@ end;
 procedure TestTHash_SHA256.TestDigestSize;
 begin
   CheckEquals(32, FHash_SHA256.DigestSize);
+end;
+
+procedure TestTHash_SHA256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_SHA256.IsPasswordHash);
 end;
 
 procedure TestTHash_SHA256.TestCalcBuffer;
@@ -1480,6 +1550,11 @@ begin
   CheckEquals(48, FHash_SHA384.DigestSize);
 end;
 
+procedure TestTHash_SHA384.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_SHA384.IsPasswordHash);
+end;
+
 procedure TestTHash_SHA384.TestBlockSize;
 begin
   CheckEquals(128, FHash_SHA384.BlockSize);
@@ -1546,6 +1621,11 @@ end;
 procedure TestTHash_SHA512.TestDigestSize;
 begin
   CheckEquals(64, FHash_SHA512.DigestSize);
+end;
+
+procedure TestTHash_SHA512.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_SHA512.IsPasswordHash);
 end;
 
 procedure TestTHash_SHA512.TestCalcBuffer;
@@ -1719,6 +1799,11 @@ begin
   CheckEquals(16, FHash_Haval128.DigestSize);
 end;
 
+procedure TestTHash_Haval128.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Haval128.IsPasswordHash);
+end;
+
 procedure TestTHash_Haval128.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Haval128);
@@ -1873,6 +1958,11 @@ end;
 procedure TestTHash_Haval160.TestDigestSize;
 begin
   CheckEquals(20, FHash_Haval160.DigestSize);
+end;
+
+procedure TestTHash_Haval160.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Haval160.IsPasswordHash);
 end;
 
 procedure TestTHash_Haval160.TestCalcStream;
@@ -2031,6 +2121,11 @@ begin
   CheckEquals(24, FHash_Haval192.DigestSize);
 end;
 
+procedure TestTHash_Haval192.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Haval192.IsPasswordHash);
+end;
+
 procedure TestTHash_Haval192.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Haval192);
@@ -2185,6 +2280,11 @@ end;
 procedure TestTHash_Haval224.TestDigestSize;
 begin
   CheckEquals(28, FHash_Haval224.DigestSize);
+end;
+
+procedure TestTHash_Haval224.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Haval224.IsPasswordHash);
 end;
 
 procedure TestTHash_Haval224.TestCalcStream;
@@ -2357,6 +2457,11 @@ begin
   CheckEquals(32, FHash_Haval256.DigestSize);
 end;
 
+procedure TestTHash_Haval256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Haval256.IsPasswordHash);
+end;
+
 procedure TestTHash_Haval256.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Haval256);
@@ -2444,6 +2549,11 @@ end;
 procedure TestTHash_Tiger_3Rounds.TestDigestSize;
 begin
   CheckEquals(24, FHash_Tiger.DigestSize);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Tiger.IsPasswordHash);
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestSet2Rounds;
@@ -2571,6 +2681,11 @@ begin
   CheckEquals(24, FHash_Tiger.DigestSize);
 end;
 
+procedure TestTHash_Tiger_4Rounds.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Tiger.IsPasswordHash);
+end;
+
 procedure TestTHash_Tiger_4Rounds.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Tiger);
@@ -2640,6 +2755,11 @@ end;
 procedure TestTHash_Panama.TestDigestSize;
 begin
   CheckEquals(32, FHash_Panama.DigestSize);
+end;
+
+procedure TestTHash_Panama.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Panama.IsPasswordHash);
 end;
 
 procedure TestTHash_Panama.TestBlockSize;
@@ -2815,6 +2935,11 @@ begin
   CheckEquals(64, FHash_Whirlpool.DigestSize);
 end;
 
+procedure TestTHash_Whirlpool.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Whirlpool.IsPasswordHash);
+end;
+
 procedure TestTHash_Whirlpool.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Whirlpool);
@@ -2968,6 +3093,11 @@ begin
   CheckEquals(64, FHash_Whirlpool1.DigestSize);
 end;
 
+procedure TestTHash_Whirlpool1.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Whirlpool1.IsPasswordHash);
+end;
+
 procedure TestTHash_Whirlpool1.TestCalcStream;
 begin
   DoTestCalcStream(FHash_Whirlpool1);
@@ -3040,6 +3170,11 @@ end;
 procedure TestTHash_Square.TestDigestSize;
 begin
   CheckEquals(16, FHash_Square.DigestSize);
+end;
+
+procedure TestTHash_Square.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Square.IsPasswordHash);
 end;
 
 procedure TestTHash_Square.TestBlockSize;
@@ -3174,6 +3309,11 @@ begin
   CheckEquals(16, FHash_Snefru128.DigestSize);
 end;
 
+procedure TestTHash_Snefru128.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Snefru128.IsPasswordHash);
+end;
+
 procedure TestTHash_Snefru128.TestBlockSize;
 begin
   CheckEquals(48, FHash_Snefru128.BlockSize);
@@ -3289,6 +3429,11 @@ end;
 procedure TestTHash_Snefru256.TestDigestSize;
 begin
   CheckEquals(32, FHash_Snefru256.DigestSize);
+end;
+
+procedure TestTHash_Snefru256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Snefru256.IsPasswordHash);
 end;
 
 procedure TestTHash_Snefru256.TestBlockSize;
@@ -3476,6 +3621,11 @@ end;
 procedure TestTHash_Sapphire.TestDigestSize;
 begin
   CheckEquals(64, FHash_Sapphire.DigestSize);
+end;
+
+procedure TestTHash_Sapphire.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash_Sapphire.IsPasswordHash);
 end;
 
 procedure TestTHash_Sapphire.TestBlockSize;

@@ -609,7 +609,7 @@ end;
 procedure THashBaseMD4.DoDone;
 begin
   if FCount[2] or FCount[3] <> 0 then
-    HashingOverflowError;
+    RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $80;
   FBuffer[FBufferIndex] := FPaddingByte;
@@ -1794,7 +1794,7 @@ end;
 procedure THash_SHA.DoDone;
 begin
   if FCount[2] or FCount[3] <> 0 then
-    HashingOverflowError;
+    RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $80;
   FBuffer[FBufferIndex] := FPaddingByte;
@@ -2261,7 +2261,7 @@ var
   T: Word;
 begin
   if FCount[2] or FCount[3] <> 0 then
-    HashingOverflowError;
+    RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $01;
   FBuffer[FBufferIndex] := FPaddingByte;

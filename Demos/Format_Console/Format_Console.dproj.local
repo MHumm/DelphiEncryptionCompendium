@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.295,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj</Transaction>
+    <Transaction>2018.04.03 17:09:31.692,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
+    <Transaction>2018.04.03 17:13:03.053,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
+    <Transaction>2018.04.03 17:13:12.109,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
+    <Transaction>2018.04.03 17:13:25.623,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
+    <Transaction>2018.04.03 17:14:11.291,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
+    <Transaction>2018.04.03 17:14:59.745,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
+  </Transactions>
+</BorlandProject>

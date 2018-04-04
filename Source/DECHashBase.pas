@@ -102,7 +102,7 @@ type
     /// <summary>
     ///   Raises an EDECHashException overflow error
     /// </summary>
-    procedure HashingOverflowError;
+    procedure RaiseHashOverflowError;
 
 { TODO : Sollte ersetzt werden zusammen mit PByteArray, wird aber auch in DECRandom benutzt! }
     function Digest: PByteArray; virtual; abstract;
@@ -256,7 +256,7 @@ type
 
 resourcestring
   sHashNotInitialized   = 'Hash must be initialized';
-  sHashingOverflowError = 'Hash Overflow: Too many bits processed';
+  sRaiseHashOverflowError = 'Hash Overflow: Too many bits processed';
 
 { TDECHash }
 
@@ -279,8 +279,22 @@ begin
 end;
 
 class function TDECHash.IsPasswordHash: Boolean;
+var
+  Parent : TClass;
 begin
-  result := ClassParent = TDECPasswordHash;
+  result := false;
+
+  Parent := ClassParent;
+  while assigned(Parent) do
+  begin
+    if (ClassParent = TDECPasswordHash) then
+    begin
+      result := true;
+      break;
+    end
+    else
+      Parent := Parent.ClassParent;
+  end;
 end;
 
 procedure TDECHash.Increment8(var Value; Add: UInt32);
@@ -300,7 +314,7 @@ procedure TDECHash.Increment8(var Value; Add: UInt32);
     ADC [EAX].DWord[20],0
     ADC [EAX].DWord[24],0
     ADC [EAX].DWord[28],0
-    JC HashingOverflowError
+    JC RaiseHashOverflowError
   end;
   {$ENDIF !X86ASM}
   {$IFDEF X64ASM}
@@ -310,7 +324,7 @@ procedure TDECHash.Increment8(var Value; Add: UInt32);
     ADD QWORD PTR [RCX +  8], 0
     ADD QWORD PTR [RCX + 16], 0
     ADD QWORD PTR [RCX + 24], 0
-    JC HashingOverflowError;
+    JC RaiseHashOverflowError;
   end;
   {$ENDIF !X64ASM}
 {$ELSE PUREPASCAL}
@@ -351,13 +365,13 @@ begin
   AddC(Data[7], 0, Carry);
 
   if Carry then
-    HashingOverflowError;
+    RaiseHashOverflowError;
 end;
 {$ENDIF PUREPASCAL}
 
-procedure TDECHash.HashingOverflowError;
+procedure TDECHash.RaiseHashOverflowError;
 begin
-  raise EDECHashException.CreateRes(@sHashingOverflowError);
+  raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
 end;
 
 procedure TDECHash.HashNotInitialized;
