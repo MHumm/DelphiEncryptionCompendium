@@ -5,6 +5,6 @@
     <Transaction>1899.12.30 00:00:00.000.500,D:\Projekte\ProjectGroup1.groupproj=D:\Projekte\DECPurePascalRededigned\Source\DEC60Complete.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj"/>
+		<Projects ActiveProject="D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj"/>
 	</Default.Personality>
 </BorlandProject>

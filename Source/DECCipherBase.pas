@@ -76,6 +76,16 @@ type
   TCipher_Null          = class;
 
   /// <summary>
+  ///   Possible kindes of cipher algorithms
+  /// </summary>
+  TCipherTypes = (ctStream, ctBlock, ctSymmetric, ctAsymmetric);
+
+  /// <summary>
+  ///   Actual kind of cipher algorithm
+  /// </summary>
+  TCipherType = set of TCipherTypes;
+
+  /// <summary>
   ///   Record containing meta data about a certain cipher
   /// </summary>
   TCipherContext = packed record
@@ -96,6 +106,11 @@ type
     /// </summary>
     UserSize   : Integer;
     UserSave   : Boolean;
+
+    /// <summary>
+    ///   Specifies the kind of cipher
+    /// </summary>
+    CipherType : TCipherType;
   end;
 
   /// <summary>

@@ -265,6 +265,10 @@ type
     class function Context: TCipherContext; override;
   end;
 
+  /// <summary>
+  ///   This is a well known stream cipher. In February 2015 its use in context
+  ///   of TLS has been forbidden due to severe security issues.
+  /// </summary>
   TCipher_RC4 = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
@@ -414,6 +418,10 @@ type
     class function Context: TCipherContext; override;
   end;
 
+  /// <summary>
+  ///   Do no longer use this algorithm if possible, as it got broken in 2015
+  ///   by crypto analysis.
+  /// </summary>
   TCipher_Misty = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
@@ -423,15 +431,16 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  {
-    This algorithm resembles the Data Encryption Standard (DES), but is easier
-    to implement in software and is supposed to be more secure. It is not to be
-    confused with another algorithm - known by the same name - which is simply
-    DES without the initial and final permutations.
-
-    The NewDES here is a completely different algorithm.
-  }
-
+  /// <summary>
+  ///   While this algorithm resembles the Data Encryption Standard (DES),
+  ///   it is easier to implement in software and is supposed to be more secure.
+  ///   It is not to be confused with another algorithm - known by the same
+  ///   name - which is simply DES without the initial and final permutations.
+  ///   The NewDES here is a completely different algorithm.
+  ///
+  ///   Be aware though that recent crypto analysis shows that this algorithm is
+  ///   less safe than DES and thus not to be recommended for use!
+  /// </summary>
   TCipher_NewDES = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
@@ -537,6 +546,9 @@ type
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
+  /// <summary>
+  ///   XTEA is an improved version of the TEA algorithm.
+  /// </summary>
   TCipher_XTEA = class(TCipher_TEA)
   protected
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -561,11 +573,12 @@ type
 
 class function TCipher_Blowfish.Context: TCipherContext;
 begin
-  Result.KeySize := 56;
+  Result.KeySize    := 56;
   Result.BufferSize := 8;
-  Result.BlockSize := 8;
-  Result.UserSize := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
-  Result.UserSave := False;
+  Result.BlockSize  := 8;
+  Result.UserSize   := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Blowfish.DoInit(const Key; Size: Integer);
@@ -778,11 +791,12 @@ type
 
 class function TCipher_Twofish.Context: TCipherContext;
 begin
-  Result.KeySize := 32;
+  Result.KeySize    := 32;
   Result.BufferSize := 16;
-  Result.BlockSize := 16;
-  Result.UserSize := 4256;
-  Result.UserSave := False;
+  Result.BlockSize  := 16;
+  Result.UserSize   := 4256;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Twofish.DoInit(const Key; Size: Integer);
@@ -1092,11 +1106,12 @@ end;
 
 class function TCipher_IDEA.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
+  Result.KeySize    := 16;
   Result.BufferSize := 8;
-  Result.BlockSize := 8;
-  Result.UserSize := 208;
-  Result.UserSave := False;
+  Result.BlockSize  := 8;
+  Result.UserSize   := 208;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_IDEA.DoInit(const Key; Size: Integer);
@@ -1266,11 +1281,12 @@ end;
 
 class function TCipher_Cast256.Context: TCipherContext;
 begin
-  Result.KeySize := 32;
-  Result.BlockSize := 16;
+  Result.KeySize    := 32;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
-  Result.UserSize := 384;
-  Result.UserSave := False;
+  Result.UserSize   := 384;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Cast256.DoInit(const Key; Size: Integer);
@@ -1537,11 +1553,12 @@ end;
 
 class function TCipher_Mars.Context: TCipherContext;
 begin
-  Result.KeySize := 56;
-  Result.BlockSize := 16;
+  Result.KeySize    := 56;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
-  Result.UserSize := 160;
-  Result.UserSave := False;
+  Result.UserSize   := 160;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Mars.DoInit(const Key; Size: Integer);
@@ -1899,11 +1916,12 @@ end;
 
 class function TCipher_RC4.Context: TCipherContext;
 begin
-  Result.KeySize := 256;
-  Result.BlockSize := 1;
+  Result.KeySize    := 256;
+  Result.BlockSize  := 1;
   Result.BufferSize := 16;
-  Result.UserSize := 256 + 2;
-  Result.UserSave := True;
+  Result.UserSize   := 256 + 2;
+  Result.UserSave   := True;
+  Result.CipherType := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_RC4.DoInit(const Key; Size: Integer);
@@ -1963,11 +1981,12 @@ end;
 
 class function TCipher_RC6.Context: TCipherContext;
 begin
-  Result.KeySize := 256;
-  Result.BlockSize := 16;
+  Result.KeySize    := 256;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
-  Result.UserSize := 272;
-  Result.UserSave := False;
+  Result.UserSize   := 272;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC6.SetRounds(Value: Integer);
@@ -2212,11 +2231,12 @@ const
   Rijndael_Blocks =  4;
   Rijndael_Rounds = 14;
 begin
-  Result.KeySize := 32;
-  Result.BlockSize := Rijndael_Blocks * 4;
+  Result.KeySize    := 32;
+  Result.BlockSize  := Rijndael_Blocks * 4;
   Result.BufferSize := Rijndael_Blocks * 4;
-  Result.UserSize := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
-  Result.UserSave := False;
+  Result.UserSize   := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
@@ -2550,11 +2570,12 @@ end;
 
 class function TCipher_Square.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 16;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
-  Result.UserSize := 9 * 4 * 2 * SizeOf(UInt32);
-  Result.UserSave := False;
+  Result.UserSize   := 9 * 4 * 2 * SizeOf(UInt32);
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Square.DoInit(const Key; Size: Integer);
@@ -2719,11 +2740,12 @@ end;
 
 class function TCipher_SCOP.Context: TCipherContext;
 begin
-  Result.KeySize := 48;
-  Result.BlockSize := 4;
+  Result.KeySize    := 48;
+  Result.BlockSize  := 4;
   Result.BufferSize := 32;
-  Result.UserSize := 384 * 4 + 3 * SizeOf(UInt32);
-  Result.UserSave := True;
+  Result.UserSize   := 384 * 4 + 3 * SizeOf(UInt32);
+  Result.UserSave   := True;
+//  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_SCOP.DoInit(const Key; Size: Integer);
@@ -2883,11 +2905,12 @@ type
 
 class function TCipher_Sapphire.Context: TCipherContext;
 begin
-  Result.KeySize := 1024;
-  Result.BlockSize := 1;
+  Result.KeySize    := 1024;
+  Result.BlockSize  := 1;
   Result.BufferSize := 32;
-  Result.UserSize := SizeOf(TSapphireKey);
-  Result.UserSave := True;
+  Result.UserSize   := SizeOf(TSapphireKey);
+  Result.UserSave   := True;
+//  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Sapphire.DoInit(const Key; Size: Integer);
@@ -3066,11 +3089,12 @@ end;
 
 class function TCipher_1DES.Context: TCipherContext;
 begin
-  Result.KeySize := 8;
-  Result.BlockSize := 8;
+  Result.KeySize    := 8;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 32 * 4 * 2;
-  Result.UserSave := False;
+  Result.UserSize   := 32 * 4 * 2;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_1DES.DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
@@ -3166,11 +3190,12 @@ end;
 
 class function TCipher_2DES.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 8;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 32 * 4 * 2 * 2;
-  Result.UserSave := False;
+  Result.UserSize   := 32 * 4 * 2 * 2;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_2DES.DoInit(const Key; Size: Integer);
@@ -3208,11 +3233,12 @@ end;
 
 class function TCipher_3DES.Context: TCipherContext;
 begin
-  Result.KeySize := 24;
-  Result.BlockSize := 8;
+  Result.KeySize    := 24;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 32 * 4 * 2 * 3;
-  Result.UserSave := False;
+  Result.UserSize   := 32 * 4 * 2 * 3;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3DES.DoInit(const Key; Size: Integer);
@@ -3252,9 +3278,10 @@ end;
 
 class function TCipher_2DDES.Context: TCipherContext;
 begin
-  Result := inherited Context;
-  Result.BlockSize := 16;
+  Result            := inherited Context;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3297,9 +3324,10 @@ end;
 
 class function TCipher_3DDES.Context: TCipherContext;
 begin
-  Result := inherited Context;
-  Result.BlockSize := 16;
+  Result            := inherited Context;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3342,9 +3370,10 @@ end;
 
 class function TCipher_3TDES.Context: TCipherContext;
 begin
-  Result := inherited Context;
-  Result.BlockSize := 24;
+  Result            := inherited Context;
+  Result.BlockSize  := 24;
   Result.BufferSize := 24;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3TDES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3406,11 +3435,12 @@ type
 
 class function TCipher_3Way.Context: TCipherContext;
 begin
-  Result.KeySize := 12;
-  Result.BlockSize := 12;
+  Result.KeySize    := 12;
+  Result.BlockSize  := 12;
   Result.BufferSize := 12;
-  Result.UserSize := SizeOf(T3Way_Key);
-  Result.UserSave := False;
+  Result.UserSize   := SizeOf(T3Way_Key);
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3Way.DoInit(const Key; Size: Integer);
@@ -3580,11 +3610,12 @@ end;
 
 class function TCipher_Cast128.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 8;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 128;
-  Result.UserSave := False;
+  Result.UserSize   := 128;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Cast128.SetRounds(Value: Integer);
@@ -3886,11 +3917,12 @@ end;
 
 class function TCipher_Gost.Context: TCipherContext;
 begin
-  Result.KeySize := 32;
-  Result.BlockSize := 8;
+  Result.KeySize    := 32;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 32;
-  Result.UserSave := False;
+  Result.UserSize   := 32;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Gost.DoInit(const Key; Size: Integer);
@@ -3998,11 +4030,12 @@ end;
 
 class function TCipher_Misty.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 8;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 128;
-  Result.UserSave := False;
+  Result.UserSize   := 128;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 function Misty_I(Value, Key: UInt32): UInt32;
@@ -4179,11 +4212,12 @@ end;
 
 class function TCipher_NewDES.Context: TCipherContext;
 begin
-  Result.KeySize := 15;
-  Result.BlockSize := 8;
+  Result.KeySize    := 15;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 60 * 2;
-  Result.UserSave := True;
+  Result.UserSize   := 60 * 2;
+  Result.UserSave   := True;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_NewDES.DoInit(const Key; Size: Integer);
@@ -4234,11 +4268,12 @@ end;
 
 class function TCipher_Q128.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 16;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 16;
   Result.BufferSize := 16;
-  Result.UserSize := 256;
-  Result.UserSave := False;
+  Result.UserSize   := 256;
+  Result.UserSave   := False;
+//  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Q128.DoInit(const Key; Size: Integer);
@@ -4431,11 +4466,12 @@ end;
 
 class function TCipher_RC2.Context: TCipherContext;
 begin
-  Result.KeySize := 128;
-  Result.BlockSize := 8;
+  Result.KeySize    := 128;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 128;
-  Result.UserSave := False;
+  Result.UserSize   := 128;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC2.DoInit(const Key; Size: Integer);
@@ -4534,11 +4570,12 @@ end;
 
 class function TCipher_RC5.Context: TCipherContext;
 begin
-  Result.KeySize := 256;
-  Result.BlockSize := 8;
+  Result.KeySize    := 256;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 136;
-  Result.UserSave := False;
+  Result.UserSize   := 136;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC5.SetRounds(Value: Integer);
@@ -4641,11 +4678,12 @@ end;
 
 class function TCipher_SAFER.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 8;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 768;
-  Result.UserSave := False;
+  Result.UserSize   := 768;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_SAFER.SetRounds(Value: Integer);
@@ -4929,11 +4967,12 @@ type
 
 class function TCipher_Shark.Context: TCipherContext;
 begin
-  Result.KeySize := 16;
-  Result.BlockSize := 8;
+  Result.KeySize    := 16;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := 112;
-  Result.UserSave := False;
+  Result.UserSize   := 112;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
@@ -5181,11 +5220,12 @@ type
 
 class function TCipher_Skipjack.Context: TCipherContext;
 begin
-  Result.KeySize := 10;
-  Result.BlockSize := 8;
+  Result.KeySize    := 10;
+  Result.BlockSize  := 8;
   Result.BufferSize := 8;
-  Result.UserSize := $A00;
-  Result.UserSave := False;
+  Result.UserSize   := $A00;
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Skipjack.DoInit(const Key; Size: Integer);
@@ -5565,11 +5605,12 @@ const
 
 class function TCipher_TEA.Context: TCipherContext;
 begin
-  Result.KeySize := 16;   // 128 bits
-  Result.BlockSize := 8;  // 64 bits
+  Result.KeySize    := 16;   // 128 bits
+  Result.BlockSize  := 8;  // 64 bits
   Result.BufferSize := 8; // 64 bits
-  Result.UserSize := 32;  // 256 bits
-  Result.UserSave := False;
+  Result.UserSize   := 32;  // 256 bits
+  Result.UserSave   := False;
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_TEA.SetRounds(Value: Integer);
