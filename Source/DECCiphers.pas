@@ -2745,7 +2745,7 @@ begin
   Result.BufferSize := 32;
   Result.UserSize   := 384 * 4 + 3 * SizeOf(UInt32);
   Result.UserSave   := True;
-//  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.CipherType := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_SCOP.DoInit(const Key; Size: Integer);
@@ -2910,7 +2910,7 @@ begin
   Result.BufferSize := 32;
   Result.UserSize   := SizeOf(TSapphireKey);
   Result.UserSave   := True;
-//  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.CipherType := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_Sapphire.DoInit(const Key; Size: Integer);
@@ -4273,7 +4273,7 @@ begin
   Result.BufferSize := 16;
   Result.UserSize   := 256;
   Result.UserSave   := False;
-//  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Q128.DoInit(const Key; Size: Integer);

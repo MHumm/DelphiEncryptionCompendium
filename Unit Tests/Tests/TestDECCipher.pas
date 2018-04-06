@@ -634,6 +634,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(4168,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Blowfish.TestDecode;
@@ -671,6 +672,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals(4256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_IDEA.SetUp;
@@ -695,6 +697,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 208,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Cast256.SetUp;
@@ -719,6 +722,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 384,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Mars.SetUp;
@@ -743,6 +747,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 160,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_RC4.SetUp;
@@ -767,6 +772,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 258,  ReturnValue.UserSize);
   CheckEquals(true,  ReturnValue.UserSave);
+  CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_RC6.SetUp;
@@ -791,6 +797,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 272,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Rijndael.SetUp;
@@ -815,6 +822,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 480,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Square.SetUp;
@@ -839,6 +847,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 288,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_SCOP.SetUp;
@@ -863,6 +872,7 @@ begin
   CheckEquals(  32,  ReturnValue.BufferSize);
   CheckEquals(1548,  ReturnValue.UserSize);
   CheckEquals(true,  ReturnValue.UserSave);
+  CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Sapphire.SetUp;
@@ -887,6 +897,7 @@ begin
   CheckEquals(  32,  ReturnValue.BufferSize);
   CheckEquals(1044,  ReturnValue.UserSize);
   CheckEquals(true,  ReturnValue.UserSave);
+  CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_1DES.Done;
@@ -940,6 +951,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_1DES.TestDecode;
@@ -974,6 +986,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 512,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_3DES.SetUp;
@@ -998,6 +1011,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_2DDES.SetUp;
@@ -1022,6 +1036,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 512,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_3DDES.SetUp;
@@ -1046,6 +1061,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_3TDES.SetUp;
@@ -1070,6 +1086,7 @@ begin
   CheckEquals(  24,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_3Way.SetUp;
@@ -1094,6 +1111,7 @@ begin
   CheckEquals(  12,  ReturnValue.BufferSize);
   CheckEquals( 120,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Cast128.SetUp;
@@ -1118,6 +1136,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Gost.SetUp;
@@ -1142,6 +1161,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Misty.SetUp;
@@ -1166,6 +1186,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_NewDES.SetUp;
@@ -1190,6 +1211,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 120,  ReturnValue.UserSize);
   CheckEquals(true,  ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Q128.SetUp;
@@ -1214,6 +1236,7 @@ begin
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_RC2.SetUp;
@@ -1238,6 +1261,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_RC5.SetUp;
@@ -1262,6 +1286,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 136,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_SAFER.SetUp;
@@ -1286,6 +1311,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Shark.SetUp;
@@ -1310,6 +1336,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 112,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_Skipjack.SetUp;
@@ -1334,6 +1361,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(2560,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_TEA.SetUp;
@@ -1358,6 +1386,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 procedure TestTCipher_XTEA.SetUp;
@@ -1382,6 +1411,7 @@ begin
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
 { TCipherBasis }
