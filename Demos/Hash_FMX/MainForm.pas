@@ -53,7 +53,8 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECFormatBase, DECFormat, Generics.Collections;
+  DECBaseClass, DECHashBase, DECHash, DECFormatBase, DECFormat, DECUtil,
+  Generics.Collections, FMX.Platform;
 
 {$R *.fmx}
 
@@ -62,7 +63,9 @@ var
   Hash             : TDECHash;
   InputFormatting  : TDECFormatClass;
   OutputFormatting : TDECFormatClass;
-  InputText        : string;
+  InputBuffer      : TBytes;
+  OutputBuffer     : TBytes;
+  AsyncDlg         : IFMXDialogServiceASync;
 begin
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
@@ -89,12 +92,22 @@ begin
       ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).Create;
 
     try
-//      Hash.Init;
-// Problem: zumindest unter Windows konvertiert BytesOf via ANSI?!
-      InputText := StringOf(InputFormatting.Encode(System.SysUtils.BytesOf(EditInput.Text)));
-      EditOutput.Text := Hash.CalcString(InputText, OutputFormatting);
-      // Ensure that the internally allocated memory is being freed AND cleared
-//      Hash.Done;
+      InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
+
+      if InputFormatting.IsValid(InputBuffer) then
+      begin
+        OutputBuffer := Hash.CalcBytes(InputFormatting.Decode(InputBuffer));
+
+        EditOutput.Text := DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer));
+      end
+      else
+        if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
+                                                             IInterface(AsyncDlg)) then
+          AsyncDlg.MessageDialogAsync(Translate('Input has wrong format'),
+                   TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
+          procedure (const AResult: TModalResult)
+          begin
+          end);
     finally
       Hash.Free;
     end;

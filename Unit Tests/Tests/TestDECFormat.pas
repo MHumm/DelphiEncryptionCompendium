@@ -277,7 +277,10 @@ procedure TestTFormat_HEX.TestIsValidRawByteString;
 begin
   CheckEquals(true,  TFormat_HEX.IsValid(BytesOf('')));
   CheckEquals(true,  TFormat_HEX.IsValid(BytesOf('0123456789abcdefABCDEF')));
-  CheckEquals(false, TFormat_HEX.IsValid(BytesOf('q')));
+  // Invalid character: q is not a hex char
+  CheckEquals(false, TFormat_HEX.IsValid(BytesOf('1q')));
+  // Hex input length needs to be a multiple of 2, if input is not empty
+  CheckEquals(false, TFormat_HEX.IsValid(BytesOf('6')));
 end;
 
 procedure TestTFormat_HEX.TestIsValidTBytes;
@@ -349,7 +352,10 @@ procedure TestTFormat_HEXL.TestIsValidRawByteString;
 begin
   CheckEquals(true, TFormat_HEXL.IsValid(BytesOf('')));
   CheckEquals(true, TFormat_HEXL.IsValid(BytesOf('0123456789abcdefABCDEF')));
-  CheckEquals(false, TFormat_HEXL.IsValid(BytesOf('q')));
+  // Invalid character: q is not a hex char
+  CheckEquals(false, TFormat_HEX.IsValid(BytesOf('1q')));
+  // Hex input length needs to be a multiple of 2, if input is not empty
+  CheckEquals(false, TFormat_HEX.IsValid(BytesOf('6')));
 end;
 
 procedure TestTFormat_HEXL.TestIsValidTBytes;

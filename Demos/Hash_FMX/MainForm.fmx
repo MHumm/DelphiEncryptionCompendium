@@ -20,9 +20,9 @@ object MainForm: TMainForm
     Viewport.Width = 427.000000000000000000
     Viewport.Height = 525.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 296.000000000000000000
+      Position.Y = 304.000000000000000000
       Size.Width = 427.000000000000000000
-      Size.Height = 225.000000000000000000
+      Size.Height = 217.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label3: TLabel
@@ -96,7 +96,7 @@ object MainForm: TMainForm
     end
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
-      Size.Height = 297.000000000000000000
+      Size.Height = 305.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object ComboBoxHashFunction: TComboBox
@@ -113,7 +113,7 @@ object MainForm: TMainForm
       object ComboBoxInputFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 108.000000000000000000
+        Position.Y = 116.000000000000000000
         Size.Width = 400.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -123,7 +123,7 @@ object MainForm: TMainForm
       object ComboBoxOutputFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 172.000000000000000000
+        Position.Y = 188.000000000000000000
         Size.Width = 400.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -144,29 +144,29 @@ object MainForm: TMainForm
       object Label5: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 80.000000000000000000
-        Size.Width = 88.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 91.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Input formatting'
+        Text = 'Input is in format'
       end
       object Label6: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 144.000000000000000000
-        Size.Width = 98.000000000000000000
+        Position.Y = 160.000000000000000000
+        Size.Width = 119.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Output formatting'
+        Text = 'Desired output format'
       end
       object CheckBoxLiveCalc: TCheckBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 224.000000000000000000
+        Position.Y = 232.000000000000000000
         Size.Width = 401.000000000000000000
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False

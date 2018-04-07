@@ -379,19 +379,24 @@ var
   T: TBytes;
   S: PByte;
 begin
-  Result := True;
-  T := CharTableBinary;
-  S := @Data;
-  while Result and (Size > 0) do
+  if not odd(Size) then
   begin
-    if TableFindBinary(S^, T, length(T)) >= 0 then
+    Result := True;
+    T := CharTableBinary;
+    S := @Data;
+    while Result and (Size > 0) do
     begin
-      Inc(S);
-      Dec(Size);
-    end
-    else
-      Result := False;
-  end;
+      if TableFindBinary(S^, T, length(T)) >= 0 then
+      begin
+        Inc(S);
+        Dec(Size);
+      end
+      else
+        Result := False;
+    end;
+  end
+  else
+    result := false;
 end;
 
 class function TFormat_HEXL.CharTableBinary: TBytes;
