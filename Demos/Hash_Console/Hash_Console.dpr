@@ -82,16 +82,18 @@ uses
   DECData in '..\..\Source\DECData.pas';
 
 var
-  Hash : THash_RipeMD128;
-  s    : string;
+  Hash : THash_RipeMD160;
+  s    : RawByteString;
 
 begin
-  Hash := THash_RipeMD128.Create;
+  Hash := THash_RipeMD160.Create;
   try
     try
-      s := 'Hello world!';
+      // Calculate a hash value in accordance to the original author's test data
+      // http://homes.esat.kuleuven.be/~bosselae/ripemd160.html
+      s := 'message digest';
 
-      WriteLn('RipeMD128 digest (hash value) of ' + s + ' is ' + sLineBreak +
+      WriteLn('RipeMD160 digest (hash value) of ' + s + ' is ' + sLineBreak +
               Hash.CalcString(s, TFormat_HEX));
 
       ReadLn;

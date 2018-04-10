@@ -84,33 +84,46 @@ uses
   DECCipherFormats in '..\..\Source\DECCipherFormats.pas';
 
 var
-  Cipher     : TCipher_AES;
+  Cipher     : TCipher_1DES;
   // We use raw byte string here since Unicode handling of Windows console
   // is not given
   SourceText : RawByteString;
   CipherText : string;
   // Key for the initialization of our encryption run
   CipherKey  : RawByteString;
-
+  IV: RawByteString;
+  Input, Output:TBytes;
+  I : Integer;
 begin
-  Cipher := TCipher_AES.Create;
+  Cipher := TCipher_1DES.Create;
 
   try
     // Init our encryption
-    CipherKey := 'My secret key';
-    Cipher.Init(CipherKey);
+    CipherKey := 'Passwort';
+    IV := #0#0#0#0#0#0#0#0;
+    Cipher.Init(CipherKey, IV, 0);
+    Cipher.Mode := cmCBCx;
+
+    SourceText := 'Beispielklartext';
+    SetLength(Input, length(SourceText));
+    for i := 1 to length(SourceText) do
+      Input[i-1] := ord(SourceText[i]);
+
+    Output := Cipher.EncodeBytes(Input);
+    for i := 0 to high(Output) do
+      Write(IntToHex(Output[i], 2), ' ');
 
     // Encrypt some text
-    SourceText := 'Hello world!';
-    CipherText := StringOf(Cipher.EncodeString(SourceText, TFormat_HEX));
-    WriteLn('Cipher of ' + SourceText + ' is: ' + CipherText);
 
-    // Show that decryption works
-    Cipher.Init(CipherKey);
-    WriteLn('Plain text of ' + CipherText + ' is: ' +
-      StringOf(Cipher.DecodeString(StringOf(TFormat_HEX.Decode(BytesOf(CipherText))), TFormat_Copy)));
+//    CipherText := DECUtil.BytesToRawString(Cipher.EncodeString(SourceText, TFormat_HEX));
+//    WriteLn('Cipher of ' + SourceText + ' is: ' + CipherText);
 
-    // Show that using a different key results in a different output
+//    // Show that decryption works
+//    Cipher.Init(CipherKey);
+//    WriteLn('Plain text of ' + CipherText + ' is: ' +
+//      StringOf(Cipher.DecodeString(StringOf(TFormat_HEX.Decode(BytesOf(CipherText))), TFormat_Copy)));
+//
+//    // Show that using a different key results in a different output
 
     ReadLn;
 

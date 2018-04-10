@@ -359,14 +359,14 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 begin
   SetLength(Result, Length(Source));
   if Length(Result) > 0 then
-    DoEncode(@Source[0], @Result[0], Length(Source));
+    Encode(Source[0], Result[0], Length(Source));
 end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
   SetLength(Result, Length(Source));
   if Length(Result) > 0 then
-    DoDecode(@Source[0], @Result[0], Length(Source));
+    Decode(Source[0], Result[0], Length(Source));
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
