@@ -105,9 +105,7 @@ begin
     Cipher.Mode := cmCBCx;
 
     SourceText := 'Beispielklartext';
-    SetLength(Input, length(SourceText));
-    for i := 1 to length(SourceText) do
-      Input[i-1] := ord(SourceText[i]);
+    Input := System.SysUtils.BytesOf(SourceText);
 
     Output := Cipher.EncodeBytes(Input);
     for i := 0 to high(Output) do
