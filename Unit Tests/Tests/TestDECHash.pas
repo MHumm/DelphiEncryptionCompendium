@@ -121,6 +121,7 @@ type
   end;
 
   // Test methods for class THash_MD2
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_MD2 = class(THash_TestBase)
   strict private
     FHash_MD2: THash_MD2;
@@ -142,6 +143,7 @@ type
   end;
 
   // Test methods for class THash_MD4
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_MD4 = class(THash_TestBase)
   strict private
     FHash_MD4: THash_MD4;
@@ -161,6 +163,7 @@ type
   end;
 
   // Test methods for class THash_MD5
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_MD5 = class(THash_TestBase)
   strict private
     FHash_MD5: THash_MD5;
@@ -180,6 +183,7 @@ type
   end;
 
   // Test methods for class THash_RipeMD128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_RipeMD128 = class(THash_TestBase)
   strict private
     FHash_RipeMD128: THash_RipeMD128;
@@ -199,6 +203,7 @@ type
   end;
 
   // Test methods for class THash_RipeMD160
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_RipeMD160 = class(THash_TestBase)
   strict private
     FHash_RipeMD160: THash_RipeMD160;
@@ -217,6 +222,7 @@ type
   end;
 
   // Test methods for class THash_RipeMD256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_RipeMD256 = class(THash_TestBase)
   strict private
     FHash_RipeMD256: THash_RipeMD256;
@@ -235,6 +241,7 @@ type
   end;
 
   // Test methods for class THash_RipeMD320
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_RipeMD320 = class(THash_TestBase)
   strict private
     FHash_RipeMD320: THash_RipeMD320;
@@ -253,6 +260,7 @@ type
   end;
 
   // Test methods for class THash_SHA
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA = class(THash_TestBase)
   strict private
     FHash_SHA: THash_SHA;
@@ -271,6 +279,7 @@ type
   end;
 
   // Test methods for class THash_SHA256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA256 = class(THash_TestBase)
   strict private
     FHash_SHA256: THash_SHA256;
@@ -289,6 +298,7 @@ type
   end;
 
   // Test methods for class THash_SHA384
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA384 = class(THash_TestBase)
   strict private
     FHash_SHA384: THash_SHA384;
@@ -308,6 +318,7 @@ type
   end;
 
   // Test methods for class THash_SHA512
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA512 = class(THash_TestBase)
   strict private
     FHash_SHA512: THash_SHA512;
@@ -326,6 +337,7 @@ type
   end;
 
   // Test methods for class THash_Haval128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval128 = class(THash_TestBase)
   strict private
     FHash_Haval128: THash_Haval128;
@@ -344,6 +356,7 @@ type
   end;
 
   // Test methods for class THash_Haval160
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval160 = class(THash_TestBase)
   strict private
     FHash_Haval160: THash_Haval160;
@@ -362,6 +375,7 @@ type
   end;
 
   // Test methods for class THash_Haval192
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval192 = class(THash_TestBase)
   strict private
     FHash_Haval192: THash_Haval192;
@@ -380,6 +394,7 @@ type
   end;
 
   // Test methods for class THash_Haval224
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval224 = class(THash_TestBase)
   strict private
     FHash_Haval224: THash_Haval224;
@@ -398,6 +413,7 @@ type
   end;
 
   // Test methods for class THash_Haval256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval256 = class(THash_TestBase)
   strict private
     FHash_Haval256: THash_Haval256;
@@ -416,6 +432,7 @@ type
   end;
 
   // Test methods for class THash_Tiger
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Tiger_3Rounds = class(THash_TestBase)
   strict private
     FHash_Tiger: THash_Tiger;
@@ -437,6 +454,7 @@ type
   end;
 
   // Test methods for class THash_Tiger
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Tiger_4Rounds = class(THash_TestBase)
   strict private
     FHash_Tiger: THash_Tiger;
@@ -458,6 +476,7 @@ type
   end;
 
   // Test methods for class THash_Panama
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Panama = class(THash_TestBase)
   strict private
     FHash_Panama: THash_Panama;
@@ -478,6 +497,7 @@ type
   end;
 
   // Test methods for class THash_Whirlpool
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Whirlpool = class(THash_TestBase)
   strict private
     FHash_Whirlpool: THash_Whirlpool;
@@ -497,6 +517,7 @@ type
   end;
 
   // Test methods for class THash_Whirlpool1
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Whirlpool1 = class(THash_TestBase)
   strict private
     FHash_Whirlpool1: THash_Whirlpool1;
@@ -516,6 +537,7 @@ type
   end;
 
   // Test methods for class THash_Square
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Square = class(THash_TestBase)
   strict private
     FHash_Square: THash_Square;
@@ -535,6 +557,7 @@ type
   end;
 
   // Test methods for class THash_Snefru128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Snefru128 = class(THash_TestBase)
   strict private
     FHash_Snefru128: THash_Snefru128;
@@ -554,6 +577,7 @@ type
   end;
 
   // Test methods for class THash_Snefru256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Snefru256 = class(THash_TestBase)
   strict private
     FHash_Snefru256: THash_Snefru256;
@@ -573,6 +597,7 @@ type
   end;
 
   // Test methods for class THash_Sapphire
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Sapphire = class(THash_TestBase)
  strict private
     FHash_Sapphire: THash_Sapphire;

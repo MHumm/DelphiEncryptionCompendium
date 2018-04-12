@@ -81,7 +81,7 @@ type
   /// <summary>
   ///   Test methods for global functions/procedures inn DECFormat
   /// </summary>
-  [TestFixture]
+    {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestFormat = class(TTestCase)
   public
     procedure SetUp; override;
@@ -113,7 +113,7 @@ type
   end;
 
   // Test methods for class TFormat_HEX
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_HEX = class(TFormatTestsBase)
   strict private
     FFormat_HEX: TFormat_HEX;
@@ -129,7 +129,7 @@ type
   end;
 
   // Test methods for class TFormat_HEXL
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_HEXL = class(TFormatTestsBase)
   strict private
     FFormat_HEXL: TFormat_HEXL;
@@ -145,7 +145,7 @@ type
   end;
 
   // Test methods for class TFormat_DECMIME32
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_DECMIME32 = class(TFormatTestsBase)
   strict private
     FFormat_DECMIME32: TFormat_DECMIME32;
@@ -158,7 +158,7 @@ type
   end;
 
   // Test methods for class TFormat_Base64
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_Base64 = class(TFormatTestsBase)
   strict private
     FFormat_Base64: TFormat_Base64;
@@ -171,7 +171,7 @@ type
   end;
 
   // Test methods for class TFormat_Radix64
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_Radix64 = class(TFormatTestsBase)
   strict private
     FFormat_Radix64: TFormat_Radix64;
@@ -184,7 +184,7 @@ type
   end;
 
   // Test methods for class TFormat_UU
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_UU = class(TFormatTestsBase)
   strict private
     FFormat_UU: TFormat_UU;
@@ -200,7 +200,7 @@ type
   end;
 
   // Test methods for class TFormat_XX
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_XX = class(TFormatTestsBase)
   strict private
     FFormat_XX: TFormat_XX;
@@ -213,7 +213,7 @@ type
   end;
 
   // Test methods for class TFormat_ESCAPE
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_ESCAPE = class(TFormatTestsBase)
   strict private
     FFormat_ESCAPE: TFormat_ESCAPE;

@@ -79,7 +79,7 @@ uses
 
 type
   // Test methods for class TFormat_Copy
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_Copy = class(TTestCase)
   strict private
     FFormat_Copy: TFormat_Copy;
@@ -89,7 +89,11 @@ type
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
@@ -120,6 +124,30 @@ begin
               string(BytesToRawString(DestBuf)));
 end;
 
+procedure TestTFormat_Copy.TestDecodeRawByteString;
+var
+  SrcString,
+  DestString : RawByteString;
+begin
+  SrcString  := '1234567890abcdefghijklmnopqrstuvwxyz@!$';
+  DestString := TFormat_Copy.Decode(SrcString);
+
+  CheckEquals(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'),
+              DestString);
+end;
+
+procedure TestTFormat_Copy.TestDecodeTypeless;
+var
+  SrcBuf     : TBytes;
+  DestString : RawByteString;
+begin
+  SrcBuf     := BytesOf(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'));
+  DestString := TFormat_Copy.Encode(SrcBuf[0], length(SrcBuf));
+
+  CheckEquals(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'),
+              DestString);
+end;
+
 procedure TestTFormat_Copy.TestEncodeBytes;
 var
   SrcBuf,
@@ -130,6 +158,30 @@ begin
 
   CheckEquals('1234567890abcdefghijklmnopqrstuvwxyz@!$',
               string(BytesToRawString(DestBuf)));
+end;
+
+procedure TestTFormat_Copy.TestEncodeRawByteString;
+var
+  SrcString,
+  DestString : RawByteString;
+begin
+  SrcString  := '1234567890abcdefghijklmnopqrstuvwxyz@!$';
+  DestString := TFormat_Copy.Encode(SrcString);
+
+  CheckEquals(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'),
+              DestString);
+end;
+
+procedure TestTFormat_Copy.TestEncodeTypeless;
+var
+  SrcBuf     : TBytes;
+  DestString : RawByteString;
+begin
+  SrcBuf     := BytesOf(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'));
+  DestString := TFormat_Copy.Encode(SrcBuf[0], length(SrcBuf));
+
+  CheckEquals(RawByteString('1234567890abcdefghijklmnopqrstuvwxyz@!$'),
+              DestString);
 end;
 
 procedure TestTFormat_Copy.TestIsValidRawByteString;

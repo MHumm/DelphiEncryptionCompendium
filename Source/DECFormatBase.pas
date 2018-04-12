@@ -91,8 +91,46 @@ type
   /// </summary>
   TDECFormat = class(TDECObject)
   protected
+    /// <summary>
+    ///   Internal method for the actual format conversion. This method needs to
+    ///   be overridden in all the child classes. Converts into the format.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    ///   Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes from source which will get converted.
+    /// </param>
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); virtual;
+    /// <summary>
+    ///   Internal method for the actual format conversion. This method needs to
+    ///   be overridden in all the child classes. Converts from the format into
+    ///   the format the data had before encoding it.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    ///   Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes from source which will get converted.
+    /// </param>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); virtual;
+    /// <summary>
+    ///   Internal method for checking whether all bytes of the data to be
+    ///   processed are valid for this particular formatting. This method needs
+    ///   to be overridden in all the child classes.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data to be checked
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes from data which will get checked.
+    /// </param>
     class function DoIsValid(const Data; Size: Integer): Boolean; virtual;
   public
     /// <summary>
@@ -112,28 +150,55 @@ type
     /// </returns>
     class function ClassByName(const Name: string): TDECFormatClass;
 
-    class function Encode(const Data: RawByteString): RawByteString; overload; deprecated; // please use TBytes variant now
-    class function Encode(const Data; Size: Integer): RawByteString; overload; deprecated; // please use TBytes variant now
+    /// <summary>
+    ///   Calls the internal method which actually does the format conversion.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data to be converted into the format of this class as
+    ///   RawByteString. Empty strings are allowed. They will simply lead to
+    //    empty return arrays as well.
+    /// </param>
+    /// <returns>
+    ///   Data in the format of this formatting algorithm as RawByteString
+    /// </returns>
+    class function Encode(const Data: RawByteString): RawByteString; overload;
+
+    /// <summary>
+    ///   Calls the internal method which actually does the format conversion.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data to be converted into the format of this class as untyped
+    ///   parameter. Empty data is allowed. It will simply lead to empty return
+    //    values as well.
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the data passed via data in bytes.
+    /// </param>
+    /// <returns>
+    ///   Data in the format of this formatting algorithm as RawByteString
+    /// </returns>
+    class function Encode(const Data; Size: Integer): RawByteString; overload;
 
     /// <summary>
     ///   Calls the internal method which actually does the format conversion.
     /// </summary>
     /// <param name="Data">
     ///   Source data to be converted into the format of this class as Byte Array.
-    ///   Empty arrays of size 0 are allowed. They'll simply lead to empty return
+    ///   Empty arrays of size 0 are allowed. They will simply lead to empty return
     //    arrays as well.
     /// </param>
     /// <returns>
     ///   Data in the format of this formatting algorithm as byte array.
     /// </returns>
     class function Encode(const Data: TBytes): TBytes; overload;
+
     /// <summary>
     ///   Calls the internal method which actually does the format conversion.
     /// </summary>
     /// <param name="Data">
-    ///   Source data to be converted from the format of this class as Byte Array
+    ///   Source data to be converted from the format of this class as byte array
     ///   into the original byte representation. Empty arrays of size 0 are allowed.
-    //    They'll simply lead to empty return arrays as well.
+    //    They will simply lead to empty return arrays as well.
     /// </param>
     /// <returns>
     ///   Data in the original byte format it had before getting encoded with
@@ -141,9 +206,73 @@ type
     /// </returns>
     class function Decode(const Data: TBytes): TBytes; overload;
 
+    /// <summary>
+    ///   Calls the internal method which actually does the format conversion.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data to be converted from the format of this class as
+    ///   RawByteString into the original representation. Empty strings are allowed.
+    ///   They will simply lead to empty return arrays as well.
+    /// </param>
+    /// <returns>
+    ///   Data in the format of this formatting algorithm as RawByteString
+    /// </returns>
+    class function Decode(const Data: RawByteString): RawByteString; overload;
+
+    /// <summary>
+    ///   Calls the internal method which actually does the format conversion.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data to be converted from the format of this class as untyped
+    ///   parameter into the original representation. Empty data is allowed.
+    ///   It will simply lead to empty return values as well.
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the data passed via data in bytes.
+    /// </param>
+    /// <returns>
+    ///   Data in the format of this formatting algorithm as RawByteString
+    /// </returns>
+    class function Decode(const Data; Size: Integer): RawByteString; overload;
+
+    /// <summary>
+    ///   Checks whether the data passed to this method only contains chars
+    ///   valid for this specific formatting.
+    /// </summary>
+    /// <param name="Data">
+    ///   Untyped parameter with the data to be checked
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the data to be checked in bytes
+    /// </param>
+    /// <returns>
+    ///   true, if the input data contains only characters valid for this format
+    /// </returns>
     class function IsValid(const Data; Size: Integer): Boolean; overload;
+
+    /// <summary>
+    ///   Checks whether the data passed to this method only contains chars
+    ///   valid for this specific formatting.
+    /// </summary>
+    /// <param name="Data">
+    ///   Byte array with the data to be checked
+    /// </param>
+    /// <returns>
+    ///   true, if the input data contains only characters valid for this format
+    /// </returns>
     class function IsValid(const Data: TBytes): Boolean; overload;
-    class function IsValid(const Text: RawByteString): Boolean; overload; deprecated; // please use TBytes variant now
+
+    /// <summary>
+    ///   Checks whether the data passed to this method only contains chars
+    ///   valid for this specific formatting.
+    /// </summary>
+    /// <param name="Text">
+    ///   RawByteString with the data to be checked
+    /// </param>
+    /// <returns>
+    ///   true, if the input data contains only characters valid for this format
+    /// </returns>
+    class function IsValid(const Text: RawByteString): Boolean; overload;
 
     /// <summary>
     ///   Converts the ordinal number of an ASCII char given as byte into the
@@ -158,6 +287,7 @@ type
     ///   a char in the a-z range. Otherwise the number passed in will be returned.
     /// </returns>
     class function UpCaseBinary(b: Byte): Byte;
+
     /// <summary>
     ///   Looks for the index of a given byte in a byte-array.
     /// </summary>
@@ -355,6 +485,32 @@ begin
   begin
     DoDecode(Data[0], b, Length(Data));
     Result := b;
+  end
+  else
+    SetLength(Result, 0);
+end;
+
+class function TDECFormat.Decode(const Data: RawByteString): RawByteString;
+var
+  b: TBytes;
+begin
+  if Length(Data) > 0 then
+  begin
+    DoDecode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
+    Result := BytesToRawString(b);
+  end
+  else
+    SetLength(Result, 0);
+end;
+
+class function TDECFormat.Decode(const Data; Size: Integer): RawByteString;
+var
+  b: TBytes;
+begin
+  if Size > 0 then
+  begin
+    DoDecode(Data, b, Size);
+    Result := BytesToRawString(b);
   end
   else
     SetLength(Result, 0);
