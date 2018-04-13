@@ -103,13 +103,31 @@ type
   ///   generic encode/decode test
   /// </summary>
   TEncodeDecodeProc = function(const data: TBytes):TBytes of Object;
+  /// <summary>
+  ///   Type needed for passing the right encode or decode method to the
+  ///   generic encode/decode test
+  /// </summary>
+  TEncodeDecodeProcRawByteString = function(const data: RawByteString):RawByteString of Object;
+  /// <summary>
+  ///   Type needed for passing the right encode or decode method to the
+  ///   generic encode/decode test
+  /// </summary>
+  TEncodeDecodeProcTypeless = function(const Data; Size: Integer): RawByteString of Object;
 
   // Basic test implementations to be shared by the individual formatting class
   // test classes to enable easier DUnit and DUnitX compatibility
   TFormatTestsBase = class(TTestCase)
-  protected
+  strict protected
+    procedure DoTestEncodeDecodeTypeless(
+      EncodeDecodeProc: TEncodeDecodeProcTypeless;
+      TestData: array of TestRecRawByteString);
+
     procedure DoTestEncodeDecode(EncodeDecodeProc: TEncodeDecodeProc;
-                                 TestData: array of TestRecRawByteString); virtual;
+                                 TestData: array of TestRecRawByteString);
+
+    procedure DoTestEncodeDecodeRawByteString(
+      EncodeDecodeProc: TEncodeDecodeProcRawByteString;
+      TestData: array of TestRecRawByteString);
   end;
 
   // Test methods for class TFormat_HEX
@@ -117,12 +135,29 @@ type
   TestTFormat_HEX = class(TFormatTestsBase)
   strict private
     FFormat_HEX: TFormat_HEX;
+
+    const
+      cTestDataEncode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF);
+         Output: '546573740A09AA55ABCDEF'));
+
+      cTestDataDecode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  '546573740A09AA55ABCDEF';
+         Output: RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
@@ -133,12 +168,29 @@ type
   TestTFormat_HEXL = class(TFormatTestsBase)
   strict private
     FFormat_HEXL: TFormat_HEXL;
+
+    const
+      cTestDataEncode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF);
+         Output: '546573740a09aa55abcdef'));
+
+      cTestDataDecode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  '546573740a09aa55abcdef';
+         Output: RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
@@ -149,12 +201,47 @@ type
   TestTFormat_DECMIME32 = class(TFormatTestsBase)
   strict private
     FFormat_DECMIME32: TFormat_DECMIME32;
+
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: 'xk3gh4jbjsklf'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: 'xk3gh4jbjsklfyc'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: 'xk3gh4jbjsklfyzk'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: 'xk3gh4jbjsklfyzkkf'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: 'xk3gh4jbjsklfyzkkpya')); // als letzter Buchstabe kommt manchmal oft ,u statt a heraus?
+                                           // scheint etwas zufällig? Was ist da faul?
+                                           // lt. DECTest.vec ist a richtig
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  'xk3gh4jbjsklf'; // lt. alter DECTest.vec aber xk3gh4jbjsklf f statt y ???
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  'xk3gh4jbjsklfyc';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  'xk3gh4jbjsklfyzk';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  'xk3gh4jbjsklfyzkkf';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  'xk3gh4jbjsklfyzkkpya';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
   end;
 
   // Test methods for class TFormat_Base64
@@ -252,25 +339,33 @@ begin
 end;
 
 procedure TestTFormat_HEX.TestDecodeBytes;
-const
-  TestData : array[1..2] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  '546573740A09AA55ABCDEF';
-     Output: RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF)));
 begin
-  DoTestEncodeDecode(FFormat_HEX.Decode, TestData);
+  DoTestEncodeDecode(FFormat_HEX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEX.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_HEX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEX.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_HEX.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_HEX.TestEncodeBytes;
-const
-  TestData : array[1..2] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF);
-     Output: '546573740A09AA55ABCDEF'));
 begin
-  DoTestEncodeDecode(FFormat_HEX.Encode, TestData);
+  DoTestEncodeDecode(FFormat_HEX.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_HEX.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_HEX.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_HEX.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_HEX.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_HEX.TestIsValidRawByteString;
@@ -327,25 +422,33 @@ begin
 end;
 
 procedure TestTFormat_HEXL.TestDecodeBytes;
-const
-  TestData : array[1..2] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  '546573740a09aa55abcdef';
-     Output: RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF)));
 begin
-  DoTestEncodeDecode(FFormat_HEXL.Decode, TestData);
+  DoTestEncodeDecode(FFormat_HEXL.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEXL.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_HEXL.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEXL.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_HEXL.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_HEXL.TestEncodeBytes;
-const
-  TestData : array[1..2] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF);
-     Output: '546573740a09aa55abcdef'));
 begin
-  DoTestEncodeDecode(FFormat_HEXL.Encode, TestData);
+  DoTestEncodeDecode(FFormat_HEXL.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_HEXL.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_HEXL.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_HEXL.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_HEXL.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_HEXL.TestIsValidRawByteString;
@@ -398,68 +501,36 @@ begin
 end;
 
 procedure TestTFormat_DECMIME32.TestDecodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  '';
-     Output: RawByteString('')),
-    (Input:  'xk3gh4jbjsklf'; // lt. alter DECTest.vec aber xk3gh4jbjsklf f statt y ???
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-    (Input:  'xk3gh4jbjsklfyc';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-    (Input:  'xk3gh4jbjsklfyzk';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-    (Input:  'xk3gh4jbjsklfyzkkf';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-    (Input:  'xk3gh4jbjsklfyzkkpya';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
 begin
-  DoTestEncodeDecode(FFormat_DECMIME32.Decode, TestData);
+  DoTestEncodeDecode(FFormat_DECMIME32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_DECMIME32.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_DECMIME32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_DECMIME32.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_DECMIME32.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_DECMIME32.TestEncodeBytes;
-{ TODO :
-Alte Fassung der Routine aus V5.2 mit diesen Testdaten testen.
-Testdaten überprüfen: f oder y, was war früher korrekt? }
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-     Output: 'xk3gh4jbjsklf'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-     Output: 'xk3gh4jbjsklfyc'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-     Output: 'xk3gh4jbjsklfyzk'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-     Output: 'xk3gh4jbjsklfyzkkf'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-     Output: 'xk3gh4jbjsklfyzkkpya')); // als letzter Buchstabe kommt manchmal oft ,u statt a heraus?
-                                       // scheint etwas zufällig? Was ist da faul?
-                                       // lt. DECTest.vec ist a richtig
-
-//var
-//  i       : Integer;
-//  SrcBuf,
-//  DestBuf : TBytes;
-//  b : Boolean;
-//begin
-//  for i := Low(TestData) to High(TestData) do
-//  begin
-//    SrcBuf := RawStringToBytes(TestData[i].Input);
-//
-//LogFile.Add('------------------------------------------------------------------');
-//LogFile.Add('Test: ' + i.ToString + ' Daten: ' + TestData[i].Input + ' / ' + BytesToRawString(SrcBuf));
-//
-//    DestBuf := TFormat_DECMIME32.Encode(SrcBuf);
-//
-//b := TestData[i].Output = BytesToRawString(DestBuf);
-//LogFile.Add(SysUtils.BoolToStr(b, true));
-//
-//    CheckEquals(TestData[i].Output,
-//                BytesToRawString(DestBuf));
-//  end;
 begin
-  DoTestEncodeDecode(FFormat_DECMIME32.Encode, TestData);
+  DoTestEncodeDecode(FFormat_DECMIME32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_DECMIME32.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_DECMIME32.Encode, cTestDataEncode);
+
+// IsValid Tests für MIME32 und für manche anderen fehlen noch!!!
+// Und dann alle anderen Encode/Decode für die anderen Klasen
+end;
+
+procedure TestTFormat_DECMIME32.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_DECMIME32.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_Base64.SetUp;
@@ -918,17 +989,53 @@ var
 begin
   for i := Low(TestData) to High(TestData) do
   begin
-if (i = 1) then
-  sleep(10);
-
-// da liegt der Hase irgendwo im Pfeffer: im Testprogramm wenn jedesmal ein
-// RawByteString übergeben wird klappt alles
-// Struktur untersuchen: wer ruft wen auf und mit welchen Daten!
     SrcBuf := BytesOf(RawByteString(TestData[i].Input));
     DestBuf := EncodeDecodeProc(SrcBuf);
 
     CheckEquals(TestData[i].Output,
                 BytesToRawString(DestBuf));
+  end;
+end;
+
+procedure TFormatTestsBase.DoTestEncodeDecodeRawByteString(EncodeDecodeProc: TEncodeDecodeProcRawByteString;
+                                                           TestData: array of TestRecRawByteString);
+var
+  i      : Integer;
+  result : RawByteString;
+begin
+  for i := Low(TestData) to High(TestData) do
+  begin
+    result := EncodeDecodeProc(TestData[i].Input);
+
+    CheckEquals(TestData[i].Output, result);
+  end;
+end;
+
+procedure TFormatTestsBase.DoTestEncodeDecodeTypeless(EncodeDecodeProc: TEncodeDecodeProcTypeless;
+                                                      TestData: array of TestRecRawByteString);
+var
+  i      : Integer;
+  result : RawByteString;
+  pdata  : PByte;
+  len    : Integer;
+begin
+  for i := Low(TestData) to High(TestData) do
+  begin
+    if length(TestData[i].Input) > 0 then
+    begin
+      pdata := @TestData[i].Input[low(TestData[i].Input)];
+
+      len := length(TestData[i].Input) * SizeOf(TestData[i].Input[low(TestData[i].Input)]);
+    end
+    else
+    begin
+      pdata := nil;
+      len   := 0;
+    end;
+
+    result := EncodeDecodeProc(pdata^, len);
+
+    CheckEquals(TestData[i].Output, result);
   end;
 end;
 
