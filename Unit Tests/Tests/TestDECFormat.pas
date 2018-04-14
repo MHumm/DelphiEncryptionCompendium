@@ -1,3 +1,6 @@
+// IsValid Tests für MIME32 und für manche anderen fehlen noch!!!
+// Und dann alle anderen Encode/Decode für die anderen Klassen
+
 {*****************************************************************************
 
   Delphi Encryption Compendium (DEC)
@@ -242,6 +245,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
   end;
 
   // Test methods for class TFormat_Base64
@@ -249,12 +255,44 @@ type
   TestTFormat_Base64 = class(TFormatTestsBase)
   strict private
     FFormat_Base64: TFormat_Base64;
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: 'VGVzdAoJqlU='),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: 'VGVzdAoJqlWq'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: 'VGVzdAoJqlWqVQ=='),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: 'VGVzdAoJqlWqVao='),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: 'VGVzdAoJqlWqVapV'));
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  'VGVzdAoJqlU=';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  'VGVzdAoJqlWq';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  'VGVzdAoJqlWqVQ==';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  'VGVzdAoJqlWqVao=';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  'VGVzdAoJqlWqVapV';
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
   end;
 
   // Test methods for class TFormat_Radix64
@@ -262,12 +300,45 @@ type
   TestTFormat_Radix64 = class(TFormatTestsBase)
   strict private
     FFormat_Radix64: TFormat_Radix64;
+
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: RawByteString('')),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM')),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: RawByteString('VGVzdAoJqlWq' + #13 + #10 + '=qBH3')),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: RawByteString('VGVzdAoJqlWqVQ==' + #13 + #10 + '=Rqc1')),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH')),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')));
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: RawByteString('')),
+        (Input:  RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  RawByteString('VGVzdAoJqlWq' + #13 + #10 + '=qBH3');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('VGVzdAoJqlWqVQ==' + #13 + #10 + '=Rqc1');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
   end;
 
   // Test methods for class TFormat_UU
@@ -275,12 +346,45 @@ type
   TestTFormat_UU = class(TFormatTestsBase)
   strict private
     FFormat_UU: TFormat_UU;
+
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: '(5&5S=`H)JE4`'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: ')5&5S=`H)JE6J'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: '*5&5S=`H)JE6J50``'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: '+5&5S=`H)JE6J5:H`'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: ',5&5S=`H)JE6J5:I5'));
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  RawByteString('(5&5S=`H)JE4`');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  RawByteString(')5&5S=`H)JE6J');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('*5&5S=`H)JE6J50``');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  RawByteString('+5&5S=`H)JE6J5:H`');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString(',5&5S=`H)JE6J5:I5');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
@@ -291,12 +395,45 @@ type
   TestTFormat_XX = class(TFormatTestsBase)
   strict private
     FFormat_XX: TFormat_XX;
+
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: '6J4JnR+c7eZI+'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: '7J4JnR+c7eZKe'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: '8J4JnR+c7eZKeJE++'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: '9J4JnR+c7eZKeJOc+'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: 'AJ4JnR+c7eZKeJOdJ'));
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('6J4JnR+c7eZI+');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  RawByteString('7J4JnR+c7eZKe');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('8J4JnR+c7eZKeJE++');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  RawByteString('9J4JnR+c7eZKeJOc+');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('AJ4JnR+c7eZKeJOdJ');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
   end;
 
   // Test methods for class TFormat_ESCAPE
@@ -304,12 +441,57 @@ type
   TestTFormat_ESCAPE = class(TFormatTestsBase)
   strict private
     FFormat_ESCAPE: TFormat_ESCAPE;
+
+    const
+      cTestDataEncode : array[1..9] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  RawByteString('Test' + #$AA + #$55);
+         Output: RawByteString('Test\xAAU')),
+        (Input:  RawByteString('Test' + #$80 + #$55);
+         Output: RawByteString('Test\x80U')),
+        (Input:  RawByteString('Test' + #$20 + #$55);
+         Output: RawByteString('Test U')),
+        (Input:  RawByteString('Test' + #$19 + #$55);
+         Output: RawByteString('Test\x19U')),
+        (Input:  RawByteString('Test' + #$07 + #$08 + #$09 + #$0A + #$0B + #$0C + #$0D + #$55);
+         Output: RawByteString('Test\a\b\t\n\v\f\rU')),
+        (Input:  RawByteString('Test\U');
+         Output: RawByteString('Test\\U')),
+        (Input:  RawByteString('Test\'+#$07 +'U');
+         Output: RawByteString('Test\\\aU')),
+        (Input:  RawByteString('Test"hello"U');
+         Output: RawByteString('Test\"hello\"U')));
+
+      cTestDataDecode : array[1..9] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  RawByteString('Test\xAAU');
+         Output: RawByteString('Test' + #$AA + #$55)),
+        (Input:  RawByteString('Test\x80U');
+         Output: RawByteString('Test' + #$80 + #$55)),
+        (Input:  RawByteString('Test U');
+         Output: RawByteString('Test' + #$20 + #$55)),
+        (Input:  RawByteString('Test\x19U');
+         Output: RawByteString('Test' + #$19 + #$55)),
+        (Input:  RawByteString('Test\a\b\t\n\v\f\rU');
+         Output: RawByteString('Test' + #$07 + #$08 + #$09 + #$0A + #$0B + #$0C + #$0D + #$55)),
+        (Input:  RawByteString('Test\\U');
+         Output: RawByteString('Test\U')),
+        (Input:  RawByteString('Test\\\aU');
+         Output: RawByteString('Test\'+#$07 +'U')),
+        (Input:  RawByteString('Test\"hello\"U');
+         Output: RawByteString('Test"hello"U')));
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
     procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
   end;
 
 implementation
@@ -523,14 +705,49 @@ end;
 procedure TestTFormat_DECMIME32.TestEncodeRawByteString;
 begin
   DoTestEncodeDecodeRawByteString(FFormat_DECMIME32.Encode, cTestDataEncode);
-
-// IsValid Tests für MIME32 und für manche anderen fehlen noch!!!
-// Und dann alle anderen Encode/Decode für die anderen Klasen
 end;
 
 procedure TestTFormat_DECMIME32.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_DECMIME32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_DECMIME32.TestIsValidRawByteString;
+begin
+  CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('')));
+  CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('0123456789abcdefABCDEF')));
+  // Invalid character: q is not a hex char
+  CheckEquals(false, TFormat_DECMIME32.IsValid(BytesOf('1q')));
+  // Hex input length needs to be a multiple of 2, if input is not empty
+  CheckEquals(false, TFormat_DECMIME32.IsValid(BytesOf('6')));
+end;
+
+procedure TestTFormat_DECMIME32.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf));
+
+  SrcBuf := BytesOf(RawByteString('0123456789abcdefABCDEF'));
+  CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf));
+
+  SrcBuf := BytesOf(RawByteString('q'));
+  CheckEquals(false, TFormat_DECMIME32.IsValid(SrcBuf));
+end;
+
+procedure TestTFormat_DECMIME32.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_HEXL.IsValid(SrcBuf, 0));
+
+  SrcBuf := BytesOf(RawByteString('0123456789abcdefABCDEF'));
+  CheckEquals(true, TFormat_HEXL.IsValid(SrcBuf[0], length(SrcBuf)));
+
+  SrcBuf := BytesOf(RawByteString('q'));
+  CheckEquals(false, TFormat_HEXL.IsValid(SrcBuf[0], length(SrcBuf)));
 end;
 
 procedure TestTFormat_Base64.SetUp;
@@ -545,42 +762,33 @@ begin
 end;
 
 procedure TestTFormat_Base64.TestDecodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  '';
-     Output: RawByteString('')),
-    (Input:  'VGVzdAoJqlU=';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-    (Input:  'VGVzdAoJqlWq';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-    (Input:  'VGVzdAoJqlWqVQ==';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-    (Input:  'VGVzdAoJqlWqVao=';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-    (Input:  'VGVzdAoJqlWqVapV';
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
 begin
-  DoTestEncodeDecode(FFormat_Base64.Decode, TestData);
+  DoTestEncodeDecode(FFormat_Base64.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base64.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base64.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base64.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base64.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_Base64.TestEncodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-     Output: 'VGVzdAoJqlU='),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-     Output: 'VGVzdAoJqlWq'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-     Output: 'VGVzdAoJqlWqVQ=='),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-     Output: 'VGVzdAoJqlWqVao='),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-     Output: 'VGVzdAoJqlWqVapV'));
-
 begin
-  DoTestEncodeDecode(FFormat_Base64.Encode, TestData);
+  DoTestEncodeDecode(FFormat_Base64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base64.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base64.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base64.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_Radix64.SetUp;
@@ -595,57 +803,33 @@ begin
 end;
 
 procedure TestTFormat_Radix64.TestDecodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: RawByteString('')),
-    (Input:  RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-    (Input:  RawByteString('VGVzdAoJqlWq' + #13 + #10 + '=qBH3');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString('VGVzdAoJqlWqVQ==' + #13 + #10 + '=Rqc1');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-    (Input:  RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
-
-//var
-//  i       : Integer;
-//  SrcBuf,
-//  DestBuf : TBytes;
-//begin
-//{ TODO : Test schlägt in DecodeBytes fehl, CRC Prüfung da drin schlägt fehl }
-//  for i := Low(TestData) to High(TestData) do
-//  begin
-//    SrcBuf := RawStringToBytes(TestData[i].Input);
-//    DestBuf := TFormat_Radix64.Decode(SrcBuf);
-//
-//    CheckEquals(TestData[i].Output,
-//                BytesToRawString(DestBuf));
-//  end;
-
 begin
-  DoTestEncodeDecode(FFormat_Radix64.Decode, TestData);
+  DoTestEncodeDecode(FFormat_Radix64.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Radix64.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Radix64.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Radix64.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Radix64.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_Radix64.TestEncodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: RawByteString('')),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-     Output: RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM')),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-     Output: RawByteString('VGVzdAoJqlWq' + #13 + #10 + '=qBH3')),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-     Output: RawByteString('VGVzdAoJqlWqVQ==' + #13 + #10 + '=Rqc1')),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-     Output: RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH')),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-     Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')));
 begin
-  DoTestEncodeDecode(FFormat_Radix64.Encode, TestData);
+  DoTestEncodeDecode(FFormat_Radix64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Radix64.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Radix64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Radix64.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Radix64.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_UU.SetUp;
@@ -660,41 +844,33 @@ begin
 end;
 
 procedure TestTFormat_UU.TestDecodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  '';
-     Output: RawByteString('')),
-    (Input:  RawByteString('(5&5S=`H)JE4`');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-    (Input:  RawByteString(')5&5S=`H)JE6J');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString('*5&5S=`H)JE6J50``');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-    (Input:  RawByteString('+5&5S=`H)JE6J5:H`');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString(',5&5S=`H)JE6J5:I5');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
 begin
-  DoTestEncodeDecode(FFormat_UU.Decode, TestData);
+  DoTestEncodeDecode(FFormat_UU.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_UU.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_UU.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_UU.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_UU.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_UU.TestEncodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-     Output: '(5&5S=`H)JE4`'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-     Output: ')5&5S=`H)JE6J'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-     Output: '*5&5S=`H)JE6J50``'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-     Output: '+5&5S=`H)JE6J5:H`'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-     Output: ',5&5S=`H)JE6J5:I5'));
 begin
-  DoTestEncodeDecode(FFormat_UU.Encode, TestData);
+  DoTestEncodeDecode(FFormat_UU.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_UU.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_UU.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_UU.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_UU.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_UU.TestIsValidRawByteString;
@@ -796,42 +972,33 @@ begin
 end;
 
 procedure TestTFormat_XX.TestDecodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('6J4JnR+c7eZI+');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-    (Input:  RawByteString('7J4JnR+c7eZKe');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString('8J4JnR+c7eZKeJE++');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-    (Input:  RawByteString('9J4JnR+c7eZKeJOc+');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-    (Input:  RawByteString('AJ4JnR+c7eZKeJOdJ');
-     Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
-
 begin
-  DoTestEncodeDecode(FFormat_XX.Decode, TestData);
+  DoTestEncodeDecode(FFormat_XX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_XX.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_XX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_XX.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_XX.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_XX.TestEncodeBytes;
-const
-  TestData : array[1..6] of TestRecRawByteString = (
-    (Input:  RawByteString('');
-     Output: ''),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-     Output: '6J4JnR+c7eZI+'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-     Output: '7J4JnR+c7eZKe'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-     Output: '8J4JnR+c7eZKeJE++'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-     Output: '9J4JnR+c7eZKeJOc+'),
-    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-     Output: 'AJ4JnR+c7eZKeJOdJ'));
 begin
-  DoTestEncodeDecode(FFormat_XX.Encode, TestData);
+  DoTestEncodeDecode(FFormat_XX.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_XX.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_XX.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_XX.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_XX.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_ESCAPE.SetUp;
@@ -846,53 +1013,33 @@ begin
 end;
 
 procedure TestTFormat_ESCAPE.TestDecodeBytes;
-const
-  TestData : array[1..9] of TestRecRawByteString = (
-    (Input:  '';
-     Output: RawByteString('')),
-    (Input:  RawByteString('Test\xAAU');
-     Output: RawByteString('Test' + #$AA + #$55)),
-    (Input:  RawByteString('Test\x80U');
-     Output: RawByteString('Test' + #$80 + #$55)),
-    (Input:  RawByteString('Test U');
-     Output: RawByteString('Test' + #$20 + #$55)),
-    (Input:  RawByteString('Test\x19U');
-     Output: RawByteString('Test' + #$19 + #$55)),
-    (Input:  RawByteString('Test\a\b\t\n\v\f\rU');
-     Output: RawByteString('Test' + #$07 + #$08 + #$09 + #$0A + #$0B + #$0C + #$0D + #$55)),
-    (Input:  RawByteString('Test\\U');
-     Output: RawByteString('Test\U')),
-    (Input:  RawByteString('Test\\\aU');
-     Output: RawByteString('Test\'+#$07 +'U')),
-    (Input:  RawByteString('Test\"hello\"U');
-     Output: RawByteString('Test"hello"U')));
 begin
-  DoTestEncodeDecode(FFormat_ESCAPE.Decode, TestData);
+  DoTestEncodeDecode(FFormat_ESCAPE.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_ESCAPE.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_ESCAPE.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_ESCAPE.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_ESCAPE.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_ESCAPE.TestEncodeBytes;
-const
-  TestData : array[1..9] of TestRecRawByteString = (
-    (Input:  '';
-     Output: RawByteString('')),
-    (Input:  RawByteString('Test' + #$AA + #$55);
-     Output: RawByteString('Test\xAAU')),
-    (Input:  RawByteString('Test' + #$80 + #$55);
-     Output: RawByteString('Test\x80U')),
-    (Input:  RawByteString('Test' + #$20 + #$55);
-     Output: RawByteString('Test U')),
-    (Input:  RawByteString('Test' + #$19 + #$55);
-     Output: RawByteString('Test\x19U')),
-    (Input:  RawByteString('Test' + #$07 + #$08 + #$09 + #$0A + #$0B + #$0C + #$0D + #$55);
-     Output: RawByteString('Test\a\b\t\n\v\f\rU')),
-    (Input:  RawByteString('Test\U');
-     Output: RawByteString('Test\\U')),
-    (Input:  RawByteString('Test\'+#$07 +'U');
-     Output: RawByteString('Test\\\aU')),
-    (Input:  RawByteString('Test"hello"U');
-     Output: RawByteString('Test\"hello\"U')));
 begin
-  DoTestEncodeDecode(FFormat_ESCAPE.Encode, TestData);
+  DoTestEncodeDecode(FFormat_ESCAPE.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_ESCAPE.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_ESCAPE.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_ESCAPE.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_ESCAPE.Encode, cTestDataEncode);
 end;
 
 { TestFormat }
