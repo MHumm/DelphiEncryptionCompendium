@@ -330,10 +330,10 @@ procedure TDECHash.Increment8(var Value; Add: UInt32);
 {$ELSE PUREPASCAL}
 type
   TData = packed array[0..7] of UInt32;
+
 var
   HiBits: UInt32;
   Add8: UInt32;
-  Data: TData absolute Value;
   Carry: Boolean;
 
   procedure AddC(var Value: UInt32; const Add: UInt32; var Carry: Boolean);
@@ -355,14 +355,14 @@ begin
   Add8 := Add * 8;
   Carry := False;
 
-  AddC(Data[0], Add8, Carry);
-  AddC(Data[1], HiBits, Carry);
-  AddC(Data[2], 0, Carry);
-  AddC(Data[3], 0, Carry);
-  AddC(Data[4], 0, Carry);
-  AddC(Data[5], 0, Carry);
-  AddC(Data[6], 0, Carry);
-  AddC(Data[7], 0, Carry);
+  AddC(TData(Value)[0], Add8, Carry);
+  AddC(TData(Value)[1], HiBits, Carry);
+  AddC(TData(Value)[2], 0, Carry);
+  AddC(TData(Value)[3], 0, Carry);
+  AddC(TData(Value)[4], 0, Carry);
+  AddC(TData(Value)[5], 0, Carry);
+  AddC(TData(Value)[6], 0, Carry);
+  AddC(TData(Value)[7], 0, Carry);
 
   if Carry then
     RaiseHashOverflowError;

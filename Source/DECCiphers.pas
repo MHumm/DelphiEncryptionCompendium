@@ -3284,40 +3284,84 @@ begin
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
+// Preserved until unit tests for encoding are in place and we can thus verify
+// that the removal of absolute was done properly
+//procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
+//var
+//  T: UInt32;
+//  S: PUInt32Array absolute Source;
+//  D: PUInt32Array absolute Dest;
+//begin
+//  Assert(Size = Context.BufferSize);
+//
+//  DES_Func(@S[0], @D[0], FUser);
+//  DES_Func(@S[2], @D[2], FUser);
+//  T := D[1]; D[1] := D[2]; D[2] := T;
+//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[32]);
+//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[32]);
+//  T := D[1]; D[1] := D[2]; D[2] := T;
+//  DES_Func(@D[0], @D[0], FUser);
+//  DES_Func(@D[2], @D[2], FUser);
+//end;
+
 procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], FUser);
-  DES_Func(@S[2], @D[2], FUser);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[32]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], FUser);
-  DES_Func(@D[2], @D[2], FUser);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], FUser);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], FUser);
 end;
+
+// Preserved until unit tests for encoding are in place and we can thus verify
+// that the removal of absolute was done properly
+//procedure TCipher_2DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
+//var
+//  T: UInt32;
+//  S: PUInt32Array absolute Source;
+//  D: PUInt32Array absolute Dest;
+//begin
+//  Assert(Size = Context.BufferSize);
+//
+//  DES_Func(@S[0], @D[0], @PUInt32Array(FUser)[64]);
+//  DES_Func(@S[2], @D[2], @PUInt32Array(FUser)[64]);
+//  T := D[1]; D[1] := D[2]; D[2] := T;
+//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[96]);
+//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[96]);
+//  T := D[1]; D[1] := D[2]; D[2] := T;
+//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[64]);
+//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[64]);
+//end;
 
 procedure TCipher_2DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@S[2], @D[2], @PUInt32Array(FUser)[64]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[96]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
 end;
 
 { TCipher_3DDES }
@@ -3333,37 +3377,41 @@ end;
 procedure TCipher_3DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], FUser);
-  DES_Func(@S[2], @D[2], FUser);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[32]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
 end;
 
 procedure TCipher_3DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@S[2], @D[2], @PUInt32Array(FUser)[96]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[128]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[128]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[160]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[128]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[128]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[160]);
 end;
 
 { TCipher_3TDES }
@@ -3379,47 +3427,59 @@ end;
 procedure TCipher_3TDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], FUser);
-  DES_Func(@S[2], @D[2], FUser);
-  DES_Func(@S[4], @D[4], FUser);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  T := D[3]; D[3] := D[4]; D[4] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[32]);
-  DES_Func(@D[4], @D[4], @PUInt32Array(FUser)[32]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  T := D[3]; D[3] := D[4]; D[4] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[64]);
-  DES_Func(@D[4], @D[4], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
+  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], FUser);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  T := PUInt32Array(Dest)[3];
+  PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
+  PUInt32Array(Dest)[4] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[32]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  T := PUInt32Array(Dest)[3];
+  PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
+  PUInt32Array(Dest)[4] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[64]);
 end;
 
 procedure TCipher_3TDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
-  S: PUInt32Array absolute Source;
-  D: PUInt32Array absolute Dest;
 begin
   Assert(Size = Context.BufferSize);
 
-  DES_Func(@S[0], @D[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@S[2], @D[2], @PUInt32Array(FUser)[96]);
-  DES_Func(@S[4], @D[4], @PUInt32Array(FUser)[96]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  T := D[3]; D[3] := D[4]; D[4] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[128]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[128]);
-  DES_Func(@D[4], @D[4], @PUInt32Array(FUser)[128]);
-  T := D[1]; D[1] := D[2]; D[2] := T;
-  T := D[3]; D[3] := D[4]; D[4] := T;
-  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[160]);
-  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[160]);
-  DES_Func(@D[4], @D[4], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[96]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  T := PUInt32Array(Dest)[3];
+  PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
+  PUInt32Array(Dest)[4] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[128]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[128]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[128]);
+  T := PUInt32Array(Dest)[1];
+  PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
+  PUInt32Array(Dest)[2] := T;
+  T := PUInt32Array(Dest)[3];
+  PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
+  PUInt32Array(Dest)[4] := T;
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[160]);
 end;
 
 { TCipher_3Way }
