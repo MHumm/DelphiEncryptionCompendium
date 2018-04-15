@@ -98,34 +98,45 @@ begin
   Cipher := TCipher_1DES.Create;
 
   try
-    // Init our encryption
-    CipherKey := 'Passwort';
-    IV := #0#0#0#0#0#0#0#0;
-    Cipher.Init(CipherKey, IV, 0);
-    Cipher.Mode := cmCBCx;
-
-    SourceText := 'Beispielklartext';
-    Input := System.SysUtils.BytesOf(SourceText);
-
-    Output := Cipher.EncodeBytes(Input);
-    for i := 0 to high(Output) do
-      Write(IntToHex(Output[i], 2), ' ');
-
-    // Encrypt some text
-
-//    CipherText := DECUtil.BytesToRawString(Cipher.EncodeString(SourceText, TFormat_HEX));
-//    WriteLn('Cipher of ' + SourceText + ' is: ' + CipherText);
-
-//    // Show that decryption works
-//    Cipher.Init(CipherKey);
-//    WriteLn('Plain text of ' + CipherText + ' is: ' +
-//      StringOf(Cipher.DecodeString(StringOf(TFormat_HEX.Decode(BytesOf(CipherText))), TFormat_Copy)));
-//
-//    // Show that using a different key results in a different output
-
-    ReadLn;
-
     try
+      // Init our encryption
+      CipherKey := 'Passwort';
+      IV := #0#0#0#0#0#0#0#0;
+      Cipher.Init(CipherKey, IV, 0);
+      Cipher.Mode := cmCBCx;
+
+      SourceText := 'Beispielklartext';
+      Input := System.SysUtils.BytesOf(SourceText);
+
+      // Encrypt
+      Output := Cipher.EncodeBytes(Input);
+
+      Write('Encrypted data in hex: ');
+      for i := 0 to high(Output) do
+        Write(IntToHex(Output[i], 2), ' ');
+
+      WriteLn;
+
+      // Decrypt
+      Cipher.Init(CipherKey, IV, 0);
+      Output := Cipher.DecodeBytes(Output);
+
+      SourceText := System.SysUtils.StringOf(Output);
+
+      WriteLn('Decrypted data: ' + SourceText);
+
+      // Show that using a different key results in a different output
+      WriteLn;
+
+      CipherKey := 'Password';
+      Cipher.Init(CipherKey, IV, 0);
+      Output := Cipher.DecodeBytes(Output);
+
+      SourceText := System.SysUtils.StringOf(Output);
+
+      WriteLn('Decrypted with different key: ' + SourceText);
+
+      ReadLn;
     except
       on E: Exception do
         Writeln(E.ClassName, ': ', E.Message);
