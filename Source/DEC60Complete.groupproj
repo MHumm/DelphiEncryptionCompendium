@@ -15,6 +15,9 @@
         <Projects Include="..\Demos\Hash_FMX\Hash_FMX.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\Demos\Cipher_FMX\Cipher_FMX.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="..\Demos\Format_Console\Format_Console.dproj">
             <Dependencies/>
         </Projects>
@@ -68,6 +71,15 @@
     <Target Name="Hash_FMX:Make">
         <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Cipher_FMX">
+        <MSBuild Projects="..\Demos\Cipher_FMX\Cipher_FMX.dproj"/>
+    </Target>
+    <Target Name="Cipher_FMX:Clean">
+        <MSBuild Projects="..\Demos\Cipher_FMX\Cipher_FMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Cipher_FMX:Make">
+        <MSBuild Projects="..\Demos\Cipher_FMX\Cipher_FMX.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Format_Console">
         <MSBuild Projects="..\Demos\Format_Console\Format_Console.dproj"/>
     </Target>
@@ -96,13 +108,13 @@
         <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX;Format_Console;Hash_Console;Cipher_Console"/>
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
