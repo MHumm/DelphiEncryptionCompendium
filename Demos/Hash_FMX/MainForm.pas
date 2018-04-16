@@ -48,7 +48,7 @@ type
   end;
 
 var
-  Form1: TMainForm;
+  FormMain: TMainForm;
 
 implementation
 

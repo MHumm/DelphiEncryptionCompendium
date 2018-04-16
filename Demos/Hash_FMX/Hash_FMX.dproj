@@ -6,7 +6,7 @@
         <MainSource>Hash_FMX.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <Platform Condition="'$(Platform)'==''">Android</Platform>
         <TargetedPlatforms>19</TargetedPlatforms>
         <AppType>Application</AppType>
     </PropertyGroup>
@@ -177,7 +177,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="MainForm.pas">
-            <Form>Form1</Form>
+            <Form>FormMain</Form>
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="..\..\Source\DECBaseClass.pas"/>

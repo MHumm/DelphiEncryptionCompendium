@@ -1,20 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.251,D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.396,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.180,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.957,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.661,D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj=d:\Projekte\Project1.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.706,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.980,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.766,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.251,D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.fmx=d:\Projekte\Unit1.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.782,=D:\Projekte\DECGit\Source\DECHash.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.847,=D:\Projekte\DECGit\Source\DECHashBase.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.422,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.661,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.251,d:\Projekte\Unit1.fmx=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.fmx</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.180,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.782,=D:\Projekte\DECGit\Source\DECHash.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.957,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.396,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.251,d:\Projekte\Unit1.pas=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.980,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.241,=d:\Projekte\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.241,=d:\Projekte\Unit1.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="android-support-v4.dex.jar"/>
@@ -39,6 +39,6 @@
     <File Path="MainForm.fmx"/>
   </ProjectSortOrder>
 	<ActiveMobileDevice>
-		<NoProfile Android="TA9290M3SN"/>
+		<NoProfile Android="CB512EA59X"/>
 	</ActiveMobileDevice>
 </BorlandProject>

@@ -1,7 +1,7 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\fmx\FMX.Edit.pas',0,1,1313,1,1334,0,0,,
-File_1=TSourceModule,'c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,32206,1,32232,0,0,,
-File_2=TSourceModule,'c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas',0,1,34527,1,34546,0,0,,
+File_0=TSourceModule,'c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas',0,1,34613,1,34632,0,0,,
+File_1=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\fmx\FMX.Edit.pas',0,1,1313,1,1334,0,0,,
+File_2=TSourceModule,'c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,32206,1,32232,0,0,,
 File_3=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\rtl\common\System.Generics.Collections.pas',0,1,6325,1,6344,0,0,,
 File_4=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\fmx\FMX.Controls.pas',0,1,4081,1,4100,0,0,{{6849,0}
 File_5=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\fmx\FMX.Forms.pas',0,1,2406,1,2425,0,0,,
@@ -15,23 +15,23 @@ File_12=TSourceModule,'D:\Projekte\DECPurePascalRedesigned\Unit Tests\TestDECFor
 File_13=TSourceModule,'D:\Projekte\DECPurePascalRedesigned\Demos\HashDemo\FMX\MainForm.pas',0,1,1,1,1,0,0,,
 
 [Modules]
-Module0=D:\Projekte\DECGit\Source\DECCipherFormats.pas
-Module1=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
-Module2=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipherModes.pas
+Module0=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj
+Module1=D:\Projekte\DECGit\Source\DECCipherFormats.pas
+Module2=D:\Projekte\DECGit\Source\DECCipherModes.pas
 Module3=D:\Projekte\DECGit\Source\DECCiphers.pas
 Module4=D:\Projekte\DECGit\Source\DECCipherBase.pas
-Module5=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj
-Module6=D:\Projekte\DECGit\Source\DECCipherModes.pas
+Module5=D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj
+Module6=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj
 Module7=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj
-Module8=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas
-Module9=D:\Projekte\DECGit\Source\DECFormat.pas
-Module10=D:\Projekte\DECGit\Unit Tests\Tests\TestDECFormat.pas
-Module11=D:\Projekte\DECGit\Source\DECFormatBase.pas
-Module12=D:\Projekte\DECGit\Source\DECData.pas
-Module13=D:\Projekte\DECGit\Unit Tests\Tests\TestDECHash.pas
-Module14=D:\Projekte\DECGit\Source\DECHashBase.pas
-Module15=D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj
-Module16=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj
+Module8=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
+Module9=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipherModes.pas
+Module10=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas
+Module11=D:\Projekte\DECGit\Source\DECFormat.pas
+Module12=D:\Projekte\DECGit\Unit Tests\Tests\TestDECFormat.pas
+Module13=D:\Projekte\DECGit\Source\DECFormatBase.pas
+Module14=D:\Projekte\DECGit\Source\DECData.pas
+Module15=D:\Projekte\DECGit\Unit Tests\Tests\TestDECHash.pas
+Module16=D:\Projekte\DECGit\Source\DECHashBase.pas
 Module17=D:\Projekte\DECGit\Source\DECHash.pas
 Module18=D:\Projekte\DECGit\Source\DECBaseClass.pas
 Module19=D:\Projekte\DECGit\Source\DECUtil.pas
@@ -64,13 +64,13 @@ Module45=D:\Projekte\DECPurePascalRedesigned\Source\DECCRC.pas
 Count=46
 EditWindowCount=1
 
+[D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj]
+ModuleType=TBaseProject
+
 [D:\Projekte\DECGit\Source\DECCipherFormats.pas]
 ModuleType=TSourceModule
 
-[D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas]
-ModuleType=TSourceModule
-
-[D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipherModes.pas]
+[D:\Projekte\DECGit\Source\DECCipherModes.pas]
 ModuleType=TSourceModule
 
 [D:\Projekte\DECGit\Source\DECCiphers.pas]
@@ -79,14 +79,20 @@ ModuleType=TSourceModule
 [D:\Projekte\DECGit\Source\DECCipherBase.pas]
 ModuleType=TSourceModule
 
-[D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj]
+[D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj]
 ModuleType=TBaseProject
 
-[D:\Projekte\DECGit\Source\DECCipherModes.pas]
-ModuleType=TSourceModule
+[D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj]
+ModuleType=TBaseProject
 
 [D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj]
 ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipherModes.pas]
+ModuleType=TSourceModule
 
 [D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas]
 ModuleType=TSourceModule
@@ -108,12 +114,6 @@ ModuleType=TSourceModule
 
 [D:\Projekte\DECGit\Source\DECHashBase.pas]
 ModuleType=TSourceModule
-
-[D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj]
-ModuleType=TBaseProject
 
 [D:\Projekte\DECGit\Source\DECHash.pas]
 ModuleType=TSourceModule
@@ -204,7 +204,7 @@ ModuleType=TSourceModule
 
 [EditWindow0]
 ViewCount=46
-CurrentEditView=D:\Projekte\DECGit\Source\DECCipherFormats.pas
+CurrentEditView=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dpr
 View0=0
 View1=1
 View2=2
@@ -276,9 +276,9 @@ RightPanelData=00000800010100000000081000000000000001D00700000000000001000000004
 BottomPanelSize=1519
 BottomPanelClients=DockSite1,MessageView
 BottomPanelData=0000080001020100000009000000446F636B5369746531724500000000000002EF050000000000000100000000724500000F0000004D65737361676556696577466F726DFFFFFFFF
-BottomMiddlePanelSize=1537
+BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
-BottomMiddelPanelData=0000080001020100000010000000477261706844726177696E6756696577F5290000000000000201060000000000000100000000F529000009000000446F636B5369746530FFFFFFFF
+BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779F1D00000000000002F206000000000000FFFFFFFF
 
 [View0]
 CustomEditViewType=TEditView
@@ -351,10 +351,10 @@ CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
 CursorX=26
 CursorY=616
-TopLine=596
+TopLine=618
 LeftCol=1
 Elisions=
-Bookmarks={1,1480,19}{2,593,1}{3,650,3}{4,586,3}
+Bookmarks=
 EditViewName=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
 
 [View7]
@@ -382,9 +382,9 @@ EditViewName=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipherModes.pas
 [View9]
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Source\DECCipherModes.pas
-CursorX=15
-CursorY=273
-TopLine=263
+CursorX=1
+CursorY=326
+TopLine=307
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -394,11 +394,11 @@ EditViewName=D:\Projekte\DECGit\Source\DECCipherModes.pas
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Source\DECCiphers.pas
 CursorX=1
-CursorY=3179
+CursorY=3181
 TopLine=3160
 LeftCol=1
 Elisions=
-Bookmarks={1,4220,21}{2,563,54}
+Bookmarks=
 EditViewName=D:\Projekte\DECGit\Source\DECCiphers.pas
 
 [View11]
@@ -427,7 +427,7 @@ EditViewName=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dpr
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dpr
 CursorX=1
-CursorY=112
+CursorY=111
 TopLine=88
 LeftCol=1
 Elisions=
@@ -439,7 +439,7 @@ CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Source\DECCipherBase.pas
 CursorX=1
 CursorY=667
-TopLine=667
+TopLine=648
 LeftCol=1
 Elisions=
 Bookmarks={1,667,1}
@@ -459,9 +459,9 @@ EditViewName=D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dpr
 [View16]
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Source\DECCipherFormats.pas
-CursorX=25
-CursorY=472
-TopLine=350
+CursorX=42
+CursorY=364
+TopLine=338
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -790,14 +790,9 @@ EditViewName=D:\Projekte\DECPurePascalRedesigned\Source\DECFormat.pas
 Count=0
 
 [Watches]
-Count=7
-Watch0='SizeOf(FRegister)',256,0,18,1,1,'Überwachte Ausdrücke',1
-Watch1='InpStr',4,50,18,1,1,'Überwachte Ausdrücke',1
-Watch2='Password[1]',4,16,18,1,1,'Überwachte Ausdrücke',1
-Watch3='Data.InputData[1]',4,32,18,1,1,'Überwachte Ausdrücke',1
-Watch4='FCipher_Blowfish.Context.KeySize',256,0,18,1,1,'Überwachte Ausdrücke',1
-Watch5='ConvertHexVectorToBytes(string(Data.OutputData))',256,0,18,1,1,'Überwachte Ausdrücke',1
-Watch6='EditInput.Text[1]',4,4,18,1,1,'Überwachte Ausdrücke',1
+Count=2
+Watch0='Source^',256,0,18,1,1,'Überwachte Ausdrücke',1
+Watch1='Dest^',256,0,18,1,1,'Überwachte Ausdrücke',1
 
 [WatchWindow]
 WatchColumnWidth=120
@@ -821,7 +816,7 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=12
+Count=13
 Breakpoint0='D:\Projekte\DECPurePascalRedesigned\Source\DECCipherBase.pas',739,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint1='D:\Projekte\DECGit\Source\DECCiphers.pas',679,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint2='D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas',650,'',0,1,'',1,0,0,'',1,'','','',0,''
@@ -834,6 +829,7 @@ Breakpoint8='D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas',912,'',0,1,'
 Breakpoint9='D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dpr',112,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint10='D:\Projekte\DECGit\Source\DECCiphers.pas',3179,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint11='D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas',616,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint12='D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dpr',110,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -986,12 +982,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=6042
-Height=1183
+Width=2339
+Height=1240
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1183
+ClientWidth=2339
+ClientHeight=1240
 TBDockHeight=4837
 LRDockWidth=3562
 Dockable=1
@@ -1005,12 +1001,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=6042
-Height=1183
+Width=2339
+Height=1240
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1183
+ClientWidth=2339
+ClientHeight=1240
 TBDockHeight=4837
 LRDockWidth=3562
 Dockable=1
@@ -1203,12 +1199,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=6042
-Height=1183
+Width=2339
+Height=1000
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1183
+ClientWidth=2339
+ClientHeight=1000
 TBDockHeight=2317
 LRDockWidth=2823
 Dockable=1
@@ -1223,11 +1219,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1202
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1202
+ClientHeight=1240
 TBDockHeight=3212
 LRDockWidth=2823
 Dockable=1
@@ -1241,12 +1237,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=6042
-Height=1183
+Width=2339
+Height=1240
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1183
+ClientWidth=2339
+ClientHeight=1240
 TBDockHeight=1154
 LRDockWidth=3677
 Dockable=1
@@ -1389,23 +1385,23 @@ HostDockSite=DockBottomCenterPanel
 DockSiteType=1
 PercentageSizes=1
 Create=1
-Visible=1
+Visible=0
 Docked=1
 State=0
-Left=0
-Top=18
-Width=6042
-Height=1423
+Left=8
+Top=8
+Width=2339
+Height=1481
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1423
-TBDockHeight=1423
+ClientWidth=2339
+ClientHeight=1481
+TBDockHeight=1481
 LRDockWidth=2339
 Dockable=1
 StayOnTop=0
 TabPosition=1
-ActiveTabID=FindReferencsForm
+ActiveTabID=RefactoringForm
 TabDockClients=RefactoringForm,FindReferencsForm,ToDo List,MetricsView,QAView
 
 [DockSite1]
@@ -1505,5 +1501,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=3
+ActiveProject=7
 

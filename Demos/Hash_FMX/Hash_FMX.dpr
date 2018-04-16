@@ -3,7 +3,7 @@ program Hash_FMX;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MainForm in 'MainForm.pas' {Form1},
+  MainForm in 'MainForm.pas' {FormMain},
   DECBaseClass in '..\..\Source\DECBaseClass.pas',
   DECHash in '..\..\Source\DECHash.pas',
   DECUtil in '..\..\Source\DECUtil.pas',
@@ -20,6 +20,6 @@ begin
   ReportMemoryLeaksOnShutdown := true;
 
   Application.Initialize;
-  Application.CreateForm(TMainForm, Form1);
+  Application.CreateForm(TMainForm, FormMain);
   Application.Run;
 end.

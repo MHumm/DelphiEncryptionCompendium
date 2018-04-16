@@ -529,6 +529,7 @@ begin
     SetLength(Result, 0);
 end;
 
+{$IFNDEF NEXTGEN}
 function TDECFormattedCipher.EncodeString(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -544,7 +545,9 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
 function TDECFormattedCipher.DecodeString(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -561,7 +564,9 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
 function TDECFormattedCipher.EncodeString(const Source: WideString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -577,7 +582,9 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
 function TDECFormattedCipher.DecodeString(const Source: WideString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -594,5 +601,6 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
 end.
