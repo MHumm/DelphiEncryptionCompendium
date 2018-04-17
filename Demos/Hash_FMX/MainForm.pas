@@ -25,7 +25,7 @@ type
     ComboBoxOutputFormatting: TComboBox;
     LayoutTop: TLayout;
     CheckBoxLiveCalc: TCheckBox;
-    Label1: TLabel;
+    LabelVersion: TLabel;
     CheckBoxIsPasswordHash: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -135,7 +135,15 @@ begin
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
+var
+  AppService : IFMXApplicationService;
 begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXApplicationService,
+                                                       IInterface(AppService)) then
+    LabelVersion.Text := format(LabelVersion.Text, [AppService.AppVersion])
+  else
+    LabelVersion.Text := format(LabelVersion.Text, ['']);
+
   InitHashCombo;
   InitFormatCombos;
 end;
