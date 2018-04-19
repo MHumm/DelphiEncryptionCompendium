@@ -21,7 +21,7 @@ type
     Label1: TLabel;
     EditKey: TEdit;
     Label3: TLabel;
-    Edit1: TEdit;
+    EditInitVector: TEdit;
     Label4: TLabel;
     EditFiller: TEdit;
     Label7: TLabel;
@@ -41,10 +41,14 @@ type
     procedure FormResize(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
+    procedure ButtonEncryptClick(Sender: TObject);
+    procedure EditPlainTextChangeTracking(Sender: TObject);
+    procedure ButtonDecryptClick(Sender: TObject);
   private
     procedure InitFormatCombos;
     procedure InitCipherCombo;
     procedure InitCipherModes;
+    procedure ShowErrorMessage(ErrorMsg: string);
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
@@ -61,6 +65,106 @@ uses
   DECCiphers, DECUtil;
 
 {$R *.fmx}
+
+procedure TMainForm.ButtonDecryptClick(Sender: TObject);
+begin
+//
+end;
+
+procedure TMainForm.ButtonEncryptClick(Sender: TObject);
+var
+  Cipher           : TDECCipher;
+  InputFormatting  : TDECFormatClass;
+  OutputFormatting : TDECFormatClass;
+  InputBuffer      : TBytes;
+  OutputBuffer     : TBytes;
+begin
+  if ComboBoxInputFormatting.ItemIndex >= 0 then
+  begin
+    // Find the class type of the selected formatting class and create an instance of it
+    InputFormatting := TDECFormat.ClassByName(
+      ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex]);
+  end
+  else
+  begin
+    ShowErrorMessage('No input format selected');
+    exit;
+  end;
+
+  if ComboBoxOutputFormatting.ItemIndex >= 0 then
+  begin
+    // Find the class type of the selected formatting class and create an instance of it
+    OutputFormatting := TDECFormat.ClassByName(
+      ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex]);
+  end
+  else
+  begin
+    ShowErrorMessage('No output format selected');
+    exit;
+  end;
+
+  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or EditFiller.Text.IsEmpty then
+  begin
+    ShowErrorMessage('No key, initialization vector or filler byte given');
+    exit;
+  end;
+
+  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
+  begin
+    // Find the class type of the selected hash class and create an instance of it
+    Cipher := TDECCipher.ClassByName(
+      ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create;
+
+    if TFormat_HEX.IsValid(RawByteString(EditInitVector.Text)) and
+       TFormat_HEX.IsValid(RawByteString(EditFiller.Text)) then
+    begin
+      Cipher.Init(RawByteString(EditKey.Text),
+                  TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
+                  StrToInt('0x' + EditFiller.Text));
+
+{ TODO : Überlegen wie man von der Mode Liste zum Modus kommt... }
+      Cipher.Mode := cmCBCx;
+    end
+    else
+    begin
+      ShowErrorMessage('Init vector or filler byte  not given in hexadecimal representation');
+      exit;
+    end;
+
+    try
+      InputBuffer  := System.SysUtils.BytesOf(EditPlainText.Text);
+
+      if InputFormatting.IsValid(InputBuffer) then
+      begin
+// Warum springt er hier direkt die nur für einen Block gültige
+// DoEncode an, statt der Blockverkettung nutzenden aus DECCipherModes?
+// Was ist hier anders als im Console basierten Programm?
+        OutputBuffer := Cipher.EncodeBytes(InputFormatting.Decode(InputBuffer));
+
+        EditCipherText.Text := DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer));
+      end
+      else
+        ShowErrorMessage('Input has wrong format');
+    finally
+      Cipher.Free;
+    end;
+  end
+  else
+    ShowErrorMessage('No cipher algorithm selected');
+end;
+
+procedure TMainForm.ShowErrorMessage(ErrorMsg: string);
+var
+  AsyncDlg : IFMXDialogServiceASync;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
+                                                       IInterface(AsyncDlg)) then
+    AsyncDlg.MessageDialogAsync(Translate(ErrorMsg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
+    procedure (const AResult: TModalResult)
+    begin
+    end);
+end;
 
 procedure TMainForm.ComboBoxCipherAlgorithmChange(Sender: TObject);
 var
@@ -93,6 +197,17 @@ begin
     StringGridContext.Cells[1, 6] := 'symmetric'
   else
     StringGridContext.Cells[1, 6] := 'asymmetric';
+end;
+
+procedure TMainForm.EditPlainTextChangeTracking(Sender: TObject);
+begin
+  if CheckBoxLiveCalc.IsChecked then
+  begin
+    if ActiveControl = ButtonEncrypt then
+      ButtonEncryptClick(self)
+    else
+      ButtonDecryptClick(self);
+  end;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);

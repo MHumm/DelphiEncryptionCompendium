@@ -44,6 +44,7 @@ type
     ///   combo boxes
     /// </summary>
     procedure InitFormatCombos;
+    procedure ShowErrorMessage(ErrorMsg: string);
   public
   end;
 
@@ -65,7 +66,6 @@ var
   OutputFormatting : TDECFormatClass;
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
-  AsyncDlg         : IFMXDialogServiceASync;
 begin
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
@@ -74,7 +74,10 @@ begin
       ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex]);
   end
   else
+  begin
+    ShowErrorMessage('No input format selected');
     exit;
+  end;
 
   if ComboBoxOutputFormatting.ItemIndex >= 0 then
   begin
@@ -83,7 +86,10 @@ begin
       ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex]);
   end
   else
+  begin
+    ShowErrorMessage('No input format selected');
     exit;
+  end;
 
   if ComboBoxHashFunction.ItemIndex >= 0 then
   begin
@@ -98,20 +104,27 @@ begin
       begin
         OutputBuffer := Hash.CalcBytes(InputFormatting.Decode(InputBuffer));
 
-        EditOutput.Text := DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer));
+        EditOutput.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
       end
       else
-        if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
-                                                             IInterface(AsyncDlg)) then
-          AsyncDlg.MessageDialogAsync(Translate('Input has wrong format'),
-                   TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
-          procedure (const AResult: TModalResult)
-          begin
-          end);
+        ShowErrorMessage('Input has wrong format');
     finally
       Hash.Free;
     end;
   end;
+end;
+
+procedure TMainForm.ShowErrorMessage(ErrorMsg: string);
+var
+  AsyncDlg : IFMXDialogServiceASync;
+begin
+  if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
+                                                       IInterface(AsyncDlg)) then
+    AsyncDlg.MessageDialogAsync(Translate(ErrorMsg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
+    procedure (const AResult: TModalResult)
+    begin
+    end);
 end;
 
 procedure TMainForm.ComboBoxHashFunctionChange(Sender: TObject);

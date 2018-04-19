@@ -91,9 +91,10 @@ var
   CipherText : string;
   // Key for the initialization of our encryption run
   CipherKey  : RawByteString;
-  IV: RawByteString;
-  Input, Output:TBytes;
-  I : Integer;
+  IV         : RawByteString;
+  Input,
+  Output     : TBytes;
+  i          : Integer;
 begin
   Cipher := TCipher_1DES.Create;
 

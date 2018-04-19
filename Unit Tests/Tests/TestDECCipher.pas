@@ -912,12 +912,12 @@ end;
 
 procedure TestTCipher_1DES.Init(TestData: TCipherTestData);
 var
-  Password : RawByteString;
+  InitVector : RawByteString;
 begin
 //  Password := 'TCipher_1DES';
-  Password := TestData.InitVector;
-  if Length(Password) > FCipher_1DES.Context.KeySize then
-    Delete(Password, FCipher_1DES.Context.KeySize+1, length(Password));
+  InitVector := TestData.InitVector;
+  if Length(TestData.Key) > FCipher_1DES.Context.KeySize then
+    Delete(TestData.Key, FCipher_1DES.Context.KeySize+1, length(TestData.Key));
 
 //  FCipher_1DES.Mode := cmCTSx;
 //  FCipher_1DES.Init(BytesOf(Password), BytesOf(#$FF#$FF#$FF#$FF#$FF#$FF#$FF#$FF), $FF);
@@ -925,7 +925,7 @@ begin
 
   FCipher_1DES.Mode := TestData.Mode;
   FCipher_1DES.Init(BytesOf(TestData.Key),
-                    BytesOf(Password),
+                    BytesOf(InitVector),
                     TestData.Filler);
 end;
 
