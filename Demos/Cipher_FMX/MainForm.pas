@@ -62,7 +62,7 @@ implementation
 uses
   System.TypInfo, Generics.Collections, FMX.Platform,
   DECBaseClass, DECFormatBase, DECFormat, DECCipherBase, DECCipherModes,
-  DECCiphers, DECUtil;
+  DECCipherFormats, DECCiphers, DECUtil;
 
 {$R *.fmx}
 
@@ -139,7 +139,7 @@ begin
 // Warum springt er hier direkt die nur für einen Block gültige
 // DoEncode an, statt der Blockverkettung nutzenden aus DECCipherModes?
 // Was ist hier anders als im Console basierten Programm?
-        OutputBuffer := Cipher.EncodeBytes(InputFormatting.Decode(InputBuffer));
+        OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
 
         EditCipherText.Text := DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer));
       end
