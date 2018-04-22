@@ -27,6 +27,9 @@
         <Projects Include="..\Demos\Cipher_Console\Cipher_Console.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -107,14 +110,23 @@
     <Target Name="Cipher_Console:Make">
         <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Make"/>
     </Target>
+    <Target Name="CryptoWorkbench">
+        <MSBuild Projects="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj"/>
+    </Target>
+    <Target Name="CryptoWorkbench:Clean">
+        <MSBuild Projects="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="CryptoWorkbench:Make">
+        <MSBuild Projects="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console"/>
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console;CryptoWorkbench"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean;CryptoWorkbench:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make;CryptoWorkbench:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
