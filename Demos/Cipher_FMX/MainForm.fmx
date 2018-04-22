@@ -1,8 +1,9 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
+  ActiveControl = ComboBoxCipherAlgorithm
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 731
+  ClientHeight = 704
   ClientWidth = 425
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -13,11 +14,11 @@ object MainForm: TMainForm
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 425.000000000000000000
-    Size.Height = 731.000000000000000000
+    Size.Height = 704.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     Viewport.Width = 409.000000000000000000
-    Viewport.Height = 731.000000000000000000
+    Viewport.Height = 704.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
       Size.Height = 993.000000000000000000
@@ -42,7 +43,7 @@ object MainForm: TMainForm
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 2
+        TabOrder = 0
         OnChange = ComboBoxCipherAlgorithmChange
       end
       object Label5: TLabel
@@ -64,7 +65,7 @@ object MainForm: TMainForm
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 3
+        TabOrder = 1
       end
       object Label6: TLabel
         AutoSize = True
@@ -85,7 +86,7 @@ object MainForm: TMainForm
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 4
+        TabOrder = 2
       end
       object Label1: TLabel
         AutoSize = True
@@ -102,7 +103,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 13
+        TabOrder = 3
         Position.X = 16.000000000000000000
         Position.Y = 272.000000000000000000
         Size.Width = 385.000000000000000000
@@ -124,7 +125,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 12
+        TabOrder = 4
         Position.X = 16.000000000000000000
         Position.Y = 344.000000000000000000
         Size.Width = 385.000000000000000000
@@ -146,7 +147,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 11
+        TabOrder = 5
         Position.X = 16.000000000000000000
         Position.Y = 408.000000000000000000
         Size.Width = 385.000000000000000000
@@ -172,7 +173,7 @@ object MainForm: TMainForm
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 0
+        TabOrder = 6
       end
       object CheckBoxLiveCalc: TCheckBox
         Anchors = [akLeft, akTop, akRight]
@@ -182,7 +183,7 @@ object MainForm: TMainForm
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 5
+        TabOrder = 7
         Text = 'Live calculation'
       end
       object Label8: TLabel
@@ -206,7 +207,7 @@ object MainForm: TMainForm
         Size.Height = 100.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'gridstyle'
-        TabOrder = 18
+        TabOrder = 8
         Viewport.Width = 365.000000000000000000
         Viewport.Height = 75.000000000000000000
         object StringColumn1: TStringColumn
@@ -243,7 +244,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 22
+        TabOrder = 9
         Position.X = 16.000000000000000000
         Position.Y = 752.000000000000000000
         Size.Width = 385.000000000000000000
@@ -255,7 +256,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 21
+        TabOrder = 10
         Position.X = 16.000000000000000000
         Position.Y = 816.000000000000000000
         Size.Width = 385.000000000000000000
@@ -270,7 +271,7 @@ object MainForm: TMainForm
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
-        TabOrder = 24
+        TabOrder = 11
         Text = 'Encrypt'
         OnClick = ButtonEncryptClick
       end
@@ -282,7 +283,7 @@ object MainForm: TMainForm
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
-        TabOrder = 23
+        TabOrder = 12
         Text = 'Decrypt'
         OnClick = ButtonDecryptClick
       end

@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox;
+  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, DECCipherBase;
 
 type
   TMainForm = class(TForm)
@@ -49,6 +49,7 @@ type
     procedure InitCipherCombo;
     procedure InitCipherModes;
     procedure ShowErrorMessage(ErrorMsg: string);
+    function GetSelectedCipherMode: TCipherMode;
     { Private-Deklarationen }
   public
     { Public-Deklarationen }
@@ -61,7 +62,7 @@ implementation
 
 uses
   System.TypInfo, Generics.Collections, FMX.Platform,
-  DECBaseClass, DECFormatBase, DECFormat, DECCipherBase, DECCipherModes,
+  DECBaseClass, DECFormatBase, DECFormat, DECCipherModes,
   DECCipherFormats, DECCiphers, DECUtil;
 
 {$R *.fmx}
@@ -122,8 +123,7 @@ begin
                   TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
                   StrToInt('0x' + EditFiller.Text));
 
-{ TODO : Überlegen wie man von der Mode Liste zum Modus kommt... }
-      Cipher.Mode := cmCBCx;
+      Cipher.Mode := GetSelectedCipherMode;
     end
     else
     begin
@@ -151,6 +151,14 @@ begin
   end
   else
     ShowErrorMessage('No cipher algorithm selected');
+end;
+
+function TMainForm.GetSelectedCipherMode:TCipherMode;
+begin
+  // Determine selected block chaining method via RTTI (runtime type information)
+  result := TCipherMode(System.TypInfo.GetEnumValue(
+              TypeInfo(TCipherMode),
+              ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex]));
 end;
 
 procedure TMainForm.ShowErrorMessage(ErrorMsg: string);
