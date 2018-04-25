@@ -30,31 +30,15 @@ object FormMain: TFormMain
       TabVisible = False
       ExplicitTop = 24
       ExplicitHeight = 341
-      DesignSize = (
-        466
-        438)
-      object CoolBar1: TCoolBar
-        Left = 0
-        Top = 0
-        Width = 466
-        Height = 25
-        BandMaximize = bmNone
-        Bands = <
-          item
-            ImageIndex = -1
-            Text = 'Format conversion'
-            Width = 460
-          end>
-        Enabled = False
-      end
       object GroupBox1: TGroupBox
         Left = 0
-        Top = 25
+        Top = 0
         Width = 466
         Height = 224
         Align = alTop
         Caption = 'Simple format conversion'
-        TabOrder = 2
+        TabOrder = 0
+        ExplicitTop = 25
         DesignSize = (
           466
           224)
@@ -75,9 +59,9 @@ object FormMain: TFormMain
         object Label5: TLabel
           Left = 16
           Top = 128
-          Width = 73
+          Width = 57
           Height = 13
-          Caption = 'Formatted text'
+          Caption = 'Output text'
         end
         object MemoFormatSourceText: TMemo
           Left = 153
@@ -85,8 +69,7 @@ object FormMain: TFormMain
           Width = 296
           Height = 52
           Anchors = [akLeft, akTop, akRight]
-          Lines.Strings = (
-            '')
+          ScrollBars = ssVertical
           TabOrder = 0
         end
         object MemoFormatOutput: TMemo
@@ -95,25 +78,130 @@ object FormMain: TFormMain
           Width = 296
           Height = 52
           Anchors = [akLeft, akTop, akRight]
+          ScrollBars = ssVertical
           TabOrder = 1
         end
-        object ButtonSimpleFormat: TButton
+        object ComboSimpleFormat: TComboBox
           Left = 153
-          Top = 187
+          Top = 85
           Width = 296
-          Height = 25
-          Caption = '&Convert'
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
         end
+        object GridPanel1: TGridPanel
+          Left = 153
+          Top = 183
+          Width = 297
+          Height = 26
+          Anchors = [akLeft, akTop, akRight]
+          BevelOuter = bvNone
+          ColumnCollection = <
+            item
+              Value = 50.000000000000000000
+            end
+            item
+              Value = 50.000000000000000000
+            end>
+          ControlCollection = <
+            item
+              Column = 0
+              Control = ButtonSimpleFormatEncode
+              Row = 0
+            end
+            item
+              Column = 1
+              Control = ButtonSimpleFormatDecode
+              Row = 0
+            end>
+          RowCollection = <
+            item
+              Value = 100.000000000000000000
+            end>
+          TabOrder = 3
+          object ButtonSimpleFormatEncode: TButton
+            Left = 0
+            Top = 0
+            Width = 148
+            Height = 26
+            Align = alClient
+            Caption = '&Encode'
+            TabOrder = 0
+            ExplicitLeft = 8
+            ExplicitTop = 1
+            ExplicitWidth = 75
+            ExplicitHeight = 25
+          end
+          object ButtonSimpleFormatDecode: TButton
+            Left = 148
+            Top = 0
+            Width = 149
+            Height = 26
+            Align = alClient
+            Caption = '&Decode'
+            TabOrder = 1
+            ExplicitLeft = 8
+            ExplicitTop = 1
+            ExplicitWidth = 75
+            ExplicitHeight = 25
+          end
+        end
       end
-      object ComboSimpleFormat: TComboBox
-        Left = 153
-        Top = 115
-        Width = 296
-        Height = 21
-        Style = csDropDownList
-        Anchors = [akLeft, akTop, akRight]
+      object GroupBox2: TGroupBox
+        Left = 0
+        Top = 224
+        Width = 466
+        Height = 214
+        Align = alClient
+        Caption = 'Format identification'
         TabOrder = 1
+        ExplicitLeft = 3
+        ExplicitTop = 230
+        ExplicitWidth = 460
+        ExplicitHeight = 205
+        DesignSize = (
+          466
+          214)
+        object Label6: TLabel
+          Left = 16
+          Top = 32
+          Width = 70
+          Height = 13
+          Caption = 'Encoded value'
+        end
+        object ButtonIdentifyFormat: TButton
+          Left = 153
+          Top = 69
+          Width = 296
+          Height = 25
+          Anchors = [akLeft, akTop, akRight]
+          Caption = '&Identify'
+          TabOrder = 1
+        end
+        object ValueListEditor1: TValueListEditor
+          Left = 16
+          Top = 112
+          Width = 433
+          Height = 89
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goTabs, goRowSelect, goThumbTracking]
+          TabOrder = 2
+          TitleCaptions.Strings = (
+            'Format'
+            'Decoded value')
+          ColWidths = (
+            150
+            277)
+        end
+        object EditFormatIdentificationSource: TEdit
+          Left = 153
+          Top = 33
+          Width = 296
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 0
+        end
       end
     end
     object TabSheetCRC: TTabSheet

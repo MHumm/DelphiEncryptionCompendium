@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.ButtonGroup, System.ImageList, Vcl.ImgList, System.Actions, Vcl.ActnList,
   Vcl.PlatformDefaultStyleActnCtrls, Vcl.ActnMan, Vcl.ToolWin,
-  Vcl.CategoryButtons;
+  Vcl.CategoryButtons, Vcl.Grids, Vcl.ValEdit, Vcl.ExtCtrls;
 
 type
   TFormMain = class(TForm)
@@ -24,7 +24,6 @@ type
     Label1: TLabel;
     Label2: TLabel;
     TabSheetFormatConversion: TTabSheet;
-    CoolBar1: TCoolBar;
     CategoryButtons: TCategoryButtons;
     GroupBox1: TGroupBox;
     Label3: TLabel;
@@ -33,7 +32,14 @@ type
     MemoFormatSourceText: TMemo;
     MemoFormatOutput: TMemo;
     ComboSimpleFormat: TComboBox;
-    ButtonSimpleFormat: TButton;
+    GroupBox2: TGroupBox;
+    Label6: TLabel;
+    ButtonIdentifyFormat: TButton;
+    ValueListEditor1: TValueListEditor;
+    GridPanel1: TGridPanel;
+    ButtonSimpleFormatEncode: TButton;
+    ButtonSimpleFormatDecode: TButton;
+    EditFormatIdentificationSource: TEdit;
     procedure ButtonGroupMainMenuItems0Click(Sender: TObject);
     procedure ButtonGroupMainMenuItems1Click(Sender: TObject);
     procedure ButtonGroupMainMenuItems2Click(Sender: TObject);
