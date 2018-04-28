@@ -192,29 +192,40 @@ type
   ///   OpenPGP/PGP Base64 with 24-bit Checksums, see http://tools.ietf.org/html/rfc4880
   /// </summary>
   TFormat_Radix64 = class(TFormat_Base64)
-  strict private
-//    /// <summary>
-//    ///   Maximum number of chars for one line of message text
-//    /// </summary>
-//    FCharsPerLine : UInt32;
+  /// <summary>
+  ///   Here the section needs to be private so that the variable can be accessed
+  ///   for initialization in the initialization section, which is needed since
+  ///   all functionality of the class is implemented as class methods
+  /// </summary>
   private
-//    procedure SetCharsPerLine(const Value: UInt32);
+    /// <summary>
+    ///   Maximum number of chars for one line of message text
+    /// </summary>
+    class var FCharsPerLine : UInt32;
   protected
     class function DoExtractCRC(const Data; var Size: Integer): UInt32;
     class procedure InsertCR(const Source: TBytes; var Dest: TBytes; BlockSize: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
   public
-    const
-      /// <summary>
-      ///   Maximum number of chars for one line of message text
-      /// </summary>
-{ TODO : Umbauen in Property und auf 76 begrenzen, wegen RFC4880, Default ist 76 }
-      CharsPerLine: UInt32 = 76;
-
-//    property CharsPerLine: UInt32
-//      read   FCharsPerLine
-//      write  SetCharsPerLine;
+    /// <summary>
+    ///   Changes the number of chars after which a line break is being added
+    /// </summary>
+    /// <param name="Value">
+    ///   Maximum number of chars for a single line. Values < 1 result in an
+    ///   EArgumentOutOfRangeException being raised
+    /// </param>
+    class procedure SetCharsPerLine(const Value: UInt32);
+    /// <summary>
+    ///   Returns the number of chars after which a line break will be introduced
+    /// </summary>
+    /// <returns>
+    ///   Maximum number of chars per line
+    /// </returns>
+    /// <remarks>
+    ///   Cannot be a property, as properties cannot access class vars
+    /// </remarks>
+    class function GetCharsPerLine: UInt32;
   end;
 
   /// <summary>
@@ -682,6 +693,11 @@ begin
   end;
 end;
 
+class function TFormat_Radix64.GetCharsPerLine: UInt32;
+begin
+  result := FCharsPerLine;
+end;
+
 class procedure TFormat_Radix64.InsertCR(const Source: TBytes; var Dest: TBytes; BlockSize: Integer);
 var
   S, D: PByte;
@@ -717,6 +733,17 @@ begin
   SetLength(Dest, PByte(D) - PByte(Dest));
 end;
 
+class procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
+begin
+  assert(Value > 0, 'Invalid number of chars per line: ' + IntToStr(Value));
+
+  if (Value > 0) then
+    FCharsPerLine := Value
+  else
+    raise EArgumentOutOfRangeException.Create('Invalid number of chars per line: ' +
+                                              IntToStr(Value));
+end;
+
 //procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
 //begin
 //  if (Value > 0) then
@@ -740,8 +767,8 @@ begin
   // use Base64
   inherited DoEncode(Source, TempData, Size);
 
-  // split lines (Radix-64 and PGP default to 80 chars per line before soft wrap)
-  InsertCR(TempData, Dest, CharsPerLine); // Radix64CharsPerLine);
+  // split lines
+  InsertCR(TempData, Dest, FCharsPerLine);
   SetLength(TempData, 0);
 
   CRC := CRCCalc(CRC_24, Source, Size); // calculate 24-bit Checksum
@@ -1144,6 +1171,9 @@ initialization
   TFormat_UU.RegisterClass(TDECFormat.ClassList);
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
+
+  // Init the number of chars per line as per RFC 4880 to 76 chars
+  TFormat_Radix64.FCharsPerLine := 76;
 
 finalization
 
