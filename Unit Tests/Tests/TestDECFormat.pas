@@ -302,7 +302,7 @@ type
     FFormat_Radix64: TFormat_Radix64;
 
     const
-      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+      cTestDataEncode : array[1..7] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: RawByteString('')),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
@@ -314,9 +314,11 @@ type
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
          Output: RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH')),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')));
+         Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')),
+        (Input:  RawByteString('12345678901234567890123456789012345678901234567890123456789012345678901234567890');
+         Output: RawByteString('MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=')));
 
-      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+      cTestDataDecode : array[1..7] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: RawByteString('')),
         (Input:  RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM');
@@ -328,7 +330,9 @@ type
         (Input:  RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH');
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
         (Input:  RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  RawByteString('MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=');
+         Output: RawByteString('12345678901234567890123456789012345678901234567890123456789012345678901234567890')));
   public
     procedure SetUp; override;
     procedure TearDown; override;

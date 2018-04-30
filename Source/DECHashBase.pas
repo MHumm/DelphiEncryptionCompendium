@@ -116,6 +116,9 @@ type
     /// </summary>
     procedure Done;
 
+    /// <summary>
+    ///   Returns the calculated hash value as byte array
+    /// </summary>
     function DigestAsBytes: TBytes; virtual;
     function DigestStr(Format: TDECFormatClass = nil): RawByteString;
 
@@ -211,7 +214,50 @@ type
     /// </returns>
     function CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString; overload;
 
+    /// <summary>
+    ///   Calculates the hash value over a givens stream of bytes
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned and the hash value will either be calculated
+    ///   from the beginning of the stream (if size < 0) or from the current
+    ///   stream position (size > 0) to the end
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="HashResult">
+    ///   In this byte array the calculated hash value will be returned
+    /// </param>
+    /// <param name="Progress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
     procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
+    /// <summary>
+    ///   Calculates the hash value over a givens stream of bytes
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned and the hash value will either be calculated
+    ///   from the beginning of the stream (if size < 0) or from the current
+    ///   stream position (size > 0) to the end
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="Format">
+    ///   optional formatting class. The formatting of that will be applied to
+    ///   the returned hash value
+    /// </param>
+    /// <param name="Progress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    /// <returns>
+    ///   Hash value over the bytes in the stream, formatted with the formatting
+    ///   passed as format parameter, if used.
+    /// </returns>
     function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil; const Progress: IDECProgress = nil): RawByteString; overload;
 
     procedure CalcFile(const FileName: string; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
@@ -520,6 +566,8 @@ var
   Bytes: Integer;
   Min, Max, Pos: Int64;
 begin
+  assert(assigned(Stream), 'Stream to calculate hash on is not assigned');
+
   SetLength(HashResult, 0);
   Min := 0;
   Max := 0;
