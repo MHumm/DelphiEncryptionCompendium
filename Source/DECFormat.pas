@@ -204,7 +204,21 @@ type
     class var FCharsPerLine : UInt32;
   protected
     class function DoExtractCRC(const Data; var Size: Integer): UInt32;
-    class procedure InsertCR(const Source: TBytes; var Dest: TBytes; BlockSize: Integer);
+    /// <summary>
+    ///   If the data given exceeds FCharsPerLine, means the maximum allowed
+    ///   line lenth, a CR/LF pair needs to be inserted at that position.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to insert a CR/LF into if necessary
+    /// </param>
+    /// <param name="Dest">
+    ///   In this byte array the processed data will be returned
+    /// </param>
+    /// <param name="LineLength">
+    ///   Maximum length of a line in byte. At this position the CR/LF will be
+    ///   inserted if the source passed in exceeds this length.
+    /// </param>
+    class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
   public
@@ -698,34 +712,34 @@ begin
   result := FCharsPerLine;
 end;
 
-class procedure TFormat_Radix64.InsertCR(const Source: TBytes; var Dest: TBytes; BlockSize: Integer);
+class procedure TFormat_Radix64.InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
 var
   S, D: PByte;
   i: Integer;
 begin
   i := Length(Source);
-  if (BlockSize <= 0) or (i <= BlockSize) then
+  if (LineLength <= 0) or (i <= LineLength) then
   begin
     SetLength(Dest, i);
     Move(Source[0], Dest[0], i);
     Exit;
   end;
 
-  SetLength(Dest, i + i * 2 div BlockSize + 2);
+  SetLength(Dest, i + i * 2 div LineLength + 2);
 
   S := @Source[0];
   D := @Dest[0];
 
   repeat
-    Move(S^, D^, BlockSize);
-    Inc(S, BlockSize);
-    Inc(D, BlockSize);
+    Move(S^, D^, LineLength);
+    Inc(S, LineLength);
+    Inc(D, LineLength);
     D^ := Ord(#13);
     Inc(D);
     D^ := Ord(#10);
     Inc(D);
-    Dec(i, BlockSize);
-  until i < BlockSize;
+    Dec(i, LineLength);
+  until i < LineLength;
 
   Move(S^, D^, i);
   Inc(D, i);
@@ -768,7 +782,7 @@ begin
   inherited DoEncode(Source, TempData, Size);
 
   // split lines
-  InsertCR(TempData, Dest, FCharsPerLine);
+  InsertCRLF(TempData, Dest, FCharsPerLine);
   SetLength(TempData, 0);
 
   CRC := CRCCalc(CRC_24, Source, Size); // calculate 24-bit Checksum
@@ -787,6 +801,10 @@ begin
 
   // encode CRC with Base64 too
   inherited DoEncode(CRC, CRCData, 3);
+
+  // if CRC is too long insert CRLF. -1 to compensate the later added = char
+  InsertCRLF(CRCData, TempData, FCharsPerLine - 1);
+  CRCData := TempData;
 
   // append encoded CRC
   Position := Length(Dest);

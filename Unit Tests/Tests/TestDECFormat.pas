@@ -302,7 +302,7 @@ type
     FFormat_Radix64: TFormat_Radix64;
 
     const
-      cTestDataEncode : array[1..7] of TestRecRawByteString = (
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: RawByteString('')),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
@@ -314,11 +314,9 @@ type
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
          Output: RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH')),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')),
-        (Input:  RawByteString('12345678901234567890123456789012345678901234567890123456789012345678901234567890');
-         Output: RawByteString('MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=')));
+         Output: RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz')));
 
-      cTestDataDecode : array[1..7] of TestRecRawByteString = (
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: RawByteString('')),
         (Input:  RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM');
@@ -330,9 +328,7 @@ type
         (Input:  RawByteString('VGVzdAoJqlWqVao=' + #13 + #10 +'=s2dH');
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
         (Input:  RawByteString('VGVzdAoJqlWqVapV' + #13 + #10 +'=WEFz');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)),
-        (Input:  RawByteString('MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTA=');
-         Output: RawByteString('12345678901234567890123456789012345678901234567890123456789012345678901234567890')));
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -343,6 +339,7 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestEncodeRawByteStringWithCharsPerLine;
   end;
 
   // Test methods for class TFormat_UU
@@ -804,6 +801,42 @@ procedure TestTFormat_Radix64.TearDown;
 begin
   FFormat_Radix64.Free;
   FFormat_Radix64 := nil;
+end;
+
+procedure TestTFormat_Radix64.TestEncodeRawByteStringWithCharsPerLine;
+type
+  /// <summary>
+  ///   Type needed for the EncodeBytes und DecodeBytes test data definition
+  /// </summary>
+  TestRecCharsPerLine = record
+    Input, Output: RawByteString;
+    CharsPerLine : Byte;
+  end;
+
+const
+  cTestDataEncode : array[1..2] of TestRecCharsPerLine = (
+    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+     Output: RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiM');
+     CharsPerLine: 20),
+    (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+     Output: RawByteString('VGVz' + #13 + #10 + 'dAoJ' + #13 + #10 + 'qlU=' +
+                           #13 + #10 + '=Xti' + #13 + #10 + 'M');
+     CharsPerLine: 4)); 
+var
+  i       : Integer;
+  SrcBuf,
+  DestBuf : TBytes;
+begin
+  for i := Low(cTestDataEncode) to High(cTestDataEncode) do
+  begin
+    SrcBuf := BytesOf(RawByteString(cTestDataEncode[i].Input));
+    FFormat_Radix64.SetCharsPerLine(cTestDataEncode[i].CharsPerLine);
+
+    DestBuf := FFormat_Radix64.Encode(SrcBuf);
+
+    CheckEquals(cTestDataEncode[i].Output,
+                BytesToRawString(DestBuf));
+  end;
 end;
 
 procedure TestTFormat_Radix64.TestDecodeBytes;
