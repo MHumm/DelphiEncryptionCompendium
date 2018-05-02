@@ -652,7 +652,7 @@ begin
 { TODO :
 Die Verschlüsselungs und Entschlüsselungstests müssen
 für alle Blockmodi separat umgesetzt werden }
-  DoTestEncode(FCipher_Blowfish.EncodeString, self.Init, self.Done);
+  DoTestEncode(FCipher_Blowfish.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Twofish.SetUp;
@@ -981,7 +981,7 @@ end;
 
 procedure TestTCipher_1DES.TestEncode;
 begin
-  DoTestEncode(FCipher_1DES.EncodeString, self.Init, self.Done);
+  DoTestEncode(FCipher_1DES.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_2DES.SetUp;

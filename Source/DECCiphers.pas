@@ -220,6 +220,10 @@ type
   /// </summary>
   TCipher_TEAN          = class;
 
+  // Definitions needed for Skipjack algorithm
+  PSkipjackTab = ^TSkipjackTab;
+  TSkipjackTab = array[0..255] of Byte;
+
   TCipher_Blowfish = class(TDECFormattedCipher)
   protected
     procedure DoInit(const Key; Size: Integer); override;
@@ -519,6 +523,9 @@ type
   end;
 
   TCipher_Skipjack = class(TDECFormattedCipher)
+  strict private
+    procedure SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte); inline;
+    procedure SkipjackDecCheck(var ATab: PSkipjackTab; AMin: PByte; AMax: PSkipjackTab); inline;
   protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -5274,10 +5281,6 @@ end;
 
 { TCipher_Skipjack }
 
-type
-  PSkipjackTab = ^TSkipjackTab;
-  TSkipjackTab = array[0..255] of Byte;
-
 class function TCipher_Skipjack.Context: TCipherContext;
 begin
   Result.KeySize    := 10;
@@ -5399,19 +5402,6 @@ var
   Max: PByte; //PAnsiChar;
   K, T, A, B, C, D: UInt32;
 
-  procedure SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte); inline;
-  begin
-    Inc(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab > AMax then
-//    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
-  diese interne procedure eher zu einer strict private methode werden}
-    if PByte(ATab) > AMax then
-//    {$ENDIF !DELPHIORBCB}
-      ATab := AMin;
-  end;
-
 begin
   Assert(Size = Context.BufferSize);
 
@@ -5480,6 +5470,19 @@ begin
   PWordArray(Dest)[1] := Swap(B);
   PWordArray(Dest)[2] := Swap(C);
   PWordArray(Dest)[3] := Swap(D);
+end;
+
+procedure TCipher_Skipjack.SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte);
+begin
+  Inc(ATab);
+//    {$IFDEF DELPHIORBCB}
+//    if ATab > AMax then
+//    {$ELSE !DELPHIORBCB}
+{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
+diese interne procedure eher zu einer strict private methode werden}
+  if PByte(ATab) > AMax then
+//    {$ENDIF !DELPHIORBCB}
+    ATab := AMin;
 end;
 
 //procedure TCipher_Skipjack.DoDecode(Source, Dest: Pointer; Size: Integer);
@@ -5575,19 +5578,6 @@ var
   Min: PByte; // PAnsiChar; // PAnsiChar for Pointer Math
   K, T, A, B, C, D: UInt32;
 
-  procedure SkipjackDecCheck(var ATab: PSkipjackTab; AMin: PByte; AMax: PSkipjackTab); inline;
-  begin
-    Dec(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab < AMin then
-//    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
-  diese interne procedure eher zu einer strict private methode werden}
-    if PByte(ATab) < AMin then
-//    {$ENDIF !DELPHIORBCB}
-      ATab := AMax;
-  end;
-
 begin
   Assert(Size = Context.BufferSize);
 
@@ -5656,6 +5646,19 @@ begin
   PWordArray(Dest)[1] := Swap(B);
   PWordArray(Dest)[2] := Swap(C);
   PWordArray(Dest)[3] := Swap(D);
+end;
+
+procedure TCipher_Skipjack.SkipjackDecCheck(var ATab: PSkipjackTab; AMin: PByte; AMax: PSkipjackTab);
+begin
+  Dec(ATab);
+//    {$IFDEF DELPHIORBCB}
+//    if ATab < AMin then
+//    {$ELSE !DELPHIORBCB}
+{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
+diese interne procedure eher zu einer strict private methode werden}
+  if PByte(ATab) < AMin then
+//    {$ENDIF !DELPHIORBCB}
+    ATab := AMax;
 end;
 
 { TCipher_TEA }
