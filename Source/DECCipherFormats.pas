@@ -130,6 +130,7 @@ type
     ///   Byte array with encrypted data
     /// </returns>
     function EncodeBytes(const Source: TBytes): TBytes;
+
     /// <summary>
     ///   Decrypts the contents of a given byte array
     /// </summary>
@@ -191,6 +192,7 @@ type
     ///   progress of the encryption operation
     /// </param>
     procedure EncodeFile(const SourceFileName, DestFileName: string; const Progress: IDECProgress = nil);
+
     /// <summary>
     ///   Reads the contents of one file, decrypts it and stores it in another file
     /// </summary>
@@ -223,6 +225,7 @@ type
     ///   Encrypted string as a byte array
     /// </returns>
     function EncodeStringToBytes(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
+
     /// <summary>
     ///   Encrypts the contents of the passed RawByteString
     /// </summary>
@@ -240,6 +243,7 @@ type
     ///   Encrypted string as a byte array
     /// </returns>
     function EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
+
     /// <summary>
     ///   Encrypts the contents of the passed unicode string
     /// </summary>
@@ -257,13 +261,14 @@ type
     ///   Encrypted string
     /// </returns>
     /// <remarks>
-    ///   The use of this method is only recommended is a formatting is passed
+    ///   The use of this method is only recommended if a formatting is passed
     ///   which will result in an 7-bit ASCII compatible string as we cannot
     ///   ensure that Unicode string processing will not alter/interpret some
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
     function EncodeStringToString(const Source: string; Format: TDECFormatClass = nil): string; overload;
+
     /// <summary>
     ///   Encrypts the contents of the passed unicode string
     /// </summary>
@@ -281,15 +286,14 @@ type
     ///   Encrypted string
     /// </returns>
     /// <remarks>
-    ///   The use of this method is only recommended is a formatting is passed
+    ///   The use of this method is only recommended if a formatting is passed
     ///   which will result in an 7-bit ASCII compatible string as we cannot
     ///   ensure that string processing will not alter/interpret some
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
     function EncodeStringToString(const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
-{ TODO :   Außerdem EncodeStringToString in AnsiString und WideString Formen umsetzen.
-  Ebenso DecodeStringToString in allen Formen. Benötigt später Unit Tests. }
+
     /// <summary>
     ///   Decrypts the contents of the passed encrypted unicode string
     /// </summary>
@@ -307,6 +311,7 @@ type
     ///   Decrypted string as a byte array
     /// </returns>
     function DecodeStringToBytes(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
+
     /// <summary>
     ///   Decrypts the contents of the passed encrypted RawByteString
     /// </summary>
@@ -325,6 +330,52 @@ type
     /// </returns>
     function DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
 
+    /// <summary>
+    ///   Decrypts the contents of the passed Unicode string
+    /// </summary>
+    /// <param name="Source">
+    ///   String to decrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Decoded will be the encrypted data, not the
+    ///   decrypted data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Decrypted string
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which uses an 7-bit ASCII compatible string as input so that it
+    ///   didn't get altered by Unicode string processing in some hafrmful way
+    /// </remarks>
+    function DecodeStringToString(const Source: string; Format: TDECFormatClass = nil): string; overload;
+
+    /// <summary>
+    ///   Decrypts the contents of the passed RawByteString string
+    /// </summary>
+    /// <param name="Source">
+    ///   String to decrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Decoded will be the encrypted data, not the
+    ///   decrypted data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Decrypted string
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which uses an 7-bit ASCII compatible string as input so that it
+    ///   didn't get altered by string processing in some hafrmful way
+    /// </remarks>
+    function DecodeStringToString(const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
+
 {$IFNDEF NEXTGEN}
     /// <summary>
     ///   Encrypts the contents of the passed Ansistring
@@ -342,10 +393,33 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
-    /// <returns>
-    ///   Encrypted string as a byte array
-    /// </returns>
     function EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes; overload;
+
+    /// <summary>
+    ///   Encrypts the contents of the passed Ansistring
+    /// </summary>
+    /// <param name="Source">
+    ///   String to encrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Encoded will be the encrypted data, not the
+    ///   source data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Encrypted string as an AnsiString
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which will result in an 7-bit ASCII compatible string as we cannot
+    ///   ensure that string processing will not alter/interpret some
+    ///   byte combinations in a destructive way, making the encrypted string
+    ///   un-decryptable.
+    /// </remarks>
+    function EncodeStringToString(const Source: AnsiString; Format: TDECFormatClass = nil): AnsiString; overload;
+
     /// <summary>
     ///   Decrypts the contents of the passed encrypted Ansistring
     /// </summary>
@@ -363,6 +437,30 @@ type
     ///   Decrypted string as a byte array
     /// </returns>
     function DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes; overload;
+
+    /// <summary>
+    ///   Decrypts the contents of the passed AnsiString string
+    /// </summary>
+    /// <param name="Source">
+    ///   String to decrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Decoded will be the encrypted data, not the
+    ///   decrypted data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Decrypted string
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which uses an 7-bit ASCII compatible string as input so that it
+    ///   didn't get altered by string processing in some hafrmful way
+    /// </remarks>
+    function DecodeStringToString(const Source: AnsiString; Format: TDECFormatClass = nil): AnsiString; overload;
+
     /// <summary>
     ///   Encrypts the contents of the passed Widestring
     /// </summary>
@@ -380,6 +478,32 @@ type
     ///   Encrypted string as a byte array
     /// </returns>
     function EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes; overload;
+
+    /// <summary>
+    ///   Encrypts the contents of the passed Widestring
+    /// </summary>
+    /// <param name="Source">
+    ///   String to encrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Encoded will be the encrypted data, not the
+    ///   source data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Encrypted string as an WideString
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which will result in an 7-bit ASCII compatible string as we cannot
+    ///   ensure that string processing will not alter/interpret some
+    ///   byte combinations in a destructive way, making the encrypted string
+    ///   un-decryptable.
+    /// </remarks>
+    function EncodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
+
     /// <summary>
     ///   Decrypts the contents of the passed encrypted Widestring
     /// </summary>
@@ -397,6 +521,29 @@ type
     ///   Decrypted string as a byte array
     /// </returns>
     function DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes; overload;
+
+    /// <summary>
+    ///   Decrypts the contents of the passed WideString string
+    /// </summary>
+    /// <param name="Source">
+    ///   String to decrypt
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter. One can pass a class reference of one of the
+    ///   concrete data formatting classes here which will be internally used
+    ///   to convert the data. Decoded will be the encrypted data, not the
+    ///   decrypted data. Formattings can be used to convert data into a format
+    ///   suitable for the transport medium the data shall be transported with.
+    /// </param>
+    /// <returns>
+    ///   Decrypted string
+    /// </returns>
+    /// <remarks>
+    ///   The use of this method is only recommended if a formatting is passed
+    ///   which uses an 7-bit ASCII compatible string as input so that it
+    ///   didn't get altered by string processing in some hafrmful way
+    /// </remarks>
+    function DecodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}
   end;
 
@@ -630,6 +777,33 @@ begin
   else
     SetLength(Result, 0);
 end;
+
+function TDECFormattedCipher.EncodeStringToString(const Source: WideString;
+  Format: TDECFormatClass): WideString;
+begin
+  result := WideString(EncodeStringToString(string(Source), Format));
+end;
+
+function TDECFormattedCipher.EncodeStringToString(const Source: AnsiString;
+  Format: TDECFormatClass): AnsiString;
+var
+  Len             : Integer;
+  EncryptedBuffer : TBytes;
+  Temp            : TBytes;
+begin
+  if Length(Source) > 0 then
+  begin
+    Len := Length(Source) * SizeOf(Source[1]);
+    SetLength(EncryptedBuffer, Len);
+    Encode(Source[1], EncryptedBuffer[0], Len);
+
+    Temp := ValidFormat(Format).Encode(EncryptedBuffer);
+    SetLength(Result, length(Temp));
+    Move(Temp[0], Result[1], length(Temp));
+  end
+  else
+    SetLength(Result, 0);
+end;
 {$ENDIF}
 
 function TDECFormattedCipher.EncodeStringToString(const Source: string;
@@ -644,7 +818,7 @@ begin
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
 
-    Result := System.SysUtils.StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
+    Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
   end
   else
     Result := '';
@@ -655,6 +829,7 @@ function TDECFormattedCipher.EncodeStringToString(const Source: RawByteString;
 var
   SourceSize      : Integer;
   EncryptedBuffer : TBytes;
+  Temp            : TBytes;
 begin
   if Length(Source) > 0 then
   begin
@@ -662,7 +837,9 @@ begin
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
 
-    Result := System.SysUtils.StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
+    Temp   := ValidFormat(Format).Encode(EncryptedBuffer);
+    SetLength(Result, length(Temp));
+    Move(Temp[0], Result[low(Result)], length(Temp));
   end
   else
     Result := '';
@@ -685,6 +862,76 @@ begin
   else
     SetLength(Result, 0);
 end;
+
+function TDECFormattedCipher.DecodeStringToString(const Source: AnsiString;
+  Format: TDECFormatClass): AnsiString;
+var
+  Len : Integer;
+  Src : TBytes;
+  Tmp : TBytes;
+begin
+  if Length(Source) > 0 then
+  begin
+    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+
+    Len := Length(Src);
+    SetLength(Tmp, Len);
+    Decode(Src[0], Tmp[0], Len);
+
+    SetLength(Result, length(Tmp));
+    Move(Tmp[0], Result[low(Result)], length(Tmp));
+  end
+  else
+    SetLength(Result, 0);
+end;
+
+function TDECFormattedCipher.DecodeStringToString(const Source: WideString;
+  Format: TDECFormatClass): WideString;
+begin
+  Result := WideString(DecodeStringToString(string(Source), Format));
+end;
 {$ENDIF}
+
+function TDECFormattedCipher.DecodeStringToString(const Source: RawByteString;
+  Format: TDECFormatClass): RawByteString;
+var
+  Len : Integer;
+  Src : TBytes;
+  Tmp : TBytes;
+begin
+  if Length(Source) > 0 then
+  begin
+    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+
+    Len := Length(Src);
+    SetLength(Tmp, Len);
+    Decode(Src[0], Tmp[0], Len);
+
+    SetLength(Result, length(Tmp));
+    Move(Tmp[0], Result[low(Result)], length(Tmp));
+  end
+  else
+    SetLength(Result, 0);
+end;
+
+function TDECFormattedCipher.DecodeStringToString(const Source: string;
+  Format: TDECFormatClass): string;
+var
+  Len : Integer;
+  Src : TBytes;
+  Tmp : TBytes;
+begin
+  if Length(Source) > 0 then
+  begin
+    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+
+    Len := Length(Src);
+    SetLength(Tmp, Len);
+    Decode(Src[0], Tmp[0], Len);
+    Result := StringOf(Tmp);
+  end
+  else
+    SetLength(Result, 0);
+end;
 
 end.
