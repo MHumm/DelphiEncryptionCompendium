@@ -592,7 +592,8 @@ begin
   if MustUserSaved then
     Inc(FDataSize, FUserSize);
 
-  ReallocMem(FData, FDataSize);
+  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+  ReallocMemory(FData, FDataSize);
 
   FVector   := @FData[0];
   FFeedback := @FVector[FBufferSize];

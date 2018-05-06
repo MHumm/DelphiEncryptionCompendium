@@ -110,6 +110,7 @@ type
     destructor Destroy; override;
     procedure Init;
     procedure Calc(const Data; DataSize: Integer); virtual;
+
     /// <summary>
     ///   Frees dynamically allocated buffers in a way which safeguards agains
     ///   data stealing by other methods which afterwards might allocate this memory.
@@ -120,7 +121,41 @@ type
     ///   Returns the calculated hash value as byte array
     /// </summary>
     function DigestAsBytes: TBytes; virtual;
-    function DigestStr(Format: TDECFormatClass = nil): RawByteString;
+
+    /// <summary>
+    ///   Returns the calculated hash value as formatted Unicode string
+    /// </summary>
+    /// <param name="Format">
+    ///   Optional parameter. If a formatting class is being passed the formatting
+    ///   will be applied to the returned string. Otherwise no formatting is
+    ///   being used.
+    /// </param>
+    /// <returns>
+    ///   Hash value of the last performed hash calculation
+    /// </returns>
+    /// <remarks>
+    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+    ///   being returned, otherwise the conversion into the Unicode string might
+    ///   result in strange characters in the returned result.
+    /// </remarks>
+    function DigestAsString(Format: TDECFormatClass = nil): string;
+    /// <summary>
+    ///   Returns the calculated hash value as formatted RawByteString
+    /// </summary>
+    /// <param name="Format">
+    ///   Optional parameter. If a formatting class is being passed the formatting
+    ///   will be applied to the returned string. Otherwise no formatting is
+    ///   being used.
+    /// </param>
+    /// <returns>
+    ///   Hash value of the last performed hash calculation
+    /// </returns>
+    /// <remarks>
+    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+    ///   being returned, otherwise the conversion into the RawByteString might
+    ///   result in strange characters in the returned result.
+    /// </remarks>
+    function DigestAsRawByteString(Format: TDECFormatClass = nil): RawByteString;
 
     /// <summary>
     ///   Gives the length of the calculated hash value in byte. Needs to be
@@ -310,7 +345,8 @@ destructor TDECHash.Destroy;
 begin
   ProtectBuffer(Digest^, DigestSize);
   ProtectBuffer(FBuffer^, FBufferSize);
-  ReallocMem(FBuffer, 0);
+  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+  ReallocMemory(FBuffer, 0);
   inherited Destroy;
 end;
 
@@ -318,7 +354,8 @@ procedure TDECHash.Init;
 begin
   FBufferIndex := 0;
   FBufferSize := BlockSize;
-  ReallocMem(FBuffer, FBufferSize);
+  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+  ReallocMemory(FBuffer, FBufferSize);
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
   DoInit;
@@ -470,7 +507,8 @@ begin
   DoDone;
   ProtectBuffer(FBuffer^, FBufferSize);
   FBufferSize := 0;
-  ReallocMem(FBuffer, 0);
+  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+  ReallocMemory(FBuffer, 0);
 end;
 
 function TDECHash.DigestAsBytes: TBytes;
@@ -480,9 +518,14 @@ begin
     Move(Digest^, Result[0], DigestSize);
 end;
 
-function TDECHash.DigestStr(Format: TDECFormatClass): RawByteString;
+function TDECHash.DigestAsRawByteString(Format: TDECFormatClass): RawByteString;
 begin
   Result := BytesToRawString(ValidFormat(Format).Encode(DigestAsBytes));
+end;
+
+function TDECHash.DigestAsString(Format: TDECFormatClass): string;
+begin
+  Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));
 end;
 
 class function TDECHash.DigestSize: Integer;
