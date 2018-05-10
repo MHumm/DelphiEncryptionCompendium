@@ -88,7 +88,7 @@ type
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
-    procedure HashNotInitialized;
+    procedure RaiseHashNotInitialized;
   strict protected
     FCount: array[0..7] of UInt32;
     FBuffer: PByteArray;
@@ -268,7 +268,8 @@ type
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
-    procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
+    procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes;
+                         const Progress: IDECProgress = nil); overload;
     /// <summary>
     ///   Calculates the hash value over a givens stream of bytes
     /// </summary>
@@ -293,16 +294,53 @@ type
     ///   Hash value over the bytes in the stream, formatted with the formatting
     ///   passed as format parameter, if used.
     /// </returns>
-    function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil; const Progress: IDECProgress = nil): RawByteString; overload;
+    function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil;
+                        const Progress: IDECProgress = nil): RawByteString; overload;
 
-    procedure CalcFile(const FileName: string; var HashResult: TBytes; const Progress: IDECProgress = nil); overload;
-    function CalcFile(const FileName: string; Format: TDECFormatClass = nil; const Progress: IDECProgress = nil): RawByteString; overload;
+    /// <summary>
+    ///   Calculates the hash value over the contents of a given file
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to be processed
+    /// </param>
+    /// <param name="HashResult">
+    ///   Here the resulting hash value is being returned as byte array
+    /// </param>
+    /// <param name="Progress">
+    ///   Optional callback. If being used the hash calculation will call it from
+    ///   time to time to return the current progress of the operation
+    /// </param>
+    procedure CalcFile(const FileName: string; var HashResult: TBytes;
+                       const Progress: IDECProgress = nil); overload;
+    /// <summary>
+    ///   Calculates the hash value over the contents of a given file
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to be processed
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter: Formatting class. If being used the formatting is
+    ///   being applied to the returned string with the calculated hash value
+    /// </param>
+    /// <param name="Progress">
+    ///   Optional callback. If being used the hash calculation will call it from
+    ///   time to time to return the current progress of the operation
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value as RawByteString.
+    /// </returns>
+    /// <remarks>
+    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+    ///   being returned, otherwise the conversion into the RawByteString might
+    ///   result in strange characters in the returned result.
+    /// </remarks>
+    function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
+                      const Progress: IDECProgress = nil): RawByteString; overload;
 
     // mask generation
     class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
     class function MGF1(const Data: TBytes; MaskSize: Integer): TBytes; overload;
     // key derivation
-{ TODO : Prüfen ob die wirklich class function sein müssen }
     class function KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes; overload;
     class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
     // DEC's own KDF + MGF
@@ -346,7 +384,7 @@ begin
   ProtectBuffer(Digest^, DigestSize);
   ProtectBuffer(FBuffer^, FBufferSize);
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMemory(FBuffer, 0);
+  FBuffer := ReallocMemory(FBuffer, 0);
   inherited Destroy;
 end;
 
@@ -355,7 +393,7 @@ begin
   FBufferIndex := 0;
   FBufferSize := BlockSize;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMemory(FBuffer, FBufferSize);
+  ReallocMem(FBuffer, FBufferSize);
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
   DoInit;
@@ -457,7 +495,7 @@ begin
   raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
 end;
 
-procedure TDECHash.HashNotInitialized;
+procedure TDECHash.RaiseHashNotInitialized;
 begin
   raise EDECHashException.CreateRes(@sHashNotInitialized);
 end;
@@ -471,7 +509,7 @@ begin
     Exit;
 
   if FBuffer = nil then
-    HashNotInitialized;
+    RaiseHashNotInitialized;
 
   Increment8(FCount, DataSize);
   Value := @TByteArray(Data)[0];
@@ -508,7 +546,7 @@ begin
   ProtectBuffer(FBuffer^, FBufferSize);
   FBufferSize := 0;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMemory(FBuffer, 0);
+  FBuffer := ReallocMemory(FBuffer, 0);
 end;
 
 function TDECHash.DigestAsBytes: TBytes;

@@ -446,6 +446,8 @@ var
   FindNameShort : Boolean;
   Pair          : TPair<Int64, TDECCLass>;
 begin
+  Result := nil;
+
   if Length(Name) > 0 then
   begin
     FindNameShort := GetShortClassName(Name) = Name;

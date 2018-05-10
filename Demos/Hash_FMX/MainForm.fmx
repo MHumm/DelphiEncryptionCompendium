@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   BorderStyle = Single
   Caption = 'DEC hash demo'
-  ClientHeight = 525
+  ClientHeight = 697
   ClientWidth = 427
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,15 +14,15 @@ object MainForm: TMainForm
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 427.000000000000000000
-    Size.Height = 525.000000000000000000
+    Size.Height = 697.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     Viewport.Width = 427.000000000000000000
-    Viewport.Height = 525.000000000000000000
+    Viewport.Height = 697.000000000000000000
     object LayoutBottom: TLayout
       Position.Y = 304.000000000000000000
       Size.Width = 427.000000000000000000
-      Size.Height = 217.000000000000000000
+      Size.Height = 393.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label3: TLabel

@@ -593,8 +593,7 @@ begin
     Inc(FDataSize, FUserSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMemory(FData, FDataSize);
-
+  FData     := ReallocMemory(FData, FDataSize);
   FVector   := @FData[0];
   FFeedback := @FVector[FBufferSize];
   FBuffer   := @FFeedback[FBufferSize];
@@ -612,7 +611,7 @@ destructor TDECCipher.Destroy;
 begin
   Protect;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMemory(FData, 0);
+  FData     := ReallocMemory(FData, 0);
   FVector   := nil;
   FFeedback := nil;
   FBuffer   := nil;

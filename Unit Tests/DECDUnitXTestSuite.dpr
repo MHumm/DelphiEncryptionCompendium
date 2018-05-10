@@ -39,10 +39,11 @@ uses
   DECHashBase in '..\Source\DECHashBase.pas',
   DECData in '..\Source\DECData.pas',
   TestDECCipher in 'Tests\TestDECCipher.pas',
-  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas',
   DECCipherBase in '..\Source\DECCipherBase.pas',
-  DECCipherPaddings in '..\Source\DECCipherPaddings.pas',
-  DECCiphers in '..\Source\DECCiphers.pas';
+  DECCiphers in '..\Source\DECCiphers.pas',
+  DECCipherModes in '..\Source\DECCipherModes.pas',
+  DECCipherFormats in '..\Source\DECCipherFormats.pas',
+  TestDECCipherModes in 'Tests\TestDECCipherModes.pas';
 
 var
   runner : ITestRunner;

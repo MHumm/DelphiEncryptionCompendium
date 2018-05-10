@@ -87,7 +87,7 @@ type
   end;
 
   // Test methods for CRC routines
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestCRC = class(TTestCase)
   strict private
     FTestData : array of TCRCTest;
