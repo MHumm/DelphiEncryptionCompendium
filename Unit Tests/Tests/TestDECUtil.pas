@@ -96,8 +96,12 @@ type
     procedure ProtectStreamPartial;
     procedure ProtectBytes;
     procedure ProtectString;
+    {$IFNDEF NextGen}
     procedure ProtectStringAnsi;
+    {$ENDIF}
+    {$IFNDEF NextGen}
     procedure ProtectStringWide;
+    {$ENDIF}
     procedure BytesToRawString;
     procedure BytesToRawStringEmpty;
   end;
@@ -135,10 +139,10 @@ end;
 
 procedure TTestBitTwiddling.SwapBytes;
 const
-  Input: AnsiString  = '0123456789';
-  Output: AnsiString = '9876543210';
+  Input: RawByteString  = '0123456789';
+  Output: RawByteString = '9876543210';
 var
-  s: AnsiString;
+  s: RawByteString;
   c: Cardinal;
 begin
   s := Input;
@@ -385,6 +389,7 @@ begin
   CheckEquals('', s);
 end;
 
+{$IFNDEF NextGen}
 procedure TTestBufferProtection.ProtectStringAnsi;
 var
   s : AnsiString;
@@ -394,7 +399,9 @@ begin
 
   CheckEquals('', string(s));
 end;
+{$ENDIF}
 
+{$IFNDEF NextGen}
 procedure TTestBufferProtection.ProtectStringWide;
 var
   s : WideString;
@@ -404,6 +411,7 @@ begin
 
   CheckEquals('', string(s));
 end;
+{$ENDIF}
 
 procedure TTestBufferProtection.BytesToRawString;
 var

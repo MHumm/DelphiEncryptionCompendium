@@ -1,4 +1,5 @@
-{.$DEFINE GUI}
+{$DEFINE GUI}
+{.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;
 
 // In order to run DEC Unit tests via DUnitX framework the $DEFINE DUnitX define
@@ -17,10 +18,13 @@ uses
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-  {$ENDIF }
+  {$ENDIF}
   {$IFDEF GUI}
   DUnitX.Loggers.GUIX,
-  {$ENDIF }
+  {$ENDIF}
+  {$IFDEF MobileGUI}
+//  DUNitX.Loggers.MobileGUI in 'C:\Program Files\Embarcadero\Studio\18.0\source\DunitX\DUNitX.Loggers.MobileGUI.pas' {MobileGUITestRunner},
+  {$ENDIF}
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,

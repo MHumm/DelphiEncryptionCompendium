@@ -2,9 +2,9 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
-    <Transaction>2018.04.22 10:04:37.980,=d:\Projekte\Unit1.pas</Transaction>
-    <Transaction>2018.04.22 10:05:00.527,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\MainForm.pas=d:\Projekte\Unit1.pas</Transaction>
-    <Transaction>2018.04.22 10:05:00.527,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\MainForm.dfm=d:\Projekte\Unit1.dfm</Transaction>
-    <Transaction>2018.04.22 10:05:07.062,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj=d:\Projekte\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.980,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.527,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\MainForm.pas=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.062,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj=d:\Projekte\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.527,D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\MainForm.dfm=d:\Projekte\Unit1.dfm</Transaction>
   </Transactions>
 </BorlandProject>
