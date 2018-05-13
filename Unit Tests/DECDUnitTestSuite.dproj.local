@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-	</Transactions>
+    <Transaction>2018.05.13 15:43:42.074,=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
+    <Transaction>2018.05.13 15:43:50.059,D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
+  </Transactions>
 </BorlandProject>

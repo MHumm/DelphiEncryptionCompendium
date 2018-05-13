@@ -109,6 +109,7 @@
         <DCCReference Include="..\Source\DECTypes.pas"/>
         <DCCReference Include="..\Source\DECCipherModes.pas"/>
         <DCCReference Include="Tests\TestDECCipherModes.pas"/>
+        <DCCReference Include="Tests\TestDECBaseClass.pas"/>
         <None Include="..\Source\DECOptions.inc"/>
         <None Include="Tests\defines.inc"/>
         <BuildConfiguration Include="Release">

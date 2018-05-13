@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.140,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.942,D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj=d:\Projekte\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.044,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.834,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.982,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.109,=D:\Projekte\DECGit\Source\DECHashBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.044,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.942,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.834,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.008,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.024,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.572,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.078,=D:\Projekte\DECGit\Source\DECHash.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.008,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.109,=D:\Projekte\DECGit\Source\DECHashBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.140,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
   </Transactions>
 </BorlandProject>

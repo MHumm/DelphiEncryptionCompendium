@@ -40,7 +40,8 @@ uses
   DECCipherFormats in '..\Source\DECCipherFormats.pas',
   DECTypes in '..\Source\DECTypes.pas',
   DECCipherModes in '..\Source\DECCipherModes.pas',
-  TestDECCipherModes in 'Tests\TestDECCipherModes.pas';
+  TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
+  TestDECBaseClass in 'Tests\TestDECBaseClass.pas';
 
 {$R *.RES}
 
