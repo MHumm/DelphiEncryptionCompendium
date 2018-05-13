@@ -1185,7 +1185,7 @@ initialization
   TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
   TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
   TFormat_Base64.RegisterClass(TDECFormat.ClassList);
-  TFormat_PGP.RegisterClass(TDECFormat.ClassList);
+  TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
   TFormat_UU.RegisterClass(TDECFormat.ClassList);
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);

@@ -139,7 +139,8 @@ type
     class var ClassList : TDECClassList;
 
     /// <summary>
-    ///   Tries to find a class type by its name
+    ///   Tries to find a class type by its name in the list of registered
+    ///   formatting classes
     /// </summary>
     /// <param name="Name">
     ///   Name to look for in the list

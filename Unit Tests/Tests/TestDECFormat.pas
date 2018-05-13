@@ -82,19 +82,6 @@ uses
 
 type
   /// <summary>
-  ///   Test methods for global functions/procedures inn DECFormat
-  /// </summary>
-    {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestFormat = class(TTestCase)
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
-  published
-    procedure TestUpCaseBinary;
-    procedure TestTableFindBinary;
-  end;
-
-  /// <summary>
   ///   Type needed for the EncodeBytes und DecodeBytes test data definition
   /// </summary>
   TestRecRawByteString = record
@@ -164,6 +151,7 @@ type
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_HEXL
@@ -197,6 +185,7 @@ type
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_DECMIME32
@@ -248,6 +237,7 @@ type
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_Base64
@@ -293,6 +283,7 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_Radix64
@@ -340,6 +331,7 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestEncodeRawByteStringWithCharsPerLine;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_UU
@@ -389,6 +381,7 @@ type
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_XX
@@ -435,6 +428,7 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestClassByName;
   end;
 
   // Test methods for class TFormat_ESCAPE
@@ -493,18 +487,12 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestClassByName;
   end;
 
 implementation
 
 type
-  TestRecTableFindBinary = record
-    Value: Byte;
-    Table: RawByteString;
-    Len  : Integer;
-    Index: Integer;
-  end;
-
   TestRecIsValidRawByteString = record
     Input: RawByteString;
     Valid: Boolean;
@@ -519,6 +507,14 @@ procedure TestTFormat_HEX.TearDown;
 begin
   FFormat_HEX.Free;
   FFormat_HEX := nil;
+end;
+
+procedure TestTFormat_HEX.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_HEX.ClassByName('TFormat_HEX');
+  CheckEquals(TFormat_HEX, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTFormat_HEX.TestDecodeBytes;
@@ -604,6 +600,14 @@ begin
   FFormat_HEXL := nil;
 end;
 
+procedure TestTFormat_HEXL.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_HEXL.ClassByName('TFormat_HEXL');
+  CheckEquals(TFormat_HEXL, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTFormat_HEXL.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_HEXL.Decode, cTestDataDecode);
@@ -681,6 +685,14 @@ procedure TestTFormat_DECMIME32.TearDown;
 begin
   FFormat_DECMIME32.Free;
   FFormat_DECMIME32 := nil;
+end;
+
+procedure TestTFormat_DECMIME32.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_DECMIME32.ClassByName('TFormat_DECMIME32');
+  CheckEquals(TFormat_DECMIME32, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTFormat_DECMIME32.TestDecodeBytes;
@@ -762,6 +774,14 @@ begin
   FFormat_Base64 := nil;
 end;
 
+procedure TestTFormat_Base64.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_Base64.ClassByName('TFormat_Base64');
+  CheckEquals(TFormat_Base64, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTFormat_Base64.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_Base64.Decode, cTestDataDecode);
@@ -839,6 +859,14 @@ begin
   end;
 end;
 
+procedure TestTFormat_Radix64.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_Radix64.ClassByName('TFormat_Radix64');
+  CheckEquals(TFormat_Radix64, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTFormat_Radix64.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_Radix64.Decode, cTestDataDecode);
@@ -878,6 +906,14 @@ procedure TestTFormat_UU.TearDown;
 begin
   FFormat_UU.Free;
   FFormat_UU := nil;
+end;
+
+procedure TestTFormat_UU.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_UU.ClassByName('TFormat_UU');
+  CheckEquals(TFormat_UU, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTFormat_UU.TestDecodeBytes;
@@ -1008,6 +1044,14 @@ begin
   FFormat_XX := nil;
 end;
 
+procedure TestTFormat_XX.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_XX.ClassByName('TFormat_XX');
+  CheckEquals(TFormat_XX, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTFormat_XX.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_XX.Decode, cTestDataDecode);
@@ -1049,6 +1093,14 @@ begin
   FFormat_ESCAPE := nil;
 end;
 
+procedure TestTFormat_ESCAPE.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_ESCAPE.ClassByName('TFormat_ESCAPE');
+  CheckEquals(TFormat_ESCAPE, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTFormat_ESCAPE.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_ESCAPE.Decode, cTestDataDecode);
@@ -1077,89 +1129,6 @@ end;
 procedure TestTFormat_ESCAPE.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_ESCAPE.Encode, cTestDataEncode);
-end;
-
-{ TestFormat }
-
-procedure TestFormat.SetUp;
-begin
-  inherited;
-end;
-
-procedure TestFormat.TearDown;
-begin
-  inherited;
-end;
-
-procedure TestFormat.TestUpCaseBinary;
-const
-  InputChars  = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-                '[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-  OutputChars = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-                '[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~';
-
-var
-  i : Integer;
-  b, exp, res : Byte;
-begin
-  for i := Low(InputChars) to High(InputChars) do
-  begin
-    b   := ord(InputChars[i]);
-    exp := ord(OutputChars[i]);
-    res := TDECFormat.UpCaseBinary(b);
-
-    CheckEquals(exp, res);
-  end;
-end;
-
-procedure TestFormat.TestTableFindBinary;
-const
-  Data : array[1..8] of TestRecTableFindBinary = (
-  (Value: 0;
-   Table: '';
-   Len:   10;
-   Index: -1),
-  (Value: 0;
-   Table: '';
-   Len: -10;
-   Index: -1),
-  (Value: $31;
-   Table: '12345678901';
-   Len:   100;
-   Index: 0),
-  (Value: $32;
-   Table: '12345678901';
-   Len:   100;
-   Index: 1),
-  (Value: $30;
-   Table: '12345678901';
-   Len:   100;
-   Index: 9),
-  (Value: $29;
-   Table: '12345678901';
-   Len:   100;
-   Index: -1),
-  (Value: $30;
-   Table: '12345678901';
-   Len:   9;
-   Index: 9),
-  (Value: $30;
-   Table: '12345678901';
-   Len:   8;
-   Index: -1)
-  );
-
-var
-  i : Integer;
-  Idx : Integer;
-begin
-  for i := Low(Data) to High(Data) do
-  begin
-    Idx := TDECFormat.TableFindBinary(Data[i].Value,
-                                      BytesOf(RawByteString(Data[i].Table)),
-                                      Data[i].Len);
-    CheckEquals(Data[i].Index, Idx);
-  end;
 end;
 
 { TFormatTestsBase }
@@ -1226,7 +1195,7 @@ end;
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
-  RegisterTests('DECFormat', [TestFormat.Suite,         TestTFormat_HEX.Suite,
+  RegisterTests('DECFormat', [TestTFormat_HEX.Suite,
                               TestTFormat_HEXL.Suite,   TestTFormat_DECMIME32.Suite,
                               TestTFormat_Base64.Suite, TestTFormat_Radix64.Suite,
                               TestTFormat_UU.Suite,     TestTFormat_XX.Suite,

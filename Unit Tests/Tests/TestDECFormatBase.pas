@@ -80,6 +80,20 @@ uses
 type
   // Test methods for class TFormat_Copy
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat = class(TTestCase)
+  strict private
+  private
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestUpCaseBinary;
+    procedure TestTableFindBinary;
+    procedure TestIsClassListCreated;
+  end;
+
+  // Test methods for class TFormat_Copy
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_Copy = class(TTestCase)
   strict private
     FFormat_Copy: TFormat_Copy;
@@ -100,6 +114,14 @@ type
   end;
 
 implementation
+
+type
+  TestRecTableFindBinary = record
+    Value: Byte;
+    Table: RawByteString;
+    Len  : Integer;
+    Index: Integer;
+  end;
 
 procedure TestTFormat_Copy.SetUp;
 begin
@@ -214,11 +236,102 @@ begin
   CheckEquals(false, TFormat_Copy.IsValid(SrcBuf[0], -1));
 end;
 
+{ TestTFormat }
+
+procedure TestTFormat.SetUp;
+begin
+  inherited;
+
+end;
+
+procedure TestTFormat.TearDown;
+begin
+  inherited;
+
+end;
+
+procedure TestTFormat.TestUpCaseBinary;
+const
+  InputChars  = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+                '[\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+  OutputChars = ' !"#$%&''()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+                '[\]^_`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~';
+
+var
+  i : Integer;
+  b, exp, res : Byte;
+begin
+  for i := Low(InputChars) to High(InputChars) do
+  begin
+    b   := ord(InputChars[i]);
+    exp := ord(OutputChars[i]);
+    res := TDECFormat.UpCaseBinary(b);
+
+    CheckEquals(exp, res);
+  end;
+end;
+
+procedure TestTFormat.TestTableFindBinary;
+const
+  Data : array[1..8] of TestRecTableFindBinary = (
+  (Value: 0;
+   Table: '';
+   Len:   10;
+   Index: -1),
+  (Value: 0;
+   Table: '';
+   Len: -10;
+   Index: -1),
+  (Value: $31;
+   Table: '12345678901';
+   Len:   100;
+   Index: 0),
+  (Value: $32;
+   Table: '12345678901';
+   Len:   100;
+   Index: 1),
+  (Value: $30;
+   Table: '12345678901';
+   Len:   100;
+   Index: 9),
+  (Value: $29;
+   Table: '12345678901';
+   Len:   100;
+   Index: -1),
+  (Value: $30;
+   Table: '12345678901';
+   Len:   9;
+   Index: 9),
+  (Value: $30;
+   Table: '12345678901';
+   Len:   8;
+   Index: -1)
+  );
+
+var
+  i : Integer;
+  Idx : Integer;
+begin
+  for i := Low(Data) to High(Data) do
+  begin
+    Idx := TDECFormat.TableFindBinary(Data[i].Value,
+                                      BytesOf(RawByteString(Data[i].Table)),
+                                      Data[i].Len);
+    CheckEquals(Data[i].Index, Idx);
+  end;
+end;
+
+procedure TestTFormat.TestIsClassListCreated;
+begin
+  CheckEquals(true, assigned(TDECFormat.ClassList), 'Class list has not been created in initialization');
+end;
+
 initialization
   {$IFNDEF DUnitX}
   // Register any test cases with the test runner
-  RegisterTest(TestTFormat_Copy.Suite);
+  RegisterTests('DECFormatBase', [TestTFormat.Suite, TestTFormat_Copy.Suite]);
   {$ELSE}
+  TDUnitX.RegisterTestFixture(TestTFormat)
   TDUnitX.RegisterTestFixture(TestTFormat_Copy)
   {$ENDIF}
 end.

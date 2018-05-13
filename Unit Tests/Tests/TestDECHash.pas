@@ -120,6 +120,17 @@ type
   published
   end;
 
+  // Test methods for base class for all hash classes
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTDECHash = class(THash_TestBase)
+  strict private
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIsClassListCreated;
+  end;
+
   // Test methods for class THash_MD2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_MD2 = class(THash_TestBase)
@@ -3859,10 +3870,28 @@ begin
     end;
 end;
 
+{ TestTDECHash }
+
+procedure TestTDECHash.SetUp;
+begin
+  inherited;
+end;
+
+procedure TestTDECHash.TearDown;
+begin
+  inherited;
+end;
+
+procedure TestTDECHash.TestIsClassListCreated;
+begin
+  CheckEquals(true, assigned(TDECHash.ClassList), 'Class list has not been created in initialization');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
-  RegisterTests('DECHash', [TestTHash_MD2.Suite,
+  RegisterTests('DECHash', [TestTDECHash.Suite,
+                            TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
                             TestTHash_MD5.Suite,
                             TestTHash_RipeMD128.Suite,
@@ -3888,6 +3917,7 @@ initialization
                             TestTHash_Snefru256.Suite,
                             TestTHash_Sapphire.Suite]);
   {$ELSE}
+  TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
   TDUnitX.RegisterTestFixture(TestTHash_MD5);

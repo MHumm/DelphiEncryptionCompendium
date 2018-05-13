@@ -138,6 +138,17 @@ type
     procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc);
   end;
 
+  // Testmethoden für Klasse TDECCipher
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTDECCipher = class(TCipherBasis)
+  strict private
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIsClassListCreated;
+  end;
+
   // Testmethoden für Klasse TCipher_Blowfish
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Blowfish = class(TCipherBasis)
@@ -1519,10 +1530,28 @@ Daten synthetisieren. }
   end;
 end;
 
+{ TestTDECCipher }
+
+procedure TestTDECCipher.SetUp;
+begin
+  inherited;
+end;
+
+procedure TestTDECCipher.TearDown;
+begin
+  inherited;
+end;
+
+procedure TestTDECCipher.TestIsClassListCreated;
+begin
+  CheckEquals(true, assigned(TDECCipher.ClassList), 'Class list has not been created in initialization');
+end;
+
 initialization
   // Register all test classes
   {$IFNDEF DUnitX}
-  RegisterTests('DECCipher', [TestTCipher_Null.Suite,
+  RegisterTests('DECCipher', [TestTDECCipher.Suite,
+                              TestTCipher_Null.Suite,
                               TestTCipher_Blowfish.Suite,
                               TestTCipher_Twofish.Suite,
                               TestTCipher_IDEA.Suite,
@@ -1554,6 +1583,7 @@ initialization
                               TestTCipher_TEA.Suite,
                               TestTCipher_XTEA.Suite]);
   {$ELSE}
+  TDUnitX.RegisterTestFixture(TestTDECCipher);
   TDUnitX.RegisterTestFixture(TestTCipher_Null);
   TDUnitX.RegisterTestFixture(TestTCipher_Blowfish);
   TDUnitX.RegisterTestFixture(TestTCipher_Twofish);
