@@ -610,8 +610,9 @@ end;
 destructor TDECCipher.Destroy;
 begin
   Protect;
-  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FData     := ReallocMemory(FData, 0);
+  // FreeMem instead of ReallocMemory which produced a memory leak. ReallocMemory
+  // was used instead of ReallocMem due to C++ compatibility as per 10.1 help
+  FreeMem(FData, FDataSize);
   FVector   := nil;
   FFeedback := nil;
   FBuffer   := nil;

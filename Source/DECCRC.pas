@@ -789,7 +789,9 @@ var
 
 function CRC16Init: Pointer;
 begin
-  GetMem(FCRC16, SizeOf(TCRCDef));
+  // Replace GetMem by GetMemory due to C++ Builder compatibility
+  // GetMem(FCRC16, SizeOf(TCRCDef));
+  FCRC16 := GetMemory(SizeOf(TCRCDef));
   CRCInit(FCRC16^, CRC_16);
   Result := FCRC16;
 end;
@@ -858,7 +860,9 @@ end;
 
 function CRC32Init: Pointer;
 begin
-  GetMem(FCRC32, SizeOf(TCRCDef));
+  // Replaced for C++ Builder compatibility
+  // GetMem(FCRC32, SizeOf(TCRCDef));
+  FCRC32 := GetMemory(SizeOf(TCRCDef));
   CRCInit(FCRC32^, CRC_32CCITT);
   Result := FCRC32;
 end;

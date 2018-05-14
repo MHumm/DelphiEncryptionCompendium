@@ -383,8 +383,8 @@ destructor TDECHash.Destroy;
 begin
   ProtectBuffer(Digest^, DigestSize);
   ProtectBuffer(FBuffer^, FBufferSize);
-  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FBuffer := ReallocMemory(FBuffer, 0);
+  FreeMem(FBuffer, FBufferSize);
+
   inherited Destroy;
 end;
 
@@ -546,7 +546,8 @@ begin
   ProtectBuffer(FBuffer^, FBufferSize);
   FBufferSize := 0;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FBuffer := ReallocMemory(FBuffer, 0);
+//  FBuffer := ReallocMemory(FBuffer, 0);
+  ReallocMem(FBuffer, 0);
 end;
 
 function TDECHash.DigestAsBytes: TBytes;
