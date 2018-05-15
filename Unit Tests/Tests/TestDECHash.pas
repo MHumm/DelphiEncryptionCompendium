@@ -149,6 +149,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
 
     procedure TestKDF2;
   end;
@@ -171,6 +172,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_MD5
@@ -191,6 +193,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_RipeMD128
@@ -211,6 +214,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_RipeMD160
@@ -230,6 +234,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_RipeMD256
@@ -249,6 +254,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_RipeMD320
@@ -268,6 +274,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_SHA
@@ -287,6 +294,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_SHA256
@@ -306,6 +314,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_SHA384
@@ -326,6 +335,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_SHA512
@@ -345,6 +355,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Haval128
@@ -364,6 +375,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Haval160
@@ -383,6 +395,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Haval192
@@ -402,6 +415,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Haval224
@@ -421,6 +435,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Haval256
@@ -440,6 +455,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Tiger
@@ -462,6 +478,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Tiger
@@ -484,6 +501,7 @@ type
 //    procedure TestCalcFile;
     procedure TestDigestSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Panama
@@ -505,6 +523,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Whirlpool
@@ -525,6 +544,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Whirlpool1
@@ -545,6 +565,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Square
@@ -565,6 +586,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Snefru128
@@ -585,6 +607,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Snefru256
@@ -605,6 +628,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
   // Test methods for class THash_Sapphire
@@ -625,6 +649,7 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
+    procedure TestClassByName;
   end;
 
 implementation
@@ -717,6 +742,14 @@ end;
 procedure TestTHash_MD2.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_MD2);
+end;
+
+procedure TestTHash_MD2.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_MD2.ClassByName('THash_MD2');
+  CheckEquals(THash_MD2, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_MD4.SetUp;
@@ -828,6 +861,14 @@ begin
   CheckNotEquals(true, FHash_MD4.IsPasswordHash);
 end;
 
+procedure TestTHash_MD4.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_MD4.ClassByName('THash_MD4');
+  CheckEquals(THash_MD4, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_MD5.SetUp;
 begin
   FHash_MD5 := THash_MD5.Create;
@@ -935,6 +976,14 @@ end;
 procedure TestTHash_MD5.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_MD5);
+end;
+
+procedure TestTHash_MD5.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_MD5.ClassByName('THash_MD5');
+  CheckEquals(THash_MD5, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_RipeMD128.SetUp;
@@ -1050,11 +1099,21 @@ begin
   DoTestCalcUnicodeString(FHash_RipeMD128);
 end;
 
+procedure TestTHash_RipeMD128.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_RipeMD128.ClassByName('THash_RipeMD128');
+  CheckEquals(THash_RipeMD128, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_RipeMD160.SetUp;
 begin
   FHash_RipeMD160 := THash_RipeMD160.Create;
   SetLength(FTestData, 12);
 
+  // Test data given here is the same as on the original RipeMD160 website here:
+  // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
   FTestData[ 0].Output           := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
   FTestData[ 0].OutputUTFStrTest := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
   FTestData[ 0].Input            := '';
@@ -1156,6 +1215,14 @@ end;
 procedure TestTHash_RipeMD160.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_RipeMD160);
+end;
+
+procedure TestTHash_RipeMD160.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_RipeMD160.ClassByName('THash_RipeMD160');
+  CheckEquals(THash_RipeMD160, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_RipeMD256.SetUp;
@@ -1266,6 +1333,14 @@ begin
   DoTestCalcUnicodeString(FHash_RipeMD256);
 end;
 
+procedure TestTHash_RipeMD256.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_RipeMD256.ClassByName('THash_RipeMD256');
+  CheckEquals(THash_RipeMD256, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_RipeMD320.SetUp;
 begin
   FHash_RipeMD320 := THash_RipeMD320.Create;
@@ -1374,6 +1449,14 @@ begin
   DoTestCalcUnicodeString(FHash_RipeMD320);
 end;
 
+procedure TestTHash_RipeMD320.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_RipeMD320.ClassByName('THash_RipeMD320');
+  CheckEquals(THash_RipeMD320, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_SHA.SetUp;
 begin
   FHash_SHA := THash_SHA.Create;
@@ -1454,6 +1537,14 @@ begin
   DoTestCalcUnicodeString(FHash_SHA);
 end;
 
+procedure TestTHash_SHA.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_SHA.ClassByName('THash_SHA');
+  CheckEquals(THash_SHA, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_SHA256.SetUp;
 begin
   FHash_SHA256 := THash_SHA256.Create;
@@ -1521,6 +1612,14 @@ end;
 procedure TestTHash_SHA256.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_SHA256);
+end;
+
+procedure TestTHash_SHA256.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_SHA256.ClassByName('THash_SHA256');
+  CheckEquals(THash_SHA256, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_SHA384.SetUp;
@@ -1606,6 +1705,14 @@ begin
   DoTestCalcUnicodeString(FHash_SHA384);
 end;
 
+procedure TestTHash_SHA384.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_SHA384.ClassByName('THash_SHA384');
+  CheckEquals(THash_SHA384, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_SHA512.SetUp;
 begin
   FHash_SHA512 := THash_SHA512.Create;
@@ -1687,6 +1794,14 @@ end;
 procedure TestTHash_SHA512.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_SHA512);
+end;
+
+procedure TestTHash_SHA512.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_SHA512.ClassByName('THash_SHA512');
+  CheckEquals(THash_SHA512, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Haval128.SetUp;
@@ -1850,6 +1965,15 @@ begin
   DoTestCalcUnicodeString(FHash_Haval128);
 end;
 
+procedure TestTHash_Haval128.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Haval128.ClassByName('THash_Haval128');
+  CheckEquals(THash_Haval128, ReturnValue, 'Class is not registered');
+end;
+
+
 procedure TestTHash_Haval160.SetUp;
 begin
   FHash_Haval160 := THash_Haval160.Create;
@@ -2009,6 +2133,14 @@ end;
 procedure TestTHash_Haval160.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Haval160);
+end;
+
+procedure TestTHash_Haval160.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Haval160.ClassByName('THash_Haval160');
+  CheckEquals(THash_Haval160, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Haval192.SetUp;
@@ -2172,6 +2304,14 @@ begin
   DoTestCalcUnicodeString(FHash_Haval192);
 end;
 
+procedure TestTHash_Haval192.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Haval192.ClassByName('THash_Haval192');
+  CheckEquals(THash_Haval192, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Haval224.SetUp;
 begin
   FHash_Haval224 := THash_Haval224.Create;
@@ -2331,6 +2471,14 @@ end;
 procedure TestTHash_Haval224.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Haval224);
+end;
+
+procedure TestTHash_Haval224.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Haval224.ClassByName('THash_Haval224');
+  CheckEquals(THash_Haval224, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Haval256.SetUp;
@@ -2508,6 +2656,14 @@ begin
   DoTestCalcUnicodeString(FHash_Haval256);
 end;
 
+procedure TestTHash_Haval256.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Haval256.ClassByName('THash_Haval256');
+  CheckEquals(THash_Haval256, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Tiger_3Rounds.SetUp;
 begin
   FHash_Tiger        := THash_Tiger.Create;
@@ -2618,6 +2774,14 @@ end;
 procedure TestTHash_Tiger_3Rounds.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Tiger);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Tiger.ClassByName('THash_Tiger');
+  CheckEquals(THash_Tiger, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Tiger_4Rounds.SetUp;
@@ -2732,6 +2896,14 @@ begin
   DoTestCalcUnicodeString(FHash_Tiger);
 end;
 
+procedure TestTHash_Tiger_4Rounds.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Tiger.ClassByName('THash_Tiger');
+  CheckEquals(THash_Tiger, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Panama.SetUp;
 begin
   FHash_Panama := THash_Panama.Create;
@@ -2826,6 +2998,14 @@ end;
 procedure TestTHash_Panama.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Panama);
+end;
+
+procedure TestTHash_Panama.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Panama.ClassByName('THash_Panama');
+  CheckEquals(THash_Panama, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Whirlpool.SetUp;
@@ -2986,6 +3166,14 @@ begin
   DoTestCalcUnicodeString(FHash_Whirlpool);
 end;
 
+procedure TestTHash_Whirlpool.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Whirlpool.ClassByName('THash_Whirlpool');
+  CheckEquals(THash_Whirlpool, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Whirlpool1.SetUp;
 begin
   FHash_Whirlpool1 := THash_Whirlpool1.Create;
@@ -3144,6 +3332,14 @@ begin
   DoTestCalcUnicodeString(FHash_Whirlpool1);
 end;
 
+procedure TestTHash_Whirlpool1.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Whirlpool1.ClassByName('THash_Whirlpool1');
+  CheckEquals(THash_Whirlpool1, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Square.SetUp;
 begin
   FHash_Square := THash_Square.Create;
@@ -3241,6 +3437,14 @@ end;
 procedure TestTHash_Square.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Square);
+end;
+
+procedure TestTHash_Square.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Square.ClassByName('THash_Square');
+  CheckEquals(THash_Square, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Snefru128.SetUp;
@@ -3380,6 +3584,14 @@ begin
   DoTestCalcUnicodeString(FHash_Snefru128);
 end;
 
+procedure TestTHash_Snefru128.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Snefru128.ClassByName('THash_Snefru128');
+  CheckEquals(THash_Snefru128, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTHash_Snefru256.SetUp;
 begin
   FHash_Snefru256 := THash_Snefru256.Create;
@@ -3500,6 +3712,14 @@ end;
 procedure TestTHash_Snefru256.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Snefru256);
+end;
+
+procedure TestTHash_Snefru256.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Snefru256.ClassByName('THash_Snefru256');
+  CheckEquals(THash_Snefru256, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTHash_Sapphire.SetUp;
@@ -3754,6 +3974,14 @@ end;
 procedure TestTHash_Sapphire.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash_Sapphire);
+end;
+
+procedure TestTHash_Sapphire.TestClassByName;
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash_Sapphire.ClassByName('THash_Sapphire');
+  CheckEquals(THash_Sapphire, ReturnValue, 'Class is not registered');
 end;
 
 { THash_TestBase }

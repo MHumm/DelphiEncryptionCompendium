@@ -54,7 +54,7 @@ object MainForm: TMainForm
         Size.Width = 402.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
-        TabOrder = 2
+        TabOrder = 7
         Text = 'Calc'
         OnClick = ButtonCalcClick
       end
@@ -62,7 +62,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 4
+        TabOrder = 3
         Position.X = 16.000000000000000000
         Position.Y = 44.000000000000000000
         Size.Width = 401.000000000000000000
@@ -75,7 +75,7 @@ object MainForm: TMainForm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 3
+        TabOrder = 5
         Position.X = 16.000000000000000000
         Position.Y = 108.000000000000000000
         Size.Width = 401.000000000000000000
@@ -171,7 +171,7 @@ object MainForm: TMainForm
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 4
+        TabOrder = 3
         Text = 'Live calculation'
       end
       object CheckBoxIsPasswordHash: TCheckBox
@@ -183,7 +183,7 @@ object MainForm: TMainForm
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 3
+        TabOrder = 4
         Text = 'Is password hash algorithm'
       end
     end

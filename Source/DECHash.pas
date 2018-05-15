@@ -148,6 +148,10 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
   end;
 
+  /// <summary>
+  ///   Do not confuse with the original RipeMD algorithm which ís being
+  ///   considered to be unsafe anyway.
+  /// </summary>
   THash_RipeMD128 = class(THashBaseMD4)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -264,6 +268,10 @@ type
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
+  /// <summary>
+  ///   In 2004 collisions for this one were found, so this one should be
+  ///   considered to be unsafe.
+  /// </summary>
   THash_Haval128 = class(THashBaseHaval)
   public
     class function DigestSize: Integer; override;
