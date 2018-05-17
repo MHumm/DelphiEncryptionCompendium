@@ -790,6 +790,10 @@ begin
   SetLength(Result, 0);
   if Length(Source) > 0 then
   begin
+{ TODO :
+In Delphi 10.1 Berlin on mobile this issues a W1057 implicit string
+conversion warning as https://quality.embarcadero.com/browse/RSP-20574
+shows that BytesOf(Val: RawByteString) is in an IFNDEF NextGen block! }
     b := ValidFormat(Format).Decode(BytesOf(Source));
 
     DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));

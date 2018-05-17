@@ -83,9 +83,11 @@ type
   TestTCipher_Null = class(TTestCase)
   strict private
     FCipher_Null: TCipher_Null;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
+    procedure TestClassByName;
   end;
 
   // A function with these parameters has to be passed to DoTestEncode/Decode to
@@ -154,6 +156,7 @@ type
   TestTCipher_Blowfish = class(TCipherBasis)
   strict private
     FCipher_Blowfish: TCipher_Blowfish;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -164,6 +167,7 @@ type
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Twofish
@@ -171,11 +175,13 @@ type
   TestTCipher_Twofish = class(TTestCase)
   strict private
     FCipher_Twofish: TCipher_Twofish;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_IDEA
@@ -183,11 +189,13 @@ type
   TestTCipher_IDEA = class(TTestCase)
   strict private
     FCipher_IDEA: TCipher_IDEA;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Cast256
@@ -195,11 +203,13 @@ type
   TestTCipher_Cast256 = class(TTestCase)
   strict private
     FCipher_Cast256: TCipher_Cast256;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Mars
@@ -207,11 +217,13 @@ type
   TestTCipher_Mars = class(TTestCase)
   strict private
     FCipher_Mars: TCipher_Mars;
+  private
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_RC4
@@ -590,6 +602,14 @@ begin
   FCipher_Null := nil;
 end;
 
+procedure TestTCipher_Null.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Null.ClassByName('TCipher_Null');
+  CheckEquals(TCipher_Null, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Blowfish.Done;
 begin
   FCipher_Blowfish.Done;
@@ -666,6 +686,14 @@ für alle Blockmodi separat umgesetzt werden }
   DoTestEncode(FCipher_Blowfish.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Blowfish.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Blowfish.ClassByName('TCipher_Blowfish');
+  CheckEquals(TCipher_Blowfish, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Twofish.SetUp;
 begin
   FCipher_Twofish := TCipher_Twofish.Create;
@@ -689,6 +717,14 @@ begin
   CheckEquals(4256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Twofish.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Twofish.ClassByName('TCipher_Twofish');
+  CheckEquals(TCipher_Twofish, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_IDEA.SetUp;
@@ -716,6 +752,14 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_IDEA.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_IDEA.ClassByName('TCipher_IDEA');
+  CheckEquals(TCipher_IDEA, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Cast256.SetUp;
 begin
   FCipher_Cast256 := TCipher_Cast256.Create;
@@ -741,6 +785,14 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Cast256.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Cast256.ClassByName('TCipher_Cast256');
+  CheckEquals(TCipher_Cast256, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Mars.SetUp;
 begin
   FCipher_Mars := TCipher_Mars.Create;
@@ -764,6 +816,14 @@ begin
   CheckEquals( 160,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Mars.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Mars.ClassByName('TCipher_Mars');
+  CheckEquals(TCipher_Mars, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_RC4.SetUp;

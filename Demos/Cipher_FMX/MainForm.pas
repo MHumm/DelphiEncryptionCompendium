@@ -44,15 +44,22 @@ type
     procedure ButtonEncryptClick(Sender: TObject);
     procedure EditPlainTextChangeTracking(Sender: TObject);
     procedure ButtonDecryptClick(Sender: TObject);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
   private
     procedure InitFormatCombos;
     procedure InitCipherCombo;
     procedure InitCipherModes;
     procedure ShowErrorMessage(ErrorMsg: string);
     function GetSelectedCipherMode: TCipherMode;
-    { Private-Deklarationen }
+    /// <summary>
+    ///   Calls the Android home screen into foreground so that when pressing
+    ///   back the app goes into background properly and when pressing the app
+    ///   icon in the app drawer or on home screen it returns to the same point
+    ///   it was.
+    /// </summary>
+    procedure OpenHomeScreen;
   public
-    { Public-Deklarationen }
   end;
 
 var
@@ -63,7 +70,13 @@ implementation
 uses
   System.TypInfo, Generics.Collections, FMX.Platform,
   DECBaseClass, DECFormatBase, DECFormat, DECCipherModes,
-  DECCipherFormats, DECCiphers, DECUtil;
+  DECCipherFormats, DECCiphers, DECUtil
+  {$IFDEF Android}
+  ,
+  Androidapi.JNI.GraphicsContentViewText,
+  Androidapi.Helpers,
+  Androidapi.JNI.App
+  {$ENDIF};
 
 {$R *.fmx}
 
@@ -233,6 +246,17 @@ begin
   InitCipherModes;
 end;
 
+procedure TMainForm.FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  {$IFDEF Android}
+  if Key = vkHardwareBack then
+    OpenHomeScreen;
+
+  Key := 0;
+  {$ENDIF}
+end;
+
 procedure TMainForm.FormResize(Sender: TObject);
 begin
   LayoutTop.Width    := VertScrollBox1.Width;
@@ -312,6 +336,23 @@ begin
 
   if ComboBoxChainingMethod.Items.Count > 0 then
     ComboBoxChainingMethod.ItemIndex := 0;
+end;
+
+procedure TMainForm.OpenHomeScreen;
+{$IFDEF ANDROID}
+var
+  Intent: JIntent;
+{$ENDIF ANDROID}
+begin
+{$IFDEF ANDROID}
+  Intent := TJIntent.Javaclass.init(TJIntent.JavaClass.ACTION_MAIN);
+  Intent.addCategory(TJIntent.JavaClass.CATEGORY_HOME);
+  Intent.setFlags(TjIntent.JavaClass.FLAG_ACTIVITY_NEW_TASK);
+  TAndroidhelper.Activity.startActivity(Intent);
+{$ENDIF ANDROID}
+{$IFDEF IOS}
+  NavigationController.popToRootViewControllerAnimated(true);
+{$ENDIF}
 end;
 
 end.

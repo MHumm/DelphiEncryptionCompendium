@@ -34,6 +34,8 @@ type
     procedure EditInputChangeTracking(Sender: TObject);
     procedure EditInputKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
+    procedure FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+      Shift: TShiftState);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -45,6 +47,13 @@ type
     /// </summary>
     procedure InitFormatCombos;
     procedure ShowErrorMessage(ErrorMsg: string);
+    /// <summary>
+    ///   Calls the Android home screen into foreground so that when pressing
+    ///   back the app goes into background properly and when pressing the app
+    ///   icon in the app drawer or on home screen it returns to the same point
+    ///   it was.
+    /// </summary>
+    procedure OpenHomeScreen;
   public
   end;
 
@@ -55,7 +64,13 @@ implementation
 
 uses
   DECBaseClass, DECHashBase, DECHash, DECFormatBase, DECFormat, DECUtil,
-  Generics.Collections, FMX.Platform;
+  Generics.Collections, FMX.Platform
+  {$IFDEF Android}
+  ,
+  Androidapi.JNI.GraphicsContentViewText,
+  Androidapi.Helpers,
+  Androidapi.JNI.App
+  {$ENDIF};
 
 {$R *.fmx}
 
@@ -161,6 +176,17 @@ begin
   InitFormatCombos;
 end;
 
+procedure TMainForm.FormKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
+  Shift: TShiftState);
+begin
+  {$IFDEF Android}
+  if Key = vkHardwareBack then
+    OpenHomeScreen;
+
+  Key := 0;
+  {$ENDIF}
+end;
+
 procedure TMainForm.InitFormatCombos;
 var
   MyClass : TPair<Int64, TDECClass>;
@@ -220,6 +246,23 @@ procedure TMainForm.FormResize(Sender: TObject);
 begin
   LayoutTop.Width    := VertScrollBox1.Width;
   LayoutBottom.Width := VertScrollBox1.Width;
+end;
+
+procedure TMainForm.OpenHomeScreen;
+{$IFDEF ANDROID}
+var
+  Intent: JIntent;
+{$ENDIF ANDROID}
+begin
+{$IFDEF ANDROID}
+  Intent := TJIntent.Javaclass.init(TJIntent.JavaClass.ACTION_MAIN);
+  Intent.addCategory(TJIntent.JavaClass.CATEGORY_HOME);
+  Intent.setFlags(TjIntent.JavaClass.FLAG_ACTIVITY_NEW_TASK);
+  TAndroidhelper.Activity.startActivity(Intent);
+{$ENDIF ANDROID}
+{$IFDEF IOS}
+  NavigationController.popToRootViewControllerAnimated(true);
+{$ENDIF}
 end;
 
 end.
