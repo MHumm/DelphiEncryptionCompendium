@@ -236,6 +236,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_RC6
@@ -248,6 +249,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Rijndael
@@ -260,6 +262,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Square
@@ -272,6 +275,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_SCOP
@@ -284,6 +288,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Sapphire
@@ -296,6 +301,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_1DES
@@ -313,6 +319,7 @@ type
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_2DES
@@ -325,6 +332,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_3DES
@@ -337,6 +345,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_2DDES
@@ -349,6 +358,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_3DDES
@@ -361,6 +371,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_3TDES
@@ -373,6 +384,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_3Way
@@ -385,6 +397,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Cast128
@@ -397,6 +410,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Gost
@@ -409,6 +423,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Misty
@@ -421,6 +436,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_NewDES
@@ -433,6 +449,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Q128
@@ -445,6 +462,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_RC2
@@ -457,6 +475,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_RC5
@@ -469,6 +488,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_SAFER
@@ -481,6 +501,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Shark
@@ -493,6 +514,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_Skipjack
@@ -505,6 +527,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_TEA
@@ -517,6 +540,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_XTEA
@@ -529,6 +553,7 @@ type
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestClassByName;
   end;
 
 implementation
@@ -819,6 +844,7 @@ begin
 end;
 
 procedure TestTCipher_Mars.TestClassByName;
+// ClassByName Tests für die restlichen Ciphers umsetzen!
 var
   ReturnValue : TDECCipherClass;
 begin
@@ -835,6 +861,14 @@ procedure TestTCipher_RC4.TearDown;
 begin
   FCipher_RC4.Free;
   FCipher_RC4 := nil;
+end;
+
+procedure TestTCipher_RC4.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_RC4.ClassByName('TCipher_RC4');
+  CheckEquals(TCipher_RC4, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_RC4.TestContext;
@@ -862,6 +896,14 @@ begin
   FCipher_RC6 := nil;
 end;
 
+procedure TestTCipher_RC6.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_RC6.ClassByName('TCipher_RC6');
+  CheckEquals(TCipher_RC6, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_RC6.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -885,6 +927,14 @@ procedure TestTCipher_Rijndael.TearDown;
 begin
   FCipher_Rijndael.Free;
   FCipher_Rijndael := nil;
+end;
+
+procedure TestTCipher_Rijndael.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Rijndael.ClassByName('TCipher_Rijndael');
+  CheckEquals(TCipher_Rijndael, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Rijndael.TestContext;
@@ -912,6 +962,14 @@ begin
   FCipher_Square := nil;
 end;
 
+procedure TestTCipher_Square.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Square.ClassByName('TCipher_Square');
+  CheckEquals(TCipher_Square, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Square.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -937,6 +995,14 @@ begin
   FCipher_SCOP := nil;
 end;
 
+procedure TestTCipher_SCOP.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_SCOP.ClassByName('TCipher_SCOP');
+  CheckEquals(TCipher_SCOP, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_SCOP.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -960,6 +1026,14 @@ procedure TestTCipher_Sapphire.TearDown;
 begin
   FCipher_Sapphire.Free;
   FCipher_Sapphire := nil;
+end;
+
+procedure TestTCipher_Sapphire.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Sapphire.ClassByName('TCipher_Sapphire');
+  CheckEquals(TCipher_Sapphire, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Sapphire.TestContext;
@@ -1031,6 +1105,14 @@ begin
   FCipher_1DES := nil;
 end;
 
+procedure TestTCipher_1DES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_1DES.ClassByName('TCipher_1DES');
+  CheckEquals(TCipher_1DES, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_1DES.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1066,6 +1148,14 @@ begin
   FCipher_2DES := nil;
 end;
 
+procedure TestTCipher_2DES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_2DES.ClassByName('TCipher_2DES');
+  CheckEquals(TCipher_2DES, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_2DES.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1089,6 +1179,14 @@ procedure TestTCipher_3DES.TearDown;
 begin
   FCipher_3DES.Free;
   FCipher_3DES := nil;
+end;
+
+procedure TestTCipher_3DES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_3DES.ClassByName('TCipher_3DES');
+  CheckEquals(TCipher_3DES, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_3DES.TestContext;
@@ -1116,6 +1214,14 @@ begin
   FCipher_2DDES := nil;
 end;
 
+procedure TestTCipher_2DDES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_2DDES.ClassByName('TCipher_2DDES');
+  CheckEquals(TCipher_2DDES, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_2DDES.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1139,6 +1245,14 @@ procedure TestTCipher_3DDES.TearDown;
 begin
   FCipher_3DDES.Free;
   FCipher_3DDES := nil;
+end;
+
+procedure TestTCipher_3DDES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_3DDES.ClassByName('TCipher_3DDES');
+  CheckEquals(TCipher_3DDES, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_3DDES.TestContext;
@@ -1166,6 +1280,14 @@ begin
   FCipher_3TDES := nil;
 end;
 
+procedure TestTCipher_3TDES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_3TDES.ClassByName('TCipher_3TDES');
+  CheckEquals(TCipher_3TDES, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_3TDES.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1189,6 +1311,14 @@ procedure TestTCipher_3Way.TearDown;
 begin
   FCipher_3Way.Free;
   FCipher_3Way := nil;
+end;
+
+procedure TestTCipher_3Way.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_3Way.ClassByName('TCipher_3Way');
+  CheckEquals(TCipher_3Way, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_3Way.TestContext;
@@ -1216,6 +1346,14 @@ begin
   FCipher_Cast128 := nil;
 end;
 
+procedure TestTCipher_Cast128.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Cast128.ClassByName('TCipher_Cast128');
+  CheckEquals(TCipher_Cast128, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Cast128.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1239,6 +1377,14 @@ procedure TestTCipher_Gost.TearDown;
 begin
   FCipher_Gost.Free;
   FCipher_Gost := nil;
+end;
+
+procedure TestTCipher_Gost.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Gost.ClassByName('TCipher_Gost');
+  CheckEquals(TCipher_Gost, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Gost.TestContext;
@@ -1266,6 +1412,14 @@ begin
   FCipher_Misty := nil;
 end;
 
+procedure TestTCipher_Misty.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Misty.ClassByName('TCipher_Misty');
+  CheckEquals(TCipher_Misty, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Misty.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1289,6 +1443,14 @@ procedure TestTCipher_NewDES.TearDown;
 begin
   FCipher_NewDES.Free;
   FCipher_NewDES := nil;
+end;
+
+procedure TestTCipher_NewDES.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_NewDES.ClassByName('TCipher_NewDES');
+  CheckEquals(TCipher_NewDES, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_NewDES.TestContext;
@@ -1316,6 +1478,14 @@ begin
   FCipher_Q128 := nil;
 end;
 
+procedure TestTCipher_Q128.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Q128.ClassByName('TCipher_Q128');
+  CheckEquals(TCipher_Q128, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Q128.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1339,6 +1509,14 @@ procedure TestTCipher_RC2.TearDown;
 begin
   FCipher_RC2.Free;
   FCipher_RC2 := nil;
+end;
+
+procedure TestTCipher_RC2.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_RC2.ClassByName('TCipher_RC2');
+  CheckEquals(TCipher_RC2, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_RC2.TestContext;
@@ -1366,6 +1544,14 @@ begin
   FCipher_RC5 := nil;
 end;
 
+procedure TestTCipher_RC5.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_RC5.ClassByName('TCipher_RC5');
+  CheckEquals(TCipher_RC5, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_RC5.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1389,6 +1575,14 @@ procedure TestTCipher_SAFER.TearDown;
 begin
   FCipher_SAFER.Free;
   FCipher_SAFER := nil;
+end;
+
+procedure TestTCipher_SAFER.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_SAFER.ClassByName('TCipher_SAFER');
+  CheckEquals(TCipher_SAFER, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_SAFER.TestContext;
@@ -1416,6 +1610,14 @@ begin
   FCipher_Shark := nil;
 end;
 
+procedure TestTCipher_Shark.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Shark.ClassByName('TCipher_Shark');
+  CheckEquals(TCipher_Shark, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_Shark.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1439,6 +1641,14 @@ procedure TestTCipher_Skipjack.TearDown;
 begin
   FCipher_Skipjack.Free;
   FCipher_Skipjack := nil;
+end;
+
+procedure TestTCipher_Skipjack.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Skipjack.ClassByName('TCipher_Skipjack');
+  CheckEquals(TCipher_Skipjack, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Skipjack.TestContext;
@@ -1466,6 +1676,14 @@ begin
   FCipher_TEA := nil;
 end;
 
+procedure TestTCipher_TEA.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_TEA.ClassByName('TCipher_TEA');
+  CheckEquals(TCipher_TEA, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_TEA.TestContext;
 var
   ReturnValue: TCipherContext;
@@ -1489,6 +1707,14 @@ procedure TestTCipher_XTEA.TearDown;
 begin
   FCipher_XTEA.Free;
   FCipher_XTEA := nil;
+end;
+
+procedure TestTCipher_XTEA.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_XTEA.ClassByName('TCipher_XTEA');
+  CheckEquals(TCipher_XTEA, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_XTEA.TestContext;
