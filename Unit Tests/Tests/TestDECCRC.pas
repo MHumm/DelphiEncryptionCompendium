@@ -125,6 +125,7 @@ type
     ///   for delivering the data to compute the CRC over.
     /// </summary>
     function CRCCodeReadCallback(var Buffer; Count: Int64): Int64;
+    function ReadMethod(var Buffer; Count: Int64): Int64;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -151,6 +152,8 @@ type
     procedure TestCRCCodeCRC32SingleBuffer;
     procedure TestCRCCodeCRC32MultiBuffer;
 
+    procedure TestCRCCodeCallback;
+
     procedure TestCRCCodeCRC16SingleBufferCallback;
 
     procedure TestCRCDoneFinalVector0;
@@ -173,6 +176,13 @@ type
   end;
 
 implementation
+
+const
+  /// <summary>
+  ///   Test data for the callback based CRCCode variant. is the same as one CRC32
+  ///   test data element (123456789)
+  /// </summary>
+  cCallbackTestData : array[1..9] of Byte = ($31, $32, $33, $34, $35, $36, $37, $38, $39);
 
 procedure TestCRC.SetUp;
 begin
@@ -313,6 +323,42 @@ begin
 
     TestCRCCodeSingleBufferCallback(Test, CRCDef);
   end;
+end;
+
+procedure TestCRC.TestCRCCodeCallback;
+var
+  CRCDef   : TCRCDef;
+  CRC      : UInt32;
+begin
+  CheckEquals(true,
+              DECCRC.CRCInit(CRCDef, CRC_32),
+              'CRC setup failed');
+
+  CRC := DECCRC.CRCCode(CRCDef, ReadMethod, length(cCallbackTestData));
+  CheckEquals($7DC08C09, CRC, 'Wrong callback CRC calculation result');
+end;
+
+function TestCRC.ReadMethod(var Buffer; Count: Int64): Int64;
+var
+  p : PByte;
+  i : Integer;
+begin
+//  SetLength(Buffer, length(cCallbackTestData[0]));
+
+  p := @Buffer;
+  for i := 1 to Count do
+  begin
+    p^ := cCallbackTestData[i];
+    inc(p);
+  end;
+
+
+//  Move(cCallbackTestData[FCallbackTestIndex], Buffer, Count);
+//  inc(FCallbackTestIndex);
+
+  result := Count;
+
+//  Buffer := cCallbackTestData[FCallbackTestIndex, 0];
 end;
 
 procedure TestCRC.TestCRCCodeCRC16MultiBuffer;
@@ -838,7 +884,9 @@ begin
   FCallbackBuffer := BytesOf(Test.Input);
 
   if Length(Test.Input) > 0 then
-    res := CRCCode(CRCDef, CRCCodeReadCallback, Length(FCallbackBuffer));
+    res := CRCCode(CRCDef, CRCCodeReadCallback, Length(FCallbackBuffer))
+  else
+    res := 0;
 //  else
 //    res := CRCCode(CRCDef, CRCCodeReadCallback, Length(FCallbackBuffer));
   CheckEquals(Test.CRC, res, 'Wrong result for input: ' + string(test.Input));
