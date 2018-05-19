@@ -414,6 +414,7 @@ const
     (Poly: $00008408; Bits: 16; Init: $00000000; FInit: $00000000; Inverse: True),  // CRC_16 XModem
     (Poly: $00864CFB; Bits: 24; Init: $00B704CE; FInit: $00000000; Inverse: False), // CRC_24
     (Poly: $9DB11213; Bits: 32; Init: $FFFFFFFF; FInit: $FFFFFFFF; Inverse: True),  // CRC_32
+
     (Poly: $04C11DB7; Bits: 32; Init: $FFFFFFFF; FInit: $FFFFFFFF; Inverse: True),  // CRC_32CCITT
     (Poly: $04C11DB7; Bits: 32; Init: $FFFFFFFF; FInit: $00000000; Inverse: True),  // CRC_32ZModem
     (Poly: $00000007; Bits: 08; Init: $00000000; FInit: $00000000; Inverse: True),  // CRC_8ATMHEC

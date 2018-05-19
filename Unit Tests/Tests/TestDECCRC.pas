@@ -90,7 +90,11 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestCRC = class(TTestCase)
   strict private
-    FTestData : array of TCRCTest;
+    FTestData      : array of TCRCTest;
+    /// <summary>
+    ///   Required index into FTestData for the callback based method test
+    /// </summary>
+    FTestDataIndex : Integer;
 
     /// <summary>
     ///   Buffer with the data for the CRCCode variant taking a callback to
@@ -329,13 +333,70 @@ procedure TestCRC.TestCRCCodeCallback;
 var
   CRCDef   : TCRCDef;
   CRC      : UInt32;
+  i        : Integer;
 begin
-  CheckEquals(true,
-              DECCRC.CRCInit(CRCDef, CRC_32),
-              'CRC setup failed');
+  SetLength(FTestData, 3);
+  FTestData[0].Input := '123456789';
+  FTestData[0].CRC   := $7DC08C09;
+  FTestData[1].Input := '12345678901234567890123456789012345678901234567890123'+
+                        '45678901234567890123456789012345678901234567890123456'+
+                        '78901234567890123456789012345678901234567890123456789'+
+                        '01234567890123456789012345678901234567890123456789012'+
+                        '34567890123456789012345678901234567890123456789012345'+
+                        '67890123456789012345678901234567890123456789012345678'+
+                        '90123456789012345678901234567890123456789012345678901'+
+                        '23456789012345678901234567890123456789012345678901234'+
+                        '56789012345678901234567890123456789012345678901234567'+
+                        '89012345678901234567890123456789012345678901234567890'+
+                        '12345678901234567890123456789012345678901234567890123'+
+                        '45678901234567890123456789012345678901234567890123456'+
+                        '78901234567890123456789012345678901234567890123456789'+
+                        '01234567890123456789012345678901234567890123456789012'+
+                        '34567890123456789012345678901234567890123456789012345'+
+                        '67890123456789012345678901234567890123456789012345678'+
+                        '90123456789012345678901234567890123456789012345678901'+
+                        '23456789012345678901234567890123456789012345678901234'+
+                        '56789012345678901234567890123456789012345678901234567'+
+                        '89012345678901234567890123456789012345678901234567890'+
+                        '1234567890123456789012345678901234567890';
+  FTestData[1].CRC   := $BED38AF0; // Length: 1100 byte
+  FTestData[2].Input := '12345678901234567890123456789012345678901234567890123'+
+                        '45678901234567890123456789012345678901234567890123456'+
+                        '78901234567890123456789012345678901234567890123456789'+
+                        '01234567890123456789012345678901234567890123456789012'+
+                        '34567890123456789012345678901234567890123456789012345'+
+                        '67890123456789012345678901234567890123456789012345678'+
+                        '90123456789012345678901234567890123456789012345678901'+
+                        '23456789012345678901234567890123456789012345678901234'+
+                        '56789012345678901234567890123456789012345678901234567'+
+                        '89012345678901234567890123456789012345678901234567890'+
+                        '12345678901234567890123456789012345678901234567890123'+
+                        '45678901234567890123456789012345678901234567890123456'+
+                        '78901234567890123456789012345678901234567890123456789'+
+                        '01234567890123456789012345678901234567890123456789012'+
+                        '34567890123456789012345678901234567890123456789012345'+
+                        '67890123456789012345678901234567890123456789012345678'+
+                        '90123456789012345678901234567890123456789012345678901'+
+                        '23456789012345678901234567890123456789012345678901234'+
+                        '56789012345678901234567890123456789012345678901234567'+
+                        '890123456789012345';
+  FTestData[2].CRC   := $9E5864CB; // length: 1025 byte, just 1 byte longer than
+                                   // the buffer
 
-  CRC := DECCRC.CRCCode(CRCDef, ReadMethod, length(cCallbackTestData));
-  CheckEquals($7DC08C09, CRC, 'Wrong callback CRC calculation result');
+
+  FTestDataIndex := 0;
+
+  for i := Low(FTestData) to High(FTestData) do
+  begin
+    CheckEquals(true,
+                DECCRC.CRCInit(CRCDef, CRC_32),
+                'CRC setup failed');
+
+    CRC := DECCRC.CRCCode(CRCDef, ReadMethod, length(FTestData[i].Input));
+    CheckEquals(FTestData[i].CRC, CRC, 'Wrong callback CRC calculation result');
+
+    inc(FTestDataIndex);
+  end;
 end;
 
 function TestCRC.ReadMethod(var Buffer; Count: Int64): Int64;
@@ -346,19 +407,13 @@ begin
 //  SetLength(Buffer, length(cCallbackTestData[0]));
 
   p := @Buffer;
-  for i := 1 to Count do
+  for i := 0 to Count-1 do
   begin
-    p^ := cCallbackTestData[i];
+    p^ := Ord(FTestData[FTestDataIndex].Input[low(FTestData[FTestDataIndex].Input) + i]);
     inc(p);
   end;
 
-
-//  Move(cCallbackTestData[FCallbackTestIndex], Buffer, Count);
-//  inc(FCallbackTestIndex);
-
   result := Count;
-
-//  Buffer := cCallbackTestData[FCallbackTestIndex, 0];
 end;
 
 procedure TestCRC.TestCRCCodeCRC16MultiBuffer;
