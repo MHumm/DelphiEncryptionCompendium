@@ -177,6 +177,9 @@ type
     procedure TestCRC32;
     procedure TestCRC32CCITT;
     procedure TestCRC32ZMODEM;
+
+    procedure TestCRC16Standalone;
+    procedure TestCRC32Standalone;
   end;
 
 implementation
@@ -610,6 +613,27 @@ begin
   DoTest(CRC_16CCITT);
 end;
 
+procedure TestCRC.TestCRC16Standalone;
+var
+  CRC : UInt16;
+  i   : Integer;
+begin
+  SetUpCRC16;
+
+  for i := 0 to length(FTestData)-1 do
+  begin
+    if FTestData[i].Input <> '' then
+    begin
+      CRC := CRC16(0,
+                   FTestData[i].Input[low(FTestData[i].Input)],
+                   length(FTestData[i].Input));
+
+      CheckEquals(FTestData[i].CRC, CRC,
+                  'Wrong CRC16Standalone reult for iteration ' + IntToStr(i));
+    end;
+  end;
+end;
+
 procedure TestCRC.SetUpCRC16XMODEM;
 begin
   SetLength(FTestData, 5);
@@ -713,6 +737,27 @@ procedure TestCRC.TestCRC32CCITT;
 begin
   SetUpCRC32CCITT;
   DoTest(CRC_32CCITT);
+end;
+
+procedure TestCRC.TestCRC32Standalone;
+var
+  CRC : UInt32;
+  i   : Integer;
+begin
+  SetUpCRC32CCITT;
+
+  for i := 0 to length(FTestData)-1 do
+  begin
+    if FTestData[i].Input <> '' then
+    begin
+      CRC := CRC32(0,
+                   FTestData[i].Input[low(FTestData[i].Input)],
+                   length(FTestData[i].Input));
+
+      CheckEquals(FTestData[i].CRC, CRC,
+                  'Wrong CRC32Standalone reult for iteration ' + IntToStr(i));
+    end;
+  end;
 end;
 
 procedure TestCRC.SetUpCRC32ZMODEM;
