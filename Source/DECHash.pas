@@ -1915,6 +1915,7 @@ var
   I: Integer;
   W: array [0..79] of Int64;
 begin
+{ TODO : The array passed is a UInt32 array, which doesn't fit with the name of this method!}
   SwapInt64Buffer(Buffer[0], W, 16);
 
   // calculate other 64 uint64

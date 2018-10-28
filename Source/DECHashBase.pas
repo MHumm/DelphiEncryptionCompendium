@@ -393,10 +393,28 @@ begin
   FBufferIndex := 0;
   FBufferSize := BlockSize;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  ReallocMem(FBuffer, FBufferSize);
+//  ReallocMem(FBuffer, FBufferSize);
+  FBuffer := ReallocMemory(FBuffer, FBufferSize);
+
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
   DoInit;
+end;
+
+procedure TDECHash.Done;
+begin
+  DoDone;
+  ProtectBuffer(FBuffer^, FBufferSize);
+
+  FBufferSize := 0;
+  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+// Commented out, as it seems to not properly work with a new size of 0, but
+// calling FreeMem is not correct either as it frees the pointer. One would get
+// around of all of this by getting rid of PByte as buffer type completely by
+// making it a TBytes variable
+  FBuffer := ReallocMemory(FBuffer, 0);
+
+//  ReallocMem(FBuffer, 0);
 end;
 
 class function TDECHash.IsPasswordHash: Boolean;
@@ -538,16 +556,6 @@ begin
 
   Move(Value^, FBuffer^, DataSize);
   FBufferIndex := DataSize;
-end;
-
-procedure TDECHash.Done;
-begin
-  DoDone;
-  ProtectBuffer(FBuffer^, FBufferSize);
-  FBufferSize := 0;
-  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-//  FBuffer := ReallocMemory(FBuffer, 0);
-  ReallocMem(FBuffer, 0);
 end;
 
 function TDECHash.DigestAsBytes: TBytes;

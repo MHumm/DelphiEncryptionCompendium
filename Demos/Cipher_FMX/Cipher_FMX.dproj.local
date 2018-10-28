@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.603,=D:\Projekte\DECGit\Source\DECCipherBase.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.308,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.658,=D:\Projekte\DECGit\Source\DECCiphers.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.201,d:\Projekte\Unit2.fmx=D:\Projekte\DECGit\Demos\Cipher_FMX\MainForm.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.092,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.501,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.603,=D:\Projekte\DECGit\Source\DECCipherBase.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.405,=D:\Projekte\DECGit\Source\DECCipherFormats.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.617,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.894,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.617,D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj=d:\Projekte\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.501,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.433,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.201,D:\Projekte\DECGit\Demos\Cipher_FMX\MainForm.pas=d:\Projekte\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.201,d:\Projekte\Unit2.pas=D:\Projekte\DECGit\Demos\Cipher_FMX\MainForm.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.371,=d:\Projekte\Unit2.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.456,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.479,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.201,D:\Projekte\DECGit\Demos\Cipher_FMX\MainForm.fmx=d:\Projekte\Unit2.fmx</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.658,=D:\Projekte\DECGit\Source\DECCiphers.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.622,=D:\Projekte\DECGit\Source\DECCipherModes.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.456,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
 		<NoProfile Android="CB512EA59X"/>
