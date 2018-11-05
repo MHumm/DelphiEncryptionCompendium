@@ -1800,6 +1800,7 @@ Daten synthetisieren. }
 
 
 //    Result := EncodeFunct(Data.InputData, TFormat_HEXL);
+
     InitProc(Data);
     Result := EncodeFunct(RawByteString(Data.InputData), TFormat_COPY);
     DoneProc;
