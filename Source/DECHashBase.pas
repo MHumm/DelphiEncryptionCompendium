@@ -412,9 +412,9 @@ begin
 // calling FreeMem is not correct either as it frees the pointer. One would get
 // around of all of this by getting rid of PByte as buffer type completely by
 // making it a TBytes variable
-  FBuffer := ReallocMemory(FBuffer, 0);
+//  FBuffer := ReallocMemory(FBuffer, 0);
 
-//  ReallocMem(FBuffer, 0);
+  ReallocMem(FBuffer, 0);
 end;
 
 class function TDECHash.IsPasswordHash: Boolean;
