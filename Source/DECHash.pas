@@ -3460,6 +3460,94 @@ begin
   FPlain     := Plain;
   FAvalanche := Avalanche;
 end;
+{$ELSE}
+procedure THash_Sapphire.Calc(const Data; DataSize: Integer);
+asm
+                test    ecx,ecx
+                jle     @Exit
+
+                push    ebx
+                push    esi
+                push    edi              // let edi points to Sapphire partial context (w/o cards array)
+                lea     esi,[eax].THash_Sapphire.FCards
+                lea     edi,[eax].THash_Sapphire.FRotor // let esi points to Sapphire cards array
+                push    ebp            // edx points to data, ecx contains DataSize
+
+                mov     ebp, esp
+                sub     esp, 18h
+                and     esp, 0FFFFFFE0h
+                mov     eax, [edi]
+                mov     ebx, [edi+4]
+                mov     [esp+14h], ebp
+                mov     ebp, [edi+8]
+                mov     [esp], ebx
+                mov     [esp+4], ebp
+                mov     ebp, eax
+                mov     eax, [edi+0Ch]
+                mov     ebx, [edi+10h]
+                mov     [esp+8], edx
+                mov     [esp+10h], edi
+@@data_loop:
+                mov     [esp+0Ch], ecx
+                mov     ecx, [esi+ebp*4]
+                mov     edi, [esp]
+                inc     ebp
+                add     edi, ecx
+                mov     ecx, [esi+ebx*4]
+                and     edi, 0FFh
+                and     ebp, 0FFh
+                mov     edx, [esi+edi*4]
+                mov     [esp], edi
+                mov     [esi+ebx*4], edx
+                mov     edx, [esi+eax*4]
+                mov     [esi+edi*4], edx
+                mov     edx, [esi+ebp*4]
+                mov     [esi+eax*4], edx
+                mov     [esi+ebp*4], ecx
+                mov     ecx, [esi+ecx*4]
+                mov     edx, [esi+eax*4]
+                mov     eax, [esp+4]
+                mov     edi, [esi+edi*4]
+                add     ecx, eax
+                mov     eax, [esi+ebp*4]
+                and     ecx, 0FFh
+                add     edi, eax
+                mov     [esp+4], ecx
+                and     edi, 0FFh
+                mov     eax, [esi+ecx*4]
+                mov     ecx, [esp+8]
+                add     edx, eax
+                mov     eax, [esi+ebx*4]
+                add     edx, eax
+                movzx   eax, byte ptr [ecx]
+                and     edx, 0FFh
+                mov     edi, [esi+edi*4]
+                inc     ecx
+                mov     ebx, eax
+                mov     edx, [esi+edx*4]
+                mov     [esp+8], ecx
+                xor     ebx, edi
+                mov     edx, [esi+edx*4]
+                mov     ecx, [esp+0Ch]
+                xor     ebx, edx
+                dec     ecx
+                jnz     @@data_loop
+                mov     edi, [esp+10h]
+                mov     ecx, [esp]
+                mov     esi, [esp+4]
+                mov     edx, [esp+14h]
+                mov     [edi], ebp
+                mov     [edi+4], ecx
+                mov     esp, edx
+                mov     [edi+8], esi
+                mov     [edi+0Ch], eax
+                mov     [edi+10h], ebx
+                pop     ebp
+                pop     edi
+                pop     esi
+                pop     ebx
+@Exit:
+end;
 {$ENDIF !THash_Sapphire_asm}
 
 function THash_Sapphire.Digest: PByteArray;
