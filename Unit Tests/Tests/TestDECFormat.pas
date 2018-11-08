@@ -742,7 +742,7 @@ begin
   SrcBuf := BytesOf(RawByteString(''));
   CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf));
 
-  SrcBuf := BytesOf(RawByteString('0123456789abcdefABCDEF'));
+  SrcBuf := BytesOf(cTestDataEncode[3].Output);
   CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf));
 
   SrcBuf := BytesOf(RawByteString('q'));
@@ -754,13 +754,13 @@ var
   SrcBuf: TBytes;
 begin
   SrcBuf := BytesOf(RawByteString(''));
-  CheckEquals(true, TFormat_HEXL.IsValid(SrcBuf, 0));
+  CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf, 0));
 
-  SrcBuf := BytesOf(RawByteString('0123456789abcdefABCDEF'));
-  CheckEquals(true, TFormat_HEXL.IsValid(SrcBuf[0], length(SrcBuf)));
+  SrcBuf := BytesOf(cTestDataEncode[3].Output);
+  CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf[0], length(SrcBuf)));
 
   SrcBuf := BytesOf(RawByteString('q'));
-  CheckEquals(false, TFormat_HEXL.IsValid(SrcBuf[0], length(SrcBuf)));
+  CheckEquals(false, TFormat_DECMIME32.IsValid(SrcBuf[0], length(SrcBuf)));
 end;
 
 procedure TestTFormat_Base64.SetUp;

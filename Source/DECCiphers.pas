@@ -167,6 +167,10 @@ type
   /// </summary>
   TCipher_Gost          = class;
   /// <summary>
+  ///   Alias/new name for Gost cipher
+  /// </summary>
+  TCipher_Magma         = class;
+  /// <summary>
   ///   Misty1 is a block cipher developed 1995 by Mitsubishi. It is free only for
   ///   academical and non-profit works in RFC 2994. it is otherwise patented.
   ///   In 2015 it got broken via integral cryptoanalysis.
@@ -421,6 +425,11 @@ type
   public
     class function Context: TCipherContext; override;
   end;
+
+  /// <summary>
+  ///   Alias for Gost
+  /// </summary>
+  TCipher_Magma = class(TCipher_Gost);
 
   /// <summary>
   ///   Do no longer use this algorithm if possible, as it got broken in 2015
@@ -5814,8 +5823,9 @@ initialization
   TCipher_Mars.RegisterClass(TDECCipher.ClassList);
   TCipher_RC4.RegisterClass(TDECCipher.ClassList);
   TCipher_RC6.RegisterClass(TDECCipher.ClassList);
-{ TODO : Diesen wirklich registrieren? Ist doch AES! }
-  TCipher_Rijndael.RegisterClass(TDECCipher.ClassList);
+// Explicitely not registered, as Rijndael is 1:1 the same as AES and AES is the
+// more common name
+//  TCipher_Rijndael.RegisterClass(TDECCipher.ClassList);
   TCipher_AES.RegisterClass(TDECCipher.ClassList);
   TCipher_Square.RegisterClass(TDECCipher.ClassList);
   TCipher_SCOP.RegisterClass(TDECCipher.ClassList);
@@ -5829,6 +5839,8 @@ initialization
   TCipher_3Way.RegisterClass(TDECCipher.ClassList);
   TCipher_Cast128.RegisterClass(TDECCipher.ClassList);
   TCipher_Gost.RegisterClass(TDECCipher.ClassList);
+// Explicitely not registered, as this is an alias for Gost only
+//  TCipher_Magma.RegisterClass(TDECCipher.ClassList);
   TCipher_Misty.RegisterClass(TDECCipher.ClassList);
   TCipher_NewDES.RegisterClass(TDECCipher.ClassList);
   TCipher_Q128.RegisterClass(TDECCipher.ClassList);

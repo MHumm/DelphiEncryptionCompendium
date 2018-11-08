@@ -23,13 +23,10 @@ object FormMain: TFormMain
     ActivePage = TabSheetFormatConversion
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 369
     object TabSheetFormatConversion: TTabSheet
       Caption = 'TabSheetFormatConversion'
       ImageIndex = 5
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitHeight = 341
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
@@ -38,7 +35,6 @@ object FormMain: TFormMain
         Align = alTop
         Caption = 'Simple format conversion'
         TabOrder = 0
-        ExplicitTop = 25
         DesignSize = (
           466
           224)
@@ -128,10 +124,6 @@ object FormMain: TFormMain
             Align = alClient
             Caption = '&Encode'
             TabOrder = 0
-            ExplicitLeft = 8
-            ExplicitTop = 1
-            ExplicitWidth = 75
-            ExplicitHeight = 25
           end
           object ButtonSimpleFormatDecode: TButton
             Left = 148
@@ -141,10 +133,6 @@ object FormMain: TFormMain
             Align = alClient
             Caption = '&Decode'
             TabOrder = 1
-            ExplicitLeft = 8
-            ExplicitTop = 1
-            ExplicitWidth = 75
-            ExplicitHeight = 25
           end
         end
       end
@@ -156,10 +144,6 @@ object FormMain: TFormMain
         Align = alClient
         Caption = 'Format identification'
         TabOrder = 1
-        ExplicitLeft = 3
-        ExplicitTop = 230
-        ExplicitWidth = 460
-        ExplicitHeight = 205
         DesignSize = (
           466
           214)
@@ -193,6 +177,9 @@ object FormMain: TFormMain
           ColWidths = (
             150
             277)
+          RowHeights = (
+            18
+            18)
         end
         object EditFormatIdentificationSource: TEdit
           Left = 153
@@ -207,25 +194,16 @@ object FormMain: TFormMain
     object TabSheetCRC: TTabSheet
       Caption = 'TabSheetCRC'
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitWidth = 490
-      ExplicitHeight = 252
     end
     object TabSheetHash: TTabSheet
       Caption = 'TabSheetHash'
       ImageIndex = 1
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitWidth = 490
-      ExplicitHeight = 252
     end
     object TabSheetCipher: TTabSheet
       Caption = 'TabSheetCipher'
       ImageIndex = 2
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitWidth = 490
-      ExplicitHeight = 252
       object PageControlCipher: TPageControl
         Left = 0
         Top = 0
@@ -234,15 +212,12 @@ object FormMain: TFormMain
         ActivePage = TabSheetBasic
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 359
         object TabSheetBasic: TTabSheet
           Caption = '&Basic'
-          ExplicitHeight = 331
         end
         object TabSheetAdvanced: TTabSheet
           Caption = '&Advanced'
           ImageIndex = 1
-          ExplicitHeight = 331
         end
       end
     end
@@ -250,17 +225,11 @@ object FormMain: TFormMain
       Caption = 'TabSheetRandom'
       ImageIndex = 4
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitWidth = 490
-      ExplicitHeight = 252
     end
     object TabSheetAbout: TTabSheet
       Caption = 'TabSheetAbout'
       ImageIndex = 5
       TabVisible = False
-      ExplicitTop = 24
-      ExplicitWidth = 490
-      ExplicitHeight = 252
       object Label1: TLabel
         Left = 16
         Top = 16
@@ -334,7 +303,7 @@ object FormMain: TFormMain
     RegularButtonColor = clWhite
     SelectedButtonColor = 15132390
     TabOrder = 1
-    ExplicitHeight = 369
+    ExplicitLeft = -6
   end
   object ImageListCategory: TImageList
     ColorDepth = cd32Bit
@@ -343,7 +312,7 @@ object FormMain: TFormMain
     Left = 48
     Top = 224
     Bitmap = {
-      494C0101030008002C0030003000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010103000800300030003000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000C00000003000000001002000000000000090
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
