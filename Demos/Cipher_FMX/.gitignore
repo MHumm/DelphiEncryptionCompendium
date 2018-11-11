@@ -2,3 +2,4 @@
 /__recovery/
 /Android/
 /Win32/
+*.identcache

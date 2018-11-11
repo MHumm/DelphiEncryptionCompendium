@@ -252,19 +252,6 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden für Klasse TCipher_Rijndael
-  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Rijndael = class(TTestCase)
-  strict private
-    FCipher_Rijndael: TCipher_Rijndael;
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
-  published
-    procedure TestContext;
-    procedure TestClassByName;
-  end;
-
   // Testmethoden für Klasse TCipher_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Square = class(TTestCase)
@@ -914,39 +901,6 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 272,  ReturnValue.UserSize);
-  CheckEquals(false, ReturnValue.UserSave);
-  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
-end;
-
-procedure TestTCipher_Rijndael.SetUp;
-begin
-  FCipher_Rijndael := TCipher_Rijndael.Create;
-end;
-
-procedure TestTCipher_Rijndael.TearDown;
-begin
-  FCipher_Rijndael.Free;
-  FCipher_Rijndael := nil;
-end;
-
-procedure TestTCipher_Rijndael.TestClassByName;
-var
-  ReturnValue : TDECCipherClass;
-begin
-  ReturnValue := FCipher_Rijndael.ClassByName('TCipher_Rijndael');
-  CheckEquals(TCipher_Rijndael, ReturnValue, 'Class is not registered');
-end;
-
-procedure TestTCipher_Rijndael.TestContext;
-var
-  ReturnValue: TCipherContext;
-begin
-  ReturnValue := FCipher_Rijndael.Context;
-
-  CheckEquals(  32,  ReturnValue.KeySize);
-  CheckEquals(  16,  ReturnValue.BlockSize);
-  CheckEquals(  16,  ReturnValue.BufferSize);
-  CheckEquals( 480,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1846,7 +1800,6 @@ initialization
                               TestTCipher_Mars.Suite,
                               TestTCipher_RC4.Suite,
                               TestTCipher_RC6.Suite,
-                              TestTCipher_Rijndael.Suite,
                               TestTCipher_Square.Suite,
                               TestTCipher_SCOP.Suite,
                               TestTCipher_Sapphire.Suite,

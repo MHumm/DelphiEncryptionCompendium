@@ -372,7 +372,7 @@ begin
     P := TableFindBinary(S^, T, 18);
     if P < 0 then P := TableFindBinary(UpCaseBinary(S^), T, 16);
     if P < 0 then
-      raise EDECException.CreateFmt(sInvalidStringFormat, [DECClassname(Self)]);
+      raise EDECException.CreateFmt(sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
     Inc(S);
     if P >= 0 then
       if P > 16 then
@@ -829,7 +829,7 @@ begin
     SwapBytes(CRC, 3);
 //    if CRC <> CRCCalc(CRC_24, Dest[0], Size) then
     if CRC <> CRCCalc(CRC_24, Dest[0], Length(Dest)) then
-      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [DECClassName(Self)]);
+      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
   end;
 end;
 
@@ -921,7 +921,7 @@ begin
   repeat
     Size := TableFindBinary(S^, T, 64);
     if (Size < 0) or (Size > 45) then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [DECClassName(Self)]);
+      raise EDECException.CreateResFmt(@sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
     Inc(S);
     while Size > 0 do
     begin
@@ -1132,16 +1132,16 @@ begin
       if UpCaseBinary(S^) = $58 then
       begin
         if S + 2 > L then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [DECClassName(Self)]);
+          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
         Inc(S);
         i := TableFindBinary(UpCaseBinary(S^), T, 16);
         if i < 0 then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [DECClassName(Self)]);
+          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
         D^ := i shl 4;
         Inc(S);
         i := TableFindBinary(UpCaseBinary(S^), T, 16);
         if i < 0 then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [DECClassName(Self)]);
+          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [TDECClassList.GetShortClassName(Self)]);
         D^ := D^ or i;
       end
       else

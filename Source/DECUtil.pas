@@ -340,7 +340,7 @@ resourcestring
 
 constructor EDECAbstractError.Create(ClassType: TDECClass);
 begin
-  inherited CreateResFmt(@sAbstractError, [DECClassName(ClassType)]);
+  inherited CreateResFmt(@sAbstractError, [TDECClassList.GetShortClassName(ClassType)]);
 end;
 
 const
@@ -641,6 +641,19 @@ begin
     Source := '';
   end;
 end;
+
+{ TODO :
+Question of how to use UniqueString with a RawByteString has been asked
+in Delphipraxis forum and somewhere else }
+//procedure ProtectString(var Source: RawByteString); overload;
+//begin
+//  if Length(Source) > 0 then
+//  begin
+//    UniqueString(_AnsiStr(Source));
+//    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
+//    Source := '';
+//  end;
+//end;
 
 {$IFNDEF NEXTGEN}
 procedure ProtectString(var Source: AnsiString); overload;
