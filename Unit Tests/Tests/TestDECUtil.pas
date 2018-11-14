@@ -102,6 +102,9 @@ type
     {$IFNDEF NextGen}
     procedure ProtectStringWide;
     {$ENDIF}
+    {$IFDEF MSWINDOWS}
+    procedure ProtectStringRawByteString;
+    {$ENDIF}
     procedure BytesToRawString;
     procedure BytesToRawStringEmpty;
   end;
@@ -393,6 +396,18 @@ end;
 procedure TTestBufferProtection.ProtectStringAnsi;
 var
   s : AnsiString;
+begin
+  s := 'Hello';
+  DECUtil.ProtectString(s);
+
+  CheckEquals('', string(s));
+end;
+{$ENDIF}
+
+{$IFDEF MSWINDOWS}
+procedure TTestBufferProtection.ProtectStringRawByteString;
+var
+  s : RawByteString;
 begin
   s := 'Hello';
   DECUtil.ProtectString(s);

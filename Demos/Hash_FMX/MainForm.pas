@@ -47,6 +47,7 @@ type
     /// </summary>
     procedure InitFormatCombos;
     procedure ShowErrorMessage(ErrorMsg: string);
+    {$IFDEF ANDROID}
     /// <summary>
     ///   Calls the Android home screen into foreground so that when pressing
     ///   back the app goes into background properly and when pressing the app
@@ -54,6 +55,7 @@ type
     ///   it was.
     /// </summary>
     procedure OpenHomeScreen;
+    {$ENDIF}
   public
   end;
 
@@ -248,6 +250,7 @@ begin
   LayoutBottom.Width := VertScrollBox1.Width;
 end;
 
+{$IFDEF ANDROID}
 procedure TMainForm.OpenHomeScreen;
 {$IFDEF ANDROID}
 var
@@ -264,5 +267,6 @@ begin
   NavigationController.popToRootViewControllerAnimated(true);
 {$ENDIF}
 end;
+{$ENDIF}
 
 end.
