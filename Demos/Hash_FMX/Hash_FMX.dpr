@@ -12,7 +12,8 @@ uses
   DECFormatBase in '..\..\Source\DECFormatBase.pas',
   DECHashBase in '..\..\Source\DECHashBase.pas',
   DECData in '..\..\Source\DECData.pas',
-  DECFormat in '..\..\Source\DECFormat.pas';
+  DECFormat in '..\..\Source\DECFormat.pas',
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
 
 {$R *.res}
 

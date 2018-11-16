@@ -286,7 +286,6 @@ procedure ProtectBytes(var Source: TBytes);
 /// </param>
 procedure ProtectString(var Source: string); overload;
 
-{$IFDEF MSWINDOWS}
 /// <summary>
 ///   Overwrites the string's contents in a secure way and returns an empty string.
 /// </summary>
@@ -294,7 +293,6 @@ procedure ProtectString(var Source: string); overload;
 ///   String to be safely overwritten
 /// </param>
 procedure ProtectString(var Source: RawByteString); overload;
-{$ENDIF}
 
 {$IFNDEF NEXTGEN}
 /// <summary>
@@ -336,10 +334,10 @@ implementation
 
 {$IFDEF FMXTranslateableExceptions}
 uses
-  FMX.Types, System.TypInfo;
+  FMX.Types, DECUtilRawByteStringHelper;
 {$ELSE}
 uses
-  System.TypInfo;
+  DECUtilRawByteStringHelper;
 {$ENDIF}
 
 const
@@ -350,29 +348,6 @@ benutzt wird. Weil es keine Ressorcestrings bei FMX gibt? }
 
 resourcestring
   sAbstractError = cAbstractError;
-
-{$IFDEF MSWINDOWS}
-type
-  /// <summary>
-  ///   Generic helper class for providing support for UniqueString with nearly
-  ///   every possible string data type. Courtesy of Remy Lebeau.
-  /// </summary>
-  TUniqueStringHelper = class
-    /// <summary>
-    ///   Overwrites the string's contents in a secure way and returns an empty string.
-    /// </summary>
-    /// <param name="Str">
-    ///   String to be safely overwritten
-    /// </param>
-    class procedure UniqueString<T>(var Str: T);
-  end;
-
-class procedure TUniqueStringHelper.UniqueString<T>(var Str: T);
-begin
-  if PTypeInfo(TypeInfo(T))^.Kind = tkLString then
-    System.UniqueString(PAnsiString(@Str)^);
-end;
-{$ENDIF}
 
 constructor EDECAbstractError.Create(ClassType: TDECClass);
 begin
@@ -672,32 +647,31 @@ procedure ProtectString(var Source: string); overload;
 begin
   if Length(Source) > 0 then
   begin
-    UniqueString(Source);
+    System.UniqueString(Source);
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
 end;
 
-{$IFDEF MSWINDOWS}
 procedure ProtectString(var Source: RawByteString); overload;
 begin
   if Length(Source) > 0 then
   begin
     // UniqueString(Source); cannot be called with a RawByteString as there is
     // no overload for it
-    TUniqueStringHelper.UniqueString<RawByteString>(Source);
+//    TUniqueStringHelper.UniqueString<RawByteString>(Source);
+    DECUtilRawByteStringHelper.UniqueString(Source);
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
 end;
-{$ENDIF}
 
 {$IFNDEF NEXTGEN}
 procedure ProtectString(var Source: AnsiString); overload;
 begin
   if Length(Source) > 0 then
   begin
-    UniqueString(Source);
+    System.UniqueString(Source);
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
@@ -707,7 +681,7 @@ procedure ProtectString(var Source: WideString); overload;
 begin
   if Length(Source) > 0 then
   begin
-    UniqueString(Source); // for OS <> Win, WideString is not RefCounted on Win
+    System.UniqueString(Source); // for OS <> Win, WideString is not RefCounted on Win
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
