@@ -259,8 +259,9 @@ begin
     if P.refCnt <> 1 then
     begin
       Result := _NewAnsiString(P.length, P.codePage);
+// Changed from System.pas original due to missing _PAnsiChr in NextGen compiler
 //      Move(_PAnsiChr(Str)^, _PAnsiChr(Result)^, P.length);
-      Move(PByte(Str)^, PByte(Result)^, P.length);
+      Move(Pointer(Str)^, Pointer(Result)^, P.length);
       _LStrClr(Str);
       Pointer(Str) := Result;
     end;
