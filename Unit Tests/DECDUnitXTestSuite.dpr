@@ -18,13 +18,12 @@ uses
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-  {$ENDIF}
+  {$ENDIF }
   {$IFDEF GUI}
   DUnitX.Loggers.GUIX,
-  {$ENDIF}
+  {$ENDIF }
   {$IFDEF MobileGUI}
-//  DUNitX.Loggers.MobileGUI in 'C:\Program Files\Embarcadero\Studio\18.0\source\DunitX\DUNitX.Loggers.MobileGUI.pas' {MobileGUITestRunner},
-  {$ENDIF}
+  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -47,7 +46,8 @@ uses
   DECCiphers in '..\Source\DECCiphers.pas',
   DECCipherModes in '..\Source\DECCipherModes.pas',
   DECCipherFormats in '..\Source\DECCipherFormats.pas',
-  TestDECCipherModes in 'Tests\TestDECCipherModes.pas';
+  TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
+  DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas';
 
 var
   runner : ITestRunner;

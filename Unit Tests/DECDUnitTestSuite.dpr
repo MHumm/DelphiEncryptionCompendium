@@ -41,7 +41,8 @@ uses
   DECTypes in '..\Source\DECTypes.pas',
   DECCipherModes in '..\Source\DECCipherModes.pas',
   TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
-  TestDECBaseClass in 'Tests\TestDECBaseClass.pas';
+  TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
+  DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas';
 
 {$R *.RES}
 

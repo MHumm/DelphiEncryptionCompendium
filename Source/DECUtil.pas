@@ -654,13 +654,19 @@ begin
 end;
 
 procedure ProtectString(var Source: RawByteString); overload;
+var
+  i : Integer;
 begin
   if Length(Source) > 0 then
   begin
+    i := System.StringRefCount(Source);
     // UniqueString(Source); cannot be called with a RawByteString as there is
     // no overload for it
 //    TUniqueStringHelper.UniqueString<RawByteString>(Source);
     DECUtilRawByteStringHelper.UniqueString(Source);
+
+    i := System.StringRefCount(Source);
+
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
@@ -668,10 +674,16 @@ end;
 
 {$IFNDEF NEXTGEN}
 procedure ProtectString(var Source: AnsiString); overload;
+var
+  i : Integer;
 begin
   if Length(Source) > 0 then
   begin
+    i := System.StringRefCount(Source);
     System.UniqueString(Source);
+
+    i := System.StringRefCount(Source);
+
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;

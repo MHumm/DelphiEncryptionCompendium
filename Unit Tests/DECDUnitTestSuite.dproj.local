@@ -3,5 +3,6 @@
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.059,D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.074,=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
+    <Transaction>2018.11.18 11:22:44.049,=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas</Transaction>
   </Transactions>
 </BorlandProject>

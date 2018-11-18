@@ -16,22 +16,22 @@ File_13=TSourceModule,'c:\program files\embarcadero\studio\18.0\source\fmx\FMX.F
 
 [Modules]
 Module0=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas
-Module1=c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas
-Module2=D:\Projekte\DECGit\Source\DECUtil.pas
-Module3=D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas
-Module4=D:\Projekte\DECGit\Source\DECBaseClass.pas
-Module5=D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj
-Module6=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas
-Module7=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
-Module8=D:\Projekte\DECGit\Unit Tests\Tests\TestDECFormat.pas
-Module9=D:\Projekte\DECGit\Unit Tests\Tests\TestDECUtil.pas
-Module10=D:\Projekte\DECGit\Source\DECFormat.pas
-Module11=D:\Projekte\DECGit\Unit Tests\DECDUnitXTestSuite.dproj
-Module12=D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj
-Module13=D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj
-Module14=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj
-Module15=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj
-Module16=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj
+Module1=D:\Projekte\DECGit\Unit Tests\DECDUnitXTestSuite.dproj
+Module2=D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj
+Module3=D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj
+Module4=D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj
+Module5=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj
+Module6=D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj
+Module7=D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj
+Module8=c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas
+Module9=D:\Projekte\DECGit\Source\DECUtil.pas
+Module10=D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas
+Module11=D:\Projekte\DECGit\Source\DECBaseClass.pas
+Module12=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas
+Module13=D:\Projekte\DECGit\Unit Tests\Tests\TestDECCipher.pas
+Module14=D:\Projekte\DECGit\Unit Tests\Tests\TestDECFormat.pas
+Module15=D:\Projekte\DECGit\Unit Tests\Tests\TestDECUtil.pas
+Module16=D:\Projekte\DECGit\Source\DECFormat.pas
 Module17=D:\Projekte\DECGit\Source\DECRandom.pas
 Module18=D:\Projekte\DECGit\Source\DECFormatBase.pas
 Module19=D:\Projekte\DECGit\Demos\CryptoWorkbenchVCL\MainForm.pas
@@ -82,6 +82,27 @@ EditWindowCount=1
 [D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas]
 ModuleType=TSourceModule
 
+[D:\Projekte\DECGit\Unit Tests\DECDUnitXTestSuite.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj]
+ModuleType=TBaseProject
+
 [c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas]
 ModuleType=TSourceModule
 
@@ -93,9 +114,6 @@ ModuleType=TSourceModule
 
 [D:\Projekte\DECGit\Source\DECBaseClass.pas]
 ModuleType=TSourceModule
-
-[D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj]
-ModuleType=TBaseProject
 
 [D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas]
 ModuleType=TSourceModule
@@ -111,24 +129,6 @@ ModuleType=TSourceModule
 
 [D:\Projekte\DECGit\Source\DECFormat.pas]
 ModuleType=TSourceModule
-
-[D:\Projekte\DECGit\Unit Tests\DECDUnitXTestSuite.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Demos\Cipher_FMX\Cipher_FMX.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Demos\Hash_Console\Hash_Console.dproj]
-ModuleType=TBaseProject
-
-[D:\Projekte\DECGit\Demos\Cipher_Console\Cipher_Console.dproj]
-ModuleType=TBaseProject
 
 [D:\Projekte\DECGit\Source\DECRandom.pas]
 ModuleType=TSourceModule
@@ -344,16 +344,16 @@ BorlandEditorCodeExplorer=BorlandEditorCodeExplorer@EditWindow0
 TopPanelSize=0
 LeftPanelSize=1896
 LeftPanelClients=PropertyInspector,DockSite3
-LeftPanelData=00000800010100000000081000000000000001680700000000000001000000005C0E000009000000446F636B53697465330100000000801C00001100000050726F7065727479496E73706563746F72FFFFFFFF
+LeftPanelData=000008000101000000007E1300000000000001680700000000000001000000005C0E000009000000446F636B53697465330100000000A62200001100000050726F7065727479496E73706563746F72FFFFFFFF
 RightPanelSize=2000
 RightPanelClients=DockSite2,DockSite4
-RightPanelData=00000800010100000000081000000000000001D00700000000000001000000004412000009000000446F636B53697465320100000000801C000009000000446F636B5369746534FFFFFFFF
-BottomPanelSize=1519
+RightPanelData=000008000101000000007E1300000000000001D00700000000000001000000004412000009000000446F636B53697465320100000000A622000009000000446F636B5369746534FFFFFFFF
+BottomPanelSize=0
 BottomPanelClients=DockSite1,MessageView
-BottomPanelData=0000080001020100000009000000446F636B5369746531724500000000000002EF050000000000000100000000724500000F0000004D65737361676556696577466F726DFFFFFFFF
-BottomMiddlePanelSize=1574
+BottomPanelData=0000080001020200000009000000446F636B53697465310F0000004D65737361676556696577466F726D1534000000000000022606000000000000FFFFFFFF
+BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
-BottomMiddelPanelData=0000080001020100000010000000477261706844726177696E6756696577F5290000000000000226060000000000000100000000F529000009000000446F636B5369746530FFFFFFFF
+BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779F1D00000000000002F206000000000000FFFFFFFF
 
 [View0]
 CustomEditViewType=TEditView
@@ -721,9 +721,9 @@ EditViewName=c:\program files\embarcadero\studio\18.0\SOURCE\RTL\SYS\System.pas
 [View33]
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas
-CursorX=1
-CursorY=215
-TopLine=197
+CursorX=19
+CursorY=250
+TopLine=237
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -1052,11 +1052,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=212
 LRDockWidth=13604
 Dockable=1
@@ -1129,18 +1129,18 @@ StayOnTop=0
 [MessageView]
 PercentageSizes=1
 Create=1
-Visible=1
+Visible=0
 Docked=1
 State=0
 Left=0
-Top=18
-Width=10000
-Height=1404
+Top=0
+Width=2771
+Height=1423
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=10000
-ClientHeight=1404
-TBDockHeight=1404
+ClientWidth=2771
+ClientHeight=1423
+TBDockHeight=1423
 LRDockWidth=2771
 Dockable=1
 StayOnTop=0
@@ -1154,11 +1154,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=2548
+Height=4183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=2548
+ClientHeight=4183
 TBDockHeight=7154
 LRDockWidth=2000
 Dockable=1
@@ -1208,8 +1208,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=-100
+Left=-36
+Top=-136
 Width=1849
 Height=3144
 MaxLeft=-1
@@ -1268,11 +1268,11 @@ State=0
 Left=0
 Top=415
 Width=1896
-Height=3587
+Height=5221
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1896
-ClientHeight=3587
+ClientHeight=5221
 TBDockHeight=9010
 LRDockWidth=1896
 Dockable=1
@@ -1288,11 +1288,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6750
+Height=7163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6750
+ClientHeight=7163
 TBDockHeight=5962
 LRDockWidth=2510
 Dockable=1
@@ -1304,8 +1304,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1419
-Top=-13
+Left=-1351
+Top=-136
 Width=2844
 Height=6202
 MaxLeft=-1
@@ -1323,8 +1323,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1536
-Top=269
+Left=-1351
+Top=-136
 Width=276
 Height=365
 MaxLeft=-1
@@ -1348,11 +1348,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=413
 LRDockWidth=4953
 Dockable=1
@@ -1367,11 +1367,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=212
 LRDockWidth=7406
 Dockable=1
@@ -1390,11 +1390,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=1538
 LRDockWidth=3484
 Dockable=1
@@ -1409,11 +1409,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=2067
 LRDockWidth=3484
 Dockable=1
@@ -1446,12 +1446,12 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=6042
-Height=1221
+Width=2339
+Height=1240
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1221
+ClientWidth=2339
+ClientHeight=1240
 TBDockHeight=2317
 LRDockWidth=2823
 Dockable=1
@@ -1512,11 +1512,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6750
+Height=7163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6750
+ClientHeight=7163
 TBDockHeight=4885
 LRDockWidth=7151
 Dockable=1
@@ -1528,8 +1528,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=370
-Top=827
+Left=0
+Top=0
 Width=2854
 Height=3212
 MaxLeft=-1
@@ -1550,11 +1550,11 @@ State=0
 Left=0
 Top=0
 Width=3823
-Height=1163
+Height=1183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1163
+ClientHeight=1183
 TBDockHeight=1548
 LRDockWidth=8740
 Dockable=1
@@ -1595,11 +1595,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=6750
+Height=7163
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=6750
+ClientHeight=7163
 TBDockHeight=4885
 LRDockWidth=5307
 Dockable=1
@@ -1632,23 +1632,23 @@ HostDockSite=DockBottomCenterPanel
 DockSiteType=1
 PercentageSizes=1
 Create=1
-Visible=1
+Visible=0
 Docked=1
 State=0
-Left=0
-Top=18
-Width=6042
-Height=1462
+Left=8
+Top=8
+Width=2339
+Height=1481
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=6042
-ClientHeight=1462
-TBDockHeight=1462
+ClientWidth=2339
+ClientHeight=1481
+TBDockHeight=1481
 LRDockWidth=2339
 Dockable=1
 StayOnTop=0
 TabPosition=1
-ActiveTabID=FindReferencsForm
+ActiveTabID=RefactoringForm
 TabDockClients=RefactoringForm,FindReferencsForm,ToDo List,MetricsView,QAView
 
 [DockSite1]
@@ -1659,15 +1659,15 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=18
+Left=8
+Top=8
 Width=3823
-Height=1404
+Height=1423
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=3823
-ClientHeight=1404
-TBDockHeight=1404
+ClientHeight=1423
+TBDockHeight=1423
 LRDockWidth=3823
 Dockable=1
 StayOnTop=0
@@ -1734,11 +1734,11 @@ State=0
 Left=0
 Top=523
 Width=2000
-Height=2548
+Height=4183
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=2548
+ClientHeight=4183
 TBDockHeight=9010
 LRDockWidth=2000
 Dockable=1

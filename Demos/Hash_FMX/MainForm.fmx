@@ -11,7 +11,7 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnKeyUp = FormKeyUp
   OnResize = FormResize
-  DesignerMasterStyle = 0
+  DesignerMasterStyle = 3
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 427.000000000000000000
@@ -30,8 +30,8 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 28.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 42.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -41,8 +41,8 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 97.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 150.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -67,7 +67,7 @@ object MainForm: TMainForm
         Position.X = 16.000000000000000000
         Position.Y = 44.000000000000000000
         Size.Width = 401.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         OnChangeTracking = EditInputChangeTracking
         OnKeyUp = EditInputKeyUp
@@ -80,15 +80,15 @@ object MainForm: TMainForm
         Position.X = 16.000000000000000000
         Position.Y = 108.000000000000000000
         Size.Width = 401.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
       object LabelVersion: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 192.000000000000000000
-        Size.Width = 149.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 224.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -135,8 +135,8 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 16.000000000000000000
-        Size.Width = 74.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 114.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -146,8 +146,8 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 88.000000000000000000
-        Size.Width = 91.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 139.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -157,8 +157,8 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 119.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 178.000000000000000000
+        Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False

@@ -72,43 +72,15 @@ interface
   /// <param name="str">
   ///   String to be processed
   /// </param>
-  procedure UniqueString(str: RawByteString);
+  procedure UniqueString(var Str: RawByteString);
 
 implementation
 
 uses
-  System.TypInfo;
+  System.SysUtils;
 
-{$IFNDEF NEXTGEN}
 type
-  /// <summary>
-  ///   Generic helper class for providing support for UniqueString with nearly
-  ///   every possible string data type. Courtesy of Remy Lebeau.
-  /// </summary>
-  TUniqueStringHelper = class
-    /// <summary>
-    ///   Overwrites the string's contents in a secure way and returns an empty string.
-    /// </summary>
-    /// <param name="Str">
-    ///   String to be safely overwritten
-    /// </param>
-    class procedure UniqueString<T>(var Str: T);
-  end;
-
-class procedure TUniqueStringHelper.UniqueString<T>(var Str: T);
-begin
-  if PTypeInfo(TypeInfo(T))^.Kind = tkLString then
-    System.UniqueString(PAnsiString(@Str)^);
-end;
-{$ENDIF}
-
-// Methode aus system.pas die auf RawByteString umgestrickt werden muss für mobile
-// für Win32 gibt's dort eine ASM Variante, die alternativ benutzt werden könnte
-
-{$IFDEF NEXTGEN}
-type
-  // For System.pas internal use only.
-  // Keep in sync with system.pas
+  // Duplicate of the System.pas internal declaration. Needs to be kept in sync.
   PStrRec = ^StrRec;
   StrRec = packed record
   {$IF defined(CPU64BITS)}
@@ -119,87 +91,6 @@ type
     refCnt: Integer;
     length: Integer;
   end;
-
-threadvar
-  InOutRes: Integer;
-
-procedure _Halt(ErrCode: Integer);
-begin
-//  ExitCode := Code;
-//  _Halt0;
-end;
-
-procedure RunErrorAt(ErrCode: Integer; ErrorAtAddr: Pointer);
-begin
-  ErrorAddr := ErrorAtAddr;
-  _Halt(ErrCode);
-end;
-
-procedure ErrorAt(ErrorCode: Byte; ErrorAddr: Pointer);
-
-const
-  reMap: array [TRunTimeError] of Byte = (
-    0,   { reNone }
-    203, { reOutOfMemory }
-    204, { reInvalidPtr }
-    200, { reDivByZero }
-    201, { reRangeError }
-{   210    Abstract error }
-    215, { reIntOverflow }
-    207, { reInvalidOp }
-    200, { reZeroDivide }
-    205, { reOverflow }
-    206, { reUnderflow }
-    219, { reInvalidCast }
-    216, { reAccessViolation }
-    218, { rePrivInstruction }
-    217, { reControlBreak }
-    202, { reStackOverflow }
-    220, { reVarTypeCast }
-    221, { reVarInvalidOp }
-    222, { reVarDispatch }
-    223, { reVarArrayCreate }
-    224, { reVarNotArray }
-    225, { reVarArrayBounds }
-{   226    Thread init failure }
-    227, { reAssertionFailed }
-    0,   { reExternalException not used here; in SysUtils }
-    228, { reIntfCastError }
-    229, { reSafeCallError }
-    235, { reMonitorNotLocked }
-    236, { reNoMonitorSupport }
-{$IFDEF PC_MAPPED_EXCEPTIONS}
-{   230   Reserved by the compiler for unhandled exceptions }
-{$ENDIF PC_MAPPED_EXCEPTIONS}
-{$IF defined(PC_MAPPED_EXCEPTIONS) or defined(STACK_BASED_EXCEPTIONS)}
-{   231   Too many nested exceptions }
-{$ENDIF}
-{$IF Defined(LINUX) or Defined(MACOS) or Defined(ANDROID)}
-{   232   Fatal signal raised on a non-Delphi thread }
-    233, { reQuit }
-{$ENDIF LINUX or MACOS or ANDROID}
-{$IFDEF POSIX}
-    234,  { reCodesetConversion }
-{$ENDIF POSIX}
-    237, { rePlatformNotImplemented }
-    238  { reObjectDisposed }
-);
-
-begin
-  errorCode := errorCode and 127;
-  if Assigned(ErrorProc) then
-    ErrorProc(errorCode, ErrorAddr);
-  if errorCode = 0 then
-    errorCode := InOutRes
-  else if errorCode <= Byte(High(TRuntimeError)) then
-    errorCode := reMap[TRunTimeError(errorCode)];
-  RunErrorAt(errorCode, ErrorAddr);
-end;
-
-procedure _IntOver;
-begin
-  ErrorAt(Byte(reIntOverflow), ReturnAddress);
-end;
 
 function _NewAnsiString(CharLength: Integer; CodePage: Word): Pointer;
 var
@@ -212,18 +103,21 @@ begin
     // cost since the allocator will round up the request to an even size
     // anyway. All _WideStr allocations have even length, and need a double
     // null terminator.
-{ TODO : Umbauen um weg von _IntOver zu kommen?! In EIntOverflow Exception aus SysUtils?}
-    if CharLength >= MaxInt - SizeOf(StrRec) then _IntOver;
+    if CharLength >= MaxInt - SizeOf(StrRec) then
+      raise System.SysUtils.EIntOverflow.Create(
+        'IntOverflow in _NewAnsiString. CharLength: ' + CharLength.ToString);
+//    _IntOver;
+
     GetMem(P, CharLength + SizeOf(StrRec) + 1 + ((CharLength + 1) and 1));
     Result := Pointer(PByte(P) + SizeOf(StrRec));
     P.length := CharLength;
     P.refcnt := 1;
     if CodePage = 0 then
-//{$IFDEF NEXTGEN}
+{$IFDEF NEXTGEN}
       CodePage := Word(CP_UTF8);
-//{$ELSE  NEXTGEN}
-//      CodePage := Word(DefaultSystemCodePage);
-//{$ENDIF NEXTGEN}
+{$ELSE  NEXTGEN}
+      CodePage := Word(DefaultSystemCodePage);
+{$ENDIF NEXTGEN}
     P.codePage := CodePage;
     P.elemSize := 1;
     PWideChar(Result)[CharLength div 2] := #0;  // length guaranteed >= 2
@@ -259,23 +153,17 @@ begin
     if P.refCnt <> 1 then
     begin
       Result := _NewAnsiString(P.length, P.codePage);
-// Changed from System.pas original due to missing _PAnsiChr in NextGen compiler
-//      Move(_PAnsiChr(Str)^, _PAnsiChr(Result)^, P.length);
+//      Move(PAnsiChar(Str)^, PAnsiChar(Result)^, P.length);
       Move(Pointer(Str)^, Pointer(Result)^, P.length);
       _LStrClr(Str);
       Pointer(Str) := Result;
     end;
   end;
 end;
-{$ENDIF}
 
-procedure UniqueString(str: RawByteString);
+procedure UniqueString(var Str: RawByteString);
 begin
-  {$IFNDEF NEXTGEN}
-  TUniqueStringHelper.UniqueString<RawByteString>(str);
-  {$ELSE}
-  InternalUniqueStringA(str);
-  {$ENDIF}
+  InternalUniqueStringA(Str);
 end;
 
 end.
