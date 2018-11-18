@@ -396,11 +396,8 @@ end;
 procedure TTestBufferProtection.ProtectStringAnsi;
 var
   s : AnsiString;
-  i : Integer;
 begin
   s := 'Hello';
-  i := System.StringRefCount(s);
-
   DECUtil.ProtectString(s);
 
   CheckEquals('', string(s));
@@ -411,11 +408,8 @@ end;
 procedure TTestBufferProtection.ProtectStringRawByteString;
 var
   s : RawByteString;
-  i : Integer;
 begin
   s := 'Hello';
-  i := System.StringRefCount(s);
-
   DECUtil.ProtectString(s);
 
   CheckEquals('', string(s));
