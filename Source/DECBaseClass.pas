@@ -3,7 +3,7 @@
   Delphi Encryption Compendium (DEC)
   Version 6.0
 
-  Copyright (c) 2016 - 2017 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+  Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
   Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
   Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
   All rights reserved.
@@ -78,21 +78,6 @@ type
   TDECClass = class of TDECObject;
 
   /// <summary>
-  ///   callback used when searching for a DEC class in the list of registered
-  ///   DEC classes
-  /// </summary>
-  /// <param name="UserData">
-  ///   ???
-  /// </param>
-  /// <param name="ClassType">
-  ///   Here the entry to be checked has to be passed in.
-  /// </param>
-  /// <returns>
-  ///   True if the entry passed in ClassType is the one one was looking for.
-  /// </returns>
-  TDECEnumClassesCallbackObj = function(UserData: Pointer; ClassType: TClass): Boolean of Object;
-
-  /// <summary>
   ///   Generic list of DEC classes with the identity as key
   /// </summary>
   TDECClassList = class(TDictionary<Int64, TDECClass>)
@@ -108,10 +93,47 @@ type
     ///   Short class name
     /// </returns>
     class function GetShortClassNameInternal(const ClassName: string): string;
-  strict protected
-    function DoAddClass(List: TStrings; ClassType: TClass): Boolean;
-    function EnumClasses(Callback: TDECEnumClassesCallbackObj; UserData: Pointer;
-                            Include: TClass = nil; Exclude: TClass = nil): TDECClass;
+
+    /// <summary>
+    ///   Checks whether a given class type has a given DEC Identity
+    /// </summary>
+    /// <param name="Identity">
+    ///   DEC identity to check
+    /// </param>
+    /// <param name="ClassType">
+    ///   Class type which should be checked if it is for the given DEC identity
+    /// </param>
+    /// <returns>
+    ///   true if the class type represents the given identity
+    /// </returns>
+    function HasIdentity(const Identity: Int64; ClassType: TDECClass): Boolean;
+
+    /// <summary>
+    ///   Checks if a given class type has the same short class name as given
+    /// </summary>
+    /// <param name="Name">
+    ///   Short class name, e.g. HEXL
+    /// </param>
+    /// <param name="ClassType">
+    ///   Class reference to check against
+    /// </param>
+    /// <returns>
+    ///   true if the class reference is for the given short name
+    /// </returns>
+    function DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
+    /// <summary>
+    ///   Checks if a given class type has the same long class name as given
+    /// </summary>
+    /// <param name="Name">
+    ///   Long class name, e.g. TFormat_HEXL
+    /// </param>
+    /// <param name="ClassType">
+    ///   Class reference to check against
+    /// </param>
+    /// <returns>
+    ///   true if the class reference is for the given long name
+    /// </returns>
+    function DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;
   public
     /// <summary>
     ///   Tries to find a class type by its name
@@ -124,9 +146,24 @@ type
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
     function ClassByName(const Name: string): TDECClass;
+
     /// <summary>
-    ///   Retzurns a list of all classes registered in this list
+    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+    ///   Useful for file headers, so they can easily encode numerically which
+    ///   cipher class was being used.
     /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for
+    /// </param>
+    function ClassByIdentity(Identity: Int64): TDECClass;
+    /// <summary>
+    ///   Returns a list of all classes registered in this list
+    /// </summary>
+    /// <param name="List">
+    ///   List where the registered classes shall be added to. The string is the
+    ///   long class name, the object the class reference. The list is being
+    ///   cleared first and when an uncreated list is given nothing is being done
+    /// </param>
     procedure GetClassList(List: TStrings);
     /// <summary>
     ///   Returns short Classname of any DEC derrived class. This is the part
@@ -138,7 +175,7 @@ type
     /// <returns>
     ///   Short class name or empty string if ClassType is nil.
     /// </returns>
-    class function  GetShortClassName(ClassType: TClass): string;
+    class function GetShortClassName(ClassType: TClass): string;
   end;
 
   /// <summary>
@@ -202,42 +239,6 @@ type
     class procedure UnregisterClass(ClassList : TDECClassList);
   end;
 
-  /// <summary>
-  ///   callback used when searching for a DEC class in the list of registered
-  ///   DEC classes
-  /// </summary>
-  /// <param name="UserData">
-  ///   ???
-  /// </param>
-  /// <param name="ClassType">
-  ///   Here the entry to be checked has to be passed in.
-  /// </param>
-  /// <returns>
-  ///   True if the entry passed in ClassType is the one one was looking for.
-  /// </returns>
-  TDECEnumClassesCallback = function(UserData: Pointer; ClassType: TClass): Boolean;
-
-/// <summary>
-///   find a registered DEC class by it's identity number
-/// </summary>
-function DECClassByIdentity(Identity: Int64; ClassType: TClass): TDECClass;
-
-/// <summary>
-///   find DEC class by it's name, can be e.g. TCipher_Blowfish or just Blowfish
-/// </summary>
-function DECClassByName(const Name: string; ClassType: TClass): TDECClass;
-
-/// <summary>
-///   fill a StringList with registered DEC classes
-/// </summary>
-procedure DECClasses(List: TStrings; Include: TClass = nil; Exclude: TClass = nil);
-
-/// <summary>
-///   enumerate registered DEC classes using a Callback
-/// </summary>
-function DECEnumClasses(Callback: TDECEnumClassesCallback; UserData: Pointer;
-                        Include: TClass = nil; Exclude: TClass = nil): TDECClass;
-
 var
   /// <summary>
   ///   default used for generating Class Identities
@@ -281,68 +282,6 @@ begin
     Delete(Result, 1, i);
 end;
 
-// forward declaration of DEC enumeration callbacks
-function DoFindIdentity(const Identity: Int64; ClassType: TDECClass): Boolean; forward;
-function DoFindNameShort(const Name: string; const ClassType: TClass): Boolean; forward;
-function DoFindNameLong(const Name: string; const ClassType: TClass): Boolean; forward;
-function DoAddClass(List: TStrings; ClassType: TClass): Boolean; forward;
-
-function DECClassByIdentity(Identity: Int64; ClassType: TClass): TDECClass;
-begin
-  Result := DECEnumClasses(@DoFindIdentity, @Identity, ClassType);
-  if Result = nil then
-    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [IntToHEX(Identity, 8)]);
-end;
-
-function DECClassByName(const Name: string; ClassType: TClass): TDECClass;
-begin
-  Result := nil;
-
-  if Length(Name) > 0 then
-  begin
-    if GetShortClassName(Name) = Name then
-      Result := DECEnumClasses(@DoFindNameShort, Pointer(Name), ClassType)
-    else
-      Result := DECEnumClasses(@DoFindNameLong, Pointer(Name), ClassType);
-  end;
-
-  if Result = nil then
-    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [Name]);
-end;
-
-procedure DECClasses(List: TStrings; Include: TClass = nil; Exclude: TClass = nil);
-begin
-  if List <> nil then
-  try
-    List.BeginUpdate;
-    List.Clear;
-    DECEnumClasses(@DoAddClass, List, Include, Exclude);
-  finally
-    List.EndUpdate;
-  end;
-end;
-
-function DECEnumClasses(Callback: TDECEnumClassesCallback; UserData: Pointer;
-  Include: TClass = nil; Exclude: TClass = nil): TDECClass;
-var
-  i: Integer;
-begin
-  Result := nil;
-  if (FClasses <> nil) and Assigned(Callback) then
-  begin
-    for i := 0 to FClasses.Count - 1 do
-    begin
-      if ((Include = nil) or     TClass(FClasses[i]).InheritsFrom(Include)) and
-         ((Exclude = nil) or not TClass(FClasses[i]).InheritsFrom(Exclude)) and
-         Callback(UserData, FClasses[i]) then
-      begin
-        Result := FClasses[i];
-        Break;
-      end;
-    end;
-  end;
-end;
-
 {
   Important Note about the following CallBacks (DoAddClass, DoFindIdentity,
   DoFindNameShort and DoFindNameLong):
@@ -350,30 +289,6 @@ end;
   The CallBacks must be placed *outside* the calling function in order to
   be compatible with x64 compilers.
 }
-
-function DoAddClass(List: TStrings; ClassType: TClass): Boolean;
-begin
-  Result := False;
-  List.AddObject(ClassType.ClassName, Pointer(ClassType));
-end;
-
-function DoFindIdentity(const Identity: Int64; ClassType: TDECClass): Boolean;
-begin
-  Result := ClassType.Identity = Identity;
-end;
-
-function DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
-begin
-  Result := CompareText(TDECClassList.GetShortClassName(ClassType), Name) = 0;
-end;
-
-function DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;
-var
-  s: string;
-begin
-  s := Name;
-  Result := CompareText(ClassType.ClassName, Name) = 0;
-end;
 
 constructor TDECObject.Create;
 begin
@@ -454,6 +369,37 @@ end;
 
 { TDECClassList }
 
+function TDECClassList.DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
+begin
+  Result := CompareText(TDECClassList.GetShortClassName(ClassType), Name) = 0;
+end;
+
+function TDECClassList.DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;
+var
+  s: string;
+begin
+  s := Name;
+  Result := CompareText(ClassType.ClassName, Name) = 0;
+end;
+
+function TDECClassList.ClassByIdentity(Identity: Int64): TDECClass;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to self.Count - 1 do
+  begin
+    if HasIdentity(Identity, Items[i]) then
+    begin
+      Result := Items[i];
+      Break;
+    end;
+  end;
+
+  if Result = nil then
+    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [IntToHEX(Identity, 8)]);
+end;
+
 function TDECClassList.ClassByName(const Name: string): TDECClass;
 var
   FindNameShort : Boolean;
@@ -489,13 +435,17 @@ begin
 end;
 
 procedure TDECClassList.GetClassList(List: TStrings);
+var
+  Pair : TPair<Int64, TDECCLass>;
 begin
   if List <> nil then
   try
     List.BeginUpdate;
     List.Clear;
-{ TODO : Fix me: uncomment and fix it }
-//    EnumClasses(self.DoAddClass, List, Include, Exclude);
+
+    for Pair in self do
+      List.AddObject(Pair.Value.ClassName, TObject(Pair.Value));
+
   finally
     List.EndUpdate;
   end;
@@ -519,32 +469,10 @@ begin
     Delete(Result, 1, i);
 end;
 
-function TDECClassList.EnumClasses(Callback: TDECEnumClassesCallbackObj; UserData: Pointer;
-  Include: TClass = nil; Exclude: TClass = nil): TDECClass;
-var
-  i: Integer;
+function TDECClassList.HasIdentity(const Identity: Int64;
+  ClassType: TDECClass): Boolean;
 begin
-  Result := nil;
-  if Assigned(Callback) then
-  begin
-    for i := 0 to self.Count - 1 do
-    begin
-      if ((Include = nil) or     TClass(Items[i]).InheritsFrom(Include)) and
-         ((Exclude = nil) or not TClass(Items[i]).InheritsFrom(Exclude)) and
-         Callback(UserData, Items[i]) then
-      begin
-        Result := Items[i];
-        Break;
-      end;
-    end;
-  end;
-end;
-
-function TDECClassList.DoAddClass(List: TStrings; ClassType: TClass): Boolean;
-begin
-{ TODO : Why is result being needed here? }
-  Result := False;
-  List.AddObject(ClassType.ClassName, Pointer(ClassType));
+  Result := ClassType.Identity = Identity;
 end;
 
 initialization

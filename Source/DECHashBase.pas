@@ -365,6 +365,32 @@ type
   /// </summary>
   TDECPasswordHash = class(TDECHash);
 
+  /// <summary>
+  ///   Searches for a hash class by its name within the list of registered
+  ///   hash classes.
+  /// </summary>
+  /// <param name="Name">
+  ///   Long (THash_Sapphire) class name or short class name (Sapphire) to look for
+  /// </param>
+  /// <returns>
+  ///   Class reference of the class searched for. If it is not found in the list
+  ///   a EDECClassNotRegisteredException exception will being thrown.
+  /// </returns>
+  function HashByName(const Name: string): TDECHashClass;
+
+  /// <summary>
+  ///   Searches for a hash class by its unique identity number within the list
+  ///   of registered hash classes.
+  /// </summary>
+  /// <param name="Identity">
+  ///   A number uniquely representing a certain hash algorithm's class
+  /// </param>
+  /// <returns>
+  ///   Class reference of the class searched for. If it is not found in the list
+  ///   a EDECClassNotRegisteredException exception will being thrown.
+  /// </returns>
+  function HashByIdentity(Identity: Int64): TDECHashClass;
+
 implementation
 
 type
@@ -376,6 +402,16 @@ type
 resourcestring
   sHashNotInitialized   = 'Hash must be initialized';
   sRaiseHashOverflowError = 'Hash Overflow: Too many bits processed';
+
+function HashByName(const Name: string): TDECHashClass;
+begin
+  Result := TDECHashClass(TDECHash.ClassList.ClassByName(Name));
+end;
+
+function HashByIdentity(Identity: Int64): TDECHashClass;
+begin
+  Result := TDECHashClass(TDECHash.ClassList.ClassByIdentity(Identity));
+end;
 
 { TDECHash }
 

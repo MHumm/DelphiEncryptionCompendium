@@ -643,7 +643,7 @@ end;
 procedure TestTCipher_Blowfish.SetUp;
 var
   Password: RawByteString;
-  Data : Tbytes;
+  Data : TBytes;
 begin
   FCipher_Blowfish      := TCipher_Blowfish.Create;
 //  FCipher_Blowfish.Context.
@@ -661,7 +661,7 @@ begin
                                   '\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD\xF5\x60' +
                                   '\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
 
-  FTestData[0].InputData  := StringOf(TFormat_ESCAPE.Decode(Data));
+  FTestData[0].InputData  := RawByteString(StringOf(TFormat_ESCAPE.Decode(Data)));
   FTestData[0].OutputData := '1971cacd2b9c8529da8147b7ebce16c6910e1dc840123e3570edbc964c13d0b8';
 end;
 

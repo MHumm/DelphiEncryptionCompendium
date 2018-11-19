@@ -526,7 +526,30 @@ type
 function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass = nil);
 
+/// <summary>
+///   Searches for a cipher class by its name within the list of registered
+///   cipher classes.
+/// </summary>
+/// <param name="Name">
+///   Long (TCipher_Null) class name or short class name (Null) to look for
+/// </param>
+/// <returns>
+///   Class reference of the class searched for. If it is not found in the list
+///   a EDECClassNotRegisteredException exception will being thrown.
+/// </returns>
 function CipherByName(const Name: string): TDECCipherClass;
+
+/// <summary>
+///   Searches for a cipher class by its unique identity number within the list
+///   of registered cipher classes.
+/// </summary>
+/// <param name="Identity">
+///   A number uniquely representing a certain cipher algorithm's class
+/// </param>
+/// <returns>
+///   Class reference of the class searched for. If it is not found in the list
+///   a EDECClassNotRegisteredException exception will being thrown.
+/// </returns>
 function CipherByIdentity(Identity: Int64): TDECCipherClass;
 
 implementation
@@ -567,12 +590,12 @@ end;
 
 function CipherByName(const Name: string): TDECCipherClass;
 begin
-  Result := TDECCipherClass(DECClassByName(Name, TDECCipher));
+  Result := TDECCipherClass(TDECCipher.ClassList.ClassByName(Name));
 end;
 
 function CipherByIdentity(Identity: Int64): TDECCipherClass;
 begin
-  Result := TDECCipherClass(DECClassByIdentity(Identity, TDECCipher));
+  Result := TDECCipherClass(TDECCipher.ClassList.ClassByIdentity(Identity));
 end;
 
 { TDECCipher }

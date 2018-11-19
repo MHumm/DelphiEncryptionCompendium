@@ -446,9 +446,6 @@ type
 function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
 procedure SetDefaultHashClass(HashClass: TDECHashClass);
 
-function HashByName(const Name: string): TDECHashClass;
-function HashByIdentity(Identity: Int64): TDECHashClass;
-
 implementation
 
 uses
@@ -526,16 +523,6 @@ end;
 procedure SetDefaultHashClass(HashClass: TDECHashClass);
 begin
   FDefaultHashClass := HashClass;
-end;
-
-function HashByName(const Name: string): TDECHashClass;
-begin
-  Result := TDECHashClass(DECClassByName(Name, TDECHash));
-end;
-
-function HashByIdentity(Identity: Int64): TDECHashClass;
-begin
-  Result := TDECHashClass(DECClassByIdentity(Identity, TDECHash));
 end;
 
 { THash_MD2 }

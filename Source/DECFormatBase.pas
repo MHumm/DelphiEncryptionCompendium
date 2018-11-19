@@ -378,7 +378,7 @@ function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 ///   Searches a registered formatting class by name.
 /// </summary>
 /// <param name="Name">
-///   Unique name of the class to be searched.
+///   Unique long (TFormat_HEXL) or short (HEXL) name of the class to be searched.
 /// </param>
 /// <returns>
 ///   Class type, which can be used to create an object isntance from. Raises an
@@ -386,6 +386,7 @@ function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 ///   the list of registered format classes.
 /// </returns>
 function FormatByName(const Name: string): TDECFormatClass;
+
 /// <summary>
 ///   Searches a registered formatting class by identity. The identity is some
 ///   integer value calculated on the basis of the class name, the length of the
@@ -413,12 +414,12 @@ end;
 
 function FormatByName(const Name: string): TDECFormatClass;
 begin
-  Result := TDECFormatClass(DECClassByName(Name, TDECFormat));
+  Result := TDECFormatClass(TDECFormat.ClassList.ClassByName(Name));
 end;
 
 function FormatByIdentity(Identity: Int64): TDECFormatClass;
 begin
-  Result := TDECFormatClass(DECClassByIdentity(Identity, TDECFormat));
+  Result := TDECFormatClass(TDECFormat.ClassList.ClassByIdentity(Identity));
 end;
 
 { TDECFormat }
