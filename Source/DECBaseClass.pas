@@ -83,18 +83,6 @@ type
   TDECClassList = class(TDictionary<Int64, TDECClass>)
   strict private
     /// <summary>
-    ///   Returns short Classname of any DEC derrived class. This is the part
-    ///   of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.
-    /// </summary>
-    /// <param name="ClassName">
-    ///   Complete class name
-    /// </param>
-    /// <returns>
-    ///   Short class name
-    /// </returns>
-    class function GetShortClassNameInternal(const ClassName: string): string;
-
-    /// <summary>
     ///   Checks whether a given class type has a given DEC Identity
     /// </summary>
     /// <param name="Identity">
@@ -165,24 +153,12 @@ type
     ///   cleared first and when an uncreated list is given nothing is being done
     /// </param>
     procedure GetClassList(List: TStrings);
-    /// <summary>
-    ///   Returns short Classname of any DEC derrived class. This is the part
-    ///   of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.
-    /// </summary>
-    /// <param name="ClassType">
-    ///   Class type for the class where the name shall be returned from
-    /// </param>
-    /// <returns>
-    ///   Short class name or empty string if ClassType is nil.
-    /// </returns>
-    class function GetShortClassName(ClassType: TClass): string;
   end;
 
   /// <summary>
   ///   Parent class of all cryptography and hash implementations
   /// </summary>
   TDECObject = class(TPersistent)
-  strict protected
   public
     /// <summary>
     ///   Overrideable but otherwise empty constructor (calls his parent
@@ -237,6 +213,30 @@ type
     ///   subclasses to have their own lists
     /// </param>
     class procedure UnregisterClass(ClassList : TDECClassList);
+
+    /// <summary>
+    ///   Returns short Classname of any DEC derrived class. This is the part
+    ///   of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.
+    /// </summary>
+    /// <param name="ClassName">
+    ///   Complete class name
+    /// </param>
+    /// <returns>
+    ///   Short class name
+    /// </returns>
+    class function GetShortClassNameFromName(const ClassName: string): string;
+
+    /// <summary>
+    ///   Returns short Classname of any DEC derrived class type. This is the part
+    ///   of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.
+    /// </summary>
+    /// <param name="ClassType">
+    ///   Class type for the class where the name shall be returned from
+    /// </param>
+    /// <returns>
+    ///   Short class name or empty string if ClassType is nil.
+    /// </returns>
+    class function GetShortClassName(ClassType: TClass): string;
   end;
 
 var
@@ -254,7 +254,7 @@ var
   EmptyStr: string = '';
   /// <summary>
   ///   Pointer to an empty string. For non Nextgen platforms declared in SysUtils
-  ///   for backwards compatibility only. here declared for NextGen only and
+  ///   for backwards compatibility only. Here declared for NextGen only and
   ///   should get replaced
   /// </summary>
   NullStr: PString = @EmptyStr;
@@ -269,19 +269,8 @@ resourcestring
   sClassNotRegistered = 'Class %s is not registered';
   sWrongIdentity      = 'Another class "%s" with the same identity as "%s" has already been registered';
 
-var
-  FClasses: TList = nil;
-
-function GetShortClassName(const ClassName: string): string;
-var
-  i: Integer;
-begin
-  Result := ClassName;
-  i := Pos('_', Result);
-  if i > 0 then
-    Delete(Result, 1, i);
-end;
-
+//var
+//  FClasses: TList = nil;
 {
   Important Note about the following CallBacks (DoAddClass, DoFindIdentity,
   DoFindNameShort and DoFindNameLong):
@@ -351,27 +340,29 @@ begin
   ClassList.Remove(Identity);
 end;
 
-{$IFDEF DELPHIORBCB}
-procedure ModuleUnload(Instance: NativeInt);
-var // automaticaly deregistration/releasing
+class function TDECObject.GetShortClassName(ClassType: TClass): string;
+begin
+  if ClassType = nil then
+    Result := ''
+  else
+    Result := GetShortClassNameFromName(ClassType.ClassName);
+end;
+
+class function TDECObject.GetShortClassNameFromName(const ClassName: string): string;
+var
   i: Integer;
 begin
-  if FClasses <> nil then
-  begin
-    for i := FClasses.Count - 1 downto 0 do
-    begin
-      if Integer(FindClassHInstance(TClass(FClasses[i]))) = Instance then
-        FClasses.Delete(i);
-    end;
-  end;
+  Result := ClassName;
+  i := Pos('_', Result);
+  if i > 0 then
+    Delete(Result, 1, i);
 end;
-{$ENDIF DELPHIORBCB}
 
 { TDECClassList }
 
 function TDECClassList.DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
 begin
-  Result := CompareText(TDECClassList.GetShortClassName(ClassType), Name) = 0;
+  Result := CompareText(TDECClass.GetShortClassName(ClassType), Name) = 0;
 end;
 
 function TDECClassList.DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;
@@ -409,7 +400,7 @@ begin
 
   if Length(Name) > 0 then
   begin
-    FindNameShort := GetShortClassNameInternal(Name) = Name;
+    FindNameShort := TDECClass.GetShortClassNameFromName(Name) = Name;
 
     for Pair in self do
     begin
@@ -451,39 +442,39 @@ begin
   end;
 end;
 
-class function TDECClassList.GetShortClassName(ClassType: TClass): string;
-begin
-  if ClassType = nil then
-    Result := ''
-  else
-    Result := GetShortClassNameInternal(ClassType.ClassName);
-end;
-
-class function TDECClassList.GetShortClassNameInternal(const ClassName: string): string;
-var
-  i: Integer;
-begin
-  Result := ClassName;
-  i := Pos('_', Result);
-  if i > 0 then
-    Delete(Result, 1, i);
-end;
-
 function TDECClassList.HasIdentity(const Identity: Int64;
   ClassType: TDECClass): Boolean;
 begin
   Result := ClassType.Identity = Identity;
 end;
 
+{ TODO : In TDECClassLiast einbauen?! Geht nicht, da es eine Callback Prozedur
+  sein muss. Aber wozu wurde dieser Mechanismus eingebaut?}
+//{$IFDEF DELPHIORBCB}
+//procedure ModuleUnload(Instance: NativeInt);
+//var // automaticaly deregistration/releasing
+//  i: Integer;
+//begin
+//  if FClasses <> nil then
+//  begin
+//    for i := FClasses.Count - 1 downto 0 do
+//    begin
+//      if Integer(FindClassHInstance(TClass(FClasses[i]))) = Instance then
+//        FClasses.Delete(i);
+//    end;
+//  end;
+//end;
+//{$ENDIF DELPHIORBCB}
+
 initialization
-  {$IFDEF DELPHIORBCB}
-  AddModuleUnloadProc(ModuleUnload);
-  {$ENDIF DELPHIORBCB}
-  FClasses := TList.Create;
+//  {$IFDEF DELPHIORBCB}
+//  AddModuleUnloadProc(ModuleUnload);
+//  {$ENDIF DELPHIORBCB}
+//  FClasses := TList.Create;
 
 finalization
-  {$IFDEF DELPHIORBCB}
-  RemoveModuleUnloadProc(ModuleUnload);
-  {$ENDIF DELPHIORBCB}
-  FClasses.Free;
+//  {$IFDEF DELPHIORBCB}
+//  RemoveModuleUnloadProc(ModuleUnload);
+//  {$ENDIF DELPHIORBCB}
+//  FClasses.Free;
 end.

@@ -351,7 +351,7 @@ resourcestring
 
 constructor EDECAbstractError.Create(ClassType: TDECClass);
 begin
-  inherited CreateResFmt(@sAbstractError, [TDECClassList.GetShortClassName(ClassType)]);
+  inherited CreateResFmt(@sAbstractError, [TDECClass.GetShortClassName(ClassType)]);
 end;
 
 const
