@@ -175,7 +175,7 @@ begin
   try
     FDECClassList.GetClassList(sl);
 
-    CheckEquals(sl.Count, 7);
+    CheckEquals(sl.Count, 7, 'Wrong number of registered classes');
     CheckEquals(sl.IndexOf('TFormat_HEX')       >= 0, true);
     CheckEquals(sl.IndexOf('TFormat_HEXL')      >= 0, true);
     CheckEquals(sl.IndexOf('TFormat_DECMIME32') >= 0, true);
