@@ -89,6 +89,8 @@ type
     procedure TearDown; override;
   published
     procedure TestClassByName;
+    procedure TestClassByIdentity;
+    procedure TestGetClassList;
   end;
 
   // Test methods for class TDECObject
@@ -103,12 +105,16 @@ type
     procedure TestIdentity;
     procedure TestRegisterClass;
     procedure TestUnregisterClass;
+    procedure TestGetShortClassNameFromName;
+    procedure TestGetShortClassNameFromName2;
+    procedure TestGetShortClassName;
+    procedure TestGetShortClassName2;
   end;
 
 implementation
 
 uses
-  DECFormat;
+  DECFormat, DECCiphers;
 
 procedure TestTDECClassList.SetUp;
 begin
@@ -129,6 +135,21 @@ begin
   FDECClassList := nil;
 end;
 
+procedure TestTDECClassList.TestClassByIdentity;
+var
+  ReturnValue: TDECClass;
+begin
+  ReturnValue := FDECClassList.ClassByIdentity(TFormat_HEX.Identity);
+  CheckEquals(ReturnValue, TFormat_HEX);
+  CheckNotEquals(ReturnValue = TFormat_HEXL, true);
+
+  ReturnValue := FDECClassList.ClassByIdentity(TFormat_Base64.Identity);
+  CheckEquals(ReturnValue, TFormat_Base64);
+
+  ReturnValue := FDECClassList.ClassByIdentity(TFormat_ESCAPE.Identity);
+  CheckEquals(ReturnValue, TFormat_ESCAPE);
+end;
+
 procedure TestTDECClassList.TestClassByName;
 var
   ReturnValue: TDECClass;
@@ -144,6 +165,51 @@ begin
 
   ReturnValue := FDECClassList.ClassByName('TFormat_ESCAPE');
   CheckEquals(ReturnValue, TFormat_ESCAPE);
+end;
+
+procedure TestTDECClassList.TestGetClassList;
+var
+  sl : TStringList;
+begin
+  sl := TStringList.Create;
+  try
+    FDECClassList.GetClassList(sl);
+
+    CheckEquals(sl.Count, 7);
+    CheckEquals(sl.IndexOf('TFormat_HEX')       >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_HEXL')      >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_DECMIME32') >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_Base64')    >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_UU')        >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_XX')        >= 0, true);
+    CheckEquals(sl.IndexOf('TFormat_ESCAPE')    >= 0, true);
+  finally
+    sl.Free;
+  end;
+end;
+
+procedure TestTDECObject.TestGetShortClassName;
+begin
+  CheckEquals(TDECClass.GetShortClassName(TFormat_HEXL),
+              'HEXL');
+end;
+
+procedure TestTDECObject.TestGetShortClassName2;
+begin
+  CheckEquals(TDECClass.GetShortClassName(TCipher_Skipjack),
+              'Skipjack');
+end;
+
+procedure TestTDECObject.TestGetShortClassNameFromName;
+begin
+  CheckEquals(TDECClass.GetShortClassNameFromName('TFormat_HEXL'),
+              'HEXL');
+end;
+
+procedure TestTDECObject.TestGetShortClassNameFromName2;
+begin
+  CheckEquals(TDECClass.GetShortClassNameFromName('TCipher_Skipjack'),
+              'Skipjack');
 end;
 
 procedure TestTDECObject.SetUp;

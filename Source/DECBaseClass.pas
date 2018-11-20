@@ -374,21 +374,14 @@ begin
 end;
 
 function TDECClassList.ClassByIdentity(Identity: Int64): TDECClass;
-var
-  i: Integer;
 begin
-  Result := nil;
-  for i := 0 to self.Count - 1 do
-  begin
-    if HasIdentity(Identity, Items[i]) then
-    begin
-      Result := Items[i];
-      Break;
-    end;
+  try
+    Result := Items[Identity];
+  except
+    On EListError do
+      raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered,
+                                                         [IntToHEX(Identity, 8)]);
   end;
-
-  if Result = nil then
-    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [IntToHEX(Identity, 8)]);
 end;
 
 function TDECClassList.ClassByName(const Name: string): TDECClass;
