@@ -282,12 +282,6 @@ type
 
 function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 
-function FormatByName(const Name: string): TDECFormatClass;
-function FormatByIdentity(Identity: Int64): TDECFormatClass;
-
-//var
-//  Radix64CharsPerLine: Integer = 80;
-
 implementation
 
 uses
@@ -299,16 +293,6 @@ resourcestring
 function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 begin
   Result := DECFormatBase.ValidFormat(FormatClass);
-end;
-
-function FormatByName(const Name: string): TDECFormatClass;
-begin
-  Result := DECFormatBase.FormatByName(Name);
-end;
-
-function FormatByIdentity(Identity: Int64): TDECFormatClass;
-begin
-  Result := DECFormatBase.FormatByIdentity(Identity);
 end;
 
 class function TFormat_HEX.CharTableBinary: TBytes;

@@ -83,20 +83,6 @@ type
   TDECClassList = class(TDictionary<Int64, TDECClass>)
   strict private
     /// <summary>
-    ///   Checks whether a given class type has a given DEC Identity
-    /// </summary>
-    /// <param name="Identity">
-    ///   DEC identity to check
-    /// </param>
-    /// <param name="ClassType">
-    ///   Class type which should be checked if it is for the given DEC identity
-    /// </param>
-    /// <returns>
-    ///   true if the class type represents the given identity
-    /// </returns>
-    function HasIdentity(const Identity: Int64; ClassType: TDECClass): Boolean;
-
-    /// <summary>
     ///   Checks if a given class type has the same short class name as given
     /// </summary>
     /// <param name="Name">
@@ -143,6 +129,11 @@ type
     /// <param name="Identity">
     ///   Identity to look for
     /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given identity has been found
+    /// </returns>
     function ClassByIdentity(Identity: Int64): TDECClass;
     /// <summary>
     ///   Returns a list of all classes registered in this list
@@ -241,7 +232,7 @@ type
 
 var
   /// <summary>
-  ///   default used for generating Class Identities
+  ///   default used for generating class identities
   /// </summary>
   IdentityBase: Int64 = $25844852;
 
@@ -268,16 +259,6 @@ uses
 resourcestring
   sClassNotRegistered = 'Class %s is not registered';
   sWrongIdentity      = 'Another class "%s" with the same identity as "%s" has already been registered';
-
-//var
-//  FClasses: TList = nil;
-{
-  Important Note about the following CallBacks (DoAddClass, DoFindIdentity,
-  DoFindNameShort and DoFindNameLong):
-
-  The CallBacks must be placed *outside* the calling function in order to
-  be compatible with x64 compilers.
-}
 
 constructor TDECObject.Create;
 begin
@@ -435,39 +416,8 @@ begin
   end;
 end;
 
-function TDECClassList.HasIdentity(const Identity: Int64;
-  ClassType: TDECClass): Boolean;
-begin
-  Result := ClassType.Identity = Identity;
-end;
-
-{ TODO : In TDECClassLiast einbauen?! Geht nicht, da es eine Callback Prozedur
-  sein muss. Aber wozu wurde dieser Mechanismus eingebaut?}
-//{$IFDEF DELPHIORBCB}
-//procedure ModuleUnload(Instance: NativeInt);
-//var // automaticaly deregistration/releasing
-//  i: Integer;
-//begin
-//  if FClasses <> nil then
-//  begin
-//    for i := FClasses.Count - 1 downto 0 do
-//    begin
-//      if Integer(FindClassHInstance(TClass(FClasses[i]))) = Instance then
-//        FClasses.Delete(i);
-//    end;
-//  end;
-//end;
-//{$ENDIF DELPHIORBCB}
-
 initialization
-//  {$IFDEF DELPHIORBCB}
-//  AddModuleUnloadProc(ModuleUnload);
-//  {$ENDIF DELPHIORBCB}
-//  FClasses := TList.Create;
 
 finalization
-//  {$IFDEF DELPHIORBCB}
-//  RemoveModuleUnloadProc(ModuleUnload);
-//  {$ENDIF DELPHIORBCB}
-//  FClasses.Free;
+
 end.

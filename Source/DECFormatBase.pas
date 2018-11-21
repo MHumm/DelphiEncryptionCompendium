@@ -152,6 +152,21 @@ type
     class function ClassByName(const Name: string): TDECFormatClass;
 
     /// <summary>
+    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+    ///   Useful for file headers, so they can easily encode numerically which
+    ///   cipher class was being used.
+    /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for
+    /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given identity has been found
+    /// </returns>
+    function ClassByIdentity(Identity: Int64): TDECFormatClass;
+
+    /// <summary>
     ///   Calls the internal method which actually does the format conversion.
     /// </summary>
     /// <param name="Data">
@@ -474,6 +489,11 @@ begin
     SetLength(Result, 0);
 end;
 
+function TDECFormat.ClassByIdentity(Identity: Int64): TDECFormatClass;
+begin
+  result := TDECFormatClass(ClassList.ClassByIdentity(Identity));
+end;
+
 class function TDECFormat.ClassByName(const Name: string): TDECFormatClass;
 begin
   result := TDECFormatClass(ClassList.ClassByName(Name));
@@ -593,12 +613,40 @@ begin
   Result := Size >= 0;
 end;
 
+{$IFDEF DELPHIORBCB}
+procedure ModuleUnload(Instance: NativeInt);
+var // automaticaly deregistration/releasing
+  i: Integer;
+begin
+  if TDECFormat.ClassList <> nil then
+  begin
+    for i := TDECFormat.ClassList.Count - 1 downto 0 do
+    begin
+      if NativeInt(FindClassHInstance(TClass(TDECFormat.ClassList[i]))) = Instance then
+        TDECFormat.ClassList.Remove(TDECFormat.ClassList[i].Identity);
+    end;
+  end;
+end;
+{$ENDIF DELPHIORBCB}
+
 initialization
+  // Code for packages and dynamic extension of the class registration list
+  {$IFDEF DELPHIORBCB}
+  AddModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECFormat.ClassList := TDECClassList.Create;
 
   TFormat_Copy.RegisterClass(TDECFormat.ClassList);
 
 finalization
+  // Ensure no further instances of classes registered in the registraiotn list
+  // are possible through the list after this unit has been unloaded by unloding
+  // the package this unit is in
+  {$IFDEF DELPHIORBCB}
+  RemoveModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECFormat.ClassList.Free;
 
 end.

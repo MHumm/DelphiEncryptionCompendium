@@ -373,8 +373,8 @@ type
   end;
 
   /// <summary>
-  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
-  ///   Be sure to set SecurityLevel to at least 8. See remark there.
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh
+  ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
   THashBaseSnefru = class(TDECHash)
   private
@@ -397,8 +397,9 @@ type
   end;
 
   /// <summary>
-  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
-  ///   Be sure to set SecurityLevel to at least 8. See remark there.
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh
+  ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark for
+  ///   THashBaseSnefru.SecurityLevel.
   /// </summary>
   THash_Snefru128 = class(THashBaseSnefru)
   protected
@@ -409,8 +410,9 @@ type
   end;
 
   /// <summary>
-  ///   This 1990 developed hash function was named after the Egyptian Pharaoh Sneferu.
-  ///   Be sure to set SecurityLevel to at least 8. See remark there.
+  ///   This 1990 developed hash function was named after the Egyptian Pharaoh
+  ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark
+  ///   THashBaseSnefru.SecurityLevel.
   /// </summary>
   THash_Snefru256 = class(THashBaseSnefru)
   protected

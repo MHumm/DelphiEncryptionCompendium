@@ -184,6 +184,22 @@ type
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
     class function ClassByName(const Name: string): TDECHashClass;
+
+    /// <summary>
+    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+    ///   Useful for file headers, so they can easily encode numerically which
+    ///   cipher class was being used.
+    /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for
+    /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given identity has been found
+    /// </returns>
+    function ClassByIdentity(Identity: Int64): TDECHashClass;
+
     /// <summary>
     ///   Detects whether the given hash class is one particularily suited
     ///   for storing hashes of passwords
@@ -365,32 +381,6 @@ type
   /// </summary>
   TDECPasswordHash = class(TDECHash);
 
-  /// <summary>
-  ///   Searches for a hash class by its name within the list of registered
-  ///   hash classes.
-  /// </summary>
-  /// <param name="Name">
-  ///   Long (THash_Sapphire) class name or short class name (Sapphire) to look for
-  /// </param>
-  /// <returns>
-  ///   Class reference of the class searched for. If it is not found in the list
-  ///   a EDECClassNotRegisteredException exception will being thrown.
-  /// </returns>
-  function HashByName(const Name: string): TDECHashClass;
-
-  /// <summary>
-  ///   Searches for a hash class by its unique identity number within the list
-  ///   of registered hash classes.
-  /// </summary>
-  /// <param name="Identity">
-  ///   A number uniquely representing a certain hash algorithm's class
-  /// </param>
-  /// <returns>
-  ///   Class reference of the class searched for. If it is not found in the list
-  ///   a EDECClassNotRegisteredException exception will being thrown.
-  /// </returns>
-  function HashByIdentity(Identity: Int64): TDECHashClass;
-
 implementation
 
 type
@@ -402,16 +392,6 @@ type
 resourcestring
   sHashNotInitialized   = 'Hash must be initialized';
   sRaiseHashOverflowError = 'Hash Overflow: Too many bits processed';
-
-function HashByName(const Name: string): TDECHashClass;
-begin
-  Result := TDECHashClass(TDECHash.ClassList.ClassByName(Name));
-end;
-
-function HashByIdentity(Identity: Int64): TDECHashClass;
-begin
-  Result := TDECHashClass(TDECHash.ClassList.ClassByIdentity(Identity));
-end;
 
 { TDECHash }
 
@@ -680,6 +660,11 @@ begin
 //    Encode(CalcBuffer(Value[1], Length(Value) * SizeOf(Value[1])), Result);
 end;
 
+function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
+begin
+  result := TDECHashClass(ClassList.ClassByIdentity(Identity));
+end;
+
 class function TDECHash.ClassByName(const Name: string): TDECHashClass;
 begin
   result := TDECHashClass(ClassList.ClassByName(Name));
@@ -930,9 +915,37 @@ begin
   Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
 end;
 
+{$IFDEF DELPHIORBCB}
+procedure ModuleUnload(Instance: NativeInt);
+var // automaticaly deregistration/releasing
+  i: Integer;
+begin
+  if TDECHash.ClassList <> nil then
+  begin
+    for i := TDECHash.ClassList.Count - 1 downto 0 do
+    begin
+      if NativeInt(FindClassHInstance(TClass(TDECHash.ClassList[i]))) = Instance then
+        TDECHash.ClassList.Remove(TDECFormat.ClassList[i].Identity);
+    end;
+  end;
+end;
+{$ENDIF DELPHIORBCB}
+
 initialization
+  // Code for packages and dynamic extension of the class registration list
+  {$IFDEF DELPHIORBCB}
+  AddModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECHash.ClassList := TDECClassList.Create;
 
 finalization
+  // Ensure no further instances of classes registered in the registraiotn list
+  // are possible through the list after this unit has been unloaded by unloding
+  // the package this unit is in
+  {$IFDEF DELPHIORBCB}
+  RemoveModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECHash.ClassList.Free;
 end.

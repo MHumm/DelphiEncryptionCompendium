@@ -180,6 +180,9 @@ type
 
   TDECCipherCodeEvent = procedure(const Source; var Dest; DataSize: Integer) of object;
 
+  /// <summary>
+  ///   Class type of the cipher base class
+  /// </summary>
   TDECCipherClass = class of TDECCipher;
 
   /// <summary>
@@ -241,6 +244,21 @@ type
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
     class function ClassByName(const Name: string): TDECCipherClass;
+
+    /// <summary>
+    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+    ///   Useful for file headers, so they can easily encode numerically which
+    ///   cipher class was being used.
+    /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for
+    /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given identity has been found
+    /// </returns>
+    function ClassByIdentity(Identity: Int64): TDECCipherClass;
 
     /// <summary>
     ///   Initializes the instance. Relies in parts on information given by the
@@ -526,32 +544,6 @@ type
 function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass = nil);
 
-/// <summary>
-///   Searches for a cipher class by its name within the list of registered
-///   cipher classes.
-/// </summary>
-/// <param name="Name">
-///   Long (TCipher_Null) class name or short class name (Null) to look for
-/// </param>
-/// <returns>
-///   Class reference of the class searched for. If it is not found in the list
-///   a EDECClassNotRegisteredException exception will being thrown.
-/// </returns>
-function CipherByName(const Name: string): TDECCipherClass;
-
-/// <summary>
-///   Searches for a cipher class by its unique identity number within the list
-///   of registered cipher classes.
-/// </summary>
-/// <param name="Identity">
-///   A number uniquely representing a certain cipher algorithm's class
-/// </param>
-/// <returns>
-///   Class reference of the class searched for. If it is not found in the list
-///   a EDECClassNotRegisteredException exception will being thrown.
-/// </returns>
-function CipherByIdentity(Identity: Int64): TDECCipherClass;
-
 implementation
 
 uses
@@ -586,16 +578,6 @@ end;
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 begin
   FDefaultCipherClass := CipherClass;
-end;
-
-function CipherByName(const Name: string): TDECCipherClass;
-begin
-  Result := TDECCipherClass(TDECCipher.ClassList.ClassByName(Name));
-end;
-
-function CipherByIdentity(Identity: Int64): TDECCipherClass;
-begin
-  Result := TDECCipherClass(TDECCipher.ClassList.ClassByIdentity(Identity));
 end;
 
 { TDECCipher }
@@ -667,6 +649,11 @@ begin
       s := sInvalidState;
     raise EDECCipherException.CreateRes(@s);
   end;
+end;
+
+function TDECCipher.ClassByIdentity(Identity: Int64): TDECCipherClass;
+begin
+  result := TDECCipherClass(ClassList.ClassByIdentity(Identity));
 end;
 
 class function TDECCipher.ClassByName(const Name: string): TDECCipherClass;
@@ -886,12 +873,39 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+{$IFDEF DELPHIORBCB}
+procedure ModuleUnload(Instance: NativeInt);
+var // automaticaly deregistration/releasing
+  i: Integer;
+begin
+  if TDECCipher.ClassList <> nil then
+  begin
+    for i := TDECCipher.ClassList.Count - 1 downto 0 do
+    begin
+      if NativeInt(FindClassHInstance(TClass(TDECCipher.ClassList[i]))) = Instance then
+        TDECCipher.ClassList.Remove(TDECCipher.ClassList[i].Identity);
+    end;
+  end;
+end;
+{$ENDIF DELPHIORBCB}
+
 initialization
+  // Code for packages and dynamic extension of the class registration list
+  {$IFDEF DELPHIORBCB}
+  AddModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECCipher.ClassList := TDECClassList.Create;
 
   TCipher_Null.RegisterClass(TDECCipher.ClassList);
-
 finalization
+  // Ensure no further instances of classes registered in the registraiotn list
+  // are possible through the list after this unit has been unloaded by unloding
+  // the package this unit is in
+  {$IFDEF DELPHIORBCB}
+  RemoveModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+
   TDECCipher.ClassList.Free;
 
 end.
