@@ -14,7 +14,8 @@ uses
   DECCipherModes in '..\..\Source\DECCipherModes.pas',
   DECCiphers in '..\..\Source\DECCiphers.pas',
   DECData in '..\..\Source\DECData.pas',
-  DECCipherFormats in '..\..\Source\DECCipherFormats.pas';
+  DECCipherFormats in '..\..\Source\DECCipherFormats.pas',
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
 
 {$R *.res}
 

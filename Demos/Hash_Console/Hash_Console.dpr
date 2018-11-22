@@ -79,7 +79,8 @@ uses
   DECTypes in '..\..\Source\DECTypes.pas',
   DECUtil in '..\..\Source\DECUtil.pas',
   DECFormatBase in '..\..\Source\DECFormatBase.pas',
-  DECData in '..\..\Source\DECData.pas';
+  DECData in '..\..\Source\DECData.pas',
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
 
 var
   Hash : THash_RipeMD160;

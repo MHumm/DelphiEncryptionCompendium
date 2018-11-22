@@ -81,7 +81,8 @@ uses
   DECTypes in '..\..\Source\DECTypes.pas',
   DECUtil in '..\..\Source\DECUtil.pas',
   DECData in '..\..\Source\DECData.pas',
-  DECCipherFormats in '..\..\Source\DECCipherFormats.pas';
+  DECCipherFormats in '..\..\Source\DECCipherFormats.pas',
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
 
 var
   Cipher     : TCipher_1DES;
