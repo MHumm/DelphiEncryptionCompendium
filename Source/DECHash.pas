@@ -1901,10 +1901,10 @@ end;
 {$IFNDEF THash_SHA384_asm}
 procedure THash_SHA384.DoTransform(Buffer: PUInt32Array);
 var
-  A, B, C, D, E, F, G, H: Int64;
-  T1, T2: Int64;
+  A, B, C, D, E, F, G, H: UInt64;
+  T1, T2: UInt64;
   I: Integer;
-  W: array [0..79] of Int64;
+  W: array [0..79] of UInt64;
 begin
 { TODO : The array passed is a UInt32 array, which doesn't fit with the name of this method!}
   SwapInt64Buffer(Buffer[0], W, 16);

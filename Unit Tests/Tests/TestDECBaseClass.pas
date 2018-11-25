@@ -190,13 +190,13 @@ end;
 
 procedure TestTDECObject.TestGetShortClassName;
 begin
-  CheckEquals(TDECClass.GetShortClassName(TFormat_HEXL),
+  CheckEquals(TFormat_HEXL.GetShortClassName,
               'HEXL');
 end;
 
 procedure TestTDECObject.TestGetShortClassName2;
 begin
-  CheckEquals(TDECClass.GetShortClassName(TCipher_Skipjack),
+  CheckEquals(TCipher_Skipjack.GetShortClassName,
               'Skipjack');
 end;
 

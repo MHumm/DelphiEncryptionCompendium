@@ -94,7 +94,7 @@ type
     /// <returns>
     ///   true if the class reference is for the given short name
     /// </returns>
-    function DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
+    function DoFindNameShort(const Name: string; const ClassType: TDECClass): Boolean;
     /// <summary>
     ///   Checks if a given class type has the same long class name as given
     /// </summary>
@@ -221,13 +221,10 @@ type
     ///   Returns short Classname of any DEC derrived class type. This is the part
     ///   of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.
     /// </summary>
-    /// <param name="ClassType">
-    ///   Class type for the class where the name shall be returned from
-    /// </param>
     /// <returns>
     ///   Short class name or empty string if ClassType is nil.
     /// </returns>
-    class function GetShortClassName(ClassType: TClass): string;
+    class function GetShortClassName: string;
   end;
 
 var
@@ -321,12 +318,9 @@ begin
   ClassList.Remove(Identity);
 end;
 
-class function TDECObject.GetShortClassName(ClassType: TClass): string;
+class function TDECObject.GetShortClassName: string;
 begin
-  if ClassType = nil then
-    Result := ''
-  else
-    Result := GetShortClassNameFromName(ClassType.ClassName);
+  Result := GetShortClassNameFromName(self.ClassName);
 end;
 
 class function TDECObject.GetShortClassNameFromName(const ClassName: string): string;
@@ -341,9 +335,9 @@ end;
 
 { TDECClassList }
 
-function TDECClassList.DoFindNameShort(const Name: string; const ClassType: TClass): Boolean;
+function TDECClassList.DoFindNameShort(const Name: string; const ClassType: TDECClass): Boolean;
 begin
-  Result := CompareText(TDECClass.GetShortClassName(ClassType), Name) = 0;
+  Result := CompareText(ClassType.GetShortClassName, Name) = 0;
 end;
 
 function TDECClassList.DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;

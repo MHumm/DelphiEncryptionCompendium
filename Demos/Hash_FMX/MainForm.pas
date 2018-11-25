@@ -199,7 +199,7 @@ begin
 
   try
     for MyClass in TDECFormat.ClassList do
-      Formats.Add(MyClass.Value.ClassName);
+      Formats.Add(MyClass.Value.GetShortClassName);
 
     Formats.Sort;
     ComboBoxInputFormatting.Items.AddStrings(Formats);
@@ -232,7 +232,7 @@ begin
 
   try
     for MyClass in TDECHash.ClassList do
-      Hashes.Add(MyClass.Value.ClassName);
+      Hashes.Add(MyClass.Value.GetShortClassName);
 
     Hashes.Sort;
     ComboBoxHashFunction.Items.AddStrings(Hashes);
