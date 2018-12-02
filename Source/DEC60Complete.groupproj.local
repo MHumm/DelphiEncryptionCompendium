@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.599,D:\Projekte\DECGit\Source\DEC60Complete.groupproj=D:\Projekte\DECGit\Source\DEC60Complete.groupproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.053,D:\Projekte\DECGit\Source\DEC60Complete.groupproj=D:\Projekte\DECGit\Source\DEC60Complete.groupproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.500,D:\Projekte\DECPurePascalRededigned\Source\DEC60Complete.groupproj=D:\Projekte\ProjectGroup1.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.599,D:\Projekte\DECGit\Source\DEC60Complete.groupproj=D:\Projekte\DECGit\Source\DEC60Complete.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.500,D:\Projekte\ProjectGroup1.groupproj=D:\Projekte\DECPurePascalRededigned\Source\DEC60Complete.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
-		<Projects ActiveProject="D:\Projekte\DECGit\Unit Tests\DECDUnitTestSuite.dproj"/>
+		<Projects ActiveProject="D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj"/>
 	</Default.Personality>
 </BorlandProject>

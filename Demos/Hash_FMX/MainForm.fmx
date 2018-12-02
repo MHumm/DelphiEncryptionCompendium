@@ -9,7 +9,6 @@ object MainForm: TMainForm
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
-  OnKeyUp = FormKeyUp
   OnResize = FormResize
   DesignerMasterStyle = 3
   object VertScrollBox1: TVertScrollBox

@@ -582,7 +582,6 @@
             </Deployment>
             <Platforms>
                 <Platform value="Android">True</Platform>
-                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
             </Platforms>
         </BorlandProject>

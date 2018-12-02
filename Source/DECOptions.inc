@@ -100,6 +100,14 @@
 // data which needs to be compatible to the DEC 3.0 cmCTS mode. Not recommended!
 {.$DEFINE DEC3_CMCTS} (* default OFF *)
 
+/// <summary>
+///   When building a Firemonkey project for non Windows platforms
+///   ressourcestrings are not available. Enabling this enables some
+///   alternative translation mechanism for exception messages based
+///   on Firemonkey's TLang architecture
+/// </summary>
+{$DEFINE FMXTranslateableExceptions}
+
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
@@ -166,14 +174,6 @@
     Sorry, but Delphi 2007 and lower are no longer supported!
   {$ENDIF}
 {$ENDIF}
-
-/// <summary>
-///   When building a Firemonkey project for non Windows platforms
-///   ressourcestrings are not available. Enabling this enables some
-///   alternative translation mechanism for exception messages based
-///   on Firemonkey's TLang architecture
-/// </summary>
-{$DEFINE FMXTranslateableExceptions}
 
 //------------------------------------------------------------------------------
 // Asm Core

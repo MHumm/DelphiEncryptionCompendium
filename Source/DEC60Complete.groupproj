@@ -12,9 +12,6 @@
         <Projects Include="..\Unit Tests\DECDUnitTestSuite.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Demos\Hash_FMX\Hash_FMX.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\Demos\Cipher_FMX\Cipher_FMX.dproj">
             <Dependencies/>
         </Projects>
@@ -28,6 +25,9 @@
             <Dependencies/>
         </Projects>
         <Projects Include="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Demos\Hash_FMX\Hash_FMX.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -64,15 +64,6 @@
     </Target>
     <Target Name="DECDUnitTestSuite:Make">
         <MSBuild Projects="..\Unit Tests\DECDUnitTestSuite.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="Hash_FMX">
-        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj"/>
-    </Target>
-    <Target Name="Hash_FMX:Clean">
-        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Hash_FMX:Make">
-        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Make"/>
     </Target>
     <Target Name="Cipher_FMX">
         <MSBuild Projects="..\Demos\Cipher_FMX\Cipher_FMX.dproj"/>
@@ -119,14 +110,23 @@
     <Target Name="CryptoWorkbench:Make">
         <MSBuild Projects="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Hash_FMX">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj"/>
+    </Target>
+    <Target Name="Hash_FMX:Clean">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Hash_FMX:Make">
+        <MSBuild Projects="..\Demos\Hash_FMX\Hash_FMX.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Hash_FMX;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console;CryptoWorkbench"/>
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console;CryptoWorkbench;Hash_FMX"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Hash_FMX:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean;CryptoWorkbench:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean;CryptoWorkbench:Clean;Hash_FMX:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Hash_FMX:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make;CryptoWorkbench:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make;CryptoWorkbench:Make;Hash_FMX:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
