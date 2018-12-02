@@ -115,16 +115,31 @@ type
 
   /// <summary>
   ///   TCipher.State represents the internal state of processing
-  ///   csNew         = cipher isn't initialized, .Init() must be called before en/decode
-  ///   csInitialized = cipher is initialized by .Init(), i.e. Keysetup was processed
-  ///   csEncode      = Encoding was started, and more chunks can be encoded, but not decoded
-  ///   csDecode      = Decoding was started, and more chunks can be decoded, but not encoded
-  ///   csPadded      = trough En/Decoding the messagechunks are padded, no more chunks can
+  /// <para>
+  ///   csNew : cipher isn't initialized, .Init() must be called before en/decode
+  /// </para>
+  /// <para>
+  ///   csNew : cipher isn't initialized, .Init() must be called before en/decode
+  /// </para>
+  /// <para>
+  ///   csInitialized : cipher is initialized by .Init(), i.e. Keysetup was processed
+  /// </para>
+  /// <para>
+  ///   csEncode : Encoding was started, and more chunks can be encoded, but not decoded
+  /// </para>
+  /// <para>
+  ///   csDecode : Decoding was started, and more chunks can be decoded, but not encoded
+  /// </para>
+  /// <para>
+  ///   csPadded : trough En/Decoding the messagechunks are padded, no more chunks can
   ///                   be processed, the cipher is blocked
-  ///   csDone        = Processing is finished and Cipher.Done was called. Now new En/Decoding
-  ///                   can be started without calling .Init() before. csDone is basically
-  ///                   identical to csInitialized, except Cipher.Buffer holds the encrypted
-  ///                   last state of Cipher.Feedback, thus Cipher.Buffer can be used as C-MAC.
+  /// </para>
+  /// <para>
+  ///   csDone : Processing is finished and Cipher.Done was called. Now new En/Decoding
+  ///            can be started without calling .Init() before. csDone is basically
+  ///            identical to csInitialized, except Cipher.Buffer holds the encrypted
+  ///            last state of Cipher.Feedback, thus Cipher.Buffer can be used as C-MAC.
+  /// </para>
   /// </summary>
   TCipherState = (csNew, csInitialized, csEncode, csDecode, csPadded, csDone);
   /// <summary>

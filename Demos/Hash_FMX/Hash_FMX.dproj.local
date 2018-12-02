@@ -42,7 +42,7 @@
     <File Path="MainForm.fmx"/>
   </ProjectSortOrder>
 	<ActiveMobileDevice>
-		<NoProfile Android="CB512EA59X"/>
+		<NoProfile Android=""/>
 	</ActiveMobileDevice>
 	<BT_BuildType>AppStore</BT_BuildType>
 </BorlandProject>

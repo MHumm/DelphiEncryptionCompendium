@@ -136,8 +136,19 @@ type
     /// </summary>
     function  ConvertHexVectorToBytes(Vector: string): TBytes;
 
+    /// <summary>
+    ///   Ensures that a given key is not longer then the KeySize passed
+    /// </summary>
+    /// <param name="Key">
+    ///   Key to be checked. if it is longer than KeySize it will be cut off.
+    /// </param>
+    /// <param name="KeySize">
+    ///   Here the length of a key for the cipher algorithm tested shall be passed
+    /// </param>
+    procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
+
     procedure DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
-    procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc);
+    procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
   end;
 
   // Testmethoden für Klasse TDECCipher
@@ -172,21 +183,26 @@ type
 
   // Testmethoden für Klasse TCipher_Twofish
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Twofish = class(TTestCase)
+  TestTCipher_Twofish = class(TCipherBasis)
   strict private
     FCipher_Twofish: TCipher_Twofish;
   private
   public
     procedure SetUp; override;
     procedure TearDown; override;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
   // Testmethoden für Klasse TCipher_IDEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_IDEA = class(TTestCase)
+  TestTCipher_IDEA = class(TCipherBasis)
   strict private
     FCipher_IDEA: TCipher_IDEA;
   private
@@ -200,7 +216,7 @@ type
 
   // Testmethoden für Klasse TCipher_Cast256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Cast256 = class(TTestCase)
+  TestTCipher_Cast256 = class(TCipherBasis)
   strict private
     FCipher_Cast256: TCipher_Cast256;
   private
@@ -214,7 +230,7 @@ type
 
   // Testmethoden für Klasse TCipher_Mars
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Mars = class(TTestCase)
+  TestTCipher_Mars = class(TCipherBasis)
   strict private
     FCipher_Mars: TCipher_Mars;
   private
@@ -228,7 +244,7 @@ type
 
   // Testmethoden für Klasse TCipher_RC4
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_RC4 = class(TTestCase)
+  TestTCipher_RC4 = class(TCipherBasis)
   strict private
     FCipher_RC4: TCipher_RC4;
   public
@@ -241,7 +257,7 @@ type
 
   // Testmethoden für Klasse TCipher_RC6
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_RC6 = class(TTestCase)
+  TestTCipher_RC6 = class(TCipherBasis)
   strict private
     FCipher_RC6: TCipher_RC6;
   public
@@ -254,7 +270,7 @@ type
 
   // Testmethoden für Klasse TCipher_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Square = class(TTestCase)
+  TestTCipher_Square = class(TCipherBasis)
   strict private
     FCipher_Square: TCipher_Square;
   public
@@ -267,7 +283,7 @@ type
 
   // Testmethoden für Klasse TCipher_SCOP
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_SCOP = class(TTestCase)
+  TestTCipher_SCOP = class(TCipherBasis)
   strict private
     FCipher_SCOP: TCipher_SCOP;
   public
@@ -280,7 +296,7 @@ type
 
   // Testmethoden für Klasse TCipher_Sapphire
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Sapphire = class(TTestCase)
+  TestTCipher_Sapphire = class(TCipherBasis)
   strict private
     FCipher_Sapphire: TCipher_Sapphire;
   public
@@ -311,7 +327,7 @@ type
 
   // Testmethoden für Klasse TCipher_2DES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_2DES = class(TTestCase)
+  TestTCipher_2DES = class(TCipherBasis)
   strict private
     FCipher_2DES: TCipher_2DES;
   public
@@ -324,7 +340,7 @@ type
 
   // Testmethoden für Klasse TCipher_3DES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_3DES = class(TTestCase)
+  TestTCipher_3DES = class(TCipherBasis)
   strict private
     FCipher_3DES: TCipher_3DES;
   public
@@ -337,7 +353,7 @@ type
 
   // Testmethoden für Klasse TCipher_2DDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_2DDES = class(TTestCase)
+  TestTCipher_2DDES = class(TCipherBasis)
   strict private
     FCipher_2DDES: TCipher_2DDES;
   public
@@ -350,7 +366,7 @@ type
 
   // Testmethoden für Klasse TCipher_3DDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_3DDES = class(TTestCase)
+  TestTCipher_3DDES = class(TCipherBasis)
   strict private
     FCipher_3DDES: TCipher_3DDES;
   public
@@ -363,7 +379,7 @@ type
 
   // Testmethoden für Klasse TCipher_3TDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_3TDES = class(TTestCase)
+  TestTCipher_3TDES = class(TCipherBasis)
   strict private
     FCipher_3TDES: TCipher_3TDES;
   public
@@ -376,7 +392,7 @@ type
 
   // Testmethoden für Klasse TCipher_3Way
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_3Way = class(TTestCase)
+  TestTCipher_3Way = class(TCipherBasis)
   strict private
     FCipher_3Way: TCipher_3Way;
   public
@@ -389,7 +405,7 @@ type
 
   // Testmethoden für Klasse TCipher_Cast128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Cast128 = class(TTestCase)
+  TestTCipher_Cast128 = class(TCipherBasis)
   strict private
     FCipher_Cast128: TCipher_Cast128;
   public
@@ -402,7 +418,7 @@ type
 
   // Testmethoden für Klasse TCipher_Gost
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Gost = class(TTestCase)
+  TestTCipher_Gost = class(TCipherBasis)
   strict private
     FCipher_Gost: TCipher_Gost;
   public
@@ -415,7 +431,7 @@ type
 
   // Testmethoden für Klasse TCipher_Misty
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Misty = class(TTestCase)
+  TestTCipher_Misty = class(TCipherBasis)
   strict private
     FCipher_Misty: TCipher_Misty;
   public
@@ -428,7 +444,7 @@ type
 
   // Testmethoden für Klasse TCipher_NewDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_NewDES = class(TTestCase)
+  TestTCipher_NewDES = class(TCipherBasis)
   strict private
     FCipher_NewDES: TCipher_NewDES;
   public
@@ -441,7 +457,7 @@ type
 
   // Testmethoden für Klasse TCipher_Q128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Q128 = class(TTestCase)
+  TestTCipher_Q128 = class(TCipherBasis)
   strict private
     FCipher_Q128: TCipher_Q128;
   public
@@ -454,7 +470,7 @@ type
 
   // Testmethoden für Klasse TCipher_RC2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_RC2 = class(TTestCase)
+  TestTCipher_RC2 = class(TCipherBasis)
   strict private
     FCipher_RC2: TCipher_RC2;
   public
@@ -467,7 +483,7 @@ type
 
   // Testmethoden für Klasse TCipher_RC5
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_RC5 = class(TTestCase)
+  TestTCipher_RC5 = class(TCipherBasis)
   strict private
     FCipher_RC5: TCipher_RC5;
   public
@@ -480,7 +496,7 @@ type
 
   // Testmethoden für Klasse TCipher_SAFER
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_SAFER = class(TTestCase)
+  TestTCipher_SAFER = class(TCipherBasis)
   strict private
     FCipher_SAFER: TCipher_SAFER;
   public
@@ -493,7 +509,7 @@ type
 
   // Testmethoden für Klasse TCipher_Shark
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Shark = class(TTestCase)
+  TestTCipher_Shark = class(TCipherBasis)
   strict private
     FCipher_Shark: TCipher_Shark;
   public
@@ -506,7 +522,7 @@ type
 
   // Testmethoden für Klasse TCipher_Skipjack
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_Skipjack = class(TTestCase)
+  TestTCipher_Skipjack = class(TCipherBasis)
   strict private
     FCipher_Skipjack: TCipher_Skipjack;
   public
@@ -519,7 +535,7 @@ type
 
   // Testmethoden für Klasse TCipher_TEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_TEA = class(TTestCase)
+  TestTCipher_TEA = class(TCipherBasis)
   strict private
     FCipher_TEA: TCipher_TEA;
   public
@@ -532,7 +548,7 @@ type
 
   // Testmethoden für Klasse TCipher_XTEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTCipher_XTEA = class(TTestCase)
+  TestTCipher_XTEA = class(TCipherBasis)
   strict private
     FCipher_XTEA: TCipher_XTEA;
   public
@@ -706,6 +722,25 @@ begin
   CheckEquals(TCipher_Blowfish, ReturnValue, 'Class is not registered');
 end;
 
+procedure TestTCipher_Twofish.Done;
+begin
+  FCipher_Twofish.Done;
+end;
+
+procedure TestTCipher_Twofish.Init(TestData: TCipherTestData);
+var
+  InitVector : RawByteString;
+begin
+  InitVector := TestData.InitVector;
+
+  LimitKeyLength(TestData.Key, FCipher_Twofish.Context.KeySize);
+
+  FCipher_Twofish.Mode := TestData.Mode;
+  FCipher_Twofish.Init(BytesOf(TestData.Key),
+                       BytesOf(InitVector),
+                       TestData.Filler);
+end;
+
 procedure TestTCipher_Twofish.SetUp;
 begin
   FCipher_Twofish := TCipher_Twofish.Create;
@@ -729,6 +764,16 @@ begin
   CheckEquals(4256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Twofish.TestDecode;
+begin
+  DoTestDecode(FCipher_Twofish.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Twofish.TestEncode;
+begin
+  DoTestEncode(FCipher_Twofish.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Twofish.TestClassByName;
@@ -1013,14 +1058,9 @@ procedure TestTCipher_1DES.Init(TestData: TCipherTestData);
 var
   InitVector : RawByteString;
 begin
-//  Password := 'TCipher_1DES';
   InitVector := TestData.InitVector;
-  if Length(TestData.Key) > FCipher_1DES.Context.KeySize then
-    Delete(TestData.Key, FCipher_1DES.Context.KeySize+1, length(TestData.Key));
 
-//  FCipher_1DES.Mode := cmCTSx;
-//  FCipher_1DES.Init(BytesOf(Password), BytesOf(#$FF#$FF#$FF#$FF#$FF#$FF#$FF#$FF), $FF);
-
+  LimitKeyLength(TestData.Key, FCipher_1DES.Context.KeySize);
 
   FCipher_1DES.Mode := TestData.Mode;
   FCipher_1DES.Init(BytesOf(TestData.Key),
@@ -1030,8 +1070,7 @@ end;
 
 procedure TestTCipher_1DES.SetUp;
 var
-  Password : RawByteString;
-  Data     : TBytes;
+  Data : TBytes;
 begin
   FCipher_1DES := TCipher_1DES.Create;
 
@@ -1083,7 +1122,7 @@ end;
 
 procedure TestTCipher_1DES.TestDecode;
 begin
-
+  DoTestDecode(FCipher_1DES.DecodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_1DES.TestEncode;
@@ -1718,29 +1757,11 @@ begin
   end;
 end;
 
-procedure TCipherBasis.DoTestDecode(DecodeFunct: TEncodeDecodeFunc);
+procedure TCipherBasis.DoTestDecode(DecodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
 var
-  Data   : TCipherTestData;
-  Result : TBytes;
-  Res, Exp: RawByteString;
-begin
-  for Data in FTestData do
-  begin
-    Result := DecodeFunct(Data.OutputData, TFormat_HEXL);
-
-    Res := BytesToRawString(Result);
-    Exp := BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData)));
-
-    CheckEquals(Exp,
-                Res);
-  end;
-end;
-
-procedure TCipherBasis.DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
-var
-  Data   : TCipherTestData;
-  Result : TBytes;
-  Temp : RawByteString;
+  Data          : TCipherTestData;
+  Result        : TBytes;
+  TempResultHex : RawByteString;
 begin
 { TODO :
 Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
@@ -1750,25 +1771,44 @@ wir die bisherigen Vektoren testen können. Dann können wir die nötigen
 Daten synthetisieren. }
   for Data in FTestData do
   begin
-//    Result := EncodeFunct(BytesOf(Data.OutputData), TFormat_HEXL);
+    InitProc(Data);
+    Result := DecodeFunct(RawByteString(Data.OutputData), TFormat_HEXL);
+    DoneProc;
 
+    TempResultHex := RawByteString(StringOf(Result));
 
-//    Result := EncodeFunct(Data.InputData, TFormat_HEXL);
+    CheckEquals(Data.InputData, TempResultHex);
+  end;
+end;
 
+procedure TCipherBasis.DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+var
+  Data          : TCipherTestData;
+  Result        : TBytes;
+  TempResultHex : RawByteString;
+begin
+{ TODO :
+Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
+ja immer von einem bestimmten CipherModus ausgehen, und nicht die
+einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
+wir die bisherigen Vektoren testen können. Dann können wir die nötigen
+Daten synthetisieren. }
+  for Data in FTestData do
+  begin
     InitProc(Data);
     Result := EncodeFunct(RawByteString(Data.InputData), TFormat_COPY);
     DoneProc;
 
-    Temp := TFormat_HEXL.Encode(Result[0], length(Result));
+    TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result));
 
-//    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.InputData))),
-//                BytesToRawString(Result));
-    CheckEquals(Data.OutputData, Temp);
-//    CheckEquals(BytesToRawString(ConvertHexVectorToBytes(string(Data.OutputData))),
-//                Temp);
-//                BytesToRawString(Result));
-
+    CheckEquals(Data.OutputData, TempResultHex);
   end;
+end;
+
+procedure TCipherBasis.LimitKeyLength(var Key: RawByteString; KeySize: Integer);
+begin
+  if Length(Key) > KeySize then
+    Delete(Key, KeySize + 1, length(Key));
 end;
 
 { TestTDECCipher }
