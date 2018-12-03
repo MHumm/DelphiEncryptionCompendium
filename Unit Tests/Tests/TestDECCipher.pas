@@ -744,6 +744,7 @@ end;
 procedure TestTCipher_Twofish.SetUp;
 begin
   FCipher_Twofish := TCipher_Twofish.Create;
+  // Testdaten initialisieren!
 end;
 
 procedure TestTCipher_Twofish.TearDown;
@@ -1080,16 +1081,33 @@ begin
                                   '\xEB\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD'+
                                   '\xF5\x60\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
 
+//.Password=TCipher_1DES
+//.IFiller=$FF
+//.Mode=cmCTSx
+//<ad6942bbf668204d53cdc762139398c0300d850be2aa72096fdb5f8ed3e4cf8a>=<\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2\xEB\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD\xF5\x60\xC2\xB8\x58\xA1\x91\xF9\x81\xB1>
+
+
 //  FTestData[0].InputData  := StringOf(TFormat_ESCAPE.Decode(Data));
 //  FTestData[0].OutputData := 'ad6942bbf668204d53cdc762139398c0300d850be2aa72096fdb5f8ed3e4cf8a';
 
-  FTestData[0].InputData  := 'Beispielklartext';
-  FTestData[0].OutputData := '704dc44d5328efd2d1fae6897174436a';
+//  FTestData[0].InputData  := 'Beispielklartext';
+//  FTestData[0].OutputData := '704dc44d5328efd2d1fae6897174436a';
+//
+//  FTestData[0].Key        := 'Passwort';
+//  FTestData[0].InitVector := cZeroBlock8;
+//  FTestData[0].Filler     := 0;
+//  FTestData[0].Mode       := cmCBCx;
 
-  FTestData[0].Key        := 'Passwort';
-  FTestData[0].InitVector := cZeroBlock8;
-  FTestData[0].Filler     := 0;
-  FTestData[0].Mode       := cmCBCx;
+
+  FTestData[0].OutputData  := 'ad6942bbf668204d53cdc762139398c0300d850be2aa72096fdb5f8ed3e4cf8a';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2'+
+                                  '\xEB\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD'+
+                                  '\xF5\x60\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_1DES';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_1DES.TearDown;
