@@ -648,41 +648,33 @@ begin
 end;
 
 procedure TestTCipher_Blowfish.Init(TestData: TCipherTestData);
-var
-  Password: RawByteString;
 begin
-  Password := 'TCipher_Blowfish';
-  if Length(Password) > FCipher_Blowfish.Context.KeySize then
-    Delete(Password, FCipher_Blowfish.Context.KeySize, length(Password));
+  LimitKeyLength(TestData.Key, FCipher_Blowfish.Context.KeySize);
 
-  FCipher_Blowfish.Mode := cmCTSx;
-//  FCipher_Blowfish.Init(Password, '', $FF);
-  FCipher_Blowfish.Init(BytesOf(Password), BytesOf(#$FF#$FF#$FF#$FF#$FF#$FF#$FF#$FF), $FF);
+  FCipher_Blowfish.Mode := TestData.Mode;
+  FCipher_Blowfish.Init(BytesOf(TestData.Key),
+                        BytesOf(TestData.InitVector),
+                        TestData.Filler);
 end;
 
 procedure TestTCipher_Blowfish.SetUp;
-var
-  Password: RawByteString;
-  Data : TBytes;
 begin
   FCipher_Blowfish      := TCipher_Blowfish.Create;
-//  FCipher_Blowfish.Context.
-
-//  Password := 'TCipher_Blowfish';
-//  if Length(Password) > FCipher_Blowfish.Context.KeySize then
-//    Delete(Password, FCipher_Blowfish.Context.KeySize, length(Password));
-//
-//  FCipher_Blowfish.Mode := cmCTSx;
-//  FCipher_Blowfish.Init(Password, '', $FF);
 
   SetLength(FTestData, 1);
 
-  Data := System.SysUtils.BytesOf('\x30\x44\xED\x6E\x45\xA4\x96\xF5\xF6\x35\xA2\xEB' +
-                                  '\x3D\x1A\x5D\xD6\xCB\x1D\x09\x82\x2D\xBD\xF5\x60' +
-                                  '\xC2\xB8\x58\xA1\x91\xF9\x81\xB1');
+  FTestData[0].OutputData  := '1971cacd2b9c8529da8147b7ebce16c6910e1dc840123e3570edbc964c13d0b8';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
 
-  FTestData[0].InputData  := RawByteString(StringOf(TFormat_ESCAPE.Decode(Data)));
-  FTestData[0].OutputData := '1971cacd2b9c8529da8147b7ebce16c6910e1dc840123e3570edbc964c13d0b8';
+  FTestData[0].Key        := 'TCipher_Blowfish';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Blowfish.TearDown;
@@ -707,14 +699,11 @@ end;
 
 procedure TestTCipher_Blowfish.TestDecode;
 begin
-//  DoTestDecode(FCipher_Blowfish.DecodeBytes);
+  DoTestDecode(FCipher_Blowfish.DecodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Blowfish.TestEncode;
 begin
-{ TODO :
-Die Verschlüsselungs und Entschlüsselungstests müssen
-für alle Blockmodi separat umgesetzt werden }
   DoTestEncode(FCipher_Blowfish.EncodeStringToBytes, self.Init, self.Done);
 end;
 
@@ -732,23 +721,33 @@ begin
 end;
 
 procedure TestTCipher_Twofish.Init(TestData: TCipherTestData);
-var
-  InitVector : RawByteString;
 begin
-  InitVector := TestData.InitVector;
-
   LimitKeyLength(TestData.Key, FCipher_Twofish.Context.KeySize);
 
   FCipher_Twofish.Mode := TestData.Mode;
   FCipher_Twofish.Init(BytesOf(TestData.Key),
-                       BytesOf(InitVector),
+                       BytesOf(TestData.InitVector),
                        TestData.Filler);
 end;
 
 procedure TestTCipher_Twofish.SetUp;
 begin
   FCipher_Twofish := TCipher_Twofish.Create;
-  // Testdaten initialisieren!
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'e81674f9bc69442188c949bb52e1e47874171177e99dbbe9880875094f8dfe21';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Twofish';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Twofish.TearDown;
