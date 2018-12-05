@@ -147,7 +147,7 @@ type
     /// </param>
     procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
 
-    procedure DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+    procedure DoTestEncode(EncodeFunc: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
     procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
   end;
 
@@ -167,13 +167,12 @@ type
   TestTCipher_Blowfish = class(TCipherBasis)
   strict private
     FCipher_Blowfish: TCipher_Blowfish;
-  private
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
   published
     procedure TestContext;
     procedure TestEncode;
@@ -186,13 +185,12 @@ type
   TestTCipher_Twofish = class(TCipherBasis)
   strict private
     FCipher_Twofish: TCipher_Twofish;
-  private
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
   published
     procedure TestContext;
     procedure TestEncode;
@@ -205,7 +203,7 @@ type
   TestTCipher_IDEA = class(TCipherBasis)
   strict private
     FCipher_IDEA: TCipher_IDEA;
-  private
+
     procedure Init(TestData: TCipherTestData);
     procedure Done;
   public
@@ -223,12 +221,16 @@ type
   TestTCipher_Cast256 = class(TCipherBasis)
   strict private
     FCipher_Cast256: TCipher_Cast256;
-  private
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -237,12 +239,17 @@ type
   TestTCipher_Mars = class(TCipherBasis)
   strict private
     FCipher_Mars: TCipher_Mars;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   private
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -251,11 +258,16 @@ type
   TestTCipher_RC4 = class(TCipherBasis)
   strict private
     FCipher_RC4: TCipher_RC4;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -264,11 +276,16 @@ type
   TestTCipher_RC6 = class(TCipherBasis)
   strict private
     FCipher_RC6: TCipher_RC6;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -277,11 +294,16 @@ type
   TestTCipher_Square = class(TCipherBasis)
   strict private
     FCipher_Square: TCipher_Square;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -290,11 +312,16 @@ type
   TestTCipher_SCOP = class(TCipherBasis)
   strict private
     FCipher_SCOP: TCipher_SCOP;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -303,11 +330,16 @@ type
   TestTCipher_Sapphire = class(TCipherBasis)
   strict private
     FCipher_Sapphire: TCipher_Sapphire;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -316,12 +348,12 @@ type
   TestTCipher_1DES = class(TCipherBasis)
   strict private
     FCipher_1DES: TCipher_1DES;
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
   published
     procedure TestContext;
     procedure TestEncode;
@@ -334,11 +366,16 @@ type
   TestTCipher_2DES = class(TCipherBasis)
   strict private
     FCipher_2DES: TCipher_2DES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -347,11 +384,16 @@ type
   TestTCipher_3DES = class(TCipherBasis)
   strict private
     FCipher_3DES: TCipher_3DES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -360,11 +402,16 @@ type
   TestTCipher_2DDES = class(TCipherBasis)
   strict private
     FCipher_2DDES: TCipher_2DDES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -373,11 +420,16 @@ type
   TestTCipher_3DDES = class(TCipherBasis)
   strict private
     FCipher_3DDES: TCipher_3DDES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -386,11 +438,16 @@ type
   TestTCipher_3TDES = class(TCipherBasis)
   strict private
     FCipher_3TDES: TCipher_3TDES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -399,11 +456,16 @@ type
   TestTCipher_3Way = class(TCipherBasis)
   strict private
     FCipher_3Way: TCipher_3Way;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -412,11 +474,16 @@ type
   TestTCipher_Cast128 = class(TCipherBasis)
   strict private
     FCipher_Cast128: TCipher_Cast128;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -425,11 +492,16 @@ type
   TestTCipher_Gost = class(TCipherBasis)
   strict private
     FCipher_Gost: TCipher_Gost;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -438,11 +510,16 @@ type
   TestTCipher_Misty = class(TCipherBasis)
   strict private
     FCipher_Misty: TCipher_Misty;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -451,11 +528,16 @@ type
   TestTCipher_NewDES = class(TCipherBasis)
   strict private
     FCipher_NewDES: TCipher_NewDES;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -464,11 +546,16 @@ type
   TestTCipher_Q128 = class(TCipherBasis)
   strict private
     FCipher_Q128: TCipher_Q128;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -477,11 +564,16 @@ type
   TestTCipher_RC2 = class(TCipherBasis)
   strict private
     FCipher_RC2: TCipher_RC2;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -490,11 +582,16 @@ type
   TestTCipher_RC5 = class(TCipherBasis)
   strict private
     FCipher_RC5: TCipher_RC5;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -503,11 +600,16 @@ type
   TestTCipher_SAFER = class(TCipherBasis)
   strict private
     FCipher_SAFER: TCipher_SAFER;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -516,11 +618,16 @@ type
   TestTCipher_Shark = class(TCipherBasis)
   strict private
     FCipher_Shark: TCipher_Shark;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -529,11 +636,16 @@ type
   TestTCipher_Skipjack = class(TCipherBasis)
   strict private
     FCipher_Skipjack: TCipher_Skipjack;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -542,11 +654,16 @@ type
   TestTCipher_TEA = class(TCipherBasis)
   strict private
     FCipher_TEA: TCipher_TEA;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -555,11 +672,16 @@ type
   TestTCipher_XTEA = class(TCipherBasis)
   strict private
     FCipher_XTEA: TCipher_XTEA;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
     procedure TestClassByName;
   end;
 
@@ -861,6 +983,21 @@ begin
   CheckEquals(TCipher_IDEA, ReturnValue, 'Class is not registered');
 end;
 
+procedure TestTCipher_Cast256.Done;
+begin
+  FCipher_Cast256.Done;
+end;
+
+procedure TestTCipher_Cast256.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Cast256.Context.KeySize);
+
+  FCipher_Cast256.Mode := TestData.Mode;
+  FCipher_Cast256.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Cast256.SetUp;
 begin
   FCipher_Cast256 := TCipher_Cast256.Create;
@@ -886,12 +1023,37 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Cast256.TestDecode;
+begin
+  DoTestDecode(FCipher_Cast256.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Cast256.TestEncode;
+begin
+  DoTestEncode(FCipher_Cast256.EncodeStringToBytes, self.Init, self.Done);
+end;
+
 procedure TestTCipher_Cast256.TestClassByName;
 var
   ReturnValue : TDECCipherClass;
 begin
   ReturnValue := FCipher_Cast256.ClassByName('TCipher_Cast256');
   CheckEquals(TCipher_Cast256, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_Mars.Done;
+begin
+  FCipher_Mars.Done;
+end;
+
+procedure TestTCipher_Mars.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Mars.Context.KeySize);
+
+  FCipher_Mars.Mode := TestData.Mode;
+  FCipher_Mars.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_Mars.SetUp;
@@ -919,6 +1081,16 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Mars.TestDecode;
+begin
+  DoTestDecode(FCipher_Mars.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Mars.TestEncode;
+begin
+  DoTestEncode(FCipher_Mars.EncodeStringToBytes, self.Init, self.Done);
+end;
+
 procedure TestTCipher_Mars.TestClassByName;
 // ClassByName Tests für die restlichen Ciphers umsetzen!
 var
@@ -926,6 +1098,21 @@ var
 begin
   ReturnValue := FCipher_Mars.ClassByName('TCipher_Mars');
   CheckEquals(TCipher_Mars, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_RC4.Done;
+begin
+  FCipher_RC4.Done;
+end;
+
+procedure TestTCipher_RC4.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_RC4.Context.KeySize);
+
+  FCipher_RC4.Mode := TestData.Mode;
+  FCipher_RC4.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_RC4.SetUp;
@@ -961,6 +1148,31 @@ begin
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_RC4.TestDecode;
+begin
+  DoTestDecode(FCipher_RC4.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC4.TestEncode;
+begin
+  DoTestEncode(FCipher_RC4.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC6.Done;
+begin
+  FCipher_RC6.Done;
+end;
+
+procedure TestTCipher_RC6.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_RC6.Context.KeySize);
+
+  FCipher_RC6.Mode := TestData.Mode;
+  FCipher_RC6.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_RC6.SetUp;
 begin
   FCipher_RC6 := TCipher_RC6.Create;
@@ -992,6 +1204,31 @@ begin
   CheckEquals( 272,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_RC6.TestDecode;
+begin
+  DoTestDecode(FCipher_RC6.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC6.TestEncode;
+begin
+  DoTestEncode(FCipher_RC6.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Square.Done;
+begin
+  FCipher_Square.Done;
+end;
+
+procedure TestTCipher_Square.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Square.Context.KeySize);
+
+  FCipher_Square.Mode := TestData.Mode;
+  FCipher_Square.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_Square.SetUp;
@@ -1027,6 +1264,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Square.TestDecode;
+begin
+  DoTestDecode(FCipher_Square.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Square.TestEncode;
+begin
+  DoTestEncode(FCipher_Square.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SCOP.Done;
+begin
+  FCipher_SCOP.Done;
+end;
+
+procedure TestTCipher_SCOP.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_SCOP.Context.KeySize);
+
+  FCipher_SCOP.Mode := TestData.Mode;
+  FCipher_SCOP.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_SCOP.SetUp;
 begin
   FCipher_SCOP := TCipher_SCOP.Create;
@@ -1060,6 +1322,31 @@ begin
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_SCOP.TestDecode;
+begin
+  DoTestDecode(FCipher_SCOP.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SCOP.TestEncode;
+begin
+  DoTestEncode(FCipher_SCOP.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Sapphire.Done;
+begin
+  FCipher_Sapphire.Done;
+end;
+
+procedure TestTCipher_Sapphire.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Sapphire.Context.KeySize);
+
+  FCipher_Sapphire.Mode := TestData.Mode;
+  FCipher_Sapphire.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Sapphire.SetUp;
 begin
   FCipher_Sapphire := TCipher_Sapphire.Create;
@@ -1091,6 +1378,16 @@ begin
   CheckEquals(1044,  ReturnValue.UserSize);
   CheckEquals(true,  ReturnValue.UserSave);
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Sapphire.TestDecode;
+begin
+  DoTestDecode(FCipher_Sapphire.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Sapphire.TestEncode;
+begin
+  DoTestEncode(FCipher_Sapphire.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_1DES.Done;
@@ -1166,6 +1463,21 @@ begin
   DoTestEncode(FCipher_1DES.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_2DES.Done;
+begin
+  FCipher_2DES.Done;
+end;
+
+procedure TestTCipher_2DES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_2DES.Context.KeySize);
+
+  FCipher_2DES.Mode := TestData.Mode;
+  FCipher_2DES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_2DES.SetUp;
 begin
   FCipher_2DES := TCipher_2DES.Create;
@@ -1197,6 +1509,31 @@ begin
   CheckEquals( 512,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_2DES.TestDecode;
+begin
+  DoTestDecode(FCipher_2DES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_2DES.TestEncode;
+begin
+  DoTestEncode(FCipher_2DES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DES.Done;
+begin
+  FCipher_3DES.Done;
+end;
+
+procedure TestTCipher_3DES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_3DES.Context.KeySize);
+
+  FCipher_3DES.Mode := TestData.Mode;
+  FCipher_3DES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_3DES.SetUp;
@@ -1232,6 +1569,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_3DES.TestDecode;
+begin
+  DoTestDecode(FCipher_3DES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DES.TestEncode;
+begin
+  DoTestEncode(FCipher_3DES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_2DDES.Done;
+begin
+  FCipher_2DDES.Done;
+end;
+
+procedure TestTCipher_2DDES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_2DDES.Context.KeySize);
+
+  FCipher_2DDES.Mode := TestData.Mode;
+  FCipher_2DDES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_2DDES.SetUp;
 begin
   FCipher_2DDES := TCipher_2DDES.Create;
@@ -1263,6 +1625,31 @@ begin
   CheckEquals( 512,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_2DDES.TestDecode;
+begin
+  DoTestDecode(FCipher_2DDES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_2DDES.TestEncode;
+begin
+  DoTestEncode(FCipher_2DDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DDES.Done;
+begin
+  FCipher_3DDES.Done;
+end;
+
+procedure TestTCipher_3DDES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_3DDES.Context.KeySize);
+
+  FCipher_3DDES.Mode := TestData.Mode;
+  FCipher_3DDES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_3DDES.SetUp;
@@ -1298,6 +1685,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_3DDES.TestDecode;
+begin
+  DoTestDecode(FCipher_3DDES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DDES.TestEncode;
+begin
+  DoTestEncode(FCipher_3DDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3TDES.Done;
+begin
+  FCipher_3TDES.Done;
+end;
+
+procedure TestTCipher_3TDES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_3TDES.Context.KeySize);
+
+  FCipher_3TDES.Mode := TestData.Mode;
+  FCipher_3TDES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_3TDES.SetUp;
 begin
   FCipher_3TDES := TCipher_3TDES.Create;
@@ -1329,6 +1741,31 @@ begin
   CheckEquals( 768,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_3TDES.TestDecode;
+begin
+  DoTestEncode(FCipher_3TDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3TDES.TestEncode;
+begin
+  DoTestDecode(FCipher_3TDES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3Way.Done;
+begin
+  FCipher_3Way.Done;
+end;
+
+procedure TestTCipher_3Way.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_3Way.Context.KeySize);
+
+  FCipher_3Way.Mode := TestData.Mode;
+  FCipher_3Way.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_3Way.SetUp;
@@ -1364,6 +1801,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_3Way.TestDecode;
+begin
+  DoTestDecode(FCipher_3Way.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3Way.TestEncode;
+begin
+  DoTestEncode(FCipher_3Way.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Cast128.Done;
+begin
+  FCipher_Cast128.Done;
+end;
+
+procedure TestTCipher_Cast128.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Cast128.Context.KeySize);
+
+  FCipher_Cast128.Mode := TestData.Mode;
+  FCipher_Cast128.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Cast128.SetUp;
 begin
   FCipher_Cast128 := TCipher_Cast128.Create;
@@ -1395,6 +1857,31 @@ begin
   CheckEquals( 128,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Cast128.TestDecode;
+begin
+  DoTestDecode(FCipher_Cast128.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Cast128.TestEncode;
+begin
+  DoTestEncode(FCipher_Cast128.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Gost.Done;
+begin
+  FCipher_Gost.Done;
+end;
+
+procedure TestTCipher_Gost.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Gost.Context.KeySize);
+
+  FCipher_Gost.Mode := TestData.Mode;
+  FCipher_Gost.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_Gost.SetUp;
@@ -1430,6 +1917,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Gost.TestDecode;
+begin
+  DoTestDecode(FCipher_Gost.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Gost.TestEncode;
+begin
+  DoTestEncode(FCipher_Gost.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Misty.Done;
+begin
+  FCipher_Misty.Done;
+end;
+
+procedure TestTCipher_Misty.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Misty.Context.KeySize);
+
+  FCipher_Misty.Mode := TestData.Mode;
+  FCipher_Misty.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Misty.SetUp;
 begin
   FCipher_Misty := TCipher_Misty.Create;
@@ -1461,6 +1973,31 @@ begin
   CheckEquals( 128,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Misty.TestDecode;
+begin
+  DoTestDecode(FCipher_Misty.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Misty.TestEncode;
+begin
+  DoTestEncode(FCipher_Misty.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_NewDES.Done;
+begin
+  FCipher_NewDES.Done;
+end;
+
+procedure TestTCipher_NewDES.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_NewDES.Context.KeySize);
+
+  FCipher_NewDES.Mode := TestData.Mode;
+  FCipher_NewDES.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_NewDES.SetUp;
@@ -1496,6 +2033,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_NewDES.TestDecode;
+begin
+  DoTestDecode(FCipher_NewDES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_NewDES.TestEncode;
+begin
+  DoTestEncode(FCipher_NewDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Q128.Done;
+begin
+  FCipher_Q128.Done;
+end;
+
+procedure TestTCipher_Q128.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Q128.Context.KeySize);
+
+  FCipher_Q128.Mode := TestData.Mode;
+  FCipher_Q128.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Q128.SetUp;
 begin
   FCipher_Q128 := TCipher_Q128.Create;
@@ -1527,6 +2089,31 @@ begin
   CheckEquals( 256,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Q128.TestDecode;
+begin
+  DoTestDecode(FCipher_Q128.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Q128.TestEncode;
+begin
+  DoTestEncode(FCipher_Q128.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC2.Done;
+begin
+  FCipher_RC2.Done;
+end;
+
+procedure TestTCipher_RC2.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_RC2.Context.KeySize);
+
+  FCipher_RC2.Mode := TestData.Mode;
+  FCipher_RC2.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_RC2.SetUp;
@@ -1562,6 +2149,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_RC2.TestDecode;
+begin
+  DoTestDecode(FCipher_RC2.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC2.TestEncode;
+begin
+  DoTestEncode(FCipher_RC2.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC5.Done;
+begin
+  FCipher_RC5.Done;
+end;
+
+procedure TestTCipher_RC5.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_RC5.Context.KeySize);
+
+  FCipher_RC5.Mode := TestData.Mode;
+  FCipher_RC5.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_RC5.SetUp;
 begin
   FCipher_RC5 := TCipher_RC5.Create;
@@ -1593,6 +2205,31 @@ begin
   CheckEquals( 136,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_RC5.TestDecode;
+begin
+  DoTestDecode(FCipher_RC5.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC5.TestEncode;
+begin
+  DoTestEncode(FCipher_RC5.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SAFER.Done;
+begin
+  FCipher_SAFER.Done;
+end;
+
+procedure TestTCipher_SAFER.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_SAFER.Context.KeySize);
+
+  FCipher_SAFER.Mode := TestData.Mode;
+  FCipher_SAFER.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_SAFER.SetUp;
@@ -1628,6 +2265,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_SAFER.TestDecode;
+begin
+  DoTestDecode(FCipher_SAFER.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SAFER.TestEncode;
+begin
+  DoTestEncode(FCipher_SAFER.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Shark.Done;
+begin
+  FCipher_Shark.Done;
+end;
+
+procedure TestTCipher_Shark.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Shark.Context.KeySize);
+
+  FCipher_Shark.Mode := TestData.Mode;
+  FCipher_Shark.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_Shark.SetUp;
 begin
   FCipher_Shark := TCipher_Shark.Create;
@@ -1659,6 +2321,31 @@ begin
   CheckEquals( 112,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Shark.TestDecode;
+begin
+  DoTestDecode(FCipher_Shark.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Shark.TestEncode;
+begin
+  DoTestEncode(FCipher_Shark.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Skipjack.Done;
+begin
+  FCipher_Skipjack.Done;
+end;
+
+procedure TestTCipher_Skipjack.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Skipjack.Context.KeySize);
+
+  FCipher_Skipjack.Mode := TestData.Mode;
+  FCipher_Skipjack.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
 end;
 
 procedure TestTCipher_Skipjack.SetUp;
@@ -1694,6 +2381,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_Skipjack.TestDecode;
+begin
+  DoTestDecode(FCipher_Skipjack.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Skipjack.TestEncode;
+begin
+  DoTestEncode(FCipher_Skipjack.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_TEA.Done;
+begin
+  FCipher_TEA.Done;
+end;
+
+procedure TestTCipher_TEA.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_TEA.Context.KeySize);
+
+  FCipher_TEA.Mode := TestData.Mode;
+  FCipher_TEA.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_TEA.SetUp;
 begin
   FCipher_TEA := TCipher_TEA.Create;
@@ -1727,6 +2439,31 @@ begin
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
 
+procedure TestTCipher_TEA.TestDecode;
+begin
+  DoTestDecode(FCipher_TEA.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_TEA.TestEncode;
+begin
+  DoTestEncode(FCipher_TEA.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_XTEA.Done;
+begin
+  FCipher_XTEA.Done;
+end;
+
+procedure TestTCipher_XTEA.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_XTEA.Context.KeySize);
+
+  FCipher_XTEA.Mode := TestData.Mode;
+  FCipher_XTEA.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
 procedure TestTCipher_XTEA.SetUp;
 begin
   FCipher_XTEA := TCipher_XTEA.Create;
@@ -1758,6 +2495,16 @@ begin
   CheckEquals(  32,  ReturnValue.UserSize);
   CheckEquals(false, ReturnValue.UserSave);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_XTEA.TestDecode;
+begin
+  DoTestDecode(FCipher_XTEA.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_XTEA.TestEncode;
+begin
+  DoTestEncode(FCipher_XTEA.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 { TCipherBasis }
@@ -1817,7 +2564,7 @@ Daten synthetisieren. }
   end;
 end;
 
-procedure TCipherBasis.DoTestEncode(EncodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+procedure TCipherBasis.DoTestEncode(EncodeFunc: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
 var
   Data          : TCipherTestData;
   Result        : TBytes;
@@ -1832,7 +2579,7 @@ Daten synthetisieren. }
   for Data in FTestData do
   begin
     InitProc(Data);
-    Result := EncodeFunct(RawByteString(Data.InputData), TFormat_COPY);
+    Result := EncodeFunc(RawByteString(Data.InputData), TFormat_COPY);
     DoneProc;
 
     TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result));
