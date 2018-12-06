@@ -1074,6 +1074,21 @@ end;
 procedure TestTCipher_Mars.SetUp;
 begin
   FCipher_Mars := TCipher_Mars.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'fda54d3c1d79739ceaf668675595e210b145bfa9e4ab65efaa68c88ea34ab09d';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Mars';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Mars.TearDown;
@@ -1133,6 +1148,21 @@ end;
 procedure TestTCipher_RC4.SetUp;
 begin
   FCipher_RC4 := TCipher_RC4.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'cfbb1291ba5b690a09ca5d14c2e5a229196d183f5539a4edc56c2bfb7c12d630';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_RC4';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_RC4.TearDown;
@@ -1191,6 +1221,21 @@ end;
 procedure TestTCipher_RC6.SetUp;
 begin
   FCipher_RC6 := TCipher_RC6.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '987165a110febdf907853efc21dbfca18f5f8bf74528810def9a227af0622cc6';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_RC6';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_RC6.TearDown;
@@ -1249,6 +1294,21 @@ end;
 procedure TestTCipher_Square.SetUp;
 begin
   FCipher_Square := TCipher_Square.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '439ca6c467e82e472295668506396ac9182120f74436f1617d1490b1a96856c7';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Square';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Square.TearDown;
@@ -1286,7 +1346,7 @@ end;
 
 procedure TestTCipher_Square.TestEncode;
 begin
-  DoTestEncode(FCipher_Square.DecodeStringToBytes, self.Init, self.Done);
+  DoTestEncode(FCipher_Square.EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_SCOP.Done;
@@ -1307,6 +1367,21 @@ end;
 procedure TestTCipher_SCOP.SetUp;
 begin
   FCipher_SCOP := TCipher_SCOP.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_SCOP';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_SCOP.TearDown;
@@ -1365,6 +1440,21 @@ end;
 procedure TestTCipher_Sapphire.SetUp;
 begin
   FCipher_Sapphire := TCipher_Sapphire.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'cff8d04e8e0d42e6aef37afaacbe9b08850c4d0c75ac54c0b9388e54e5609650';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Sapphire';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Sapphire.TearDown;
