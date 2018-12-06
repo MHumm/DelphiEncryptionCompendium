@@ -1586,6 +1586,21 @@ end;
 procedure TestTCipher_2DES.SetUp;
 begin
   FCipher_2DES := TCipher_2DES.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '665c7927e91c8ba0a9e4995a158cbd465c9c75913c38069d75b47e68e947fdab';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_2DES';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_2DES.TearDown;
@@ -1644,6 +1659,21 @@ end;
 procedure TestTCipher_3DES.SetUp;
 begin
   FCipher_3DES := TCipher_3DES.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '074c14f3e22e08d964bf6f82b5dff0a22f2d3bdb17db25b6b51efa71372fd172';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_3DES';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_3DES.TearDown;
@@ -1702,6 +1732,21 @@ end;
 procedure TestTCipher_2DDES.SetUp;
 begin
   FCipher_2DDES := TCipher_2DDES.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '936cf643c6a77fed4db4704ae2a6068b751319afe182ed354e13f688a46b3326';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_2DDES';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_2DDES.TearDown;
@@ -1760,6 +1805,21 @@ end;
 procedure TestTCipher_3DDES.SetUp;
 begin
   FCipher_3DDES := TCipher_3DDES.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '2f5a5ed45e8aaa4ed26659481de195942a9fcc1f4de614f050040364669a778e';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_3DDES';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_3DDES.TearDown;
