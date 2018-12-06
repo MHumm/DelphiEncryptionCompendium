@@ -1001,6 +1001,21 @@ end;
 procedure TestTCipher_Cast256.SetUp;
 begin
   FCipher_Cast256 := TCipher_Cast256.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := '45820e97772071993e2945d5594feca5cd583875469ca7c5faa6339c82fb9254';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_CAST256';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_Cast256.TearDown;
