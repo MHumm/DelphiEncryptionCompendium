@@ -174,6 +174,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -775,6 +776,11 @@ end;
 procedure TestTCipher_Blowfish.TestEncode;
 begin
   DoTestEncode(FCipher_Blowfish.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Blowfish.TestIdentity;
+begin
+  CheckEquals(16319959, FCipher_Blowfish.Identity);
 end;
 
 procedure TestTCipher_Blowfish.TestClassByName;
