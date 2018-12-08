@@ -1,0 +1,29 @@
+DEC - Delphi Encryption Compendium
+Version 6.0
+
+Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+Copyright (c) 2008 - 2018 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
+Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
+All rights reserved.
+
+The DEC team wishes to thank the following people for their contributions:
+
+Andreas Hausladen
+
+
+
+                        *** Export/Import Controls ***
+
+  This is cryptographic software. Even if it is created, maintained and
+  distributed from liberal countries in Europe (where it is legal to do this),
+  it falls under certain export/import and/or use restrictions in some other
+  parts of the world.
+
+  PLEASE REMEMBER THAT EXPORT/IMPORT AND/OR USE OF STRONG CRYPTOGRAPHY
+  SOFTWARE OR EVEN JUST COMMUNICATING TECHNICAL DETAILS ABOUT CRYPTOGRAPHY
+  SOFTWARE IS ILLEGAL IN SOME PARTS OF THE WORLD. SO, WHEN YOU IMPORT THIS
+  PACKAGE TO YOUR COUNTRY, RE-DISTRIBUTE IT FROM THERE OR EVEN JUST EMAIL
+  TECHNICAL SUGGESTIONS OR EVEN SOURCE PATCHES TO THE AUTHOR OR OTHER PEOPLE
+  YOU ARE STRONGLY ADVISED TO PAY CLOSE ATTENTION TO ANY EXPORT/IMPORT AND/OR
+  USE LAWS WHICH APPLY TO YOU. THE AUTHORS OF THE DEC ARE NOT LIABLE FOR ANY
+  VIOLATIONS YOU MAKE HERE. SO BE CAREFUL, IT IS YOUR RESPONSIBILITY.
