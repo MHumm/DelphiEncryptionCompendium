@@ -2,8 +2,8 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.049,=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.059,D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.074,=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.059,D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="..\..\DECGit"/>

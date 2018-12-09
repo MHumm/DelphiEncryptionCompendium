@@ -95,8 +95,17 @@ type
     FBufferSize: Integer;
     FBufferIndex: Integer;
     FPaddingByte: Byte;
+    /// <summary>
+    ///   This abstract method has to be overridden by each concrete hash algorithm
+    ///   to initialize the necessary data structures.
+    /// </summary>
     procedure DoInit; virtual; abstract;
+
     procedure DoTransform(Buffer: PUInt32Array); virtual; abstract;
+    /// <summary>
+    ///   This abstract method has to be overridden by each concrete hash algorithm
+    ///   to finalize the calculation of a hash value over the data passed.
+    /// </summary>
     procedure DoDone; virtual; abstract;
     procedure Increment8(var Value; Add: UInt32);
     /// <summary>
@@ -107,13 +116,25 @@ type
 { TODO : Sollte ersetzt werden zusammen mit PByteArray, wird aber auch in DECRandom benutzt! }
     function Digest: PByteArray; virtual; abstract;
   public
+    /// <summary>
+    ///   Fees internal resources
+    /// </summary>
     destructor Destroy; override;
+    /// <summary>
+    ///   Generic initialization of internal data structures. Additionally the
+    ///   internal algorithm specific (because of being overridden by each
+    ///   hash algorithm) DoInit method.
+    /// </summary>
     procedure Init;
+    /// <summary>
+    ///   Calculates one chunk of data to be hashed. Since
+    /// </summary>
     procedure Calc(const Data; DataSize: Integer); virtual;
 
     /// <summary>
     ///   Frees dynamically allocated buffers in a way which safeguards agains
     ///   data stealing by other methods which afterwards might allocate this memory.
+    ///   Additionaly calls the algorithm spercific DoDone method.
     /// </summary>
     procedure Done;
 
@@ -357,7 +378,37 @@ type
     class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
     class function MGF1(const Data: TBytes; MaskSize: Integer): TBytes; overload;
     // key derivation
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
+    /// <param name="SeedSize">
+    ///   Size of the seed in byte.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key.
+    /// </returns>
     class function KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes; overload;
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
+    /// <param name="SeedSize">
+    ///   Size of the seed in byte.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key.
+    /// </returns>
     class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
     // DEC's own KDF + MGF
     class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;

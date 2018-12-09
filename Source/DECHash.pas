@@ -101,6 +101,9 @@ type
   THash_Snefru256   = class;  // " - "
   THash_Sapphire    = class;
 
+  /// <summary>
+  ///   Implementation of the MD2 hash algorithm
+  /// </summary>
   THash_MD2 = class(TDECHash)
   private
     FDigest: array[0..63] of Byte;
@@ -180,6 +183,7 @@ type
   end;
 
   /// <summary>
+{ TODO : Chrck if the XMLDOC shall talk about SHA1 or rather about SHA0 }
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
   ///   clear that it should not be used if ever possible! Use SHA256 or SHA512

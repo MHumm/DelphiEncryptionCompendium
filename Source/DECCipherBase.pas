@@ -193,6 +193,20 @@ type
     {$ENDIF DEC3_CMCTS}
   );
 
+  /// <summary>
+  ///   Each cipher algorithm has to implement a Encode and a Decode method which
+  ///   has the same signature as this type. The CipherFormats get these
+  ///   encode/decode methods passed to do their work.
+  /// </summary>
+  /// <param name="Source">
+  ///   Contains the data to be encoded or decoded
+  /// </param>
+  /// <param name="Dest">
+  ///   Contains the data after encoding or decoding
+  /// </param>
+  /// <param name="DataSize">
+  ///   Number of bytes to encode or decode
+  /// </param>
   TDECCipherCodeEvent = procedure(const Source; var Dest; DataSize: Integer) of object;
 
   /// <summary>

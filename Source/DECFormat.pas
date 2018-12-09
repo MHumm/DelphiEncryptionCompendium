@@ -125,13 +125,13 @@ type
   end;
 
   /// <summary>
-  ///   Same TFormat_HEX, use TFormat_HEX instead
+  ///   Same as TFormat_HEX, use TFormat_HEX instead
   /// </summary>
   TFormat_Base16 = class(TFormat_HEX)
   end deprecated 'Use TFormat_HEX instead';
 
   /// <summary>
-  ///   Same TFormat_HEXL, use TFormat_HEXL instead
+  ///   Same as TFormat_HEXL, use TFormat_HEXL instead
   /// </summary>
   TFormat_Base16L = class(TFormat_HEXL)
   end deprecated 'Use TFormat_HEXL instead';
@@ -167,6 +167,9 @@ type
     class function CharTableBinary: TBytes; override;
   end;
 
+  /// <summary>
+  ///   Same as DECMIME32, which itsself should only be used for legacy projects
+  /// </summary>
   TFormat_MIME32 = class(TFormat_DECMIME32)
   end deprecated 'Use TFormat_DECMIME32 instead';
 
@@ -280,8 +283,6 @@ type
     class function CharTableBinary: TBytes; virtual;
   end;
 
-function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
-
 implementation
 
 uses
@@ -289,11 +290,6 @@ uses
 
 resourcestring
   sInvalidStringFormat  = 'Input is not an valid %s format';
-
-function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
-begin
-  Result := DECFormatBase.ValidFormat(FormatClass);
-end;
 
 class function TFormat_HEX.CharTableBinary: TBytes;
 begin
