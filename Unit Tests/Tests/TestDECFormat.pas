@@ -728,11 +728,10 @@ end;
 procedure TestTFormat_DECMIME32.TestIsValidRawByteString;
 begin
   CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('')));
-  CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('0123456789abcdefABCDEF')));
-  // Invalid character: q is not a hex char
-  CheckEquals(false, TFormat_DECMIME32.IsValid(BytesOf('1q')));
-  // Hex input length needs to be a multiple of 2, if input is not empty
-  CheckEquals(false, TFormat_DECMIME32.IsValid(BytesOf('6')));
+
+  CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('abcdefghijklnpqrstuwxyz123456789')));
+  CheckEquals(false, TFormat_DECMIME32.IsValid(BytesOf('1Q')));
+  CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('6')));
 end;
 
 procedure TestTFormat_DECMIME32.TestIsValidTBytes;
@@ -745,7 +744,7 @@ begin
   SrcBuf := BytesOf(cTestDataEncode[3].Output);
   CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf));
 
-  SrcBuf := BytesOf(RawByteString('q'));
+  SrcBuf := BytesOf(RawByteString('Q'));
   CheckEquals(false, TFormat_DECMIME32.IsValid(SrcBuf));
 end;
 
@@ -759,7 +758,7 @@ begin
   SrcBuf := BytesOf(cTestDataEncode[3].Output);
   CheckEquals(true, TFormat_DECMIME32.IsValid(SrcBuf[0], length(SrcBuf)));
 
-  SrcBuf := BytesOf(RawByteString('q'));
+  SrcBuf := BytesOf(RawByteString('Q'));
   CheckEquals(false, TFormat_DECMIME32.IsValid(SrcBuf[0], length(SrcBuf)));
 end;
 
@@ -846,7 +845,9 @@ var
   i       : Integer;
   SrcBuf,
   DestBuf : TBytes;
+  OldCharsPerLineValue : Cardinal;
 begin
+  OldCharsPerLineValue := FFormat_Radix64.GetCharsPerLine;
   for i := Low(cTestDataEncode) to High(cTestDataEncode) do
   begin
     SrcBuf := BytesOf(RawByteString(cTestDataEncode[i].Input));
@@ -857,6 +858,7 @@ begin
     CheckEquals(cTestDataEncode[i].Output,
                 BytesToRawString(DestBuf));
   end;
+  FFormat_Radix64.SetCharsPerLine(OldCharsPerLineValue);
 end;
 
 procedure TestTFormat_Radix64.TestClassByName;

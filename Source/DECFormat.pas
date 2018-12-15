@@ -163,6 +163,15 @@ type
     ///   already use this format. It is being considered to be more or less deprecated.
     /// </remarks>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <summary>
+    ///   Checks if certain data adheres to the rules for this formatting.
+    /// </summary>
+    /// <remarks>
+    ///   This formatting should only be used for supporting legacy projects which
+    ///   already use this format. It is being considered to be more or less deprecated.
+    /// </remarks>
+    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+
   public
     class function CharTableBinary: TBytes; override;
   end;
@@ -470,6 +479,26 @@ begin
 
   SetLength(Dest, n);
   SetLength(Src, 0);
+end;
+
+class function TFormat_DECMIME32.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
+begin
+  Result := True;
+  T := CharTableBinary;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    if TableFindBinary(S^, T, length(T)) >= 0 then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
 end;
 
 class procedure TFormat_DECMIME32.DoDecode(const Source; var Dest: TBytes; Size: Integer);
