@@ -110,7 +110,7 @@ type
 
   // Test methods for base class for all hash classes
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTDECHash = class(THash_TestBase)
+  TestTDECHash = class(TTestCase)
   published
     procedure TestIsClassListCreated;
   end;
@@ -2852,7 +2852,7 @@ end;
 procedure TestTHash_Sapphire.ConfigHashClass(aHashClass: TDECHash; aIdxTestData: Integer);
 begin
   inherited;
-  THash_Sapphire(FHash).RequestedDigestSize := FTestData[aIdxTestData].ReqDigSize;
+  THash_Sapphire(FHash).RequestedDigestSize := FTestData[aIdxTestData].RequiredDigestSize;
 end;
 
 procedure TestTHash_Sapphire.SetUp;
@@ -2865,111 +2865,111 @@ begin
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436a';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436a';
-  lDataRow.ReqDigSize               := 16;
+  lDataRow.RequiredDigestSize       := 16;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822';
-  lDataRow.ReqDigSize               := 16;
+  lDataRow.RequiredDigestSize       := 16;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe5';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe5';
-  lDataRow.ReqDigSize               := 20;
+  lDataRow.RequiredDigestSize       := 20;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25c';
-  lDataRow.ReqDigSize               := 20;
+  lDataRow.RequiredDigestSize       := 20;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54';
-  lDataRow.ReqDigSize               := 24;
+  lDataRow.RequiredDigestSize       := 24;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a6';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8d';
-  lDataRow.ReqDigSize               := 24;
+  lDataRow.RequiredDigestSize       := 24;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb';
-  lDataRow.ReqDigSize               := 28;
+  lDataRow.RequiredDigestSize       := 28;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5';
-  lDataRow.ReqDigSize               := 28;
+  lDataRow.RequiredDigestSize       := 28;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f';
-  lDataRow.ReqDigSize               := 32;
+  lDataRow.RequiredDigestSize       := 32;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f32';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5cba2e6d3';
-  lDataRow.ReqDigSize               := 32;
+  lDataRow.RequiredDigestSize       := 32;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520';
-  lDataRow.ReqDigSize               := 36;
+  lDataRow.RequiredDigestSize       := 36;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5cba2e6d37eb8dbc4';
-  lDataRow.ReqDigSize               := 36;
+  lDataRow.RequiredDigestSize       := 36;
   lDataRow.AddInputVector('abc');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520fa7a5ad7';
   lDataRow.ExpectedOutputUTFStrTest := 'c1e0df6ce706a32fb7b25b7ac55f436ad29c9fe54b096f54a2a128bb08c9651f34606520fa7a5ad7';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '8b3763c9e423995743a702a37cc4a82c9771c7ac04fe44990d2cf64a311715406a59cf62b0b4edc9';
   lDataRow.ExpectedOutputUTFStrTest := 'a947fdf3a224bcd948c426cec358e84c8468ff42af47dd558979953ee426213ac2f415b0c3c9d476';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('a');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4acf17d911781571f053ce82e2f70cce5470f410b717b9a699063814b6df1f327c766773fc59830b';
   lDataRow.ExpectedOutputUTFStrTest := '9c7d13f4c388cd4dea2b3f513dc08822c7a6d25ced55ad8ddc81aad5cba2e6d37eb8dbc44c70af77';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('ab');
   lDataRow.AddInputVector('c');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'e0affc0f16c9303c9938dbc9b1e6be3a3dcb75a2879ef8227fdd42595980793c94e7d3e33ce0a20a';
   lDataRow.ExpectedOutputUTFStrTest := 'f8ddc0058786d1094b005901927e6743ec8a46ba69a8c0e3821086510dfc338ec839fb729a733c3b';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('message digest');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '23b86cf1a67c6870b90e594be9b4eda4c3862036edf1efb03c86863c274585cf5837429f1ff6f4b0';
   lDataRow.ExpectedOutputUTFStrTest := '14d2bc67c1d0ec0afaadff77f03fe563156d416b232eb2f995a038cb5de6a19dcbc3e773decca6ab';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('abcdefghijklm');
   lDataRow.AddInputVector('nopqrstuvwxyz');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '341530ae3c1f715197847eddd38b4f58cc9a13c3e65f890772c9c561b103d2bf41340dff2af0335f';
   lDataRow.ExpectedOutputUTFStrTest := 'da208c7d3cbb8280f0f9be7b88b6cc54ea24eb9dd900071b15b83cfb6abe68dce87c27f7ce1097ff';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('A');
   lDataRow.AddInputVector('BCDEFGHIJKLMNOPQRS');
   lDataRow.AddInputVector('TUVWXYZabcdefghijklmnopqrstuvwxyz012345678');
@@ -2978,7 +2978,7 @@ begin
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '5bb5a1bd1ad4974042aa74992489fbdec857212a29cedc67b1fc79ddc9f139c3f52044be4e6f8588';
   lDataRow.ExpectedOutputUTFStrTest := '87b0a006a73261011c4df04dc164216cfe566e54f92f161fec529c3cc956929955b1dc1cbe0215fa';
-  lDataRow.ReqDigSize               := 40;
+  lDataRow.RequiredDigestSize       := 40;
   lDataRow.AddInputVector('1234567890', 8);
 
 end;

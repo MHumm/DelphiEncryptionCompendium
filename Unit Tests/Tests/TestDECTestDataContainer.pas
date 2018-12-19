@@ -73,7 +73,7 @@ type
     function GetRequiredDigestSize:Integer;
     function GetPaddingByte:Byte;
 
-    property ReqDigSize       : Integer read GetRequiredDigestSize;
+    property RequiredDigestSize       : Integer read GetRequiredDigestSize;
     property PaddingByte      : Byte read GetPaddingByte;
   end;
 
@@ -134,10 +134,10 @@ type
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
     procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1);
   protected // IHashTestDataRow
-    function GetReqDigSize:Integer;
+    function GetRequiredDigestSize:Integer;
     function GetPaddingByte:Byte;
   protected // IHashTestDataRowSetup
-    procedure SetReqDigSize(const aValue:Integer);
+    procedure SetRequiredDigestSize(const aValue:Integer);
     procedure SetPaddingByte(const aValue:Byte);
   public
     constructor Create;
@@ -259,7 +259,7 @@ begin
   result := FPaddingByte;
 end;
 
-function TTestDataRow.GetReqDigSize: Integer;
+function TTestDataRow.GetRequiredDigestSize: Integer;
 begin
   result := FReqDigSize;
 end;
@@ -279,7 +279,7 @@ begin
   FPaddingByte := aValue;
 end;
 
-procedure TTestDataRow.SetReqDigSize(const aValue: Integer);
+procedure TTestDataRow.SetRequiredDigestSize(const aValue: Integer);
 begin
   FReqDigSize := aValue;
 end;

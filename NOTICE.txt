@@ -1,12 +1,13 @@
 DEC - Delphi Encryption Compendium
 Version 6.0
 
+Copyright (c) 2018 - 2018 Norman Gallery (ng931884 [at] gmx [dot] de)
 Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
 Copyright (c) 2008 - 2018 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
 Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
 All rights reserved.
 
-The DEC team wishes to thank the following people for their contributions:
+The DEC team wishes to thank the following other people for their contributions:
 
 Andreas Hausladen
 
