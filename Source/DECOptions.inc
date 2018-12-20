@@ -64,7 +64,6 @@
 // Reset Defines (do not change!)
 //------------------------------------------------------------------------------
 
-{$UNDEF SUPPORTS_INLINE}
 {$UNDEF NATIVEINT_UNDEFINED}
 
 {$UNDEF PUREPASCAL}

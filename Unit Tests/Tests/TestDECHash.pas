@@ -75,14 +75,57 @@ uses
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
-  TestDECTestDataContainer,
+  TestDECTestDataContainer, DECTypes,
   DECBaseClass, DECHash, DECHashBase, Classes, SysUtils, DECUtil, DECFormatBase;
 
 type
+  /// <summary>
+  ///   Makes Increment8 method public for testing purposes as we fixed the ASM
+  ///   code of it.
+  /// </summary>
+  TDECHashIncrement8 = class(TDECHash)
+  strict protected
+    /// <summary>
+    ///   Needs to be overridden, even if empty, as it's called internally by
+    ///   the class to be tested
+    /// </summary>
+    procedure DoInit; override;
+    /// <summary>
+    ///   Needs to be overridden, even if empty, as it's called internally by
+    ///   the class to be tested
+    /// </summary>
+    procedure DoDone; override;
+    procedure DoTransform(Buffer: PUInt32Array); override;
+    function Digest: PByteArray; override;
+  public
+    /// <summary>
+    ///   Need to be overriden, as the originals would raise an exception by design
+    /// </summary>
+    class function DigestSize: Integer; override;
+    /// <summary>
+    ///   Need to be overriden, as the originals would raise an exception by design
+    /// </summary>
+    class function BlockSize: Integer; override;
+
+    procedure Increment8Test(var Value; Add: UInt32);
+  end;
+
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  THash_TestIncrement8 = class(TTestCase)
+  strict protected
+    FHashIncr8 : TDECHashIncrement8;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published  // special case: test for Increment8 method due to ASM fixes applied
+    procedure TestIncrement8;
+  end;
+
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   THash_TestBase = class(TTestCase)
   strict protected
-    FTestData : IHashTestDataContainer;
-    FHash     : TDECHash;
+    FTestData  : IHashTestDataContainer;
+    FHash      : TDECHash;
 
     // kind of "low-level" test, close to the original test used in DEC5.2
     procedure DoTest52(HashClass:TDECHash);
@@ -3176,7 +3219,7 @@ end;
 procedure THash_TestBase.Setup;
 begin
   inherited;
-  FTestData := CreateTestDataContainer as IHashTestDataContainer;
+  FTestData  := CreateTestDataContainer as IHashTestDataContainer;
 end;
 
 procedure THash_TestBase.TearDown;
@@ -3240,10 +3283,74 @@ begin
   CheckEquals(true, assigned(TDECHash.ClassList), 'Class list has not been created in initialization');
 end;
 
+{ TDECHashUnitTest }
+
+class function TDECHashIncrement8.BlockSize: Integer;
+begin
+  result := 4;
+end;
+
+function TDECHashIncrement8.Digest: PByteArray;
+begin
+  // Empty on purpose
+end;
+
+class function TDECHashIncrement8.DigestSize: Integer;
+begin
+  result := 0;
+end;
+
+procedure TDECHashIncrement8.DoDone;
+begin
+  // Empty on purpose
+end;
+
+procedure TDECHashIncrement8.DoInit;
+begin
+  // Empty on purpose
+end;
+
+procedure TDECHashIncrement8.DoTransform(Buffer: PUInt32Array);
+begin
+  // Empty on purpose
+end;
+
+procedure TDECHashIncrement8.Increment8Test(var Value; Add: UInt32);
+begin
+  inherited Increment8(Value, Add);
+end;
+
+{ THash_TestIncrement8 }
+
+procedure THash_TestIncrement8.SetUp;
+begin
+  inherited;
+  FHashIncr8 := TDECHashIncrement8.Create;
+  FHashIncr8.Init;
+end;
+
+procedure THash_TestIncrement8.TearDown;
+begin
+  FHashIncr8.Free;
+  inherited;
+end;
+
+procedure THash_TestIncrement8.TestIncrement8;
+var
+  i, n : Integer;
+begin
+  for i := 1 to 255 do
+  begin
+    n := i;
+    FHashIncr8.Increment8Test(n, 1);
+    CheckEquals(i + 8, n);
+  end;
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
-  RegisterTests('DECHash', [
+  RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             TestTDECHash.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
@@ -3272,6 +3379,7 @@ initialization
                             TestTHash_Sapphire.Suite
                               ]);
   {$ELSE}
+  TDUnitX.RegisterTestFixture(THash_TestIncrement8);
   TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);

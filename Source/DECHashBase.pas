@@ -389,8 +389,14 @@ type
     ///   Size in bytes of the source data passed.
     /// </param>
 { TODO : Was ist Seed und MaskSize? Frederik fragen. }
+    /// <param name="Seed">
+    ///   Start value for pseudo random number generator
+    /// </param>
     /// <param name="SeedSize">
     ///   Size of the seed in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   ???
     /// </param>
     /// <returns>
     ///   Returns the new derrived key.
@@ -506,30 +512,51 @@ end;
 procedure TDECHash.Increment8(var Value; Add: UInt32);
 // Value := Value + 8 * Add
 // Value is array[0..7] of UInt32
+{ TODO -oNormanNG -cCodeReview : !!Unbedingt noch einmal prüfen, ob das wirklich so alles stimmt!!
+Mein Versuch der Umsetzung von Increment8 in ASM.
+Die Implementierung zuvor hat immer Zugriffsverletzungen ausgelöst.
+Vermutung: die alte Implementierung lag ursprünglich ausserhalb der Klasse und wurde später
+in die Klasse verschoben. Dabei verändert sich aber die Nutzung der Register, da zusätzlich
+der SELF-Parameter in EAX übergeben wird. Beim Schreiben nach auf Value wurde dann in die Instanz (Self)
+geschrieben -> peng
+}
 {$IF defined(X86ASM) or defined(X64ASM)}
   {$IFDEF X86ASM}
+  //   type TData = packed array[0..7] of UInt32;  8x32bit
+  //   TypeOf Param "Value" = TData
+  //
+  //   EAX = Self
+  //   EDX = Pointer to "Value"
+  //   ECX = Value of "ADD"
+  register; // redundant but informative
   asm
-    MOV ECX,EDX
-    LEA EDX,[EDX * 8]
-    SHR ECX,29 // 12/13/2011 Fixed
-    ADD [EAX].DWord[ 0],EDX
-    ADC [EAX].DWord[ 4],ECX
-    ADC [EAX].DWord[ 8],0
-    ADC [EAX].DWord[12],0
-    ADC [EAX].DWord[16],0
-    ADC [EAX].DWord[20],0
-    ADC [EAX].DWord[24],0
-    ADC [EAX].DWord[28],0
-    JC RaiseHashOverflowError
+      LEA EAX,[ECX*8]              //                      EAX := ADD * 8
+      SHR ECX,29                   //                      29bit nach rechts schieben, 3bit beiben stehen
+      ADD [EDX].DWord[00],EAX      // add [edx], eax       TData(Value)[00] := TData(Value)[00] + EAX
+      ADC [EDX].DWord[04],ECX      // adc [edx+$04], ecx   TData(Value)[04] := TData(Value)[04] + ECX + Carry
+      ADC [EDX].DWord[08],0        // adc [edx+$08], 0     TData(Value)[08] := TData(Value)[08] + 0 + Carry
+      ADC [EDX].DWord[12],0        // adc [edx+$0c], 0     TData(Value)[12] := TData(Value)[12] + 0 + Carry
+      ADC [EDX].DWord[16],0        // adc [edx+$10], 0     TData(Value)[16] := TData(Value)[16] + 0 + Carry
+      ADC [EDX].DWord[20],0        // adc [edx+$14], 0     TData(Value)[20] := TData(Value)[20] + 0 + Carry
+      ADC [EDX].DWord[24],0        // adc [edx+$18], 0     TData(Value)[24] := TData(Value)[24] + 0 + Carry
+      ADC [EDX].DWord[28],0        // adc [edx+$1c], 0     TData(Value)[28] := TData(Value)[28] + 0 + Carry
+      JC  RaiseHashOverflowError
   end;
   {$ENDIF !X86ASM}
   {$IFDEF X64ASM}
+  //   type TData = packed array[0..3] of UInt64;  4x64bit
+  //   TypeOf Param "Value" = TData
+  //
+  //   RCX = Self
+  //   RDX = Pointer to "Value"
+  //   R8D = Value of "ADD"
+  register; // redundant but informative
   asm
-    SHL RDX, 3 // the caller writes to EDX what automatically clears the high DWORD of RDX
-    ADD QWORD PTR [RCX     ], RDX
-    ADD QWORD PTR [RCX +  8], 0
-    ADD QWORD PTR [RCX + 16], 0
-    ADD QWORD PTR [RCX + 24], 0
+    SHL R8, 3                      // R8 := Add * 8       the caller writes to R8D what automatically clears the high DWORD of R8
+    ADD QWORD PTR [RDX     ], R8   // add [rdx], r8       TData(Value)[00] := TData(Value)[00] + R8
+    ADD QWORD PTR [RDX +  8], 0    // add [rdx+$08], 0    TData(Value)[08] := TData(Value)[08] + 0 + Carry
+    ADD QWORD PTR [RDX + 16], 0    // add [rdx+$10], 0    TData(Value)[16] := TData(Value)[16] + 0 + Carry
+    ADD QWORD PTR [RDX + 24], 0    // add [rdx+$18], 0    TData(Value)[24] := TData(Value)[24] + 0 + Carry
     JC RaiseHashOverflowError;
   end;
   {$ENDIF !X64ASM}

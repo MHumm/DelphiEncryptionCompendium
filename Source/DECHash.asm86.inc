@@ -6688,7 +6688,7 @@ var
   I: Integer;
   T: UInt32; //LongWord;
 begin
-  SwapLongBuffer(S[0], W[0], 16);
+  SwapUInt32Buffer(S[0], W[0], 16);
   if Rotate then
     for I := 16 to 79 do
     begin
@@ -27295,7 +27295,7 @@ end;
 {$IFDEF THash_Snefru128_asm}
 procedure THash_Snefru128.DoTransform(Buffer: PUInt32Array);
 begin
-  SwapLongBuffer(Buffer[0], FDigest[4], 12);
+  SwapUInt32Buffer(Buffer[0], FDigest[4], 12);
   asm
                 push    ebx
                 mov     eax, Self
@@ -27913,7 +27913,7 @@ end;
 {$IFDEF THash_Snefru256_asm}
 procedure THash_Snefru256.DoTransform(Buffer: PUInt32Array);
 begin
-  SwapLongBuffer(Buffer[0], FDigest[8], 8);
+  SwapUInt32Buffer(Buffer[0], FDigest[8], 8);
   asm
                 push    ebx
                 mov     eax, Self
