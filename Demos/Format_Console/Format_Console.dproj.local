@@ -4,11 +4,11 @@
     <Transaction>1899.12.30 00:00:00.000.623,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.692,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.053,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.295,D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj=d:\Projekte\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.109,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.295,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Format_Console\Format_Console.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.291,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.745,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.490,=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.291,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.109,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
   </Transactions>
 </BorlandProject>

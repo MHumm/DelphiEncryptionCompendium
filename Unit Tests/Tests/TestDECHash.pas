@@ -95,7 +95,15 @@ type
     ///   the class to be tested
     /// </summary>
     procedure DoDone; override;
+    /// <summary>
+    ///   Needs to be overridden, even if empty, as it's called internally by
+    ///   the class to be tested
+    /// </summary>
     procedure DoTransform(Buffer: PUInt32Array); override;
+    /// <summary>
+    ///   Needs to be overridden, even if empty, as it's called internally by
+    ///   the class to be tested
+    /// </summary>
     function Digest: PByteArray; override;
   public
     /// <summary>
@@ -107,7 +115,13 @@ type
     /// </summary>
     class function BlockSize: Integer; override;
 
-    procedure Increment8Test(var Value; Add: UInt32);
+    /// <summary>
+    ///   Just calls the inherited Increment8 method in order to make it public
+    ///   so it can be tested. Internal methods usually do not get unit tested,
+    ///   but since this one created quite some heavoc in ASM mode of this library
+    ///   (see DECOptions.inc for the necessary define) it deserves some testing.
+    /// </summary>
+    procedure Increment8(var Value; Add: UInt32);
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -121,7 +135,6 @@ type
     procedure TestIncrement8;
   end;
 
-  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   THash_TestBase = class(TTestCase)
   strict protected
     FTestData  : IHashTestDataContainer;
@@ -3292,7 +3305,8 @@ end;
 
 function TDECHashIncrement8.Digest: PByteArray;
 begin
-  // Empty on purpose
+  // Returns nil on purpose to supress a return value might be undefined warning
+  result := nil;
 end;
 
 class function TDECHashIncrement8.DigestSize: Integer;
@@ -3315,7 +3329,7 @@ begin
   // Empty on purpose
 end;
 
-procedure TDECHashIncrement8.Increment8Test(var Value; Add: UInt32);
+procedure TDECHashIncrement8.Increment8(var Value; Add: UInt32);
 begin
   inherited Increment8(Value, Add);
 end;
@@ -3342,7 +3356,7 @@ begin
   for i := 1 to 255 do
   begin
     n := i;
-    FHashIncr8.Increment8Test(n, 1);
+    FHashIncr8.Increment8(n, 1);
     CheckEquals(i + 8, n);
   end;
 end;

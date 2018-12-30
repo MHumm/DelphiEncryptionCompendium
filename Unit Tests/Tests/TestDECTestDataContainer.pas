@@ -73,8 +73,8 @@ type
     function GetRequiredDigestSize:Integer;
     function GetPaddingByte:Byte;
 
-    property RequiredDigestSize       : Integer read GetRequiredDigestSize;
-    property PaddingByte      : Byte read GetPaddingByte;
+    property RequiredDigestSize : Integer read GetRequiredDigestSize;
+    property PaddingByte        : Byte read GetPaddingByte;
   end;
 
   IHashTestDataContainer = interface(ITestDataContainer)
@@ -95,8 +95,8 @@ uses
 type
   TTestDataInputVector = class(TInterfacedObject, ITestDataInputVector)
   private
-    FData:RawByteString;
-    FRunCount:Cardinal;
+    FData     : RawByteString;
+    FRunCount : Cardinal;
   protected // ITestDataInputVector
     function GetRunCount:Cardinal;
     function GetData:RawByteString;
@@ -104,12 +104,33 @@ type
     constructor Create(const aData:RawByteString; const aRunCount:Cardinal);
   end;
 
+  /// <summary>
+  ///   All methods are protected by design so that nobody directly uses this class.
+  ///   It shall be used via the ITestDataInputVectorContainer interface, which
+  ///   automatically makes the methods allowed to be used externally public
+  /// </summary>
   TTestDataInputVectorContainer = class(TInterfacedObject, ITestDataInputVectorContainer)
   private
-    FVectors:TInterfaceList;
+    FVectors : TInterfaceList;
   protected // ITestDataInputVectorContainer
     function GetCount:Integer;
     function GetVectors(aIndex:Integer):ITestDataInputVector;
+    /// <summary>
+    ///   Adds an input vector for one test to the list
+    /// </summary>
+    /// <param name="aData">
+    ///   Test data for the vector
+    /// </param>
+    /// <param name="aRunCount">
+    ///   Number of times the test shall be repeated on the data given, default = 1
+    /// </param>
+    /// <param name="aConcatCount">
+    ///   Number of times aData is being concatenated to form the real input data
+    ///   for this test vector
+    /// </param>
+    /// <returns>
+    ///   An interface to the generated test vector
+    /// </returns>
     function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
   public
     constructor Create;
@@ -207,9 +228,10 @@ end;
 { TTestDataRow }
 
 procedure TTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: Cardinal);
-var lData:String;
-    Idx:Integer;
-    lVector:ITestDataInputVector;
+var
+  lData:String;
+  Idx:Integer;
+  lVector:ITestDataInputVector;
 begin
   lVector := FInputVectors.AddInputVector(aData, aRunCount, aConcatCount);
 
@@ -219,7 +241,7 @@ begin
     lData := lData + lVector.Data;
   end;
 
-  FInputData := fInputData + lData;
+  FInputData := FInputData + lData;
 end;
 
 constructor TTestDataRow.Create;
@@ -286,9 +308,11 @@ end;
 
 { TTestDataInputVectorContainer }
 
-function TTestDataInputVectorContainer.AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
-var lData:RawByteString;
-    Idx:Integer;
+function TTestDataInputVectorContainer.AddInputVector(const aData:RawByteString;
+           const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
+var
+  lData : RawByteString;
+  Idx   : Integer;
 begin
   lData := '';
   for Idx := 1 to aConcatCount do
@@ -326,7 +350,7 @@ end;
 constructor TTestDataInputVector.Create(const aData: RawByteString; const aRunCount: Cardinal);
 begin
   inherited Create;
-  FData := aData;
+  FData     := aData;
   FRunCount := aRunCount;
 end;
 

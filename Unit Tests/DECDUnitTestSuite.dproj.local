@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.059,D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.049,=D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.059,D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas=D:\Projekte\DECGit\Unit Tests\Tests\TestDECBaseClass.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.524,=D:\Projekte\DECGit\Unit Tests\Tests\TestDECTestDataContainer.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.074,=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
-    <Transaction>2018.12.16 17:05:40.524,=D:\Projekte\DECGit\Unit Tests\Tests\TestDECTestDataContainer.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="..\..\DECGit"/>
