@@ -528,7 +528,8 @@ var
 begin
 { TODO :
 Test verallgemeinert aufbauen und über Testdata als Eingabe gehen.
-Außerdem für jede Hash Funktion umsetzen? }
+Außerdem für jede Hash Funktion umsetzen?  Frederik und ich wollen vorher KDF2
+noch etwas analysieren: inwieweit entspricht dieser dem offiziellen Standard?}
   SetLength(Data, 5);
   Data := [0, 1, 2, 3, 4];
 

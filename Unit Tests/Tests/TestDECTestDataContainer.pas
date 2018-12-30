@@ -229,7 +229,7 @@ end;
 
 procedure TTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: Cardinal);
 var
-  lData:String;
+  lData:RawByteString;
   Idx:Integer;
   lVector:ITestDataInputVector;
 begin

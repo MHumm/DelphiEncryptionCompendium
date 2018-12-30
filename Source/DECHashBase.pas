@@ -409,8 +409,11 @@ type
     ///   Source data from which the new key shall be derrived.
     /// </param>
 { TODO : Was ist Seed und MaskSize? Frederik fragen. }
-    /// <param name="SeedSize">
-    ///   Size of the seed in byte.
+    /// <param name="Seed">
+    ///   Start value for pseudo random number generator
+    /// </param>
+    /// <param name="MaskSize">
+    ///   ???
     /// </param>
     /// <returns>
     ///   Returns the new derrived key.

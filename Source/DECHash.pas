@@ -439,6 +439,7 @@ type
   protected
     procedure DoInit; override;
     procedure DoDone; override;
+    procedure DoTransform(Buffer: PUInt32Array); override;
   public
     function Digest: PByteArray; override;
     function DigestAsBytes: TBytes; override;
@@ -3405,6 +3406,13 @@ begin
   FCipher := 11;
   for I := 0 to 255 do
     FCards[I] := 255 - I;
+end;
+
+procedure THash_Sapphire.DoTransform(Buffer: PUInt32Array);
+begin
+  // Empty on purpose: the base class for the hashes declares an abstract
+  // DoTransform method and not providing an override for it causes a compiler
+  // warning
 end;
 
 procedure THash_Sapphire.DoDone;

@@ -287,7 +287,7 @@ type
   /// <summary>
   ///   Testmethoden für Klasse TDECCipherModes
   /// </summary>
-  [TestFixture]
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherModes = class(TTestCase)
   strict private
     FDECPaddedCipher: TTestableCipherModes;
