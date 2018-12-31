@@ -1,3 +1,12 @@
+!!! We did not release DEC V6.0 beta 1 yet             !!!
+!!! This file is only in preparation of such a release !!!
+!!! When we release, the release will appear on the    !!!
+!!! release tab in GitHub!                             !!! 
+
+!!! Something else: while we plan to move from MPL 1.0 !!!
+!!! to Apache 2.0 as licence we have not really done   !!!
+!!! this, even if GitHub assumes so!                   !!!
+
 DEC V6.0 beta 1 readme
 
 Please read these information thoroughly before using this library 

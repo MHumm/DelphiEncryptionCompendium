@@ -3110,7 +3110,7 @@ begin
 
     CheckEquals(ResultExpected,
                 ResultCalculated,
-                HashClass.ClassName+' Index: '+IntToStr(i));
+                HashClass.ClassName + ' Index: '+IntToStr(i));
   end;
 end;
 
@@ -3170,23 +3170,23 @@ end;
 
 procedure THash_TestBase.DoTestCalcStream(HashClass: TDECHash);
 var
-  s    : TMemoryStream;
-  i    : Integer;
-  Buf  : TBytes;
-  Hash : TBytes;
+  Stream : TMemoryStream;
+  i      : Integer;
+  Buf    : TBytes;
+  Hash   : TBytes;
 begin
-  s := TMemoryStream.Create;
+  Stream := TMemoryStream.Create;
 
   try
     for i := 0 to FTestData.Count-1 do
       begin
         Buf := BytesOf(FTestData[i].InputData);
-        s.Clear;
-        s.Write(Buf, Length(Buf));
-        s.Position := 0;
+        Stream.Clear;
+        Stream.Write(Buf, Length(Buf));
+        Stream.Position := 0;
 
         ConfigHashClass(HashClass, i);
-        HashClass.CalcStream(s, Length(Buf), Hash);
+        HashClass.CalcStream(Stream, Length(Buf), Hash);
 
         CheckEquals(FTestData[i].ExpectedOutput,
                     BytesToRawString(TFormat_HEXL.Encode(Hash)),
@@ -3195,7 +3195,7 @@ begin
                     string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
       end;
   finally
-    s.Free;
+    Stream.Free;
   end;
 end;
 
