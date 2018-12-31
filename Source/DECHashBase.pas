@@ -265,7 +265,7 @@ type
     /// </param>
     /// <param name="Format">
     ///   Formatting class from DECFormat. The formatting will be applied to the
-    ///   returned digest value
+    ///   returned digest value. This parameter is optional.
     /// </param>
     /// <returns>
     ///   string with the calculated hash value
@@ -279,7 +279,7 @@ type
     /// </param>
     /// <param name="Format">
     ///   Formatting class from DECFormat. The formatting will be applied to the
-    ///   returned digest value
+    ///   returned digest value. This parameter is optional.
     /// </param>
     /// <returns>
     ///   string with the calculated hash value
@@ -320,8 +320,8 @@ type
     ///   Number of bytes within the stream over which to calculate the hash value
     /// </param>
     /// <param name="Format">
-    ///   optional formatting class. The formatting of that will be applied to
-    ///   the returned hash value
+    ///   Optional formatting class. The formatting of that will be applied to
+    ///   the returned hash value.
     /// </param>
     /// <param name="Progress">
     ///   Optional callback routine. It can be used to display the progress of
