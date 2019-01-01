@@ -123,12 +123,19 @@ type
     /// <summary>
     ///   Generic initialization of internal data structures. Additionally the
     ///   internal algorithm specific (because of being overridden by each
-    ///   hash algorithm) DoInit method.
+    ///   hash algorithm) DoInit method. Needs to be called before each hash
+    ///   calculation.
     /// </summary>
     procedure Init;
     /// <summary>
-    ///   Calculates one chunk of data to be hashed. Since
+    ///   Calculates one chunk of data to be hashed.
     /// </summary>
+    /// <param name="Data">
+    ///   Data on which the hash value shall be calculated on
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the data in bytes
+    /// </param>
     procedure Calc(const Data; DataSize: Integer); virtual;
 
     /// <summary>
@@ -737,8 +744,6 @@ begin
     SetLength(Buf, 0);
     result := BytesToRawString(ValidFormat(Format).Encode(CalcBuffer(Buf, 0)));
   end;
-
-//    Encode(CalcBuffer(Value[1], Length(Value) * SizeOf(Value[1])), Result);
 end;
 
 function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;

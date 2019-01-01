@@ -183,7 +183,7 @@ type
   end;
 
   /// <summary>
-{ TODO : Chrck if the XMLDOC shall talk about SHA1 or rather about SHA0 }
+{ TODO : Check the XMLDOC shall talk about SHA1 or rather about SHA0 }
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
   ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
@@ -229,7 +229,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override; // 128
+    class function BlockSize: Integer; override;
   end;
 
   /// <summary>
@@ -260,7 +260,7 @@ type
   public
     function Digest: PByteArray; override;
     class function BlockSize: Integer; override;
-  published
+
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
     ///   The range for this parameter is 3-5 rounds. If a value outside this
@@ -310,7 +310,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: Integer; override;
-  published
+
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
     ///   passed. Valid values are in the range from 3-32 rounds and values
@@ -390,14 +390,16 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-  published
+
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
     ///   algorithm will use. With the default of 8 rounds it is being considered
     ///   as safe as of spring 2016, with less rounds this algorithm is considered
     ///   to be unsafe.
     /// </summary>
-    property SecurityLevel: Integer read FSecurityLevel write SetSecurityLevel;
+    property SecurityLevel: Integer
+      read   FSecurityLevel
+      write  SetSecurityLevel;
   end;
 
   /// <summary>
@@ -446,8 +448,10 @@ type
     class function DigestSize: Integer; override;
     class function BlockSize: Integer; override;
     procedure Calc(const Data; DataSize: Integer); override;
-  published
-    property RequestedDigestSize: Integer read FDigestSize write FDigestSize;
+
+    property RequestedDigestSize: Integer
+      read   FDigestSize
+      write  FDigestSize;
   end;
 
 function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
@@ -3411,8 +3415,8 @@ end;
 procedure THash_Sapphire.DoTransform(Buffer: PUInt32Array);
 begin
   // Empty on purpose: the base class for the hashes declares an abstract
-  // DoTransform method and not providing an override for it causes a compiler
-  // warning
+  // DoTransform method and not providing an override for it would cause a
+  // compiler warning
 end;
 
 procedure THash_Sapphire.DoDone;
