@@ -565,6 +565,27 @@ type
     procedure TestClassByName;
   end;
 
+  // Testmethoden for Klasse TCipher_Magma, which is an alias for Ghost
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_Magma = class(TCipherBasis)
+  strict private
+    FCipher_Magma: TCipher_Magma;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+
+    procedure DoTestClassByName;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
   // Testmethoden for Klasse TCipher_Misty
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Misty = class(TCipherBasis)
@@ -2265,6 +2286,88 @@ begin
   CheckEquals($A4F73879, FCipher_Gost.Identity);
 end;
 
+procedure TestTCipher_Magma.Done;
+begin
+  FCipher_Magma.Done;
+end;
+
+procedure TestTCipher_Magma.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Magma.Context.KeySize);
+
+  FCipher_Magma.Mode := TestData.Mode;
+  FCipher_Magma.Init(BytesOf(TestData.Key),
+                     BytesOf(TestData.InitVector),
+                     TestData.Filler);
+end;
+
+procedure TestTCipher_Magma.SetUp;
+begin
+  FCipher_Magma := TCipher_Magma.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'b303a03fb57b914d97512440bdcf251534059cf8ab10869ff2804784479b1ad1';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Gost';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
+end;
+
+procedure TestTCipher_Magma.TearDown;
+begin
+  FCipher_Magma.Free;
+  FCipher_Magma := nil;
+end;
+
+procedure TestTCipher_Magma.DoTestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Magma.ClassByName('TCipher_Magma');
+end;
+
+procedure TestTCipher_Magma.TestClassByName;
+begin
+  CheckException(DoTestClassByName, EDECClassNotRegisteredException);
+end;
+
+procedure TestTCipher_Magma.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_Magma.Context;
+
+  CheckEquals(  32,  ReturnValue.KeySize);
+  CheckEquals(   8,  ReturnValue.BlockSize);
+  CheckEquals(   8,  ReturnValue.BufferSize);
+  CheckEquals(  32,  ReturnValue.UserSize);
+  CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Magma.TestDecode;
+begin
+  DoTestDecode(FCipher_Magma.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Magma.TestEncode;
+begin
+  DoTestEncode(FCipher_Magma.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Magma.TestIdentity;
+begin
+  CheckEquals($5BB9788, FCipher_Magma.Identity);
+end;
+
 procedure TestTCipher_Misty.Done;
 begin
   FCipher_Misty.Done;
@@ -3339,6 +3442,7 @@ initialization
                               TestTCipher_3Way.Suite,
                               TestTCipher_Cast128.Suite,
                               TestTCipher_Gost.Suite,
+                              TestTCipher_Magma.Suite,
                               TestTCipher_Misty.Suite,
                               TestTCipher_NewDES.Suite,
                               TestTCipher_Q128.Suite,
@@ -3373,6 +3477,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_3Way);
   TDUnitX.RegisterTestFixture(TestTCipher_Cast128);
   TDUnitX.RegisterTestFixture(TestTCipher_Gost);
+  TDUnitX.RegisterTestFixture(TestTCipher_Magma);
   TDUnitX.RegisterTestFixture(TestTCipher_Misty);
   TDUnitX.RegisterTestFixture(TestTCipher_NewDES);
   TDUnitX.RegisterTestFixture(TestTCipher_Q128);
