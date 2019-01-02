@@ -69,8 +69,8 @@ uses
 
 type
   /// <summary>
-  ///   Class in which all uncommented methods of TDECCipher have been moved
-  ///   until they got properly added by some means
+  ///   Class in which the various encode/decode variants provided have been
+  ///   moved in order to keep the base cipher class small and clean.
   /// </summary>
   TDECFormattedCipher = class(TDECCipherModes)
   private

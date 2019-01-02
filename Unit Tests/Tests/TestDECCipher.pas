@@ -129,6 +129,8 @@ type
     /// </summary>
     FTestStream : TMemoryStream;
 
+    FCipher : TDECCipher;
+
     /// <summary>
     ///   Converts a test vector with the follwing syntax to a byte array:
     ///   \x30\x31\x41 where \ is the delimiter and x means that the following
@@ -193,6 +195,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -211,6 +214,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -229,6 +233,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -248,6 +253,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -266,6 +272,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -284,6 +291,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -302,6 +310,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -320,6 +329,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -338,6 +348,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -356,6 +367,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -374,6 +386,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -392,6 +405,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -410,6 +424,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -428,6 +443,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -446,6 +462,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -464,6 +481,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -482,6 +500,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -500,6 +519,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -518,6 +538,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -536,6 +557,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -554,6 +576,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -572,6 +595,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -590,6 +614,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -608,6 +633,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -626,6 +652,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -644,6 +671,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -662,6 +690,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -680,6 +709,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
@@ -720,17 +750,17 @@ end;
 
 procedure TestTCipher_Blowfish.Init(TestData: TCipherTestData);
 begin
-  LimitKeyLength(TestData.Key, FCipher_Blowfish.Context.KeySize);
+  LimitKeyLength(TestData.Key, FCipher.Context.KeySize);
 
-  FCipher_Blowfish.Mode := TestData.Mode;
-  FCipher_Blowfish.Init(BytesOf(TestData.Key),
-                        BytesOf(TestData.InitVector),
-                        TestData.Filler);
+  FCipher.Mode := TestData.Mode;
+  FCipher.Init(BytesOf(TestData.Key),
+               BytesOf(TestData.InitVector),
+               TestData.Filler);
 end;
 
 procedure TestTCipher_Blowfish.SetUp;
 begin
-  FCipher_Blowfish      := TCipher_Blowfish.Create;
+  FCipher               := TCipher_Blowfish.Create;
 
   SetLength(FTestData, 1);
 
@@ -750,15 +780,15 @@ end;
 
 procedure TestTCipher_Blowfish.TearDown;
 begin
-  FCipher_Blowfish.Free;
-  FCipher_Blowfish := nil;
+  FCipher.Free;
+  FCipher := nil;
 end;
 
 procedure TestTCipher_Blowfish.TestContext;
 var
   ReturnValue: TCipherContext;
 begin
-  ReturnValue := FCipher_Blowfish.Context;
+  ReturnValue := FCipher.Context;
 
   CheckEquals(  56,  ReturnValue.KeySize);
   CheckEquals(   8,  ReturnValue.BlockSize);
@@ -770,24 +800,24 @@ end;
 
 procedure TestTCipher_Blowfish.TestDecode;
 begin
-  DoTestDecode(FCipher_Blowfish.DecodeStringToBytes, self.Init, self.Done);
+  DoTestDecode((FCipher as TCipher_Blowfish).DecodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Blowfish.TestEncode;
 begin
-  DoTestEncode(FCipher_Blowfish.EncodeStringToBytes, self.Init, self.Done);
+  DoTestEncode((FCipher as TCipher_Blowfish).EncodeStringToBytes, self.Init, self.Done);
 end;
 
 procedure TestTCipher_Blowfish.TestIdentity;
 begin
-  CheckEquals(16319959, FCipher_Blowfish.Identity);
+  CheckEquals($54E9A294, FCipher.Identity);
 end;
 
 procedure TestTCipher_Blowfish.TestClassByName;
 var
   ReturnValue : TDECCipherClass;
 begin
-  ReturnValue := FCipher_Blowfish.ClassByName('TCipher_Blowfish');
+  ReturnValue := FCipher.ClassByName('TCipher_Blowfish');
   CheckEquals(TCipher_Blowfish, ReturnValue, 'Class is not registered');
 end;
 
@@ -854,6 +884,11 @@ end;
 procedure TestTCipher_Twofish.TestEncode;
 begin
   DoTestEncode(FCipher_Twofish.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Twofish.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Twofish.TestClassByName;
@@ -929,6 +964,11 @@ begin
   DoTestEncode(FCipher_IDEA.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_IDEA.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_IDEA.TestClassByName;
 var
   ReturnValue : TDECCipherClass;
@@ -1002,6 +1042,11 @@ begin
   DoTestEncode(FCipher_Cast256.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Cast256.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_Cast256.TestClassByName;
 var
   ReturnValue : TDECCipherClass;
@@ -1073,6 +1118,11 @@ end;
 procedure TestTCipher_Mars.TestEncode;
 begin
   DoTestEncode(FCipher_Mars.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Mars.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Mars.TestClassByName;
@@ -1157,6 +1207,11 @@ begin
   DoTestEncode(FCipher_RC4.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_RC4.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_RC6.Done;
 begin
   FCipher_RC6.Done;
@@ -1228,6 +1283,11 @@ end;
 procedure TestTCipher_RC6.TestEncode;
 begin
   DoTestEncode(FCipher_RC6.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC6.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Square.Done;
@@ -1303,6 +1363,11 @@ begin
   DoTestEncode(FCipher_Square.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Square.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_SCOP.Done;
 begin
   FCipher_SCOP.Done;
@@ -1374,6 +1439,11 @@ end;
 procedure TestTCipher_SCOP.TestEncode;
 begin
   DoTestEncode(FCipher_SCOP.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SCOP.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Sapphire.Done;
@@ -1449,6 +1519,11 @@ begin
   DoTestEncode(FCipher_Sapphire.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Sapphire.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_1DES.Done;
 begin
   FCipher_1DES.Done;
@@ -1520,6 +1595,11 @@ end;
 procedure TestTCipher_1DES.TestEncode;
 begin
   DoTestEncode(FCipher_1DES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_1DES.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_2DES.Done;
@@ -1595,6 +1675,11 @@ begin
   DoTestEncode(FCipher_2DES.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_2DES.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_3DES.Done;
 begin
   FCipher_3DES.Done;
@@ -1666,6 +1751,11 @@ end;
 procedure TestTCipher_3DES.TestEncode;
 begin
   DoTestEncode(FCipher_3DES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DES.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_2DDES.Done;
@@ -1741,6 +1831,11 @@ begin
   DoTestEncode(FCipher_2DDES.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_2DDES.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_3DDES.Done;
 begin
   FCipher_3DDES.Done;
@@ -1812,6 +1907,11 @@ end;
 procedure TestTCipher_3DDES.TestEncode;
 begin
   DoTestEncode(FCipher_3DDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3DDES.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_3TDES.Done;
@@ -1887,6 +1987,11 @@ begin
   DoTestDecode(FCipher_3TDES.DecodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_3TDES.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_3Way.Done;
 begin
   FCipher_3Way.Done;
@@ -1958,6 +2063,11 @@ end;
 procedure TestTCipher_3Way.TestEncode;
 begin
   DoTestEncode(FCipher_3Way.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_3Way.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Cast128.Done;
@@ -2033,6 +2143,11 @@ begin
   DoTestEncode(FCipher_Cast128.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Cast128.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_Gost.Done;
 begin
   FCipher_Gost.Done;
@@ -2104,6 +2219,11 @@ end;
 procedure TestTCipher_Gost.TestEncode;
 begin
   DoTestEncode(FCipher_Gost.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Gost.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Misty.Done;
@@ -2179,6 +2299,11 @@ begin
   DoTestEncode(FCipher_Misty.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Misty.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_NewDES.Done;
 begin
   FCipher_NewDES.Done;
@@ -2250,6 +2375,11 @@ end;
 procedure TestTCipher_NewDES.TestEncode;
 begin
   DoTestEncode(FCipher_NewDES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_NewDES.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Q128.Done;
@@ -2325,6 +2455,11 @@ begin
   DoTestEncode(FCipher_Q128.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Q128.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_RC2.Done;
 begin
   FCipher_RC2.Done;
@@ -2396,6 +2531,11 @@ end;
 procedure TestTCipher_RC2.TestEncode;
 begin
   DoTestEncode(FCipher_RC2.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_RC2.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_RC5.Done;
@@ -2471,6 +2611,11 @@ begin
   DoTestEncode(FCipher_RC5.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_RC5.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_SAFER.Done;
 begin
   FCipher_SAFER.Done;
@@ -2542,6 +2687,11 @@ end;
 procedure TestTCipher_SAFER.TestEncode;
 begin
   DoTestEncode(FCipher_SAFER.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SAFER.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_Shark.Done;
@@ -2617,6 +2767,11 @@ begin
   DoTestEncode(FCipher_Shark.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_Shark.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_Skipjack.Done;
 begin
   FCipher_Skipjack.Done;
@@ -2688,6 +2843,11 @@ end;
 procedure TestTCipher_Skipjack.TestEncode;
 begin
   DoTestEncode(FCipher_Skipjack.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Skipjack.TestIdentity;
+begin
+
 end;
 
 procedure TestTCipher_TEA.Done;
@@ -2763,6 +2923,11 @@ begin
   DoTestEncode(FCipher_TEA.EncodeStringToBytes, self.Init, self.Done);
 end;
 
+procedure TestTCipher_TEA.TestIdentity;
+begin
+
+end;
+
 procedure TestTCipher_XTEA.Done;
 begin
   FCipher_XTEA.Done;
@@ -2836,6 +3001,11 @@ end;
 procedure TestTCipher_XTEA.TestEncode;
 begin
   DoTestEncode(FCipher_XTEA.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_XTEA.TestIdentity;
+begin
+
 end;
 
 { TCipherBasis }
