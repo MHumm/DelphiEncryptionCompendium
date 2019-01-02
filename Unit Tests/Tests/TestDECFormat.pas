@@ -152,6 +152,7 @@ type
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_HEXL
@@ -186,6 +187,7 @@ type
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_DECMIME32
@@ -238,6 +240,7 @@ type
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_Base64
@@ -284,6 +287,7 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_Radix64
@@ -332,6 +336,7 @@ type
     procedure TestDecodeTypeless;
     procedure TestEncodeRawByteStringWithCharsPerLine;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_UU
@@ -382,6 +387,7 @@ type
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_XX
@@ -429,6 +435,7 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
   // Test methods for class TFormat_ESCAPE
@@ -488,6 +495,7 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestClassByName;
+    procedure TestIdentity;
   end;
 
 implementation
@@ -545,6 +553,11 @@ end;
 procedure TestTFormat_HEX.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_HEX.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_HEX.TestIdentity;
+begin
+  CheckEquals($E1B35EAB, FFormat_HEX.Identity);
 end;
 
 procedure TestTFormat_HEX.TestIsValidRawByteString;
@@ -638,6 +651,11 @@ begin
   DoTestEncodeDecodeTypeless(FFormat_HEXL.Encode, cTestDataEncode);
 end;
 
+procedure TestTFormat_HEXL.TestIdentity;
+begin
+  CheckEquals($39D2D18D, FFormat_HEXL.Identity);
+end;
+
 procedure TestTFormat_HEXL.TestIsValidRawByteString;
 begin
   CheckEquals(true, TFormat_HEXL.IsValid(BytesOf('')));
@@ -725,6 +743,11 @@ begin
   DoTestEncodeDecodeTypeless(FFormat_DECMIME32.Encode, cTestDataEncode);
 end;
 
+procedure TestTFormat_DECMIME32.TestIdentity;
+begin
+  CheckEquals($A7072340, FFormat_DECMIME32.Identity);
+end;
+
 procedure TestTFormat_DECMIME32.TestIsValidRawByteString;
 begin
   CheckEquals(true, TFormat_DECMIME32.IsValid(BytesOf('')));
@@ -809,6 +832,11 @@ end;
 procedure TestTFormat_Base64.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_Base64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base64.TestIdentity;
+begin
+  CheckEquals($521BA151, FFormat_BASE64.Identity);
 end;
 
 procedure TestTFormat_Radix64.SetUp;
@@ -899,6 +927,11 @@ begin
   DoTestEncodeDecodeTypeless(FFormat_Radix64.Encode, cTestDataEncode);
 end;
 
+procedure TestTFormat_Radix64.TestIdentity;
+begin
+  CheckEquals($B5607732, FFormat_Radix64.Identity);
+end;
+
 procedure TestTFormat_UU.SetUp;
 begin
   FFormat_UU := TFormat_UU.Create;
@@ -946,6 +979,11 @@ end;
 procedure TestTFormat_UU.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_UU.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_UU.TestIdentity;
+begin
+  CheckEquals($6FCCDE6F, FFormat_UU.Identity);
 end;
 
 procedure TestTFormat_UU.TestIsValidRawByteString;
@@ -1084,6 +1122,11 @@ begin
   DoTestEncodeDecodeTypeless(FFormat_XX.Encode, cTestDataEncode);
 end;
 
+procedure TestTFormat_XX.TestIdentity;
+begin
+  CheckEquals($A4D3DC9F, FFormat_XX.Identity);
+end;
+
 procedure TestTFormat_ESCAPE.SetUp;
 begin
   FFormat_ESCAPE := TFormat_ESCAPE.Create;
@@ -1131,6 +1174,11 @@ end;
 procedure TestTFormat_ESCAPE.TestEncodeTypeless;
 begin
   DoTestEncodeDecodeTypeless(FFormat_ESCAPE.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_ESCAPE.TestIdentity;
+begin
+  CheckEquals($168B27C3, FFormat_ESCAPE.Identity);
 end;
 
 { TFormatTestsBase }

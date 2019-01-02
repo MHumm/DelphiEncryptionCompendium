@@ -2332,6 +2332,9 @@ var
   ReturnValue : TDECCipherClass;
 begin
   ReturnValue := FCipher_Magma.ClassByName('TCipher_Magma');
+  // This line should never be executed due to ClassByName rising an exception
+  // but it suppresses a ReturnValue is not being used compiler warning
+  CheckEquals(TCipher_Magma, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Magma.TestClassByName;
@@ -3380,6 +3383,9 @@ var
   ReturnValue : TDECCipherClass;
 begin
   ReturnValue := FCipher_Rijndael.ClassByName('TCipher_Rijndael');
+  // This line should never be executed due to ClassByName rising an exception
+  // but it suppresses a ReturnValue is not being used compiler warning
+  CheckEquals(TCipher_Rijndael, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_Rijndael.TestClassByName;
