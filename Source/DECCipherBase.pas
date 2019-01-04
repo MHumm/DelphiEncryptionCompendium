@@ -545,7 +545,6 @@ type
     /// </summary>
     property State: TCipherState
       read   FState;
-  published
     /// <summary>
     ///   Mode used for padding data to be encrypted/decrypted. See TCipherMode.
     /// </summary>
