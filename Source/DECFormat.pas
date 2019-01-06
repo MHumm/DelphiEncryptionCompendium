@@ -767,15 +767,6 @@ begin
                                               IntToStr(Value));
 end;
 
-//procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
-//begin
-//  if (Value > 0) then
-//    FCharsPerLine := Value
-//  else
-//{ TODO : Exception werfen! }
-//    ;
-//end;
-
 class procedure TFormat_Radix64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
 var
   TempData : TBytes;
@@ -836,7 +827,6 @@ begin
   if CRC <> $FFFFFFFF then // check CRC if found
   begin
     SwapBytes(CRC, 3);
-//    if CRC <> CRCCalc(CRC_24, Dest[0], Size) then
     if CRC <> CRCCalc(CRC_24, Dest[0], Length(Dest)) then
       raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
   end;
@@ -1203,71 +1193,5 @@ initialization
   TFormat_Radix64.FCharsPerLine := 76;
 
 finalization
-
-  // No need to unregister the hash classes, as the list is being freed
-  // in finalization of DECBaseClass unit
-
-//
-//
-//// prefered hashs
-//  THash_MD2.Register;        // 1.5Kb
-//  THash_MD4.Register;        // 2.0Kb                           // for fast checksums
-//  THash_MD5.Register;        // 2.5Kb
-//  THash_SHA.Register;        // 10Kb for SHA,SHA1,SHA256        // strong
-//  THash_SHA1.Register;
-//  THash_SHA256.Register;
-//  THash_SHA384.Register;     // 3.0Kb for SHA384,SHA512
-//  THash_SHA512.Register;                                        // variable digest
-//  THash_Sapphire.Register;   // 1.0Kb
-//
-//  THash_Panama.Register;     // 2.0Kb
-//  THash_Tiger.Register;      // 12.0kb
-//  THash_RipeMD128.Register;  // 4.0Kb
-//  THash_RipeMD160.Register;  // 8.0Kb
-//  THash_RipeMD256.Register;  // 4.5Kb
-//  THash_RipeMD320.Register;  // 9.0Kb
-//  THash_Haval128.Register;   // 6.0Kb for all Haval's
-//  THash_Haval160.Register;
-//  THash_Haval192.Register;
-//  THash_Haval224.Register;
-//  THash_Haval256.Register;
-//  THash_Whirlpool.Register;   // 10.0Kb
-//  THash_Whirlpool1.Register;  // 10.0Kb
-//  THash_Square.Register;      // 10Kb
-//  THash_Snefru128.Register;   // 18Kb
-//  THash_Snefru256.Register;   //
-//
-////  TCipher_Null.Register;
-//  TCipher_Blowfish.Register;
-//  TCipher_Twofish.Register;
-//  TCipher_IDEA.Register;
-//  TCipher_CAST256.Register;
-//  TCipher_Mars.Register;
-//  TCipher_RC4.Register;
-//  TCipher_RC6.Register;
-//  TCipher_Rijndael.Register;
-//  TCipher_Square.Register;
-//  TCipher_SCOP.Register;
-//  TCipher_Sapphire.Register;
-//  TCipher_1DES.Register;
-//  TCipher_2DES.Register;
-//  TCipher_3DES.Register;
-//  TCipher_2DDES.Register;
-//  TCipher_3DDES.Register;
-//  TCipher_3TDES.Register;
-//  TCipher_3Way.Register;
-//  TCipher_Cast128.Register;
-//  TCipher_Gost.Register;
-//  TCipher_Misty.Register;
-//  TCipher_NewDES.Register;
-//  TCipher_Q128.Register;
-//  TCipher_RC2.Register;
-//  TCipher_RC5.Register;
-//  TCipher_SAFER.Register;
-//  TCipher_Shark.Register;
-//  TCipher_Skipjack.Register;
-//  TCipher_TEA.Register;
-//  TCipher_TEAN.Register;
-
 
 end.

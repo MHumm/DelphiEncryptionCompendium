@@ -427,12 +427,17 @@ type
     procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF); overload;
     {$ENDIF}
 
+    /// <summary>
+    ///   Properly finishes the cryptographic operation. It needs to be called
+    ///   at the end of encrypting or decrypting data, otherwise the last block
+    ///   or last byte of the data will not be properly processed.
+    /// </summary>
     procedure Done;
 
     /// <summary>
     ///   Sets the processing state to csNew, which means that before using this
     ///   object any further,  init must be called and it securely fills the
-    ///    processing buffer with zeroes.
+    ///   processing buffer with zeroes.
     /// </summary>
     procedure Protect; virtual;
 
