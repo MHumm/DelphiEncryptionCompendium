@@ -3574,7 +3574,7 @@ begin
   Assert(Size = Context.BufferSize);
   T3WayKey := P3Way_Key(FUser);
 
-K0 := T3WayKey^.E_Key[0];
+  K0 := T3WayKey^.E_Key[0];
   K1 := T3WayKey^.E_Key[1];
   K2 := T3WayKey^.E_Key[2];
   E  := @T3WayKey^.E_Data;

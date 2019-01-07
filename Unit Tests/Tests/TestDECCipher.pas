@@ -3093,9 +3093,6 @@ begin
   FCipher_XTEA := TCipher_XTEA.Create;
 
   SetLength(FTestData, 1);
-{ TODO :
-Problem: in Hagen's test vector file there is no test data for an Cipher called XTEA
-but one for TEAN. But with the TEAN test data the XTEA tests fail. }
   FTestData[0].OutputData  := 'cd7ebba2921a4b3be29e62cff71da5df63339429e2367c663ff81af90278bfa1';
   FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
                                                     '\x96\xF5\xF6\x35\xA2\xEB' +
@@ -3104,7 +3101,10 @@ but one for TEAN. But with the TEAN test data the XTEA tests fail. }
                                                     '\xC2\xB8\x58\xA1\x91\xF9' +
                                                     '\x81\xB1');
 
-  FTestData[0].Key        := 'TCipher_XTEA';
+  // The key for this test vector is the old name of the class which was
+  // TCipher_TEAN as the vector already existed in DEC 5.2 but the class got
+  // renamed later on
+  FTestData[0].Key        := 'TCipher_TEAN';
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
   FTestData[0].Mode       := cmCTSx;
