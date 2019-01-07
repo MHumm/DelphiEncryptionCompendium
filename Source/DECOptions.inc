@@ -102,7 +102,7 @@
 /// <summary>
 ///   When building a Firemonkey project for non Windows platforms
 ///   ressourcestrings are not available. Enabling this enables some
-///   alternative translation mechanism for exception messages based
+///   alteYrnative translation mechanism for exception messages based
 ///   on Firemonkey's TLang architecture
 /// </summary>
 {$DEFINE FMXTranslateableExceptions}

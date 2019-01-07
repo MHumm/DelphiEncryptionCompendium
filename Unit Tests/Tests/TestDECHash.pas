@@ -3218,7 +3218,7 @@ procedure THash_TestBase.DoTest52(HashClass: TDECHash);
 var
   i                : Integer;
   Buf              : TBytes;
-  InputDataVectors : ITestDataInputVectorContainer;
+  InputDataVectors : ITestDataInputVectorList;
   IdxVector        : Integer;
   IdxCount         : Integer;
   HashResult       : TBytes;
@@ -3238,12 +3238,12 @@ begin
 
       if length(Buf) > 0 then
       begin
-        for IdxCount := 1 to InputDataVectors[IdxVector].RunCount do
+        for IdxCount := 1 to InputDataVectors[IdxVector].RepeatCount do
           HashClass.Calc(Buf[0], length(Buf));
       end
       else
       begin
-        for IdxCount := 1 to InputDataVectors[IdxVector].RunCount do
+        for IdxCount := 1 to InputDataVectors[IdxVector].RepeatCount do
           HashClass.Calc(Buf, length(Buf));
       end;
     end;

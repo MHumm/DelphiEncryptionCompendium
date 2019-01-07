@@ -1,3 +1,14 @@
+{*****************************************************************************
+
+  Delphi Encryption Compendium (DEC)
+  Version 6.0
+
+  Copyright (c) 2018 - 2019 Norman Gallery (ng931884 [at] gmx [dot] de)
+  Copyright (c) 2016 - 2019 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+  Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
+  Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
+  All rights reserved.
+***************************************************************************** }
 unit TestDECTestDataContainer;
 
 interface
@@ -8,17 +19,27 @@ type
     function GetRunCount:Cardinal;
     function GetData:RawByteString;
 
-    property RunCount:Cardinal read GetRunCount;
-    property Data:RawByteString read GetData;
+    /// <summary>
+    ///   Number of times this test needs to be run to produce the final test data
+    /// </summary>
+    property RepeatCount:Cardinal
+      read   GetRunCount;
+    /// <summary>
+    ///   Input data for the test
+    /// </summary>
+    property Data:RawByteString
+      read   GetData;
   end;
 
-  ITestDataInputVectorContainer = interface
+  ITestDataInputVectorList = interface
   ['{34CEDD4B-4249-4C69-A0CC-C89F90A9B4E3}']
     function GetCount:Integer;
     function GetVectors(aIndex:Integer):ITestDataInputVector;
 
-    property Count:Integer read GetCount;
-    property Vectors[aIndex:integer]:ITestDataInputVector read GetVectors; default;
+    property Count:Integer
+      read   GetCount;
+    property Vectors[aIndex:integer]:ITestDataInputVector
+      read   GetVectors; default;
 
     function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
                             const aConcatCount:Cardinal=1):ITestDataInputVector;
@@ -27,14 +48,18 @@ type
   ITestDataRow = interface
   ['{A105BADC-46E9-4A1D-B338-5C8E60305823}']
     function GetInputData:RawByteString;
-    function GetInputVectors:ITestDataInputVectorContainer;
+    function GetInputVectors:ITestDataInputVectorList;
     function GetOutputData:RawByteString;
     function GetOutputUTFStrTest:RawByteString;
 
-    property InputData : RawByteString read GetInputData;
-    property InputDataVectors : ITestDataInputVectorContainer read GetInputVectors;
-    property ExpectedOutput : RawByteString read GetOutputData;
-    property ExpectedOutputUTFStrTest : RawByteString read GetOutputUTFStrTest;
+    property InputData : RawByteString
+      read   GetInputData;
+    property InputDataVectors : ITestDataInputVectorList
+      read   GetInputVectors;
+    property ExpectedOutput : RawByteString
+      read   GetOutputData;
+    property ExpectedOutputUTFStrTest : RawByteString
+      read   GetOutputUTFStrTest;
   end;
 
   ITestDataRowSetup = interface
@@ -42,8 +67,10 @@ type
     procedure SetExpectedOutput(const aValue:RawByteString);
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
 
-    property ExpectedOutput : RawByteString Write SetExpectedOutput;
-    property ExpectedOutputUTFStrTest : RawByteString Write SetExpectedOutputUTFStrTest;
+    property ExpectedOutput : RawByteString
+      Write  SetExpectedOutput;
+    property ExpectedOutputUTFStrTest : RawByteString
+      Write  SetExpectedOutputUTFStrTest;
 
     procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
                              const aConcatCount:Cardinal=1);
@@ -52,7 +79,8 @@ type
   ITestDataContainer = interface
   ['{65205874-94D9-424C-8314-4816D33CECA4}']
     function GetCount:Integer;
-    property Count:Integer read GetCount;
+    property Count:Integer
+      read   GetCount;
 
     procedure Clear;
   end;
@@ -64,8 +92,10 @@ type
     procedure SetRequiredDigestSize(const aValue:Integer);
     procedure SetPaddingByte(const aValue:Byte);
 
-    property RequiredDigestSize : Integer Write SetRequiredDigestSize;
-    property PaddingByte        : Byte Write SetPaddingByte;
+    property RequiredDigestSize : Integer
+      Write  SetRequiredDigestSize;
+    property PaddingByte        : Byte
+      Write  SetPaddingByte;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
@@ -73,14 +103,17 @@ type
     function GetRequiredDigestSize:Integer;
     function GetPaddingByte:Byte;
 
-    property RequiredDigestSize : Integer read GetRequiredDigestSize;
-    property PaddingByte        : Byte read GetPaddingByte;
+    property RequiredDigestSize : Integer
+      read   GetRequiredDigestSize;
+    property PaddingByte        : Byte
+      read   GetPaddingByte;
   end;
 
   IHashTestDataContainer = interface(ITestDataContainer)
   ['{BDF2082D-3133-48D8-B9AA-87F3485FD91F}']
     function GetRows(aIndex:Integer):IHashTestDataRow;
-    property Rows[aIndex:Integer]:IHashTestDataRow read GetRows;  default;
+    property Rows[aIndex:Integer]:IHashTestDataRow
+      read   GetRows; default;
 
     function AddRow:IHashTestDataRowSetup;
   end;
@@ -109,8 +142,11 @@ type
   ///   It shall be used via the ITestDataInputVectorContainer interface, which
   ///   automatically makes the methods allowed to be used externally public
   /// </summary>
-  TTestDataInputVectorContainer = class(TInterfacedObject, ITestDataInputVectorContainer)
+  TTestDataInputVectorList = class(TInterfacedObject, ITestDataInputVectorList)
   private
+    /// <summary>
+    ///   List of all the input values for the tests
+    /// </summary>
     FVectors : TInterfaceList;
   protected // ITestDataInputVectorContainer
     function GetCount:Integer;
@@ -131,29 +167,32 @@ type
     /// <returns>
     ///   An interface to the generated test vector
     /// </returns>
-    function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
+    function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
+                            const aConcatCount:Cardinal=1):ITestDataInputVector;
   public
     constructor Create;
     destructor Destroy; override;
   end;
 
-  TTestDataRow = class(TInterfacedObject, ITestDataRow, ITestDataRowSetup, IHashTestDataRow, IHashTestDataRowSetup)
+  THashTestDataRow = class(TInterfacedObject, ITestDataRow, ITestDataRowSetup,
+                           IHashTestDataRow, IHashTestDataRowSetup)
   private
     FInputData:RawByteString;
-    FInputVectors:ITestDataInputVectorContainer;
+    FInputVectors:ITestDataInputVectorList;
     FOutputData:RawByteString;
     FOutputUTFStrTest:RawByteString;
     FReqDigSize:Integer;
     FPaddingByte:Byte;
   protected // ITestDataRow
     function GetInputData:RawByteString;
-    function GetInputVectors:ITestDataInputVectorContainer;
+    function GetInputVectors:ITestDataInputVectorList;
     function GetOutputData:RawByteString;
     function GetOutputUTFStrTest:RawByteString;
   protected // ITestDataRowSetup
     procedure SetExpectedOutput(const aValue:RawByteString);
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
-    procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1);
+    procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
+                             const aConcatCount:Cardinal=1);
   protected // IHashTestDataRow
     function GetRequiredDigestSize:Integer;
     function GetPaddingByte:Byte;
@@ -165,7 +204,10 @@ type
     destructor Destroy; override;
   end;
 
-  TTestDataContainer = class(TInterfacedObject, ITestDataContainer, IHashTestDataContainer)
+  /// <summary>
+  ///   List of all the test vectors of a unit test for one of the hash classes
+  /// </summary>
+  TTestDataList = class(TInterfacedObject, ITestDataContainer, IHashTestDataContainer)
   private
     FDataRows:TInterfaceList;
   protected // ITestDataContainer
@@ -173,8 +215,8 @@ type
     function GetRows(aIndex:Integer):ITestDataRow;
     procedure Clear;
   protected // IHashTestDataContainer
-    function HASH_AddRow:IHashTestDataRowSetup;                     function IHashTestDataContainer.AddRow = HASH_Addrow;
-    function HASH_GetRows(aIndex:Integer):IHashTestDataRow;         function IHashTestDataContainer.GetRows = HASH_GetRows;
+    function HASH_AddRow:IHashTestDataRowSetup;             function IHashTestDataContainer.AddRow = HASH_Addrow;
+    function HASH_GetRows(aIndex:Integer):IHashTestDataRow; function IHashTestDataContainer.GetRows = HASH_GetRows;
   public
     constructor Create;
     destructor Destroy; override;
@@ -182,52 +224,52 @@ type
 
 function CreateTestDataContainer:ITestDataContainer;
 begin
-  result := TTestDataContainer.Create;
+  result := TTestDataList.Create;
 end;
 
 { TTestDataContainer }
 
-procedure TTestDataContainer.Clear;
+procedure TTestDataList.Clear;
 begin
   FDataRows.Clear;
 end;
 
-constructor TTestDataContainer.Create;
+constructor TTestDataList.Create;
 begin
   inherited Create;
   FDataRows := TInterfaceList.Create;
 end;
 
-destructor TTestDataContainer.Destroy;
+destructor TTestDataList.Destroy;
 begin
   FDataRows.Free;
   inherited;
 end;
 
-function TTestDataContainer.GetCount: Integer;
+function TTestDataList.GetCount: Integer;
 begin
   result := FDataRows.Count;
 end;
 
-function TTestDataContainer.GetRows(aIndex: Integer): ITestDataRow;
+function TTestDataList.GetRows(aIndex: Integer): ITestDataRow;
 begin
   result := FDataRows.Items[aIndex] as ITestDataRow;
 end;
 
-function TTestDataContainer.HASH_AddRow: IHashTestDataRowSetup;
+function TTestDataList.HASH_AddRow: IHashTestDataRowSetup;
 begin
-  Result := TTestDataRow.Create;
+  Result := THashTestDataRow.Create;
   FDataRows.Add(Result);
 end;
 
-function TTestDataContainer.HASH_GetRows(aIndex: Integer): IHashTestDataRow;
+function TTestDataList.HASH_GetRows(aIndex: Integer): IHashTestDataRow;
 begin
   result := FDataRows.Items[aIndex] as IHashTestDataRow;
 end;
 
 { TTestDataRow }
 
-procedure TTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: Cardinal);
+procedure THashTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: Cardinal);
 var
   lData:RawByteString;
   Idx:Integer;
@@ -236,7 +278,7 @@ begin
   lVector := FInputVectors.AddInputVector(aData, aRunCount, aConcatCount);
 
   lData := '';
-  for Idx := 1 to lVector.RunCount do
+  for Idx := 1 to lVector.RepeatCount do
   begin
     lData := lData + lVector.Data;
   end;
@@ -244,71 +286,71 @@ begin
   FInputData := FInputData + lData;
 end;
 
-constructor TTestDataRow.Create;
+constructor THashTestDataRow.Create;
 begin
   inherited Create;
-  FInputVectors := TTestDataInputVectorContainer.Create;
+  FInputVectors := TTestDataInputVectorList.Create;
 end;
 
-destructor TTestDataRow.Destroy;
+destructor THashTestDataRow.Destroy;
 begin
   FInputVectors := NIL;
   inherited;
 end;
 
-function TTestDataRow.GetInputData: RawByteString;
+function THashTestDataRow.GetInputData: RawByteString;
 begin
   result := FInputData;
 end;
 
-function TTestDataRow.GetInputVectors: ITestDataInputVectorContainer;
+function THashTestDataRow.GetInputVectors: ITestDataInputVectorList;
 begin
   result := FInputVectors;
 end;
 
-function TTestDataRow.GetOutputData: RawByteString;
+function THashTestDataRow.GetOutputData: RawByteString;
 begin
   result := FOutputData;
 end;
 
-function TTestDataRow.GetOutputUTFStrTest: RawByteString;
+function THashTestDataRow.GetOutputUTFStrTest: RawByteString;
 begin
   result := FOutputUTFStrTest;
 end;
 
-function TTestDataRow.GetPaddingByte: Byte;
+function THashTestDataRow.GetPaddingByte: Byte;
 begin
   result := FPaddingByte;
 end;
 
-function TTestDataRow.GetRequiredDigestSize: Integer;
+function THashTestDataRow.GetRequiredDigestSize: Integer;
 begin
   result := FReqDigSize;
 end;
 
-procedure TTestDataRow.SetExpectedOutput(const aValue: RawByteString);
+procedure THashTestDataRow.SetExpectedOutput(const aValue: RawByteString);
 begin
   FOutputData := aValue;
 end;
 
-procedure TTestDataRow.SetExpectedOutputUTFStrTest(const aValue: RawByteString);
+procedure THashTestDataRow.SetExpectedOutputUTFStrTest(const aValue: RawByteString);
 begin
   FOutputUTFStrTest := aValue;
 end;
 
-procedure TTestDataRow.SetPaddingByte(const aValue: Byte);
+procedure THashTestDataRow.SetPaddingByte(const aValue: Byte);
 begin
   FPaddingByte := aValue;
 end;
 
-procedure TTestDataRow.SetRequiredDigestSize(const aValue: Integer);
+procedure THashTestDataRow.SetRequiredDigestSize(const aValue: Integer);
 begin
   FReqDigSize := aValue;
 end;
 
 { TTestDataInputVectorContainer }
 
-function TTestDataInputVectorContainer.AddInputVector(const aData:RawByteString;
+function TTestDataInputVectorList.AddInputVector(const aData:RawByteString;
            const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
 var
   lData : RawByteString;
@@ -323,24 +365,24 @@ begin
   FVectors.Add(Result);
 end;
 
-constructor TTestDataInputVectorContainer.Create;
+constructor TTestDataInputVectorList.Create;
 begin
   inherited Create;
   FVectors := TInterfaceList.Create;
 end;
 
-destructor TTestDataInputVectorContainer.Destroy;
+destructor TTestDataInputVectorList.Destroy;
 begin
   FVectors.Free;
   inherited;
 end;
 
-function TTestDataInputVectorContainer.GetCount: Integer;
+function TTestDataInputVectorList.GetCount: Integer;
 begin
   result := FVectors.Count;
 end;
 
-function TTestDataInputVectorContainer.GetVectors(aIndex: Integer): ITestDataInputVector;
+function TTestDataInputVectorList.GetVectors(aIndex: Integer): ITestDataInputVector;
 begin
   result := FVectors.Items[aIndex] as ITestDataInputVector;
 end;
