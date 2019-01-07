@@ -78,7 +78,6 @@ type
   ///   algorithms for linking blocks.
   /// </summary>
   TDECCipherModes = class(TDECCipher)
-  strict private
   strict protected
     /// <summary>
     ///   Raises an EDECCipherException exception and provides the correct values

@@ -2964,9 +2964,9 @@ var
 
 var
   I, S, T: Integer;
-  SKey : TSapphireKey;
+  SKey : PSapphireKey;
 begin
-  SKey := PSapphireKey(FUser)^;
+  SKey := PSapphireKey(FUser);
   if Size <= 0 then
   begin
     SKey.Rotor     := 1;
@@ -3537,9 +3537,9 @@ procedure TCipher_3Way.DoInit(const Key; Size: Integer);
 var
   A0, A1, A2: UInt32;
   B0, B1, B2: UInt32;
-  T3WayKey: T3Way_Key;
+  T3WayKey: P3Way_Key;
 begin
-  T3WayKey := P3Way_Key(FUser)^;
+  T3WayKey := P3Way_Key(FUser);
 
   Move(Key, T3WayKey.E_Key, Size);
   Move(Key, T3WayKey.D_Key, Size);
@@ -3569,15 +3569,15 @@ var
   B0, B1, B2: UInt32;
   K0, K1, K2: UInt32;
   E: PUInt32;
-  T3WayKey: T3Way_Key;
+  T3WayKey: P3Way_Key;
 begin
   Assert(Size = Context.BufferSize);
-  T3WayKey := P3Way_Key(FUser)^;
+  T3WayKey := P3Way_Key(FUser);
 
-  K0 := T3WayKey.E_Key[0];
-  K1 := T3WayKey.E_Key[1];
-  K2 := T3WayKey.E_Key[2];
-  E  := @T3WayKey.E_Data;
+K0 := T3WayKey^.E_Key[0];
+  K1 := T3WayKey^.E_Key[1];
+  K2 := T3WayKey^.E_Key[2];
+  E  := @T3WayKey^.E_Data;
 
   A0 := PUInt32Array(Source)[0];
   A1 := PUInt32Array(Source)[1];
@@ -3627,15 +3627,15 @@ var
   B0, B1, B2: UInt32;
   K0, K1, K2: UInt32;
   E: PUInt32;
-  T3WayKey: T3Way_Key;
+  T3WayKey: P3Way_Key;
 begin
   Assert(Size = Context.BufferSize);
-  T3WayKey := P3Way_Key(FUser)^;
+  T3WayKey := P3Way_Key(FUser);
 
-  K0 := T3WayKey.D_Key[0];
-  K1 := T3WayKey.D_Key[1];
-  K2 := T3WayKey.D_Key[2];
-  E  := @T3WayKey.D_Data;
+  K0 := T3WayKey^.D_Key[0];
+  K1 := T3WayKey^.D_Key[1];
+  K2 := T3WayKey^.D_Key[2];
+  E  := @T3WayKey^.D_Data;
 
   A0 := ReverseBits(PUInt32Array(Source)[2]);
   A1 := ReverseBits(PUInt32Array(Source)[1]);
