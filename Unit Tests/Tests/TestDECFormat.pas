@@ -1251,7 +1251,7 @@ initialization
                               TestTFormat_UU.Suite,     TestTFormat_XX.Suite,
                               TestTFormat_ESCAPE.Suite]);
   {$ELSE}
-  TDUnitX.RegisterTestFixture(TestFormat);
+//  TDUnitX.RegisterTestFixture(TestTFormat);
   TDUnitX.RegisterTestFixture(TestTFormat_HEX);
   TDUnitX.RegisterTestFixture(TestTFormat_HEXL);
   TDUnitX.RegisterTestFixture(TestTFormat_DECMIME32);

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.223,D:\Projekte\DECPurePascalRededigned\Source\DEC60.dproj=D:\Projekte\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.223,D:\Projekte\Project1.dproj=D:\Projekte\DECPurePascalRededigned\Source\DEC60.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.922,D:\Projekte\DECPurePascalRededigned\Source\DEC60.dproj=D:\Projekte\DECPurePascalRededigned\Source\DEC60.dproj</Transaction>
   </Transactions>
 </BorlandProject>

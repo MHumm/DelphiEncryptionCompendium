@@ -86,8 +86,23 @@
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)
 
-// Disable asm completly
-{$DEFINE NO_ASM} (* default ON *)
+// if the compiler does not support assembler turn usage of and even if restrict
+// it to Windows, as we currently cannot check if the calling ABI on MacOS X and
+// and Linux is compatible with our ASM code.
+{$IFNDEF FPC}
+  {$IFNDEF ASSEMBLER}
+    {$DEFINE NO_ASM} (* default ON *)
+  {$ELSE}
+    {$IFDEF WINDOWS}
+    {.$DEFINE NO_ASM} (* default ON *)
+    {$ELSE
+      {$DEFINE NO_ASM} (* default ON *)
+    {$ENDIF}
+  {$ENDIF}
+{$ELSE}
+  // Turn ASM of for FPC as we do not know enough about ASM support on FPC
+  {$DEFINE NO_ASM} (* default ON *)
+{$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
 // DEC version 5.2. See TDECObject.Identity in DECBaseClass.pas for more details

@@ -331,8 +331,8 @@ initialization
   // Register any test cases with the test runner
   RegisterTests('DECFormatBase', [TestTFormat.Suite, TestTFormat_Copy.Suite]);
   {$ELSE}
-  TDUnitX.RegisterTestFixture(TestTFormat)
-  TDUnitX.RegisterTestFixture(TestTFormat_Copy)
+  TDUnitX.RegisterTestFixture(TestTFormat);
+  TDUnitX.RegisterTestFixture(TestTFormat_Copy);
   {$ENDIF}
 end.
 

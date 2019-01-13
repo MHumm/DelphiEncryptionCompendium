@@ -561,9 +561,13 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-  SetLength(Result, Length(Source));
+  Result := Source;
   if Length(Result) > 0 then
     Decode(Source[0], Result[0], Length(Source));
+
+//  SetLength(Result, Length(Source));
+//  if Length(Result) > 0 then
+//    Decode(Source[0], Result[0], Length(Source));
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
