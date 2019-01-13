@@ -3,7 +3,7 @@
   Delphi Encryption Compendium (DEC)
   Version 6.0
 
-  Copyright (c) 2016 - 2018 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
+  Copyright (c) 2016 - 2019 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
   Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
   Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
   All rights reserved.
