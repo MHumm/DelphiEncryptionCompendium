@@ -88,26 +88,24 @@ type
     ///   are not translated in the same way on mobile platforms as they are on
     ///   Win32/Win64.
     /// </summary>
-    /// <param name="ResStringRec">
-    ///   Specifies the ressource string which shall be used as exception message.
-    ///   Call it like this: .CreateRes(@MyResourceStringName);
+    /// <param name="Msg">
+    ///   String with a failure message to be output or logged
     /// </param>
-    constructor CreateRes(ResStringRec: PResStringRec); reintroduce; overload;
+    constructor Create(const Msg: string); reintroduce; overload;
     /// <summary>
     ///   Creates the exception instance and makes the exception message translateable
     ///   via Firemonkey's TLang translation mechanism. Normal ressource strings
     ///   are not translated in the same way on mobile platforms as they are on
     ///   Win32/Win64.
     /// </summary>
-    /// <param name="ResStringRec">
-    ///   Specifies the ressource string which shall be used as exception message.
-    ///   It may contain format strings like %0:s
+    /// <param name="Msg">
+    ///   String with a failure message to be output or logged
     /// </param>
     /// <param name="Args">
     ///   Array with values for the parameters specified in the format string
     /// </param>
-    constructor CreateResFmt(ResStringRec: PResStringRec;
-                             const Args: array of const); reintroduce; overload;
+    constructor CreateFmt(const Msg: string;
+                          const Args: array of const); reintroduce; overload;
     {$ENDIF}
   end;
 
@@ -701,15 +699,15 @@ end;
 { EDECException }
 
 {$IFDEF FMXTranslateableExceptions}
-constructor EDECException.CreateRes(ResStringRec: PResStringRec);
+constructor EDECException.Create(const Msg: string);
 begin
-  inherited Create(Translate(LoadResString(ResStringRec)));
+  inherited Create(Translate(msg));
 end;
 
-constructor EDECException.CreateResFmt(ResStringRec: PResStringRec;
-  const Args: array of const);
+constructor EDECException.CreateFmt(const Msg: string;
+                                    const Args: array of const);
 begin
-  inherited Create(Format(Translate(LoadResString(ResStringRec)), Args));
+  inherited Create(Format(Translate(Msg), Args));
 end;
 {$ENDIF}
 

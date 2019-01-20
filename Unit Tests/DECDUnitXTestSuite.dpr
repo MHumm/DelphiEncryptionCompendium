@@ -1,4 +1,4 @@
-{.$DEFINE GUI}
+{$DEFINE GUI}
 {.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;
 
@@ -62,12 +62,12 @@ begin
   exit;
 {$ENDIF}
 
-{$IFDEF GUI}
-  DUnitX.Loggers.GUIX.GUIXTestRunner.Run.Execute;
-//  DUnitX.Loggers.GUIX.GUIXTestRunner.Run;
+//{$IFDEF GUI}
+// // DUnitX.Loggers.GUIX.GUIXTestRunner.Run.Execute;
+////  DUnitX.Loggers.GUIX.GUIXTestRunner.Run;
 //  DUnitX.Loggers.GUI.VCL.Run;
-  exit;
-{$ENDIF}
+//  exit;
+//{$ENDIF}
 
   try
     //Check command line options, will exit if invalid
@@ -78,7 +78,11 @@ begin
     runner.UseRTTI := True;
     //tell the runner how we will log things
     //Log to the console window
+    {$IFDEF GUI}
+    logger := TGUIXTestRunner.Create(nil);
+    {$ELSE}
     logger := TDUnitXConsoleLogger.Create(true);
+    {$ENDIF}
     runner.AddLogger(logger);
     //Generate an NUnit compatible XML File
     nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);

@@ -605,7 +605,7 @@ begin
     Result := FDefaultCipherClass;
 
   if Result = nil then
-    raise EDECCipherException.CreateRes(@sCipherNoDefault);
+    raise EDECCipherException.Create(sCipherNoDefault);
 end;
 
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
@@ -680,7 +680,7 @@ begin
       s := sAlreadyPadded
     else
       s := sInvalidState;
-    raise EDECCipherException.CreateRes(@s);
+    raise EDECCipherException.Create(s);
   end;
 end;
 
@@ -706,10 +706,10 @@ begin
   Protect;
 
   if (Size > Context.KeySize) and (ClassType <> TCipher_Null) then
-    raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
+    raise EDECCipherException.Create(sKeyMaterialTooLarge);
 
   if IVectorSize > FBufferSize then
-    raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
+    raise EDECCipherException.Create(sIVMaterialTooLarge);
 
   DoInit(Key, Size);
   if FUserSave <> nil then
@@ -733,7 +733,7 @@ end;
 procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+    raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if IVector <> nil then
     Init(Key[0], Length(Key), IVector[0], Length(IVector), IFiller)
@@ -744,7 +744,7 @@ end;
 procedure TDECCipher.Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+    raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
@@ -758,7 +758,7 @@ end;
 procedure TDECCipher.Init(const Key, IVector: AnsiString; IFiller: Byte);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+    raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
@@ -773,7 +773,7 @@ end;
 procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+    raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),

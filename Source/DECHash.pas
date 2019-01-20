@@ -528,7 +528,7 @@ begin
   else
     Result := FDefaultHashClass;
   if Result = nil then
-    raise EDECHashException.CreateRes(@sHashNoDefault);
+    raise EDECHashException.Create(sHashNoDefault);
 end;
 
 procedure SetDefaultHashClass(HashClass: TDECHashClass);

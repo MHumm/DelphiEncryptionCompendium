@@ -295,10 +295,10 @@ resourcestring
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
-  raise EDECCipherException.CreateResFmt(@sInvalidMessageLength,
-                                        [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
-                                        Integer(Cipher.Mode)),
-                                        Cipher.Context.BlockSize]);
+  raise EDECCipherException.CreateFmt(sInvalidMessageLength,
+                                      [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
+                                      Integer(Cipher.Mode)),
+                                      Cipher.Context.BlockSize]);
 end;
 
 procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);

@@ -828,7 +828,7 @@ begin
   begin
     SwapBytes(CRC, 3);
     if CRC <> CRCCalc(CRC_24, Dest[0], Length(Dest)) then
-      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECFormatException.CreateFmt(sInvalidStringFormat, [self.GetShortClassName]);
   end;
 end;
 
@@ -920,7 +920,7 @@ begin
   repeat
     Size := TableFindBinary(S^, T, 64);
     if (Size < 0) or (Size > 45) then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECException.CreateFmt(sInvalidStringFormat, [self.GetShortClassName]);
     Inc(S);
     while Size > 0 do
     begin
@@ -1131,16 +1131,16 @@ begin
       if UpCaseBinary(S^) = $58 then
       begin
         if S + 2 > L then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+          raise EDECFormatException.CreateFmt(sInvalidStringFormat, [self.GetShortClassName]);
         Inc(S);
         i := TableFindBinary(UpCaseBinary(S^), T, 16);
         if i < 0 then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+          raise EDECFormatException.CreateFmt(sInvalidStringFormat, [self.GetShortClassName]);
         D^ := i shl 4;
         Inc(S);
         i := TableFindBinary(UpCaseBinary(S^), T, 16);
         if i < 0 then
-          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+          raise EDECFormatException.CreateFmt(sInvalidStringFormat, [self.GetShortClassName]);
         D^ := D^ or i;
       end
       else

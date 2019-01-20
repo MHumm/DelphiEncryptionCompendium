@@ -614,12 +614,12 @@ end;
 
 procedure TDECHash.RaiseHashOverflowError;
 begin
-  raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
+  raise EDECHashException.Create(sRaiseHashOverflowError);
 end;
 
 procedure TDECHash.RaiseHashNotInitialized;
 begin
-  raise EDECHashException.CreateRes(@sHashNotInitialized);
+  raise EDECHashException.Create(sHashNotInitialized);
 end;
 
 procedure TDECHash.Calc(const Data; DataSize: Integer);

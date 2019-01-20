@@ -2710,7 +2710,6 @@ begin
                                        'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
                                        '51d19010a7c43802a0495ccd68';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
 end;
 
 procedure TestTHash_Whirlpool1.TestBlockSize;
