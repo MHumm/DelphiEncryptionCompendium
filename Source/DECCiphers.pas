@@ -607,8 +607,7 @@ var
 begin
   K := @Key;
   S := FUser;
-{ TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
-  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // PAnsiChar for Pointer Math
+  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // for Pointer Math
 
   Move(Blowfish_Data, S^, SizeOf(Blowfish_Data));
   Move(Blowfish_Key, P^, Sizeof(Blowfish_Key));
@@ -696,8 +695,7 @@ begin
                                    'block size of ' + IntToStr(Context.BlockSize));
 
   D := FUser;
-{ TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
-  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // PAnsiChar for Pointer Math
+  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // for Pointer Math
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
@@ -771,7 +769,6 @@ begin
   Assert(Size = Context.BlockSize);
 
   D := FUser;
-{ TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist und SizeOf(Integer) müsste wohl SizeOf(Int32) sein?}
   P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0];
   B := SwapUInt32(PUInt32Array(Source)[1]);
@@ -2330,7 +2327,7 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
     I: Integer;
     D: PUInt32;
   begin
-    D := Pointer(PAnsiChar(FUser) + FUserSize shr 1); // PAnsiChar for Pointer Math
+    D := Pointer(PAnsiChar(FUser) + FUserSize shr 1); // for Pointer Math
     Move(FUser^, D^, FUserSize shr 1);
     Inc(D, 4);
     for I := 0 to FRounds * 4 - 5 do
@@ -2421,8 +2418,7 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
     P: PUInt32;
     I: Integer;
   begin
-  { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
-    P := Pointer(PByte(FUser) + FUserSize shr 1); // PAnsiChar for Pointer Math
+    P := Pointer(PByte(FUser) + FUserSize shr 1); // for Pointer Math
     Move(FUser^, P^, FUserSize shr 1);
     Inc(P, 4);
     for I := 0 to FRounds * 4 - 5 do
@@ -2523,8 +2519,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
-  P  := Pointer(PByte(FUser) + FUserSize shr 1 + FRounds * 16); // PAnsiChar for Pointer Math
+  P  := Pointer(PByte(FUser) + FUserSize shr 1 + FRounds * 16); // for Pointer Math
   A1 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   C1 := PUInt32Array(Source)[2];
@@ -2834,8 +2829,7 @@ var
 begin
   FillChar(Init_State, SizeOf(Init_State), 0);
   FillChar(T, SizeOf(T), 0);
-  { TODO : Prüfen ob Umstellung von PAnsiChar auf PByte korrekt ist }
-  P := Pointer(PByte(FUser) + 12); // PAnsiChar for Pointer Math
+  P := Pointer(PByte(FUser) + 12); // for Pointer Math
   ExpandKey;
   for I := 0 to 7 do
     GP8(@T);
@@ -5318,104 +5312,17 @@ begin
   ProtectBuffer(K, SizeOf(K));
 end;
 
-//procedure TCipher_Skipjack.DoEncode(Source, Dest: Pointer; Size: Integer);
-//var
-//  Tab, Min: PSkipjackTab;
-//  Max: PAnsiChar;
-//  K, T, A, B, C, D: UInt32;
-//
-//  procedure SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PAnsiChar); inline;
-//  begin
-//    Inc(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab > AMax then
-//    {$ELSE !DELPHIORBCB}
-//    if ATab > PSkipjacktab(AMax) then // fix for FPC
-//    {$ENDIF !DELPHIORBCB}
-//      ATab := AMin;
-//  end;
-//
-//begin
-//  Assert(Size = Context.BufferSize);
-//
-//  Min := FUser;
-//  Max := PAnsiChar(Min) + 9 * 256; // PAnsiChar for Pointer Math
-//  Tab := Min;
-//  A   := Swap(PWordArray(Source)[0]);
-//  B   := Swap(PWordArray(Source)[1]);
-//  C   := Swap(PWordArray(Source)[2]);
-//  D   := Swap(PWordArray(Source)[3]);
-//  K   := 0;
-//
-//  repeat
-//    Inc(K);
-//    T := A;
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    A := T xor D xor K;
-//    D := C;
-//    C := B;
-//    B := T;
-//  until K = 8;
-//
-//  repeat
-//    Inc(K);
-//    T := A;
-//    A := D;
-//    D := C;
-//    C := T xor B xor K;
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    B := T;
-//  until K = 16;
-//
-//  repeat
-//    Inc(K);
-//    T := A;
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    A := T xor D xor K;
-//    D := C;
-//    C := B;
-//    B := T;
-//  until K = 24;
-//
-//  repeat
-//    Inc(K);
-//    T := A;
-//    A := D;
-//    D := C;
-//    C := T xor B xor K;
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackIncCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackIncCheck(Tab, Min, Max);
-//    B := T;
-//  until K = 32;
-//
-//  PWordArray(Dest)[0] := Swap(A);
-//  PWordArray(Dest)[1] := Swap(B);
-//  PWordArray(Dest)[2] := Swap(C);
-//  PWordArray(Dest)[3] := Swap(D);
-//end;
-
 procedure TCipher_Skipjack.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   Tab, Min: PSkipjackTab;
-  Max: PByte; //PAnsiChar;
+  Max: PByte;
   K, T, A, B, C, D: UInt32;
 
 begin
   Assert(Size = Context.BufferSize);
 
   Min := FUser;
-  Max := PByte(Min) + 9 * 256; //PAnsiChar(Min) + 9 * 256; // PAnsiChar for Pointer Math
+  Max := PByte(Min) + 9 * 256; // for Pointer Math
   Tab := Min;
   A   := Swap(PWordArray(Source)[0]);
   B   := Swap(PWordArray(Source)[1]);
@@ -5494,97 +5401,10 @@ diese interne procedure eher zu einer strict private methode werden}
     ATab := AMin;
 end;
 
-//procedure TCipher_Skipjack.DoDecode(Source, Dest: Pointer; Size: Integer);
-//var
-//  Tab, Max: PSkipjackTab;
-//  Min: PAnsiChar; // PAnsiChar for Pointer Math
-//  K, T, A, B, C, D: UInt32;
-//
-//  procedure SkipjackDecCheck(var ATab: PSkipjackTab; AMin: PAnsiChar; AMax: PSkipjackTab); inline;
-//  begin
-//    Dec(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab < AMin then
-//    {$ELSE !DELPHIORBCB}
-//    if ATab < PSkipjacktab(AMin) then // fix for FPC
-//    {$ENDIF !DELPHIORBCB}
-//      ATab := AMax;
-//  end;
-//
-//begin
-//  Assert(Size = Context.BufferSize);
-//
-//  Min := FUser;
-//  Max := Pointer(Min + 9 * 256);
-//  Tab := Pointer(Min + 7 * 256);
-//  A   := Swap(PWordArray(Source)[0]); // holds an Integer, Compiler makes faster Code
-//  B   := Swap(PWordArray(Source)[1]);
-//  C   := Swap(PWordArray(Source)[2]);
-//  D   := Swap(PWordArray(Source)[3]);
-//  K   := 32;
-//
-//  repeat
-//    T := B;
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    B := T xor C xor K;
-//    C := D;
-//    D := A;
-//    A := T;
-//    Dec(K);
-//  until K = 24;
-//
-//  repeat
-//    T := B;
-//    B := C;
-//    C := D;
-//    D := T xor A xor K;
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    A := T;
-//    Dec(K);
-//  until K = 16;
-//
-//  repeat
-//    T := B;
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    B := C xor T xor K;
-//    C := D;
-//    D := A;
-//    A := T;
-//    Dec(K);
-//  until K = 8;
-//
-//  repeat
-//    T := B;
-//    B := C;
-//    C := D;
-//    D := T xor A xor K;
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T shr 8];           SkipjackDecCheck(Tab, Min, Max);
-//    T := T xor Tab[T and $FF] shl 8;   SkipjackDecCheck(Tab, Min, Max);
-//    A := T;
-//    Dec(K);
-//  until K = 0;
-//
-//  PWordArray(Dest)[0] := Swap(A);
-//  PWordArray(Dest)[1] := Swap(B);
-//  PWordArray(Dest)[2] := Swap(C);
-//  PWordArray(Dest)[3] := Swap(D);
-//end;
-
 procedure TCipher_Skipjack.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   Tab, Max: PSkipjackTab;
-  Min: PByte; // PAnsiChar; // PAnsiChar for Pointer Math
+  Min: PByte; // for Pointer Math
   K, T, A, B, C, D: UInt32;
 
 begin

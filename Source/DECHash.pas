@@ -314,7 +314,7 @@ type
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
     ///   passed. Valid values are in the range from 3-32 rounds and values
-    ///   outside this range will lead to a rounds value of 3 to be used.
+    ///   outside this range will lead to a rounds value of 32 to be used.
     /// </summary>
     property Rounds: Integer read FRounds write SetRounds default 3;
   end;
