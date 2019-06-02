@@ -269,7 +269,7 @@ type
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
     /// </summary>
-    property Rounds: Integer read FRounds write SetRounds;
+    property Rounds: Integer read FRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -316,8 +316,15 @@ type
     ///   passed. Valid values are in the range from 3-32 rounds and values
     ///   outside this range will lead to a rounds value of 3 to be used.
     /// </summary>
-    property Rounds: Integer read FRounds write SetRounds;
+    property Rounds: Integer read FRounds write SetRounds default 3;
   end;
+
+  /// <summary>
+  ///   As there seem to exist 128 and 160 bit variants of Tiger which seem to
+  ///   be truncated variants of Tiger 192 but we want to keep compatibility
+  ///   with old code we introduce an alias for the time being.
+  /// </summary>
+  THash_Tiger192 = THash_Tiger;
 
   /// <summary>
   ///   The Panama algorithm is being considered to be unsafe. Support is only
@@ -528,7 +535,7 @@ begin
   else
     Result := FDefaultHashClass;
   if Result = nil then
-    raise EDECHashException.Create(sHashNoDefault);
+    raise EDECHashException.CreateRes(@sHashNoDefault);
 end;
 
 procedure SetDefaultHashClass(HashClass: TDECHashClass);
