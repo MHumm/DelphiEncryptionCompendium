@@ -116,7 +116,7 @@ begin
 
   if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
   begin
-    // Find the class type of the selected hash class and create an instance of it
+    // Find the class type of the selected cipher class and create an instance of it
     Cipher := TDECCipher.ClassByName(
       ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create;
 
