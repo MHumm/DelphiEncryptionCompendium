@@ -94,7 +94,7 @@
     {$DEFINE NO_ASM} (* default ON *)
   {$ELSE}
     {$IFDEF WINDOWS}
-    {.$DEFINE NO_ASM} (* default ON *)
+    {$DEFINE NO_ASM} (* default ON *)
     {$ELSE
       {$DEFINE NO_ASM} (* default ON *)
     {$ENDIF}
