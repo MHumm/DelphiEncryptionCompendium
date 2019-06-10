@@ -153,7 +153,6 @@ begin
     if P.refCnt <> 1 then
     begin
       Result := _NewAnsiString(P.length, P.codePage);
-//      Move(PAnsiChar(Str)^, PAnsiChar(Result)^, P.length);
       Move(Pointer(Str)^, Pointer(Result)^, P.length);
       _LStrClr(Str);
       Pointer(Str) := Result;

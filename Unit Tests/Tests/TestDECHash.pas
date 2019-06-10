@@ -2568,6 +2568,15 @@ begin
                                        'ca892b2854c0908bd146789aa1';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
 
+  // Test vector from EN Wikipedia article
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4f8f5cb531e3d49a61cf417cd133792ccfa501fd8da53ee368f' +
+                                       'ed20e5fe0248c3a0b64f98a6533cee1da614c3a8ddec791ff05' +
+                                       'fee6d971d57c1348320f4eb42d';
+  lDataRow.ExpectedOutputUTFStrTest := '68a834ccecee9b794e8ad869d004cb0afae42f4b98da40dcd22' +
+                                       '75ef295563ff15fc17ee9ceb0c153f19ab1b24ab959aa1acf08' +
+                                       '5b8d6db01a25584ab32dce3356';
+  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
 procedure TestTHash_Whirlpool.TestBlockSize;
@@ -2710,6 +2719,16 @@ begin
                                        'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
                                        '51d19010a7c43802a0495ccd68';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+
+  // Test vector from EN Wikipedia article
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '3ccf8252d8bbb258460d9aa999c06ee38e67cb546cffcf48e91' +
+                                       'f700f6fc7c183ac8cc3d3096dd30a35b01f4620a1e3a20d79cd' +
+                                       '5168544d9e1b7cdf49970e87f1';
+  lDataRow.ExpectedOutputUTFStrTest := '9c7bb5e44e2721d1b442642719d7afffe2cad341a93ed823da0' +
+                                       'fe84a63140af67467cfed7b268d45a77de6510b6e077f1ea0cd' +
+                                       '69f19efdfd697c7089a3cc79dd';
+  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
 procedure TestTHash_Whirlpool1.TestBlockSize;

@@ -682,7 +682,6 @@ begin
     Inc(n, 3);
   end;
 
-  // PAnsiChar(D) - PAnsiChar(Dest) - j
   SetLength(Dest, n-j);
 end;
 
