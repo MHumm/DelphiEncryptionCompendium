@@ -120,7 +120,9 @@
 ///   alternative translation mechanism for exception messages based
 ///   on Firemonkey's TLang architecture
 /// </summary>
+{$IF DECLARED(FireMonkeyVersion)}
 {$DEFINE FMXTranslateableExceptions}
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
