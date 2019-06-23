@@ -230,6 +230,15 @@ type
 
   TCipher_Blowfish = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -239,6 +248,15 @@ type
 
   TCipher_Twofish = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -248,6 +266,15 @@ type
 
   TCipher_IDEA = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -257,6 +284,15 @@ type
 
   TCipher_Cast256 = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -266,6 +302,15 @@ type
 
   TCipher_Mars = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -279,6 +324,15 @@ type
   /// </summary>
   TCipher_RC4 = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -290,7 +344,21 @@ type
   private
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
+    /// <summary>
+    ///   Limits the number of rounds used to a minimum or maximum value,
+    ///   depending on the current value. If FRounds is 0 it will be set to 20.
+    /// </summary>
+    procedure LimitRounds; inline;
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -304,6 +372,15 @@ type
   private
     FRounds: Integer;
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -317,6 +394,15 @@ type
 
   TCipher_Square = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -326,6 +412,15 @@ type
 
   TCipher_SCOP = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -335,6 +430,15 @@ type
 
   TCipher_Sapphire = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -344,6 +448,15 @@ type
 
   TCipher_1DES = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -354,6 +467,15 @@ type
 
   TCipher_2DES = class(TCipher_1DES)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -363,6 +485,15 @@ type
 
   TCipher_3DES = class(TCipher_1DES)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -396,6 +527,15 @@ type
 
   TCipher_3Way = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -408,6 +548,15 @@ type
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -419,6 +568,15 @@ type
 
   TCipher_Gost = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -437,6 +595,15 @@ type
   /// </summary>
   TCipher_Misty = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -456,6 +623,15 @@ type
   /// </summary>
   TCipher_NewDES = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -465,6 +641,15 @@ type
 
   TCipher_Q128 = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -474,6 +659,15 @@ type
 
   TCipher_RC2 = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -486,6 +680,15 @@ type
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -512,6 +715,15 @@ type
     procedure SetRounds(Value: Integer);
     procedure SetVersion(Value: TSAFERVersion);
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -524,6 +736,15 @@ type
 
   TCipher_Shark = class(TDECFormattedCipher)
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -536,6 +757,15 @@ type
     procedure SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte); inline;
     procedure SkipjackDecCheck(var ATab: PSkipjackTab; AMin: PByte; AMax: PSkipjackTab); inline;
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -548,6 +778,15 @@ type
     FRounds: Integer;
     procedure SetRounds(Value: Integer);
   protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -556,7 +795,7 @@ type
   published
     /// <summary>
     ///   16 - 32 Rounds, 16 (default) is sufficient, 32 is secure. If a value
-    ///   outside the range of 16 to 32 is assigned it will be liomited to that
+    ///   outside the range of 16 to 32 is assigned it will be limited to that
     ///   range.
     /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
@@ -2023,14 +2262,8 @@ var
   D: PUInt32Array;
   I, J, L, A, B, Z, T: UInt32;
 begin
-  if FRounds = 0 then
-    FRounds := 20
-  else
-  if FRounds < 16 then
-    FRounds := 16
-  else
-  if FRounds > 24 then
-    FRounds := 24;
+  LimitRounds;
+
   D := FUser;
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
@@ -2066,6 +2299,18 @@ begin
     J := (J + 1) mod L;
   end;
   ProtectBuffer(K, SizeOf(K));
+end;
+
+procedure TCipher_RC6.LimitRounds;
+begin
+  if FRounds = 0 then
+    FRounds := 20
+  else
+  if FRounds < 16 then
+    FRounds := 16
+  else
+  if FRounds > 24 then
+    FRounds := 24;
 end;
 
 procedure TCipher_RC6.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3531,17 +3776,17 @@ procedure TCipher_3Way.DoInit(const Key; Size: Integer);
 var
   A0, A1, A2: UInt32;
   B0, B1, B2: UInt32;
-  T3WayKey: P3Way_Key;
+  P3WayKey: P3Way_Key;
 begin
-  T3WayKey := P3Way_Key(FUser);
+  P3WayKey := P3Way_Key(FUser);
 
-  Move(Key, T3WayKey.E_Key, Size);
-  Move(Key, T3WayKey.D_Key, Size);
-  RANDGenerate($0B0B, T3WayKey.E_Data);
-  RANDGenerate($B1B1, T3WayKey.D_Data);
-  A0 := T3WayKey.D_Key[0];
-  A1 := T3WayKey.D_Key[1];
-  A2 := T3WayKey.D_Key[2];
+  Move(Key, P3WayKey.E_Key, Size);
+  Move(Key, P3WayKey.D_Key, Size);
+  RANDGenerate($0B0B, P3WayKey.E_Data);
+  RANDGenerate($B1B1, P3WayKey.D_Data);
+  A0 := P3WayKey.D_Key[0];
+  A1 := P3WayKey.D_Key[1];
+  A2 := P3WayKey.D_Key[2];
   B0 := A0 xor A0 shr 16 xor A1 shl 16 xor A1 shr 16 xor A2 shl 16 xor
                A1 shr 24 xor A2 shl  8 xor A2 shr  8 xor A0 shl 24 xor
                A2 shr 16 xor A0 shl 16 xor A2 shr 24 xor A0 shl  8;
@@ -3551,9 +3796,9 @@ begin
   B2 := A2 xor A2 shr 16 xor A0 shl 16 xor A0 shr 16 xor A1 shl 16 xor
                A0 shr 24 xor A1 shl  8 xor A1 shr  8 xor A2 shl 24 xor
                A1 shr 16 xor A2 shl 16 xor A1 shr 24 xor A2 shl  8;
-  T3WayKey.D_Key[2] := ReverseBits(B0);
-  T3WayKey.D_Key[1] := ReverseBits(B1);
-  T3WayKey.D_Key[0] := ReverseBits(B2);
+  P3WayKey.D_Key[2] := ReverseBits(B0);
+  P3WayKey.D_Key[1] := ReverseBits(B1);
+  P3WayKey.D_Key[0] := ReverseBits(B2);
 end;
 
 procedure TCipher_3Way.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3563,15 +3808,15 @@ var
   B0, B1, B2: UInt32;
   K0, K1, K2: UInt32;
   E: PUInt32;
-  T3WayKey: P3Way_Key;
+  P3WayKey: P3Way_Key;
 begin
   Assert(Size = Context.BufferSize);
-  T3WayKey := P3Way_Key(FUser);
+  P3WayKey := P3Way_Key(FUser);
 
-  K0 := T3WayKey^.E_Key[0];
-  K1 := T3WayKey^.E_Key[1];
-  K2 := T3WayKey^.E_Key[2];
-  E  := @T3WayKey^.E_Data;
+  K0 := P3WayKey.E_Key[0];
+  K1 := P3WayKey.E_Key[1];
+  K2 := P3WayKey.E_Key[2];
+  E  := @P3WayKey.E_Data;
 
   A0 := PUInt32Array(Source)[0];
   A1 := PUInt32Array(Source)[1];
@@ -3621,15 +3866,15 @@ var
   B0, B1, B2: UInt32;
   K0, K1, K2: UInt32;
   E: PUInt32;
-  T3WayKey: P3Way_Key;
+  P3WayKey: P3Way_Key;
 begin
   Assert(Size = Context.BufferSize);
-  T3WayKey := P3Way_Key(FUser);
+  P3WayKey := P3Way_Key(FUser);
 
-  K0 := T3WayKey^.D_Key[0];
-  K1 := T3WayKey^.D_Key[1];
-  K2 := T3WayKey^.D_Key[2];
-  E  := @T3WayKey^.D_Data;
+  K0 := P3WayKey.D_Key[0];
+  K1 := P3WayKey.D_Key[1];
+  K2 := P3WayKey.D_Key[2];
+  E  := @P3WayKey.D_Data;
 
   A0 := ReverseBits(PUInt32Array(Source)[2]);
   A1 := ReverseBits(PUInt32Array(Source)[1]);

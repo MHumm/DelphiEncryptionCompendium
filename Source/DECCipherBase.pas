@@ -253,6 +253,15 @@ type
     FUserSave: Pointer;
     procedure CheckState(States: TCipherStates);
 
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes. 
+    /// </param>
     procedure DoInit(const Key; Size: Integer); virtual; abstract;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
