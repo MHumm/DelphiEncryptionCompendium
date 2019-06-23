@@ -563,7 +563,7 @@ function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
   Result := Source;
   if Length(Result) > 0 then
-    Decode(Source[0], Result[0], Length(Source));
+    Decode(Result[0], Result[0], Length(Source));
 
 //  SetLength(Result, Length(Source));
 //  if Length(Result) > 0 then
@@ -704,8 +704,8 @@ begin
     Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
 
     Len := Length(Src);
-    SetLength(Result, Len);
-    Decode(Src[0], Result[0], Len);
+    Result := Src;
+    Decode(Result[0], Result[0], Len);
   end
   else
     SetLength(Result, 0);
@@ -721,8 +721,8 @@ begin
     Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
 
     Len := Length(Src);
-    SetLength(Result, Len);
-    Decode(Src[0], Result[0], Len);
+    Result := Src;
+    Decode(Result[0], Result[0], Len);
   end
   else
     SetLength(Result, 0);

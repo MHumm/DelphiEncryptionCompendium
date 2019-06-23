@@ -121,7 +121,7 @@
 ///   on Firemonkey's TLang architecture
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
-{$DEFINE FMXTranslateableExceptions}
+  {$DEFINE FMXTranslateableExceptions}
 {$ENDIF}
 
 //------------------------------------------------------------------------------
