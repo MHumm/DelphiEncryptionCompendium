@@ -636,7 +636,7 @@ procedure ProtectBytes(var Source: TBytes);
 begin
   if (Source <> nil) and (Length(Source) > 0) then
   begin
-    ProtectBuffer(Pointer(Source)^, Length(Source));
+    ProtectBuffer(Source[0], Length(Source));
     SetLength(Source, 0);
   end;
 end;

@@ -87,14 +87,14 @@
 {$DEFINE AUTO_PRNG} (* default ON *)
 
 // if the compiler does not support assembler turn usage of and even if restrict
-// it to Windows, as we currently cannot check if the calling ABI on MacOS X and
-// and Linux is compatible with our ASM code.
+// it to Windows, as those non Windows platforms which actually do support ASM
+// in Delphi do not use Intel x86 ASM
 {$IFNDEF FPC}
   {$IFNDEF ASSEMBLER}
     {$DEFINE NO_ASM} (* default ON *)
   {$ELSE}
     {$IFDEF WINDOWS}
-    {$DEFINE NO_ASM} (* default ON *)
+      {$UNDEFINE NO_ASM} (* default ON *)
     {$ELSE
       {$DEFINE NO_ASM} (* default ON *)
     {$ENDIF}
