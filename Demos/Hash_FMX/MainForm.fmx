@@ -86,12 +86,12 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 192.000000000000000000
-        Size.Width = 224.000000000000000000
+        Size.Width = 272.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018 by Team DEC V%0:s'
+        Text = #169' 2018-2019 by Team DEC V%0:s'
       end
     end
     object LayoutTop: TLayout

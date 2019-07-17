@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, DECCipherBase;
+  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
 
 type
   TMainForm = class(TForm)
@@ -50,6 +50,9 @@ type
     procedure InitCipherModes;
     procedure ShowErrorMessage(ErrorMsg: string);
     function GetSelectedCipherMode: TCipherMode;
+    function GetSettings(var InputFormatting  : TDECFormatClass;
+                         var OutputFormatting : TDECFormatClass): Boolean;
+    function GetCipherAlgorithm(var Cipher: TDECCipher): Boolean;
   public
   end;
 
@@ -60,7 +63,7 @@ implementation
 
 uses
   System.TypInfo, Generics.Collections, FMX.Platform,
-  DECBaseClass, DECFormatBase, DECFormat, DECCipherModes,
+  DECBaseClass, DECFormat, DECCipherModes,
   DECCipherFormats, DECCiphers, DECUtil
   {$IFDEF Android}
   ,
@@ -72,8 +75,38 @@ uses
 {$R *.fmx}
 
 procedure TMainForm.ButtonDecryptClick(Sender: TObject);
+var
+  Cipher           : TDECCipher;
+  InputFormatting  : TDECFormatClass;
+  OutputFormatting : TDECFormatClass;
+  InputBuffer      : TBytes;
+  OutputBuffer     : TBytes;
 begin
-//
+  if not GetSettings(InputFormatting, OutputFormatting) then
+    exit;
+
+  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
+  begin
+    if not GetCipherAlgorithm(Cipher) then
+      exit;
+
+    try
+      InputBuffer  := System.SysUtils.BytesOf(EditCipherText.Text);
+
+      if InputFormatting.IsValid(InputBuffer) then
+      begin
+        OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(InputFormatting.Decode(InputBuffer));
+
+        EditPlainText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
+      end
+      else
+        ShowErrorMessage('Input has wrong format');
+    finally
+      Cipher.Free;
+    end;
+  end
+  else
+    ShowErrorMessage('No cipher algorithm selected');
 end;
 
 procedure TMainForm.ButtonEncryptClick(Sender: TObject);
@@ -84,6 +117,38 @@ var
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
 begin
+  if not GetSettings(InputFormatting, OutputFormatting) then
+    exit;
+
+  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
+  begin
+    if not GetCipherAlgorithm(Cipher) then
+      exit;
+
+    try
+      InputBuffer  := System.SysUtils.BytesOf(EditPlainText.Text);
+
+      if InputFormatting.IsValid(InputBuffer) then
+      begin
+        OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
+
+        EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
+      end
+      else
+        ShowErrorMessage('Input has wrong format');
+    finally
+      Cipher.Free;
+    end;
+  end
+  else
+    ShowErrorMessage('No cipher algorithm selected');
+end;
+
+function TMainForm.GetSettings(var InputFormatting  : TDECFormatClass;
+                               var OutputFormatting : TDECFormatClass): Boolean;
+begin
+  result := false;
+
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
     // Find the class type of the selected formatting class and create an instance of it
@@ -114,47 +179,33 @@ begin
     exit;
   end;
 
-  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
+  result := true;
+end;
+
+function TMainForm.GetCipherAlgorithm(var Cipher : TDECCipher):Boolean;
+begin
+  result := false;
+
+  // Find the class type of the selected cipher class and create an instance of it
+  Cipher := TDECCipher.ClassByName(
+    ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create;
+
+  if TFormat_HEX.IsValid(RawByteString(EditInitVector.Text)) and
+     TFormat_HEX.IsValid(RawByteString(EditFiller.Text)) then
   begin
-    // Find the class type of the selected cipher class and create an instance of it
-    Cipher := TDECCipher.ClassByName(
-      ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create;
+    Cipher.Init(RawByteString(EditKey.Text),
+                TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
+                StrToInt('0x' + EditFiller.Text));
 
-    if TFormat_HEX.IsValid(RawByteString(EditInitVector.Text)) and
-       TFormat_HEX.IsValid(RawByteString(EditFiller.Text)) then
-    begin
-      Cipher.Init(RawByteString(EditKey.Text),
-                  TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
-                  StrToInt('0x' + EditFiller.Text));
-
-      Cipher.Mode := GetSelectedCipherMode;
-    end
-    else
-    begin
-      ShowErrorMessage('Init vector or filler byte  not given in hexadecimal representation');
-      exit;
-    end;
-
-    try
-      InputBuffer  := System.SysUtils.BytesOf(EditPlainText.Text);
-
-      if InputFormatting.IsValid(InputBuffer) then
-      begin
-// Warum springt er hier direkt die nur für einen Block gültige
-// DoEncode an, statt der Blockverkettung nutzenden aus DECCipherModes?
-// Was ist hier anders als im Console basierten Programm?
-        OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
-
-        EditCipherText.Text := DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer));
-      end
-      else
-        ShowErrorMessage('Input has wrong format');
-    finally
-      Cipher.Free;
-    end;
+    Cipher.Mode := GetSelectedCipherMode;
   end
   else
-    ShowErrorMessage('No cipher algorithm selected');
+  begin
+    ShowErrorMessage('Init vector or filler byte  not given in hexadecimal representation');
+    exit;
+  end;
+
+  result := true;
 end;
 
 function TMainForm.GetSelectedCipherMode:TCipherMode;
@@ -280,24 +331,21 @@ procedure TMainForm.InitCipherCombo;
 var
   MyClass : TPair<Int64, TDECClass>;
   Ciphers : TStringList;
-  CopyIdx : Integer;
 begin
   Ciphers := TStringList.Create;
 
   try
     for MyClass in TDECCipher.ClassList do
-      Ciphers.Add(MyClass.Value.ClassName);
+    begin
+      if (MyClass.Value <>TCipher_Null) then
+        Ciphers.Add(MyClass.Value.ClassName);
+    end;
 
     Ciphers.Sort;
     ComboBoxCipherAlgorithm.Items.AddStrings(Ciphers);
 
     if Ciphers.Count > 0 then
-    begin
-      if Ciphers.Find('TCipher_Null', CopyIdx) then
-        ComboBoxCipherAlgorithm.ItemIndex  := CopyIdx
-      else
-        ComboBoxCipherAlgorithm.ItemIndex  := 0;
-    end;
+      ComboBoxCipherAlgorithm.ItemIndex  := 0;
   finally
     Ciphers.Free;
   end;

@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Top = 0
   ActiveControl = ComboBoxCipherAlgorithm
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 704
+  ClientHeight = 711
   ClientWidth = 425
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,11 +14,11 @@ object MainForm: TMainForm
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 425.000000000000000000
-    Size.Height = 704.000000000000000000
+    Size.Height = 711.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     Viewport.Width = 409.000000000000000000
-    Viewport.Height = 704.000000000000000000
+    Viewport.Height = 711.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
       Size.Height = 993.000000000000000000
@@ -291,12 +291,12 @@ object MainForm: TMainForm
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 968.000000000000000000
-        Size.Width = 148.000000000000000000
+        Size.Width = 178.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018 by Team DEC V%0:s'
+        Text = #169' 2018-2019 by Team DEC V%0:s'
       end
     end
   end
