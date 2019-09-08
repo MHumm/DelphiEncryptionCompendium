@@ -108,6 +108,7 @@ begin
       Cipher.Mode := cmCBCx;
 
       SourceText := 'Beispielklartext';
+      WriteLn('Source text: ' + SourceText);
       Input := System.SysUtils.BytesOf(SourceText);
 
       // Encrypt

@@ -1,22 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.135,=D:\Projekte\DECGit\Demos\Hash_FMX\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.097,D:\Projekte\DECGit\Source\DECUtilRawByteStringHelper.pas=D:\Projekte\DECGit\Demos\Hash_FMX\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.957,=D:\Projekte\DECGit\Source\DECCRC.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.396,=D:\Projekte\DECGit\Source\DECData.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.180,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.980,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.661,d:\Projekte\Project1.dproj=D:\Projekte\DECGit\Demos\Hash_FMX\Hash_FMX.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.251,d:\Projekte\Unit1.fmx=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.fmx</Transaction>
     <Transaction>1899.12.30 00:00:00.000.706,=D:\Projekte\DECGit\Source\DECUtil.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.980,=D:\Projekte\DECGit\Source\DECTypes.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.135,=D:\Projekte\DECGit\Demos\Hash_FMX\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.241,=d:\Projekte\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.985,=d:\Projekte\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.251,d:\Projekte\Unit1.pas=D:\Projekte\DECGit\Demos\Hash_FMX\MainForm.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.782,=D:\Projekte\DECGit\Source\DECHash.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.180,=D:\Projekte\DECGit\Source\DECFormatBase.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.422,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.766,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.847,=D:\Projekte\DECGit\Source\DECHashBase.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.422,=D:\Projekte\DECGit\Source\DECFormat.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.959,=D:\Projekte\DECGitMaster\Source\DECOptions.inc</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.387,D:\Projekte\DECGitMaster\Source\DECOptions.inc=</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.766,=D:\Projekte\DECGit\Source\DECBaseClass.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="android-support-v4.dex.jar"/>
@@ -26,9 +28,16 @@
     <File Path="google-play-billing.dex.jar"/>
     <File Path="google-play-licensing.dex.jar"/>
     <File Path="google-play-services.dex.jar"/>
+    <File Path="android-support-v4.dex.jar"/>
+    <File Path="cloud-messaging.dex.jar"/>
+    <File Path="fmx.dex.jar"/>
+    <File Path="google-analytics-v2.dex.jar"/>
+    <File Path="google-play-billing.dex.jar"/>
+    <File Path="google-play-licensing.dex.jar"/>
+    <File Path="google-play-services.dex.jar"/>
     <File Path="MainForm.pas"/>
     <File Path="MainForm.fmx"/>
-    <File Path="..\..\..\DECGit"/>
+    <File Path="..\..\..\DECGitMaster"/>
     <File Path="..\..\Source"/>
     <File Path="..\..\Source\DECBaseClass.pas"/>
     <File Path="..\..\Source\DECCRC.pas"/>
@@ -42,7 +51,7 @@
     <File Path="..\..\Source\DECUtilRawByteStringHelper.pas"/>
   </ProjectSortOrder>
 	<ActiveMobileDevice>
-		<NoProfile Android=""/>
+		<NoProfile Android="HGAF6WRS" Android64="HGAF6WRS"/>
 	</ActiveMobileDevice>
 	<BT_BuildType>AppStore</BT_BuildType>
 </BorlandProject>

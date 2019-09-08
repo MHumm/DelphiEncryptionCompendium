@@ -650,3 +650,4 @@ finalization
   TDECFormat.ClassList.Free;
 
 end.
+

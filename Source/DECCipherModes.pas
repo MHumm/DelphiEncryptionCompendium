@@ -291,14 +291,14 @@ uses
   System.TypInfo, DECUtil;
 
 resourcestring
-  sInvalidMessageLength = 'Message length for %0:s must be a multiple of %0:d bytes';
+  sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
   raise EDECCipherException.CreateFmt(sInvalidMessageLength,
                                       [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
-                                      Integer(Cipher.Mode)),
-                                      Cipher.Context.BlockSize]);
+                                       Integer(Cipher.Mode)),
+                                       Cipher.Context.BlockSize]);
 end;
 
 procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);

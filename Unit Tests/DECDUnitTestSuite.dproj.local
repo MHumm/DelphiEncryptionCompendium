@@ -7,7 +7,7 @@
     <Transaction>1899.12.30 00:00:00.000.074,=D:\Projekte\DECGit\Unit Tests\TestDECBaseClass.pas</Transaction>
   </Transactions>
 	<ProjectSortOrder AutoSort="0" SortType="0">
-    <File Path="..\..\DECGit"/>
+    <File Path="..\..\DECGitMaster"/>
     <File Path="..\Source"/>
     <File Path="..\Source\DECBaseClass.pas"/>
     <File Path="..\Source\DECCipherBase.pas"/>
