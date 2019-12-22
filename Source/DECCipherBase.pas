@@ -324,7 +324,7 @@ type
     ///   Initializes the cipher with the necessary encryption/decryption key
     /// </summary>
     /// <param name="Key">
-    ///   Encryption/decryption key. Recommended/requoired key length is dependant
+    ///   Encryption/decryption key. Recommended/required key length is dependant
     ///   on the concrete algorithm.
     /// </param>
     /// <param name="Size">
@@ -351,7 +351,7 @@ type
     ///   Initializes the cipher with the necessary encryption/decryption key
     /// </summary>
     /// <param name="Key">
-    ///   Encryption/decryption key. Recommended/requoired key length is dependant
+    ///   Encryption/decryption key. Recommended/required key length is dependant
     ///   on the concrete algorithm.
     /// </param>
     /// <param name="IVector">
@@ -372,7 +372,7 @@ type
     ///   Initializes the cipher with the necessary encryption/decryption key
     /// </summary>
     /// <param name="Key">
-    ///   Encryption/decryption key. Recommended/requoired key length is dependant
+    ///   Encryption/decryption key. Recommended/required key length is dependant
     ///   on the concrete algorithm.
     /// </param>
     /// <param name="IVector">
@@ -395,7 +395,7 @@ type
     ///   Only for use with the classic desktop compilers.
     /// </summary>
     /// <param name="Key">
-    ///   Encryption/decryption key. Recommended/requoired key length is dependant
+    ///   Encryption/decryption key. Recommended/required key length is dependant
     ///   on the concrete algorithm.
     /// </param>
     /// <param name="IVector">
@@ -417,7 +417,7 @@ type
     ///   Only for use with the classic desktop compilers.
     /// </summary>
     /// <param name="Key">
-    ///   Encryption/decryption key. Recommended/requoired key length is dependant
+    ///   Encryption/decryption key. Recommended/required key length is dependant
     ///   on the concrete algorithm.
     /// </param>
     /// <param name="IVector">
