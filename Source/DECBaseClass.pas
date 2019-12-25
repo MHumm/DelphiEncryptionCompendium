@@ -104,7 +104,7 @@ type
   /// <summary>
   ///   Parent class of all cryptography and hash implementations
   /// </summary>
-  TDECObject = class(TPersistent)
+  TDECObject = class(TInterfacedObject)
   public
     /// <summary>
     ///   Overrideable but otherwise empty constructor (calls his parent

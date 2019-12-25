@@ -65,14 +65,14 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  DECCipherBase, DECCipherModes, DECUtil, DECFormatBase;
+  DECCipherBase, DECCipherModes, DECUtil, DECFormatBase, DECCipherInterface;
 
 type
   /// <summary>
   ///   Class in which the various encode/decode variants provided have been
   ///   moved in order to keep the base cipher class small and clean.
   /// </summary>
-  TDECFormattedCipher = class(TDECCipherModes)
+  TDECFormattedCipher = class(TDECCipherModes, IDECCipher)
   private
     /// <summary>
     ///   Encrypts or decrypts the data contained in a given stream
@@ -191,7 +191,8 @@ type
     ///   Optional event which can be passed to get information about the
     ///   progress of the encryption operation
     /// </param>
-    procedure EncodeFile(const SourceFileName, DestFileName: string; const Progress: IDECProgress = nil);
+    procedure EncodeFile(const SourceFileName, DestFileName: string;
+                         const Progress: IDECProgress = nil);
 
     /// <summary>
     ///   Reads the contents of one file, decrypts it and stores it in another file
@@ -206,7 +207,8 @@ type
     ///   Optional event which can be passed to get information about the
     ///   progress of the decryption operation
     /// </param>
-    procedure DecodeFile(const SourceFileName, DestFileName: string; const Progress: IDECProgress = nil);
+    procedure DecodeFile(const SourceFileName, DestFileName: string;
+                         const Progress: IDECProgress = nil);
 
     /// <summary>
     ///   Encrypts the contents of the passed unicode string
@@ -224,7 +226,8 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
-    function EncodeStringToBytes(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
+    function EncodeStringToBytes(const Source: string;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed RawByteString
@@ -242,7 +245,8 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
-    function EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
+    function EncodeStringToBytes(const Source: RawByteString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed unicode string
@@ -267,7 +271,8 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
-    function EncodeStringToString(const Source: string; Format: TDECFormatClass = nil): string; overload;
+    function EncodeStringToString(const Source: string;
+                                  Format: TDECFormatClass = nil): string; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed unicode string
@@ -292,7 +297,8 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
-    function EncodeStringToString(const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
+    function EncodeStringToString(const Source: RawByteString;
+                                  Format: TDECFormatClass = nil): RawByteString; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed encrypted unicode string
@@ -310,7 +316,8 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
-    function DecodeStringToBytes(const Source: string; Format: TDECFormatClass = nil): TBytes; overload;
+    function DecodeStringToBytes(const Source: string;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed encrypted RawByteString
@@ -328,7 +335,8 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
-    function DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes; overload;
+    function DecodeStringToBytes(const Source: RawByteString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed Unicode string
@@ -351,7 +359,8 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by Unicode string processing in some hafrmful way
     /// </remarks>
-    function DecodeStringToString(const Source: string; Format: TDECFormatClass = nil): string; overload;
+    function DecodeStringToString(const Source: string;
+                                  Format: TDECFormatClass = nil): string; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed RawByteString string
@@ -374,7 +383,8 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
-    function DecodeStringToString(const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
+    function DecodeStringToString(const Source: RawByteString;
+                                  Format: TDECFormatClass = nil): RawByteString; overload;
 
 {$IFNDEF NEXTGEN}
     /// <summary>
@@ -393,7 +403,8 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
-    function EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes; overload;
+    function EncodeStringToBytes(const Source: AnsiString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed Ansistring
@@ -418,7 +429,8 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
-    function EncodeStringToString(const Source: AnsiString; Format: TDECFormatClass = nil): AnsiString; overload;
+    function EncodeStringToString(const Source: AnsiString;
+                                  Format: TDECFormatClass = nil): AnsiString; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed encrypted Ansistring
@@ -436,7 +448,8 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
-    function DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes; overload;
+    function DecodeStringToBytes(const Source: AnsiString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed AnsiString string
@@ -459,7 +472,8 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
-    function DecodeStringToString(const Source: AnsiString; Format: TDECFormatClass = nil): AnsiString; overload;
+    function DecodeStringToString(const Source: AnsiString;
+                                  Format: TDECFormatClass = nil): AnsiString; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed Widestring
@@ -477,7 +491,8 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
-    function EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes; overload;
+    function EncodeStringToBytes(const Source: WideString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Encrypts the contents of the passed Widestring
@@ -502,7 +517,8 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
-    function EncodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
+    function EncodeStringToString(const Source: WideString;
+                                  Format: TDECFormatClass = nil): WideString; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed encrypted Widestring
@@ -520,7 +536,8 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
-    function DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes; overload;
+    function DecodeStringToBytes(const Source: WideString;
+                                 Format: TDECFormatClass = nil): TBytes; overload;
 
     /// <summary>
     ///   Decrypts the contents of the passed WideString string
@@ -543,7 +560,8 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
-    function DecodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
+    function DecodeStringToString(const Source: WideString;
+                                  Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}
   end;
 

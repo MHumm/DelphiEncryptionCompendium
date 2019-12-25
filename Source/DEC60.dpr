@@ -21,7 +21,8 @@ uses
   DECHashBase in 'DECHashBase.pas',
   DECCipherFormats in 'DECCipherFormats.pas',
   DECTypes in 'DECTypes.pas',
-  DECCipherModes in 'DECCipherModes.pas';
+  DECCipherModes in 'DECCipherModes.pas',
+  DECCipherInterface in 'DECCipherInterface.pas';
 
 begin
   try

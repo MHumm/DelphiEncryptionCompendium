@@ -133,6 +133,7 @@
         <DCCReference Include="DECCipherFormats.pas"/>
         <DCCReference Include="DECTypes.pas"/>
         <DCCReference Include="DECCipherModes.pas"/>
+        <DCCReference Include="DECCipherInterface.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
         <BuildConfiguration Include="Release">
@@ -276,6 +277,12 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>library\lib\arm64-v8a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidServiceOutput_Android32">
+                    <Platform Name="Android64">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
