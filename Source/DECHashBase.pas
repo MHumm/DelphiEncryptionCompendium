@@ -71,7 +71,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  DECBaseClass, DECFormatBase, DECUtil, DECTypes;
+  DECBaseClass, DECFormatBase, DECUtil, DECTypes, DECHashInterface;
 
 type
   /// <summary>
@@ -83,12 +83,26 @@ type
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
   /// </summary>
-  TDECHash = class(TDECObject)
+  TDECHash = class(TDECObject, IDECHash)
   strict private
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
     procedure RaiseHashNotInitialized;
+
+    /// <summary>
+    ///   Returns the current value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    function GetPaddingByte: Byte;
+    /// <summary>
+    ///   Changes the value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    /// <param name="Value">
+    ///   New value for the padding byte
+    /// </param>
+    procedure SetPaddingByte(Value: Byte);
   strict protected
     FCount: array[0..7] of UInt32;
     FBuffer: PByteArray;
@@ -437,7 +451,7 @@ type
     ///   if the length of the data cannot be divided by required size for the
     ///   hash algorithm without reminder
     /// </summary>
-    property PaddingByte: Byte read FPaddingByte write FPaddingByte;
+    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
   /// <summary>
@@ -498,6 +512,11 @@ begin
 //  FBuffer := ReallocMemory(FBuffer, 0);
 
   ReallocMem(FBuffer, 0);
+end;
+
+function TDECHash.GetPaddingByte: Byte;
+begin
+  result := FPaddingByte;
 end;
 
 class function TDECHash.IsPasswordHash: Boolean;
@@ -615,6 +634,11 @@ end;
 procedure TDECHash.RaiseHashOverflowError;
 begin
   raise EDECHashException.Create(sRaiseHashOverflowError);
+end;
+
+procedure TDECHash.SetPaddingByte(Value: Byte);
+begin
+  FPaddingByte := Value;
 end;
 
 procedure TDECHash.RaiseHashNotInitialized;

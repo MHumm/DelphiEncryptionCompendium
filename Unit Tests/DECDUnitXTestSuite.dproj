@@ -130,6 +130,10 @@
         <DCCReference Include="..\Source\DECCipherFormats.pas"/>
         <DCCReference Include="Tests\TestDECCipherModes.pas"/>
         <DCCReference Include="..\Source\DECUtilRawByteStringHelper.pas"/>
+        <DCCReference Include="Tests\TestDECTestDataContainer.pas"/>
+        <DCCReference Include="Tests\TestDECBaseClass.pas"/>
+        <DCCReference Include="..\Source\DECCipherInterface.pas"/>
+        <DCCReference Include="..\Source\DECHashInterface.pas"/>
         <None Include="..\Source\DECOptions.inc"/>
         <None Include="Tests\defines.inc"/>
         <BuildConfiguration Include="Release">
@@ -273,6 +277,12 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>library\lib\arm64-v8a</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidServiceOutput_Android32">
+                    <Platform Name="Android64">
+                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

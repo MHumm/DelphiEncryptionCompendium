@@ -13,7 +13,8 @@ uses
   DECHashBase in '..\..\Source\DECHashBase.pas',
   DECData in '..\..\Source\DECData.pas',
   DECFormat in '..\..\Source\DECFormat.pas',
-  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
+  DECHashInterface in '..\..\Source\DECHashInterface.pas';
 
 {$R *.res}
 
@@ -21,6 +22,7 @@ begin
   ReportMemoryLeaksOnShutdown := true;
 
   Application.Initialize;
+  // TMainForm
   Application.CreateForm(TMainForm, FormMain);
   Application.Run;
 end.

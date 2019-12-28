@@ -1,4 +1,4 @@
-{$DEFINE GUI}
+{.$DEFINE GUI}
 {.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;
 
@@ -49,7 +49,9 @@ uses
   TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
   DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas',
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
-  TestDECBaseClass in 'Tests\TestDECBaseClass.pas';
+  TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
+  DECCipherInterface in '..\Source\DECCipherInterface.pas',
+  DECHashInterface in '..\Source\DECHashInterface.pas';
 
 var
   runner : ITestRunner;

@@ -80,7 +80,8 @@ uses
   DECUtil in '..\..\Source\DECUtil.pas',
   DECFormatBase in '..\..\Source\DECFormatBase.pas',
   DECData in '..\..\Source\DECData.pas',
-  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas';
+  DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
+  DECHashInterface in '..\..\Source\DECHashInterface.pas';
 
 var
   Hash : THash_RipeMD160;

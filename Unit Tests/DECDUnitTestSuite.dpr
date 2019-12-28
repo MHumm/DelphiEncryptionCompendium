@@ -43,7 +43,9 @@ uses
   TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
   TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
   DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas',
-  TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas';
+  TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
+  DECCipherInterface in '..\Source\DECCipherInterface.pas',
+  DECHashInterface in '..\Source\DECHashInterface.pas';
 
 {$R *.RES}
 
