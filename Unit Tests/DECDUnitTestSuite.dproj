@@ -112,6 +112,7 @@
         <DCCReference Include="Tests\TestDECTestDataContainer.pas"/>
         <DCCReference Include="..\Source\DECCipherInterface.pas"/>
         <DCCReference Include="..\Source\DECHashInterface.pas"/>
+        <DCCReference Include="Tests\TestDECCipherFormats.pas"/>
         <None Include="..\Source\DECOptions.inc"/>
         <None Include="Tests\defines.inc"/>
         <BuildConfiguration Include="Release">

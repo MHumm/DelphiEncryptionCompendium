@@ -45,7 +45,8 @@ uses
   DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas',
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
   DECCipherInterface in '..\Source\DECCipherInterface.pas',
-  DECHashInterface in '..\Source\DECHashInterface.pas';
+  DECHashInterface in '..\Source\DECHashInterface.pas',
+  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas';
 
 {$R *.RES}
 
