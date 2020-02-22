@@ -94,7 +94,9 @@ type
   // make that one generic
   TEncodeDecodeFunc = function (const Source: RawByteString; Format: TDECFormatClass = nil): TBytes of Object;
 
-  // All known testvectors use the same filler byte and the same cmCTSx mode
+  /// <summary>
+  ///   All known testvectors use the same filler byte and the same cmCTSx mode
+  /// </summary>
   TCipherTestData = record
     InputData  : RawByteString;
     OutputData : RawByteString;
@@ -143,7 +145,7 @@ type
     ///   Key to be checked. if it is longer than KeySize it will be cut off.
     /// </param>
     /// <param name="KeySize">
-    ///   Here the length of a key for the cipher algorithm tested shall be passed
+    ///   Maximum size of a key for the given cipher algorithm
     /// </param>
     procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
 
@@ -3217,7 +3219,7 @@ var
   TempResultHex : RawByteString;
 begin
 { TODO :
-Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
+Das Problem ist hier: dass wir zu low level testen, da die bisherigen Testvektoren
 ja immer von einem bestimmten CipherModus ausgehen, und nicht die
 einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
 wir die bisherigen Vektoren testen können. Dann können wir die nötigen

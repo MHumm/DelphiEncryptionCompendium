@@ -76,14 +76,61 @@ uses
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
 
-  Classes, DECBaseClass, SysUtils, Generics.Collections;
+  Classes, SysUtils, DECCipherBase, DECCiphers;
 
 type
+  /// <summary>
+  ///   All known testvectors use the same filler byte and the same cmCTSx mode
+  /// </summary>
+  TCipherTestData = record
+    InputData  : RawByteString;
+    OutputData : RawByteString;
+
+    Key        : RawByteString;
+    InitVector : RawByteString;
+    Filler     : Byte;
+    Mode       : TCipherMode;
+  end;
+
+  /// <summary>
+  ///   base class for all cipher mode tests to make them more independent of
+  ///   the actually tested algorithm
+  /// </summary>
+  TestTDECCipherFormatsBase = class(TTestCase)
+  strict protected
+    FCipher        : TDECCipher;
+    FTestData      : array of TCipherTestData;
+
+    /// <summary>
+    ///   Initialize the cipher alrorithm with the initial values for a
+    ///   single test
+    /// </summary>
+    /// <param name="Cipher">
+    ///   Instance which shall be initialized with the test data given
+    /// </param>
+    /// <param name="TestData">
+    ///   Data used to initialize the instance
+    /// </param>
+    procedure Init(Cipher: TDECCipher; TestData: TCipherTestData);
+    /// <summary>
+    ///   Ensures that a given key is not longer then the KeySize passed
+    /// </summary>
+    /// <param name="Key">
+    ///   Key to be checked. if it is longer than KeySize it will be cut off.
+    /// </param>
+    /// <param name="KeySize">
+    ///   Maximum size of a key for the given cipher algorithm
+    /// </param>
+    procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
+
+    procedure DoTestEncodeBytes(Cipher: TDECCipher);
+  end;
+
   // Test methods for class TDECClassList
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTDECCipherFormats = class(TTestCase)
+  TestTDECCipherFormats = class(TestTDECCipherFormatsBase)
   strict private
-
+    FCipherTwoFish : TCipher_Twofish;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -130,7 +177,44 @@ type
 implementation
 
 uses
-  DECFormat, DECCiphers;
+  DECBaseClass, DECFormat;
+
+procedure TestTDECCipherFormatsBase.DoTestEncodeBytes(Cipher: TDECCipher);
+var
+  i      : Integer;
+  result : TBytes;
+begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(Cipher, FTestData[i]);
+
+    result := Cipher.EncodeBytes(BytesOf(FTestData[i].InputData));
+
+    CheckEquals(FTestData[i].OutputData,
+                StringOf(TFormat_HexL.Encode(result)),
+                'Fehler in TestEncodeBytes ' + i.ToString);
+  end;
+
+end;
+
+procedure TestTDECCipherFormatsBase.Init(Cipher: TDECCipher; TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, Cipher.Context.KeySize);
+
+  Cipher.Mode := TestData.Mode;
+  Cipher.Init(BytesOf(TestData.Key),
+                      BytesOf(TestData.InitVector),
+                      TestData.Filler);
+end;
+
+procedure TestTDECCipherFormatsBase.LimitKeyLength(var Key: RawByteString;
+  KeySize: Integer);
+begin
+  if Length(Key) > KeySize then
+    Delete(Key, KeySize + 1, length(Key));
+end;
+
+{ TestTDECCipherFormats }
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
 begin
@@ -144,12 +228,27 @@ end;
 
 procedure TestTDECCipherFormats.SetUp;
 begin
-//
+  FCipherTwoFish := TCipher_Twofish.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'e81674f9bc69442188c949bb52e1e47874171177e99dbbe9880875094f8dfe21';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Twofish';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
 end;
 
 procedure TestTDECCipherFormats.TearDown;
 begin
-//
+  FCipherTwoFish.Free;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeAnsiStringToBytes;
@@ -203,8 +302,27 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeBytes;
+var
+  i      : Integer;
+  result : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(FCipherTwoFish, FTestData[i]);
 
+    result := FCipherTwoFish.EncodeBytes(BytesOf(FTestData[i].InputData));
+
+    CheckEquals(FTestData[i].OutputData,
+                StringOf(TFormat_HexL.Encode(result)),
+                'Fehler in TestEncodeBytes ' + i.ToString);
+  end;
+
+{ TODO :
+Change to use DoTestEncodeBytes but that needs to be
+passed an init method as calling that one on the TDECCipher
+level leads to an assertion later on }
+//begin
+//  DoTestEncodeBytes(FCipherTwoFish);
 end;
 
 procedure TestTDECCipherFormats.TestEncodeRawByteStringToBytes;
