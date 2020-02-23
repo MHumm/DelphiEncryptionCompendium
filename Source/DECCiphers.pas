@@ -319,8 +319,11 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
-    property Rounds: Integer read FRounds write SetRounds; // 16-24, default 20
+    /// <summary>
+    ///   Sets the number of rounds/times the algorithm is being applied to the
+    ///   data. Range should be 16-24 and default is 20 rounds.
+    /// </summary>
+    property Rounds: Integer read FRounds write SetRounds;
   end;
 
   TCipher_Rijndael = class(TDECFormattedCipher)
@@ -341,7 +344,10 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
+    /// <summary>
+    ///   Gets the number of rounds/times the algorithm is being applied to the
+    ///   data. The number of rounds depends on the key size.
+    /// </summary>
     property Rounds: Integer read FRounds;
   end;
 
@@ -517,7 +523,11 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
+
+    /// <summary>
+    ///   Sets the number of rounds/times the algorithm is being applied to the
+    ///   data. Default value is 16 rounds.
+    /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
   end;
 
@@ -649,8 +659,12 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
-    property Rounds: Integer read FRounds write SetRounds; // 8-16, default 12
+
+    /// <summary>
+    ///   Sets the number of rounds/times the algorithm is being applied to the
+    ///   data. Range should be 8-16 and default is 12 rounds.
+    /// </summary>
+    property Rounds: Integer read FRounds write SetRounds;
   end;
 
   /// <summary>
@@ -684,7 +698,12 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
+
+    /// <summary>
+    ///   Sets the number of rounds/times the algorithm is being applied to the
+    ///   data. Range should be 4-13 and default is 5, 6, 10 or 8 rounds
+    ///   depending on the version
+    /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
     property Version: TSAFERVersion read FVersion write SetVersion;
   end;
@@ -747,7 +766,7 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-  published
+
     /// <summary>
     ///   16 - 32 Rounds, 16 (default) is sufficient, 32 is secure. If a value
     ///   outside the range of 16 to 32 is assigned it will be limited to that
