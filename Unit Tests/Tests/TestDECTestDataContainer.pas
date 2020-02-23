@@ -1,14 +1,19 @@
 {*****************************************************************************
+  The DEC team (see file NOTICE.txt) licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License. A copy of this licence is found in the root directory of
+  this project in the file LICENCE.txt or alternatively at
 
-  Delphi Encryption Compendium (DEC)
-  Version 6.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
-  Copyright (c) 2018 - 2019 Norman Gallery (ng931884 [at] gmx [dot] de)
-  Copyright (c) 2016 - 2019 Markus Humm (markus [dot] humm [at] googlemail [dot] com)
-  Copyright (c) 2008 - 2012 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
-  Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
-  All rights reserved.
-***************************************************************************** }
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+*****************************************************************************}
 unit TestDECTestDataContainer;
 
 interface

@@ -194,16 +194,28 @@ object FormMain: TFormMain
     object TabSheetCRC: TTabSheet
       Caption = 'TabSheetCRC'
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheetHash: TTabSheet
       Caption = 'TabSheetHash'
       ImageIndex = 1
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheetCipher: TTabSheet
       Caption = 'TabSheetCipher'
       ImageIndex = 2
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object PageControlCipher: TPageControl
         Left = 0
         Top = 0
@@ -214,10 +226,18 @@ object FormMain: TFormMain
         TabOrder = 0
         object TabSheetBasic: TTabSheet
           Caption = '&Basic'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
         object TabSheetAdvanced: TTabSheet
           Caption = '&Advanced'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
       end
     end
@@ -225,11 +245,19 @@ object FormMain: TFormMain
       Caption = 'TabSheetRandom'
       ImageIndex = 4
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
     end
     object TabSheetAbout: TTabSheet
       Caption = 'TabSheetAbout'
       ImageIndex = 5
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 16
         Top = 16
