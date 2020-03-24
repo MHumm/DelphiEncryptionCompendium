@@ -31,7 +31,7 @@ uses
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
 
-  Classes, SysUtils, DECCipherBase, DECCiphers;
+  Classes, SysUtils, DECCipherBase, DECCiphers, DECCipherFormats;
 
 type
   /// <summary>
@@ -51,7 +51,7 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherFormats = class(TTestCase)
   strict private
-    FCipherTwoFish : TCipher_Twofish;
+    FCipherTwoFish : TDECFormattedCipher;
 
     /// <summary>
     ///   Array with the test data
@@ -145,13 +145,37 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
+var
+  i      : Integer;
+  result : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    result := FCipherTwoFish.EncodeStringToBytes(FTestData[i].PlainTextData);
+
+    CheckEquals(TFormat_HexL.Decode(FTestData[i].EncryptedTextData),
+                RawByteString(StringOf(result)),
+                'Fehler in TestDecodeRawByteStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeStringToBytes;
+//var
+//  i      : Integer;
+//  result : TBytes;
 begin
-
+//  for i := 0 to High(FTestData) do
+//  begin
+//    Init(i);
+//
+//    result := FCipherTwoFish.EncodeStringToBytes(string(FTestData[i].PlainTextData));
+//
+//    CheckEquals(TFormat_HexL.Decode(FTestData[i].EncryptedTextData),
+//                StringOf(result),
+//                'Fehler in TestDecodeStringToBytesBytes ' + i.ToString);
+//  end;
 end;
 
 procedure TestTDECCipherFormats.Init(Index: Integer);
@@ -253,7 +277,7 @@ begin
 
         CheckEquals(FTestData[i].PlainTextData,
                     RawByteString(StringOf(result)),
-                    'Fehler in TestDecodeBytes ' + i.ToString);
+                    'Fehler in TestDecodeStream ' + i.ToString);
       end;
 
     finally
@@ -308,8 +332,20 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeRawByteStringToBytes;
+var
+  i      : Integer;
+  result : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    result := FCipherTwoFish.EncodeStringToBytes(FTestData[i].PlainTextData);
+
+    CheckEquals(FTestData[i].EncryptedTextData,
+                RawByteString(StringOf(TFormat_HexL.Encode(result))),
+                'Fehler in TestEncodeRawByteStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeRawByteStringToString;
@@ -348,7 +384,7 @@ begin
 
         CheckEquals(FTestData[i].EncryptedTextData,
                     RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                    'Fehler in TestEncodeBytes ' + i.ToString);
+                    'Fehler in TestEncodeStream ' + i.ToString);
       end;
 
     finally
@@ -361,8 +397,28 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeStringToBytes;
+//var
+//  i      : Integer;
+//  result : TBytes;
+//  s      : string;
 begin
+{ TODO :
+Result of this test will be a different one because input for encryption
+is an UTF16 string which will lead to insertion of 0's between each
+RawByteString char from the plain text. We need to figure out what the really
+expected data is by feeding such a string to the TBytes based test! }
 
+//  for i := 0 to High(FTestData) do
+//  begin
+//    Init(i);
+//
+//    s := string(string(FTestData[i].PlainTextData));
+//    result := FCipherTwoFish.EncodeStringToBytes(s);
+//
+//    CheckEquals(string(FTestData[i].EncryptedTextData),
+//                StringOf(TFormat_HexL.Encode(result)),
+//                'Fehler in TestEncodeStringToBytes ' + i.ToString);
+//  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeStringToString;
