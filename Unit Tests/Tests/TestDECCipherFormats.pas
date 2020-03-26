@@ -80,12 +80,6 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
-
-    /// <summary>
-    ///   Callback used by stream oriented Cipher and Hash functions for reporting
-    ///   the progress of the operation
-    /// </summary>
-    procedure Process(const Min, Max, Pos: Int64); stdcall;
   published
     procedure TestEncodeBytes;
     procedure TestDecodeBytes;
@@ -142,11 +136,6 @@ begin
     Delete(Key, KeySize + 1, length(Key));
 end;
 
-procedure TestTDECCipherFormats.Process(const Min, Max, Pos: Int64);
-begin
-  // deliberately empty
-end;
-
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
 var
   i      : Integer;
@@ -182,7 +171,7 @@ begin
     result := FCipherTwoFish.DecodeStringToBytes(InputStr);
     ResStr := WideStringOf(result);
 
-    ExpStr := FTestData[i].PlainTextData;
+    ExpStr := string(FTestData[i].PlainTextData);
     CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeStringToBytes ' + i.ToString);
   end;
 end;
@@ -443,18 +432,32 @@ begin
   begin
     Init(i);
 
-    InputStr := FTestData[i].PlainTextData;
+    InputStr := string(FTestData[i].PlainTextData);
     result := FCipherTwoFish.EncodeStringToBytes(InputStr);
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
-                RawByteString(StringOf(TFormat_HexL.Encode(result))),
+                string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
                 'Fehler in TestEncodeStringToBytes ' + i.ToString);
   end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeStringToString;
+var
+  i        : Integer;
+  result   : string;
+  InputStr : string;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := string(FTestData[i].PlainTextData);
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedUTF16TextData,
+                StringOf(TFormat_HexL.Encode(BytesOf(result))),
+                'Fehler in TestEncodeStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeWideStringToBytes;
