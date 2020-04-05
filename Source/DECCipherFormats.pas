@@ -905,7 +905,7 @@ begin
     Len := Length(Src);
     SetLength(Tmp, Len);
     Decode(Src[0], Tmp[0], Len);
-    Result := StringOf(Tmp);
+    Result := WideStringOf(Tmp);
   end
   else
     SetLength(Result, 0);
