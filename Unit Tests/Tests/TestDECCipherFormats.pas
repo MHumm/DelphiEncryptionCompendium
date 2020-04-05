@@ -104,6 +104,7 @@ type
     procedure TestDecodeStringToBytes;
     procedure TestDecodeRawByteStringToBytes;
 
+{ TODO : Hier geht's weiter }
     procedure TestDecodeStringToString;
     procedure TestDecodeRawByteStringToString;
 
@@ -200,6 +201,8 @@ begin
                                                           '\x09\x82\x2D\xBD\xF5\x60' +
                                                           '\xC2\xB8\x58\xA1\x91\xF9' +
                                                           '\x81\xB1');
+  // In this first test case simply the RawByteString based test data filled up
+  // with a 0 in each char to form a UTF16 char
   FTestData[0].EncryptedUTF16TextData := 'ebc6a21d2a7d8341f643a0bf494057d5a5c38f' +
                                          '0ae72bd4ced90b5e6467de24c7d06b88207a41' +
                                          'f9d32126e38ab49024c98788b8619c3cbeb7fa' +
@@ -316,8 +319,26 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestDecodeStringToString;
+var
+  i        : Integer;
+  result   : string;
+  InputStr : string;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedUTF16TextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := StringOf(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(string(FTestData[i].PlainTextData),
+                result,
+                'Fehler in TestDecodeStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeWideStringToBytes;
