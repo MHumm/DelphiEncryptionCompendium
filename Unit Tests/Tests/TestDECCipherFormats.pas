@@ -70,6 +70,17 @@ type
     /// </param>
     procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
     /// <summary>
+    ///   Copies the bytes of the buffer into an AnsiString
+    /// </summary>
+    /// <param name="Bytes">
+    ///   Byte buffer to be converted to an ANsiString
+    /// </param>
+    /// <returns>
+    ///   AnsiString converted buffer. If the buffer passed has a length of 0
+    ///   an empty string will be returned
+    /// </returns>
+    function AnsiStringOf(const Bytes: TBytes): AnsiString;
+    /// <summary>
     ///   Initialization routine which sets the properties of the crypto object
     ///   as specified in the test data record with the given index.
     /// </summary>
@@ -104,7 +115,6 @@ type
     procedure TestDecodeStringToBytes;
     procedure TestDecodeRawByteStringToBytes;
 
-{ TODO : Hier geht's weiter }
     procedure TestDecodeStringToString;
     procedure TestDecodeRawByteStringToString;
 
@@ -126,7 +136,7 @@ type
 implementation
 
 uses
-  DECBaseClass, DECFormat;
+  DECBaseClass, DECFormat, DECUtil;
 
 { TestTDECCipherFormats }
 
@@ -135,6 +145,17 @@ procedure TestTDECCipherFormats.LimitKeyLength(var Key: RawByteString;
 begin
   if Length(Key) > KeySize then
     Delete(Key, KeySize + 1, length(Key));
+end;
+
+function TestTDECCipherFormats.AnsiStringOf(const Bytes: TBytes): AnsiString;
+begin
+  if Assigned(Bytes) then
+  begin
+    SetLength(Result, length(Bytes));
+    Move(Bytes[0], Result[low(Result)], length(Bytes));
+  end
+  else
+    Result := '';
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
@@ -248,8 +269,26 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestDecodeAnsiStringToString;
+var
+  i        : Integer;
+  result   : AnsiString;
+  InputStr : AnsiString;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedTextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := AnsiStringOf(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(AnsiString(FTestData[i].PlainTextData),
+                result,
+                'Fehler in TestDecodeAnsiStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeBytes;
@@ -271,8 +310,26 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToString;
+var
+  i        : Integer;
+  result   : RawByteString;
+  InputStr : RawByteString;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedTextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := BytesToRawString(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].PlainTextData,
+                result,
+                'Fehler in TestDecodeRawByteStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeStream;
@@ -357,8 +414,22 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeAnsiStringToString;
+var
+  i        : Integer;
+  result   : AnsiString;
+  InputStr : AnsiString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := FTestData[i].PlainTextData;
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(AnsiString(FTestData[i].EncryptedTextData),
+                AnsiStringOf(TFormat_HexL.Encode(BytesOf(result))),
+                'Fehler in TestEncodeAnsiStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeBytes;
@@ -396,8 +467,22 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeRawByteStringToString;
+var
+  i        : Integer;
+  result   : RawByteString;
+  InputStr : RawByteString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := FTestData[i].PlainTextData;
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedTextData,
+                BytesToRawString(TFormat_HexL.Encode(BytesOf(result))),
+                'Fehler in TestEncodeRawByteStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeStream;
