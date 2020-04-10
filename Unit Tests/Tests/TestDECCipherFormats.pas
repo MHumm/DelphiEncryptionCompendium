@@ -70,6 +70,17 @@ type
     /// </param>
     procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
     /// <summary>
+    ///   Copies the bytes of the buffer into an AnsiString
+    /// </summary>
+    /// <param name="Bytes">
+    ///   Byte buffer to be converted to an ANsiString
+    /// </param>
+    /// <returns>
+    ///   AnsiString converted buffer. If the buffer passed has a length of 0
+    ///   an empty string will be returned
+    /// </returns>
+    function AnsiStringOf(const Bytes: TBytes): AnsiString;
+    /// <summary>
     ///   Initialization routine which sets the properties of the crypto object
     ///   as specified in the test data record with the given index.
     /// </summary>
@@ -104,7 +115,6 @@ type
     procedure TestDecodeStringToBytes;
     procedure TestDecodeRawByteStringToBytes;
 
-{ TODO : Hier geht's weiter }
     procedure TestDecodeStringToString;
     procedure TestDecodeRawByteStringToString;
 
@@ -126,7 +136,7 @@ type
 implementation
 
 uses
-  DECBaseClass, DECFormat;
+  DECBaseClass, DECFormat, DECUtil;
 
 { TestTDECCipherFormats }
 
@@ -135,6 +145,17 @@ procedure TestTDECCipherFormats.LimitKeyLength(var Key: RawByteString;
 begin
   if Length(Key) > KeySize then
     Delete(Key, KeySize + 1, length(Key));
+end;
+
+function TestTDECCipherFormats.AnsiStringOf(const Bytes: TBytes): AnsiString;
+begin
+  if Assigned(Bytes) then
+  begin
+    SetLength(Result, length(Bytes));
+    Move(Bytes[0], Result[low(Result)], length(Bytes));
+  end
+  else
+    Result := '';
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
@@ -146,9 +167,9 @@ begin
   begin
     Init(i);
 
-    result := FCipherTwoFish.EncodeStringToBytes(FTestData[i].PlainTextData);
+    result := FCipherTwoFish.DecodeStringToBytes(TFormat_HexL.Decode(FTestData[i].EncryptedTextData));
 
-    CheckEquals(TFormat_HexL.Decode(FTestData[i].EncryptedTextData),
+    CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
                 'Fehler in TestDecodeRawByteStringToBytes ' + i.ToString);
   end;
@@ -219,38 +240,47 @@ begin
   FCipherTwoFish.Free;
 end;
 
-//procedure TestTDECCipherFormats.TestCalculateStringData;
-//var
-//  i      : Integer;
-//  result : TBytes;
-//  s      : string;
-//  Inp    : TBytes;
-//begin
-//  for i := 0 to High(FTestData) do
-//  begin
-//    Init(i);
-//
-//    s := FTestData[i].PlainTextData;
-//    SetLength(Inp, length(s) * Sizeof(s[low(s)]));
-//    Move(s[low(s)], Inp[0], length(Inp));
-//
-//    result := FCipherTwoFish.EncodeBytes(Inp);
-//
-//    CheckEquals(FTestData[i].EncryptedUTF16TextData,
-//                RawByteString(StringOf(TFormat_HexL.Encode(result))),
-//                'Fehler in TestEncodeBytes ' + i.ToString);
-//  end;
-//end;
-
+{$IFNDEF NEXTGEN}
 procedure TestTDECCipherFormats.TestDecodeAnsiStringToBytes;
+var
+  i      : Integer;
+  result : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    result := FCipherTwoFish.DecodeStringToBytes(AnsiString(TFormat_HexL.Decode(FTestData[i].EncryptedTextData)));
+
+    CheckEquals(FTestData[i].PlainTextData,
+                AnsiStringOf(result),
+                'Fehler in TestDecodeAnsiStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeAnsiStringToString;
+var
+  i        : Integer;
+  result   : AnsiString;
+  InputStr : AnsiString;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedTextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := AnsiStringOf(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(AnsiString(FTestData[i].PlainTextData),
+                result,
+                'Fehler in TestDecodeAnsiStringToString ' + i.ToString);
+  end;
 end;
+{$ENDIF}
 
 procedure TestTDECCipherFormats.TestDecodeBytes;
 var
@@ -271,8 +301,26 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToString;
+var
+  i        : Integer;
+  result   : RawByteString;
+  InputStr : RawByteString;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedTextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := BytesToRawString(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].PlainTextData,
+                result,
+                'Fehler in TestDecodeRawByteStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeStream;
@@ -341,25 +389,91 @@ begin
   end;
 end;
 
+{$IFNDEF NEXTGEN}
 procedure TestTDECCipherFormats.TestDecodeWideStringToBytes;
+var
+  i        : Integer;
+  result   : TBytes;
+  InputStr : WideString;
+  ExpStr   : WideString;
+  ResStr   : WideString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    result := TFormat_HexL.Decode(BytesOf(FTestData[i].EncryptedUTF16TextData));
+    InputStr := StringOf(result);
+
+    result := FCipherTwoFish.DecodeStringToBytes(InputStr);
+    ResStr := WideStringOf(result);
+
+    ExpStr := string(FTestData[i].PlainTextData);
+    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeWideStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestDecodeWideStringToString;
+var
+  i        : Integer;
+  result   : WideString;
+  InputStr : WideString;
+  StrArr   : TBytes;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    StrArr := BytesOf(FTestData[i].EncryptedUTF16TextData);
+    StrArr := TFormat_HexL.Decode(StrArr);
+    InputStr := StringOf(StrArr);
+
+    result := FCipherTwoFish.DecodeStringToString(InputStr);
+
+    CheckEquals(string(FTestData[i].PlainTextData),
+                result,
+                'Fehler in TestDecodeWideStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeAnsiStringToBytes;
+var
+  i        : Integer;
+  result   : TBytes;
+  InputStr : AnsiString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := AnsiString(FTestData[i].PlainTextData);
+    result := FCipherTwoFish.EncodeStringToBytes(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedTextData,
+                AnsiStringOf(TFormat_HexL.Encode(result)),
+                'Fehler in TestEncodeAnsiStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeAnsiStringToString;
+var
+  i        : Integer;
+  result   : AnsiString;
+  InputStr : AnsiString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := FTestData[i].PlainTextData;
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(AnsiString(FTestData[i].EncryptedTextData),
+                AnsiStringOf(TFormat_HexL.Encode(BytesOf(result))),
+                'Fehler in TestEncodeAnsiStringToString ' + i.ToString);
+  end;
 end;
+{$ENDIF}
 
 procedure TestTDECCipherFormats.TestEncodeBytes;
 var
@@ -396,8 +510,22 @@ begin
 end;
 
 procedure TestTDECCipherFormats.TestEncodeRawByteStringToString;
+var
+  i        : Integer;
+  result   : RawByteString;
+  InputStr : RawByteString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := FTestData[i].PlainTextData;
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedTextData,
+                BytesToRawString(TFormat_HexL.Encode(BytesOf(result))),
+                'Fehler in TestEncodeRawByteStringToString ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeStream;
@@ -481,15 +609,45 @@ begin
   end;
 end;
 
+{$IFNDEF NEXTGEN}
 procedure TestTDECCipherFormats.TestEncodeWideStringToBytes;
+var
+  i        : Integer;
+  result   : TBytes;
+  InputStr : WideString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := WideString(FTestData[i].PlainTextData);
+    result := FCipherTwoFish.EncodeStringToBytes(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedUTF16TextData,
+                string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
+                'Fehler in TestEncodeWideStringToBytes ' + i.ToString);
+  end;
 end;
 
 procedure TestTDECCipherFormats.TestEncodeWideStringToString;
+var
+  i        : Integer;
+  result   : WideString;
+  InputStr : WideString;
 begin
+  for i := 0 to High(FTestData) do
+  begin
+    Init(i);
 
+    InputStr := WideString(FTestData[i].PlainTextData);
+    result := FCipherTwoFish.EncodeStringToString(InputStr);
+
+    CheckEquals(FTestData[i].EncryptedUTF16TextData,
+                WideString(StringOf(TFormat_HexL.Encode(BytesOf(result)))),
+                'Fehler in TestEncodeWideStringToString ' + i.ToString);
+  end;
 end;
+{$ENDIF}
 
 initialization
   // Register any test cases with the test runner
