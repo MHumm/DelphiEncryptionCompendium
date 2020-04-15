@@ -37,7 +37,7 @@ type
   THash_RipeMD160   = class;
   THash_RipeMD256   = class;
   THash_RipeMD320   = class;
-  THash_SHA         = class;  // SHA-0
+  THash_SHA0         = class;  // SHA-0
   THash_SHA1        = class;  // SHA-1
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
@@ -138,13 +138,19 @@ type
   end;
 
   /// <summary>
-{ TODO : Check the XMLDOC shall talk about SHA1 or rather about SHA0 }
+{ TODO : Check whether the XMLDOC shall talk about SHA1 or rather about SHA0
+ SHA = SHA0 Testvektoren belegen das und SHA1=SHA1. In DoTransform wird auf den
+ Klassennamen abgeprüft!
+ => neues Define für 5.3 Kompatibilität anlegen, THash_SHA in THash_SHA0 umstellen
+    und bei gesetztem Schalter THash_SHA wieder als direkten Erben von THash_SHA0
+    anlegen. Im DOTransform das richtige tun. Klassenregistrierung beachten
+    und Unit Tests abhängig vom Schalter beachten!}
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
   ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
   ///   instead!
   /// </summary>
-  THash_SHA = class(THashBaseMD4)
+  THash_SHA0 = class(THashBaseMD4)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
@@ -152,18 +158,22 @@ type
     class function DigestSize: Integer; override;
   end;
 
+  {$IFDEF OLD_SHA_NAME}
+  THash_SHA = class(THash_SHA0);
+  {$ENDIF}
+
   /// <summary>
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
   ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
   ///   instead!
   /// </summary>
-  THash_SHA1 = class(THash_SHA);
+  THash_SHA1 = class(THash_SHA0);
 
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
   /// </summary>
-  THash_SHA256 = class(THash_SHA)
+  THash_SHA256 = class(THash_SHA0)
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -1640,14 +1650,14 @@ end;
 { THash_SHA }
 
 {$IFNDEF THash_SHA_asm}
-procedure THash_SHA.DoTransform(Buffer: PUInt32Array);
+procedure THash_SHA0.DoTransform(Buffer: PUInt32Array);
 var
   A, B, C, D, E, T: UInt32;
   W: array[0..79] of UInt32;
   I: Integer;
 begin
   SwapUInt32Buffer(Buffer[0], W, 16);
-  if ClassType = THash_SHA then
+  if ClassType <> THash_SHA1 then
   begin
     for I := 16 to 79 do
     begin
@@ -1762,7 +1772,7 @@ begin
 end;
 {$ENDIF !THash_SHA_asm}
 
-procedure THash_SHA.DoDone;
+procedure THash_SHA0.DoDone;
 begin
   if FCount[2] or FCount[3] <> 0 then
     RaiseHashOverflowError;
@@ -1783,7 +1793,7 @@ begin
   SwapUInt32Buffer(FDigest, FDigest, SizeOf(FDigest) div 4);
 end;
 
-class function THash_SHA.DigestSize: Integer;
+class function THash_SHA0.DigestSize: Integer;
 begin
   Result := 20;
 end;
@@ -3472,7 +3482,7 @@ initialization
   THash_RipeMD160.RegisterClass(TDECHash.ClassList);
   THash_RipeMD256.RegisterClass(TDECHash.ClassList);
   THash_RipeMD320.RegisterClass(TDECHash.ClassList);
-  THash_SHA.RegisterClass(TDECHash.ClassList);
+  THash_SHA0.RegisterClass(TDECHash.ClassList);
   THash_SHA1.RegisterClass(TDECHash.ClassList);
   THash_SHA256.RegisterClass(TDECHash.ClassList);
   THash_SHA384.RegisterClass(TDECHash.ClassList);
@@ -3490,6 +3500,10 @@ initialization
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
   THash_Sapphire.RegisterClass(TDECHash.ClassList);
+
+  {$IFDEF OLD_SHA_NAME}
+  THash_SHA.RegisterClass(TDECHash.ClassList);
+  {$ENDIF}
 
 finalization
   // No need to unregister the hash classes, as the list is being freed 

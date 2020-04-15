@@ -22,6 +22,7 @@ interface
 
 // Needs to be included before any other statements
 {$I defines.inc}
+{$I ..\..\Source\DECOptions.inc}
 
 uses
   {$IFNDEF DUnitX}
@@ -218,9 +219,9 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_SHA
+  // Test methods for class THash_SHA0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA = class(THash_TestBase)
+  TestTHash_SHA0 = class(THash_TestBase)
   public
     procedure SetUp; override;
   published
@@ -230,6 +231,19 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
   end;
+
+  // Test methods for class THash_SHA, only active if this compatibility define
+  // is set
+  {$IFDEF OLD_SHA_NAME}
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA = class(TestTHash_SHA0)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+  {$ENDIF}
 
   // Test methods for class THash_SHA256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -1126,12 +1140,12 @@ begin
   DoTestClassByName('THash_RipeMD320', THash_RipeMD320);
 end;
 
-procedure TestTHash_SHA.SetUp;
+procedure TestTHash_SHA0.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
-  FHash := THash_SHA.Create;
+  FHash := THash_SHA0.Create;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '0164b8a914cd2a5e74c4f7ff082c4d97f1edf880';
@@ -1165,9 +1179,38 @@ begin
 
 end;
 
-procedure TestTHash_SHA.TestDigestSize;
+procedure TestTHash_SHA0.TestDigestSize;
 begin
   CheckEquals(20, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA0.TestIdentity;
+begin
+  CheckEquals($0C266BE5, FHash.Identity);
+end;
+
+procedure TestTHash_SHA0.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_SHA0.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA0.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA0', THash_SHA0);
+end;
+
+{$IFDEF OLD_SHA_NAME}
+procedure TestTHash_SHA.SetUp;
+begin
+  inherited;
+
+  FHash.free;
+  FHash := THash_SHA.Create;
 end;
 
 procedure TestTHash_SHA.TestIdentity;
@@ -1175,20 +1218,11 @@ begin
   CheckEquals($A0A1CCFF, FHash.Identity);
 end;
 
-procedure TestTHash_SHA.TestIsPasswordHash;
-begin
-  CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
-procedure TestTHash_SHA.TestBlockSize;
-begin
-  CheckEquals(64, FHash.BlockSize);
-end;
-
 procedure TestTHash_SHA.TestClassByName;
 begin
   DoTestClassByName('THash_SHA', THash_SHA);
 end;
+{$ENDIF}
 
 procedure TestTHash_SHA256.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -3493,7 +3527,10 @@ initialization
                             TestTHash_RipeMD160.Suite,
                             TestTHash_RipeMD256.Suite,
                             TestTHash_RipeMD320.Suite,
+                            TestTHash_SHA0.Suite,
+                            {$IFDEF OLD_SHA_NAME}
                             TestTHash_SHA.Suite,
+                            {$ENDIF}
                             TestTHash_SHA256.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
@@ -3522,7 +3559,12 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_RipeMD160);
   TDUnitX.RegisterTestFixture(TestTHash_RipeMD256);
   TDUnitX.RegisterTestFixture(TestTHash_RipeMD320);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA0);
+
+  {$IFDEF OLD_SHA_NAME}
   TDUnitX.RegisterTestFixture(TestTHash_SHA);
+  {$ENDIF}
+
   TDUnitX.RegisterTestFixture(TestTHash_SHA256);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);

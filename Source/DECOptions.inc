@@ -38,10 +38,13 @@
 // User Configuration (feel free to edit)
 //------------------------------------------------------------------------------
 
+// if on, the old class name THash_SHA for the THash_SHA0 class will be available
+{$UNDEF OLD_SHA_NAME} (* default off *)
+
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)
 
-// if the compiler does not support assembler turn usage of and even if restrict
+// if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM
 // in Delphi do not use Intel x86 ASM
 {$IFNDEF FPC}
@@ -55,7 +58,7 @@
     {$ENDIF}
   {$ENDIF}
 {$ELSE}
-  // Turn ASM of for FPC as we do not know enough about ASM support on FPC
+  // Turn ASM off for FPC as we do not know enough about ASM support on FPC
   {$DEFINE NO_ASM} (* default ON *)
 {$ENDIF}
 
@@ -109,6 +112,8 @@
 //------------------------------------------------------------------------------
 // Architecture (x86ASM, x64ASM, PurePascal)
 //------------------------------------------------------------------------------
+
+{$DEFINE NO_ASM}
 
 {$IFDEF NO_ASM}
   // User config override (see top of this file)
