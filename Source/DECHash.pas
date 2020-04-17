@@ -138,17 +138,12 @@ type
   end;
 
   /// <summary>
-{ TODO : Check whether the XMLDOC shall talk about SHA1 or rather about SHA0
- SHA = SHA0 Testvektoren belegen das und SHA1=SHA1. In DoTransform wird auf den
- Klassennamen abgeprüft!
- => neues Define für 5.3 Kompatibilität anlegen, THash_SHA in THash_SHA0 umstellen
-    und bei gesetztem Schalter THash_SHA wieder als direkten Erben von THash_SHA0
-    anlegen. Im DOTransform das richtige tun. Klassenregistrierung beachten
-    und Unit Tests abhängig vom Schalter beachten!}
-  ///   Implementation of the SHA1 hash algorithm. At least since February 2017
-  ///   collisions have been found for this algorithm so it's now completely
-  ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
-  ///   instead!
+  ///   Implementation of the SHA0 hash algorithm. This is the original version
+  ///   of the SHA algorithm released in 1993. In 1995 some security issues have
+  ///   been identified in this algorithm so he got replaced by the slightly
+  ///   modified SHA1 algorithm. The recommendation is to not use this SHA0
+  ///   algorithm at all. It is only being provided for scenarios where
+  ///   compatibility with this algorithm is required.
   /// </summary>
   THash_SHA0 = class(THashBaseMD4)
   protected
@@ -159,13 +154,21 @@ type
   end;
 
   {$IFDEF OLD_SHA_NAME}
+  /// <summary>
+  ///   Implementation of the SHA0 hash algorithm. This is the original version
+  ///   of the SHA algorithm released in 1993. In 1995 some security issues have
+  ///   been identified in this algorithm so he got replaced by the slightly
+  ///   modified SHA1 algorithm. The recommendation is to not use this SHA0
+  ///   algorithm at all. It is only being provided for scenarios where
+  ///   compatibility with this algorithm is required.
+  /// </summary>
   THash_SHA = class(THash_SHA0);
   {$ENDIF}
 
   /// <summary>
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
-  ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
+  ///   clear that it should not be used if possible! Use SHA256 or SHA512
   ///   instead!
   /// </summary>
   THash_SHA1 = class(THash_SHA0);
