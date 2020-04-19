@@ -146,6 +146,7 @@
         <DCCReference Include="..\..\Source\DECCipherFormats.pas"/>
         <DCCReference Include="..\..\Source\DECUtilRawByteStringHelper.pas"/>
         <DCCReference Include="..\..\Source\DECCipherInterface.pas"/>
+        <DCCReference Include="..\..\Source\DECDataCipher.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

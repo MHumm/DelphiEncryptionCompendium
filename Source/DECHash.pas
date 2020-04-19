@@ -436,7 +436,7 @@ procedure SetDefaultHashClass(HashClass: TDECHashClass);
 implementation
 
 uses
-  DECData;
+  DECData, DECDataHash;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}

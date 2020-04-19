@@ -792,7 +792,7 @@ implementation
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 uses
-  System.SysUtils, DECData;
+  System.SysUtils, DECData, DECDataCipher;
 
 { TCipher_Blowfish }
 

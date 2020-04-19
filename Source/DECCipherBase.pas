@@ -543,7 +543,7 @@ procedure SetDefaultCipherClass(CipherClass: TDECCipherClass = nil);
 implementation
 
 uses
-  TypInfo, DECData;
+  TypInfo;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}

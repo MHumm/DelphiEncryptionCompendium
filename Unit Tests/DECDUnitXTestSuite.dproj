@@ -134,6 +134,9 @@
         <DCCReference Include="Tests\TestDECBaseClass.pas"/>
         <DCCReference Include="..\Source\DECCipherInterface.pas"/>
         <DCCReference Include="..\Source\DECHashInterface.pas"/>
+        <DCCReference Include="Tests\TestDECCipherFormats.pas"/>
+        <DCCReference Include="..\Source\DECDataCipher.pas"/>
+        <DCCReference Include="..\Source\DECDataHash.pas"/>
         <None Include="..\Source\DECOptions.inc"/>
         <None Include="Tests\defines.inc"/>
         <BuildConfiguration Include="Release">

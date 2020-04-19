@@ -36,7 +36,8 @@ uses
   DECFormatBase in '..\..\Source\DECFormatBase.pas',
   DECData in '..\..\Source\DECData.pas',
   DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
-  DECHashInterface in '..\..\Source\DECHashInterface.pas';
+  DECHashInterface in '..\..\Source\DECHashInterface.pas',
+  DECDataHash in '..\..\Source\DECDataHash.pas';
 
 var
   Hash : THash_RipeMD160;
