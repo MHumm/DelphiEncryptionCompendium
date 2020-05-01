@@ -27,6 +27,7 @@
 {$UNDEF NO_ASM}
 
 {$UNDEF OLD_SHA_NAME}
+{$UNDEF OLD_WHIRLPOOL_NAMES}
 {$UNDEF AUTO_PRNG}
 {$UNDEF INCLUDE_IDEA}
 {$UNDEF DEC52_IDENTITY}
@@ -39,8 +40,22 @@
 // User Configuration (feel free to edit)
 //------------------------------------------------------------------------------
 
-// if on, the old class name THash_SHA for the THash_SHA0 class will be available
+// If on, the old class name THash_SHA for the THash_SHA0 class will be available
+// This should only be necessary for cases where the identity value has been
+// used to determine the algorithm to be used and thus it's necessary that the
+// same result will be produced. It is recommended to switch to the new class
+// names where possible
 {$UNDEF OLD_SHA_NAME} (* default off *)
+
+// if on the old outdated class names THash_Whirlpool and THash_Whirlpool1 are
+// being used. Nowadays Whirlpool versions are named like this:
+// Whirlpool -> Whirlpool0. Whrilpool1 -> WhirlpoolT and there's a new Whirlpool1
+// variant which differs to WhrilpoolT only by the initialization of internal data
+// This should only be necessary for cases where the identity value has been
+// used to determine the algorithm to be used and thus it's necessary that the
+// same result will be produced. It is recommended to switch to the new class
+// names where possible
+{$UNDEF OLD_WHIRLPOOL_NAMES} (* default off *)
 
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)

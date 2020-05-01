@@ -51,7 +51,7 @@ type
     procedure ProtectStreamPartial;
     procedure ProtectBytes;
     procedure ProtectString;
-    {$IFNDEF NextGen}
+    {$IFDEF ANSISTRINGSUPPORTED}
     procedure ProtectStringAnsi;
     {$ENDIF}
     {$IFNDEF NextGen}
@@ -347,7 +347,7 @@ begin
   CheckEquals('', s);
 end;
 
-{$IFNDEF NextGen}
+{$IFDEF ANSISTRINGSUPPORTED}
 procedure TTestBufferProtection.ProtectStringAnsi;
 var
   s : AnsiString;

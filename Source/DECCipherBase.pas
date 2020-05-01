@@ -343,7 +343,7 @@ type
     ///   completely filled with data.
     /// </param>
     procedure Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF); overload;
-    {$IFNDEF NEXTGEN}
+    {$IFDEF ANSISTRINGSUPPORTED}
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key.
     ///   Only for use with the classic desktop compilers.
@@ -366,6 +366,8 @@ type
     ///   completely filled with data.
     /// </param>
     procedure Init(const Key: AnsiString; const IVector: AnsiString = ''; IFiller: Byte = $FF); overload;
+    {$ENDIF}
+    {$IFNDEF NEXTGEN}
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key.
     ///   Only for use with the classic desktop compilers.
@@ -717,7 +719,7 @@ begin
 end;
 
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
 procedure TDECCipher.Init(const Key, IVector: AnsiString; IFiller: Byte);
 begin
   if Length(Key) = 0 then
@@ -796,10 +798,11 @@ begin
   SetLength(Result, 0);
   if Length(Source) > 0 then
   begin
-{ TODO :
-In Delphi 10.1 Berlin on mobile this issues a W1057 implicit string
-conversion warning as https://quality.embarcadero.com/browse/RSP-20574
-shows that BytesOf(Val: RawByteString) is in an IFNDEF NextGen block! }
+    // Delphi 10.1 Berlin and 10.2 Tokyo will issue a W1057 implicit string
+    // conversion warning here because the RawByteString BytesOf function is by
+    // mistake in a $IFNDEF NEXTGEN block. See QP report:
+    // https://quality.embarcadero.com/browse/RSP-20574
+    // This has been fixed in 10.3.0 Rio
     b := ValidFormat(Format).Decode(BytesOf(Source));
 
     DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));

@@ -49,8 +49,14 @@ type
   THash_Haval256    = class;  // Haval 256, 5 Rounds
   THash_Tiger       = class;
   THash_Panama      = class;
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool   = class;
   THash_Whirlpool1  = class;
+  {$ENDIF}
+
+  THash_Whirlpool0   = class;
+  THash_WhirlpoolT  = class;
+
   THash_Square      = class;
   THash_Snefru128   = class;  // derived from the Xerox Secure Hash Function
   THash_Snefru256   = class;  // " - "
@@ -329,15 +335,20 @@ type
     class function BlockSize: Integer; override;
   end;
 
-  THash_Whirlpool = class(THashBaseWhirlpool)
+  THash_Whirlpool0 = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
 
-  THash_Whirlpool1 = class(THashBaseWhirlpool)
+  THash_WhirlpoolT = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  THash_Whirlpool = class(THash_Whirlpool0);
+  THash_Whirlpool1 = class(THash_WhirlpoolT);
+  {$ENDIF}
 
   THash_Square = class(TDECHash)
   private
@@ -471,8 +482,8 @@ uses
   THash_RipeMD160 :       26.5 cycles/byte      56.66 Mb/sec       31.4 cycles/byte      47.79 Mb/sec   19%
   THash_Square    :       44.7 cycles/byte      33.58 Mb/sec       53.1 cycles/byte      28.23 Mb/sec   19%
   THash_Haval192  :       32.5 cycles/byte      46.17 Mb/sec       37.6 cycles/byte      39.87 Mb/sec   18%
-  THash_Whirlpool1:      104.9 cycles/byte      14.30 Mb/sec      122.8 cycles/byte      12.22 Mb/sec   17%
-  THash_Whirlpool :      104.7 cycles/byte      14.33 Mb/sec      119.9 cycles/byte      12.51 Mb/sec   15%
+  THash_WhirlpoolT:      104.9 cycles/byte      14.30 Mb/sec      122.8 cycles/byte      12.22 Mb/sec   17%
+  THash_Whirlpool0:      104.7 cycles/byte      14.33 Mb/sec      119.9 cycles/byte      12.51 Mb/sec   15%
   THash_Sapphire  :       52.9 cycles/byte      28.35 Mb/sec       53.8 cycles/byte      27.86 Mb/sec    2%
   THash_Haval224  :       32.0 cycles/byte      46.82 Mb/sec       32.3 cycles/byte      46.46 Mb/sec    1%
   THash_SHA256    :       47.8 cycles/byte      31.35 Mb/sec       47.8 cycles/byte      31.39 Mb/sec    0%
@@ -3067,18 +3078,18 @@ begin
   Result := 64;
 end;
 
-{ THash_Whirlpool }
+{ THash_Whirlpool0 }
 
-procedure THash_Whirlpool.DoInit;
+procedure THash_Whirlpool0.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   FTableC := @Whirlpool_C_U;
   FTableR := @Whirlpool_RC_U
 end;
 
-{ THash_Whirlpool1 }
+{ THash_WhirlpoolT }
 
-procedure THash_Whirlpool1.DoInit;
+procedure THash_WhirlpoolT.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   FTableC := @Whirlpool_C_T;
@@ -3497,8 +3508,15 @@ initialization
   THash_Haval256.RegisterClass(TDECHash.ClassList);
   THash_Tiger.RegisterClass(TDECHash.ClassList);
   THash_Panama.RegisterClass(TDECHash.ClassList);
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool.RegisterClass(TDECHash.ClassList);
   THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+  {$ENDIF}
+
+  THash_Whirlpool0.RegisterClass(TDECHash.ClassList);
+  THash_WhirlpoolT.RegisterClass(TDECHash.ClassList);
+
   THash_Square.RegisterClass(TDECHash.ClassList);
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
@@ -3509,7 +3527,7 @@ initialization
   {$ENDIF}
 
 finalization
-  // No need to unregister the hash classes, as the list is being freed 
+  // No need to unregister the hash classes, as the list is being freed
   // in finalization of DECBaseClass unit
 
 end.

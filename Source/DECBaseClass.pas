@@ -22,7 +22,7 @@ interface
 {$I DECOptions.inc}
 
 uses
-  SysUtils, Classes, Generics.Collections;
+  System.SysUtils, Classes, Generics.Collections;
 
 type
   /// <summary>

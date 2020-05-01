@@ -412,11 +412,18 @@ type
     /// <summary>
     ///   Initialize the key, based on the key passed in
     /// </summary>
+    /// <param name="Data">
+    ///   Key for the current block to be encrypted/decrypted?
+    /// </param>
     /// <param name="Key">
     ///   Encryption/Decryption key to be used
     /// </param>
     /// <param name="Size">
     ///   Size of the key passed in bytes.
+    /// </param>
+    /// <param name="Reverse">
+    ///   Defines whether some internal calculation needs to be based from the
+    ///   start index or the highest index  (= reverse)
     /// </param>
     procedure DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
     procedure DoInit(const Key; Size: Integer); override;

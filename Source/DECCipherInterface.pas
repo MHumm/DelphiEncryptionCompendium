@@ -284,7 +284,7 @@ type
     /// </remarks>
     function DecodeStringToString(const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString; overload;
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
     /// <summary>
     ///   Encrypts the contents of the passed Ansistring
     /// </summary>
@@ -368,7 +368,9 @@ type
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
     function DecodeStringToString(const Source: AnsiString; Format: TDECFormatClass = nil): AnsiString; overload;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
     /// <summary>
     ///   Encrypts the contents of the passed Widestring
     /// </summary>
@@ -453,7 +455,7 @@ type
     /// </remarks>
     function DecodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}
-  End;
+  end;
 
 implementation
 

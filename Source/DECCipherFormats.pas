@@ -341,7 +341,7 @@ type
     function DecodeStringToString(const Source: RawByteString;
                                   Format: TDECFormatClass = nil): RawByteString; overload;
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
     /// <summary>
     ///   Encrypts the contents of the passed Ansistring
     /// </summary>
@@ -429,7 +429,9 @@ type
     /// </remarks>
     function DecodeStringToString(const Source: AnsiString;
                                   Format: TDECFormatClass = nil): AnsiString; overload;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
     /// <summary>
     ///   Encrypts the contents of the passed Widestring
     /// </summary>
@@ -701,7 +703,7 @@ begin
     SetLength(Result, 0);
 end;
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
 function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -719,7 +721,7 @@ begin
 end;
 {$ENDIF}
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
 function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
 var
   Len: Integer;
@@ -760,7 +762,9 @@ function TDECFormattedCipher.EncodeStringToString(const Source: WideString;
 begin
   result := WideString(EncodeStringToString(string(Source), Format));
 end;
+{$ENDIF}
 
+{$IFDEF ANSISTRINGSUPPORTED}
 function TDECFormattedCipher.EncodeStringToString(const Source: AnsiString;
   Format: TDECFormatClass): AnsiString;
 var
@@ -839,7 +843,9 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
+{$IFDEF ANSISTRINGSUPPORTED}
 function TDECFormattedCipher.DecodeStringToString(const Source: AnsiString;
   Format: TDECFormatClass): AnsiString;
 var
@@ -861,7 +867,9 @@ begin
   else
     SetLength(Result, 0);
 end;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
 function TDECFormattedCipher.DecodeStringToString(const Source: WideString;
   Format: TDECFormatClass): WideString;
 begin

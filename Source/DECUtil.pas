@@ -246,7 +246,7 @@ procedure ProtectString(var Source: string); overload;
 /// </param>
 procedure ProtectString(var Source: RawByteString); overload;
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
 /// <summary>
 ///   Overwrites the string's contents in a secure way and returns an empty string.
 /// </summary>
@@ -254,6 +254,9 @@ procedure ProtectString(var Source: RawByteString); overload;
 ///   String to be safely overwritten
 /// </param>
 procedure ProtectString(var Source: AnsiString); overload;
+{$ENDIF}
+
+{$IFNDEF NEXTGEN}
 /// <summary>
 ///   Overwrites the string's contents in a secure way and returns an empty string.
 /// </summary>

@@ -398,31 +398,55 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_Whirlpool
+  // Test methods for class THash_Whirlpool0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool = class(THash_TestBase)
+  TestTHash_Whirlpool0 = class(THash_TestBase)
   public
     procedure SetUp; override;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
-    procedure TestClassByName;
-    procedure TestIdentity;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
   end;
 
-  // Test methods for class THash_Whirlpool1
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  // Test methods for class THash_Whirlpool
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool1 = class(THash_TestBase)
+  TestTHash_Whirlpool = class(TestTHash_Whirlpool0)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestClassByName; override;
+    procedure TestIdentity; override;
+  end;
+  {$ENDIF}
+
+  // Test methods for class THash_WhirlpoolT
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_WhirlpoolT = class(THash_TestBase)
   public
     procedure SetUp; override;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
-    procedure TestClassByName;
-    procedure TestIdentity;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
   end;
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  // Test methods for class THash_WhirlpoolT
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_Whirlpool1 = class(TestTHash_WhirlpoolT)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestClassByName; override;
+    procedure TestIdentity; override;
+  end;
+  {$ENDIF}
 
   // Test methods for class THash_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -2441,12 +2465,12 @@ begin
   DoTestClassByName('THash_Panama', THash_Panama);
 end;
 
-procedure TestTHash_Whirlpool.SetUp;
+procedure TestTHash_Whirlpool0.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
-  FHash := THash_Whirlpool.Create;
+  FHash := THash_Whirlpool0.Create;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'b3e1ab6eaf640a34f784593f2074416accd3b8e62c620175fca' +
@@ -2568,14 +2592,39 @@ begin
   lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
-procedure TestTHash_Whirlpool.TestBlockSize;
+procedure TestTHash_Whirlpool0.TestBlockSize;
 begin
   CheckEquals(64, FHash.BlockSize);
 end;
 
-procedure TestTHash_Whirlpool.TestDigestSize;
+procedure TestTHash_Whirlpool0.TestDigestSize;
 begin
   CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_Whirlpool0.TestIdentity;
+begin
+  CheckEquals($D2619FF2, FHash.Identity);
+end;
+
+procedure TestTHash_Whirlpool0.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Whirlpool0.TestClassByName;
+begin
+  DoTestClassByName('THash_Whirlpool0', THash_Whirlpool0);
+end;
+
+{$IFDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash.Free;
+  FHash := THash_Whirlpool.Create;
 end;
 
 procedure TestTHash_Whirlpool.TestIdentity;
@@ -2583,22 +2632,18 @@ begin
   CheckEquals($5CCB1E12, FHash.Identity);
 end;
 
-procedure TestTHash_Whirlpool.TestIsPasswordHash;
-begin
-  CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
 procedure TestTHash_Whirlpool.TestClassByName;
 begin
   DoTestClassByName('THash_Whirlpool', THash_Whirlpool);
 end;
+{$ENDIF}
 
-procedure TestTHash_Whirlpool1.SetUp;
+procedure TestTHash_WhirlpoolT.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
-  FHash := THash_Whirlpool1.Create;
+  FHash := THash_WhirlpoolT.Create;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
@@ -2720,14 +2765,39 @@ begin
   lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
-procedure TestTHash_Whirlpool1.TestBlockSize;
+procedure TestTHash_WhirlpoolT.TestBlockSize;
 begin
   CheckEquals(64, FHash.BlockSize);
 end;
 
-procedure TestTHash_Whirlpool1.TestDigestSize;
+procedure TestTHash_WhirlpoolT.TestDigestSize;
 begin
   CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_WhirlpoolT.TestIdentity;
+begin
+  CheckEquals($98BE3AB3, FHash.Identity);
+end;
+
+procedure TestTHash_WhirlpoolT.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_WhirlpoolT.TestClassByName;
+begin
+  DoTestClassByName('THash_WhirlpoolT', THash_WhirlpoolT);
+end;
+
+{$IFDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool1.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash.Free;
+  FHash := THash_Whirlpool1.Create;
 end;
 
 procedure TestTHash_Whirlpool1.TestIdentity;
@@ -2735,15 +2805,11 @@ begin
   CheckEquals($A566AF64, FHash.Identity);
 end;
 
-procedure TestTHash_Whirlpool1.TestIsPasswordHash;
-begin
-  CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
 procedure TestTHash_Whirlpool1.TestClassByName;
 begin
   DoTestClassByName('THash_Whirlpool1', THash_Whirlpool1);
 end;
+{$ENDIF}
 
 procedure TestTHash_Square.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -3542,8 +3608,15 @@ initialization
                             TestTHash_Tiger_3Rounds.Suite,
                             TestTHash_Tiger_4Rounds.Suite,
                             TestTHash_Panama.Suite,
+
+                            TestTHash_Whirlpool0.Suite,
+                            TestTHash_WhirlpoolT.Suite,
+
+                            {$IFDEF OLD_WHIRLPOOL_NAMES}
                             TestTHash_Whirlpool.Suite,
                             TestTHash_Whirlpool1.Suite,
+                            {$ENDIF}
+
                             TestTHash_Square.Suite,
                             TestTHash_Snefru128.Suite,
                             TestTHash_Snefru256.Suite,
@@ -3576,8 +3649,15 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Tiger_3Rounds);
   TDUnitX.RegisterTestFixture(TestTHash_Tiger_4Rounds);
   TDUnitX.RegisterTestFixture(TestTHash_Panama);
+
+  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool0);
+  TDUnitX.RegisterTestFixture(TestTHash_WhirlpoolT);
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
   TDUnitX.RegisterTestFixture(TestTHash_Whirlpool);
   TDUnitX.RegisterTestFixture(TestTHash_Whirlpool1);
+  {$ENDIF}
+
   TDUnitX.RegisterTestFixture(TestTHash_Square);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru128);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru256);

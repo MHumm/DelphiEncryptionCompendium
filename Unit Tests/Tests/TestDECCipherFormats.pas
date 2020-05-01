@@ -73,7 +73,7 @@ type
     ///   Copies the bytes of the buffer into an AnsiString
     /// </summary>
     /// <param name="Bytes">
-    ///   Byte buffer to be converted to an ANsiString
+    ///   Byte buffer to be converted to an AnsiString
     /// </param>
     /// <returns>
     ///   AnsiString converted buffer. If the buffer passed has a length of 0
@@ -118,13 +118,16 @@ type
     procedure TestDecodeStringToString;
     procedure TestDecodeRawByteStringToString;
 
-{$IFNDEF NEXTGEN}
+
+{$IFDEF ANSISTRINGSUPPORTED}
     procedure TestEncodeAnsiStringToBytes;
     procedure TestEncodeAnsiStringToString;
 
     procedure TestDecodeAnsiStringToBytes;
     procedure TestDecodeAnsiStringToString;
+{$ENDIF}
 
+{$IFNDEF NEXTGEN}
     procedure TestEncodeWideStringToBytes;
     procedure TestEncodeWideStringToString;
 
@@ -240,7 +243,7 @@ begin
   FCipherTwoFish.Free;
 end;
 
-{$IFNDEF NEXTGEN}
+{$IFDEF ANSISTRINGSUPPORTED}
 procedure TestTDECCipherFormats.TestDecodeAnsiStringToBytes;
 var
   i      : Integer;
@@ -435,7 +438,9 @@ begin
                 'Fehler in TestDecodeWideStringToString ' + i.ToString);
   end;
 end;
+{$ENDIF}
 
+{$IFDEF NEXTGEN}
 procedure TestTDECCipherFormats.TestEncodeAnsiStringToBytes;
 var
   i        : Integer;
