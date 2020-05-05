@@ -345,9 +345,23 @@ type
     procedure DoInit; override;
   end;
 
+  /// <summary>
+  ///   The current version of Whirlpool but not the one usually used in your
+  ///   code. The name of the one used in your code differs, depending whether
+  ///   you opt tu use the old DEC 5.2 compatible class names where the name
+  ///   Whirlpool1 was already taken by the variant nowadays known as Whirlpool-T.
+  /// </summary>
+  THash_Whirlpool1_ = class(THashBaseWhirlpool)
+  protected
+    procedure DoInit; override;
+  end;
+
   {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool = class(THash_Whirlpool0);
   THash_Whirlpool1 = class(THash_WhirlpoolT);
+  THash_Whirlpool1New = class(THash_Whirlpool1_);
+  {$ELSE}
+  THash_Whirlpool1 = class(THash_Whirlpool1_);
   {$ENDIF}
 
   THash_Square = class(TDECHash)
@@ -3096,6 +3110,15 @@ begin
   FTableR := @Whirlpool_RC_T;
 end;
 
+{ THash_Whirlpool1_ }
+
+procedure THash_Whirlpool1_.DoInit;
+begin
+  FillChar(FDigest, SizeOf(FDigest), 0);
+  FTableC := @Whirlpool_C_1;
+  FTableR := @Whirlpool_RC_1;
+end;
+
 { THash_Square }
 
 procedure THash_Square.DoInit;
@@ -3511,6 +3534,9 @@ initialization
 
   {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool.RegisterClass(TDECHash.ClassList);
+  THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+  THash_Whirlpool1New.RegisterClass(TDECHash.ClassList);
+  {$ELSE}
   THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
   {$ENDIF}
 

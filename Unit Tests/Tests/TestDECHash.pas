@@ -437,7 +437,7 @@ type
   end;
 
   {$IFDEF OLD_WHIRLPOOL_NAMES}
-  // Test methods for class THash_WhirlpoolT
+  // Test methods for class THash_Whirlpool1 aka WhirlpoolT's old name in DEC 5.2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Whirlpool1 = class(TestTHash_WhirlpoolT)
   public
@@ -445,6 +445,21 @@ type
   published
     procedure TestClassByName; override;
     procedure TestIdentity; override;
+  end;
+  {$ENDIF}
+
+  {$IFNDEF OLD_WHIRLPOOL_NAMES}
+  // Test methods for class THash_Whirlpool1
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_Whirlpool1 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
   end;
   {$ENDIF}
 
@@ -2811,6 +2826,165 @@ begin
 end;
 {$ENDIF}
 
+{$IFNDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool1.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash := THash_Whirlpool1.Create;
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '19fa61d75522a4669b44e39c1d2e1726c530232130d407f89af' +
+                                       'ee0964997f7a73e83be698b288febcf88e3e03c4f0757ea8964' +
+                                       'e59b63d93708b138cc42a66eb3';
+
+  lDataRow.ExpectedOutputUTFStrTest := '19fa61d75522a4669b44e39c1d2e1726c530232130d407f89af' +
+                                       'ee0964997f7a73e83be698b288febcf88e3e03c4f0757ea8964' +
+                                       'e59b63d93708b138cc42a66eb3';
+  lDataRow.AddInputVector('');
+
+{ TODO :
+Diese Testverktoren sollten noch durch
+Whirlpool1 Vektoren ersetzt werden }
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'ebaa1df2e97113be187eb0303c660f6e643e2c090ef2cda9a2e' +
+//                                       'a6dcf5002147d1d0e1e9d996e879cef9d26896630a5db3308d5' +
+//                                       'a0dc235b199c38923be2259e03';
+//  lDataRow.ExpectedOutputUTFStrTest := '5777fc1f8467a1c004cd9130439403ccdaa9fdc86092d9cffe3' +
+//                                       '39e6008612374d04c8fc0c724707feae6f7ceb1e030cabf652a' +
+//                                       '673da1849b02654af76eee24a7';
+//  lDataRow.AddInputVector(#$00);
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'a8583b83929bd46f0006e8401f87767ff0e23b96cd4cb2fe377' +
+//                                       '4901ee6eeed91f43ab569fb908122c53a264a35687b40a0590d' +
+//                                       '83e69fa82724380bae82a1caa0';
+//  lDataRow.ExpectedOutputUTFStrTest := '535497c6f54acf4a669eadae6f5005b149edbd36a6d32613e4d' +
+//                                       '81c5752948657d4c48f4dd851dd0cddccad88a5ce1ab32cb62a' +
+//                                       '692f3487d7490be2df6ca5c34c';
+//  lDataRow.AddInputVector(#$80);
+//  lDataRow.AddInputVector(#$00, 1, 63);
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'b290e0e7931025ed37043ad568f0036b40e6bff8f7455868780' +
+//                                       'f47ef7b5d693e62448029a9351cd85ac29cb0725e4cfeb996a9' +
+//                                       '2f2b8da8768483ac58ec0e492c';
+//  lDataRow.ExpectedOutputUTFStrTest := '528f3f670d4dfed05ff342f36d16b8a5a0d884da737dbc1b55c' +
+//                                       '2575362b5fbf9df895013bccc3a72dd7d78c157c52609b42633' +
+//                                       'a48affdd58297f44b3f40c5626';
+//  lDataRow.AddInputVector('a');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '8afc0527dcc0a19623860ef2369d0e25de8ebe2abaa40f598af' +
+//                                       'af6b07c002ed73e4fc0fc220fd4f54f74b5d6b07aa57764c3db' +
+//                                       'dcc2cdd919d89fa8155a34b841';
+//  lDataRow.ExpectedOutputUTFStrTest := '5e812e973466dde1b43dfcd752ec1828f53ecb0e330f6937311' +
+//                                       '159d6eded439994ccafa867a034266bc16ce73057343a01742d' +
+//                                       '8b13053aa1d4ce82f52f312fce';
+//  lDataRow.AddInputVector('abc');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '817eadf8efca5afbc11f71d0814e03a8d569c90f748c8603597' +
+//                                       'a7a0de3c8d55f528199010218249517b58b14bee52351560875' +
+//                                       '4b53a3cca35c0865ba5e361431';
+//  lDataRow.ExpectedOutputUTFStrTest := '5fb89db25c24f3c3d222302ead771d6c371c8fa0af40f62a422' +
+//                                       'cf092cf6af6bf0ab4c6707e25c34680bfdbf92973de78d37d9f' +
+//                                       'af2bed23dd9b27d53ed02ea473';
+//  lDataRow.AddInputVector('message digest');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '4afc2b07bddc8417635fcb43e695e16f45e116c226dd84339eb' +
+//                                       '95c2ccb39e7acbe1af8f7b1f3bd380077e71929498bc9682003' +
+//                                       '71f9299015434d1df109a0aa1d';
+//  lDataRow.ExpectedOutputUTFStrTest := '1925d2d0eaa3e76ed1cd7d95b0bdd03152f9d2193376f6348c0' +
+//                                       '64fc5115233f88a26610428bea98935464cce2078af9e81ca3f' +
+//                                       '31bdd5b5c5d5f3775c85569c1f';
+//  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '0f960ec9ab7d0c7e355a423d1ef4911a39797c836a71414276a' +
+//                                       'feb8fa475dba0c348547143162f3212edf1fb8d8c652a11a579' +
+//                                       'a399c2dbd837fe8608f5096131';
+//  lDataRow.ExpectedOutputUTFStrTest := 'c8176962d4e58e8e6174a3e3eecd1ab012345f3fa04ff06515b' +
+//                                       'b225bcdfa13ccbe5c53c357534aade7db3a46ff24c6c86bd5d3' +
+//                                       '465930c5d4ba0b734efcf8b43b';
+//  lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '6ae43784c69d01c273bba40f8411495167909e0c1acc241473d' +
+//                                       '44e27bc8641e646535d38fce20604941988c387c201cff199c8' +
+//                                       'fa2afbedd036d66202892a7eee';
+//  lDataRow.ExpectedOutputUTFStrTest := '0fb6cadc695c10b27f8dc5a591e7856acc8edb22459060dfa28' +
+//                                       'd9f9532e1f7b2206b8b297f9d89f85570f73439592a45fd6475' +
+//                                       'd0a83923cead6eb443d3f69bb1';
+//  lDataRow.AddInputVector('1234567890', 8);
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '7da3991ff3d40e0beed44b89c83bed5b085cc390a2df47765c9' +
+//                                       '9ae2ddb0a1e2e094ef0e8b0cf7ba4733afd756ef8eef59b9181' +
+//                                       '29fe2efe0b00024d6c4e56dc45';
+//  lDataRow.ExpectedOutputUTFStrTest := '5586a2f7b714de8301412ff72d7bc8d4def56cece16ce4adc48' +
+//                                       'b3a6ef5b46ab17c979f8e1aedae3cbf4b74a4ea0e8b02e02032' +
+//                                       'a782094ff00fea088b78759ab9';
+//  lDataRow.AddInputVector('abcdbcdecdefdefgefghfghighijhijk');
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
+//                                       '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
+//                                       '71856c4a7924f9b0e4044d9112';
+//  lDataRow.ExpectedOutputUTFStrTest := '6449537a67085f0ac0d80956d7d92d0cf0ec48cebde1728ad13' +
+//                                       'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
+//                                       '51d19010a7c43802a0495ccd68';
+//  lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 15625, 1);
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '0ee18ba7ca7ee091dace6285661eedf819a8fa17620f72aeffe' +
+//                                       '5aa62c462138b626aa09072a10fcbcfe7f7ff22db2f4d6d1f07' +
+//                                       '71856c4a7924f9b0e4044d9112';
+//  lDataRow.ExpectedOutputUTFStrTest := '6449537a67085f0ac0d80956d7d92d0cf0ec48cebde1728ad13' +
+//                                       'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
+//                                       '51d19010a7c43802a0495ccd68';
+//  lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+//
+  // Test vector from EN Wikipedia article
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'b97de512e91e3828b40d2b0fdce9ceb3c4a71f9bea8d88e75c4' +
+                                       'fa854df36725fd2b52eb6544edcacd6f8beddfea403cb55ae31' +
+                                       'f03ad62a5ef54e42ee82c3fb35';
+
+  lDataRow.ExpectedOutputUTFStrTest := '54d79c3801365ff9e1c7c64796926ddd715e23a1ac48c3ab086' +
+                                       '4eb2e29d681e6b0f628982c3167e1987053b5aacfa4e3f3dc53' +
+                                       'af65923aa2e2beb2adc74b3591';
+  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
+end;
+
+procedure TestTHash_Whirlpool1.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_Whirlpool1.TestDigestSize;
+begin
+  CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_Whirlpool1.TestIdentity;
+begin
+  CheckEquals($A566AF64, FHash.Identity);
+end;
+
+procedure TestTHash_Whirlpool1.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Whirlpool1.TestClassByName;
+begin
+  DoTestClassByName('THash_Whirlpool1', THash_Whirlpool1);
+end;
+{$ENDIF}
+
 procedure TestTHash_Square.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
@@ -3611,10 +3785,10 @@ initialization
 
                             TestTHash_Whirlpool0.Suite,
                             TestTHash_WhirlpoolT.Suite,
+                            TestTHash_Whirlpool1.Suite,
 
                             {$IFDEF OLD_WHIRLPOOL_NAMES}
                             TestTHash_Whirlpool.Suite,
-                            TestTHash_Whirlpool1.Suite,
                             {$ENDIF}
 
                             TestTHash_Square.Suite,
@@ -3652,10 +3826,10 @@ initialization
 
   TDUnitX.RegisterTestFixture(TestTHash_Whirlpool0);
   TDUnitX.RegisterTestFixture(TestTHash_WhirlpoolT);
+  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool1);
 
   {$IFDEF OLD_WHIRLPOOL_NAMES}
   TDUnitX.RegisterTestFixture(TestTHash_Whirlpool);
-  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool1);
   {$ENDIF}
 
   TDUnitX.RegisterTestFixture(TestTHash_Square);
