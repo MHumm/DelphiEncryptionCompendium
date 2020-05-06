@@ -3,9 +3,8 @@
 !!! When we release, the release will appear on the    !!!
 !!! release tab in GitHub!                             !!! 
 
-!!! Something else: while we plan to move from MPL 1.0 !!!
-!!! to Apache 2.0 as licence we have not really done   !!!
-!!! this, even if GitHub assumes so!                   !!!
+!!! The project changed license!                       !!!
+!!! We moved from MPL 1.0 to Apache 2.0 license        !!!
 
 DEC V6.0 beta 1 readme
 
@@ -30,17 +29,10 @@ Current status of beta 1:
 - Some of the unit tests still fail so those algorithms most likely still 
   have bugs. The algorithms concerned are:
 
-  - 
-
-- the Whirlpool hash algorithm is said to not match the oficially 
-  standardisized one
-- the SHA hash algorithm most likely will be renamed in SHA0 for cleaness 
-  reasons
-
 - in DECOptions.inc you can enable an x86 ASM mode. This is usefull for the
   Win32 platform only and enabling it currently crashes the compiled app at 
   startup due to some still unresolved failure in our initialization code 
-- some of the demos do not work yet
-- the documentation is not complete yet
+- one of the demos (Crypto Workbench) is not implemented yet
+- the documentation is not complete yet (only mostly complete)
 - XML doc in our code might not be 100% complete yet or as meaningful as we 
   like it to be
