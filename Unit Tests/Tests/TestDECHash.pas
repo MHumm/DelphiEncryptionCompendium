@@ -518,6 +518,7 @@ type
   end;
 
 implementation
+
 uses
   DECFormat;
 
@@ -2843,14 +2844,14 @@ begin
                                        'e59b63d93708b138cc42a66eb3';
   lDataRow.AddInputVector('');
 
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'e384d540e0bdfd28c8529177343b31183fb40c20f960b0bcdce' +
-//                                       '0513a382f96a3832099ebb6aabdb71b0ea2e30177f698ea703d' +
-//                                       'e51f93cf3cfea6d3171b955383';
-//  lDataRow.ExpectedOutputUTFStrTest := '5777fc1f8467a1c004cd9130439403ccdaa9fdc86092d9cffe3' +
-//                                       '39e6008612374d04c8fc0c724707feae6f7ceb1e030cabf652a' +
-//                                       '673da1849b02654af76eee24a7';
-//  lDataRow.AddInputVector(#$00);
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4d9444c212955963d425a410176fccfb74161e6839692b4c11f' +
+                                       'de2ed6eb559efe0560c39a7b61d5a8bcabd6817a3135af80f34' +
+                                       '2a4942ccaae745abddfb6afed0';
+  lDataRow.ExpectedOutputUTFStrTest := '8bdc9d4471d0dabd8812098b8cbdf5090beddb3d582917a61e1' +
+                                       '76e3d22529d753fed9a37990ca18583855efbc4f26e88f62002' +
+                                       'f67722eb05f74c7ea5e07013f5';
+  lDataRow.AddInputVector(#$00);
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '103e0055a9b090e11c8fddebba06c05ace8b64b896128f6eed3' +
