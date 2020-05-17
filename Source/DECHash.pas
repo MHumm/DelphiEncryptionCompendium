@@ -275,6 +275,11 @@ type
     class function DigestSize: Integer; override;
   end;
 
+  /// <summary>
+  ///   This is actually an implementation of the 192 bit variant of the Tiger
+  ///   hash algorithm with 3 rounds, unless a different value is assigned
+  ///   to the rounds property
+  /// </summary>
   THash_Tiger = class(THashBaseMD4)
   private
     FRounds: Integer;
@@ -335,21 +340,34 @@ type
     class function BlockSize: Integer; override;
   end;
 
+  /// <summary>
+  ///   This is the original variant of the algorithmus. Do not use it as some
+  ///   security flaw has been detected early on by its inventors. DEC contains
+  ///   it for backwards compatibility and completeness.
+  /// </summary>
   THash_Whirlpool0 = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
 
+  /// <summary>
+  ///   This is variant of the algorithmus fixing the security flaw of the
+  ///   original version Whirlpool0. Do not use it in new code as it has been
+  ///   superseeded by the optimized Whirlpool1 (THash_Whirlpool1 class in DEC)
+  ///   variant which is additionally more safe as well! It is there for
+  ///   backwards compatibility and completeness only.
+  /// </summary>
   THash_WhirlpoolT = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
 
   /// <summary>
-  ///   The current version of Whirlpool but not the one usually used in your
-  ///   code. The name of the one used in your code differs, depending whether
-  ///   you opt tu use the old DEC 5.2 compatible class names where the name
-  ///   Whirlpool1 was already taken by the variant nowadays known as Whirlpool-T.
+  ///   The current version of Whirlpool but not the one used in code developed
+  ///   against the older DEC 5.x versions. The name of the one used in your
+  ///   code differs, depending whether you opt tu use the old DEC 5.2 compatible
+  ///   class names where the name Whirlpool1 was already taken by the variant
+  ///   nowadays known as Whirlpool-T.
   /// </summary>
   THash_Whirlpool1_ = class(THashBaseWhirlpool)
   protected
