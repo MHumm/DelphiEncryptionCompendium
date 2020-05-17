@@ -16,12 +16,13 @@ object MainForm: TMainForm
     Size.Width = 425.000000000000000000
     Size.Height = 711.000000000000000000
     Size.PlatformDefault = False
+    StyleLookup = 'scrollboxstyle'
     TabOrder = 0
     Viewport.Width = 409.000000000000000000
     Viewport.Height = 711.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
-      Size.Height = 993.000000000000000000
+      Size.Height = 1170.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label2: TLabel
@@ -296,7 +297,7 @@ object MainForm: TMainForm
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2019 by Team DEC V%0:s'
+        Text = #169' 2018-2020 by Team DEC V%0:s'
       end
     end
   end
