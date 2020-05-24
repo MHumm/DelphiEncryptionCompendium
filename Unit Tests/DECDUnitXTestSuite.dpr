@@ -51,7 +51,10 @@ uses
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
   TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
   DECCipherInterface in '..\Source\DECCipherInterface.pas',
-  DECHashInterface in '..\Source\DECHashInterface.pas';
+  DECHashInterface in '..\Source\DECHashInterface.pas',
+  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
+  DECDataCipher in '..\Source\DECDataCipher.pas',
+  DECDataHash in '..\Source\DECDataHash.pas';
 
 var
   runner : ITestRunner;

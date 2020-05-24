@@ -135,6 +135,8 @@
         <DCCReference Include="DECCipherModes.pas"/>
         <DCCReference Include="DECCipherInterface.pas"/>
         <DCCReference Include="DECHashInterface.pas"/>
+        <DCCReference Include="DECDataCipher.pas"/>
+        <DCCReference Include="DECDataHash.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
         <BuildConfiguration Include="Release">

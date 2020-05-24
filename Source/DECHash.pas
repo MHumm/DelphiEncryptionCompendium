@@ -49,8 +49,14 @@ type
   THash_Haval256    = class;  // Haval 256, 5 Rounds
   THash_Tiger       = class;
   THash_Panama      = class;
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool   = class;
   THash_Whirlpool1  = class;
+  {$ENDIF}
+
+  THash_Whirlpool0   = class;
+  THash_WhirlpoolT  = class;
+
   THash_Square      = class;
   THash_Snefru128   = class;  // derived from the Xerox Secure Hash Function
   THash_Snefru256   = class;  // " - "
@@ -138,17 +144,12 @@ type
   end;
 
   /// <summary>
-{ TODO : Check whether the XMLDOC shall talk about SHA1 or rather about SHA0
- SHA = SHA0 Testvektoren belegen das und SHA1=SHA1. In DoTransform wird auf den
- Klassennamen abgeprüft!
- => neues Define für 5.3 Kompatibilität anlegen, THash_SHA in THash_SHA0 umstellen
-    und bei gesetztem Schalter THash_SHA wieder als direkten Erben von THash_SHA0
-    anlegen. Im DOTransform das richtige tun. Klassenregistrierung beachten
-    und Unit Tests abhängig vom Schalter beachten!}
-  ///   Implementation of the SHA1 hash algorithm. At least since February 2017
-  ///   collisions have been found for this algorithm so it's now completely
-  ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
-  ///   instead!
+  ///   Implementation of the SHA0 hash algorithm. This is the original version
+  ///   of the SHA algorithm released in 1993. In 1995 some security issues have
+  ///   been identified in this algorithm so he got replaced by the slightly
+  ///   modified SHA1 algorithm. The recommendation is to not use this SHA0
+  ///   algorithm at all. It is only being provided for scenarios where
+  ///   compatibility with this algorithm is required.
   /// </summary>
   THash_SHA0 = class(THashBaseMD4)
   protected
@@ -159,13 +160,21 @@ type
   end;
 
   {$IFDEF OLD_SHA_NAME}
+  /// <summary>
+  ///   Implementation of the SHA0 hash algorithm. This is the original version
+  ///   of the SHA algorithm released in 1993. In 1995 some security issues have
+  ///   been identified in this algorithm so he got replaced by the slightly
+  ///   modified SHA1 algorithm. The recommendation is to not use this SHA0
+  ///   algorithm at all. It is only being provided for scenarios where
+  ///   compatibility with this algorithm is required.
+  /// </summary>
   THash_SHA = class(THash_SHA0);
   {$ENDIF}
 
   /// <summary>
   ///   Implementation of the SHA1 hash algorithm. At least since February 2017
   ///   collisions have been found for this algorithm so it's now completely
-  ///   clear that it should not be used if ever possible! Use SHA256 or SHA512
+  ///   clear that it should not be used if possible! Use SHA256 or SHA512
   ///   instead!
   /// </summary>
   THash_SHA1 = class(THash_SHA0);
@@ -266,6 +275,11 @@ type
     class function DigestSize: Integer; override;
   end;
 
+  /// <summary>
+  ///   This is actually an implementation of the 192 bit variant of the Tiger
+  ///   hash algorithm with 3 rounds, unless a different value is assigned
+  ///   to the rounds property
+  /// </summary>
   THash_Tiger = class(THashBaseMD4)
   private
     FRounds: Integer;
@@ -326,15 +340,47 @@ type
     class function BlockSize: Integer; override;
   end;
 
-  THash_Whirlpool = class(THashBaseWhirlpool)
+  /// <summary>
+  ///   This is the original variant of the algorithmus. Do not use it as some
+  ///   security flaw has been detected early on by its inventors. DEC contains
+  ///   it for backwards compatibility and completeness.
+  /// </summary>
+  THash_Whirlpool0 = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
 
-  THash_Whirlpool1 = class(THashBaseWhirlpool)
+  /// <summary>
+  ///   This is variant of the algorithmus fixing the security flaw of the
+  ///   original version Whirlpool0. Do not use it in new code as it has been
+  ///   superseeded by the optimized Whirlpool1 (THash_Whirlpool1 class in DEC)
+  ///   variant which is additionally more safe as well! It is there for
+  ///   backwards compatibility and completeness only.
+  /// </summary>
+  THash_WhirlpoolT = class(THashBaseWhirlpool)
   protected
     procedure DoInit; override;
   end;
+
+  /// <summary>
+  ///   The current version of Whirlpool but not the one used in code developed
+  ///   against the older DEC 5.x versions. The name of the one used in your
+  ///   code differs, depending whether you opt tu use the old DEC 5.2 compatible
+  ///   class names where the name Whirlpool1 was already taken by the variant
+  ///   nowadays known as Whirlpool-T.
+  /// </summary>
+  THash_Whirlpool1_ = class(THashBaseWhirlpool)
+  protected
+    procedure DoInit; override;
+  end;
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  THash_Whirlpool = class(THash_Whirlpool0);
+  THash_Whirlpool1 = class(THash_WhirlpoolT);
+  THash_Whirlpool1New = class(THash_Whirlpool1_);
+  {$ELSE}
+  THash_Whirlpool1 = class(THash_Whirlpool1_);
+  {$ENDIF}
 
   THash_Square = class(TDECHash)
   private
@@ -433,7 +479,7 @@ procedure SetDefaultHashClass(HashClass: TDECHashClass);
 implementation
 
 uses
-  DECData;
+  DECData, DECDataHash;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
@@ -468,8 +514,8 @@ uses
   THash_RipeMD160 :       26.5 cycles/byte      56.66 Mb/sec       31.4 cycles/byte      47.79 Mb/sec   19%
   THash_Square    :       44.7 cycles/byte      33.58 Mb/sec       53.1 cycles/byte      28.23 Mb/sec   19%
   THash_Haval192  :       32.5 cycles/byte      46.17 Mb/sec       37.6 cycles/byte      39.87 Mb/sec   18%
-  THash_Whirlpool1:      104.9 cycles/byte      14.30 Mb/sec      122.8 cycles/byte      12.22 Mb/sec   17%
-  THash_Whirlpool :      104.7 cycles/byte      14.33 Mb/sec      119.9 cycles/byte      12.51 Mb/sec   15%
+  THash_WhirlpoolT:      104.9 cycles/byte      14.30 Mb/sec      122.8 cycles/byte      12.22 Mb/sec   17%
+  THash_Whirlpool0:      104.7 cycles/byte      14.33 Mb/sec      119.9 cycles/byte      12.51 Mb/sec   15%
   THash_Sapphire  :       52.9 cycles/byte      28.35 Mb/sec       53.8 cycles/byte      27.86 Mb/sec    2%
   THash_Haval224  :       32.0 cycles/byte      46.82 Mb/sec       32.3 cycles/byte      46.46 Mb/sec    1%
   THash_SHA256    :       47.8 cycles/byte      31.35 Mb/sec       47.8 cycles/byte      31.39 Mb/sec    0%
@@ -3064,22 +3110,31 @@ begin
   Result := 64;
 end;
 
-{ THash_Whirlpool }
+{ THash_Whirlpool0 }
 
-procedure THash_Whirlpool.DoInit;
+procedure THash_Whirlpool0.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   FTableC := @Whirlpool_C_U;
   FTableR := @Whirlpool_RC_U
 end;
 
-{ THash_Whirlpool1 }
+{ THash_WhirlpoolT }
 
-procedure THash_Whirlpool1.DoInit;
+procedure THash_WhirlpoolT.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   FTableC := @Whirlpool_C_T;
   FTableR := @Whirlpool_RC_T;
+end;
+
+{ THash_Whirlpool1_ }
+
+procedure THash_Whirlpool1_.DoInit;
+begin
+  FillChar(FDigest, SizeOf(FDigest), 0);
+  FTableC := @Whirlpool_C_1;
+  FTableR := @Whirlpool_RC_1;
 end;
 
 { THash_Square }
@@ -3494,8 +3549,18 @@ initialization
   THash_Haval256.RegisterClass(TDECHash.ClassList);
   THash_Tiger.RegisterClass(TDECHash.ClassList);
   THash_Panama.RegisterClass(TDECHash.ClassList);
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool.RegisterClass(TDECHash.ClassList);
   THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+  THash_Whirlpool1New.RegisterClass(TDECHash.ClassList);
+  {$ELSE}
+  THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+  {$ENDIF}
+
+  THash_Whirlpool0.RegisterClass(TDECHash.ClassList);
+  THash_WhirlpoolT.RegisterClass(TDECHash.ClassList);
+
   THash_Square.RegisterClass(TDECHash.ClassList);
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
@@ -3506,7 +3571,7 @@ initialization
   {$ENDIF}
 
 finalization
-  // No need to unregister the hash classes, as the list is being freed 
+  // No need to unregister the hash classes, as the list is being freed
   // in finalization of DECBaseClass unit
 
 end.

@@ -14,7 +14,8 @@ uses
   DECData in '..\..\Source\DECData.pas',
   DECFormat in '..\..\Source\DECFormat.pas',
   DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
-  DECHashInterface in '..\..\Source\DECHashInterface.pas';
+  DECHashInterface in '..\..\Source\DECHashInterface.pas',
+  DECDataHash in '..\..\Source\DECDataHash.pas';
 
 {$R *.res}
 
@@ -23,6 +24,6 @@ begin
 
   Application.Initialize;
   // TMainForm
-  Application.CreateForm(TMainForm, FormMain);
+  Application.CreateForm(TFormMain, FormMain);
   Application.Run;
 end.

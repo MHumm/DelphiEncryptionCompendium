@@ -23,7 +23,9 @@ uses
   DECTypes in 'DECTypes.pas',
   DECCipherModes in 'DECCipherModes.pas',
   DECCipherInterface in 'DECCipherInterface.pas',
-  DECHashInterface in 'DECHashInterface.pas';
+  DECHashInterface in 'DECHashInterface.pas',
+  DECDataCipher in 'DECDataCipher.pas',
+  DECDataHash in 'DECDataHash.pas';
 
 begin
   try

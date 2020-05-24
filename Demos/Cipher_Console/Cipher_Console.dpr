@@ -38,7 +38,8 @@ uses
   DECData in '..\..\Source\DECData.pas',
   DECCipherFormats in '..\..\Source\DECCipherFormats.pas',
   DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
-  DECCipherInterface in '..\..\Source\DECCipherInterface.pas';
+  DECCipherInterface in '..\..\Source\DECCipherInterface.pas',
+  DECDataCipher in '..\..\Source\DECDataCipher.pas';
 
 var
   Cipher     : TCipher_1DES;

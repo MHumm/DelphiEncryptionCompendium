@@ -398,19 +398,57 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_Whirlpool
+  // Test methods for class THash_Whirlpool0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool = class(THash_TestBase)
+  TestTHash_Whirlpool0 = class(THash_TestBase)
   public
     procedure SetUp; override;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
-    procedure TestClassByName;
-    procedure TestIdentity;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
   end;
 
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  // Test methods for class THash_Whirlpool
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_Whirlpool = class(TestTHash_Whirlpool0)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestClassByName; override;
+    procedure TestIdentity; override;
+  end;
+  {$ENDIF}
+
+  // Test methods for class THash_WhirlpoolT
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_WhirlpoolT = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
+  end;
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  // Test methods for class THash_Whirlpool1 aka WhirlpoolT's old name in DEC 5.2
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_Whirlpool1 = class(TestTHash_WhirlpoolT)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestClassByName; override;
+    procedure TestIdentity; override;
+  end;
+  {$ENDIF}
+
+  {$IFNDEF OLD_WHIRLPOOL_NAMES}
   // Test methods for class THash_Whirlpool1
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Whirlpool1 = class(THash_TestBase)
@@ -420,9 +458,10 @@ type
     procedure TestDigestSize;
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
-    procedure TestClassByName;
-    procedure TestIdentity;
+    procedure TestClassByName; virtual;
+    procedure TestIdentity; virtual;
   end;
+  {$ENDIF}
 
   // Test methods for class THash_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -479,6 +518,7 @@ type
   end;
 
 implementation
+
 uses
   DECFormat;
 
@@ -2441,12 +2481,12 @@ begin
   DoTestClassByName('THash_Panama', THash_Panama);
 end;
 
-procedure TestTHash_Whirlpool.SetUp;
+procedure TestTHash_Whirlpool0.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
-  FHash := THash_Whirlpool.Create;
+  FHash := THash_Whirlpool0.Create;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'b3e1ab6eaf640a34f784593f2074416accd3b8e62c620175fca' +
@@ -2568,14 +2608,39 @@ begin
   lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
-procedure TestTHash_Whirlpool.TestBlockSize;
+procedure TestTHash_Whirlpool0.TestBlockSize;
 begin
   CheckEquals(64, FHash.BlockSize);
 end;
 
-procedure TestTHash_Whirlpool.TestDigestSize;
+procedure TestTHash_Whirlpool0.TestDigestSize;
 begin
   CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_Whirlpool0.TestIdentity;
+begin
+  CheckEquals($D2619FF2, FHash.Identity);
+end;
+
+procedure TestTHash_Whirlpool0.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Whirlpool0.TestClassByName;
+begin
+  DoTestClassByName('THash_Whirlpool0', THash_Whirlpool0);
+end;
+
+{$IFDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash.Free;
+  FHash := THash_Whirlpool.Create;
 end;
 
 procedure TestTHash_Whirlpool.TestIdentity;
@@ -2583,22 +2648,18 @@ begin
   CheckEquals($5CCB1E12, FHash.Identity);
 end;
 
-procedure TestTHash_Whirlpool.TestIsPasswordHash;
-begin
-  CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
 procedure TestTHash_Whirlpool.TestClassByName;
 begin
   DoTestClassByName('THash_Whirlpool', THash_Whirlpool);
 end;
+{$ENDIF}
 
-procedure TestTHash_Whirlpool1.SetUp;
+procedure TestTHash_WhirlpoolT.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
-  FHash := THash_Whirlpool1.Create;
+  FHash := THash_WhirlpoolT.Create;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
@@ -2720,6 +2781,182 @@ begin
   lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
+procedure TestTHash_WhirlpoolT.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_WhirlpoolT.TestDigestSize;
+begin
+  CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_WhirlpoolT.TestIdentity;
+begin
+  CheckEquals($98BE3AB3, FHash.Identity);
+end;
+
+procedure TestTHash_WhirlpoolT.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_WhirlpoolT.TestClassByName;
+begin
+  DoTestClassByName('THash_WhirlpoolT', THash_WhirlpoolT);
+end;
+
+{$IFDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool1.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash.Free;
+  FHash := THash_Whirlpool1.Create;
+end;
+
+procedure TestTHash_Whirlpool1.TestIdentity;
+begin
+  CheckEquals($A566AF64, FHash.Identity);
+end;
+
+procedure TestTHash_Whirlpool1.TestClassByName;
+begin
+  DoTestClassByName('THash_Whirlpool1', THash_Whirlpool1);
+end;
+{$ENDIF}
+
+{$IFNDEF OLD_WHIRLPOOL_NAMES}
+procedure TestTHash_Whirlpool1.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash := THash_Whirlpool1.Create;
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '19fa61d75522a4669b44e39c1d2e1726c530232130d407f89af' +
+                                       'ee0964997f7a73e83be698b288febcf88e3e03c4f0757ea8964' +
+                                       'e59b63d93708b138cc42a66eb3';
+  lDataRow.ExpectedOutputUTFStrTest := '19fa61d75522a4669b44e39c1d2e1726c530232130d407f89af' +
+                                       'ee0964997f7a73e83be698b288febcf88e3e03c4f0757ea8964' +
+                                       'e59b63d93708b138cc42a66eb3';
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4d9444c212955963d425a410176fccfb74161e6839692b4c11f' +
+                                       'de2ed6eb559efe0560c39a7b61d5a8bcabd6817a3135af80f34' +
+                                       '2a4942ccaae745abddfb6afed0';
+  lDataRow.ExpectedOutputUTFStrTest := '8bdc9d4471d0dabd8812098b8cbdf5090beddb3d582917a61e1' +
+                                       '76e3d22529d753fed9a37990ca18583855efbc4f26e88f62002' +
+                                       'f67722eb05f74c7ea5e07013f5';
+  lDataRow.AddInputVector(#$00);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '103e0055a9b090e11c8fddebba06c05ace8b64b896128f6eed3' +
+                                       '071fcf3dc16946778e07223233fd180fc40ccdb8430a640e376' +
+                                       '34271e655ca1674ebff507f8cb';
+  lDataRow.ExpectedOutputUTFStrTest := 'caf45c33b5551249ce0fc6d59e778fcb46dc6b682c34a5382f2' +
+                                       '8efaf3a9a605c9eae0feb081637322e7a56b369453e9ad36bd8' +
+                                       '58537c103874b80aa4ab138368';
+  lDataRow.AddInputVector(#$80);
+  lDataRow.AddInputVector(#$00, 1, 63);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '8aca2602792aec6f11a67206531fb7d7f0dff59413145e6973c' +
+                                       '45001d0087b42d11bc645413aeff63a42391a39145a591a9220' +
+                                       '0d560195e53b478584fdae231a';
+
+  lDataRow.ExpectedOutputUTFStrTest := '3f3a6a6d213b7d669e90f1309ff1dad4a6c8d0b0568109aa359' +
+                                       '34a6586dcc5d1758b5ce644313310a1cf979c19c380b96af62b' +
+                                       'dc82bd03bafd94f65d51d43188';
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4e2448a4c6f486bb16b6562c73b4020bf3043e3a731bce721ae' +
+                                       '1b303d97e6d4c7181eebdb6c57e277d0e34957114cbd6c797fc' +
+                                       '9d95d8b582d225292076d4eef5';
+  lDataRow.ExpectedOutputUTFStrTest := '2c41adef13bbfd33743ca3aa26a2977852348de9b7e9b70a785' +
+                                       'd34a661454403caa110de49f0641048acde14158a58a38b3a36' +
+                                       '04a6a1096c64fdd880940191ae';
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '378c84a4126e2dc6e56dcc7458377aac838d00032230f53ce1f' +
+                                       '5700c0ffb4d3b8421557659ef55c106b4b52ac5a4aaa692ed92' +
+                                       '0052838f3362e86dbd37a8903e';
+  lDataRow.ExpectedOutputUTFStrTest := '69da33ab06954bbb5dea0df780ce48f663e6333470f74b4f3df' +
+                                       'bf5724087caeb816c4c661d3e9359740668ae07d2bf8432bfb1' +
+                                       '07150e5540bd95681c4a744a3e';
+  lDataRow.AddInputVector('message digest');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'f1d754662636ffe92c82ebb9212a484a8d38631ead4238f5442' +
+                                       'ee13b8054e41b08bf2a9251c30b6a0b8aae86177ab4a6f68f67' +
+                                       '3e7207865d5d9819a3dba4eb3b';
+  lDataRow.ExpectedOutputUTFStrTest := '970c5e7fbf85ab33e1faf78e0e2839955b4a0e401c954fdf778' +
+                                       '673b625f35662f63fda7f77f5e6859493037d9d513e739c6643' +
+                                       '98402f555f269cc04e0bc76528';
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'dc37e008cf9ee69bf11f00ed9aba26901dd7c28cdec066cc6af' +
+                                       '42e40f82f3a1e08eba26629129d8fb7cb57211b9281a65517cc' +
+                                       '879d7b962142c65f5a7af01467';
+  lDataRow.ExpectedOutputUTFStrTest := 'a29d364116fb3398621689907e2baf7dba60a4b51ea3c9671b4' +
+                                       'd2408761b3457a7b4ae1f2c6ef935f3f8cbe37578b9c39dac5b' +
+                                       'acd1392b966a6943397db1048e';
+  lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '466ef18babb0154d25b9d38a6414f5c08784372bccb204d6549' +
+                                       'c4afadb6014294d5bd8df2a6c44e538cd047b2681a51a2c6048' +
+                                       '1e88c5a20b2c2a80cf3a9a083b';
+  lDataRow.ExpectedOutputUTFStrTest := '75ce932e300c665d5527f35d888f8a4fcde76cb693be179eac9' +
+                                       '8a436542f1cf070c555bac1fef156a18106e3f8c09ddf3e7ef7' +
+                                       'e6bfa5317ba97c7e8df9b7caf6';
+  lDataRow.AddInputVector('1234567890', 8);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '2a987ea40f917061f5d6f0a0e4644f488a7a5a52deee656207c' +
+                                       '562f988e95c6916bdc8031bc5be1b7b947639fe050b56939baa' +
+                                       'a0adff9ae6745b7b181c3be3fd';
+  lDataRow.ExpectedOutputUTFStrTest := '369e16f05a6866a72fc27b0a9f0582eb1e370a604b731712456' +
+                                       '831ae19054dd189d276b32a0a664132146e9e07b8654cb9b3f4' +
+                                       '312bc8b19a73ed572629b1718e';
+  lDataRow.AddInputVector('abcdbcdecdefdefgefghfghighijhijk');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '0c99005beb57eff50a7cf005560ddf5d29057fd86b20bfd62de' +
+                                       'ca0f1ccea4af51fc15490eddc47af32bb2b66c34ff9ad8c6008' +
+                                       'ad677f77126953b226e4ed8b01';
+  lDataRow.ExpectedOutputUTFStrTest := 'e1ddbc099459cad3d521ac1e8352a8946c3eeeacc9129299fdb' +
+                                       'fc70c7d36de45ca602087d50adbee16c6f51157234673facfe5' +
+                                       '3938c8735f3d4266d4b399424f';
+  lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 15625, 1);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '0c99005beb57eff50a7cf005560ddf5d29057fd86b20bfd62de' +
+                                       'ca0f1ccea4af51fc15490eddc47af32bb2b66c34ff9ad8c6008' +
+                                       'ad677f77126953b226e4ed8b01';
+  lDataRow.ExpectedOutputUTFStrTest := 'e1ddbc099459cad3d521ac1e8352a8946c3eeeacc9129299fdb' +
+                                       'fc70c7d36de45ca602087d50adbee16c6f51157234673facfe5' +
+                                       '3938c8735f3d4266d4b399424f';
+  lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+
+  // Test vector from EN Wikipedia article
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'b97de512e91e3828b40d2b0fdce9ceb3c4a71f9bea8d88e75c4' +
+                                       'fa854df36725fd2b52eb6544edcacd6f8beddfea403cb55ae31' +
+                                       'f03ad62a5ef54e42ee82c3fb35';
+
+  lDataRow.ExpectedOutputUTFStrTest := '54d79c3801365ff9e1c7c64796926ddd715e23a1ac48c3ab086' +
+                                       '4eb2e29d681e6b0f628982c3167e1987053b5aacfa4e3f3dc53' +
+                                       'af65923aa2e2beb2adc74b3591';
+  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
+end;
+
 procedure TestTHash_Whirlpool1.TestBlockSize;
 begin
   CheckEquals(64, FHash.BlockSize);
@@ -2744,6 +2981,7 @@ procedure TestTHash_Whirlpool1.TestClassByName;
 begin
   DoTestClassByName('THash_Whirlpool1', THash_Whirlpool1);
 end;
+{$ENDIF}
 
 procedure TestTHash_Square.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -3542,8 +3780,15 @@ initialization
                             TestTHash_Tiger_3Rounds.Suite,
                             TestTHash_Tiger_4Rounds.Suite,
                             TestTHash_Panama.Suite,
-                            TestTHash_Whirlpool.Suite,
+
+                            TestTHash_Whirlpool0.Suite,
+                            TestTHash_WhirlpoolT.Suite,
                             TestTHash_Whirlpool1.Suite,
+
+                            {$IFDEF OLD_WHIRLPOOL_NAMES}
+                            TestTHash_Whirlpool.Suite,
+                            {$ENDIF}
+
                             TestTHash_Square.Suite,
                             TestTHash_Snefru128.Suite,
                             TestTHash_Snefru256.Suite,
@@ -3576,8 +3821,15 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Tiger_3Rounds);
   TDUnitX.RegisterTestFixture(TestTHash_Tiger_4Rounds);
   TDUnitX.RegisterTestFixture(TestTHash_Panama);
-  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool);
+
+  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool0);
+  TDUnitX.RegisterTestFixture(TestTHash_WhirlpoolT);
   TDUnitX.RegisterTestFixture(TestTHash_Whirlpool1);
+
+  {$IFDEF OLD_WHIRLPOOL_NAMES}
+  TDUnitX.RegisterTestFixture(TestTHash_Whirlpool);
+  {$ENDIF}
+
   TDUnitX.RegisterTestFixture(TestTHash_Square);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru128);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru256);

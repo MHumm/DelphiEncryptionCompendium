@@ -46,7 +46,9 @@ uses
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
   DECCipherInterface in '..\Source\DECCipherInterface.pas',
   DECHashInterface in '..\Source\DECHashInterface.pas',
-  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas';
+  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
+  DECDataCipher in '..\Source\DECDataCipher.pas',
+  DECDataHash in '..\Source\DECDataHash.pas';
 
 {$R *.RES}
 
