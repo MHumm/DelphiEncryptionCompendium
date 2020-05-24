@@ -355,7 +355,10 @@ type
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
     ///   similar to a hash function but incontrast does not have a fixed output
-    ///   length.
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators
     /// </summary>
     /// <param name="Data">
     ///   Data from which to generate a mask from
@@ -374,7 +377,10 @@ type
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
     ///   similar to a hash function but incontrast does not have a fixed output
-    ///   length.
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators
     /// </summary>
     /// <param name="Data">
     ///   Data from which to generate a mask from
