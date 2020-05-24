@@ -351,7 +351,41 @@ type
                       const Progress: IDECProgress = nil): RawByteString; overload;
 
     // mask generation
+
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the input data in bytes
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGF1(const Data: TBytes; MaskSize: Integer): TBytes; overload;
     // key derivation
 
