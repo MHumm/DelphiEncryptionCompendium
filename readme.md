@@ -1,14 +1,14 @@
-!!! We did not release DEC V6.0 beta 1 yet             !!!
-!!! This file is only in preparation of such a release !!!
-!!! When we release, the release will appear on the    !!!
-!!! release tab in GitHub!                             !!! 
+!!! We did not release DEC V6.0 beta 1 yet
+!!! This file is only in preparation of such a release
+!!! When we release, the release will appear on the
+!!! release tab in GitHub!
 
-!!! The project changed license!                       !!!
-!!! We moved from MPL 1.0 to Apache 2.0 license        !!!
+!!! The project changed license!
+!!! We moved from MPL 1.0 to Apache 2.0 license
 
-DEC - Delphi Encryption Compendium
+# DEC - Delphi Encryption Compendium
 
-#What is DEC?
+## What is DEC?
 DEC is a library for Embarcadero Delphi, containing different cryptographic algorithms .
 It contains algorithms for these categories:
 
@@ -17,7 +17,7 @@ It contains algorithms for these categories:
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
-#Which Delphi versions are compatible?
+## Which Delphi versions are compatible?
 The last released version 5.2 is compatible with Delphi 7-2007 at least.
 For using it with newer versions some small modification is necessary in order 
 to compile it. If done it is compatible up to 10.2 Tokio at least.
@@ -27,7 +27,7 @@ The version 6.0 which is still in development is compatible with
 Delphi 2009 - Delphi 10.3.3 Rio. When defining the NO_ASM define
 in DECOptions.inc it is compatible with all platforms!
 
-#What is the current status of this project?
+## What is the current status of this project?
 If you look at the release tab you see a 5.2 release from 2015 so
 the project looks a bit dead. But if you look closer at the insights
 or at the source code in development and master branch you will notice, 
@@ -40,18 +40,18 @@ In comparison to 5.2 we added some console, VCL and FMX based demo applications.
 The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
 
-#Why is V6.0 not released yet?
+## Why is V6.0 not released yet?
 We are still working on some bugfixes and on finalizing the documentation.
 As soon as these things are done we will release this new version. Please
 keep in mind that we are working on this in our limited spare time!
 
-#Where can I get further information? For example if I'd like to contribute?
+## Where can I get further information? For example if I'd like to contribute?
 In the root folder of DEC V6.0 you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 Also take the time to read DEC60.pdf in the *Docs* folder or look at the demos 
 provided in the *Demos* subfolder.
 
-#Has it been tested?
+## Has it been tested?
 DEC 5.2 comes with some "arcane" test program testing the algoithms implemented
 using test data supplied via some text file. For many algorithms this test data
 stems from official documentation of the algorithms itsself. DEC 5.2 passes these 
