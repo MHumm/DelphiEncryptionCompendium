@@ -91,6 +91,34 @@ type
     procedure TestIncrement8;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  /// <summary>
+  ///   All test cases for the MGF1 class method. These are in this  class rather
+  ///   than in TestTDECHash as the MGF1 class methods can only be called on a
+  ///   concrete hash class as they use the DigestSize and would otherwise fail.
+  ///   We currently only have test data for the SHA1 (= SHA with 128 bit length)
+  ///   algorithm, but the MGF1 method is universally useable so the tests got
+  ///   separated here.
+  /// </summary>
+  TestTHash_MGF1 = class(TTestCase)
+  strict protected
+    // List of test cases goes here, to be defined in such a way that input, length,
+    // output and hash class to be used shall be spoecified.
+
+    // Testdata:
+    // foo 3 = 1ac907
+    // foo 5 = 1ac9075cd4
+    // bar 5 = bc0c655e01
+    // bar 50 = bc0c655e016bc2931d85a2e675181adcef7f581f76df2739da74faac41627be2f7f415c89e983fd0ce80ced9878641cb4876
+    // bar 50 sha256 = 382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestTBytes;
+    procedure TestRawMemory;
+  end;
+
   THash_TestBase = class(TTestCase)
   strict protected
     FTestData  : IHashTestDataContainer;
@@ -3753,11 +3781,42 @@ begin
   end;
 end;
 
+{ THash_TestMGF1 }
+
+procedure TestTHash_MGF1.SetUp;
+begin
+  inherited;
+
+end;
+
+procedure TestTHash_MGF1.TearDown;
+begin
+  inherited;
+
+end;
+
+procedure TestTHash_MGF1.TestRawMemory;
+begin
+
+end;
+
+procedure TestTHash_MGF1.TestTBytes;
+var
+  InputData  : TBytes;
+  OutputData : TBytes;
+begin
+  InputData := BytesOf(RawByteString('foo'));
+
+  OutputData := THash_SHA1.MGF1(InputData, 3);
+  CheckEquals(RawByteString('1ac907'), DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)));
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             TestTDECHash.Suite,
+                            TestTHash_MGF1.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
                             TestTHash_MD5.Suite,
@@ -3797,6 +3856,7 @@ initialization
   {$ELSE}
   TDUnitX.RegisterTestFixture(THash_TestIncrement8);
   TDUnitX.RegisterTestFixture(TestTDECHash);
+  TDUnitX.RegisterTestFixture(TestTHash_MGF1);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
   TDUnitX.RegisterTestFixture(TestTHash_MD5);
