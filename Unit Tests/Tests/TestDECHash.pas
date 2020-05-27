@@ -31,6 +31,7 @@ uses
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
+  Generics.Collections,
   TestDECTestDataContainer, DECTypes,
   DECBaseClass, DECHash, DECHashBase, Classes, SysUtils, DECUtil, DECFormatBase;
 
@@ -91,17 +92,71 @@ type
     procedure TestIncrement8;
   end;
 
+  /// <summary>
+  ///   Meta class to store class references in the list as there is no pointer
+  ///   to class methods as it seems
+  /// </summary>
+  THashClass = class of TDECHash;
+
+  /// <summary>
+  ///   Record containing everything necessary for a single key deviation
+  ///   method test
+  /// </summary>
+  TKeyDeviationTestData = record
+    /// <summary>
+    ///   Test data as normal text
+    /// </summary>
+    InputData  : RawByteString;
+    /// <summary>
+    ///   Test output in hexadecimal format
+    /// </summary>
+    OutputData : RawByteString;
+    /// <summary>
+    ///   Requested output length
+    /// </summary>
+    MaskSize   : Integer;
+    /// <summary>
+    ///   Class reference containing the class methods to be tested
+    /// </summary>
+    HashClass  : THashClass;
+  end;
+
+  /// <summary>
+  ///   List of all the test cases
+  /// </summary>
+  TKeyDeviationTestList = class(TList<TKeyDeviationTestData>)
+  public
+    /// <summary>
+    ///   Add one entry to the list
+    /// </summary>
+    /// <param name="InputData">
+    ///   Test data as normal text
+    /// </param>
+    /// <param name="OutputData">
+    ///   Test output in hexadecimal format
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Requested output length
+    /// </param>
+    /// <param name="HashClass">
+    ///   Class reference containing the class methods to be tested
+    /// </param>
+    procedure Add(const InputData, OutputData: RawByteString;
+                  MaskSize : Integer; HashClass: THashClass); overload;
+  end;
+
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   /// <summary>
-  ///   All test cases for the MGF1 class method. These are in this  class rather
+  ///   All test cases for the MGF1 class methods. These are in this class rather
   ///   than in TestTDECHash as the MGF1 class methods can only be called on a
   ///   concrete hash class as they use the DigestSize and would otherwise fail.
-  ///   We currently only have test data for the SHA1 (= SHA with 128 bit length)
+  ///   We currently mostly have test data for the SHA1 (= SHA with 128 bit length)
   ///   algorithm, but the MGF1 method is universally useable so the tests got
   ///   separated here.
   /// </summary>
   TestTHash_MGF1 = class(TTestCase)
   strict protected
+    FTestData : TKeyDeviationTestList;
     // List of test cases goes here, to be defined in such a way that input, length,
     // output and hash class to be used shall be spoecified.
 
@@ -3787,28 +3842,70 @@ procedure TestTHash_MGF1.SetUp;
 begin
   inherited;
 
+  FTestData := TKeyDeviationTestList.Create;
+
+  FTestData.Add('foo', '1ac907', 3, THash_SHA1);
+  FTestData.Add('foo', '1ac9075cd4', 5, THash_SHA1);
+  FTestData.Add('bar', 'bc0c655e01', 5, THash_SHA1);
+  FTestData.Add('bar', 'bc0c655e016bc2931d85a2e675181adcef7f581f76df2739da74f' +
+                       'aac41627be2f7f415c89e983fd0ce80ced9878641cb4876', 50, THash_SHA1);
+  FTestData.Add('bar', '382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735' +
+                       'd10dc724b155f9f6069f289d61daca0cb814502ef04eae1', 50, THash_SHA256);
 end;
 
 procedure TestTHash_MGF1.TearDown;
 begin
-  inherited;
+  FTestData.Free;
 
+  inherited;
 end;
 
 procedure TestTHash_MGF1.TestRawMemory;
+var
+  InputData  : TBytes;
+  OutputData : TBytes;
+  i          : Integer;
 begin
-
+  for i := 0 to FTestData.Count - 1 do
+  begin
+    InputData  := BytesOf(FTestData[i].InputData);
+    OutputData := FTestData[i].HashClass.MGF1(InputData[0], length(InputData),
+                                              FTestData[i].MaskSize);
+    CheckEquals(FTestData[i].OutputData,
+                DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)),
+                'MGFT1 test failed at index ' + IntToStr(i));
+  end;
 end;
 
 procedure TestTHash_MGF1.TestTBytes;
 var
   InputData  : TBytes;
   OutputData : TBytes;
+  i          : Integer;
 begin
-  InputData := BytesOf(RawByteString('foo'));
+  for i := 0 to FTestData.Count - 1 do
+  begin
+    InputData  := BytesOf(FTestData[i].InputData);
+    OutputData := FTestData[i].HashClass.MGF1(InputData, FTestData[i].MaskSize);
+    CheckEquals(FTestData[i].OutputData,
+                DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)),
+                'MGFT1 test failed at index ' + IntToStr(i));
+  end;
+end;
 
-  OutputData := THash_SHA1.MGF1(InputData, 3);
-  CheckEquals(RawByteString('1ac907'), DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)));
+{ TKeyDeviationTestList }
+
+procedure TKeyDeviationTestList.Add(const InputData, OutputData: RawByteString;
+                                    MaskSize: Integer; HashClass: THashClass);
+var
+  Data: TKeyDeviationTestData;
+begin
+  Data.InputData  := InputData;
+  Data.OutputData := OutputData;
+  Data.MaskSize   := MaskSize;
+  Data.HashClass  := HashClass;
+
+  self.Add(Data);
 end;
 
 initialization
