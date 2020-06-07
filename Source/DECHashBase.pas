@@ -404,7 +404,6 @@ type
     /// <param name="DataSize">
     ///   Size in bytes of the source data passed.
     /// </param>
-{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
     /// <param name="Seed">
     ///   Start value for pseudo random number generator
     /// </param>
@@ -412,12 +411,23 @@ type
     ///   Size of the seed in byte.
     /// </param>
     /// <param name="MaskSize">
-    ///   ???
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="Format">
+    ///   Optional formatting class. If specified the output will be in the
+    ///   format of this formatting class.
     /// </param>
     /// <returns>
     ///   Returns the new derrived key.
     /// </returns>
-    class function KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes; overload;
+    /// <remarks>
+    ///   In earlier versions there was an optional format parameter. This has
+    ///   been removed as this is a base class. The method might not have
+    ///   returned a result with the MaskSize specified, as the formatting might
+    ///   have had to alter this. This would have been illogical.
+    /// </remarks>
+    class function KDF2(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer): TBytes; overload;
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
@@ -874,6 +884,7 @@ end;
 class function TDECHash.MGF1(const Data; DataSize, MaskSize: Integer): TBytes;
 // indexed Mask generation function, IEEE P1363 Working Group
 // equal to KDF2 except without Seed
+// RFC 2437 PKCS #1
 begin
   Result := KDF2(Data, DataSize, NullStr, 0, MaskSize);
 end;
@@ -883,8 +894,12 @@ begin
   Result := KDF2(Data[0], Length(Data), NullStr, 0, MaskSize);
 end;
 
-class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes;
+class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer): TBytes;
 // Key Generation Function 2, IEEE P1363 Working Group
+// ISO 18033-2:2004
+// !!! Our KDF2 seems to be KDF1 rather as for KDF2 the loop counter I would
+// !!! need to run from 1 to Rounds!
 var
   I,
   Rounds, DigestBytes : Integer;
