@@ -24,7 +24,7 @@ to compile it. If done it is compatible up to 10.2 Tokio at least.
 This version is only compatible with Win32/Win64!
 
 The version 6.0 which is still in development is compatible with
-Delphi 2009 - Delphi 10.3.3 Rio. When defining the NO_ASM define
+Delphi 2009 - Delphi 10.4 Sydney. When defining the NO_ASM define
 in DECOptions.inc it is compatible with all platforms!
 
 ## What is the current status of this project?
