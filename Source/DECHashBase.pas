@@ -428,6 +428,9 @@ type
     /// </remarks>
     class function KDF2(const Data; DataSize: Integer; const Seed;
                         SeedSize, MaskSize: Integer): TBytes; overload;
+
+    class function KDF2Neu(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer): TBytes; inline;
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
@@ -467,13 +470,12 @@ type
   /// </summary>
   TDECPasswordHash = class(TDECHash);
 
-implementation
-
-type
   /// <summary>
   ///   Type needed to be able to remove with statements in KDF functions
   /// </summary>
   TDECHashstype = class of TDECHash;
+
+implementation
 
 resourcestring
   sHashNotInitialized   = 'Hash must be initialized';
@@ -934,6 +936,50 @@ begin
     HashInstance.Free;
   end;
 end;
+
+class function TDECHash.KDF2Neu(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer): TBytes;
+// Key Generation Function 2, IEEE P1363 Working Group
+// ISO 18033-2:2004
+// !!! This is the real KDF2
+var
+  I,
+  Rounds, DigestBytes : Integer;
+  Dest                : PByteArray;
+  Count               : UInt32;
+  HashInstance        : TDECHash;
+begin
+  SetLength(Result, 0);
+  DigestBytes := DigestSize;
+  Assert(MaskSize >= 0);
+  Assert(DataSize >= 0);
+  Assert(SeedSize >= 0);
+  Assert(DigestBytes >= 0);
+
+  HashInstance := TDECHashstype(self).Create;
+  try
+    Rounds := (MaskSize + DigestBytes - 1) div DigestBytes;
+    SetLength(Result, Rounds * DigestBytes);
+    Dest := @Result[0];
+
+    for I := 1 to Rounds do
+    begin
+      Count := SwapUInt32(I);
+      HashInstance.Init;
+// KDF3 müssten wohl einfach nur die nächsten Beiden Zeilen vertauscht sein
+      HashInstance.Calc(Data, DataSize);
+      HashInstance.Calc(Count, SizeOf(Count));
+      HashInstance.Calc(Seed, SeedSize);
+      HashInstance.Done;
+      Move(HashInstance.Digest[0], Dest[(I-1) * DigestBytes], DigestBytes);
+    end;
+
+    SetLength(Result, MaskSize);
+  finally
+    HashInstance.Free;
+  end;
+end;
+
 
 //class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Format: TDECFormatClass = nil): Binary;
 //// Key Generation Function 2, IEEE P1363 Working Group

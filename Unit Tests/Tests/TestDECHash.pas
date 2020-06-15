@@ -159,19 +159,21 @@ type
     FTestData : TKeyDeviationTestList;
     // List of test cases goes here, to be defined in such a way that input, length,
     // output and hash class to be used shall be spoecified.
-
-    // Testdata:
-    // foo 3 = 1ac907
-    // foo 5 = 1ac9075cd4
-    // bar 5 = bc0c655e01
-    // bar 50 = bc0c655e016bc2931d85a2e675181adcef7f581f76df2739da74faac41627be2f7f415c89e983fd0ce80ced9878641cb4876
-    // bar 50 sha256 = 382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735d10dc724b155f9f6069f289d61daca0cb814502ef04eae1
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestTBytes;
     procedure TestRawMemory;
+  end;
+
+  TestTHash_KDF2 = class(TTestCase)
+  strict protected
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestTBytes;
   end;
 
   THash_TestBase = class(TTestCase)
@@ -3908,12 +3910,78 @@ begin
   self.Add(Data);
 end;
 
+{ TestTHash_KDF2 }
+
+procedure TestTHash_KDF2.SetUp;
+begin
+  inherited;
+
+end;
+
+procedure TestTHash_KDF2.TearDown;
+begin
+  inherited;
+
+end;
+
+procedure TestTHash_KDF2.TestTBytes;
+var
+  Result, ExpResult, Data, Seed : TBytes;
+begin
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
+    /// <param name="Seed">
+    ///   Start value for pseudo random number generator
+    /// </param>
+    /// <param name="MaskSize">
+    ///   ???
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key.
+    /// </returns>
+
+// OtherInfo von kdf.pas/t_kdf ist bei uns seed
+// Z ist unser Data und ctr unser interner counter
+  Data := SysUtils.BytesOf(TFormat_HexL.Decode('deadbeeffeebdaed'));
+//                                               '032e45326fa859a72ec235acff929b15' +
+//                                               'd1372e30b207255f0611b8f785d76437' +
+//                                               '4152e0ac009e509e7ba30cd2f1778e11' +
+//                                               '3b64e135cf4e2292c75efe5288edfda4'));
+  Seed := SysUtils.BytesOf(TFormat_HexL.Decode(''));
+  ExpResult := SysUtils.BytesOf(TFormat_HexL.Decode('b0ad565b14b478cad4763856ff3016b1' +
+                                                    '$a93d840f87261bede7ddf0f9305a6e44'));
+
+//  Result := THash_SHA256.KDF2(Data, Seed, 128);
+
+// Problem auch, dass der KDF2 mit lauter TBytes Parametern nicht mit einem leeren
+// Seed der Größe aufrufbar ist! Ändenr wie?
+
+// Beweis laut der KDF1 Testdaten aus t_kdf: unser KDF2 ist ein KDF1!
+  Result := THash_SHA1.KDF2(Data[0], length(Data), NullStr, 0, 32);
+
+
+  Data := SysUtils.BytesOf(TFormat_HexL.Decode('deadbeeffeebdaed'));
+  Seed := SysUtils.BytesOf(TFormat_HexL.Decode(''));
+  ExpResult := SysUtils.BytesOf(TFormat_HexL.Decode('87261bede7ddf0f9' +
+                                                    '305a6e44a74e6a08' +
+                                                    '46dede27f48205c6' +
+                                                    'b141888742b0ce2c'));
+
+  Result := THash_SHA1.KDF2Neu(Data[0], length(Data), NullStr, 0, 32);
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             TestTDECHash.Suite,
                             TestTHash_MGF1.Suite,
+                            TestTHash_KDF2.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
                             TestTHash_MD5.Suite,
@@ -3954,6 +4022,7 @@ initialization
   TDUnitX.RegisterTestFixture(THash_TestIncrement8);
   TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MGF1);
+  TDUnitX.RegisterTestFixture(TestTHash_KDF2);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
   TDUnitX.RegisterTestFixture(TestTHash_MD5);
