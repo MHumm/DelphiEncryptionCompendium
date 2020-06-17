@@ -110,7 +110,7 @@ type
     /// <summary>
     ///   Optional parameter for some key deviation tests.
     /// </summary>
-    SeedData   : TBytes;
+    SeedData   : RawByteString;
     /// <summary>
     ///   Test output in hexadecimal format
     /// </summary>
@@ -3966,7 +3966,7 @@ var
   Data: TKeyDeviationTestData;
 begin
   Data.InputData  := InputData;
-  Data.SeedData   := SysUtils.BytesOf(TFormat_HexL.Decode(SeedData));
+  Data.SeedData   := SeedData; //SysUtils.BytesOf(TFormat_HexL.Decode(SeedData));
   Data.OutputData := OutputData;
   Data.MaskSize   := MaskSize;
   Data.HashClass  := HashClass;
@@ -3975,7 +3975,7 @@ begin
   self.Add(Data);
 end;
 
-{ TestTHash_KDF2 }
+{ TestTHash_KDF }
 
 procedure TestTHash_KDF.InternalTest(KDFType: TKDFType);
 var
@@ -3987,26 +3987,26 @@ begin
     if (TestData.KDFType = KDFType) then
     begin
       Data := SysUtils.BytesOf(TestData.InputData);
-      Seed := TestData.SeedData;
+      Seed := SysUtils.BytesOf(TestData.SeedData);
       ExpResult := SysUtils.BytesOf(TestData.OutputData);
 
       if (KDFType = ktKDF1) then
         if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF1(Data[0], length(Data), NullStr, 0, 32)
+          Result := TestData.HashClass.KDF1(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
         else
-          Result := TestData.HashClass.KDF1(Data[0], length(Data), Seed[0], length(Seed), 32);
+          Result := TestData.HashClass.KDF1(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
 
       if (KDFType = ktKDF2) then
         if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF2(Data[0], length(Data), NullStr, 0, 32)
+          Result := TestData.HashClass.KDF2(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
         else
-          Result := TestData.HashClass.KDF2(Data[0], length(Data), Seed[0], length(Seed), 32);
+          Result := TestData.HashClass.KDF2(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
 
       if (KDFType = ktKDF3) then
         if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF3(Data[0], length(Data), NullStr, 0, 32)
+          Result := TestData.HashClass.KDF3(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
         else
-          Result := TestData.HashClass.KDF3(Data[0], length(Data), Seed[0], length(Seed), 32);
+          Result := TestData.HashClass.KDF3(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
                   DECUtil.BytesToRawString(Result));
@@ -4024,17 +4024,17 @@ begin
     if (TestData.KDFType = KDFType) then
     begin
       Data := SysUtils.BytesOf(TestData.InputData);
-      Seed := TestData.SeedData;
+      Seed := SysUtils.BytesOf(TestData.SeedData);
       ExpResult := SysUtils.BytesOf(TestData.OutputData);
 
       if (KDFType = ktKDF1) then
-        Result := TestData.HashClass.KDF1(Data, Seed, 32);
+        Result := TestData.HashClass.KDF1(Data, Seed, TestData.MaskSize);
 
       if (KDFType = ktKDF2) then
-        Result := TestData.HashClass.KDF2(Data, Seed, 32);
+        Result := TestData.HashClass.KDF2(Data, Seed, TestData.MaskSize);
 
       if (KDFType = ktKDF3) then
-        Result := TestData.HashClass.KDF3(Data, Seed, 32);
+        Result := TestData.HashClass.KDF3(Data, Seed, TestData.MaskSize);
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
                   DECUtil.BytesToRawString(Result));
@@ -4066,6 +4066,93 @@ begin
                 TFormat_HexL.Decode('60cef67059af33f6aebce1e10188f434' +
                                     'f80306ac0360470aeb41f81bafb35790'),
                 32, THash_SHA1, ktKDF3);
+
+  FTestData.Add(TFormat_HexL.Decode('032e45326fa859a72ec235acff929b15' +
+                                    'd1372e30b207255f0611b8f785d76437' +
+                                    '4152e0ac009e509e7ba30cd2f1778e11' +
+                                    '3b64e135cf4e2292c75efe5288edfda4'),
+                '',
+                TFormat_HexL.Decode('10a2403db42a8743cb989de86e668d16' +
+                                    '8cbe6046e23ff26f741e87949a3bba13' +
+                                    '11ac179f819a3d18412e9eb45668f292' +
+                                    '3c087c1299005f8d5fd42ca257bc93e8' +
+                                    'fee0c5a0d2a8aa70185401fbbd99379e' +
+                                    'c76c663e9a29d0b70f3fe261a59cdc24' +
+                                    '875a60b4aacb1319fa11c3365a8b79a4' +
+                                    '4669f26fba933d012db213d7e3b16349'),
+                128, THash_SHA256, ktKDF2);
+
+  FTestData.Add(TFormat_HexL.Decode('032e45326fa859a72ec235acff929b15' +
+                                    'd1372e30b207255f0611b8f785d76437' +
+                                    '4152e0ac009e509e7ba30cd2f1778e11' +
+                                    '3b64e135cf4e2292c75efe5288edfda4'),
+                '',
+                TFormat_HexL.Decode('0e6a26eb7b956ccb8b3bdc1ca975bc57' +
+                                    'c3989e8fbad31a224655d800c4695484' +
+                                    '0ff32052cdf0d640562bdfadfa263cfc' +
+                                    'cf3c52b29f2af4a1869959bc77f854cf' +
+                                    '15bd7a25192985a842dbff8e13efee5b' +
+                                    '7e7e55bbe4d389647c686a9a9ab3fb88' +
+                                    '9b2d7767d3837eea4e0a2f04b53ca8f5' +
+                                    '0fb31225c1be2d0126c8c7a4753b0807'),
+                128, THash_SHA1, ktKDF2);
+
+  FTestData.Add(TFormat_HexL.Decode('ca7c0f8c3ffa87a96e1b74ac8e6af594' +
+                                    '347bb40a'),
+                '',
+                TFormat_HexL.Decode('744ab703f5bc082e59185f6d049d2d36' +
+                                    '7db245c2'),
+                20, THash_SHA1, ktKDF2);
+
+  FTestData.Add(TFormat_HexL.Decode('0499b502fc8b5bafb0f4047e731d1f9f' +
+                                    'd8cd0d8881'),
+                '',
+                TFormat_HexL.Decode('03c62280c894e103c680b13cd4b4ae74' +
+                                    '0a5ef0c72547292f82dc6b1777f47d63' +
+                                    'ba9d1ea732dbf386'),
+                40, THash_SHA1, ktKDF2);
+
+  // Test vector #1, ANSI X9.63
+  FTestData.Add(TFormat_HexL.Decode('96c05619d56c328ab95fe84b18264b08' +
+                                    '725b85e33fd34f08'),
+                '',
+                TFormat_HexL.Decode('443024c3dae66b95e6f5670601558f71'),
+                16, THash_SHA256, ktKDF2);
+
+  // Test vector #2, ANSI X9.63
+  FTestData.Add(TFormat_HexL.Decode('96f600b73ad6ac5629577eced51743dd' +
+                                    '2c24c21b1ac83ee4'),
+                '',
+                TFormat_HexL.Decode('b6295162a7804f5667ba9070f82fa522'),
+                16, THash_SHA256, ktKDF2);
+
+  // Test vector #3, ANSI X9.63
+  FTestData.Add(TFormat_HexL.Decode('22518b10e70f2a3f243810ae3254139e' +
+                                    'fbee04aa57c7af7d'),
+                TFormat_HexL.Decode('75eef81aa3041e33b80971203d2c0c52'),
+                TFormat_HexL.Decode('c498af77161cc59f2962b9a713e2b215' +
+                                    '152d139766ce34a776df11866a69bf2e' +
+                                    '52a13d9c7c6fc878c50c5ea0bc7b00e0' +
+                                    'da2447cfd874f6cf92f30d0097111485' +
+                                    '500c90c3af8b487872d04685d14c8d1d' +
+                                    'c8d7fa08beb0ce0ababc11f0bd496269' +
+                                    '142d43525a78e5bc79a17f59676a5706' +
+                                    'dc54d54d4d1f0bd7e386128ec26afc21'),
+                128, THash_SHA256, ktKDF2);
+
+  // Test vector #4, ANSI X9.63
+  FTestData.Add(TFormat_HexL.Decode('7e335afa4b31d772c0635c7b0e06f26f' +
+                                    'cd781df947d2990a'),
+                TFormat_HexL.Decode('d65a4812733f8cdbcdfb4b2f4c191d87'),
+                TFormat_HexL.Decode('c0bd9e38a8f9de14c2acd35b2f3410c6' +
+                                    '988cf02400543631e0d6a4c1d030365a' +
+                                    'cbf398115e51aaddebdc9590664210f9' +
+                                    'aa9fed770d4c57edeafa0b8c14f93300' +
+                                    '865251218c262d63dadc47dfa0e02848' +
+                                    '26793985137e0a544ec80abf2fdf5ab9' +
+                                    '0bdaea66204012efe34971dc431d625c' +
+                                    'd9a329b8217cc8fd0d9f02b13f2f6b0b'),
+                128, THash_SHA256, ktKDF2);
 end;
 
 procedure TestTHash_KDF.TearDown;
