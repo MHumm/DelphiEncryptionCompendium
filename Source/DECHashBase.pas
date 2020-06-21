@@ -440,20 +440,16 @@ type
     ///   Size in bytes of the source data passed.
     /// </param>
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="SeedSize">
-    ///   Size of the seed in byte.
+    ///   Size of the seed/salt in byte.
     /// </param>
     /// <param name="MaskSize">
     ///   Size of the generated output in byte
     /// </param>
-    /// <param name="Format">
-    ///   Optional formatting class. If specified the output will be in the
-    ///   format of this formatting class.
-    /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     /// <remarks>
     ///   In earlier versions there was an optional format parameter. This has
@@ -472,13 +468,13 @@ type
     ///   Source data from which the new key shall be derrived.
     /// </param>
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="MaskSize">
     ///   Size of the generated output in byte
     /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     class function KDF1(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
 
@@ -493,20 +489,16 @@ type
     ///   Size in bytes of the source data passed.
     /// </param>
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="SeedSize">
-    ///   Size of the seed in byte.
+    ///   Size of the seed/salt in byte.
     /// </param>
     /// <param name="MaskSize">
     ///   Size of the generated output in byte
     /// </param>
-    /// <param name="Format">
-    ///   Optional formatting class. If specified the output will be in the
-    ///   format of this formatting class.
-    /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     /// <remarks>
     ///   In earlier versions there was an optional format parameter. This has
@@ -531,7 +523,7 @@ type
     ///   Size of the generated output in byte
     /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
 
@@ -545,20 +537,16 @@ type
     ///   Size in bytes of the source data passed.
     /// </param>
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="SeedSize">
-    ///   Size of the seed in byte.
+    ///   Size of the seed/salt in byte.
     /// </param>
     /// <param name="MaskSize">
     ///   Size of the generated output in byte
     /// </param>
-    /// <param name="Format">
-    ///   Optional formatting class. If specified the output will be in the
-    ///   format of this formatting class.
-    /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     /// <remarks>
     ///   In earlier versions there was an optional format parameter. This has
@@ -576,18 +564,65 @@ type
     ///   Source data from which the new key shall be derrived.
     /// </param>
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="MaskSize">
     ///   Size of the generated output in byte
     /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     class function KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
 
     // DEC's own KDF + MGF
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys. The alrorithm
+    ///   implemented by this method does not follow any official standard.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="SeedSize">
+    ///   Size of the seed/salt in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="Index">
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
     class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys. The alrorithm
+    ///   implemented by this method does not follow any official standard.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="Index">
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
     class function KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
     class function MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
     class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
