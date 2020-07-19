@@ -1135,6 +1135,7 @@ initialization
   ESCAPE_CodesU[5] := $46;
   ESCAPE_CodesU[6] := $52;
 
+  {$IFNDEF ManualRegisterClasses}
   TFormat_HEX.RegisterClass(TDECFormat.ClassList);
   TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
   TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
@@ -1143,6 +1144,7 @@ initialization
   TFormat_UU.RegisterClass(TDECFormat.ClassList);
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
+  {$ENDIF}
 
   // Init the number of chars per line as per RFC 4880 to 76 chars
   TFormat_Radix64.FCharsPerLine := 76;

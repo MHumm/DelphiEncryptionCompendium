@@ -45,7 +45,9 @@
 // used to determine the algorithm to be used and thus it's necessary that the
 // same result will be produced. It is recommended to switch to the new class
 // names where possible
-{$UNDEF OLD_SHA_NAME} (* default off *)
+// Currently this does not work together with using x86 ASM! Either ASM or the
+// old name works
+{.$DEFINE OLD_SHA_NAME} (* default off *)
 
 // if on the old outdated class names THash_Whirlpool and THash_Whirlpool1 are
 // being used. Nowadays Whirlpool versions are named like this:
@@ -55,7 +57,11 @@
 // used to determine the algorithm to be used and thus it's necessary that the
 // same result will be produced. It is recommended to switch to the new class
 // names where possible
-{$UNDEF OLD_WHIRLPOOL_NAMES} (* default off *)
+{.$DEFINE OLD_WHIRLPOOL_NAMES} (* default off *)
+
+// when enabling this define, the automatic registration of all those cipher and
+// hash classes in initialization sections is not being done.
+{.$DEFINE ManualRegisterClasses} (* default off *}
 
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)
@@ -129,7 +135,7 @@
 // Architecture (x86ASM, x64ASM, PurePascal)
 //------------------------------------------------------------------------------
 
-{$DEFINE NO_ASM}
+{.$DEFINE NO_ASM}
 
 {$IFDEF NO_ASM}
   // User config override (see top of this file)

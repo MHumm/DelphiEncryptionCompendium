@@ -604,9 +604,12 @@ type
     /// </returns>
     class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
     /// <summary>
-    ///   Key deviation algorithm to derrive keys from other keys. The alrorithm
-    ///   implemented by this method does not follow any official standard.
+    ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
     /// <param name="Data">
     ///   Source data from which the new key shall be derrived.
     /// </param>
@@ -624,7 +627,62 @@ type
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
     class function KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators.
+    /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the passed data in bytes
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <param name="Index">
+    ///   Looks like this is a salt applied to each byte of output data?
+{ TODO : Clarify this parameter }
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators.
+    /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <param name="Index">
+    ///
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>

@@ -3530,6 +3530,7 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  {$IFNDEF ManualRegisterClasses}
   THash_MD2.RegisterClass(TDECHash.ClassList);
   THash_MD4.RegisterClass(TDECHash.ClassList);
   THash_MD5.RegisterClass(TDECHash.ClassList);
@@ -3568,6 +3569,8 @@ initialization
 
   {$IFDEF OLD_SHA_NAME}
   THash_SHA.RegisterClass(TDECHash.ClassList);
+  {$ENDIF}
+
   {$ENDIF}
 
 finalization

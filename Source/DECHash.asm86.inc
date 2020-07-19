@@ -6659,17 +6659,19 @@ begin
     end
 end;
 
-procedure THash_SHA.DoTransform(Buffer: PUInt32Array);
+procedure THash_SHA0.DoTransform(Buffer: PUInt32Array);
 var
   W: array[0..79] of LongWord;
 begin
-  SHABuffer(PUInt32Array(@W), Buffer, ClassType <> THash_SHA);
+//  {$IFDEF OLD_SHA_NAME}
+  SHABuffer(PUInt32Array(@W), Buffer, ClassType <> THash_SHA0);
+
   asm
                 push    ebx
                 mov     eax, Self
                 push    esi
                 push    edi
-                lea     edi, [eax].THash_SHA.FDigest
+                lea     edi, [eax].THash_SHA0.FDigest
                 lea     esi, W
                 push    ebp
 
