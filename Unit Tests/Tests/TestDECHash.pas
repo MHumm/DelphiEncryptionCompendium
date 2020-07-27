@@ -377,6 +377,19 @@ type
   end;
   {$ENDIF}
 
+  // Test methods for class THash_SHA1
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA1 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
   // Test methods for class THash_SHA256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA256 = class(THash_TestBase)
@@ -1395,6 +1408,84 @@ begin
   DoTestClassByName('THash_SHA', THash_SHA);
 end;
 {$ENDIF}
+
+{ TestTHash_SHA1 }
+
+procedure TestTHash_SHA1.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash := THash_SHA1.Create;
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+  lDataRow.ExpectedOutputUTFStrTest := 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '68ac906495480a3404beee4874ed853a037a7a8f';
+  lDataRow.ExpectedOutputUTFStrTest := 'ca2bea5813b6914b6d75ee6975af2aa99b7f09ca';
+  lDataRow.AddInputVector('Franz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '89fdde0b28373dc4f361cfb810b35342cc2c3232';
+  lDataRow.ExpectedOutputUTFStrTest := '41e9761e0427676d8b5aead6631c5e7bc2946e81';
+  lDataRow.AddInputVector('Granz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'a9993e364706816aba3e25717850c26c9cd0d89d';
+  lDataRow.ExpectedOutputUTFStrTest := '9f04f41a848514162050e3d68c1a7abb441dc2b5';
+  lDataRow.AddInputVector('ab');
+  lDataRow.AddInputVector('c');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '84983e441c3bd26ebaae4aa1f95129e5e54670f1';
+  lDataRow.ExpectedOutputUTFStrTest := '51d7d8769ac72c409c5b0e3f69c60adc9a039014';
+  lDataRow.AddInputVector('abcdbcdecdefdef');
+  lDataRow.AddInputVector('gefghfghighijhijki');
+  lDataRow.AddInputVector('jkljklmklmnlmnomnopnop');
+  lDataRow.AddInputVector('q');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'c464f3b38d34f7bf49b29635e50c8957b3a87dc7';
+  lDataRow.ExpectedOutputUTFStrTest := '65bbefb5a727dedc039540dc1dcfa18c6fa3aeec';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'df2724a78d507fbfb4b85aa328cf8221e10f74a7';
+  lDataRow.ExpectedOutputUTFStrTest := '634f2fd10ec73d75bd976990064edfc1e9d75cd5';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
+
+
+//<34aa973cd4c4daa4f61eeb2bdbad27316534016f>=15625<aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
+//<34aa973cd4c4daa4f61eeb2bdbad27316534016f>=15625!<aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
+end;
+
+procedure TestTHash_SHA1.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA1.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA1', THash_SHA1);
+end;
+
+procedure TestTHash_SHA1.TestDigestSize;
+begin
+  CheckEquals(20, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA1.TestIdentity;
+begin
+  CheckEquals($7B215B73, FHash.Identity);
+end;
+
+procedure TestTHash_SHA1.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
 
 procedure TestTHash_SHA256.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -4210,6 +4301,7 @@ initialization
                             {$IFDEF OLD_SHA_NAME}
                             TestTHash_SHA.Suite,
                             {$ENDIF}
+                            TestTHash_SHA1.Suite,
                             TestTHash_SHA256.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
@@ -4253,6 +4345,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA);
   {$ENDIF}
 
+  TDUnitX.RegisterTestFixture(TestTHash_SHA1);
   TDUnitX.RegisterTestFixture(TestTHash_SHA256);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
