@@ -203,6 +203,14 @@ type
     procedure TestRawMemory;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  /// <summary>
+  ///   All test cases for the KDF class methods. These are in this class rather
+  ///   than in TestTDECHash as the KDF class methods can only be called on a
+  ///   concrete hash class as they use the DigestSize and would otherwise fail.
+  ///   We currently mostly have test data for the SHA and SHA256 algorithms,
+  ///   but the MGF1 method is universally useable so the tests got separated here.
+  /// </summary>
   TestTHash_KDF = class(TTestCase)
   strict protected
     // List of test cases, defined in such a way that input, length,
@@ -269,7 +277,6 @@ type
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
     procedure TestClassByName;
-    procedure TestKDF2;
     procedure TestIdentity;
   end;
 
@@ -704,28 +711,6 @@ end;
 procedure TestTHash_MD2.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
-procedure TestTHash_MD2.TestKDF2;
-var
-  Data, Seed : TBytes;
-  KDF2Res    : TBytes;
-  ResultCalculated:String;
-begin
-{ TODO :
-Test verallgemeinert aufbauen und über Testdata als Eingabe gehen.
-Außerdem für jede Hash Funktion umsetzen?  Frederik und ich wollen vorher KDF2
-noch etwas analysieren: inwieweit entspricht dieser dem offiziellen Standard?}
-  SetLength(Data, 5);
-  Data := [0, 1, 2, 3, 4];
-
-  SetLength(Seed, 5);
-  Seed := [5, 6, 7, 8, 9];
-
-  KDF2Res := THash_MD2.KDF2(Data, Seed, 2);
-
-  ResultCalculated := string(BytesToRawString(TFormat_HEX.Encode(KDF2Res)));
-  CheckEquals('F52B', ResultCalculated);
 end;
 
 procedure TestTHash_MD2.TestBlockSize;
@@ -4089,23 +4074,26 @@ begin
       Seed := SysUtils.BytesOf(TestData.SeedData);
       ExpResult := SysUtils.BytesOf(TestData.OutputData);
 
-      if (KDFType = ktKDF1) then
-        if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF1(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
-        else
-          Result := TestData.HashClass.KDF1(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
-
-      if (KDFType = ktKDF2) then
-        if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF2(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
-        else
-          Result := TestData.HashClass.KDF2(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
-
-      if (KDFType = ktKDF3) then
-        if (length(Seed) = 0) then
-          Result := TestData.HashClass.KDF3(Data[0], length(Data), NullStr, 0, TestData.MaskSize)
-        else
-          Result := TestData.HashClass.KDF3(Data[0], length(Data), Seed[0], length(Seed), TestData.MaskSize);
+      case KDFType of
+        ktKDF1 : if (length(Seed) = 0) then
+                   Result := TestData.HashClass.KDF1(Data[0], length(Data),
+                                                     NullStr, 0, TestData.MaskSize)
+                 else
+                   Result := TestData.HashClass.KDF1(Data[0], length(Data),
+                                                     Seed[0], length(Seed), TestData.MaskSize);
+        ktKDF2 : if (length(Seed) = 0) then
+                   Result := TestData.HashClass.KDF2(Data[0], length(Data),
+                                                     NullStr, 0, TestData.MaskSize)
+                 else
+                   Result := TestData.HashClass.KDF2(Data[0], length(Data),
+                                                     Seed[0], length(Seed), TestData.MaskSize);
+        ktKDF3 : if (length(Seed) = 0) then
+                   Result := TestData.HashClass.KDF3(Data[0], length(Data),
+                                                     NullStr, 0, TestData.MaskSize)
+                 else
+                   Result := TestData.HashClass.KDF3(Data[0], length(Data),
+                                                     Seed[0], length(Seed), TestData.MaskSize);
+      end;
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
                   DECUtil.BytesToRawString(Result));
@@ -4146,6 +4134,11 @@ begin
   inherited;
 
   FTestData := TKeyDeviationTestList.Create;
+
+  FTestData.Add(TFormat_HexL.Decode('0001020304'),
+                TFormat_HexL.Decode('0506070809'),
+                TFormat_HexL.Decode('f52b'),
+                2, THash_MD2, ktKDF1);
 
   // Test data from Wolfgang Erhard's library
   FTestData.Add(TFormat_HexL.Decode('deadbeeffeebdaed'),
