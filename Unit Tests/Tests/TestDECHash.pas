@@ -1412,7 +1412,10 @@ end;
 { TestTHash_SHA1 }
 
 procedure TestTHash_SHA1.SetUp;
-var lDataRow:IHashTestDataRowSetup;
+var
+  lDataRow : IHashTestDataRowSetup;
+  i        : Integer;
+  rs       : RawByteString;
 begin
   inherited;
 
@@ -1457,9 +1460,14 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '634f2fd10ec73d75bd976990064edfc1e9d75cd5';
   lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
 
+  rs := '';
+  for i := 1 to 15625 do
+    rs := rs + 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-//<34aa973cd4c4daa4f61eeb2bdbad27316534016f>=15625<aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
-//<34aa973cd4c4daa4f61eeb2bdbad27316534016f>=15625!<aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '34aa973cd4c4daa4f61eeb2bdbad27316534016f';
+  lDataRow.ExpectedOutputUTFStrTest := 'c4609560a108a0c626aa7f2b38a65566739353c5';
+  lDataRow.AddInputVector(rs);
 end;
 
 procedure TestTHash_SHA1.TestBlockSize;
