@@ -1119,7 +1119,7 @@ class function TDECHash.MGF1(const Data; DataSize, MaskSize: Integer): TBytes;
 // equal to KDF1 except without Seed
 // RFC 2437 PKCS #1
 begin
-  Result := KDF2(Data, DataSize, NullStr, 0, MaskSize);
+  Result := KDF1(Data, DataSize, NullStr, 0, MaskSize);
 end;
 
 class function TDECHash.MGF1(const Data: TBytes; MaskSize: Integer): TBytes;

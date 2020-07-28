@@ -37,7 +37,7 @@ type
   THash_RipeMD160   = class;
   THash_RipeMD256   = class;
   THash_RipeMD320   = class;
-  THash_SHA0         = class;  // SHA-0
+  THash_SHA0        = class;  // SHA-0
   THash_SHA1        = class;  // SHA-1
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
@@ -168,7 +168,13 @@ type
   ///   algorithm at all. It is only being provided for scenarios where
   ///   compatibility with this algorithm is required.
   /// </summary>
-  THash_SHA = class(THash_SHA0);
+  THash_SHA = class(THash_SHA0)
+  {$IFDEF X86ASM}
+  protected
+    procedure DoTransform(Buffer: PUInt32Array); override;
+  end
+  {$ENDIF};
+
   {$ENDIF}
 
   /// <summary>

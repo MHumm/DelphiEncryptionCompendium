@@ -135,7 +135,7 @@
 // Architecture (x86ASM, x64ASM, PurePascal)
 //------------------------------------------------------------------------------
 
-{.$DEFINE NO_ASM}
+{$DEFINE NO_ASM}
 
 {$IFDEF NO_ASM}
   // User config override (see top of this file)
