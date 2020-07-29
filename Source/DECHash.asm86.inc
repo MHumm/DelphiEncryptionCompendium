@@ -6663,7 +6663,6 @@ procedure THash_SHA0.DoTransform(Buffer: PUInt32Array);
 var
   W: array[0..79] of LongWord;
 begin
-//  {$IFDEF OLD_SHA_NAME}
   SHABuffer(PUInt32Array(@W), Buffer, ClassType <> THash_SHA0);
 
   asm

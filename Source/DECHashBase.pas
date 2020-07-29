@@ -193,7 +193,7 @@ type
     ///   Gives the length of the calculated hash value in byte. Needs to be
     ///   overridden in concrete hash implementations.
     /// </summary>
-    class function DigestSize: Integer; virtual;
+    class function DigestSize: UInt32; virtual;
     /// <summary>
     ///   Gives the length of the blocks the hash value is being calculated
     ///   on in byte. Needs to be overridden in concrete hash implementations.
@@ -941,7 +941,7 @@ begin
   Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));
 end;
 
-class function TDECHash.DigestSize: Integer;
+class function TDECHash.DigestSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
