@@ -198,7 +198,7 @@ type
     ///   Gives the length of the blocks the hash value is being calculated
     ///   on in byte. Needs to be overridden in concrete hash implementations.
     /// </summary>
-    class function BlockSize: Integer; virtual;
+    class function BlockSize: UInt32; virtual;
 
     /// <summary>
     ///   List of registered DEC classes. Key is the Identity of the class.
@@ -948,7 +948,7 @@ begin
   raise EDECAbstractError.Create(Self);
 end;
 
-class function TDECHash.BlockSize: Integer;
+class function TDECHash.BlockSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:

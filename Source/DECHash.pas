@@ -75,7 +75,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -91,7 +91,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -209,7 +209,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -239,7 +239,7 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
@@ -329,7 +329,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override; // 32
+    class function BlockSize: UInt32; override; // 32
   end;
 
   THashBaseWhirlpool = class(TDECHash)
@@ -343,7 +343,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -398,7 +398,7 @@ type
   public
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -437,7 +437,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override; // 48
+    class function BlockSize: UInt32; override; // 48
   end;
 
   /// <summary>
@@ -450,7 +450,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override; // 32
+    class function BlockSize: UInt32; override; // 32
   end;
 
   THash_Sapphire = class(TDECHash)
@@ -471,7 +471,7 @@ type
     function Digest: PByteArray; override;
     function DigestAsBytes: TBytes; override;
     class function DigestSize: UInt32; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
     procedure Calc(const Data; DataSize: Integer); override;
 
     property RequestedDigestSize: UInt32
@@ -618,7 +618,7 @@ begin
   Result := 16;
 end;
 
-class function THash_MD2.BlockSize: Integer;
+class function THash_MD2.BlockSize: UInt32;
 begin
   Result := 16;
 end;
@@ -668,7 +668,7 @@ begin
   Result := 16;
 end;
 
-class function THashBaseMD4.BlockSize: Integer;
+class function THashBaseMD4.BlockSize: UInt32;
 begin
   Result := 64;
 end;
@@ -2022,7 +2022,7 @@ begin
   Result := 48;
 end;
 
-class function THash_SHA384.BlockSize: Integer;
+class function THash_SHA384.BlockSize: UInt32;
 begin
   Result := 128;
 end;
@@ -2379,7 +2379,7 @@ begin
   Result := @FDigest;
 end;
 
-class function THashBaseHaval.BlockSize: Integer;
+class function THashBaseHaval.BlockSize: UInt32;
 begin
   Result := 128;
 end;
@@ -2904,7 +2904,7 @@ begin
   Result := 32;
 end;
 
-class function THash_Panama.BlockSize: Integer;
+class function THash_Panama.BlockSize: UInt32;
 begin
   Result := 32
 end;
@@ -3111,7 +3111,7 @@ begin
   Result := 64;
 end;
 
-class function THashBaseWhirlpool.BlockSize: Integer;
+class function THashBaseWhirlpool.BlockSize: UInt32;
 begin
   Result := 64;
 end;
@@ -3270,7 +3270,7 @@ begin
   Result := 16;
 end;
 
-class function THash_Square.BlockSize: Integer;
+class function THash_Square.BlockSize: UInt32;
 begin
   Result := 16;
 end;
@@ -3365,7 +3365,7 @@ begin
   Result := 16;
 end;
 
-class function THash_Snefru128.BlockSize: Integer;
+class function THash_Snefru128.BlockSize: UInt32;
 begin
   Result := 48
 end;
@@ -3425,7 +3425,7 @@ begin
   Result := 32;
 end;
 
-class function THash_Snefru256.BlockSize: Integer;
+class function THash_Snefru256.BlockSize: UInt32;
 begin
   Result := 32
 end;
@@ -3527,7 +3527,7 @@ begin
   Result := 64;
 end;
 
-class function THash_Sapphire.BlockSize: Integer;
+class function THash_Sapphire.BlockSize: UInt32;
 begin
   Result := 1;
 end;

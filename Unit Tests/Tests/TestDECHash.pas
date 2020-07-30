@@ -66,11 +66,11 @@ type
     /// <summary>
     ///   Need to be overriden, as the originals would raise an exception by design
     /// </summary>
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
     /// <summary>
     ///   Need to be overriden, as the originals would raise an exception by design
     /// </summary>
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
 
     /// <summary>
     ///   Just calls the inherited Increment8 method in order to make it public
@@ -3906,7 +3906,7 @@ end;
 
 { TDECHashUnitTest }
 
-class function TDECHashIncrement8.BlockSize: Integer;
+class function TDECHashIncrement8.BlockSize: UInt32;
 begin
   result := 4;
 end;
@@ -3917,7 +3917,7 @@ begin
   result := nil;
 end;
 
-class function TDECHashIncrement8.DigestSize: Integer;
+class function TDECHashIncrement8.DigestSize: UInt32;
 begin
   result := 0;
 end;
