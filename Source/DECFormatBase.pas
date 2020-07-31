@@ -570,7 +570,7 @@ end;
 
 {$IFDEF DELPHIORBCB}
 procedure ModuleUnload(Instance: NativeInt);
-var // automaticaly deregistration/releasing
+var
   i: Integer;
 begin
   if TDECFormat.ClassList <> nil then

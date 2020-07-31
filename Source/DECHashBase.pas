@@ -1238,7 +1238,7 @@ begin
   Assert(MaskSize >= 0);
   Assert(DataSize >= 0);
   Assert(SeedSize >= 0);
-  Assert(DigestSize >= 0);
+  Assert(DigestSize > 0);
 
   SetLength(Result, MaskSize);
   Index := SwapUInt32(Index);
@@ -1317,7 +1317,7 @@ initialization
   TDECHash.ClassList := TDECClassList.Create;
 
 finalization
-  // Ensure no further instances of classes registered in the registraiotn list
+  // Ensure no further instances of classes registered in the registration list
   // are possible through the list after this unit has been unloaded by unloding
   // the package this unit is in
   {$IFDEF DELPHIORBCB}

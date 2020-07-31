@@ -355,9 +355,11 @@ begin
   Ciphers := TStringList.Create;
 
   try
+    // Alternatively you can use TDECCipher.ClassList.GetClassList(Ciphers); but
+    // then it's harder to remove TCipher_Null from the list
     for MyClass in TDECCipher.ClassList do
     begin
-      if (MyClass.Value <>TCipher_Null) then
+      if (MyClass.Value <> TCipher_Null) then
         Ciphers.Add(MyClass.Value.ClassName);
     end;
 

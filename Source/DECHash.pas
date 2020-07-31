@@ -408,8 +408,14 @@ type
   THashBaseSnefru = class(TDECHash)
   private
     FDigest: array[0..23] of UInt32;
-    FSecurityLevel: Integer;
-    procedure SetSecurityLevel(Value: Integer);
+    /// <summary>
+    ///   Number of rounds the loop will do on the data
+    /// </summary>
+    FRounds: Integer;
+    /// <summary>
+    ///   Sets the number of rounds for the looping over the data
+    /// </summary>
+    procedure SetRounds(Value: Integer);
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -420,11 +426,11 @@ type
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
     ///   algorithm will use. With the default of 8 rounds it is being considered
     ///   as safe as of spring 2016, with less rounds this algorithm is considered
-    ///   to be unsafe.
+    ///   to be unsafe and even with 8 rounds it is not really strong.
     /// </summary>
-    property SecurityLevel: Integer
-      read   FSecurityLevel
-      write  SetSecurityLevel;
+    property Rounds: Integer
+      read   FRounds
+      write  SetRounds;
   end;
 
   /// <summary>
@@ -3277,17 +3283,17 @@ end;
 
 { THashBaseSnefru }
 
-procedure THashBaseSnefru.SetSecurityLevel(Value: Integer);
+procedure THashBaseSnefru.SetRounds(Value: Integer);
 begin
   if (Value < 2) or (Value > 8) then
     Value := 8;
-  FSecurityLevel := Value;
+  FRounds := Value;
 end;
 
 procedure THashBaseSnefru.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
-  SetSecurityLevel(FSecurityLevel);
+  SetRounds(FRounds);
 end;
 
 procedure THashBaseSnefru.DoDone;
@@ -3325,7 +3331,7 @@ begin
   Move(D[0], D[16], 16);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];
-  for Index := 0 to FSecurityLevel - 1 do
+  for Index := 0 to FRounds - 1 do
   begin
     for ByteInWord := 0 to 3 do
     begin
@@ -3385,7 +3391,7 @@ begin
   Move(D[0], D[16], 32);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];
-  for Index := 0 to FSecurityLevel - 1 do
+  for Index := 0 to FRounds - 1 do
   begin
     for ByteInWord := 0 to 3 do
     begin
