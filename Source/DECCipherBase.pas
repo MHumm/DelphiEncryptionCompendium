@@ -250,7 +250,7 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
-    function ClassByIdentity(Identity: Int64): TDECCipherClass;
+    class function ClassByIdentity(Identity: Int64): TDECCipherClass;
 
     /// <summary>
     ///   Initializes the instance. Relies in parts on information given by the
@@ -570,7 +570,7 @@ begin
     Result := FDefaultCipherClass;
 
   if Result = nil then
-    raise EDECCipherException.Create(sCipherNoDefault);
+    raise EDECCipherException.CreateRes(@sCipherNoDefault);
 end;
 
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
@@ -636,20 +636,17 @@ begin
 end;
 
 procedure TDECCipher.CheckState(States: TCipherStates);
-var
-  s: string;
 begin
   if not (FState in States) then
   begin
     if FState = csPadded then
-      s := sAlreadyPadded
+      raise EDECCipherException.CreateRes(@sAlreadyPadded)
     else
-      s := sInvalidState;
-    raise EDECCipherException.Create(s);
+      raise EDECCipherException.CreateRes(@sInvalidState);
   end;
 end;
 
-function TDECCipher.ClassByIdentity(Identity: Int64): TDECCipherClass;
+class function TDECCipher.ClassByIdentity(Identity: Int64): TDECCipherClass;
 begin
   result := TDECCipherClass(ClassList.ClassByIdentity(Identity));
 end;
@@ -671,10 +668,10 @@ begin
   Protect;
 
   if (Size > Context.KeySize) and (ClassType <> TCipher_Null) then
-    raise EDECCipherException.Create(sKeyMaterialTooLarge);
+    raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
 
   if IVectorSize > FBufferSize then
-    raise EDECCipherException.Create(sIVMaterialTooLarge);
+    raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);
   if FUserSave <> nil then
@@ -698,7 +695,7 @@ end;
 procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.Create(sNoKeyMaterialGiven);
+    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if IVector <> nil then
     Init(Key[0], Length(Key), IVector[0], Length(IVector), IFiller)
@@ -709,7 +706,7 @@ end;
 procedure TDECCipher.Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.Create(sNoKeyMaterialGiven);
+    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
@@ -738,7 +735,7 @@ end;
 procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
 begin
   if Length(Key) = 0 then
-    raise EDECCipherException.Create(sNoKeyMaterialGiven);
+    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
@@ -824,7 +821,7 @@ function TDECCipher.CalcMAC(Format: TDECFormatClass): RawByteString;
 begin
   Done;
   if FMode in [cmECBx] then
-    raise EDECException.Create(sInvalidMACMode)
+    raise EDECException.CreateRes(@sInvalidMACMode)
   else
     Result := ValidFormat(Format).Encode(FBuffer^, FBufferSize);
   { TODO : Wie umschreiben? EncodeBytes direkt kann so nicht aufgerufen werden }

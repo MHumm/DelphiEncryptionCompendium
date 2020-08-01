@@ -468,7 +468,17 @@ type
     FAvalanche: UInt32;
     FPlain: UInt32;
     FCipher: UInt32;
-    FDigestSize: UInt32;
+    FDigestSize: UInt8;
+
+    /// <summary>
+    ///   Set the length of the output hash value in byte.
+    /// </summary>
+    /// <param name="Value">
+    ///   Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
+    ///   Raises an EDECHashException exception when an invalid DigestSize
+    ///   is specified.
+    /// </param>
+    procedure SetDigestSize(Value: UInt8);
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -476,13 +486,28 @@ type
   public
     function Digest: PByteArray; override;
     function DigestAsBytes: TBytes; override;
+    /// <summary>
+    ///   Returns the default digest/hash size in bit. If RequestedDigestSize is
+    ///   not set, the defauilt size returned here is being used.
+    /// </summary>
     class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Returns on which block size this algorithm operates. Since the Sapphire
+    ///   hash originates from a Sapphire stream cipher algorithm this is always 1.
+    /// </summary>
     class function BlockSize: UInt32; override;
     procedure Calc(const Data; DataSize: Integer); override;
 
-    property RequestedDigestSize: UInt32
+    /// <summary>
+    ///   This property defines the length of the output from the hash calculation
+    ///   in byte. Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
+    ///   This setting is only respected by the DigestAsBytes method and all other
+    ///   convenience methods using that one like CalcStream, CalcString,
+    ///   DigestAsString or DigestAsRawString.
+    /// </summary>
+    property RequestedDigestSize: UInt8
       read   FDigestSize
-      write  FDigestSize;
+      write  SetDigestSize;
   end;
 
 function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
@@ -536,6 +561,7 @@ uses
 
 resourcestring
   sHashNoDefault        = 'No default hash registered';
+  sHashSizeInvalid      = 'Invalid size for hash output. Must be between %0:s and %1:s bytes';
 
 var
   FDefaultHashClass: TDECHashClass = nil;
@@ -3457,6 +3483,14 @@ begin
   // Empty on purpose: the base class for the hashes declares an abstract
   // DoTransform method and not providing an override for it would cause a
   // compiler warning
+end;
+
+procedure THash_Sapphire.SetDigestSize(Value: UInt8);
+begin
+  if (Value >= 1) and (Value <= 64) then
+    FDigestSize := Value
+  else
+    raise EDECHashException.CreateResFmt(@sHashSizeInvalid, ['1', '64']);
 end;
 
 procedure THash_Sapphire.DoDone;

@@ -230,7 +230,7 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
-    function ClassByIdentity(Identity: Int64): TDECHashClass;
+    class function ClassByIdentity(Identity: Int64): TDECHashClass;
 
     /// <summary>
     ///   Detects whether the given hash class is one particularily suited
@@ -298,7 +298,7 @@ type
     function CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString; overload;
 
     /// <summary>
-    ///   Calculates the hash value over a givens stream of bytes
+    ///   Calculates the hash value over a given stream of bytes
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
@@ -871,7 +871,7 @@ end;
 
 procedure TDECHash.RaiseHashOverflowError;
 begin
-  raise EDECHashException.Create(sRaiseHashOverflowError);
+  raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
 end;
 
 procedure TDECHash.SetPaddingByte(Value: Byte);
@@ -881,7 +881,7 @@ end;
 
 procedure TDECHash.RaiseHashNotInitialized;
 begin
-  raise EDECHashException.Create(sHashNotInitialized);
+  raise EDECHashException.CreateRes(@sHashNotInitialized);
 end;
 
 procedure TDECHash.Calc(const Data; DataSize: Integer);
@@ -1008,7 +1008,7 @@ begin
   end;
 end;
 
-function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
+class function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
 begin
   result := TDECHashClass(ClassList.ClassByIdentity(Identity));
 end;

@@ -119,7 +119,7 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
-    function ClassByIdentity(Identity: Int64): TDECFormatClass;
+    class function ClassByIdentity(Identity: Int64): TDECFormatClass;
 
     /// <summary>
     ///   Calls the internal method which actually does the format conversion.
@@ -444,7 +444,7 @@ begin
     SetLength(Result, 0);
 end;
 
-function TDECFormat.ClassByIdentity(Identity: Int64): TDECFormatClass;
+class function TDECFormat.ClassByIdentity(Identity: Int64): TDECFormatClass;
 begin
   result := TDECFormatClass(ClassList.ClassByIdentity(Identity));
 end;
