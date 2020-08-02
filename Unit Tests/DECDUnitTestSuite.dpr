@@ -33,6 +33,7 @@ uses
   TestDECFormatBase in 'Tests\TestDECFormatBase.pas',
   TestDECFormat in 'Tests\TestDECFormat.pas',
   TestDECHash in 'Tests\TestDECHash.pas',
+  TestDECHashKDF in 'Tests\TestDECHashKDF.pas',
   TestDECCRC in 'Tests\TestDECCRC.pas',
   TestDECCipher in 'Tests\TestDECCipher.pas',
   DECCiphers in '..\Source\DECCiphers.pas',

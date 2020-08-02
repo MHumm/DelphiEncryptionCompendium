@@ -54,7 +54,8 @@ uses
   DECHashInterface in '..\Source\DECHashInterface.pas',
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   DECDataCipher in '..\Source\DECDataCipher.pas',
-  DECDataHash in '..\Source\DECDataHash.pas';
+  DECDataHash in '..\Source\DECDataHash.pas',
+  TestDECHashKDF in 'Tests\TestDECHashKDF.pas';
 
 var
   runner : ITestRunner;
