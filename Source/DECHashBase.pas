@@ -1245,7 +1245,7 @@ begin
 
   HashInstance := TDECHashstype(self).Create;
   try
-    for I := 0 to MaskSize - 2 do
+    for I := 0 to MaskSize - 1 do
     begin
       HashInstance.Init;
 
@@ -1270,7 +1270,7 @@ begin
       for J := 0 to DigestSize - 1 do
         R := R xor HashInstance.Digest[J];
 
-      Result[I + 1] := R;
+      Result[I] := R;
     end;
   finally
     HashInstance.Free;
@@ -1279,7 +1279,10 @@ end;
 
 class function TDECHash.KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
 begin
-  Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index);
+  if (length(Seed) > 0) then
+    Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
+  else
+    Result := KDFx(Data[0], Length(Data), NullStr, Length(Seed), MaskSize, Index)
 end;
 
 class function TDECHash.MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;

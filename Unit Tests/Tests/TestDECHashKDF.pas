@@ -43,6 +43,11 @@ type
   THashClass = class of TDECHash;
 
   /// <summary>
+  ///   Type of the KDF variant
+  /// </summary>
+  TKDFTestType = (ktKDF1, ktKDF2, ktKDF3, ktKDFx);
+
+  /// <summary>
   ///   Record containing everything necessary for a single key deviation
   ///   method test
   /// </summary>
@@ -64,9 +69,9 @@ type
     /// </summary>
     MaskSize   : Integer;
     /// <summary>
-    ///   If the entry is for a KDF1-KDF3 test define which test method to call
+    ///   If the entry is for a KDF1-KDF3 or KDFx test define which test method to call
     /// </summary>
-    KDFType    : TKDFType;
+    KDFType    : TKDFTestType;
     /// <summary>
     ///   Class reference containing the class methods to be tested
     /// </summary>
@@ -98,7 +103,7 @@ type
     /// </param>
     procedure Add(const InputData, OutputData: RawByteString;
                   MaskSize : Integer; HashClass: THashClass;
-                  KDFType : TKDFType = ktKDF1); overload;
+                  KDFType : TKDFTestType = ktKDF1); overload;
     /// <summary>
     ///   Add one entry to the list
     /// </summary>
@@ -122,7 +127,7 @@ type
     /// </param>
     procedure Add(const InputData, SeedData, OutputData: RawByteString;
                   MaskSize : Integer; HashClass: THashClass;
-                  KDFType : TKDFType = ktKDF1); overload;
+                  KDFType : TKDFTestType = ktKDF1); overload;
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -161,8 +166,8 @@ type
     // output and hash class to be used shall be spoecified.
     FTestData : TKeyDeviationTestList;
 
-    procedure InternalTest(KDFType: TKDFType);
-    procedure InternalTestTBytes(KDFType: TKDFType);
+    procedure InternalTest(KDFType: TKDFTestType);
+    procedure InternalTestTBytes(KDFType: TKDFTestType);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -173,6 +178,8 @@ type
     procedure TestKDF2TBytes;
     procedure TestKDF3;
     procedure TestKDF3TBytes;
+    procedure TestKDFx;
+    procedure TestKDFxTBytes;
   end;
 
 
@@ -185,7 +192,7 @@ uses
 
 procedure TKeyDeviationTestList.Add(const InputData, OutputData: RawByteString;
                                     MaskSize: Integer; HashClass: THashClass;
-                                    KDFType : TKDFType = ktKDF1);
+                                    KDFType : TKDFTestType = ktKDF1);
 var
   Data: TKeyDeviationTestData;
 begin
@@ -200,7 +207,7 @@ end;
 
 procedure TKeyDeviationTestList.Add(const InputData, SeedData,
   OutputData: RawByteString; MaskSize: Integer; HashClass: THashClass;
-  KDFType : TKDFType = ktKDF1);
+  KDFType : TKDFTestType = ktKDF1);
 var
   Data: TKeyDeviationTestData;
 begin
@@ -216,7 +223,7 @@ end;
 
 { TestTHash_KDF }
 
-procedure TestTHash_KDF.InternalTest(KDFType: TKDFType);
+procedure TestTHash_KDF.InternalTest(KDFType: TKDFTestType);
 var
   TestData : TKeyDeviationTestData;
   Result, ExpResult, Data, Seed : TBytes;
@@ -248,6 +255,13 @@ begin
                  else
                    Result := TestData.HashClass.KDF3(Data[0], length(Data),
                                                      Seed[0], length(Seed), TestData.MaskSize);
+
+        ktKDFx : if (length(Seed) = 0) then
+                   Result := TestData.HashClass.KDFx(Data[0], length(Data),
+                                                     NullStr, 0, TestData.MaskSize)
+                 else
+                   Result := TestData.HashClass.KDFx(Data[0], length(Data),
+                                                     Seed[0], length(Seed), TestData.MaskSize);
       end;
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
@@ -256,7 +270,7 @@ begin
   end;
 end;
 
-procedure TestTHash_KDF.InternalTestTBytes(KDFType: TKDFType);
+procedure TestTHash_KDF.InternalTestTBytes(KDFType: TKDFTestType);
 var
   TestData : TKeyDeviationTestData;
   Result, ExpResult, Data, Seed : TBytes;
@@ -277,6 +291,9 @@ begin
 
       if (KDFType = ktKDF3) then
         Result := TestData.HashClass.KDF3(Data, Seed, TestData.MaskSize);
+
+      if (KDFType = ktKDFx) then
+        Result := TestData.HashClass.KDFx(Data, Seed, TestData.MaskSize);
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
                   DECUtil.BytesToRawString(Result));
@@ -400,6 +417,27 @@ begin
                                     '0bdaea66204012efe34971dc431d625c' +
                                     'd9a329b8217cc8fd0d9f02b13f2f6b0b'),
                 128, THash_SHA256, ktKDF2);
+
+  // Test for DEC's own KDFx variant, testdata synthesised and verified against
+  // DEC V5.2
+  FTestData.Add(TFormat_HexL.Decode('deadbeeffeebdaed'),
+                '',
+                TFormat_HexL.Decode('e473e6b6065219bab4fde9113bd80301'+
+                                    '6cc49979783559585b0c8bb5bbdfa4cd'),
+                32, THash_SHA1, ktKDFx);
+
+  FTestData.Add(TFormat_HexL.Decode('7e335afa4b31d772c0635c7b0e06f26f' +
+                                    'cd781df947d2990a'),
+                TFormat_HexL.Decode('d65a4812733f8cdbcdfb4b2f4c191d87'),
+                TFormat_HexL.Decode('934006d019879d1ee2787b27ed57841b' +
+                                    '66433425d6a0f4ca6abb20f6967dc660' +
+                                    'd04f8577b13ec8d4ec54610a78e0881f' +
+                                    '2ae26f482c81053c6d8951e787b2e4a9' +
+                                    '9b3c2a95bc196948e1f1819c55ba08d6' +
+                                    '6a6ca395e9929eaee752b5dc324e980d' +
+                                    '71f0e8c1b244bb3b0c09b903ebc446e2' +
+                                    '925bf1a7041923a3910959e5dcd6afd2'),
+                128, THash_SHA256, ktKDFx);
 end;
 
 procedure TestTHash_KDF.TearDown;
@@ -437,6 +475,16 @@ end;
 procedure TestTHash_KDF.TestKDF3TBytes;
 begin
   InternalTestTBytes(ktKDF3);
+end;
+
+procedure TestTHash_KDF.TestKDFx;
+begin
+  InternalTest(ktKDFx);
+end;
+
+procedure TestTHash_KDF.TestKDFxTBytes;
+begin
+  InternalTestTBytes(ktKDFx);
 end;
 
 { THash_TestMGF1 }
