@@ -43,9 +43,9 @@ type
   THashClass = class of TDECHash;
 
   /// <summary>
-  ///   Type of the KDF variant
+  ///   Type of the KDF or MGF variant to be tested
   /// </summary>
-  TKDFTestType = (ktKDF1, ktKDF2, ktKDF3, ktKDFx);
+  TKDFMGFAlgorithm = (ktKDF1, ktKDF2, ktKDF3, ktKDFx, ktMGF1, ktMGFx);
 
   /// <summary>
   ///   Record containing everything necessary for a single key deviation
@@ -71,11 +71,16 @@ type
     /// <summary>
     ///   If the entry is for a KDF1-KDF3 or KDFx test define which test method to call
     /// </summary>
-    KDFType    : TKDFTestType;
+    Algorithm  : TKDFMGFAlgorithm;
     /// <summary>
     ///   Class reference containing the class methods to be tested
     /// </summary>
     HashClass  : THashClass;
+    /// <summary>
+    ///   Index, which i being used for the KDFx and MGFx variants of the
+    ///   original author of DEC
+    /// </summary>
+    Index      : UInt32;
   end;
 
   /// <summary>
@@ -98,12 +103,17 @@ type
     /// <param name="HashClass">
     ///   Class reference containing the class methods to be tested
     /// </param>
-    /// <param name="KDFType">
-    ///   For tests for the KDF1-KDF3 algorithms define for which one this is
+    /// <param name="AlgorithmType">
+    ///   Algorithm for which the test data specified is
+    /// </param>
+    /// <param name="Index">
+    ///   Index, which i being used for the KDFx and MGFx variants of the
+    ///   original author of DEC
     /// </param>
     procedure Add(const InputData, OutputData: RawByteString;
                   MaskSize : Integer; HashClass: THashClass;
-                  KDFType : TKDFTestType = ktKDF1); overload;
+                  AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
+                  Index : UInt32 = 1); overload;
     /// <summary>
     ///   Add one entry to the list
     /// </summary>
@@ -122,12 +132,17 @@ type
     /// <param name="HashClass">
     ///   Class reference containing the class methods to be tested
     /// </param>
-    /// <param name="KDFType">
-    ///   For tests for the KDF1-KDF3 algorithms define for which one this is
+    /// <param name="AlgorithmType">
+    ///   Algorithm for which the test data specified is
+    /// </param>
+    /// <param name="Index">
+    ///   Index, which i being used for the KDFx and MGFx variants of the
+    ///   original author of DEC
     /// </param>
     procedure Add(const InputData, SeedData, OutputData: RawByteString;
                   MaskSize : Integer; HashClass: THashClass;
-                  KDFType : TKDFTestType = ktKDF1); overload;
+                  AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
+                  Index : UInt32 = 1); overload;
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -147,9 +162,14 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+
+    procedure TestTBytesInternal(Algorithm : TKDFMGFAlgorithm);
+    procedure TestRawMemoryInternal(Algorithm : TKDFMGFAlgorithm);
   published
-    procedure TestTBytes;
-    procedure TestRawMemory;
+    procedure TestMGF1TBytes;
+    procedure TestMGF1RawMemory;
+    procedure TestMGFxTBytes;
+    procedure TestMGFxRawMemory;
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -166,8 +186,8 @@ type
     // output and hash class to be used shall be spoecified.
     FTestData : TKeyDeviationTestList;
 
-    procedure InternalTest(KDFType: TKDFTestType);
-    procedure InternalTestTBytes(KDFType: TKDFTestType);
+    procedure InternalTest(KDFType: TKDFMGFAlgorithm);
+    procedure InternalTestTBytes(KDFType: TKDFMGFAlgorithm);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -192,7 +212,8 @@ uses
 
 procedure TKeyDeviationTestList.Add(const InputData, OutputData: RawByteString;
                                     MaskSize: Integer; HashClass: THashClass;
-                                    KDFType : TKDFTestType = ktKDF1);
+                                    AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
+                                    Index : UInt32 = 1);
 var
   Data: TKeyDeviationTestData;
 begin
@@ -200,14 +221,16 @@ begin
   Data.OutputData := OutputData;
   Data.MaskSize   := MaskSize;
   Data.HashClass  := HashClass;
-  Data.KDFType    := KDFType;
+  Data.Algorithm    := AlgorithmType;
+  Data.Index      := Index;
 
   self.Add(Data);
 end;
 
 procedure TKeyDeviationTestList.Add(const InputData, SeedData,
   OutputData: RawByteString; MaskSize: Integer; HashClass: THashClass;
-  KDFType : TKDFTestType = ktKDF1);
+  AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
+  Index : UInt32 = 1);
 var
   Data: TKeyDeviationTestData;
 begin
@@ -216,21 +239,22 @@ begin
   Data.OutputData := OutputData;
   Data.MaskSize   := MaskSize;
   Data.HashClass  := HashClass;
-  Data.KDFType    := KDFType;
+  Data.Algorithm    := AlgorithmType;
+  Data.Index      := Index;
 
   self.Add(Data);
 end;
 
 { TestTHash_KDF }
 
-procedure TestTHash_KDF.InternalTest(KDFType: TKDFTestType);
+procedure TestTHash_KDF.InternalTest(KDFType: TKDFMGFAlgorithm);
 var
   TestData : TKeyDeviationTestData;
   Result, ExpResult, Data, Seed : TBytes;
 begin
   for TestData in FTestData do
   begin
-    if (TestData.KDFType = KDFType) then
+    if (TestData.Algorithm = KDFType) then
     begin
       Data := SysUtils.BytesOf(TestData.InputData);
       Seed := SysUtils.BytesOf(TestData.SeedData);
@@ -258,10 +282,14 @@ begin
 
         ktKDFx : if (length(Seed) = 0) then
                    Result := TestData.HashClass.KDFx(Data[0], length(Data),
-                                                     NullStr, 0, TestData.MaskSize)
+                                                     NullStr, 0,
+                                                     TestData.MaskSize,
+                                                     TestData.Index)
                  else
                    Result := TestData.HashClass.KDFx(Data[0], length(Data),
-                                                     Seed[0], length(Seed), TestData.MaskSize);
+                                                     Seed[0], length(Seed),
+                                                     TestData.MaskSize,
+                                                     TestData.Index);
       end;
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
@@ -270,14 +298,14 @@ begin
   end;
 end;
 
-procedure TestTHash_KDF.InternalTestTBytes(KDFType: TKDFTestType);
+procedure TestTHash_KDF.InternalTestTBytes(KDFType: TKDFMGFAlgorithm);
 var
   TestData : TKeyDeviationTestData;
   Result, ExpResult, Data, Seed : TBytes;
 begin
   for TestData in FTestData do
   begin
-    if (TestData.KDFType = KDFType) then
+    if (TestData.Algorithm = KDFType) then
     begin
       Data := SysUtils.BytesOf(TestData.InputData);
       Seed := SysUtils.BytesOf(TestData.SeedData);
@@ -293,7 +321,7 @@ begin
         Result := TestData.HashClass.KDF3(Data, Seed, TestData.MaskSize);
 
       if (KDFType = ktKDFx) then
-        Result := TestData.HashClass.KDFx(Data, Seed, TestData.MaskSize);
+        Result := TestData.HashClass.KDFx(Data, Seed, TestData.MaskSize, TestData.Index);
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
                   DECUtil.BytesToRawString(Result));
@@ -424,7 +452,13 @@ begin
                 '',
                 TFormat_HexL.Decode('e473e6b6065219bab4fde9113bd80301'+
                                     '6cc49979783559585b0c8bb5bbdfa4cd'),
-                32, THash_SHA1, ktKDFx);
+                32, THash_SHA1, ktKDFx, 1);
+
+  FTestData.Add(TFormat_HexL.Decode('deadbeeffeebdaed'),
+                '',
+                TFormat_HexL.Decode('2dfb9508c07cd1521849d8dd92585ec0'+
+                                    '9499132de0f6b8d4ed2768ec1c83f0ed'),
+                32, THash_SHA1, ktKDFx, 2);
 
   FTestData.Add(TFormat_HexL.Decode('7e335afa4b31d772c0635c7b0e06f26f' +
                                     'cd781df947d2990a'),
@@ -437,7 +471,20 @@ begin
                                     '6a6ca395e9929eaee752b5dc324e980d' +
                                     '71f0e8c1b244bb3b0c09b903ebc446e2' +
                                     '925bf1a7041923a3910959e5dcd6afd2'),
-                128, THash_SHA256, ktKDFx);
+                128, THash_SHA256, ktKDFx, 1);
+
+  FTestData.Add(TFormat_HexL.Decode('7e335afa4b31d772c0635c7b0e06f26f' +
+                                    'cd781df947d2990a'),
+                TFormat_HexL.Decode('d65a4812733f8cdbcdfb4b2f4c191d87'),
+                TFormat_HexL.Decode('2c26a1303d2146d61384e689debf541f' +
+                                    'bcd832e9343f2771b7e28dd877f096d5' +
+                                    '95e0e12c768d74d72a91176908b34842' +
+                                    'a0a32d7b3f8293d169fa873a5a7e747e' +
+                                    '0e6e054e73c2ca1bb89a1772e4e5b0f6' +
+                                    '7cead338829bb02e7012254f4f79e63a' +
+                                    '619e6f14782af946e169c2870ec6ca3a' +
+                                    '68377d2ad42196987278f93674c7d861'),
+                128, THash_SHA256, ktKDFx, 2);
 end;
 
 procedure TestTHash_KDF.TearDown;
@@ -495,13 +542,28 @@ begin
 
   FTestData := TKeyDeviationTestList.Create;
 
-  FTestData.Add('foo', '1ac907', 3, THash_SHA1);
-  FTestData.Add('foo', '1ac9075cd4', 5, THash_SHA1);
-  FTestData.Add('bar', 'bc0c655e01', 5, THash_SHA1);
+  FTestData.Add('foo', '1ac907', 3, THash_SHA1, ktMGF1);
+  FTestData.Add('foo', '1ac9075cd4', 5, THash_SHA1, ktMGF1);
+  FTestData.Add('bar', 'bc0c655e01', 5, THash_SHA1, ktMGF1);
   FTestData.Add('bar', 'bc0c655e016bc2931d85a2e675181adcef7f581f76df2739da74f' +
-                       'aac41627be2f7f415c89e983fd0ce80ced9878641cb4876', 50, THash_SHA1);
+                       'aac41627be2f7f415c89e983fd0ce80ced9878641cb4876', 50, THash_SHA1, ktMGF1);
   FTestData.Add('bar', '382576a7841021cc28fc4c0948753fb8312090cea942ea4c4e735' +
-                       'd10dc724b155f9f6069f289d61daca0cb814502ef04eae1', 50, THash_SHA256);
+                       'd10dc724b155f9f6069f289d61daca0cb814502ef04eae1', 50, THash_SHA256, ktMGF1);
+
+  FTestData.Add('foo', 'b2ae0e', 3, THash_SHA1, ktMGFx, 1);
+  FTestData.Add('foo', '44ffe3', 3, THash_SHA1, ktMGFx, 2);
+  FTestData.Add('foo', 'b2ae0e6e26', 5, THash_SHA1, ktMGFx, 1);
+  FTestData.Add('foo', '44ffe3a40b', 5, THash_SHA1, ktMGFx, 2);
+  FTestData.Add('bar', '21dfca12e1', 5, THash_SHA1, ktMGFx, 1);
+  FTestData.Add('bar', '596eb7fe1b', 5, THash_SHA1, ktMGFx, 2);
+  FTestData.Add('bar', '21dfca12e13ebcaa77a5b6c0ff7023266e0dd54498306070fc735' +
+                       'ad7b0d88e14cb1acc887f564c7adb677a1b6b4b1e6b3f07', 50, THash_SHA1, ktMGFx, 1);
+  FTestData.Add('bar', '596eb7fe1ba0a133e7c445c745270bf6433dc88cef9f922840f75' +
+                       'd4867a247ea37fc9458c934e4675bcd7300722ee8d07b37', 50, THash_SHA1, ktMGFx, 2);
+  FTestData.Add('bar', 'e01f7238400a2f1501bbaaf937d3d081bda4fe5bccc713134f5d3' +
+                       'a580bd66783d379e6d91c6e91a1072744ae42fe4e182f32', 50, THash_SHA256, ktMGFx, 1);
+  FTestData.Add('bar', '816453f0040d4f0469ccfcb520bf63fbf4616e46adff6708d40b1' +
+                       '63041b91a234baa7f8a1fb86b23ef81df6e1121233dd88e', 50, THash_SHA256, ktMGFx, 2);
 end;
 
 procedure TestTHash_MGF1.TearDown;
@@ -511,7 +573,27 @@ begin
   inherited;
 end;
 
-procedure TestTHash_MGF1.TestRawMemory;
+procedure TestTHash_MGF1.TestMGF1RawMemory;
+begin
+  TestRawMemoryInternal(ktMGF1)
+end;
+
+procedure TestTHash_MGF1.TestMGF1TBytes;
+begin
+  TestTBytesInternal(ktMGF1);
+end;
+
+procedure TestTHash_MGF1.TestMGFxRawMemory;
+begin
+  TestRawMemoryInternal(ktMGFx)
+end;
+
+procedure TestTHash_MGF1.TestMGFxTBytes;
+begin
+  TestTBytesInternal(ktMGFx);
+end;
+
+procedure TestTHash_MGF1.TestRawMemoryInternal(Algorithm : TKDFMGFAlgorithm);
 var
   InputData  : TBytes;
   OutputData : TBytes;
@@ -520,15 +602,25 @@ begin
   for i := 0 to FTestData.Count - 1 do
   begin
     InputData  := BytesOf(FTestData[i].InputData);
-    OutputData := FTestData[i].HashClass.MGF1(InputData[0], length(InputData),
+
+    // Skip tests which are not for the selected algorithm
+    if FTestData[i].Algorithm <> Algorithm then
+      Continue;
+
+    case FTestData[i].Algorithm of
+      ktMGF1 : OutputData := FTestData[i].HashClass.MGF1(InputData[0], length(InputData),
                                               FTestData[i].MaskSize);
+      ktMGFx : OutputData := FTestData[i].HashClass.MGFx(InputData[0], length(InputData),
+                                              FTestData[i].MaskSize, FTestData[i].Index);
+    end;
+
     CheckEquals(FTestData[i].OutputData,
                 DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)),
-                'MGFT1 test failed at index ' + IntToStr(i));
+                'MGFT1/MGFx test failed at index ' + IntToStr(i));
   end;
 end;
 
-procedure TestTHash_MGF1.TestTBytes;
+procedure TestTHash_MGF1.TestTBytesInternal(Algorithm : TKDFMGFAlgorithm);
 var
   InputData  : TBytes;
   OutputData : TBytes;
@@ -537,10 +629,20 @@ begin
   for i := 0 to FTestData.Count - 1 do
   begin
     InputData  := BytesOf(FTestData[i].InputData);
-    OutputData := FTestData[i].HashClass.MGF1(InputData, FTestData[i].MaskSize);
+
+    // Skip tests which are not for the selected algorithm
+    if FTestData[i].Algorithm <> Algorithm then
+      Continue;
+
+    case FTestData[i].Algorithm of
+      ktMGF1 : OutputData := FTestData[i].HashClass.MGF1(InputData, FTestData[i].MaskSize);
+      ktMGFx : OutputData := FTestData[i].HashClass.MGFx(InputData, FTestData[i].MaskSize,
+                                                         FTestData[i].Index);
+    end;
+
     CheckEquals(FTestData[i].OutputData,
                 DECUtil.BytesToRawString(TFormat_HEXL.Encode(OutputData)),
-                'MGFT1 test failed at index ' + IntToStr(i));
+                'MGF1/MGFx test failed at index ' + IntToStr(i));
   end;
 end;
 
