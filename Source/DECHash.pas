@@ -475,7 +475,7 @@ type
     /// </summary>
     /// <param name="Value">
     ///   Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
-    ///   Raises an EDECHashException exception when an invalid DigestSize
+    ///   Sets the size to the default size returned by DigestSize otherwise.
     ///   is specified.
     /// </param>
     procedure SetDigestSize(Value: UInt8);
@@ -500,7 +500,8 @@ type
 
     /// <summary>
     ///   This property defines the length of the output from the hash calculation
-    ///   in byte. Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
+    ///   in byte. The maximum value is 64 byte = 512 bit. Values bigger 64 byte
+    ///   and a value of 0 lead to the default size returned by DigestSize otherwise.
     ///   This setting is only respected by the DigestAsBytes method and all other
     ///   convenience methods using that one like CalcStream, CalcString,
     ///   DigestAsString or DigestAsRawString.
@@ -561,7 +562,6 @@ uses
 
 resourcestring
   sHashNoDefault        = 'No default hash registered';
-  sHashSizeInvalid      = 'Invalid size for hash output. Must be between %0:s and %1:s bytes';
 
 var
   FDefaultHashClass: TDECHashClass = nil;
@@ -3490,7 +3490,7 @@ begin
   if (Value >= 1) and (Value <= 64) then
     FDigestSize := Value
   else
-    raise EDECHashException.CreateResFmt(@sHashSizeInvalid, ['1', '64']);
+    FDigestSize := DigestSize;
 end;
 
 procedure THash_Sapphire.DoDone;
