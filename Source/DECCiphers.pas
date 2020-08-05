@@ -5862,6 +5862,7 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  {$IFNDEF ManualRegisterClasses}
   TCipher_Blowfish.RegisterClass(TDECCipher.ClassList);
   TCipher_Twofish.RegisterClass(TDECCipher.ClassList);
   TCipher_IDEA.RegisterClass(TDECCipher.ClassList);
@@ -5898,6 +5899,7 @@ initialization
   TCipher_TEA.RegisterClass(TDECCipher.ClassList);
   TCipher_XTEA.RegisterClass(TDECCipher.ClassList);
   TCipher_TEAN.RegisterClass(TDECCipher.ClassList);
+  {$ENDIF}
 
 finalization
 

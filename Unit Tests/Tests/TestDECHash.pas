@@ -31,6 +31,7 @@ uses
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
   {$ENDIF}
+  Generics.Collections,
   TestDECTestDataContainer, DECTypes,
   DECBaseClass, DECHash, DECHashBase, Classes, SysUtils, DECUtil, DECFormatBase;
 
@@ -65,11 +66,11 @@ type
     /// <summary>
     ///   Need to be overriden, as the originals would raise an exception by design
     /// </summary>
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
     /// <summary>
     ///   Need to be overriden, as the originals would raise an exception by design
     /// </summary>
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
 
     /// <summary>
     ///   Just calls the inherited Increment8 method in order to make it public
@@ -137,7 +138,6 @@ type
     procedure TestBlockSize;
     procedure TestIsPasswordHash;
     procedure TestClassByName;
-    procedure TestKDF2;
     procedure TestIdentity;
   end;
 
@@ -244,6 +244,19 @@ type
     procedure TestIdentity;
   end;
   {$ENDIF}
+
+  // Test methods for class THash_SHA1
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA1 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
 
   // Test methods for class THash_SHA256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -559,28 +572,6 @@ end;
 procedure TestTHash_MD2.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
-end;
-
-procedure TestTHash_MD2.TestKDF2;
-var
-  Data, Seed : TBytes;
-  KDF2Res    : TBytes;
-  ResultCalculated:String;
-begin
-{ TODO :
-Test verallgemeinert aufbauen und über Testdata als Eingabe gehen.
-Außerdem für jede Hash Funktion umsetzen?  Frederik und ich wollen vorher KDF2
-noch etwas analysieren: inwieweit entspricht dieser dem offiziellen Standard?}
-  SetLength(Data, 5);
-  Data := [0, 1, 2, 3, 4];
-
-  SetLength(Seed, 5);
-  Seed := [5, 6, 7, 8, 9];
-
-  KDF2Res := THash_MD2.KDF2(Data, Seed, 2);
-
-  ResultCalculated := string(BytesToRawString(TFormat_HEX.Encode(KDF2Res)));
-  CheckEquals('F52B', ResultCalculated);
 end;
 
 procedure TestTHash_MD2.TestBlockSize;
@@ -1263,6 +1254,92 @@ begin
   DoTestClassByName('THash_SHA', THash_SHA);
 end;
 {$ENDIF}
+
+{ TestTHash_SHA1 }
+
+procedure TestTHash_SHA1.SetUp;
+var
+  lDataRow : IHashTestDataRowSetup;
+  i        : Integer;
+  rs       : RawByteString;
+begin
+  inherited;
+
+  FHash := THash_SHA1.Create;
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+  lDataRow.ExpectedOutputUTFStrTest := 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '68ac906495480a3404beee4874ed853a037a7a8f';
+  lDataRow.ExpectedOutputUTFStrTest := 'ca2bea5813b6914b6d75ee6975af2aa99b7f09ca';
+  lDataRow.AddInputVector('Franz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '89fdde0b28373dc4f361cfb810b35342cc2c3232';
+  lDataRow.ExpectedOutputUTFStrTest := '41e9761e0427676d8b5aead6631c5e7bc2946e81';
+  lDataRow.AddInputVector('Granz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'a9993e364706816aba3e25717850c26c9cd0d89d';
+  lDataRow.ExpectedOutputUTFStrTest := '9f04f41a848514162050e3d68c1a7abb441dc2b5';
+  lDataRow.AddInputVector('ab');
+  lDataRow.AddInputVector('c');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '84983e441c3bd26ebaae4aa1f95129e5e54670f1';
+  lDataRow.ExpectedOutputUTFStrTest := '51d7d8769ac72c409c5b0e3f69c60adc9a039014';
+  lDataRow.AddInputVector('abcdbcdecdefdef');
+  lDataRow.AddInputVector('gefghfghighijhijki');
+  lDataRow.AddInputVector('jkljklmklmnlmnomnopnop');
+  lDataRow.AddInputVector('q');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'c464f3b38d34f7bf49b29635e50c8957b3a87dc7';
+  lDataRow.ExpectedOutputUTFStrTest := '65bbefb5a727dedc039540dc1dcfa18c6fa3aeec';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'df2724a78d507fbfb4b85aa328cf8221e10f74a7';
+  lDataRow.ExpectedOutputUTFStrTest := '634f2fd10ec73d75bd976990064edfc1e9d75cd5';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
+
+  rs := '';
+  for i := 1 to 15625 do
+    rs := rs + 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '34aa973cd4c4daa4f61eeb2bdbad27316534016f';
+  lDataRow.ExpectedOutputUTFStrTest := 'c4609560a108a0c626aa7f2b38a65566739353c5';
+  lDataRow.AddInputVector(rs);
+end;
+
+procedure TestTHash_SHA1.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA1.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA1', THash_SHA1);
+end;
+
+procedure TestTHash_SHA1.TestDigestSize;
+begin
+  CheckEquals(20, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA1.TestIdentity;
+begin
+  CheckEquals($7B215B73, FHash.Identity);
+end;
+
+procedure TestTHash_SHA1.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
 
 procedure TestTHash_SHA256.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -3690,7 +3767,7 @@ end;
 
 { TDECHashUnitTest }
 
-class function TDECHashIncrement8.BlockSize: Integer;
+class function TDECHashIncrement8.BlockSize: UInt32;
 begin
   result := 4;
 end;
@@ -3701,7 +3778,7 @@ begin
   result := nil;
 end;
 
-class function TDECHashIncrement8.DigestSize: Integer;
+class function TDECHashIncrement8.DigestSize: UInt32;
 begin
   result := 0;
 end;
@@ -3769,6 +3846,7 @@ initialization
                             {$IFDEF OLD_SHA_NAME}
                             TestTHash_SHA.Suite,
                             {$ENDIF}
+                            TestTHash_SHA1.Suite,
                             TestTHash_SHA256.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
@@ -3810,6 +3888,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA);
   {$ENDIF}
 
+  TDUnitX.RegisterTestFixture(TestTHash_SHA1);
   TDUnitX.RegisterTestFixture(TestTHash_SHA256);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);

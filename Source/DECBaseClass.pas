@@ -309,8 +309,8 @@ begin
     Result := Items[Identity];
   except
     On EListError do
-      raise EDECClassNotRegisteredException.CreateFmt(sClassNotRegistered,
-                                                      [IntToHEX(Identity, 8)]);
+      raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered,
+                                                         [IntToHEX(Identity, 8)]);
   end;
 end;
 
@@ -345,7 +345,7 @@ begin
   end;
 
   if Result = nil then
-    raise EDECClassNotRegisteredException.CreateFmt(sClassNotRegistered, [Name]);
+    raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [Name]);
 end;
 
 procedure TDECClassList.GetClassList(List: TStrings);

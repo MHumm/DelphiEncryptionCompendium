@@ -37,7 +37,7 @@ type
   THash_RipeMD160   = class;
   THash_RipeMD256   = class;
   THash_RipeMD320   = class;
-  THash_SHA0         = class;  // SHA-0
+  THash_SHA0        = class;  // SHA-0
   THash_SHA1        = class;  // SHA-1
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
@@ -74,8 +74,8 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -90,8 +90,8 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -125,7 +125,7 @@ type
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_RipeMD256 = class(THashBaseMD4)
@@ -133,14 +133,14 @@ type
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_RipeMD320 = class(THashBaseMD4)
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -156,7 +156,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   {$IFDEF OLD_SHA_NAME}
@@ -168,7 +168,13 @@ type
   ///   algorithm at all. It is only being provided for scenarios where
   ///   compatibility with this algorithm is required.
   /// </summary>
-  THash_SHA = class(THash_SHA0);
+  THash_SHA = class(THash_SHA0)
+  {$IFDEF X86ASM}
+  protected
+    procedure DoTransform(Buffer: PUInt32Array); override;
+  end
+  {$ENDIF};
+
   {$ENDIF}
 
   /// <summary>
@@ -187,7 +193,7 @@ type
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -202,8 +208,8 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -213,7 +219,7 @@ type
   protected
     procedure DoInit; override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THavalBaseTransformMethod = procedure(Buffer: PUInt32Array) of object;
@@ -233,7 +239,7 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function BlockSize: Integer; override;
+    class function BlockSize: UInt32; override;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
@@ -252,27 +258,27 @@ type
   /// </summary>
   THash_Haval128 = class(THashBaseHaval)
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_Haval160 = class(THashBaseHaval)
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_Haval192 = class(THashBaseHaval)
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_Haval224 = class(THashBaseHaval)
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   THash_Haval256 = class(THashBaseHaval)
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -288,7 +294,7 @@ type
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
+    class function DigestSize: UInt32; override;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
@@ -322,8 +328,8 @@ type
     procedure DoPull;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override; // 32
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override; // 32
   end;
 
   THashBaseWhirlpool = class(TDECHash)
@@ -336,8 +342,8 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -391,8 +397,8 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -402,8 +408,14 @@ type
   THashBaseSnefru = class(TDECHash)
   private
     FDigest: array[0..23] of UInt32;
-    FSecurityLevel: Integer;
-    procedure SetSecurityLevel(Value: Integer);
+    /// <summary>
+    ///   Number of rounds the loop will do on the data
+    /// </summary>
+    FRounds: Integer;
+    /// <summary>
+    ///   Sets the number of rounds for the looping over the data
+    /// </summary>
+    procedure SetRounds(Value: Integer);
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -414,11 +426,11 @@ type
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
     ///   algorithm will use. With the default of 8 rounds it is being considered
     ///   as safe as of spring 2016, with less rounds this algorithm is considered
-    ///   to be unsafe.
+    ///   to be unsafe and even with 8 rounds it is not really strong.
     /// </summary>
-    property SecurityLevel: Integer
-      read   FSecurityLevel
-      write  SetSecurityLevel;
+    property Rounds: Integer
+      read   FRounds
+      write  SetRounds;
   end;
 
   /// <summary>
@@ -430,8 +442,8 @@ type
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override; // 48
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override; // 48
   end;
 
   /// <summary>
@@ -443,8 +455,8 @@ type
   protected
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override; // 32
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override; // 32
   end;
 
   THash_Sapphire = class(TDECHash)
@@ -456,7 +468,17 @@ type
     FAvalanche: UInt32;
     FPlain: UInt32;
     FCipher: UInt32;
-    FDigestSize: Integer;
+    FDigestSize: UInt8;
+
+    /// <summary>
+    ///   Set the length of the output hash value in byte.
+    /// </summary>
+    /// <param name="Value">
+    ///   Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
+    ///   Sets the size to the default size returned by DigestSize otherwise.
+    ///   is specified.
+    /// </param>
+    procedure SetDigestSize(Value: UInt8);
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -464,13 +486,29 @@ type
   public
     function Digest: PByteArray; override;
     function DigestAsBytes: TBytes; override;
-    class function DigestSize: Integer; override;
-    class function BlockSize: Integer; override;
+    /// <summary>
+    ///   Returns the default digest/hash size in bit. If RequestedDigestSize is
+    ///   not set, the defauilt size returned here is being used.
+    /// </summary>
+    class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Returns on which block size this algorithm operates. Since the Sapphire
+    ///   hash originates from a Sapphire stream cipher algorithm this is always 1.
+    /// </summary>
+    class function BlockSize: UInt32; override;
     procedure Calc(const Data; DataSize: Integer); override;
 
-    property RequestedDigestSize: Integer
+    /// <summary>
+    ///   This property defines the length of the output from the hash calculation
+    ///   in byte. The maximum value is 64 byte = 512 bit. Values bigger 64 byte
+    ///   and a value of 0 lead to the default size returned by DigestSize otherwise.
+    ///   This setting is only respected by the DigestAsBytes method and all other
+    ///   convenience methods using that one like CalcStream, CalcString,
+    ///   DigestAsString or DigestAsRawString.
+    /// </summary>
+    property RequestedDigestSize: UInt8
       read   FDigestSize
-      write  FDigestSize;
+      write  SetDigestSize;
   end;
 
 function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
@@ -607,12 +645,12 @@ begin
   Result := @FDigest;
 end;
 
-class function THash_MD2.DigestSize: Integer;
+class function THash_MD2.DigestSize: UInt32;
 begin
   Result := 16;
 end;
 
-class function THash_MD2.BlockSize: Integer;
+class function THash_MD2.BlockSize: UInt32;
 begin
   Result := 16;
 end;
@@ -657,12 +695,12 @@ begin
   Result := @FDigest;
 end;
 
-class function THashBaseMD4.DigestSize: Integer;
+class function THashBaseMD4.DigestSize: UInt32;
 begin
   Result := 16;
 end;
 
-class function THashBaseMD4.BlockSize: Integer;
+class function THashBaseMD4.BlockSize: UInt32;
 begin
   Result := 64;
 end;
@@ -1212,7 +1250,7 @@ begin
 end;
 {$ENDIF !THash_RipeMD160_asm}
 
-class function THash_RipeMD160.DigestSize: Integer;
+class function THash_RipeMD160.DigestSize: UInt32;
 begin
   Result := 20;
 end;
@@ -1430,7 +1468,7 @@ begin
   FDigest[9] := $3C2D1E0F;
 end;
 
-class function THash_RipeMD256.DigestSize: Integer;
+class function THash_RipeMD256.DigestSize: UInt32;
 begin
   Result := 32;
 end;
@@ -1688,7 +1726,7 @@ begin
 end;
 {$ENDIF !THash_RipeMD320_asm}
 
-class function THash_RipeMD320.DigestSize: Integer;
+class function THash_RipeMD320.DigestSize: UInt32;
 begin
   Result := 40;
 end;
@@ -1839,7 +1877,7 @@ begin
   SwapUInt32Buffer(FDigest, FDigest, SizeOf(FDigest) div 4);
 end;
 
-class function THash_SHA0.DigestSize: Integer;
+class function THash_SHA0.DigestSize: UInt32;
 begin
   Result := 20;
 end;
@@ -1907,7 +1945,7 @@ begin
 end;
 {$ENDIF !THash_SHA256_asm}
 
-class function THash_SHA256.DigestSize: Integer;
+class function THash_SHA256.DigestSize: UInt32;
 begin
   Result := 32;
 end;
@@ -2011,12 +2049,12 @@ begin
   Result := @FDigest;
 end;
 
-class function THash_SHA384.DigestSize: Integer;
+class function THash_SHA384.DigestSize: UInt32;
 begin
   Result := 48;
 end;
 
-class function THash_SHA384.BlockSize: Integer;
+class function THash_SHA384.BlockSize: UInt32;
 begin
   Result := 128;
 end;
@@ -2035,7 +2073,7 @@ begin
   FDigest[7] := Int64($5BE0CD19137E2179);
 end;
 
-class function THash_SHA512.DigestSize: Integer;
+class function THash_SHA512.DigestSize: UInt32;
 begin
   Result := 64;
 end;
@@ -2373,42 +2411,42 @@ begin
   Result := @FDigest;
 end;
 
-class function THashBaseHaval.BlockSize: Integer;
+class function THashBaseHaval.BlockSize: UInt32;
 begin
   Result := 128;
 end;
 
 { THash_Haval128 }
 
-class function THash_Haval128.DigestSize: Integer;
+class function THash_Haval128.DigestSize: UInt32;
 begin
   Result := 16;
 end;
 
 { THash_Haval160 }
 
-class function THash_Haval160.DigestSize: Integer;
+class function THash_Haval160.DigestSize: UInt32;
 begin
   Result := 20;
 end;
 
 { THash_Haval192 }
 
-class function THash_Haval192.DigestSize: Integer;
+class function THash_Haval192.DigestSize: UInt32;
 begin
   Result := 24;
 end;
 
 { THash_Haval224 }
 
-class function THash_Haval224.DigestSize: Integer;
+class function THash_Haval224.DigestSize: UInt32;
 begin
   Result := 28;
 end;
 
 { THash_Haval256 }
 
-class function THash_Haval256.DigestSize: Integer;
+class function THash_Haval256.DigestSize: UInt32;
 begin
   Result := 32;
 end;
@@ -2654,7 +2692,7 @@ begin
   PInt64Array(@FDigest)[2] := C  +  PInt64Array(@FDigest)[2];
 end;
 
-class function THash_Tiger.DigestSize: Integer;
+class function THash_Tiger.DigestSize: UInt32;
 begin
   Result := 24;
 end;
@@ -2893,12 +2931,12 @@ begin
   Result := @FDigest;
 end;
 
-class function THash_Panama.DigestSize: Integer;
+class function THash_Panama.DigestSize: UInt32;
 begin
   Result := 32;
 end;
 
-class function THash_Panama.BlockSize: Integer;
+class function THash_Panama.BlockSize: UInt32;
 begin
   Result := 32
 end;
@@ -3100,12 +3138,12 @@ begin
   Result := @FDigest;
 end;
 
-class function THashBaseWhirlpool.DigestSize: Integer;
+class function THashBaseWhirlpool.DigestSize: UInt32;
 begin
   Result := 64;
 end;
 
-class function THashBaseWhirlpool.BlockSize: Integer;
+class function THashBaseWhirlpool.BlockSize: UInt32;
 begin
   Result := 64;
 end;
@@ -3259,29 +3297,29 @@ begin
   Result := @FDigest;
 end;
 
-class function THash_Square.DigestSize: Integer;
+class function THash_Square.DigestSize: UInt32;
 begin
   Result := 16;
 end;
 
-class function THash_Square.BlockSize: Integer;
+class function THash_Square.BlockSize: UInt32;
 begin
   Result := 16;
 end;
 
 { THashBaseSnefru }
 
-procedure THashBaseSnefru.SetSecurityLevel(Value: Integer);
+procedure THashBaseSnefru.SetRounds(Value: Integer);
 begin
   if (Value < 2) or (Value > 8) then
     Value := 8;
-  FSecurityLevel := Value;
+  FRounds := Value;
 end;
 
 procedure THashBaseSnefru.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
-  SetSecurityLevel(FSecurityLevel);
+  SetRounds(FRounds);
 end;
 
 procedure THashBaseSnefru.DoDone;
@@ -3319,7 +3357,7 @@ begin
   Move(D[0], D[16], 16);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];
-  for Index := 0 to FSecurityLevel - 1 do
+  for Index := 0 to FRounds - 1 do
   begin
     for ByteInWord := 0 to 3 do
     begin
@@ -3354,12 +3392,12 @@ begin
 end;
 {$ENDIF !THash_Snefru128_asm}
 
-class function THash_Snefru128.DigestSize: Integer;
+class function THash_Snefru128.DigestSize: UInt32;
 begin
   Result := 16;
 end;
 
-class function THash_Snefru128.BlockSize: Integer;
+class function THash_Snefru128.BlockSize: UInt32;
 begin
   Result := 48
 end;
@@ -3379,7 +3417,7 @@ begin
   Move(D[0], D[16], 32);
   Box0 := @Snefru_Data[0];
   Box1 := @Snefru_Data[1];
-  for Index := 0 to FSecurityLevel - 1 do
+  for Index := 0 to FRounds - 1 do
   begin
     for ByteInWord := 0 to 3 do
     begin
@@ -3414,12 +3452,12 @@ begin
 end;
 {$ENDIF !THash_Snefru256_asm}
 
-class function THash_Snefru256.DigestSize: Integer;
+class function THash_Snefru256.DigestSize: UInt32;
 begin
   Result := 32;
 end;
 
-class function THash_Snefru256.BlockSize: Integer;
+class function THash_Snefru256.BlockSize: UInt32;
 begin
   Result := 32
 end;
@@ -3445,6 +3483,14 @@ begin
   // Empty on purpose: the base class for the hashes declares an abstract
   // DoTransform method and not providing an override for it would cause a
   // compiler warning
+end;
+
+procedure THash_Sapphire.SetDigestSize(Value: UInt8);
+begin
+  if (Value >= 1) and (Value <= 64) then
+    FDigestSize := Value
+  else
+    FDigestSize := DigestSize;
 end;
 
 procedure THash_Sapphire.DoDone;
@@ -3516,12 +3562,12 @@ begin
     Move(FDigest, Result[0], Size);
 end;
 
-class function THash_Sapphire.DigestSize: Integer;
+class function THash_Sapphire.DigestSize: UInt32;
 begin
   Result := 64;
 end;
 
-class function THash_Sapphire.BlockSize: Integer;
+class function THash_Sapphire.BlockSize: UInt32;
 begin
   Result := 1;
 end;
@@ -3530,6 +3576,7 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  {$IFNDEF ManualRegisterClasses}
   THash_MD2.RegisterClass(TDECHash.ClassList);
   THash_MD4.RegisterClass(TDECHash.ClassList);
   THash_MD5.RegisterClass(TDECHash.ClassList);
@@ -3568,6 +3615,8 @@ initialization
 
   {$IFDEF OLD_SHA_NAME}
   THash_SHA.RegisterClass(TDECHash.ClassList);
+  {$ENDIF}
+
   {$ENDIF}
 
 finalization

@@ -94,10 +94,10 @@ type
 
   IHashTestDataRowSetup = interface(ITestDataRowSetup)
   ['{ADB4AFA2-4199-47F4-86F6-E84A20C3AA8E}']
-    procedure SetRequiredDigestSize(const aValue:Integer);
+    procedure SetRequiredDigestSize(const aValue:UInt32);
     procedure SetPaddingByte(const aValue:Byte);
 
-    property RequiredDigestSize : Integer
+    property RequiredDigestSize : UInt32
       Write  SetRequiredDigestSize;
     property PaddingByte        : Byte
       Write  SetPaddingByte;
@@ -105,10 +105,10 @@ type
 
   IHashTestDataRow = interface(ITestDataRow)
   ['{73ED2877-967A-410B-8493-636F099FBA60}']
-    function GetRequiredDigestSize:Integer;
+    function GetRequiredDigestSize:UInt32;
     function GetPaddingByte:Byte;
 
-    property RequiredDigestSize : Integer
+    property RequiredDigestSize : UInt32
       read   GetRequiredDigestSize;
     property PaddingByte        : Byte
       read   GetPaddingByte;
@@ -186,7 +186,7 @@ type
     FInputVectors:ITestDataInputVectorList;
     FOutputData:RawByteString;
     FOutputUTFStrTest:RawByteString;
-    FReqDigSize:Integer;
+    FReqDigSize:UInt32;
     FPaddingByte:Byte;
   protected // ITestDataRow
     function GetInputData:RawByteString;
@@ -199,10 +199,10 @@ type
     procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
                              const aConcatCount:Cardinal=1);
   protected // IHashTestDataRow
-    function GetRequiredDigestSize:Integer;
+    function GetRequiredDigestSize:UInt32;
     function GetPaddingByte:Byte;
   protected // IHashTestDataRowSetup
-    procedure SetRequiredDigestSize(const aValue:Integer);
+    procedure SetRequiredDigestSize(const aValue:UInt32);
     procedure SetPaddingByte(const aValue:Byte);
   public
     constructor Create;
@@ -328,7 +328,7 @@ begin
   result := FPaddingByte;
 end;
 
-function THashTestDataRow.GetRequiredDigestSize: Integer;
+function THashTestDataRow.GetRequiredDigestSize: UInt32;
 begin
   result := FReqDigSize;
 end;
@@ -348,7 +348,7 @@ begin
   FPaddingByte := aValue;
 end;
 
-procedure THashTestDataRow.SetRequiredDigestSize(const aValue: Integer);
+procedure THashTestDataRow.SetRequiredDigestSize(const aValue: UInt32);
 begin
   FReqDigSize := aValue;
 end;

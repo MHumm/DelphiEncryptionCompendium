@@ -16,7 +16,8 @@
 *****************************************************************************}
 
 /// <summary>
-///   Base unit for all the hash algorithms
+///   Base unit for all the hash algorithms. Contains implementation of the key
+///   deviation algorithms as well.
 /// </summary>
 unit DECHashBase;
 
@@ -36,10 +37,44 @@ type
   TDECHashClass = class of TDECHash;
 
   /// <summary>
+  ///   Type of the KDF variant
+  /// </summary>
+  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
+
+  /// <summary>
   ///   Base class for all hash algorithm implementation classes
   /// </summary>
   TDECHash = class(TDECObject, IDECHash)
   strict private
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+    ///   This is either KDF1 or KDF2 depending on KDFType
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+    /// <param name="Seed">
+    ///   Start value for pseudo random number generator
+    /// </param>
+    /// <param name="SeedSize">
+    ///   Size of the seed in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="KDFType">
+    ///   Type of the algorithm: 1 = KDF1, 2 = KDF2 and 3 = KDF 3
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key.
+    /// </returns>
+    class function KDFInternal(const Data; DataSize: Integer; const Seed;
+                               SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes; inline;
+
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
@@ -158,12 +193,12 @@ type
     ///   Gives the length of the calculated hash value in byte. Needs to be
     ///   overridden in concrete hash implementations.
     /// </summary>
-    class function DigestSize: Integer; virtual;
+    class function DigestSize: UInt32; virtual;
     /// <summary>
     ///   Gives the length of the blocks the hash value is being calculated
     ///   on in byte. Needs to be overridden in concrete hash implementations.
     /// </summary>
-    class function BlockSize: Integer; virtual;
+    class function BlockSize: UInt32; virtual;
 
     /// <summary>
     ///   List of registered DEC classes. Key is the Identity of the class.
@@ -195,7 +230,7 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
-    function ClassByIdentity(Identity: Int64): TDECHashClass;
+    class function ClassByIdentity(Identity: Int64): TDECHashClass;
 
     /// <summary>
     ///   Detects whether the given hash class is one particularily suited
@@ -263,7 +298,7 @@ type
     function CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString; overload;
 
     /// <summary>
-    ///   Calculates the hash value over a givens stream of bytes
+    ///   Calculates the hash value over a given stream of bytes
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
@@ -351,9 +386,146 @@ type
                       const Progress: IDECProgress = nil): RawByteString; overload;
 
     // mask generation
+
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators
+    /// </summary>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the input data in bytes
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators
+    /// </summary>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGF1(const Data: TBytes; MaskSize: Integer): TBytes; overload;
-    // key derivation
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="SeedSize">
+    ///   Size of the seed/salt in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
+    /// <remarks>
+    ///   In earlier versions there was an optional format parameter. This has
+    ///   been removed as this is a base class. The method might not have
+    ///   returned a result with the MaskSize specified, as the formatting might
+    ///   have had to alter this. This would have been illogical.
+    /// </remarks>
+    class function KDF1(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer): TBytes; overload;
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
+    class function KDF1(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="SeedSize">
+    ///   Size of the seed/salt in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
+    /// <remarks>
+    ///   In earlier versions there was an optional format parameter. This has
+    ///   been removed as this is a base class. The method might not have
+    ///   returned a result with the MaskSize specified, as the formatting might
+    ///   have had to alter this. This would have been illogical.
+    /// </remarks>
+    class function KDF2(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer): TBytes; overload;
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="Seed">
+    ///   Start value for pseudo random number generator
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
+    class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
 
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -364,41 +536,153 @@ type
     /// <param name="DataSize">
     ///   Size in bytes of the source data passed.
     /// </param>
-{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="SeedSize">
-    ///   Size of the seed in byte.
+    ///   Size of the seed/salt in byte.
     /// </param>
     /// <param name="MaskSize">
-    ///   ???
+    ///   Size of the generated output in byte
     /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes; overload;
+    /// <remarks>
+    ///   In earlier versions there was an optional format parameter. This has
+    ///   been removed as this is a base class. The method might not have
+    ///   returned a result with the MaskSize specified, as the formatting might
+    ///   have had to alter this. This would have been illogical.
+    /// </remarks>
+    class function KDF3(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer): TBytes; overload;
+
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
     /// <param name="Data">
     ///   Source data from which the new key shall be derrived.
     /// </param>
-{ TODO : Was ist Seed und MaskSize? Frederik fragen. }
     /// <param name="Seed">
-    ///   Start value for pseudo random number generator
+    ///   Salt value
     /// </param>
     /// <param name="MaskSize">
-    ///   ???
+    ///   Size of the generated output in byte
     /// </param>
     /// <returns>
-    ///   Returns the new derrived key.
+    ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+
     // DEC's own KDF + MGF
+
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys. The alrorithm
+    ///   implemented by this method does not follow any official standard.
+    /// </summary>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size in bytes of the source data passed.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="SeedSize">
+    ///   Size of the seed/salt in byte.
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="Index">
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
     class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    /// <summary>
+    ///   Key deviation algorithm to derrive keys from other keys.
+    /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
+    /// <param name="Data">
+    ///   Source data from which the new key shall be derrived.
+    /// </param>
+    /// <param name="Seed">
+    ///   Salt value
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the generated output in byte
+    /// </param>
+    /// <param name="Index">
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm.
+    /// </param>
+    /// <returns>
+    ///   Returns the new derrived key with the length specified in MaskSize.
+    /// </returns>
     class function KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators.
+    /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the passed data in bytes
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <param name="Index">
+    ///   Looks like this is a salt applied to each byte of output data?
+{ TODO : Clarify this parameter }
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    /// <summary>
+    ///   Mask generation: generates an output based on the data given which is
+    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+    ///   would be inadequate. Examples include generating padding, producing
+    ///   one time pads or keystreams in symmetric key encryption, and yielding
+    ///   outputs for pseudorandom number generators.
+    /// </summary>
+    /// <remarks>
+    ///   This variant of the algorithm does not follow an official standard.
+    ///   It has been created by the original author of DEC.
+    /// </remarks>
+    /// <param name="Data">
+    ///   Data from which to generate a mask from
+    /// </param>
+    /// <param name="MaskSize">
+    ///   Size of the returned mask in bytes
+    /// </param>
+    /// <param name="Index">
+    ///
+    /// </param>
+    /// <returns>
+    ///   Mask such that one cannot determine the data which had been given to
+    ///   generate this mask from.
+    /// </returns>
     class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
@@ -417,13 +701,12 @@ type
   /// </summary>
   TDECPasswordHash = class(TDECHash);
 
-implementation
-
-type
   /// <summary>
   ///   Type needed to be able to remove with statements in KDF functions
   /// </summary>
   TDECHashstype = class of TDECHash;
+
+implementation
 
 resourcestring
   sHashNotInitialized   = 'Hash must be initialized';
@@ -588,7 +871,7 @@ end;
 
 procedure TDECHash.RaiseHashOverflowError;
 begin
-  raise EDECHashException.Create(sRaiseHashOverflowError);
+  raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
 end;
 
 procedure TDECHash.SetPaddingByte(Value: Byte);
@@ -598,7 +881,7 @@ end;
 
 procedure TDECHash.RaiseHashNotInitialized;
 begin
-  raise EDECHashException.Create(sHashNotInitialized);
+  raise EDECHashException.CreateRes(@sHashNotInitialized);
 end;
 
 procedure TDECHash.Calc(const Data; DataSize: Integer);
@@ -658,14 +941,14 @@ begin
   Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));
 end;
 
-class function TDECHash.DigestSize: Integer;
+class function TDECHash.DigestSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
   raise EDECAbstractError.Create(Self);
 end;
 
-class function TDECHash.BlockSize: Integer;
+class function TDECHash.BlockSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
@@ -725,7 +1008,7 @@ begin
   end;
 end;
 
-function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
+class function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
 begin
   result := TDECHashClass(ClassList.ClassByIdentity(Identity));
 end;
@@ -833,20 +1116,64 @@ end;
 
 class function TDECHash.MGF1(const Data; DataSize, MaskSize: Integer): TBytes;
 // indexed Mask generation function, IEEE P1363 Working Group
-// equal to KDF2 except without Seed
+// equal to KDF1 except without Seed
+// RFC 2437 PKCS #1
 begin
-  Result := KDF2(Data, DataSize, NullStr, 0, MaskSize);
+  Result := KDF1(Data, DataSize, NullStr, 0, MaskSize);
 end;
 
 class function TDECHash.MGF1(const Data: TBytes; MaskSize: Integer): TBytes;
 begin
-  Result := KDF2(Data[0], Length(Data), NullStr, 0, MaskSize);
+  Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF1);
 end;
 
-class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer): TBytes;
-// Key Generation Function 2, IEEE P1363 Working Group
+class function TDECHash.KDF1(const Data; DataSize: Integer; const Seed;
+  SeedSize, MaskSize: Integer): TBytes;
+begin
+  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF1);
+end;
+
+class function TDECHash.KDF1(const Data, Seed: TBytes;
+  MaskSize: Integer): TBytes;
+begin
+  if (length(Seed) > 0) then
+    result := KDFInternal(Data[0], length(Data), Seed[0], length(Seed), MaskSize, ktKDF1)
+  else
+    result := KDFInternal(Data[0], length(Data), NullStr, 0, MaskSize, ktKDF1);
+end;
+
+class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer): TBytes;
+begin
+  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
+end;
+
+class function TDECHash.KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+begin
+  if (length(Seed) > 0) then
+    Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF2)
+  else
+    Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF2);
+end;
+
+class function TDECHash.KDF3(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer): TBytes;
+begin
+  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
+end;
+
+class function TDECHash.KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+begin
+  if (length(Seed) > 0) then
+    Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)
+  else
+    Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF3);
+end;
+
+class function TDECHash.KDFInternal(const Data; DataSize: Integer; const Seed;
+                             SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes;
 var
-  I,
+  I, n,
   Rounds, DigestBytes : Integer;
   Dest                : PByteArray;
   Count               : UInt32;
@@ -864,55 +1191,40 @@ begin
     Rounds := (MaskSize + DigestBytes - 1) div DigestBytes;
     SetLength(Result, Rounds * DigestBytes);
     Dest := @Result[0];
-    for I := 0 to Rounds - 1 do
+
+
+    if (KDFType = ktKDF2) then
+      n := 1
+    else
+      n := 0;
+
+    for I := 0 to Rounds-1 do
     begin
-      Count := SwapUInt32(I);
+      Count := SwapUInt32(n);
       HashInstance.Init;
-      HashInstance.Calc(Data, DataSize);
-      HashInstance.Calc(Count, SizeOf(Count));
+
+      if (KDFType = ktKDF3) then
+      begin
+        HashInstance.Calc(Count, SizeOf(Count));
+        HashInstance.Calc(Data, DataSize);
+      end
+      else
+      begin
+        HashInstance.Calc(Data, DataSize);
+        HashInstance.Calc(Count, SizeOf(Count));
+      end;
+
       HashInstance.Calc(Seed, SeedSize);
       HashInstance.Done;
-      Move(HashInstance.Digest[0], Dest[I * DigestBytes], DigestBytes);
+      Move(HashInstance.Digest[0], Dest[(I) * DigestBytes], DigestBytes);
+
+      inc(n);
     end;
+
     SetLength(Result, MaskSize);
   finally
     HashInstance.Free;
   end;
-end;
-
-//class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Format: TDECFormatClass = nil): Binary;
-//// Key Generation Function 2, IEEE P1363 Working Group
-//var
-//  I,Rounds,DigestBytes: Integer;
-//  Dest: PByteArray;
-//  Count: LongWord;
-//begin
-//  with Create do
-//  try
-//    Rounds := (MaskSize + DigestBytes -1) div DigestBytes;
-//    SetLength(Result, Rounds * DigestBytes);
-//    Dest := @Result[1];
-//    for I := 0 to Rounds -1 do
-//    begin
-//      Count := SwapLong(I);
-//      Init;
-//      Calc(Data, DataSize);
-//      Calc(Count, SizeOf(Count));
-//      Calc(Seed, SeedSize);
-//      Done;
-//      Move(Digest[0], Dest[I * DigestBytes], DigestBytes);
-//    end;
-//  finally
-//    Free;
-//  end;
-//  SetLength(Result, MaskSize);
-//  Result := ValidFormat(Format).Encode(Result[1], MaskSize);
-//end;
-
-
-class function TDECHash.KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
-begin
-  Result := KDF2(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize);
 end;
 
 class function TDECHash.KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
@@ -926,14 +1238,14 @@ begin
   Assert(MaskSize >= 0);
   Assert(DataSize >= 0);
   Assert(SeedSize >= 0);
-  Assert(DigestSize >= 0);
+  Assert(DigestSize > 0);
 
   SetLength(Result, MaskSize);
   Index := SwapUInt32(Index);
 
   HashInstance := TDECHashstype(self).Create;
   try
-    for I := 0 to MaskSize - 2 do
+    for I := 0 to MaskSize - 1 do
     begin
       HashInstance.Init;
 
@@ -958,7 +1270,7 @@ begin
       for J := 0 to DigestSize - 1 do
         R := R xor HashInstance.Digest[J];
 
-      Result[I + 1] := R;
+      Result[I] := R;
     end;
   finally
     HashInstance.Free;
@@ -967,7 +1279,10 @@ end;
 
 class function TDECHash.KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
 begin
-  Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index);
+  if (length(Seed) > 0) then
+    Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
+  else
+    Result := KDFx(Data[0], Length(Data), NullStr, Length(Seed), MaskSize, Index)
 end;
 
 class function TDECHash.MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
@@ -1005,7 +1320,7 @@ initialization
   TDECHash.ClassList := TDECClassList.Create;
 
 finalization
-  // Ensure no further instances of classes registered in the registraiotn list
+  // Ensure no further instances of classes registered in the registration list
   // are possible through the list after this unit has been unloaded by unloding
   // the package this unit is in
   {$IFDEF DELPHIORBCB}

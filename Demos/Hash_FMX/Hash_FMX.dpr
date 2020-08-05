@@ -24,6 +24,6 @@ begin
 
   Application.Initialize;
   // TMainForm
-  Application.CreateForm(TFormMain, FormMain);
+  Application.CreateForm(TMainForm, FormMain);
   Application.Run;
 end.
