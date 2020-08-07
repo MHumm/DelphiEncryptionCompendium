@@ -27,6 +27,10 @@ type
   // Cipher Classes
 
   /// <summary>
+  ///   Null cipher, doesn't encrypt, only copy
+  /// </summary>
+  TCipher_Null          = class;
+  /// <summary>
   ///   A block based encryption algorithm with 32 to 448 bit key length
   /// </summary>
   TCipher_Blowfish      = class;
@@ -182,6 +186,22 @@ type
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
   TSkipjackTab = array[0..255] of Byte;
+
+  /// <summary>
+  ///   A do nothing cipher, usefull for debugging and development purposes. Do
+  ///   not use it for actual encryption as it will not encrypt anything at all!
+  /// </summary>
+  TCipher_Null = class(TDECFormattedCipher)
+  protected
+    procedure DoInit(const Key; Size: Integer); override;
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  public
+    /// <summary>
+    ///   Provides meta data about the cipher algorithm used like key size.
+    /// </summary>
+    class function Context: TCipherContext; override;
+  end;
 
   TCipher_Blowfish = class(TDECFormattedCipher)
   protected
@@ -800,6 +820,35 @@ implementation
 
 uses
   System.SysUtils, DECData, DECDataCipher;
+
+{ TCipher_Null }
+
+class function TCipher_Null.Context: TCipherContext;
+begin
+  Result.KeySize := 0;
+  Result.BlockSize := 1;
+  Result.BufferSize := 32;
+  Result.UserSize := 0;
+  Result.UserSave := False;
+  Result.CipherType := [ctNull, ctSymmetric];
+end;
+
+procedure TCipher_Null.DoInit(const Key; Size: Integer);
+begin
+  // dummy
+end;
+
+procedure TCipher_Null.DoEncode(Source, Dest: Pointer; Size: Integer);
+begin
+  if Source <> Dest then
+    Move(Source^, Dest^, Size);
+end;
+
+procedure TCipher_Null.DoDecode(Source, Dest: Pointer; Size: Integer);
+begin
+  if Source <> Dest then
+    Move(Source^, Dest^, Size);
+end;
 
 { TCipher_Blowfish }
 
@@ -5863,6 +5912,7 @@ end;
 
 initialization
   {$IFNDEF ManualRegisterClasses}
+  TCipher_Null.RegisterClass(TDECCipher.ClassList);
   TCipher_Blowfish.RegisterClass(TDECCipher.ClassList);
   TCipher_Twofish.RegisterClass(TDECCipher.ClassList);
   TCipher_IDEA.RegisterClass(TDECCipher.ClassList);

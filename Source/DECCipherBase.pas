@@ -25,14 +25,25 @@ uses
 
 type
   /// <summary>
-  ///   Null cipher, doesn't encrypt, only copy
-  /// </summary>
-  TCipher_Null          = class;
-
-  /// <summary>
   ///   Possible kindes of cipher algorithms
+  ///   <para>
+  ///     ctNull = special "do nothing cipher"
+  ///    </para>
+  ///   <para>
+  ///     ctStream = cipher operating on a stream of bytes instead of blocks
+  ///    </para>
+  ///   <para>
+  ///     ctBlock = cipher operating on blocks of bytes with a fixed size
+  ///    </para>
+  ///   <para>
+  ///     ctSymmetric = cipher where the same key encrypts and decrypts
+  ///    </para>
+  ///   <para>
+  ///     ctAsymetric = cipher where encryption and decryption requires
+  ///                   different keys
+  ///    </para>
   /// </summary>
-  TCipherTypes = (ctStream, ctBlock, ctSymmetric, ctAsymmetric);
+  TCipherTypes = (ctNull, ctStream, ctBlock, ctSymmetric, ctAsymmetric);
 
   /// <summary>
   ///   Actual kind of cipher algorithm
@@ -177,7 +188,14 @@ type
   /// </remarks>
   TDECCipher = class(TDECObject)
   strict private
+    /// <summary>
+    ///   This is the complete memory block containing FVector, FFeedback, FBuffer
+    ///   and FUser
+    /// </summary>
     FData     : PByteArray;
+    /// <summary>
+    ///   This is the size of FData in byte
+    /// </summary>
     FDataSize : Integer;
 
     /// <summary>
@@ -194,9 +212,17 @@ type
     ///   Current processing state
     /// </summary>
     FState: TCipherState;
+    /// <summary>
+    ///   Size of the internally used processing buffer in byte
+    /// </summary>
     FBufferSize: Integer;
+    /// <summary>
+    ///   At which position of the buffer are we currently operating?
+    /// </summary>
     FBufferIndex: Integer;
+
     FUserSize: Integer;
+
     FBuffer: PByteArray;
     FVector: PByteArray;
     FFeedback: PByteArray;
@@ -493,7 +519,7 @@ type
   DECUtils.RawStringToBytes und overload geht nicht, wenn nur der Rückgabetyp unterschiedlich}
 //    function CalcMAC(Format: TDECFormatClass = nil): TBytes; overload;
 
-    function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; deprecated; // please use the TBytes based overload;
+    function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; //deprecated; // please use the TBytes based overload;
 
     // properties
 
@@ -506,10 +532,10 @@ type
     ///   Provides access to the contents of the initialization vector
     /// </summary>
     property InitVector: PByteArray
-      read   FVector; //
+      read   FVector;
 
     property Feedback: PByteArray
-      read   FFeedback; // buffer size bytes
+      read   FFeedback;
     /// <summary>
     ///   Allows to query the current internal processing state
     /// </summary>
@@ -521,22 +547,6 @@ type
     property Mode: TCipherMode
       read   FMode
       write  SetMode;
-  end;
-
-  /// <summary>
-  ///   A do nothing cipher, usefull for debugging and development purposes. Do
-  ///   not use it for actual encryption as it will not encrypt anything at all!
-  /// </summary>
-  TCipher_Null = class(TDECCipher)
-  protected
-    procedure DoInit(const Key; Size: Integer); override;
-    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
-    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
-  public
-    /// <summary>
-    ///   Provides meta data about the cipher algorithm used like key size.
-    /// </summary>
-    class function Context: TCipherContext; override;
   end;
 
 function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
@@ -582,17 +592,17 @@ end;
 
 constructor TDECCipher.Create;
 var
-  MustUserSaved: Boolean;
+  MustUserSave: Boolean;
 begin
   inherited Create;
 
-  FBufferSize   := Context.BufferSize;
-  FUserSize     := Context.UserSize;
-  MustUserSaved := Context.UserSave;
+  FBufferSize  := Context.BufferSize;
+  FUserSize    := Context.UserSize;
+  MustUserSave := Context.UserSave;
 
   FDataSize := FBufferSize * 3 + FUserSize;
 
-  if MustUserSaved then
+  if MustUserSave then
     Inc(FDataSize, FUserSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
@@ -602,7 +612,7 @@ begin
   FBuffer   := @FFeedback[FBufferSize];
   FUser     := @FBuffer[FBufferSize];
 
-  if MustUserSaved then
+  if MustUserSave then
     FUserSave := @PByteArray(FUser)[FUserSize]
   else
     FUserSave := nil;
@@ -667,7 +677,7 @@ procedure TDECCipher.Init(const Key; Size: Integer; const IVector; IVectorSize: 
 begin
   Protect;
 
-  if (Size > Context.KeySize) and (ClassType <> TCipher_Null) then
+  if (Size > Context.KeySize) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
 
   if IVectorSize > FBufferSize then
@@ -838,34 +848,6 @@ end;
 //  end;
 //end;
 
-{ TCipher_Null }
-
-class function TCipher_Null.Context: TCipherContext;
-begin
-  Result.KeySize := 0;
-  Result.BlockSize := 1;
-  Result.BufferSize := 32;
-  Result.UserSize := 0;
-  Result.UserSave := False;
-end;
-
-procedure TCipher_Null.DoInit(const Key; Size: Integer);
-begin
-  // dummy
-end;
-
-procedure TCipher_Null.DoEncode(Source, Dest: Pointer; Size: Integer);
-begin
-  if Source <> Dest then
-    Move(Source^, Dest^, Size);
-end;
-
-procedure TCipher_Null.DoDecode(Source, Dest: Pointer; Size: Integer);
-begin
-  if Source <> Dest then
-    Move(Source^, Dest^, Size);
-end;
-
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
@@ -893,7 +875,6 @@ initialization
 
   TDECCipher.ClassList := TDECClassList.Create;
 
-  TCipher_Null.RegisterClass(TDECCipher.ClassList);
 finalization
   // Ensure no further instances of classes registered in the registraiotn list
   // are possible through the list after this unit has been unloaded by unloding
@@ -903,5 +884,4 @@ finalization
   {$ENDIF DELPHIORBCB}
 
   TDECCipher.ClassList.Free;
-
 end.
