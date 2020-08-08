@@ -34,17 +34,6 @@ uses
   DECUtil, DECFormatBase, DECFormat;
 
 type
-  // Testmethoden for Klasse TCipher_Null
-  TestTCipher_Null = class(TTestCase)
-  strict private
-    FCipher_Null: TCipher_Null;
-  private
-  public
-    procedure SetUp; override;
-    procedure TearDown; override;
-    procedure TestClassByName;
-  end;
-
   // A function with these parameters has to be passed to DoTestEncode/Decode to
   // make that one generic
   TEncodeDecodeFunc = function (const Source: RawByteString; Format: TDECFormatClass = nil): TBytes of Object;
@@ -108,7 +97,7 @@ type
     procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
   end;
 
-  // Testmethoden for Klasse TDECCipher
+  // Testmethods for class TDECCipher
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipher = class(TCipherBasis)
   strict private
@@ -119,7 +108,21 @@ type
     procedure TestIsClassListCreated;
   end;
 
-  // Testmethoden for Klasse TCipher_Blowfish
+  // Testmethoden for Klasse TCipher_Null
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_Null = class(TTestCase)
+  strict private
+    FCipher_Null: TCipher_Null;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestClassByName;
+  end;
+
+  // Testmethods for class TCipher_Blowfish
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Blowfish = class(TCipherBasis)
   strict private
@@ -138,7 +141,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Twofish
+  // Testmethods for class TCipher_Twofish
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Twofish = class(TCipherBasis)
   strict private
@@ -157,7 +160,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_IDEA
+  // Testmethods for class TCipher_IDEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_IDEA = class(TCipherBasis)
   strict private
@@ -176,7 +179,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Cast256
+  // Testmethods for class TCipher_Cast256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Cast256 = class(TCipherBasis)
   strict private
@@ -195,7 +198,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Mars
+  // Testmethods for class TCipher_Mars
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Mars = class(TCipherBasis)
   strict private
@@ -215,7 +218,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_RC4
+  // Testmethods for class TCipher_RC4
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_RC4 = class(TCipherBasis)
   strict private
@@ -234,7 +237,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_RC6
+  // Testmethods for class TCipher_RC6
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_RC6 = class(TCipherBasis)
   strict private
@@ -253,7 +256,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_AES
+  // Testmethods for class TCipher_AES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_AES = class(TCipherBasis)
   strict private
@@ -272,7 +275,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Rijndael which is an alias for AES as it's
+  // Testmethods for class TCipher_Rijndael which is an alias for AES as it's
   // the original name of that algorithm
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Rijndael = class(TCipherBasis)
@@ -294,7 +297,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Square
+  // Testmethods for class TCipher_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Square = class(TCipherBasis)
   strict private
@@ -313,7 +316,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_SCOP
+  // Testmethods for class TCipher_SCOP
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_SCOP = class(TCipherBasis)
   strict private
@@ -332,7 +335,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Sapphire
+  // Testmethods for class TCipher_Sapphire
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Sapphire = class(TCipherBasis)
   strict private
@@ -351,7 +354,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_1DES
+  // Testmethods for class TCipher_1DES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_1DES = class(TCipherBasis)
   strict private
@@ -370,7 +373,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_2DES
+  // Testmethods for class TCipher_2DES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_2DES = class(TCipherBasis)
   strict private
@@ -389,7 +392,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_3DES
+  // Testmethods for class TCipher_3DES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_3DES = class(TCipherBasis)
   strict private
@@ -408,7 +411,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_2DDES
+  // Testmethods for class TCipher_2DDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_2DDES = class(TCipherBasis)
   strict private
@@ -427,7 +430,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_3DDES
+  // Testmethods for class TCipher_3DDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_3DDES = class(TCipherBasis)
   strict private
@@ -446,7 +449,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_3TDES
+  // Testmethods for class TCipher_3TDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_3TDES = class(TCipherBasis)
   strict private
@@ -465,7 +468,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_3Way
+  // Testmethods for class TCipher_3Way
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_3Way = class(TCipherBasis)
   strict private
@@ -484,7 +487,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Cast128
+  // Testmethods for class TCipher_Cast128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Cast128 = class(TCipherBasis)
   strict private
@@ -503,7 +506,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Gost
+  // Testmethods for class TCipher_Gost
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Gost = class(TCipherBasis)
   strict private
@@ -522,7 +525,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Magma, which is an alias for Ghost
+  // Testmethods for class TCipher_Magma, which is an alias for Ghost
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Magma = class(TCipherBasis)
   strict private
@@ -543,7 +546,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Misty
+  // Testmethods for class TCipher_Misty
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Misty = class(TCipherBasis)
   strict private
@@ -562,7 +565,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_NewDES
+  // Testmethods for class TCipher_NewDES
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_NewDES = class(TCipherBasis)
   strict private
@@ -581,7 +584,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Q128
+  // Testmethods for class TCipher_Q128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Q128 = class(TCipherBasis)
   strict private
@@ -600,7 +603,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_RC2
+  // Testmethods for class TCipher_RC2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_RC2 = class(TCipherBasis)
   strict private
@@ -619,7 +622,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_RC5
+  // Testmethods for class TCipher_RC5
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_RC5 = class(TCipherBasis)
   strict private
@@ -638,7 +641,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_SAFER
+  // Testmethods for class TCipher_SAFER
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_SAFER = class(TCipherBasis)
   strict private
@@ -657,7 +660,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Shark
+  // Testmethods for class TCipher_Shark
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Shark = class(TCipherBasis)
   strict private
@@ -676,7 +679,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_Skipjack
+  // Testmethods for class TCipher_Skipjack
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Skipjack = class(TCipherBasis)
   strict private
@@ -695,7 +698,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_TEA
+  // Testmethods for class TCipher_TEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_TEA = class(TCipherBasis)
   strict private
@@ -714,7 +717,7 @@ type
     procedure TestClassByName;
   end;
 
-  // Testmethoden for Klasse TCipher_XTEA
+  // Testmethods for class TCipher_XTEA
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_XTEA = class(TCipherBasis)
   strict private
@@ -758,6 +761,25 @@ var
 begin
   ReturnValue := FCipher_Null.ClassByName('TCipher_Null');
   CheckEquals(TCipher_Null, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_Null.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_Null.Context;
+
+  CheckEquals(   0,  ReturnValue.KeySize);
+  CheckEquals(   1,  ReturnValue.BlockSize);
+  CheckEquals(   8,  ReturnValue.BufferSize);
+  CheckEquals(   0,  ReturnValue.UserSize);
+  CheckEquals(false, ReturnValue.UserSave);
+  CheckEquals(true,  [ctNull, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Null.TestIdentity;
+begin
+  CheckEquals($1678C79D, FCipher_Null.Identity);
 end;
 
 procedure TestTCipher_Blowfish.Done;

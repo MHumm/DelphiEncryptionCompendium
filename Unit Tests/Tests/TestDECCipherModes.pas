@@ -243,12 +243,21 @@ type
     ///   Class reference for the cipher class used for this test.
     /// </summary>
     TestClass  : TFormattedCipherClass;
+    /// <summary>
+    ///   Block concatenating/padding mode
+    /// </summary>
+    Mode       : TCipherMode;
   end;
 
   /// <summary>
   ///   Prototype for a function to be passed to the generic test method
   /// </summary>
   TTestFunction = procedure(Source, Dest: PByteArray; Size: Integer) of object;
+
+  /// <summary>
+  ///   Defines what is being tested: Encryption or decryption
+  /// </summary>
+  TTestDirection = (dEncode, dDecode);
 
   /// <summary>
   ///   Testmethoden für Klasse TDECCipherModes
@@ -259,7 +268,16 @@ type
     FDECPaddedCipher: TTestableCipherModes;
   private
     procedure DoTest(Data: array of TTestEntry; TestFunction: TTestFunction);
-    procedure DoTestNew(Data: array of TTestEntry; TestFunction: TTestFunction);
+    /// <summary>
+    ///   Carries out the actual test
+    /// </summary>
+    /// <param name="Data">
+    ///   Array with the data definint inputs and outputs for the tests
+    /// </param>
+    /// <param name="Direction">
+    ///   dEncode for Encode/Encrypt, dDecode for Decode/Decrypt
+    /// </param>
+    procedure DoTestNew(Data: array of TTestEntry; Direction:TTestDirection);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -289,7 +307,7 @@ type
 implementation
 
 uses
-  DECCiphers;
+  DECCiphers, DECUtil;
 
 procedure TestTDECCipherModes.SetUp;
 begin
@@ -344,10 +362,10 @@ begin
   end;
 end;
 
-procedure TestTDECCipherModes.DoTestNew(Data: array of TTestEntry; TestFunction:TTestFunction);
+procedure TestTDECCipherModes.DoTestNew(Data: array of TTestEntry; Direction:TTestDirection);
 var
-  Dest   : TByteArray;
-  Source : TByteArray;
+  Dest   : TBytes;
+  Source : TBytes;
   i, n   : Integer;
   Result : string;
 
@@ -356,40 +374,47 @@ begin
   for i := Low(Data) to High(Data) do
   begin
     Cipher := Data[i].TestClass.Create;
+    Cipher.Mode := Data[i].Mode;
 
     try
-      if Cipher.ClassType <> TCipher_Null then
-        FDECPaddedCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
+//      if Cipher.ClassType <> TCipher_Null then
+        Cipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
+//      else
+//        Cipher.Init(BytesOf(RawByteString('')), BytesOf(Data[i].InitVector), $FF);
 
+      SetLength(Source, length(Data[i].Input));
       FillChar(Source[0], Length(Source), $FF);
-      FillChar(Dest[0],   Length(Dest),   $FF);
-
 
       Move(Data[i].Input[1], Source[0], Length(Data[i].Input));
 
-
-
-      TestFunction(@Source, @Dest, Length(Data[i].Input));
+      if (Direction = dEncode) then
+        Dest := Cipher.EncodeBytes(Source)
+      else
+        Dest := Cipher.DecodeBytes(Source);
 
       // Output is noted non hexadecimal
       if Data[i].Output <> '' then
       begin
-        for n := Low(Dest) to Length(Data[i].Output)-1 do
+        for n := Low(Dest) to High(Dest) do
         begin
           CheckEquals(Ord(Data[i].Output[n+1]), Dest[n],
                       IntToStr(n+1) + '. position is wrong. ' +
-                      IntToStr(i) + '. test series');
+                      IntToStr(i) + '. test series. Expected: ' +
+                      Data[i].Output + ' was: ' + DECUtil.BytesToRawString(Dest));
         end;
       end
       else
       begin
         // Output is noted in hex
         Result := '';
-        for n := Low(Dest) to (Length(Data[i].OutputHex) div 2)-1 do
+        for n := Low(Dest) to High(Dest) do
           Result := Result + IntToHex(Dest[n], 2);
 
-        CheckEquals(string(Data[i].OutputHex), Result,
-                    'Data is wrong. ' + IntToStr(i) + '. test series');
+        for n := Low(Result) to High(Result) do
+          CheckEquals(Data[i].OutputHex[n], Result[n],
+                      IntToStr(n+1) + '. position is wrong. ' +
+                      IntToStr(i) + '. test series. Expected: ' +
+                      Data[i].OutputHex + ' was: ' + Result);
       end;
 
     finally
@@ -400,112 +425,189 @@ end;
 
 procedure TestTDECCipherModes.TestEncodeECBx;
 const
-  Data: array[1..3] of TTestEntry = ((Input: 'ABCDEFGHIJKLMNOPQRSTUVWX'; Output: 'ABCDEFGHIJKLMNOPQRSTUVWX'; TestClass: TCipher_Null),
-                                     (Input: '000000000000000000000000'; Output: '000000000000000000000000'; TestClass: TCipher_Null),
-                                     (Input: '12345678'; Output: '12345678'; TestClass: TCipher_Null));
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      TestClass: TCipher_Null;
+                                      Mode:      TCipherMode.cmECBx),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '000000000000000000000000';
+                                      TestClass: TCipher_Null;
+                                      Mode:      TCipherMode.cmECBx),
+                                     (Input:     '12345678';
+                                      Output:    '12345678';
+                                      TestClass: TCipher_Null;
+                                      Mode:      TCipherMode.cmECBx));
 begin
-  DoTest(Data, FDECPaddedCipher.EncodeECBx);
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeOFB8;
 const
   Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                       Output:    '';
-                                      OutputHex: 'BEBDBCBBBAB9B8B7B6B5B4B3B2B1B0AFAEADACABAAA9A8A7'),
+                                      OutputHex: 'FE5A89A7A1F4BD29DFFADFCF2239E1F581106DA64C0AE704';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFB8),
                                      (Input:     '000000000000000000000000';
                                       Output:    '';
-                                      OutputHex: 'CFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF'),
+                                      OutputHex: '8F28FAD3D482CA51A680A4B35F479E95E0720EC2296C806C';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFB8),
                                      (Input:     '12345678';
                                       Output:    '';
-                                      OutputHex: 'CECDCCCBCAC9C8C7'));
+                                      OutputHex: '8E2AF9D7D184CD59';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFB8));
 begin
-  DoTest(Data, FDECPaddedCipher.EncodeOFB8);
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCFB8;
 const
   Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                       Output:    '';
-                                      OutputHex: 'BEBDBCBBBAB9B8B7B6B5B4B3B2B1B0AFAEADACABAAA9A8A7'),
+                                      OutputHex: 'FE604D3DF9C2AE3D7839AF5BDEE8FD9078544A1996EC4F1C';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFB8),
                                      (Input:     '000000000000000000000000';
                                       Output:    '';
-                                      OutputHex: 'CFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFCF'),
+                                      OutputHex: '8FD637FC449CF89F1E5EEBB66BED15C7F8C63B4481F74C5A';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFB8),
                                      (Input:     '12345678';
                                       Output:    '';
-                                      OutputHex: 'CECDCCCBCAC9C8C7'));
+                                      OutputHex: '8EF08D6414063543';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFB8));
 begin
-  DoTest(Data, FDECPaddedCipher.EncodeCFB8);
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCFS8;
-var
-  Size: Integer;
-  Dest: PByteArray;
-  Source: PByteArray;
+const
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    '';
+                                      OutputHex: 'FEAB3839BBA059FC1FECBF798CEF537803F10F15967E3ABD';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFS8),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '';
+                                      OutputHex: '8F9661B53B06D611BA916562F4420DA4B6EFD550BF01DA2C';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFS8),
+                                     (Input:     '12345678';
+                                      Output:    '';
+                                      OutputHex: '8EEA2F2F86159953';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFS8));
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  // FDECPaddedCipher.EncodeCFS8(Source, Dest, Size);
-  // TODO: Methodenergebnisse prüfen
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCFBx;
-var
-  Size: Integer;
-  Dest: PByteArray;
-  Source: PByteArray;
+const
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    '';
+                                      OutputHex: 'FED41297FD52669BF5361295F3BD937EF0644802ED92DC21';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFBx),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '';
+                                      OutputHex: '8FA661E3882411E35337C15BAE99B7CBDD988AC4FABB3368';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFBx),
+                                     (Input:     '12345678';
+                                      Output:    '';
+                                      OutputHex: '8EA462E78D2216EB';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFBx));
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  // FDECPaddedCipher.EncodeCFBx(Source, Dest, Size);
-  // TODO: Methodenergebnisse prüfen
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeOFBx;
-var
-  Size: Integer;
-  Dest: PByteArray;
-  Source: PByteArray;
+const
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    '';
+                                      OutputHex: 'FED41297FD52669B4221F913AF978D77292C958B2A9E289A';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFBx),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '';
+                                      OutputHex: '8FA661E3882411E33B5B826FD2E9F217484EF6EF4FF84FF2';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFBx),
+                                     (Input:     '12345678';
+                                      Output:    '';
+                                      OutputHex: '8EA462E78D2216EB';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmOFBx));
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  // FDECPaddedCipher.EncodeOFBx(Source, Dest, Size);
-  // TODO: Methodenergebnisse prüfen
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCFSx;
-var
-  Size: Integer;
-  Dest: PByteArray;
-  Source: PByteArray;
+const
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    '';
+                                      OutputHex: 'FED41297FD52669B0DEC818A383ADA358E469BE634B7AFBC';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFSx),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '';
+                                      OutputHex: '8FA661E3882411E3DB7258A29424D11F2BB6B4607D24D5DB';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFSx),
+                                     (Input:     '12345678';
+                                      Output:    '';
+                                      OutputHex: '8EA462E78D2216EB';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCFSx));
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  // FDECPaddedCipher.EncodeCFSx(Source, Dest, Size);
-  // TODO: Methodenergebnisse prüfen
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCBCx;
 const
   Data: array[1..3] of TTestEntry = ((Input     : 'ABCDEFGHIJKLMNOPQRSTUVWX';
                                       Output    : 'qsqwqsq'+#$7f+'89:;<=>/ikioikiw';
-                                      InitVector: '01234567'),
+                                      InitVector: '01234567';
+                                      TestClass : TCipher_NULL;
+                                      Mode      : TCipherMode.cmCBCx),
                                      (Input     : '000000000000000000000000';
                                       Output    : '00000000' + #0#0#0#0#0#0#0#0 + '00000000';
-                                      InitVector: #0#0#0#0#0#0#0#0),
+                                      InitVector: #0#0#0#0#0#0#0#0;
+                                      TestClass : TCipher_NULL;
+                                      Mode      : TCipherMode.cmCBCx),
                                      (Input     : '000000000000000000000000';
                                       Output    : #0#1#2#3#4#5#6#7 + '01234567' + #0#1#2#3#4#5#6#7;
-                                      InitVector: '01234567'));
+                                      InitVector: '01234567';
+                                      TestClass : TCipher_NULL;
+                                      Mode      : TCipherMode.cmCBCx));
 
 begin
-  DoTest(Data, FDECPaddedCipher.EncodeCBCx);
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestEncodeCTSx;
-var
-  Size: Integer;
-  Dest: PByteArray;
-  Source: PByteArray;
+const
+  Data: array[1..3] of TTestEntry = ((Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:    '';
+                                      OutputHex: 'FD73DA2F279926A19A65EFA8EBA5EEB67A778C6CD73294F5';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCTSx),
+                                     (Input:     '000000000000000000000000';
+                                      Output:    '';
+                                      OutputHex: '1D538CCCF38138A6BD4655272CC67443A0E32865EB422745';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCTSx),
+                                     (Input:     '12345678';
+                                      Output:    '';
+                                      OutputHex: '8EE274B893296F9E';
+                                      TestClass: TCipher_1DES;
+                                      Mode:      TCipherMode.cmCTSx));
 begin
-  // TODO: Methodenaufrufparameter einrichten
-  // FDECPaddedCipher.EncodeCTSx(Source, Dest, Size);
-  // TODO: Methodenergebnisse prüfen
+  DoTestNew(Data, dEncode);
 end;
 
 procedure TestTDECCipherModes.TestDecodeECBx;
@@ -513,10 +615,15 @@ var
   Dest   : TByteArray;
   Source : TByteArray;
 const
-  Data: array[1..3] of TTestEntry = ((Input: 'ABCDEFGHIJKLMNOPQRSTUVWX'; Output: 'ABCDEFGHIJKLMNOPQRSTUVWX'),
-                                     (Input: '000000000000000000000000'; Output: '000000000000000000000000'),
-                                     (Input: '12345678'; Output: '12345678')); //,
-//                                     (Input: ''; Output: ''));
+  Data: array[1..3] of TTestEntry = ((Input:      'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      Output:     'ABCDEFGHIJKLMNOPQRSTUVWX';
+                                      TestClass : TCipher_NULL),
+                                     (Input:      '000000000000000000000000';
+                                      Output:     '000000000000000000000000';
+                                      TestClass : TCipher_NULL),
+                                     (Input:      '12345678';
+                                      Output:     '12345678';
+                                      TestClass : TCipher_NULL));
 begin
   DoTest(Data, FDECPaddedCipher.DecodeECBx);
 end;
@@ -591,13 +698,16 @@ procedure TestTDECCipherModes.TestDecodeCBCx;
 const
   Data: array[1..3] of TTestEntry = ((Input     : 'qsqwqsq'+#$7f+'89:;<=>/ikioikiw';
                                       Output    : 'ABCDEFGHIJKLMNOPQRSTUVWX';
-                                      InitVector: '01234567'),
+                                      InitVector: '01234567';
+                                      TestClass : TCipher_NULL),
                                      (Input     : '00000000' + #0#0#0#0#0#0#0#0 + '00000000';
                                       Output    : '000000000000000000000000';
-                                      InitVector: #0#0#0#0#0#0#0#0),
+                                      InitVector: #0#0#0#0#0#0#0#0;
+                                      TestClass : TCipher_NULL),
                                      (Input     : #0#1#2#3#4#5#6#7 + '01234567' + #0#1#2#3#4#5#6#7;
                                       Output    : '000000000000000000000000';
-                                      InitVector: '01234567'));
+                                      InitVector: '01234567';
+                                      TestClass : TCipher_NULL));
 
 begin
   DoTest(Data, FDECPaddedCipher.DecodeCBCx);

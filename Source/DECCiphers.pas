@@ -827,7 +827,7 @@ class function TCipher_Null.Context: TCipherContext;
 begin
   Result.KeySize := 0;
   Result.BlockSize := 1;
-  Result.BufferSize := 32;
+  Result.BufferSize := 8;
   Result.UserSize := 0;
   Result.UserSave := False;
   Result.CipherType := [ctNull, ctSymmetric];

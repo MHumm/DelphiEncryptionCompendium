@@ -704,7 +704,7 @@ end;
 
 procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF);
 begin
-  if Length(Key) = 0 then
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if IVector <> nil then
@@ -715,7 +715,7 @@ end;
 
 procedure TDECCipher.Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF);
 begin
-  if Length(Key) = 0 then
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
@@ -729,7 +729,7 @@ end;
 {$IFDEF ANSISTRINGSUPPORTED}
 procedure TDECCipher.Init(const Key, IVector: AnsiString; IFiller: Byte);
 begin
-  if Length(Key) = 0 then
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
@@ -744,7 +744,7 @@ end;
 {$IFNDEF NEXTGEN}
 procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
 begin
-  if Length(Key) = 0 then
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
