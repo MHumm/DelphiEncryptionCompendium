@@ -563,9 +563,7 @@ end;
 procedure TDECCipherModes.Decode(const Source; var Dest; DataSize: Integer);
 begin
   CheckState([csInitialized, csDecode, csDone]);
-  if (ctNull in Context.CipherType) then
-    DoEncode(@Source, @Dest, DataSize) // copy the data untouched
-  else
+
   case FMode of
     cmECBx:   DecodeECBx(@Source, @Dest, DataSize);
     cmCBCx:   DecodeCBCx(@Source, @Dest, DataSize);
