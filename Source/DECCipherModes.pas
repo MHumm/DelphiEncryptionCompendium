@@ -260,9 +260,9 @@ procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);
 begin
   CheckState([csInitialized, csEncode, csDone]);
 
-  if ClassType = TCipher_Null then
-    DoEncode(@Source, @Dest, DataSize) // copy the data untouched
-  else
+//  if (ctNull in Context.CipherType) then
+//    DoEncode(@Source, @Dest, DataSize) // copy the data untouched
+//  else
   case FMode of
     cmECBx:   EncodeECBx(@Source, @Dest, DataSize);
     cmCBCx:   EncodeCBCx(@Source, @Dest, DataSize);
@@ -563,9 +563,7 @@ end;
 procedure TDECCipherModes.Decode(const Source; var Dest; DataSize: Integer);
 begin
   CheckState([csInitialized, csDecode, csDone]);
-  if ClassType = TCipher_Null then
-    DoEncode(@Source, @Dest, DataSize) // copy the data untouched
-  else
+
   case FMode of
     cmECBx:   DecodeECBx(@Source, @Dest, DataSize);
     cmCBCx:   DecodeCBCx(@Source, @Dest, DataSize);

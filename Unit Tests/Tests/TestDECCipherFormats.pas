@@ -434,7 +434,7 @@ begin
     result := FCipherTwoFish.DecodeStringToString(InputStr);
 
     CheckEquals(string(FTestData[i].PlainTextData),
-                result,
+                string(result),
                 'Fehler in TestDecodeWideStringToString ' + i.ToString);
   end;
 end;
@@ -648,7 +648,7 @@ begin
     result := FCipherTwoFish.EncodeStringToString(InputStr);
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
-                WideString(StringOf(TFormat_HexL.Encode(BytesOf(result)))),
+                StringOf(TFormat_HexL.Encode(BytesOf(result))),
                 'Fehler in TestEncodeWideStringToString ' + i.ToString);
   end;
 end;
