@@ -204,7 +204,7 @@ type
   strict private
     FFormat_Base64: TFormat_Base64;
     const
-      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+      cTestDataEncode : array[1..12] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: ''),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
@@ -216,9 +216,21 @@ type
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
          Output: 'VGVzdAoJqlWqVao='),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: 'VGVzdAoJqlWqVapV'));
+         Output: 'VGVzdAoJqlWqVapV'),
+        (Input:  RawByteString('f');
+         Output: 'Zg=='),
+        (Input:  RawByteString('fo');
+         Output: 'Zm8='),
+        (Input:  RawByteString('foo');
+         Output: 'Zm9v'),
+        (Input:  RawByteString('foob');
+         Output: 'Zm9vYg=='),
+        (Input:  RawByteString('fooba');
+         Output: 'Zm9vYmE='),
+        (Input:  RawByteString('foobar');
+         Output: 'Zm9vYmFy'));
 
-      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+      cTestDataDecode : array[1..12] of TestRecRawByteString = (
         (Input:  '';
          Output: RawByteString('')),
         (Input:  'VGVzdAoJqlU=';
@@ -230,7 +242,19 @@ type
         (Input:  'VGVzdAoJqlWqVao=';
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
         (Input:  'VGVzdAoJqlWqVapV';
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  'Zg==';
+         Output: RawByteString('f')),
+        (Input: 'Zm8=';
+         Output:  RawByteString('fo')),
+        (Input:  'Zm9v';
+         Output: RawByteString('foo')),
+        (Input:  'Zm9vYg==';
+         Output: RawByteString('foob')),
+        (Input:  'Zm9vYmE=';
+         Output: RawByteString('fooba')),
+        (Input:  'Zm9vYmFy';
+         Output: RawByteString('foobar')));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -241,6 +265,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -792,6 +819,79 @@ end;
 procedure TestTFormat_Base64.TestIdentity;
 begin
   CheckEquals($521BA151, FFormat_BASE64.Identity);
+end;
+
+procedure TestTFormat_Base64.TestIsValidRawByteString;
+begin
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('')));
+
+  CheckEquals(true, TFormat_Base64.IsValid(
+    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')));
+  CheckEquals(false, TFormat_Base64.IsValid(BytesOf('abc"')));
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('6')));
+end;
+
+procedure TestTFormat_Base64.TestIsValidTBytes;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do //Low(Data) to High(Data) do
+  begin
+    SrcBuf[0] := i; //ord(Data[i]);
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base64.IsValid(SrcBuf),
+                  'Failure at char nr: ' + i.ToHexString + ' ');
+  end;
+
+  SrcBuf := BytesOf('abc"');
+  CheckEquals(false, TFormat_Base64.IsValid(SrcBuf), 'Data: abc" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+              'Data: ' + cTestDataDecode[3].Input);
+end;
+
+procedure TestTFormat_Base64.TestIsValidTypeless;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf, 0));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do //Low(Data) to High(Data) do
+  begin
+    SrcBuf[0] := i; //ord(Data[i]);
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char nr: ' + i.ToHexString + ' ');
+  end;
+
+
+  SrcBuf := BytesOf('abc"');
+  CheckEquals(false, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)), 'Data: abc" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'Data: ' + cTestDataDecode[3].Input);
 end;
 
 procedure TestTFormat_Radix64.SetUp;

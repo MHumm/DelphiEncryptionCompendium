@@ -145,6 +145,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; override;
   end;
@@ -639,6 +640,27 @@ begin
   end;
 
   SetLength(Dest, n-j);
+end;
+
+class function TFormat_Base64.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
+begin
+  Result := True;
+  T := CharTableBinary;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // A-Z, a-z, 0-9, + and /
+    if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
 end;
 
 class function TFormat_Radix64.DoExtractCRC(const Data; var Size: Integer): UInt32;

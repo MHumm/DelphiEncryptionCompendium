@@ -108,7 +108,7 @@ type
 // Byte Ordering
 
 /// <summary>
-///   Reverses all bits in the passed value
+///   Reverses all bits in the passed value, 1111 0000 will be 0000 1111 afterwards
 /// </summary>
 /// <param name="Source">
 ///   Value who's bits are to be reversed
