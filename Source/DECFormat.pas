@@ -190,6 +190,8 @@ type
     class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     /// <summary>
     ///   Changes the number of chars after which a line break is being added
@@ -690,6 +692,22 @@ begin
       Size := L - PByte(@Data);
     end;
   except
+  end;
+end;
+
+class function TFormat_Radix64.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  crc24: UInt32;
+begin
+  // Radix64 is like Base64 but with additional CRC24 checksum
+  result := TFormat_Base64.IsValid(Data, Size);
+
+  // Check contained checksum as well
+  if result then
+  begin
+    crc24 := DoExtractCRC(Data, SIze);
+    // recalc CRC and compare
+{ TODO : Implement this! }
   end;
 end;
 
