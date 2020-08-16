@@ -1048,6 +1048,10 @@ begin
   // No CRC present due to missing =
   CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'XtiM'),
               'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'XtiM'),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
 end;
 
 procedure TestTFormat_Radix64.TestIsValidTBytes;
@@ -1065,6 +1069,21 @@ begin
     CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf),
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  // Check if wrong CRC is not being detected
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'))),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'))),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'))),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'))),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
 end;
 
 procedure TestTFormat_Radix64.TestIsValidTypeless;
@@ -1082,6 +1101,25 @@ begin
     CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  // Check if wrong CRC is not being detected
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
 end;
 
 procedure TestTFormat_UU.SetUp;

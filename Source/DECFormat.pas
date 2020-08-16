@@ -709,7 +709,8 @@ end;
 
 class function TFormat_Radix64.DoIsValid(const Data; Size: Integer): Boolean;
 var
-  crc24: UInt32;
+  crc24 : UInt32;
+  Dest  : TBytes;
 begin
   // Radix64 is like Base64 but with additional CRC24 checksum
   result := TFormat_Base64.IsValid(Data, Size);
@@ -718,12 +719,15 @@ begin
   if result then
   begin
     crc24 := DoExtractCRC(Data, Size);
+    // we need to decode, because it removes the CR/LF linebreaks which would
+    // invalidate the checksum
+    inherited DoDecode(Data, Dest, Size);
 
     if crc24 <> $FFFFFFFF then
     begin
       // recalc CRC and compare
       SwapBytes(crc24, 3);
-      result := crc24 = CRCCalc(CRC_24, Data, Size);
+      result := crc24 = CRCCalc(CRC_24, Dest[0], Length(Dest));
     end
     else
       result := false;
