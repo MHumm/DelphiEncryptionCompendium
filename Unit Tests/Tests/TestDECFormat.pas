@@ -317,6 +317,9 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestEncodeRawByteStringWithCharsPerLine;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -822,18 +825,30 @@ begin
 end;
 
 procedure TestTFormat_Base64.TestIsValidRawByteString;
+var
+  i : Integer;
 begin
   CheckEquals(true, TFormat_Base64.IsValid(BytesOf('')));
 
   CheckEquals(true, TFormat_Base64.IsValid(
-    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=')));
+    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A)));
   CheckEquals(false, TFormat_Base64.IsValid(BytesOf('abc"')));
   CheckEquals(true, TFormat_Base64.IsValid(BytesOf('6')));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Base64.IsValid(RawByteString(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_Base64.TestIsValidTBytes;
 const
-  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A;
 var
   SrcBuf: TBytes;
   i     : Integer;
@@ -844,7 +859,7 @@ begin
   SetLength(SrcBuf, 1);
   for i := 0 to 255 do //Low(Data) to High(Data) do
   begin
-    SrcBuf[0] := i; //ord(Data[i]);
+    SrcBuf[0] := i;
 
     if (pos(chr(i), Data) > 0) then
       CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
@@ -859,12 +874,23 @@ begin
 
   SrcBuf := BytesOf(cTestDataDecode[3].Input);
   CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
-              'Data: ' + cTestDataDecode[3].Input);
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_Base64.TestIsValidTypeless;
 const
-  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A;
 var
   SrcBuf: TBytes;
   i     : Integer;
@@ -875,7 +901,7 @@ begin
   SetLength(SrcBuf, 1);
   for i := 0 to 255 do //Low(Data) to High(Data) do
   begin
-    SrcBuf[0] := i; //ord(Data[i]);
+    SrcBuf[0] := i;
 
     if (pos(chr(i), Data) > 0) then
       CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
@@ -891,7 +917,18 @@ begin
 
   SrcBuf := BytesOf(cTestDataDecode[3].Input);
   CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
-              'Data: ' + cTestDataDecode[3].Input);
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_Radix64.SetUp;
@@ -985,6 +1022,66 @@ end;
 procedure TestTFormat_Radix64.TestIdentity;
 begin
   CheckEquals($B5607732, FFormat_Radix64.Identity);
+end;
+
+procedure TestTFormat_Radix64.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Radix64.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  // Check if wrong CRC is not being detected
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'XtiM'),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+end;
+
+procedure TestTFormat_Radix64.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_Radix64.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_UU.SetUp;

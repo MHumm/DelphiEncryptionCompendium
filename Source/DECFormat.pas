@@ -172,6 +172,18 @@ type
     /// </summary>
     class var FCharsPerLine : UInt32;
   protected
+    /// <summary>
+    ///   Extracts the CRC24 checksum from Radix64 encoded data
+    /// </summary>
+    /// <param name="Data">
+    ///   Data to extract the checksum from
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the data in byte
+    /// </param>
+    /// <returns>
+    ///   CRC24 checksum if present, otherwise $FFFFFFFF
+    /// </returns>
     class function DoExtractCRC(const Data; var Size: Integer): UInt32;
     /// <summary>
     ///   If the data given exceeds FCharsPerLine, means the maximum allowed
@@ -654,8 +666,8 @@ begin
   S := @Data;
   while Result and (Size > 0) do
   begin
-    // A-Z, a-z, 0-9, + and /
-    if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D] then
+    // A-Z, a-z, 0-9, + and / and CR/LF
+    if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D, $0D, $0A] then
     begin
       Inc(S);
       Dec(Size);
@@ -705,9 +717,16 @@ begin
   // Check contained checksum as well
   if result then
   begin
-    crc24 := DoExtractCRC(Data, SIze);
-    // recalc CRC and compare
-{ TODO : Implement this! }
+    crc24 := DoExtractCRC(Data, Size);
+
+    if crc24 <> $FFFFFFFF then
+    begin
+      // recalc CRC and compare
+      SwapBytes(crc24, 3);
+      result := crc24 = CRCCalc(CRC_24, Data, Size);
+    end
+    else
+      result := false;
   end;
 end;
 
