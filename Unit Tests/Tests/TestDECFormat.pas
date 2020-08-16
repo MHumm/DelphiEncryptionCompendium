@@ -419,6 +419,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -1177,75 +1180,45 @@ begin
 end;
 
 procedure TestTFormat_UU.TestIsValidRawByteString;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
-  SrcBuf: TBytes;
   i     : Integer;
 begin
-  SetLength(SrcBuf, 0);
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(DECUtil.BytesToRawString(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(RawByteString('')),'Failure on empty string ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(DECUtil.BytesToRawString(SrcBuf)));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_UU.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  { TODO : Negative tests missing! }
 end;
 
 procedure TestTFormat_UU.TestIsValidTBytes;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
   SrcBuf: TBytes;
   i     : Integer;
 begin
   SetLength(SrcBuf, 0);
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(SrcBuf, length(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(SrcBuf, length(SrcBuf)),
+              'Failure on empty buffer ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(SrcBuf[0], length(SrcBuf)));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_UU.IsValid(BytesOf(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  { TODO : Negative tests missing! }
 end;
 
 procedure TestTFormat_UU.TestIsValidTypeless;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
   SrcBuf: TBytes;
   i     : Integer;
@@ -1253,14 +1226,21 @@ var
 begin
   SetLength(SrcBuf, 0);
   p := @SrcBuf;
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(p^, length(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(p^, length(SrcBuf)),
+              'Failure on empty buffer ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    SrcBuf := BytesOf(cTestDataDecode[i].Input);
     p := @SrcBuf[0];
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(p^, length(SrcBuf)));
+    CheckEquals(true, TFormat_UU.IsValid(p^, length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  { TODO : Negative tests missing! }
 end;
 
 procedure TestTFormat_XX.SetUp;
@@ -1315,6 +1295,70 @@ end;
 procedure TestTFormat_XX.TestIdentity;
 begin
   CheckEquals($A4D3DC9F, FFormat_XX.Identity);
+end;
+
+procedure TestTFormat_XX.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  CheckEquals(true, TFormat_XX.IsValid(RawByteString('')),'Failure on empty string ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_XX.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  { TODO : Negative tests missing! }
+end;
+
+procedure TestTFormat_XX.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SetLength(SrcBuf, 0);
+  CheckEquals(true, TFormat_XX.IsValid(SrcBuf, length(SrcBuf)),
+              'Failure on empty buffer ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_XX.IsValid(BytesOf(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  { TODO : Negative tests missing! }
+end;
+
+procedure TestTFormat_XX.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+  p     : Pointer;
+begin
+  SetLength(SrcBuf, 0);
+  p := @SrcBuf;
+  CheckEquals(true, TFormat_XX.IsValid(p^, length(SrcBuf)),
+              'Failure on empty buffer ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    SrcBuf := BytesOf(cTestDataDecode[i].Input);
+    p := @SrcBuf[0];
+    CheckEquals(true, TFormat_XX.IsValid(p^, length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  { TODO : Negative tests missing! }
 end;
 
 procedure TestTFormat_ESCAPE.SetUp;
