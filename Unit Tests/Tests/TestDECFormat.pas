@@ -1194,7 +1194,13 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  CheckEquals(false, TFormat_UU.IsValid(RawByteString('#$61')), 'Failure on char $61 ');
+  CheckEquals(false, TFormat_UU.IsValid('(5&5S' + #$61 + '=`H)JE4`'), 'Failure on char $61 inbetween ');
+  CheckEquals(false, TFormat_UU.IsValid(#$61 + '(5&5S=`H)JE4`'), 'Failure on char $61 at the beginning ');
+  CheckEquals(false, TFormat_UU.IsValid('(5&5S=`H)JE4`' + #$61), 'Failure on char $61 at the end ');
+
+  for i := $61 to $FF do
+    CheckEquals(false, TFormat_UU.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTBytes;
@@ -1215,7 +1221,13 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString('#$61'))), 'Failure on char $61 ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf('(5&5S' + #$61 + '=`H)JE4`')), 'Failure on char $61 inbetween ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf(#$61 + '(5&5S=`H)JE4`')), 'Failure on char $61 at the beginning ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf('(5&5S=`H)JE4`' + #$61)), 'Failure on char $61 at the end ');
+
+  for i := $61 to $FF do
+    CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString(chr(i)))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTypeless;
@@ -1240,7 +1252,26 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  SrcBuf := BytesOf(RawByteString('#$61'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 ');
+  SrcBuf := BytesOf('(5&5S' + #$61 + '=`H)JE4`');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 inbetween ');
+  SrcBuf := BytesOf(#$61 + '(5&5S=`H)JE4`');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the beginning ');
+  SrcBuf := BytesOf('(5&5S=`H)JE4`' + #$61);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the end ');
+
+  SetLength(SrcBuf, 1);
+  for i := $61 to $FF do
+  begin
+    SrcBuf[0] := i;
+    p := @SrcBuf;
+    CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
+  end;
 end;
 
 procedure TestTFormat_XX.SetUp;
@@ -1312,7 +1343,18 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  CheckEquals(false, TFormat_XX.IsValid(RawByteString('#$2A')), 'Failure on char $2A ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4Jn' + #$2A + 'R+c7eZI+'), 'Failure on char $2A inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(#$2A +'6J4JnR+c7eZI+'), 'Failure on char $2A at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4JnR+c7eZI+' + #$2A), 'Failure on char $2A at the end ');
+
+  CheckEquals(false, TFormat_XX.IsValid(RawByteString('#$23')), 'Failure on char $23 ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4Jn' + #$23 + 'R+c7eZI+'), 'Failure on char $23 inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(#$23 +'6J4JnR+c7eZI+'), 'Failure on char $23 at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4JnR+c7eZI+' + #$23), 'Failure on char $23 at the end ');
+
+  for i := $7B to $FF do
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_XX.TestIsValidTBytes;
@@ -1333,7 +1375,18 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(RawByteString('#$2A'))), 'Failure on char $2A ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4Jn' + #$2A + 'R+c7eZI+')), 'Failure on char $2A inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(#$2A +'6J4JnR+c7eZI+')), 'Failure on char $2A at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4JnR+c7eZI+' + #$2A)), 'Failure on char $2A at the end ');
+
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(RawByteString('#$23'))), 'Failure on char $23 ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4Jn' + #$23 + 'R+c7eZI+')), 'Failure on char $23 inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(#$23 +'6J4JnR+c7eZI+')), 'Failure on char $23 at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4JnR+c7eZI+' + #$23)), 'Failure on char $23 at the end ');
+
+  for i := $7B to $FF do
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_XX.TestIsValidTypeless;
@@ -1358,7 +1411,39 @@ begin
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
 
-  { TODO : Negative tests missing! }
+  Srcbuf := BytesOf(RawByteString('#$2A'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A ');
+  Srcbuf := BytesOf('6J4Jn' + #$2A + 'R+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A inbetween ');
+  Srcbuf := BytesOf(#$2A +'6J4JnR+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A at the beginning ');
+  Srcbuf := BytesOf('6J4JnR+c7eZI+' + #$2A);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A at the end ');
+
+  Srcbuf := BytesOf(RawByteString('#$23'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 ');
+  Srcbuf := BytesOf('6J4Jn' + #$23 + 'R+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 inbetween ');
+  Srcbuf := BytesOf(#$23 +'6J4JnR+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 at the beginning ');
+  Srcbuf := BytesOf('6J4JnR+c7eZI+' + #$23);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 at the end ');
+
+  SetLength(SrcBuf, 1);
+  for i := $61 to $FF do
+  begin
+    SrcBuf[0] := i;
+    p := @SrcBuf;
+    CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
+  end;
 end;
 
 procedure TestTFormat_ESCAPE.SetUp;
