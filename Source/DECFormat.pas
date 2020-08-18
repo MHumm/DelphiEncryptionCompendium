@@ -239,7 +239,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
-    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
   end;
@@ -259,6 +259,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
   end;
@@ -1066,7 +1067,7 @@ begin
     begin
       if (S^ >= 7) and (S^ <= 13) then
       begin
-        D^ := $5C; // \-Zeichen
+        D^ := $5C; // \ char
         Inc(D);
         D^ := ESCAPE_CodesL[S^ - 7];
         Inc(D);
@@ -1097,7 +1098,7 @@ begin
         Dec(i, 2);
       end
       else
-      // S° is " char?
+      // S^ is " char?
       if S^ = $22 then
       begin
         D^ := $5C; // \ char
@@ -1118,6 +1119,69 @@ begin
   end;
 
   SetLength(Dest, PByte(D) - PByte(Dest));
+end;
+
+class function TFormat_ESCAPE.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
+begin
+  Result := False;
+  T := CharTableBinary;
+  S := @Data;
+
+  while Size > 0 do
+  begin
+    if S^ > $7F then
+      Exit;
+
+    // start of an escape sequence
+    if S^ = $5C then
+    begin
+      Dec(Size);
+      Inc(S);
+
+      // \ at the end
+      if Size <= 0 then
+        Exit;
+
+      // X for hex notation
+      if UpCaseBinary(S^) = $58 then
+      begin
+        Inc(S);
+        Dec(Size);
+
+        // incomplete hex notation follows?
+        if (Size < 2) or (TableFindBinary(UpCaseBinary(S^), T, 16) < 0) then
+          Exit;
+
+        Inc(S);
+        Dec(Size);
+
+        if (TableFindBinary(UpCaseBinary(S^), T, 16) < 0) then
+          Exit;
+
+        Inc(S);
+        Dec(Size);
+      end
+      else
+      begin
+        // \ with invalid following char?
+        if TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7) < 0 then
+          Exit;
+
+        Dec(Size);
+        Inc(S);
+      end;
+    end
+    else
+    begin
+      Dec(Size);
+      Inc(S);
+    end;
+  end;
+
+  Result := True;
 end;
 
 class procedure TFormat_ESCAPE.DoDecode(const Source; var Dest: TBytes; Size: Integer);
