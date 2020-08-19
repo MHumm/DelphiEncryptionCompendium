@@ -482,6 +482,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -1498,6 +1501,79 @@ end;
 procedure TestTFormat_ESCAPE.TestIdentity;
 begin
   CheckEquals($168B27C3, FFormat_ESCAPE.Identity);
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('')),'Failure on empty string ');
+
+  // check all chars in allowed range
+  for i := 32 to 127 do
+  begin
+    // skip backslash
+    if i = $5C then
+      Continue;
+
+    CheckEquals(true, TFormat_ESCAPE.IsValid(chr(i)),
+                'Failure on ' + chr(i) + ' ');
+  end;
+
+  // check hex chars
+  for i := 128 to 255 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid('\X' + IntToHex(i, 2)),
+                'Failure on \X' + IntToHex(i, 2));
+  end;
+
+  // check hex chars
+  for i := 0 to 31 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid('\X' + IntToHex(i, 2)),
+                'Failure on \X' + IntToHex(i, 2));
+  end;
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('abcABC123'),
+              'Failure on abcABC123');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\a'),
+              'Failure on \a');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\b'),
+              'Failure on \b');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\t'),
+              'Failure on \t');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\n'),
+              'Failure on \n');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\r'),
+              'Failure on \r');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\v'),
+              'Failure on \v');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid('\f
+  '),
+              'Failure on \f');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid(''),
+              'Failure on ');
+
+  CheckEquals(true, TFormat_ESCAPE.IsValid(''),
+              'Failure on ');
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidTBytes;
+begin
+
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidTypeless;
+begin
+
 end;
 
 { TFormatTestsBase }
