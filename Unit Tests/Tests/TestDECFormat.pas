@@ -481,7 +481,7 @@ type
         (Input:  RawByteString('Test\"hello\"U');
          Output: RawByteString('Test"hello"U')));
 
-        cTestDataIsValied : array[1..8] of TestRecIsValidRawByteString = (
+        cTestDataIsValid : array[1..18] of TestRecIsValidRawByteString = (
           (Input  : 'abcABC123';
            Result : true),
           (Input  : '\a';
@@ -497,7 +497,27 @@ type
           (Input  : '\v';
            Result : true),
           (Input  : '\f';
-           Result : true));
+           Result : true),
+          (Input  : '\r\n';
+           Result : true),
+          (Input  : 'Data\tvalue';
+           Result : true),
+          (Input  : '\';
+           Result : false),
+          (Input  : '\q';
+           Result : false),
+          (Input  : '\X41';
+           Result : true),
+          (Input  : '\X';
+           Result : false),
+          (Input  : '\X9';
+           Result : false),
+          (Input  : '\XZZ';
+           Result : false),
+          (Input  : chr(6);
+           Result : false),
+          (Input  : chr(31);
+           Result : false));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -1525,7 +1545,9 @@ end;
 
 procedure TestTFormat_ESCAPE.TestIsValidRawByteString;
 var
-  i     : Integer;
+  i   : Integer;
+  Str : RawByteString;
+  p   : ^Byte;
 begin
   CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('')),'Failure on empty string ');
 
@@ -1536,41 +1558,44 @@ begin
     if i = $5C then
       Continue;
 
-    CheckEquals(true, TFormat_ESCAPE.IsValid(chr(i)),
-                'Failure on ' + chr(i) + ' ');
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))),
+                i.ToString + ': Failure on ' + chr(i) + ' ');
   end;
 
   // check hex chars
   for i := 128 to 255 do
   begin
-    CheckEquals(true, TFormat_ESCAPE.IsValid('\X' + IntToHex(i, 2)),
-                'Failure on \X' + IntToHex(i, 2));
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
   for i := 0 to 31 do
   begin
-    CheckEquals(true, TFormat_ESCAPE.IsValid('\X' + IntToHex(i, 2)),
-                'Failure on \X' + IntToHex(i, 2));
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
-  for i := Low(cTestDataIsValied) to High(cTestDataIsValied) do
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
   begin
-    CheckEquals(cTestDataIsValied[i].Result,
-                TFormat_ESCAPE.IsValid(cTestDataIsValied[i].Input),
-                'Failure on ' + cTestDataIsValied[i].Input);
+    CheckEquals(cTestDataIsValid[i].Result,
+                TFormat_ESCAPE.IsValid(cTestDataIsValid[i].Input),
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
 
-  CheckEquals(true, TFormat_ESCAPE.IsValid(''),
-              'Failure on ');
+  Str := 'A';
+  p := @Str[1];
+  p^ := $80;
 
-  CheckEquals(true, TFormat_ESCAPE.IsValid(''),
-              'Failure on ');
+  CheckEquals(false,
+              TFormat_ESCAPE.IsValid(Str),
+              'Failure on ' + string(Str));
 end;
 
 procedure TestTFormat_ESCAPE.TestIsValidTBytes;
 var
-  i     : Integer;
+  i : Integer;
+  b : TBytes;
 begin
   CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf(RawByteString(''))),'Failure on empty string ');
 
@@ -1582,29 +1607,34 @@ begin
       Continue;
 
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf(chr(i))),
-                'Failure on ' + chr(i) + ' ');
+                i.ToString + ': Failure on ' + chr(i) + ' ');
   end;
 
   // check hex chars
   for i := 128 to 255 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
-                'Failure on \X' + IntToHex(i, 2));
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
   for i := 0 to 31 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
-                'Failure on \X' + IntToHex(i, 2));
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
-  for i := Low(cTestDataIsValied) to High(cTestDataIsValied) do
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
   begin
-    CheckEquals(cTestDataIsValied[i].Result,
-                TFormat_ESCAPE.IsValid(BytesOf(cTestDataIsValied[i].Input)),
-                'Failure on ' + cTestDataIsValied[i].Input);
+    CheckEquals(cTestDataIsValid[i].Result,
+                TFormat_ESCAPE.IsValid(BytesOf(cTestDataIsValid[i].Input)),
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
+
+  // Chars outside the range 32..$7F need to be hex encoded e.g. \X80
+  SetLength(b, 1);
+  b[0] := $80;
+  CheckEquals(false, TFormat_ESCAPE.IsValid(b), 'Failure on: #$80 ');
 end;
 
 procedure TestTFormat_ESCAPE.TestIsValidTypeless;
@@ -1631,7 +1661,7 @@ begin
   begin
     Bytes := BytesOf('\X' + IntToHex(i, 2));
     CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                'Failure on \X' + IntToHex(i, 2));
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
@@ -1639,16 +1669,21 @@ begin
   begin
     Bytes := BytesOf('\X' + IntToHex(i, 2));
     CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                'Failure on \X' + IntToHex(i, 2));
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
   end;
 
-  for i := Low(cTestDataIsValied) to High(cTestDataIsValied) do
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
   begin
-    Bytes := BytesOf(cTestDataIsValied[i].Input);
-    CheckEquals(cTestDataIsValied[i].Result,
+    Bytes := BytesOf(cTestDataIsValid[i].Input);
+    CheckEquals(cTestDataIsValid[i].Result,
                 TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                'Failure on ' + cTestDataIsValied[i].Input);
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
+
+  // Chars outside the range 32..$7F need to be hex encoded e.g. \X80
+  SetLength(Bytes, 1);
+  Bytes[0] := $80;
+  CheckEquals(false, TFormat_ESCAPE.IsValid(Bytes[0], 1), 'Failure on: #$80 ');
 end;
 
 { TFormatTestsBase }

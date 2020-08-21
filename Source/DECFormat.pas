@@ -1132,7 +1132,7 @@ begin
 
   while Size > 0 do
   begin
-    if S^ > $7F then
+    if (S^ > $7F) or (S^ < 32) then
       Exit;
 
     // start of an escape sequence
