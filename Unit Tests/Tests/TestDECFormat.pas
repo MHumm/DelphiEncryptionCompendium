@@ -1,6 +1,3 @@
-// IsValid Tests für MIME32 und für manche anderen fehlen noch!!!
-// Und dann alle anderen Encode/Decode für die anderen Klassen
-
 {*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
