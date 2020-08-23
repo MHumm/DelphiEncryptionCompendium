@@ -145,6 +145,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; override;
   end;
@@ -171,6 +172,18 @@ type
     /// </summary>
     class var FCharsPerLine : UInt32;
   protected
+    /// <summary>
+    ///   Extracts the CRC24 checksum from Radix64 encoded data
+    /// </summary>
+    /// <param name="Data">
+    ///   Data to extract the checksum from
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the data in byte
+    /// </param>
+    /// <returns>
+    ///   CRC24 checksum if present, otherwise $FFFFFFFF
+    /// </returns>
     class function DoExtractCRC(const Data; var Size: Integer): UInt32;
     /// <summary>
     ///   If the data given exceeds FCharsPerLine, means the maximum allowed
@@ -189,6 +202,8 @@ type
     class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     /// <summary>
     ///   Changes the number of chars after which a line break is being added
@@ -224,7 +239,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
-    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
   end;
@@ -244,6 +259,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
   end;
@@ -641,6 +657,27 @@ begin
   SetLength(Dest, n-j);
 end;
 
+class function TFormat_Base64.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
+begin
+  Result := True;
+  T := CharTableBinary;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // A-Z, a-z, 0-9, + and / and CR/LF
+    if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D, $0D, $0A] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
+end;
+
 class function TFormat_Radix64.DoExtractCRC(const Data; var Size: Integer): UInt32;
 var
   L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
@@ -668,6 +705,33 @@ begin
       Size := L - PByte(@Data);
     end;
   except
+  end;
+end;
+
+class function TFormat_Radix64.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  crc24 : UInt32;
+  Dest  : TBytes;
+begin
+  // Radix64 is like Base64 but with additional CRC24 checksum
+  result := TFormat_Base64.IsValid(Data, Size);
+
+  // Check contained checksum as well
+  if result then
+  begin
+    crc24 := DoExtractCRC(Data, Size);
+    // we need to decode, because it removes the CR/LF linebreaks which would
+    // invalidate the checksum
+    inherited DoDecode(Data, Dest, Size);
+
+    if crc24 <> $FFFFFFFF then
+    begin
+      // recalc CRC and compare
+      SwapBytes(crc24, 3);
+      result := crc24 = CRCCalc(CRC_24, Dest[0], Length(Dest));
+    end
+    else
+      result := false;
   end;
 end;
 
@@ -1003,7 +1067,7 @@ begin
     begin
       if (S^ >= 7) and (S^ <= 13) then
       begin
-        D^ := $5C; // \-Zeichen
+        D^ := $5C; // \ char
         Inc(D);
         D^ := ESCAPE_CodesL[S^ - 7];
         Inc(D);
@@ -1034,7 +1098,7 @@ begin
         Dec(i, 2);
       end
       else
-      // S° is " char?
+      // S^ is " char?
       if S^ = $22 then
       begin
         D^ := $5C; // \ char
@@ -1055,6 +1119,69 @@ begin
   end;
 
   SetLength(Dest, PByte(D) - PByte(Dest));
+end;
+
+class function TFormat_ESCAPE.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
+begin
+  Result := False;
+  T := CharTableBinary;
+  S := @Data;
+
+  while Size > 0 do
+  begin
+    if (S^ > $7F) or (S^ < 32) then
+      Exit;
+
+    // start of an escape sequence
+    if S^ = $5C then
+    begin
+      Dec(Size);
+      Inc(S);
+
+      // \ at the end
+      if Size <= 0 then
+        Exit;
+
+      // X for hex notation
+      if UpCaseBinary(S^) = $58 then
+      begin
+        Inc(S);
+        Dec(Size);
+
+        // incomplete hex notation follows?
+        if (Size < 2) or (TableFindBinary(UpCaseBinary(S^), T, 16) < 0) then
+          Exit;
+
+        Inc(S);
+        Dec(Size);
+
+        if (TableFindBinary(UpCaseBinary(S^), T, 16) < 0) then
+          Exit;
+
+        Inc(S);
+        Dec(Size);
+      end
+      else
+      begin
+        // \ with invalid following char?
+        if TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7) < 0 then
+          Exit;
+
+        Dec(Size);
+        Inc(S);
+      end;
+    end
+    else
+    begin
+      Dec(Size);
+      Inc(S);
+    end;
+  end;
+
+  Result := True;
 end;
 
 class procedure TFormat_ESCAPE.DoDecode(const Source; var Dest: TBytes; Size: Integer);

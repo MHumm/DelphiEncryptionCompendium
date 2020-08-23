@@ -44,6 +44,14 @@ type
   end;
 
   /// <summary>
+  ///   Type used for some IsValid test data lists
+  /// </summary>
+  TestRecIsValidRawByteString = record
+    Input  : RawByteString;
+    Result : Boolean;
+  end;
+
+  /// <summary>
   ///   Type needed for passing the right encode or decode method to the
   ///   generic encode/decode test
   /// </summary>
@@ -204,7 +212,7 @@ type
   strict private
     FFormat_Base64: TFormat_Base64;
     const
-      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+      cTestDataEncode : array[1..12] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: ''),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
@@ -216,9 +224,21 @@ type
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
          Output: 'VGVzdAoJqlWqVao='),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: 'VGVzdAoJqlWqVapV'));
+         Output: 'VGVzdAoJqlWqVapV'),
+        (Input:  RawByteString('f');
+         Output: 'Zg=='),
+        (Input:  RawByteString('fo');
+         Output: 'Zm8='),
+        (Input:  RawByteString('foo');
+         Output: 'Zm9v'),
+        (Input:  RawByteString('foob');
+         Output: 'Zm9vYg=='),
+        (Input:  RawByteString('fooba');
+         Output: 'Zm9vYmE='),
+        (Input:  RawByteString('foobar');
+         Output: 'Zm9vYmFy'));
 
-      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+      cTestDataDecode : array[1..12] of TestRecRawByteString = (
         (Input:  '';
          Output: RawByteString('')),
         (Input:  'VGVzdAoJqlU=';
@@ -230,7 +250,19 @@ type
         (Input:  'VGVzdAoJqlWqVao=';
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
         (Input:  'VGVzdAoJqlWqVapV';
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  'Zg==';
+         Output: RawByteString('f')),
+        (Input: 'Zm8=';
+         Output:  RawByteString('fo')),
+        (Input:  'Zm9v';
+         Output: RawByteString('foo')),
+        (Input:  'Zm9vYg==';
+         Output: RawByteString('foob')),
+        (Input:  'Zm9vYmE=';
+         Output: RawByteString('fooba')),
+        (Input:  'Zm9vYmFy';
+         Output: RawByteString('foobar')));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -241,6 +273,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -290,6 +325,9 @@ type
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
     procedure TestEncodeRawByteStringWithCharsPerLine;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -389,6 +427,9 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
@@ -439,6 +480,44 @@ type
          Output: RawByteString('Test\'+#$07 +'U')),
         (Input:  RawByteString('Test\"hello\"U');
          Output: RawByteString('Test"hello"U')));
+
+        cTestDataIsValid : array[1..18] of TestRecIsValidRawByteString = (
+          (Input  : 'abcABC123';
+           Result : true),
+          (Input  : '\a';
+           Result : true),
+          (Input  : '\b';
+           Result : true),
+          (Input  : '\t';
+           Result : true),
+          (Input  : '\n';
+           Result : true),
+          (Input  : '\r';
+           Result : true),
+          (Input  : '\v';
+           Result : true),
+          (Input  : '\f';
+           Result : true),
+          (Input  : '\r\n';
+           Result : true),
+          (Input  : 'Data\tvalue';
+           Result : true),
+          (Input  : '\';
+           Result : false),
+          (Input  : '\q';
+           Result : false),
+          (Input  : '\X41';
+           Result : true),
+          (Input  : '\X';
+           Result : false),
+          (Input  : '\X9';
+           Result : false),
+          (Input  : '\XZZ';
+           Result : false),
+          (Input  : chr(6);
+           Result : false),
+          (Input  : chr(31);
+           Result : false));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -449,17 +528,14 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
   end;
 
 implementation
-
-type
-  TestRecIsValidRawByteString = record
-    Input: RawByteString;
-    Valid: Boolean;
-  end;
 
 procedure TestTFormat_HEX.SetUp;
 begin
@@ -794,6 +870,113 @@ begin
   CheckEquals($521BA151, FFormat_BASE64.Identity);
 end;
 
+procedure TestTFormat_Base64.TestIsValidRawByteString;
+var
+  i : Integer;
+begin
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('')));
+
+  CheckEquals(true, TFormat_Base64.IsValid(
+    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A)));
+  CheckEquals(false, TFormat_Base64.IsValid(BytesOf('abc"')));
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('6')));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Base64.IsValid(RawByteString(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_Base64.TestIsValidTBytes;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do //Low(Data) to High(Data) do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base64.IsValid(SrcBuf),
+                  'Failure at char nr: ' + i.ToHexString + ' ');
+  end;
+
+  SrcBuf := BytesOf('abc"');
+  CheckEquals(false, TFormat_Base64.IsValid(SrcBuf), 'Data: abc" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base64.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_Base64.TestIsValidTypeless;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='#$0D#$0A;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf, 0));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do //Low(Data) to High(Data) do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char nr: ' + i.ToHexString + ' ');
+  end;
+
+
+  SrcBuf := BytesOf('abc"');
+  CheckEquals(false, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)), 'Data: abc" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
 procedure TestTFormat_Radix64.SetUp;
 begin
   FFormat_Radix64 := TFormat_Radix64.Create;
@@ -887,6 +1070,104 @@ begin
   CheckEquals($B5607732, FFormat_Radix64.Identity);
 end;
 
+procedure TestTFormat_Radix64.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Radix64.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  // Check if wrong CRC is not being detected
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'XtiM'),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  CheckEquals(false, TFormat_Radix64.IsValid('VGVzdAoJqlU=' + #13 + #10 +'XtiM'),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
+end;
+
+procedure TestTFormat_Radix64.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  // Check if wrong CRC is not being detected
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'))),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'))),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'))),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  CheckEquals(false, TFormat_Radix64.IsValid(BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'))),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
+end;
+
+procedure TestTFormat_Radix64.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  // Check if wrong CRC is not being detected
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=XtiN'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=XtiN' + ' ');
+
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'=YtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC-failure not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'=YtiM' + ' ');
+
+  // No CRC present due to missing =
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'XtiM' + ' ');
+
+  // CRC has double =
+  SrcBuf := BytesOf(RawByteString('VGVzdAoJqlU=' + #13 + #10 +'XtiM'));
+  CheckEquals(false, TFormat_Radix64.IsValid(SrcBuf[0], length(SrcBuf)),
+              'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
+end;
+
 procedure TestTFormat_UU.SetUp;
 begin
   FFormat_UU := TFormat_UU.Create;
@@ -942,75 +1223,57 @@ begin
 end;
 
 procedure TestTFormat_UU.TestIsValidRawByteString;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
-  SrcBuf: TBytes;
   i     : Integer;
 begin
-  SetLength(SrcBuf, 0);
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(DECUtil.BytesToRawString(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(RawByteString('')),'Failure on empty string ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(DECUtil.BytesToRawString(SrcBuf)));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_UU.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  CheckEquals(false, TFormat_UU.IsValid(RawByteString('#$61')), 'Failure on char $61 ');
+  CheckEquals(false, TFormat_UU.IsValid('(5&5S' + #$61 + '=`H)JE4`'), 'Failure on char $61 inbetween ');
+  CheckEquals(false, TFormat_UU.IsValid(#$61 + '(5&5S=`H)JE4`'), 'Failure on char $61 at the beginning ');
+  CheckEquals(false, TFormat_UU.IsValid('(5&5S=`H)JE4`' + #$61), 'Failure on char $61 at the end ');
+
+  for i := $61 to $FF do
+    CheckEquals(false, TFormat_UU.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTBytes;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
   SrcBuf: TBytes;
   i     : Integer;
 begin
   SetLength(SrcBuf, 0);
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(SrcBuf, length(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(SrcBuf, length(SrcBuf)),
+              'Failure on empty buffer ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(SrcBuf[0], length(SrcBuf)));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_UU.IsValid(BytesOf(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString('#$61'))), 'Failure on char $61 ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf('(5&5S' + #$61 + '=`H)JE4`')), 'Failure on char $61 inbetween ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf(#$61 + '(5&5S=`H)JE4`')), 'Failure on char $61 at the beginning ');
+  CheckEquals(false, TFormat_UU.IsValid(BytesOf('(5&5S=`H)JE4`' + #$61)), 'Failure on char $61 at the end ');
+
+  for i := $61 to $FF do
+    CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString(chr(i)))), 'Failure on char #' + i.ToHexString + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTypeless;
-const
-  TestData : array[1..5] of TestRecIsValidRawByteString = (
-    (Input: RawByteString('(5&5S=`H)JE4`');
-     Valid: true),
-    (Input: RawByteString(')5&5S=`H)JE6J');
-     Valid: true),
-    (Input: RawByteString('*5&5S=`H)JE6J50``');
-     Valid: true),
-    (Input: RawByteString('+5&5S=`H)JE6J5:H`');
-     Valid: true),
-    (Input: RawByteString(',5&5S=`H)JE6J5:I5');
-     Valid: true));
-
 var
   SrcBuf: TBytes;
   i     : Integer;
@@ -1018,13 +1281,39 @@ var
 begin
   SetLength(SrcBuf, 0);
   p := @SrcBuf;
-  CheckEquals(TestData[1].Valid, TFormat_UU.IsValid(p^, length(SrcBuf)));
+  CheckEquals(true, TFormat_UU.IsValid(p^, length(SrcBuf)),
+              'Failure on empty buffer ');
 
-  for i := Low(TestData)+1 to High(TestData) do
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
   begin
-    SrcBuf := BytesOf(RawByteString(TestData[i].Input));
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    SrcBuf := BytesOf(cTestDataDecode[i].Input);
     p := @SrcBuf[0];
-    CheckEquals(TestData[i].Valid, TFormat_UU.IsValid(p^, length(SrcBuf)));
+    CheckEquals(true, TFormat_UU.IsValid(p^, length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  SrcBuf := BytesOf(RawByteString('#$61'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 ');
+  SrcBuf := BytesOf('(5&5S' + #$61 + '=`H)JE4`');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 inbetween ');
+  SrcBuf := BytesOf(#$61 + '(5&5S=`H)JE4`');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the beginning ');
+  SrcBuf := BytesOf('(5&5S=`H)JE4`' + #$61);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the end ');
+
+  SetLength(SrcBuf, 1);
+  for i := $61 to $FF do
+  begin
+    SrcBuf[0] := i;
+    p := @SrcBuf;
+    CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
   end;
 end;
 
@@ -1082,6 +1371,124 @@ begin
   CheckEquals($A4D3DC9F, FFormat_XX.Identity);
 end;
 
+procedure TestTFormat_XX.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  CheckEquals(true, TFormat_XX.IsValid(RawByteString('')),'Failure on empty string ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_XX.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  CheckEquals(false, TFormat_XX.IsValid(RawByteString('#$2A')), 'Failure on char $2A ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4Jn' + #$2A + 'R+c7eZI+'), 'Failure on char $2A inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(#$2A +'6J4JnR+c7eZI+'), 'Failure on char $2A at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4JnR+c7eZI+' + #$2A), 'Failure on char $2A at the end ');
+
+  CheckEquals(false, TFormat_XX.IsValid(RawByteString('#$23')), 'Failure on char $23 ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4Jn' + #$23 + 'R+c7eZI+'), 'Failure on char $23 inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(#$23 +'6J4JnR+c7eZI+'), 'Failure on char $23 at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid('6J4JnR+c7eZI+' + #$23), 'Failure on char $23 at the end ');
+
+  for i := $7B to $FF do
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
+end;
+
+procedure TestTFormat_XX.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SetLength(SrcBuf, 0);
+  CheckEquals(true, TFormat_XX.IsValid(SrcBuf, length(SrcBuf)),
+              'Failure on empty buffer ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    CheckEquals(true, TFormat_XX.IsValid(BytesOf(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(RawByteString('#$2A'))), 'Failure on char $2A ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4Jn' + #$2A + 'R+c7eZI+')), 'Failure on char $2A inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(#$2A +'6J4JnR+c7eZI+')), 'Failure on char $2A at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4JnR+c7eZI+' + #$2A)), 'Failure on char $2A at the end ');
+
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(RawByteString('#$23'))), 'Failure on char $23 ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4Jn' + #$23 + 'R+c7eZI+')), 'Failure on char $23 inbetween ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf(#$23 +'6J4JnR+c7eZI+')), 'Failure on char $23 at the beginning ');
+  CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4JnR+c7eZI+' + #$23)), 'Failure on char $23 at the end ');
+
+  for i := $7B to $FF do
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
+end;
+
+procedure TestTFormat_XX.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+  p     : Pointer;
+begin
+  SetLength(SrcBuf, 0);
+  p := @SrcBuf;
+  CheckEquals(true, TFormat_XX.IsValid(p^, length(SrcBuf)),
+              'Failure on empty buffer ');
+
+  for i := Low(cTestDataDecode) to High(cTestDataDecode) do
+  begin
+    if cTestDataDecode[i].Input = '' then
+      Continue;
+
+    SrcBuf := BytesOf(cTestDataDecode[i].Input);
+    p := @SrcBuf[0];
+    CheckEquals(true, TFormat_XX.IsValid(p^, length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+
+  Srcbuf := BytesOf(RawByteString('#$2A'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A ');
+  Srcbuf := BytesOf('6J4Jn' + #$2A + 'R+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A inbetween ');
+  Srcbuf := BytesOf(#$2A +'6J4JnR+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A at the beginning ');
+  Srcbuf := BytesOf('6J4JnR+c7eZI+' + #$2A);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $2A at the end ');
+
+  Srcbuf := BytesOf(RawByteString('#$23'));
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 ');
+  Srcbuf := BytesOf('6J4Jn' + #$23 + 'R+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 inbetween ');
+  Srcbuf := BytesOf(#$23 +'6J4JnR+c7eZI+');
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 at the beginning ');
+  Srcbuf := BytesOf('6J4JnR+c7eZI+' + #$23);
+  p := @SrcBuf;
+  CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char $23 at the end ');
+
+  SetLength(SrcBuf, 1);
+  for i := $61 to $FF do
+  begin
+    SrcBuf[0] := i;
+    p := @SrcBuf;
+    CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
+  end;
+end;
+
 procedure TestTFormat_ESCAPE.SetUp;
 begin
   FFormat_ESCAPE := TFormat_ESCAPE.Create;
@@ -1134,6 +1541,149 @@ end;
 procedure TestTFormat_ESCAPE.TestIdentity;
 begin
   CheckEquals($168B27C3, FFormat_ESCAPE.Identity);
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidRawByteString;
+var
+  i   : Integer;
+  Str : RawByteString;
+  p   : ^Byte;
+begin
+  CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('')),'Failure on empty string ');
+
+  // check all chars in allowed range
+  for i := 32 to 127 do
+  begin
+    // skip backslash
+    if i = $5C then
+      Continue;
+
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))),
+                i.ToString + ': Failure on ' + chr(i) + ' ');
+  end;
+
+  // check hex chars
+  for i := 128 to 255 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  // check hex chars
+  for i := 0 to 31 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
+  begin
+    CheckEquals(cTestDataIsValid[i].Result,
+                TFormat_ESCAPE.IsValid(cTestDataIsValid[i].Input),
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+  end;
+
+  Str := 'A';
+  p := @Str[1];
+  p^ := $80;
+
+  CheckEquals(false,
+              TFormat_ESCAPE.IsValid(Str),
+              'Failure on ' + string(Str));
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidTBytes;
+var
+  i : Integer;
+  b : TBytes;
+begin
+  CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf(RawByteString(''))),'Failure on empty string ');
+
+  // check all chars in allowed range
+  for i := 32 to 127 do
+  begin
+    // skip backslash
+    if i = $5C then
+      Continue;
+
+    CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf(chr(i))),
+                i.ToString + ': Failure on ' + chr(i) + ' ');
+  end;
+
+  // check hex chars
+  for i := 128 to 255 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  // check hex chars
+  for i := 0 to 31 do
+  begin
+    CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
+  begin
+    CheckEquals(cTestDataIsValid[i].Result,
+                TFormat_ESCAPE.IsValid(BytesOf(cTestDataIsValid[i].Input)),
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+  end;
+
+  // Chars outside the range 32..$7F need to be hex encoded e.g. \X80
+  SetLength(b, 1);
+  b[0] := $80;
+  CheckEquals(false, TFormat_ESCAPE.IsValid(b), 'Failure on: #$80 ');
+end;
+
+procedure TestTFormat_ESCAPE.TestIsValidTypeless;
+var
+  i     : Integer;
+  Bytes : TBytes;
+begin
+  SetLength(Bytes, 0);
+  CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes, 0),'Failure on empty string ');
+
+  // check all chars in allowed range
+  for i := 32 to 127 do
+  begin
+    // skip backslash
+    if i = $5C then
+      Continue;
+
+    CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))[low(RawByteString)], 1),
+                'Failure on ' + chr(i) + ' ');
+  end;
+
+  // check hex chars
+  for i := 128 to 255 do
+  begin
+    Bytes := BytesOf('\X' + IntToHex(i, 2));
+    CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  // check hex chars
+  for i := 0 to 31 do
+  begin
+    Bytes := BytesOf('\X' + IntToHex(i, 2));
+    CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
+                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+  end;
+
+  for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
+  begin
+    Bytes := BytesOf(cTestDataIsValid[i].Input);
+    CheckEquals(cTestDataIsValid[i].Result,
+                TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
+                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+  end;
+
+  // Chars outside the range 32..$7F need to be hex encoded e.g. \X80
+  SetLength(Bytes, 1);
+  Bytes[0] := $80;
+  CheckEquals(false, TFormat_ESCAPE.IsValid(Bytes[0], 1), 'Failure on: #$80 ');
 end;
 
 { TFormatTestsBase }

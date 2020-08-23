@@ -2,12 +2,11 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+The following versions are currently supported with security fixes:
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| 5.2      | :white_check_mark: |
+| 5.2      | :cross_mark:       |
 | 6.0 Beta | :white_check_mark: |
 
 ## Reporting a Vulnerability
@@ -19,7 +18,7 @@ and report the issue with as much detail as possible.
 For instace add these details:
 
 * description of the issue
-* circumstandes under which the issue occurs
+* circumstances under which the issue occurs
 * steps to reproduce the issue
 * Delphi version used
 * if possible supply a small demo application showing the issue
