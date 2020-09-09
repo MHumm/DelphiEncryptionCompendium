@@ -5911,6 +5911,8 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  SetDefaultCipherClass(TCipher_Null);
+
   {$IFNDEF ManualRegisterClasses}
   TCipher_Null.RegisterClass(TDECCipher.ClassList);
   TCipher_Blowfish.RegisterClass(TDECCipher.ClassList);
