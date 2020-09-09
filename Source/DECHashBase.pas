@@ -728,7 +728,6 @@ begin
   FBufferIndex := 0;
   FBufferSize := BlockSize;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-//  ReallocMem(FBuffer, FBufferSize);
   FBuffer := ReallocMemory(FBuffer, FBufferSize);
 
   FillChar(FBuffer^, FBufferSize, 0);
