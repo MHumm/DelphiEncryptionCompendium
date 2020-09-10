@@ -37,7 +37,36 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat = class(TTestCase)
   strict private
-  private
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestClassByInvalidIdentityHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFormatByInvalidIdentityHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestClassByInvalidNameHelperEmpty;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestClassByInvalidNameHelperWrong;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFormatByInvalidNameHelperEmpty;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFormatByInvalidNameHelperWrong;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -45,6 +74,16 @@ type
     procedure TestUpCaseBinary;
     procedure TestTableFindBinary;
     procedure TestIsClassListCreated;
+
+    procedure TestClassByName;
+    procedure TestClassByInvalidName;
+    procedure TestClassByIdentity;
+    procedure TestClassByInvalidIdentity;
+    procedure TestValidFormat;
+    procedure TestFormatByName;
+    procedure TestFormatByInvalidName;
+    procedure TestFormatByIdentity;
+    procedure TestFormatByInvalidIdentity;
   end;
 
   // Test methods for class TFormat_Copy
@@ -69,6 +108,9 @@ type
   end;
 
 implementation
+
+uses
+  DECFormat;
 
 type
   TestRecTableFindBinary = record
@@ -226,6 +268,17 @@ begin
   end;
 end;
 
+procedure TestTFormat.TestValidFormat;
+var
+  result : Boolean;
+begin
+  result := ValidFormat(nil) = TFormat_Copy;
+  CheckEquals(true, result, 'ValidFormat(nil) must be TFormat_Copy');
+
+  result := ValidFormat(TFormat_ESCAPE) = TFormat_ESCAPE;
+  CheckEquals(true, result, 'ValidFormat(TFormat_ESCAPE) must be TFormat_ESCAPE');
+end;
+
 procedure TestTFormat.TestTableFindBinary;
 const
   Data : array[1..8] of TestRecTableFindBinary = (
@@ -274,6 +327,108 @@ begin
                                       Data[i].Len);
     CheckEquals(Data[i].Index, Idx);
   end;
+end;
+
+procedure TestTFormat.TestFormatByIdentity;
+var
+  result : Boolean;
+begin
+  result := FormatByIdentity(1178647993) = TFormat_Copy;
+  CheckEquals(true, result, 'TFormat_Copy must have Identity value 1178647993');
+
+  result := FormatByIdentity(3786628779) = TFormat_HEX;
+  CheckEquals(true, result, 'TFormat_HEX must have Identity value 3786628779');
+
+  result := FormatByIdentity(970117517) = TFormat_HEXL;
+  CheckEquals(true, result, 'TFormat_HEXL must have Identity value 970117517');
+end;
+
+procedure TestTFormat.TestFormatByInvalidIdentity;
+begin
+  CheckException(TestFormatByInvalidIdentityHelper, EDECClassNotRegisteredException);
+end;
+
+procedure TestTFormat.TestFormatByInvalidIdentityHelper;
+begin
+  FormatByIdentity(0);
+end;
+
+procedure TestTFormat.TestClassByIdentity;
+var
+  result : Boolean;
+begin
+  result := TDECFormat.ClassByIdentity(1178647993) = TFormat_Copy;
+  CheckEquals(true, result, 'TFormat_Copy must have Identity value 1178647993');
+
+  result := TDECFormat.ClassByIdentity(3786628779) = TFormat_HEX;
+  CheckEquals(true, result, 'TFormat_HEX must have Identity value 3786628779');
+
+  result := TDECFormat.ClassByIdentity(970117517) = TFormat_HEXL;
+  CheckEquals(true, result, 'TFormat_HEXL must have Identity value 970117517');
+end;
+
+procedure TestTFormat.TestClassByInvalidIdentity;
+begin
+  CheckException(TestClassByInvalidIdentityHelper, EDECClassNotRegisteredException);
+end;
+
+procedure TestTFormat.TestClassByInvalidIdentityHelper;
+begin
+  TDECFormat.ClassByIdentity(0);
+end;
+
+procedure TestTFormat.TestClassByName;
+var
+  result : Boolean;
+begin
+  result := TDECFormat.ClassByName('TFormat_HEX') = TFormat_HEX;
+  CheckEquals(true, result, 'Class TFormat_HEX not found');
+
+  result := TDECFormat.ClassByName('TFormat_HEXL') = TFormat_HEXL;
+  CheckEquals(true, result, 'Class TFormat_HEXL not found');
+end;
+
+procedure TestTFormat.TestClassByInvalidName;
+begin
+  CheckException(TestClassByInvalidNameHelperEmpty, EDECClassNotRegisteredException);
+  CheckException(TestClassByInvalidNameHelperWrong, EDECClassNotRegisteredException);
+end;
+
+procedure TestTFormat.TestClassByInvalidNameHelperEmpty;
+begin
+  TDECFormat.ClassByName('');
+end;
+
+procedure TestTFormat.TestClassByInvalidNameHelperWrong;
+begin
+  TDECFormat.ClassByName('Foo');
+end;
+
+procedure TestTFormat.TestFormatByName;
+var
+  result : Boolean;
+begin
+  result := FormatByName('TFormat_HEX') = TFormat_HEX;
+  CheckEquals(true, result, 'Class TFormat_HEX not found');
+
+  result := FormatByName('TFormat_HEXL') = TFormat_HEXL;
+  CheckEquals(true, result, 'Class TFormat_HEXL not found');
+end;
+
+procedure TestTFormat.TestFormatByInvalidName;
+begin
+  CheckException(TestClassByInvalidNameHelperEmpty, EDECClassNotRegisteredException);
+  CheckException(TestClassByInvalidNameHelperWrong, EDECClassNotRegisteredException);
+end;
+
+procedure TestTFormat.TestFormatByInvalidNameHelperEmpty;
+begin
+  FormatByName('');
+end;
+
+procedure TestTFormat.TestFormatByInvalidNameHelperWrong;
+begin
+  FormatByName('Foo');
 end;
 
 procedure TestTFormat.TestIsClassListCreated;
