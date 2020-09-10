@@ -126,6 +126,7 @@ type
   TestTDECHash = class(TTestCase)
   published
     procedure TestIsClassListCreated;
+    procedure TestValidCipherSetDefaultCipherClass;
   end;
 
   // Test methods for class THash_MD2
@@ -3763,6 +3764,27 @@ end;
 procedure TestTDECHash.TestIsClassListCreated;
 begin
   CheckEquals(true, assigned(TDECHash.ClassList), 'Class list has not been created in initialization');
+end;
+
+procedure TestTDECHash.TestValidCipherSetDefaultCipherClass;
+var
+  result : Boolean;
+begin
+  // Asumption: nobody has called SetDefaultHash yet so DECHash' initialization
+  // of THash_SHA256 is in effect
+  result := ValidHash(nil) = THash_SHA256;
+  CheckEquals(true, result, 'Initial default hash is not THash_SHA256');
+
+  SetDefaultHashClass(THash_Haval160);
+  result := ValidHash(nil) = THash_Haval160;
+  CheckEquals(true, result, 'Changed default cipher is not THash_Haval160');
+
+  SetDefaultHashClass(THash_Haval192);
+  result := ValidHash(nil) = THash_Haval192;
+  CheckEquals(true, result, 'Changed default cipher is not THash_Haval192');
+
+  result := ValidHash(THash_Square) = THash_Square;
+  CheckEquals(true, result, 'Passed cipher is not THash_Square');
 end;
 
 { TDECHashUnitTest }

@@ -574,7 +574,7 @@ function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
 ///   Defines which cipher class to return by ValidCipher if passing nil to that
 /// </summary>
 /// <param name="CipherClass">
-///   Class type of a cipher class to return by ValidCIpher if passing nil to
+///   Class type of a cipher class to return by ValidCipher if passing nil to
 ///   that one. This parameter should not be nil!
 /// </param>
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
@@ -598,7 +598,7 @@ resourcestring
 
 var
   /// <summary>
-  ///   Cipher class returned by ValidCIpher if nil is passed as parameter to it
+  ///   Cipher class returned by ValidCipher if nil is passed as parameter to it
   /// </summary>
   FDefaultCipherClass: TDECCipherClass = nil;
 
