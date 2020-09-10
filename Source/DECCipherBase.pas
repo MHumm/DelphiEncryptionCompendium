@@ -514,11 +514,17 @@ type
     /// </returns>
     function DecodeBytes(const Source: TBytes; Format: TDECFormatClass): TBytes;
 
-    // MAC
-{ TODO : Variante mit TBytes zwar unten auch pro forma umgesetzt, jedoch mit Rückgriff auf
-  DECUtils.RawStringToBytes und overload geht nicht, wenn nur der Rückgabetyp unterschiedlich}
-//    function CalcMAC(Format: TDECFormatClass = nil): TBytes; overload;
+    // CalcMACBytes deferred since the current implementation would neither be
+    // performant (that would require another TFormatBase.Encode variant from
+    // pointer to TBytes and that would require a new method name as overloads
+    // may not differ in return values only and it would require a lot of unit
+    // tests to get implemented. Deferred in particular also due to not yet
+    // really understanding the purpose of CalcMAC
+//    function CalcMACByte(Format: TDECFormatClass = nil): TBytes; overload;
 
+    // Deprecated directive commented out, as replacement CalcMACByte has not
+    // been implemented yet, see remark above. Use case for CalcMAC is not clear
+    // yet either.
     function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; //deprecated; // please use the TBytes based overload;
 
     // properties
@@ -549,8 +555,29 @@ type
       write  SetMode;
   end;
 
+/// <summary>
+///   Returns the passed cipher class type if it is not nil. Otherwise the
+///   class type class set per SetDefaultCipherClass is being returned. If using
+///   the DECCiphers unit that one registers TCipher_Null in the initialization
+/// </summary>
+/// <param name="CipherClass">
+///   Class type of a cipher class like TCipher_Blowfish or nil, if no
+///   encryption/decryption is desired.
+/// </param>
+/// <returns>
+///   Passed class type or defined default cipher class type, depending on
+///   CipherClass parameter value.
+/// </returns>
 function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
-procedure SetDefaultCipherClass(CipherClass: TDECCipherClass = nil);
+
+/// <summary>
+///   Defines which cipher class to return by ValidCipher if passing nil to that
+/// </summary>
+/// <param name="CipherClass">
+///   Class type of a cipher class to return by ValidCipher if passing nil to
+///   that one. This parameter should not be nil!
+/// </param>
+procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 
 implementation
 
@@ -570,6 +597,9 @@ resourcestring
   sCipherNoDefault      = 'No default cipher has been registered';
 
 var
+  /// <summary>
+  ///   Cipher class returned by ValidCipher if nil is passed as parameter to it
+  /// </summary>
   FDefaultCipherClass: TDECCipherClass = nil;
 
 function ValidCipher(CipherClass: TDECCipherClass): TDECCipherClass;
@@ -585,6 +615,8 @@ end;
 
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 begin
+  assert(assigned(CipherClass), 'Do not set a nil default cipher class!');
+
   FDefaultCipherClass := CipherClass;
 end;
 
@@ -837,14 +869,14 @@ begin
   { TODO : Wie umschreiben? EncodeBytes direkt kann so nicht aufgerufen werden }
 end;
 
-//function TDECCipher.CalcMAC(Format: TDECFormatClass): TBytes;
+//function TDECCipher.CalcMACByte(Format: TDECFormatClass): TBytes;
 //begin
 //  Done;
 //  if FMode in [cmECBx] then
 //    raise EDECCipherException.Create(sInvalidMACMode)
 //  else
 //  begin
-//    Result := DECUtil.RawStringToBytes(ValidFormat(Format).Encode(FBuffer^, FBufferSize));
+//    Result := System.SysUtils.BytesOf(ValidFormat(Format).Encode(FBuffer^, FBufferSize));
 //  end;
 //end;
 

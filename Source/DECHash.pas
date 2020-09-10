@@ -511,9 +511,6 @@ type
       write  SetDigestSize;
   end;
 
-function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
-procedure SetDefaultHashClass(HashClass: TDECHashClass);
-
 implementation
 
 uses
@@ -560,12 +557,6 @@ uses
   THash_Panama    :        8.9 cycles/byte     169.01 Mb/sec        7.3 cycles/byte     206.55 Mb/sec  -18%
 }
 
-resourcestring
-  sHashNoDefault        = 'No default hash registered';
-
-var
-  FDefaultHashClass: TDECHashClass = nil;
-
 const
   /// <summary>
   ///   Minimum number of rounds for the Tigher hash function. Trying to set a 
@@ -577,21 +568,6 @@ const
   ///   higher one sets the rounds to this value.
   /// </summary>  
   cTigerMaxRounds = 32;  
-
-function ValidHash(HashClass: TDECHashClass): TDECHashClass;
-begin
-  if HashClass <> nil then
-    Result := HashClass
-  else
-    Result := FDefaultHashClass;
-  if Result = nil then
-    raise EDECHashException.CreateRes(@sHashNoDefault);
-end;
-
-procedure SetDefaultHashClass(HashClass: TDECHashClass);
-begin
-  FDefaultHashClass := HashClass;
-end;
 
 { THash_MD2 }
 
@@ -3576,6 +3552,9 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  // Define the has returned by ValidHash if passing nil as parameter
+  SetDefaultHashClass(THash_SHA256);
+
   {$IFNDEF ManualRegisterClasses}
   THash_MD2.RegisterClass(TDECHash.ClassList);
   THash_MD4.RegisterClass(TDECHash.ClassList);

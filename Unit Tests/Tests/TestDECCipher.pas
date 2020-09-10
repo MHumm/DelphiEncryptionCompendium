@@ -106,6 +106,7 @@ type
     procedure TearDown; override;
   published
     procedure TestIsClassListCreated;
+    procedure TestValidCipherSetDefaultCipherClass;
   end;
 
   // Testmethoden for Klasse TCipher_Null
@@ -3234,6 +3235,26 @@ end;
 procedure TestTDECCipher.TestIsClassListCreated;
 begin
   CheckEquals(true, assigned(TDECCipher.ClassList), 'Class list has not been created in initialization');
+end;
+
+procedure TestTDECCipher.TestValidCipherSetDefaultCipherClass;
+var
+  result : Boolean;
+begin
+  // Asumption: nobody has called SetDefaultCipher yet
+  result := ValidCipher(nil) = TCipher_Null;
+  CheckEquals(true, result, 'Initial default cipher is not TCipher_Null');
+
+  SetDefaultCipherClass(TCipher_AES);
+  result := ValidCipher(nil) = TCipher_AES;
+  CheckEquals(true, result, 'Changed default cipher is not TCipher_AES');
+
+  SetDefaultCipherClass(TCipher_TEA);
+  result := ValidCipher(nil) = TCipher_TEA;
+  CheckEquals(true, result, 'Changed default cipher is not TCipher_TEA');
+
+  result := ValidCipher(TCipher_XTEA) = TCipher_XTEA;
+  CheckEquals(true, result, 'Passed cipher is not TCipher_XTEA');
 end;
 
 { TestTCipher_AES }

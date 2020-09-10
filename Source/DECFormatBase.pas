@@ -595,7 +595,7 @@ initialization
   TFormat_Copy.RegisterClass(TDECFormat.ClassList);
 
 finalization
-  // Ensure no further instances of classes registered in the registraiotn list
+  // Ensure no further instances of classes registered in the registration list
   // are possible through the list after this unit has been unloaded by unloding
   // the package this unit is in
   {$IFDEF DELPHIORBCB}

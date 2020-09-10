@@ -706,11 +706,61 @@ type
   /// </summary>
   TDECHashstype = class of TDECHash;
 
+/// <summary>
+///   Returns the passed hash class type if it is not nil. Otherwise the
+///   class type class set per SetDefaultHashClass is being returned. If using
+///   the DECHash unit THash_SHA256 is registered in the initialization, otherwise
+///   nil might be returned!
+/// </summary>
+/// <param name="HashClass">
+///   Class type of a hash class like THash_SHA256. If nil is passed the one set
+///   as default is returned.
+/// </param>
+/// <returns>
+///   Passed class type or defined default hash class type, depending on
+///   HashClass parameter value.
+/// </returns>
+function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
+
+/// <summary>
+///   Defines which cipher class to return by ValidCipher if passing nil to that
+/// </summary>
+/// <param name="HashClass">
+///   Class type of a hash class to return by ValidHash if passing nil to
+///   that one. This parameter should not be nil!
+/// </param>
+procedure SetDefaultHashClass(HashClass: TDECHashClass);
+
 implementation
 
 resourcestring
-  sHashNotInitialized   = 'Hash must be initialized';
+  sHashNotInitialized     = 'Hash must be initialized';
   sRaiseHashOverflowError = 'Hash Overflow: Too many bits processed';
+  sHashNoDefault          = 'No default hash has been registered';
+
+var
+  /// <summary>
+  ///   Hash class returned by ValidHash if nil is passed as parameter to it
+  /// </summary>
+  FDefaultHashClass: TDECHashClass = nil;
+
+function ValidHash(HashClass: TDECHashClass): TDECHashClass;
+begin
+  if HashClass <> nil then
+    Result := HashClass
+  else
+    Result := FDefaultHashClass;
+
+  if Result = nil then
+    raise EDECHashException.CreateRes(@sHashNoDefault);
+end;
+
+procedure SetDefaultHashClass(HashClass: TDECHashClass);
+begin
+  assert(assigned(HashClass), 'Do not set a nil default hash class!');
+
+  FDefaultHashClass := HashClass;
+end;
 
 { TDECHash }
 
@@ -728,7 +778,6 @@ begin
   FBufferIndex := 0;
   FBufferSize := BlockSize;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-//  ReallocMem(FBuffer, FBufferSize);
   FBuffer := ReallocMemory(FBuffer, FBufferSize);
 
   FillChar(FBuffer^, FBufferSize, 0);
@@ -743,13 +792,9 @@ begin
 
   FBufferSize := 0;
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-// Commented out, as it seems to not properly work with a new size of 0, but
-// calling FreeMem is not correct either as it frees the pointer. One would get
-// around of all of this by getting rid of PByte as buffer type completely by
-// making it a TBytes variable
-//  FBuffer := ReallocMemory(FBuffer, 0);
-
-  ReallocMem(FBuffer, 0);
+  // It is necessary to reallocate the buffer as FreeMem in destructor wouldn't
+  // accept a nil pointer on some platforms.
+  FBuffer := ReallocMemory(FBuffer, 0);
 end;
 
 function TDECHash.GetPaddingByte: Byte;
