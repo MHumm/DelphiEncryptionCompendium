@@ -227,9 +227,9 @@ type
   THashBaseHaval = class(TDECHash)
   private
     FDigest: array[0..7] of UInt32;
-    FRounds: Integer;
+    FRounds: UInt32;
     FTransform: THavalBaseTransformMethod;
-    procedure SetRounds(Value: Integer);
+    procedure SetRounds(Value: UInt32);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -249,7 +249,7 @@ type
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
     /// </summary>
-    property Rounds: Integer read FRounds write SetRounds default 3;
+    property Rounds: UInt32 read FRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -2056,7 +2056,7 @@ end;
 
 { THashBaseHaval }
 
-procedure THashBaseHaval.SetRounds(Value: Integer);
+procedure THashBaseHaval.SetRounds(Value: UInt32);
 begin
   if (Value < 3) or (Value > 5) then
   begin

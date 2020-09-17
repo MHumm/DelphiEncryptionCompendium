@@ -69,6 +69,18 @@ type
     ///   Maximum size of a key for the given cipher algorithm
     /// </param>
     procedure LimitKeyLength(var Key:RawByteString; KeySize: Integer);
+
+    /// <summary>
+    ///   Initialization routine which sets the properties of the crypto object
+    ///   as specified in the test data record with the given index.
+    /// </summary>
+    /// <param name="Index">
+    ///   Index of the test data record to be used for this test run initialization
+    /// </param>
+    procedure Init(Index: Integer);
+
+
+    {$IFDEF ANSISTRINGSUPPORTED}
     /// <summary>
     ///   Copies the bytes of the buffer into an AnsiString
     /// </summary>
@@ -80,14 +92,7 @@ type
     ///   an empty string will be returned
     /// </returns>
     function AnsiStringOf(const Bytes: TBytes): AnsiString;
-    /// <summary>
-    ///   Initialization routine which sets the properties of the crypto object
-    ///   as specified in the test data record with the given index.
-    /// </summary>
-    /// <param name="Index">
-    ///   Index of the test data record to be used for this test run initialization
-    /// </param>
-    procedure Init(Index: Integer);
+    {$ENDIF}
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -150,6 +155,7 @@ begin
     Delete(Key, KeySize + 1, length(Key));
 end;
 
+{$IFDEF ANSISTRINGSUPPORTED}
 function TestTDECCipherFormats.AnsiStringOf(const Bytes: TBytes): AnsiString;
 begin
   if Assigned(Bytes) then
@@ -160,6 +166,7 @@ begin
   else
     Result := '';
 end;
+{$ENDIF}
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToBytes;
 var
