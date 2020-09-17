@@ -224,7 +224,11 @@ type
     /// <param name="Mode">
     ///   Cipher mode which shall be tested
     /// </param>
-    procedure DoTestEncode(Data: array of TTestEntry; Mode: TCipherMode);
+    /// <param name="TestAllModes">
+    ///   if true parameter Mode will be ignored and tests for all modes be
+    ///   carried out
+    /// </param>
+    procedure DoTestEncode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
     /// <summary>
     ///   Carries out the actual decode test
     /// </summary>
@@ -234,7 +238,11 @@ type
     /// <param name="Mode">
     ///   Cipher mode which shall be tested
     /// </param>
-    procedure DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode);
+    /// <param name="TestAllModes">
+    ///   if true parameter Mode will be ignored and tests for all modes be
+    ///   carried out
+    /// </param>
+    procedure DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
   published
     procedure TestEncodeECBx;
     procedure TestEncodeOFB8;
@@ -263,20 +271,21 @@ implementation
 uses
   DECUtil;
 
-procedure TestTDECCipherModes.DoTestEncode(Data: array of TTestEntry; Mode: TCipherMode);
+procedure TestTDECCipherModes.DoTestEncode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
 var
   Dest   : TBytes;
   Source : TBytes;
   i, n   : Integer;
   Result : string;
 
-  Cipher : TDECFormattedCipher;
+  Cipher : TDECCipherModes;
 begin
   for i := Low(Data) to High(Data) do
   begin
-    // Skip data for other modes
-    if Data[i].Mode <> Mode then
-      Continue;
+    if not TestAllModes then
+      // Skip data for other modes
+      if Data[i].Mode <> Mode then
+        Continue;
 
     Cipher := Data[i].TestClass.Create;
     Cipher.Mode := Data[i].Mode;
@@ -289,7 +298,8 @@ begin
 
       Move(Data[i].Input[1], Source[0], Length(Data[i].Input));
 
-      Dest := Cipher.EncodeBytes(Source);
+      SetLength(Dest, length(Source));
+      Cipher.Encode(Source[0], Dest[0], length(Source));
 
       // Output is noted non hexadecimal
       if Data[i].Output <> '' then
@@ -322,19 +332,20 @@ begin
   end;
 end;
 
-procedure TestTDECCipherModes.DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode);
+procedure TestTDECCipherModes.DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
 var
   Dest    : TBytes;
   Source  : TBytes;
   i, n, m : Integer;
 
-  Cipher : TDECFormattedCipher;
+  Cipher : TDECCipherModes;
 begin
   for i := Low(Data) to High(Data) do
   begin
-    // Skip data for other modes
-    if Data[i].Mode <> Mode then
-      Continue;
+    if not TestAllModes then
+      // Skip data for other modes
+      if Data[i].Mode <> Mode then
+        Continue;
 
     Cipher := Data[i].TestClass.Create;
     Cipher.Mode := Data[i].Mode;
@@ -364,7 +375,8 @@ begin
         until (n > Length(Data[i].OutputHex));
       end;
 
-      Dest := Cipher.DecodeBytes(Source);
+      SetLength(Dest, length(Source));
+      Cipher.Decode(Source[0], Dest[0], length(Source));
 
       for n := Low(Dest) to High(Dest) do
       begin
@@ -472,10 +484,12 @@ end;
 
 procedure TestTDECCipherModes.TestEncode;
 begin
+  DoTestEncode(Data, TCipherMode.cmCTSx, true);
 end;
 
 procedure TestTDECCipherModes.TestDecode;
 begin
+  DoTestDecode(Data, TCipherMode.cmCTSx, true);
 end;
 
 initialization
