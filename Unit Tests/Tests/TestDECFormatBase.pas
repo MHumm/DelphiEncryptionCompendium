@@ -417,8 +417,8 @@ end;
 
 procedure TestTFormat.TestFormatByInvalidName;
 begin
-  CheckException(TestClassByInvalidNameHelperEmpty, EDECClassNotRegisteredException);
-  CheckException(TestClassByInvalidNameHelperWrong, EDECClassNotRegisteredException);
+  CheckException(TestFormatByInvalidNameHelperEmpty, EDECClassNotRegisteredException);
+  CheckException(TestFormatByInvalidNameHelperWrong, EDECClassNotRegisteredException);
 end;
 
 procedure TestTFormat.TestFormatByInvalidNameHelperEmpty;
