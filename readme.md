@@ -17,31 +17,29 @@ It contains algorithms for these categories:
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
-## Which Delphi versions are compatible?
+## Which Delphi versions does it support?
 The last released version 5.2 is compatible with Delphi 7-2007 at least.
 For using it with newer versions some small modification is necessary in order 
 to compile it. If done it is compatible up to 10.2 Tokio at least.
 This version is only compatible with Win32/Win64!
 
-The version 6.0 which is still in development is compatible with
-Delphi 2009 - Delphi 10.4 Sydney. When defining the NO_ASM define
-in DECOptions.inc it is compatible with all platforms!
+Version 6.0 is still in development and supports Delphi 2009 - Delphi 10.4 Sydney. 
+When defining the NO_ASM define in DECOptions.inc it is compatible with all platforms!
 
-## What is the current status of this project?
+## What is the current status?
 If you look at the release tab you see a 5.2 release from 2015 so
-the project looks a bit dead. But if you look closer at the insights
-or at the source code in development and master branch you will notice, 
-that there has been quite some activity since then which is targeted at
-releasing a V6.0. Details about the changes and additions in V6.0
-can be found in the DEC60.pdf file in the docs subfolder of the development
-branch.
+the project looks a bit dead. Looking closer at the insights
+or at the source code in development and master branch, however, you will notice 
+that there has been a lot activity since then aimed at releasing a V6.0. 
+Details about the changes and additions in V6.0 can be found in the DEC60.pdf 
+file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
 The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
 
 ## Why is V6.0 not released yet?
-We are still working on some bugfixes and on finalizing the documentation.
+We are still working on some bugfixes and finalizing the documentation.
 As soon as these things are done we will release this new version. Please
 keep in mind that we are working on this in our limited spare time!
 
@@ -60,6 +58,6 @@ tests.
 DEC 6.0 reworked these tests into DUnit and DUnitX tests. We also added some more 
 tests and with this replaced the "arcane" test program which used hard to understand 
 code. A few of the implemented unit tests still fail, but this is simply because
-they are empty sceletons at this point in time waiting to be filled in. We first 
+they are empty scheletons at this point in time waiting to be filled in. We first 
 need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
