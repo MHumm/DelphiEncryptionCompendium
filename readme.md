@@ -61,3 +61,110 @@ code. A few of the implemented unit tests still fail, but this is simply because
 they are empty skeletons at this point in time waiting to be filled in. We first 
 need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
+
+## Contained hash algorithms
+* MD2        
+* MD4        
+* MD5        
+* RipeMD128  
+* RipeMD160  
+* RipeMD256  
+* RipeMD320  
+* SHA0       
+* SHA1       
+* SHA256     
+* SHA384     
+* SHA512     
+* Haval128   
+* Haval160   
+* Haval192   
+* Haval224   
+* Haval256   
+* Tiger      
+* Panama     
+* Whirlpool0 
+* Whirlpool1 
+* WhirlpoolT 
+* Square     
+* Snefru128  
+* Snefru256  
+* Sapphire   
+
+## Contained cipher algorithms
+* Null
+* Blowfish
+* Twofish
+* IDEA
+* Cast256
+* Mars
+* RC4
+* RC6
+* AES
+* Square
+* SCOP
+* Sapphire
+* 1DES
+* 2DES
+* 3DES
+* 2DDES
+* 3DDES
+* 3TDES
+* 3Way
+* Cast128
+* Gost
+* Magma
+* Misty
+* NewDES
+* Q128
+* RC2
+* RC5
+* SAFER
+* Shark
+* Skipjack
+* TEA
+* XTEA
+* TEAN
+
+## Contained block concatenating modes
+Modes ending on x have been invented by the original developer of DEC
+* ECBx
+* CBCx
+* CTSx
+* CTS3
+* CFB8
+* CFBx
+* OFB8
+* OFBx
+* CFS8
+* CFSx
+
+## Contained formattings
+* Copy
+* HEX      
+* HEXL     
+* Base16   
+* Base16L  
+* DECMIME32
+* Base64   
+* MIME64   
+* Radix64  
+* PGP      
+* UU       
+* XX       
+* ESCAPE   
+
+## Contained CRCs
+* 8
+* 10
+* 12
+* 16
+* 16CCITT
+* 16XModem
+* 24
+* 32
+* 32CCITT
+* 32ZModem
+* 8ATMHEC
+* 8SMBus
+* 15CAN
+* 16ZMODEM
