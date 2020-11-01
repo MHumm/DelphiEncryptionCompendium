@@ -58,6 +58,6 @@ tests.
 DEC 6.0 reworked these tests into DUnit and DUnitX tests. We also added some more 
 tests and with this replaced the "arcane" test program which used hard to understand 
 code. A few of the implemented unit tests still fail, but this is simply because
-they are empty scheletons at this point in time waiting to be filled in. We first 
+they are empty skeletons at this point in time waiting to be filled in. We first 
 need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
