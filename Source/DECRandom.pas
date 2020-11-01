@@ -184,13 +184,9 @@ begin
   FHash.Calc(FRegister, SizeOf(FRegister));
   FHash.Done;
 
-{ TODO : Auskommentiert wegen Verlegung von Digest nach Protected in DECHash um
- von PByteArray weg zu kommen}
-//  FRegister[FCounter mod SizeOf(FRegister)] := FRegister[FCounter mod SizeOf(FRegister)] xor FHash.Digest[0];
   FRegister[FCounter mod SizeOf(FRegister)] := FRegister[FCounter mod SizeOf(FRegister)] xor FHash.DigestAsBytes[0];
   Inc(FCounter);
 
-//  Result := FHash.Digest[1]; // no real predictable dependency to above FHash.Digest[0] !
   Result := FHash.DigestAsBytes[1]; // no real predictable dependency to above FHash.Digest[0] !
 end;
 

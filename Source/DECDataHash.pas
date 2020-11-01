@@ -1938,10 +1938,11 @@ const
 
   /// <summary>
   ///   Whirlpool 1
+  ///   S-BOX V3.0 (2003.03.12), nothing changed, same as Whirlpool_RC_T
   /// </summary>
-  Whirlpool_RC_1: array[0..Whirlpool_Rounds * 2 - 1] of UInt32 = (                             // S-BOX V3.0 (2003.03.12)
-    $E8C62318,$4F01B887,$F5D2A636,$52916F79,$8E9BBC60,$357B0CA3,$C2D7E01D,$57FE4B2E,            // nothing changed, same as
-    $E5377715,$DA4AF09F,$0A29C958,$856BA0B1,$F4105DBD,$67053ECB,$8B4127E4,$D8957DA7,            // Whirlpool_RC_T
+  Whirlpool_RC_1: array[0..Whirlpool_Rounds * 2 - 1] of UInt32 = (
+    $E8C62318,$4F01B887,$F5D2A636,$52916F79,$8E9BBC60,$357B0CA3,$C2D7E01D,$57FE4B2E,
+    $E5377715,$DA4AF09F,$0A29C958,$856BA0B1,$F4105DBD,$67053ECB,$8B4127E4,$D8957DA7,
     $667CEEFB,$9E4717DD,$07BF2DCA,$33835AAD
   );
 
