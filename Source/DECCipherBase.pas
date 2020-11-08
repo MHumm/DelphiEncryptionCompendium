@@ -255,6 +255,11 @@ type
     /// </summary>
     FUser: Pointer;
 
+{ TODO :
+Speicherbereich der bei verschiedenen, nicht nur
+Stromverschlüsselungsalgorithmen zur Initialisierung
+des Schlüssels oder algorithmosparameter (z. B. Sapphire)
+benutzt wird }
     FUserSave: Pointer;
 
     /// <summary>
@@ -606,7 +611,7 @@ type
     ///   Cipher modes are used to derive a stream cipher from block cipher
     ///   algorithms. For this something from the last entrypted block (or for
     ///   the first block from the vector) is used in the encryption of the next
-    ///   block. It may be XORed with the next block cipher text for isntance.
+    ///   block. It may be XORed with the next block cipher text for instance.
     ///   That data "going into the next block encryption" is this feedback array
     /// </summary>
     property Feedback: PByteArray
@@ -704,6 +709,8 @@ begin
   FDataSize := FBufferSize * 3 + FUserSize;
 
   if MustUserSave then
+    // if contents of the "user area" needs to be saved increase buffer size
+    // by user size so FUser and then FUserSave fit in the buffer
     Inc(FDataSize, FUserSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
@@ -714,6 +721,7 @@ begin
   FUser     := @FBuffer[FBufferSize];
 
   if MustUserSave then
+    // buffer contents: FData, then FUser then FUserSave
     FUserSave := @PByteArray(FUser)[FUserSize]
   else
     FUserSave := nil;
@@ -786,13 +794,20 @@ begin
 
   DoInit(Key, Size);
   if FUserSave <> nil then
+    // create backup of FUser
     Move(FUser^, FUserSave^, FUserSize);
 
+{ TODO :
+Zur klärung wozu FUserSave in manchen Fällen benötigt wird
+muss der Code zwischen hier und dem Restore verstanden werden
+Warum nur bei IVectorSize 0 restauriert? Was ist in den anderen Fällen?
+Im Done wird auf alle Fälle auch restored!}
   FillChar(FInitializationVector^, FBufferSize, IFiller);
   if IVectorSize = 0 then
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
     if FUserSave <> nil then
+      // Restore backup fo FUser
       Move(FUserSave^, FUser^, FUserSize);
   end
   else

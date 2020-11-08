@@ -825,11 +825,11 @@ uses
 
 class function TCipher_Null.Context: TCipherContext;
 begin
-  Result.KeySize := 0;
-  Result.BlockSize := 1;
+  Result.KeySize    := 0;
+  Result.BlockSize  := 1;
   Result.BufferSize := 8;
-  Result.UserSize := 0;
-  Result.UserSave := False;
+  Result.UserSize   := 0;
+  Result.UserSave   := False;
   Result.CipherType := [ctNull, ctSymmetric];
 end;
 
@@ -5626,13 +5626,8 @@ end;
 procedure TCipher_Skipjack.SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte);
 begin
   Inc(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab > AMax then
-//    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
-diese interne procedure eher zu einer strict private methode werden}
+
   if PByte(ATab) > AMax then
-//    {$ENDIF !DELPHIORBCB}
     ATab := AMin;
 end;
 
