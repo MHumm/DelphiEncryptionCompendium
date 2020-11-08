@@ -617,7 +617,6 @@ var
   SrcBuf: TBytes;
   p     : Pointer;
 begin
-  { TODO : Ersten test überprüfen, ist dieser wirklich sinnvoll so? }
   SrcBuf := BytesOf(RawByteString(''));
   CheckEquals(true, TFormat_HEX.IsValid(SrcBuf, 0));
 

@@ -30,7 +30,7 @@ uses
 function RandomSystemTime: Int64;
 procedure RandomBuffer(var Buffer; Size: Integer);
 function RandomBytes(Size: Integer): TBytes;
-function RandomRawByteString(Size: Integer): RawByteString; deprecated; // please use RandomBytes now
+function RandomRawByteString(Size: Integer): RawByteString; deprecated 'please use RandomBytes now';
 function RandomLong: UInt32;
 procedure RandomSeed(const Buffer; Size: Integer); overload;
 procedure RandomSeed; overload;
@@ -178,9 +178,6 @@ begin
 
   FHash.Init;
   FHash.Calc(FCounter, SizeOf(FCounter));
-{ TODO : Wenn in DECOptions.inc die Benutzung von ASM Code aktiviert ist, crasht
-  das Programm mit Zugriffsverletzung  in der nächsten Zeile. Grund ist jedoch noch
-  unbekannt.}
   FHash.Calc(FRegister, SizeOf(FRegister));
   FHash.Done;
 

@@ -3245,16 +3245,20 @@ begin
   result := ValidCipher(nil) = TCipher_Null;
   CheckEquals(true, result, 'Initial default cipher is not TCipher_Null');
 
-  SetDefaultCipherClass(TCipher_AES);
-  result := ValidCipher(nil) = TCipher_AES;
-  CheckEquals(true, result, 'Changed default cipher is not TCipher_AES');
+  try
+    SetDefaultCipherClass(TCipher_AES);
+    result := ValidCipher(nil) = TCipher_AES;
+    CheckEquals(true, result, 'Changed default cipher is not TCipher_AES');
 
-  SetDefaultCipherClass(TCipher_TEA);
-  result := ValidCipher(nil) = TCipher_TEA;
-  CheckEquals(true, result, 'Changed default cipher is not TCipher_TEA');
+    SetDefaultCipherClass(TCipher_TEA);
+    result := ValidCipher(nil) = TCipher_TEA;
+    CheckEquals(true, result, 'Changed default cipher is not TCipher_TEA');
 
-  result := ValidCipher(TCipher_XTEA) = TCipher_XTEA;
-  CheckEquals(true, result, 'Passed cipher is not TCipher_XTEA');
+    result := ValidCipher(TCipher_XTEA) = TCipher_XTEA;
+    CheckEquals(true, result, 'Passed cipher is not TCipher_XTEA');
+  finally
+    SetDefaultCipherClass(TCipher_Null);
+  end;
 end;
 
 { TestTCipher_AES }
