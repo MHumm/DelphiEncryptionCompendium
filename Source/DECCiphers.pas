@@ -829,7 +829,7 @@ begin
   Result.BlockSize  := 1;
   Result.BufferSize := 8;
   Result.UserSize   := 0;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctNull, ctSymmetric];
 end;
 
@@ -862,7 +862,7 @@ begin
   Result.BufferSize := 8;
   Result.BlockSize  := 8;
   Result.UserSize   := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1077,7 +1077,7 @@ begin
   Result.BufferSize := 16;
   Result.BlockSize  := 16;
   Result.UserSize   := 4256;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1392,7 +1392,7 @@ begin
   Result.BufferSize := 8;
   Result.BlockSize  := 8;
   Result.UserSize   := 208;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1567,7 +1567,7 @@ begin
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
   Result.UserSize   := 384;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1839,7 +1839,7 @@ begin
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
   Result.UserSize   := 160;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -2202,7 +2202,7 @@ begin
   Result.BlockSize  := 1;
   Result.BufferSize := 16;
   Result.UserSize   := 256 + 2;
-  Result.UserSave   := True;
+  Result.NeedsUserBackup   := True;
   Result.CipherType := [ctSymmetric, ctStream];
 end;
 
@@ -2267,7 +2267,7 @@ begin
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
   Result.UserSize   := 272;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -2523,7 +2523,7 @@ begin
   Result.BlockSize  := Rijndael_Blocks * 4;
   Result.BufferSize := Rijndael_Blocks * 4;
   Result.UserSize   := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -2860,7 +2860,7 @@ begin
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
   Result.UserSize   := 9 * 4 * 2 * SizeOf(UInt32);
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3030,7 +3030,7 @@ begin
   Result.BlockSize  := 4;
   Result.BufferSize := 32;
   Result.UserSize   := 384 * 4 + 3 * SizeOf(UInt32);
-  Result.UserSave   := True;
+  Result.NeedsUserBackup   := True;
   Result.CipherType := [ctSymmetric, ctStream];
 end;
 
@@ -3194,7 +3194,7 @@ begin
   Result.BlockSize  := 1;
   Result.BufferSize := 32;
   Result.UserSize   := SizeOf(TSapphireKey);
-  Result.UserSave   := True;
+  Result.NeedsUserBackup   := True;
   Result.CipherType := [ctSymmetric, ctStream];
 end;
 
@@ -3378,7 +3378,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 32 * 4 * 2;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3461,13 +3461,13 @@ end;
 
 procedure TCipher_1DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, FUser);
 end;
 
 procedure TCipher_1DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
 end;
 
@@ -3479,7 +3479,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 32 * 4 * 2 * 2;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3500,7 +3500,7 @@ end;
 
 procedure TCipher_2DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, FUser);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
   DES_Func(Source, Dest, FUser);
@@ -3508,7 +3508,7 @@ end;
 
 procedure TCipher_2DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[96]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
@@ -3522,7 +3522,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 32 * 4 * 2 * 3;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3545,7 +3545,7 @@ end;
 
 procedure TCipher_3DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[ 0]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
@@ -3553,7 +3553,7 @@ end;
 
 procedure TCipher_3DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[96]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[128]);
   DES_Func(Source, Dest, @PUInt32Array(FUser)[160]);
@@ -3573,7 +3573,7 @@ procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
@@ -3593,7 +3593,7 @@ procedure TCipher_2DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
@@ -3623,7 +3623,7 @@ procedure TCipher_3DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
@@ -3643,7 +3643,7 @@ procedure TCipher_3DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
@@ -3673,7 +3673,7 @@ procedure TCipher_3TDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
@@ -3702,7 +3702,7 @@ procedure TCipher_3TDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
   DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
@@ -3744,7 +3744,7 @@ begin
   Result.BlockSize  := 12;
   Result.BufferSize := 12;
   Result.UserSize   := SizeOf(T3Way_Key);
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3800,7 +3800,7 @@ var
   E: PUInt32;
   P3WayKey: P3Way_Key;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   P3WayKey := P3Way_Key(FUser);
 
   K0 := P3WayKey.E_Key[0];
@@ -3858,7 +3858,7 @@ var
   E: PUInt32;
   P3WayKey: P3Way_Key;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   P3WayKey := P3Way_Key(FUser);
 
   K0 := P3WayKey.D_Key[0];
@@ -3919,7 +3919,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 128;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4094,7 +4094,7 @@ var
   T, I, A, B: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := FUser;
   A := SwapUInt32(PUInt32Array(Source)[0]);
@@ -4153,7 +4153,7 @@ var
   K: PUInt32Array;
   JumpStart: Boolean;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   JumpStart := False;
 
   K := @PUInt32Array(FUser)[12];
@@ -4226,7 +4226,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 32;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4240,7 +4240,7 @@ var
   I, A, B, T: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := FUser;
   A := PUInt32Array(Source)[0];
@@ -4289,7 +4289,7 @@ var
   I, A, B, T: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
@@ -4339,7 +4339,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 128;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4427,7 +4427,7 @@ procedure TCipher_Misty.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
@@ -4452,7 +4452,7 @@ procedure TCipher_Misty.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   B := Misty_D(PUInt32Array(Source)[0], 9, FUser);
   A := Misty_D(PUInt32Array(Source)[1], 8, FUser);
@@ -4521,7 +4521,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 60 * 2;
-  Result.UserSave   := True;
+  Result.NeedsUserBackup   := True;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4559,13 +4559,13 @@ end;
 
 procedure TCipher_NewDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   NewDES_Func(Source, Dest, FUser);
 end;
 
 procedure TCipher_NewDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   NewDES_Func(Source, Dest, @PByteArray(FUser)[60]);
 end;
 
@@ -4577,7 +4577,7 @@ begin
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
   Result.UserSize   := 256;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4666,7 +4666,7 @@ var
   D: PUInt32Array;
   B0, B1, B2, B3, I: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   D  := FUser;
   B0 := PUInt32Array(Source)[0];
@@ -4745,7 +4745,7 @@ var
   D: PUInt32Array;
   B0, B1, B2, B3, I: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   D  := @PUInt32Array(FUser)[60];
   B0 := PUInt32Array(Source)[0];
@@ -4775,7 +4775,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 128;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4811,7 +4811,7 @@ var
   K: PWordArray;
   A, B, C, D: Word;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := FUser;
   A := PWordArray(Source)[0];
@@ -4879,7 +4879,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 136;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -4945,7 +4945,7 @@ var
   I: Integer;
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := FUser;
   A := PUInt32Array(Source)[0] + K[0];
@@ -4965,7 +4965,7 @@ var
   I: Integer;
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := @PUInt32Array(FUser)[0];
   A := PUInt32Array(Source)[0];
@@ -4987,7 +4987,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 768;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -5132,7 +5132,7 @@ var
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Exp := FUser;
   Log := @Exp[256];
@@ -5199,7 +5199,7 @@ var
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Exp := FUser;
   Log := @Exp[256];
@@ -5276,7 +5276,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := 112;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -5429,7 +5429,7 @@ var
   T, L, R: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := FUser;
   L := PLong64(Source).L;
@@ -5476,7 +5476,7 @@ var
   T, R, L: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   K := @PUInt32Array(FUser)[14];
   L := PLong64(Source).L;
@@ -5525,7 +5525,7 @@ begin
   Result.BlockSize  := 8;
   Result.BufferSize := 8;
   Result.UserSize   := $A00;
-  Result.UserSave   := False;
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -5554,7 +5554,7 @@ var
   K, T, A, B, C, D: UInt32;
 
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Min := FUser;
   Max := PByte(Min) + 9 * 256; // for Pointer Math
@@ -5638,7 +5638,7 @@ var
   K, T, A, B, C, D: UInt32;
 
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Min := FUser;
   Max := Pointer(Min + 9 * 256);
@@ -5728,10 +5728,10 @@ const
 class function TCipher_TEA.Context: TCipherContext;
 begin
   Result.KeySize    := 16;   // 128 bits
-  Result.BlockSize  := 8;  // 64 bits
-  Result.BufferSize := 8; // 64 bits
-  Result.UserSize   := 32;  // 256 bits
-  Result.UserSave   := False;
+  Result.BlockSize  := 8;    // 64 bits
+  Result.BufferSize := 8;    // 64 bits
+  Result.UserSize   := 32;   // 256 bits
+  Result.NeedsUserBackup   := False;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -5759,7 +5759,7 @@ var
   Sum,
   X, Y, A, B, C, D: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := 0;
 
@@ -5787,7 +5787,7 @@ var
   Sum,
   X, Y, A, B, C, D: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := TEA_Delta * UInt32(FRounds);
 
@@ -5817,7 +5817,7 @@ var
   I, X, Y: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := 0;
 
@@ -5843,7 +5843,7 @@ var
   X, Y: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := TEA_Delta * UInt32(FRounds);
 

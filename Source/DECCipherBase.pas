@@ -70,7 +70,13 @@ type
     ///   internal size in bytes of cipher dependend structures
     /// </summary>
     UserSize   : Integer;
-    UserSave   : Boolean;
+    /// <summary>
+    ///   When true the memory a certain internal pointer (FUser) points to
+    ///   needs to be backuped during key initialization if no init vector is
+    ///   specified and restored at the end of that init method. Same in Done
+    ///   method as well.
+    /// </summary>
+    NeedsUserBackup : Boolean;
 
     /// <summary>
     ///   Specifies the kind of cipher
@@ -255,12 +261,17 @@ type
     /// </summary>
     FUser: Pointer;
 
-{ TODO :
-Speicherbereich der bei verschiedenen, nicht nur
-Stromverschlüsselungsalgorithmen zur Initialisierung
-des Schlüssels oder algorithmosparameter (z. B. Sapphire)
-benutzt wird }
-    FUserSave: Pointer;
+    /// <summary>
+    ///   If a user does not specify an init vector (IV) during key setup
+    ///   (IV length = 0) the init method generates an IV by encrypting the
+    ///   complete memory reserved for IV. Within this memory block is the memory
+    ///   FUser points to as well, and for some algorithms this part of the memory
+    ///   may not be altered during initialization so it is backupped to this
+    ///   memory location and restored after the IV got encrypted. In DoDone
+    ///   it needs to be restored as well to prevent any unwanted leftovers which
+    ///   might pose a security issue.
+    /// </summary>
+    FUserBackup: Pointer;
 
     /// <summary>
     ///   Checks whether the state machine is in one of the states specified as
@@ -718,7 +729,7 @@ begin
 
   FBufferSize  := Context.BufferSize;
   FUserSize    := Context.UserSize;
-  MustUserSave := Context.UserSave;
+  MustUserSave := Context.NeedsUserBackup;
 
   FDataSize := FBufferSize * 3 + FUserSize;
 
@@ -736,9 +747,9 @@ begin
 
   if MustUserSave then
     // buffer contents: FData, then FUser then FUserSave
-    FUserSave := @PByteArray(FUser)[FUserSize]
+    FUserBackup := @PByteArray(FUser)[FUserSize]
   else
-    FUserSave := nil;
+    FUserBackup := nil;
 
   Protect;
 end;
@@ -753,7 +764,7 @@ begin
   FFeedback := nil;
   FBuffer   := nil;
   FUser     := nil;
-  FUserSave := nil;
+  FUserBackup := nil;
   inherited Destroy;
 end;
 
@@ -807,22 +818,17 @@ begin
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);
-  if FUserSave <> nil then
+  if FUserBackup <> nil then
     // create backup of FUser
-    Move(FUser^, FUserSave^, FUserSize);
+    Move(FUser^, FUserBackup^, FUserSize);
 
-{ TODO :
-Zur klärung wozu FUserSave in manchen Fällen benötigt wird
-muss der Code zwischen hier und dem Restore verstanden werden
-Warum nur bei IVectorSize 0 restauriert? Was ist in den anderen Fällen?
-Im Done wird auf alle Fälle auch restored!}
   FillChar(FInitializationVector^, FBufferSize, IFiller);
   if IVectorSize = 0 then
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
-    if FUserSave <> nil then
+    if FUserBackup <> nil then
       // Restore backup fo FUser
-      Move(FUserSave^, FUser^, FUserSize);
+      Move(FUserBackup^, FUser^, FUserSize);
   end
   else
     Move(IVector, FInitializationVector^, IVectorSize);
@@ -893,8 +899,8 @@ begin
     FBufferIndex := 0;
     DoEncode(FFeedback, FBuffer, FBufferSize);
     Move(FInitializationVector^, FFeedback^, FBufferSize);
-    if FUserSave <> nil then
-      Move(FUserSave^, FUser^, FUserSize);
+    if FUserBackup <> nil then
+      Move(FUserBackup^, FUser^, FUserSize);
   end;
 end;
 
