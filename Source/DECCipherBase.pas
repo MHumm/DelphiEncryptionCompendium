@@ -509,7 +509,11 @@ benutzt wird }
     ///   order to not support mistreating strings as binary buffers.
     /// </summary>
     /// <remarks>
-    ///   This is the direct successor of the EncodeBinary method from DEC 5.2
+    ///   This is the direct successor of the EncodeBinary method from DEC 5.2.
+    ///   When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </remarks>
     /// <param name="Source">
     ///   The data to be encrypted
@@ -531,6 +535,10 @@ benutzt wird }
     /// </summary>
     /// <remarks>
     ///   This is the direct successor of the DecodeBinary method from DEC 5.2
+    ///   When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </remarks>
     /// <param name="Source">
     ///   The data to be decrypted
@@ -552,7 +560,10 @@ benutzt wird }
     ///   Encrypts the contents of a ByteArray.
     /// </summary>
     /// <param name="Source">
-    ///   The data to be encrypted
+    ///   The data to be encrypted. When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. Here a formatting method can be passed. The
@@ -567,7 +578,10 @@ benutzt wird }
     ///   Decrypts the contents of a ByteArray.
     /// </summary>
     /// <param name="Source">
-    ///   The data to be decrypted
+    ///   The data to be decrypted. When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. Here a formatting method can be passed. The
