@@ -67,16 +67,16 @@ type
     /// </summary>
     BufferSize : Integer;
     /// <summary>
-    ///   internal size in bytes of cipher dependend structures
+    ///   Size in bytes of the FAdditionalBuffer used by some of the cipher algorithms
     /// </summary>
-    UserSize   : Integer;
+    AdditionalBufferSize   : Integer;
     /// <summary>
-    ///   When true the memory a certain internal pointer (FUser) points to
-    ///   needs to be backuped during key initialization if no init vector is
-    ///   specified and restored at the end of that init method. Same in Done
-    ///   method as well.
+    ///   When true the memory a certain internal pointer (FAdditionalBuffer)
+    ///   points to needs to be backuped during key initialization if no init
+    ///   vector is specified and restored at the end of that init method.
+    ///   Same in Done method as well.
     /// </summary>
-    NeedsUserBackup : Boolean;
+    NeedsAdditionalBufferBackup : Boolean;
 
     /// <summary>
     ///   Specifies the kind of cipher
@@ -253,25 +253,26 @@ type
     FFeedback: PByteArray;
 
     /// <summary>
-    ///   Size of FUser in Byte
+    ///   Size of FAdditionalBuffer in Byte
     /// </summary>
-    FUserSize: Integer;
+    FAdditionalBufferSize: Integer;
     /// <summary>
-    ///   Seems to be a pointer to the last element of FBuffer?
+    ///   A buffer some of the cipher algorithms need to operate on. It is
+    ///   some part of FBuffer like FInitializationVector and FFeedback as well.
     /// </summary>
-    FUser: Pointer;
+    FAdditionalBuffer: Pointer;
 
     /// <summary>
     ///   If a user does not specify an init vector (IV) during key setup
     ///   (IV length = 0) the init method generates an IV by encrypting the
     ///   complete memory reserved for IV. Within this memory block is the memory
-    ///   FUser points to as well, and for some algorithms this part of the memory
-    ///   may not be altered during initialization so it is backupped to this
-    ///   memory location and restored after the IV got encrypted. In DoDone
-    ///   it needs to be restored as well to prevent any unwanted leftovers which
-    ///   might pose a security issue.
+    ///   FAdditionalBuffer points to as well, and for some algorithms this part
+    ///   of the memory may not be altered during initialization so it is
+    ///   backupped to this memory location and restored after the IV got encrypted.
+    ///   In DoDone it needs to be restored as well to prevent any unwanted
+    ///   leftovers which might pose a security issue.
     /// </summary>
-    FUserBackup: Pointer;
+    FAdditionalBufferBackup: Pointer;
 
     /// <summary>
     ///   Checks whether the state machine is in one of the states specified as
@@ -723,33 +724,35 @@ end;
 
 constructor TDECCipher.Create;
 var
-  MustUserSave: Boolean;
+  MustAdditionalBufferSave: Boolean;
 begin
   inherited Create;
 
-  FBufferSize  := Context.BufferSize;
-  FUserSize    := Context.UserSize;
-  MustUserSave := Context.NeedsUserBackup;
+  FBufferSize              := Context.BufferSize;
+  FAdditionalBufferSize    := Context.AdditionalBufferSize;
+  MustAdditionalBufferSave := Context.NeedsAdditionalBufferBackup;
 
-  FDataSize := FBufferSize * 3 + FUserSize;
+  // Initialization vector, feedback, buffer, additional buffer
+  FDataSize := FBufferSize * 3 + FAdditionalBufferSize;
 
-  if MustUserSave then
-    // if contents of the "user area" FUser needs to be saved increase buffer size
-    // by user size so FUser and then FUserSave fit in the buffer
-    Inc(FDataSize, FUserSize);
+  if MustAdditionalBufferSave then
+    // if contents of the FAdditionalBuffer needs to be saved increase buffer size
+    // by FAdditionalBufferSize so FAdditionalBuffer and then FAdditionalBufferBackup
+    // fit in the buffer
+    Inc(FDataSize, FAdditionalBufferSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
   FData                 := ReallocMemory(FData, FDataSize);
   FInitializationVector := @FData[0];
   FFeedback             := @FInitializationVector[FBufferSize];
   FBuffer               := @FFeedback[FBufferSize];
-  FUser                 := @FBuffer[FBufferSize];
+  FAdditionalBuffer     := @FBuffer[FBufferSize];
 
-  if MustUserSave then
+  if MustAdditionalBufferSave then
     // buffer contents: FData, then FUser then FUserSave
-    FUserBackup := @PByteArray(FUser)[FUserSize]
+    FAdditionalBufferBackup := @PByteArray(FAdditionalBuffer)[FAdditionalBufferSize]
   else
-    FUserBackup := nil;
+    FAdditionalBufferBackup := nil;
 
   Protect;
 end;
@@ -763,8 +766,8 @@ begin
   FInitializationVector   := nil;
   FFeedback := nil;
   FBuffer   := nil;
-  FUser     := nil;
-  FUserBackup := nil;
+  FAdditionalBuffer     := nil;
+  FAdditionalBufferBackup := nil;
   inherited Destroy;
 end;
 
@@ -818,17 +821,17 @@ begin
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);
-  if FUserBackup <> nil then
+  if FAdditionalBufferBackup <> nil then
     // create backup of FUser
-    Move(FUser^, FUserBackup^, FUserSize);
+    Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
 
   FillChar(FInitializationVector^, FBufferSize, IFiller);
   if IVectorSize = 0 then
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
-    if FUserBackup <> nil then
+    if FAdditionalBufferBackup <> nil then
       // Restore backup fo FUser
-      Move(FUserBackup^, FUser^, FUserSize);
+      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
   end
   else
     Move(IVector, FInitializationVector^, IVectorSize);
@@ -899,8 +902,8 @@ begin
     FBufferIndex := 0;
     DoEncode(FFeedback, FBuffer, FBufferSize);
     Move(FInitializationVector^, FFeedback^, FBufferSize);
-    if FUserBackup <> nil then
-      Move(FUserBackup^, FUser^, FUserSize);
+    if FAdditionalBufferBackup <> nil then
+      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
   end;
 end;
 
