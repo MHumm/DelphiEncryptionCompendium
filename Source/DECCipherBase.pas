@@ -734,16 +734,16 @@ begin
   FDataSize := FBufferSize * 3 + FUserSize;
 
   if MustUserSave then
-    // if contents of the "user area" needs to be saved increase buffer size
+    // if contents of the "user area" FUser needs to be saved increase buffer size
     // by user size so FUser and then FUserSave fit in the buffer
     Inc(FDataSize, FUserSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FData     := ReallocMemory(FData, FDataSize);
-  FInitializationVector   := @FData[0];
-  FFeedback := @FInitializationVector[FBufferSize];
-  FBuffer   := @FFeedback[FBufferSize];
-  FUser     := @FBuffer[FBufferSize];
+  FData                 := ReallocMemory(FData, FDataSize);
+  FInitializationVector := @FData[0];
+  FFeedback             := @FInitializationVector[FBufferSize];
+  FBuffer               := @FFeedback[FBufferSize];
+  FUser                 := @FBuffer[FBufferSize];
 
   if MustUserSave then
     // buffer contents: FData, then FUser then FUserSave
