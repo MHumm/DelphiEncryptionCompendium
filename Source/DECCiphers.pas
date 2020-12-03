@@ -805,6 +805,13 @@ type
   /// <summary>
   ///   XTEA is an improved version of the TEA algorithm.
   /// </summary>
+  /// <remarks>
+  ///   In DEC V5.2 at least and in former commits of DEC 6.0 development version
+  ///   this algorithm was broken due to differences in brackets and thus returned
+  ///   a different result. It is unclear why nobody reported this as bug yet
+  ///   but be aware that if you need the old variant for compatibility reasons
+  ///   you need a commit from before 3rd December 2020.
+  /// </remarks>
   TCipher_XTEA = class(TCipher_TEA)
   protected
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -5827,9 +5834,9 @@ begin
 
   for I := 0 to FRounds - 1 do
   begin
-    Inc(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+    Inc(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
     Inc(Sum, TEA_Delta);
-    Inc(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+    Inc(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
   end;
 
   PUInt32Array(Dest)[0] := X;
@@ -5853,9 +5860,9 @@ begin
 
   for I := 0 to FRounds - 1 do
   begin
-    Dec(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+    Dec(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
     Dec(Sum, TEA_Delta);
-    Dec(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+    Dec(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
   end;
 
   PUInt32Array(Dest)[0] := X;
