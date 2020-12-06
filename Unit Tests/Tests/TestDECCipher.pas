@@ -3071,23 +3071,47 @@ end;
 procedure TestTCipher_XTEA.SetUp;
 begin
   FCipher_XTEA := TCipher_XTEA.Create;
+{ TODO : Should be specified via FTestData? But how to apply? }
+  FCipher_XTEA.Rounds := 32;
 
-  SetLength(FTestData, 1);
-  FTestData[0].OutputData  := 'cd7ebba2921a4b3be29e62cff71da5df63339429e2367c663ff81af90278bfa1';
-  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
-                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
-                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
-                                                    '\x09\x82\x2D\xBD\xF5\x60' +
-                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
-                                                    '\x81\xB1');
+  SetLength(FTestData, 3);
+  FTestData[0].OutputData  := 'd8d4e9ded91e13f7';
+  FTestData[0].InputData   := TFormat_HEX.Decode('0000000000000000');
 
-  // The key for this test vector is the old name of the class which was
-  // TCipher_TEAN as the vector already existed in DEC 5.2 but the class got
-  // renamed later on
-  FTestData[0].Key        := 'TCipher_TEAN';
+  FTestData[0].Key        := #$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00;
   FTestData[0].InitVector := '';
-  FTestData[0].Filler     := $FF;
-  FTestData[0].Mode       := cmCTSx;
+  FTestData[0].Filler     := $00;
+  FTestData[0].Mode       := cmECBx;
+
+  FTestData[1].OutputData  := '058c7e0537191550';
+  FTestData[1].InputData   := TFormat_HEX.Decode('0000000000000000');
+
+  FTestData[1].Key        := #$00#$00#$00#$80#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00;
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $00;
+  FTestData[1].Mode       := cmECBx;
+
+  FTestData[2].OutputData  := 'ef175e2818e3d22f';
+  FTestData[2].InputData   := TFormat_HEX.Decode('1a1a1a1a1a1a1a1a');
+
+  FTestData[2].Key        := #$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a;
+  FTestData[2].InitVector := '';
+  FTestData[2].Filler     := $00;
+  FTestData[2].Mode       := cmECBx;
+
+// There are further byte order issues regarding endianess. Since the preceeding
+// tests run properly it is assumed that the following one would as well when the
+// byte order issue has been cleared up
+////(:ecb-mode-test #h"2BD6459F82C5B300952C49104881FF48" #h"EA024714AD5C4D84" #h"67b41e0aa05f593a")
+//  FTestData[2].OutputData  := '0a1eb4673a595fa0';
+//  FTestData[2].InputData   := TFormat_HEX.Decode('144702ea844d5cad');
+//
+//
+//
+//  FTestData[2].Key        := #$9f#$45#$d6#$2b#$00#$be#$c5#$82#$10#$49#$2c#$95#$48#$ff#$81#$48;
+//  FTestData[2].InitVector := '';
+//  FTestData[2].Filler     := $00;
+//  FTestData[2].Mode       := cmECBx;
 end;
 
 procedure TestTCipher_XTEA.TearDown;
