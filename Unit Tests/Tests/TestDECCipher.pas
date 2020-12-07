@@ -774,6 +774,8 @@ begin
   CheckEquals(   1,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(   0,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctNull, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -834,6 +836,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(4168,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -912,6 +916,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals(4256,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -990,6 +996,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 208,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1068,6 +1076,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 384,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1146,6 +1156,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 160,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1233,6 +1245,8 @@ begin
   CheckEquals(   1,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 258,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1311,6 +1325,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 272,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(  16,  ReturnValue.MinRounds);
+  CheckEquals(  24,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1389,6 +1405,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 288,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1467,6 +1485,8 @@ begin
   CheckEquals(   4,  ReturnValue.BlockSize);
   CheckEquals(  32,  ReturnValue.BufferSize);
   CheckEquals(1548,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1545,6 +1565,8 @@ begin
   CheckEquals(   1,  ReturnValue.BlockSize);
   CheckEquals(  32,  ReturnValue.BufferSize);
   CheckEquals(1044,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1623,6 +1645,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 256,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1701,6 +1725,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 512,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1779,6 +1805,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1857,6 +1885,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 512,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -1935,6 +1965,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2013,6 +2045,8 @@ begin
   CheckEquals(  24,  ReturnValue.BlockSize);
   CheckEquals(  24,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2091,6 +2125,8 @@ begin
   CheckEquals(  12,  ReturnValue.BlockSize);
   CheckEquals(  12,  ReturnValue.BufferSize);
   CheckEquals( 120,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2169,6 +2205,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals( 256,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2247,6 +2285,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2332,6 +2372,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2410,6 +2452,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2488,6 +2532,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 120,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2566,6 +2612,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 256,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2644,6 +2692,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2722,6 +2772,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 136,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals( 256,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2800,6 +2852,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 768,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   4,  ReturnValue.MinRounds);
+  CheckEquals(  13,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2878,6 +2932,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 112,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -2956,6 +3012,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(2560,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -3034,6 +3092,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(  16,  ReturnValue.MinRounds);
+  CheckEquals( 256,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -3138,6 +3198,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals(  32,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(  16,  ReturnValue.MinRounds);
+  CheckEquals( 256,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -3345,6 +3407,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -3431,6 +3495,8 @@ begin
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
   CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
