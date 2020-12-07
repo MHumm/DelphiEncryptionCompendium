@@ -795,9 +795,9 @@ type
     class function Context: TCipherContext; override;
 
     /// <summary>
-    ///   16 - 32 Rounds, 16 (default) is sufficient, 32 is secure. If a value
-    ///   outside the range of 16 to 32 is assigned it will be limited to that
-    ///   range.
+    ///   16 - 256 Rounds, 16 (default) is sufficient, 64 is the official
+    ///   recommendation. If a value outside the range of 16 to 256 is assigned
+    ///   it will be limited to that range.
     /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
   end;
@@ -832,12 +832,14 @@ uses
 
 class function TCipher_Null.Context: TCipherContext;
 begin
-  Result.KeySize    := 0;
-  Result.BlockSize  := 1;
-  Result.BufferSize := 8;
-  Result.AdditionalBufferSize   := 0;
-  Result.NeedsAdditionalBufferBackup   := False;
-  Result.CipherType := [ctNull, ctSymmetric];
+  Result.KeySize                     := 0;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 0;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctNull, ctSymmetric];
 end;
 
 procedure TCipher_Null.DoInit(const Key; Size: Integer);
@@ -865,11 +867,13 @@ type
 
 class function TCipher_Blowfish.Context: TCipherContext;
 begin
-  Result.KeySize    := 56;
-  Result.BufferSize := 8;
-  Result.BlockSize  := 8;
-  Result.AdditionalBufferSize   := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
-  Result.NeedsAdditionalBufferBackup   := False;
+  Result.KeySize                     := 56;
+  Result.BufferSize                  := 8;
+  Result.BlockSize                   := 8;
+  Result.AdditionalBufferSize        := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -5749,8 +5753,8 @@ begin
   if Value < 16 then
     Value := 16
   else
-  if Value > 32 then
-    Value := 32;
+  if Value > 256 then
+    Value := 256;
   FRounds := Value;
 end;
 

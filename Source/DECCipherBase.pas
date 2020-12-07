@@ -77,6 +77,16 @@ type
     ///   Same in Done method as well.
     /// </summary>
     NeedsAdditionalBufferBackup : Boolean;
+    /// <summary>
+    ///   Minimum number of rounds allowed for any block cipher having a rounds
+    ///   property. In all other cases it will be set to 1.
+    /// </summary>
+    MinRounds : UInt16;
+    /// <summary>
+    ///   Maximum number of rounds allowed for any block cipher having a rounds
+    ///   property. In all other cases it will be set to 1.
+    /// </summary>
+    MaxRounds : UInt16;
 
     /// <summary>
     ///   Specifies the kind of cipher
