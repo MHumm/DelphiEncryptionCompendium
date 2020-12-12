@@ -132,7 +132,7 @@ type
     /// </summary>
     procedure Init;
     /// <summary>
-    ///   Calculates one chunk of data to be hashed.
+    ///   Processes one chunk of data to be hashed.
     /// </summary>
     /// <param name="Data">
     ///   Data on which the hash value shall be calculated on
