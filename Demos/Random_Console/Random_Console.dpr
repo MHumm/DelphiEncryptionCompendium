@@ -38,7 +38,8 @@ uses
   DECFormat in '..\..\Source\DECFormat.pas',
   DECHash in '..\..\Source\DECHash.pas',
   DECData in '..\..\Source\DECData.pas',
-  DECDataHash in '..\..\Source\DECDataHash.pas';
+  DECDataHash in '..\..\Source\DECDataHash.pas',
+  TestDECRandom in '..\..\Unit Tests\Tests\TestDECRandom.pas';
 
 var
   RandomNumbers: TBytes;
@@ -47,8 +48,8 @@ var
 begin
   try
     // Draw one random number each
-    WriteLn('Random UInt32 1: ', DECRandom.RandomLong);
-    WriteLn('Random UInt32 2: ', DECRandom.RandomLong);
+    WriteLn('Random UInt32 1: ', RandomLong);
+    WriteLn('Random UInt32 2: ', RandomLong);
     WriteLn;
 
     WriteLn('Get a buffer of random numbers');
@@ -76,7 +77,7 @@ begin
     WriteLn('same random number 1092210896 - so this is not recommended!');
 
     RandomSeed(RandomNumbers, 0);
-    WriteLn('Random UInt32 1: ', DECRandom.RandomLong);
+    WriteLn('Random UInt32 1: ', RandomLong);
 
     ReadLn;
   except

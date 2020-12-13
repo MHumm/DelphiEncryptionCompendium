@@ -1,11 +1,3 @@
-!!! We did not release DEC V6.0 beta 1 yet
-!!! This file is only in preparation of such a release
-!!! When we release, the release will appear on the
-!!! release tab in GitHub!
-
-!!! The project changed license!
-!!! We moved from MPL 1.0 to Apache 2.0 license
-
 # DEC - Delphi Encryption Compendium
 
 ## What is DEC?
@@ -14,6 +6,7 @@ It contains algorithms for these categories:
 
 * Ciphers: encryption/decryption of data
 * Hashes: "cryptographic checksums"
+* Key deviation algorithms like Kdf1-Kdf3
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
@@ -24,26 +17,18 @@ to compile it. If done it is compatible up to 10.2 Tokio at least.
 This version is only compatible with Win32/Win64!
 
 The version 6.0 which is still in development is compatible with
-Delphi 2009 - Delphi 10.4 Sydney. When defining the NO_ASM define
+Delphi 2009 - Delphi 10.4.1 Sydney. When defining the NO_ASM define
 in DECOptions.inc it is compatible with all platforms!
+It might be compatible with FPC, but this has not been focus and is not tested.
 
 ## What is the current status of this project?
-If you look at the release tab you see a 5.2 release from 2015 so
-the project looks a bit dead. But if you look closer at the insights
-or at the source code in development and master branch you will notice, 
-that there has been quite some activity since then, which is targeted at
-releasing a V6.0. Details about the changes and additions in V6.0
-can be found in the DEC60.pdf file in the docs subfolder of the development
-branch.
+After some years of work we finally managed to release V6.0 now. 
+Details about the changes and additions in V6.0 can be found in the DEC60.pdf 
+file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
 The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
-
-## Why is V6.0 not released yet?
-We are still working on some bugfixes and on finalizing the documentation.
-As soon as these things are done we will release this new version. Please
-keep in mind that we are working on this in our limited spare time!
 
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of DEC V6.0 you will find further files with information about 
@@ -139,6 +124,12 @@ Modes ending on x have been invented by the original developer of DEC
 * OFBx
 * CFS8
 * CFSx
+
+## Contained key deviation algorithms:
+* KDF1
+* KDF2
+* KDF3
+* MGF1
 
 ## Contained formattings
 * Copy

@@ -55,7 +55,9 @@ uses
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   DECDataCipher in '..\Source\DECDataCipher.pas',
   DECDataHash in '..\Source\DECDataHash.pas',
-  TestDECHashKDF in 'Tests\TestDECHashKDF.pas';
+  TestDECHashKDF in 'Tests\TestDECHashKDF.pas',
+  TestDECRandom in 'Tests\TestDECRandom.pas',
+  DECRandom in '..\Source\DECRandom.pas';
 
 var
   runner : ITestRunner;

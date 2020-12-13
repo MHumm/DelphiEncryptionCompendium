@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{FEE36113-01B3-4DE2-B2BC-B4858EAD04A3}</ProjectGuid>
-        <ProjectVersion>19.0</ProjectVersion>
+        <ProjectVersion>19.1</ProjectVersion>
         <MainSource>DECDUnitXTestSuite.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -137,6 +137,9 @@
         <DCCReference Include="Tests\TestDECCipherFormats.pas"/>
         <DCCReference Include="..\Source\DECDataCipher.pas"/>
         <DCCReference Include="..\Source\DECDataHash.pas"/>
+        <DCCReference Include="Tests\TestDECHashKDF.pas"/>
+        <DCCReference Include="Tests\TestDECRandom.pas"/>
+        <DCCReference Include="..\Source\DECRandom.pas"/>
         <None Include="..\Source\DECOptions.inc"/>
         <None Include="Tests\defines.inc"/>
         <BuildConfiguration Include="Release">
@@ -577,6 +580,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="iPad_AppIcon167">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimulator">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen\Assets\AppIcon.appiconset</RemoteDir>
+                        <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="iPad_Launch1024">
