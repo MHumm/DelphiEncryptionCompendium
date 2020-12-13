@@ -16,7 +16,9 @@
 *****************************************************************************}
 
 /// <summary>
-///   Secure Pseudo Random Number Generator based on Yarrow
+///   Secure Pseudo Random Number Generator based on Yarrow. If used without
+///   doing anything special for initialization a repeatable generator will be
+///   initialized always using the same start value.
 /// </summary>
 unit DECRandom;
 
@@ -87,7 +89,33 @@ function RandomRawByteString(Size: Integer): RawByteString; deprecated 'please u
 /// </returns>
 function RandomLong: UInt32;
 
+/// <summary>
+///   If the default value of the global DoRandomSeed variable is kept, this
+///   procedure initializes a repeatable or a non repeatable seed,
+///   depending on the parameters specified. Otherwise the alternative DoRandomSeed
+///   implementation is called. The FRndSeed variable is initialized with the
+///   seed value generated.
+/// </summary>
+/// <param name="Buffer">
+///   If a repeatable seed is to be initialized, the contents of this buffer is
+///   a parameter to the seed generation and a buffer containing at least Size
+///   bytes needs to be passed.
+/// </param>
+/// <param name="Size">
+///   If Size is > 0 a repeatable seed is initialized. If Size is 0 the
+///   internal seed variable FRndSeed is initialized with 0. If Size is
+///   less than 0 the internal FRndSeed variable is initialized with
+///   a value derrived from current system time/performance counter using
+///   RandomSystemTime.
+/// </param>
 procedure RandomSeed(const Buffer; Size: Integer); overload;
+/// <summary>
+///   Creates a seed (starting) value for the random number generator. If the
+///   default value of the global DoRandomSeed variable is kept, a non repeatable
+///   seed based on RandomSystemTime (based on system time and potentially
+///   QueryPerformanceCounter) is created and assigned to the internal FRndSeed
+///   variable.
+/// </summary>
 procedure RandomSeed; overload;
 
 var
@@ -311,6 +339,19 @@ begin
     TByteArray(Buffer)[i] := DoGenerateRandomByte;
 end;
 
+/// <summary>
+///   Initializes a repeatable or a non repeatable seed, depending on the
+///   parameters specified
+/// </summary>
+/// <param name="Buffer">
+///   If a repeatable seed is to be initialized, the contents of this buffer is
+///   a parameter to the seed generation and a buffer containing at least Size
+///   bytes needs to be passed.
+/// </param>
+/// <param name="Size">
+///   If Size is >= 0 a repeatable seed is initialized, otherwise a non repeatable
+///   based on system time
+/// </param>
 procedure DoSeed(const Buffer; Size: Integer);
 var
   i: Integer;
