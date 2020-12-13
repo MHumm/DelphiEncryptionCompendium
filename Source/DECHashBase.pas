@@ -132,7 +132,7 @@ type
     /// </summary>
     procedure Init;
     /// <summary>
-    ///   Calculates one chunk of data to be hashed.
+    ///   Processes one chunk of data to be hashed.
     /// </summary>
     /// <param name="Data">
     ///   Data on which the hash value shall be calculated on
@@ -389,7 +389,7 @@ type
 
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
-    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   similar to a hash function but in contrast does not have a fixed output
     ///   length. Use of a MGF is desirable in cases where a fixed-size hash
     ///   would be inadequate. Examples include generating padding, producing
     ///   one time pads or keystreams in symmetric key encryption, and yielding

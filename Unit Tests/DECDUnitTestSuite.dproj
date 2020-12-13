@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{4117BDAD-9849-4F6E-8968-BB6B92C8AE7B}</ProjectGuid>
-        <ProjectVersion>19.0</ProjectVersion>
+        <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -99,8 +99,10 @@
         <DCCReference Include="Tests\TestDECFormatBase.pas"/>
         <DCCReference Include="Tests\TestDECFormat.pas"/>
         <DCCReference Include="Tests\TestDECHash.pas"/>
+        <DCCReference Include="Tests\TestDECHashKDF.pas"/>
         <DCCReference Include="Tests\TestDECCRC.pas"/>
         <DCCReference Include="Tests\TestDECCipher.pas"/>
+        <DCCReference Include="Tests\TestDECRandom.pas"/>
         <DCCReference Include="..\Source\DECCiphers.pas"/>
         <DCCReference Include="..\Source\DECHashBase.pas"/>
         <DCCReference Include="..\Source\DECCipherFormats.pas"/>

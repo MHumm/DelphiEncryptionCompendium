@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{34FB3EC0-D6C0-4F92-9FEE-3E0E87C91FC4}</ProjectGuid>
-        <ProjectVersion>19.0</ProjectVersion>
+        <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <MainSource>DEC60.dpr</MainSource>
         <Base>True</Base>

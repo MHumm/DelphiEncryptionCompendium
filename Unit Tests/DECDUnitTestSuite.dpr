@@ -36,6 +36,7 @@ uses
   TestDECHashKDF in 'Tests\TestDECHashKDF.pas',
   TestDECCRC in 'Tests\TestDECCRC.pas',
   TestDECCipher in 'Tests\TestDECCipher.pas',
+  TestDECRandom in 'Tests\TestDECRandom.pas',
   DECCiphers in '..\Source\DECCiphers.pas',
   DECHashBase in '..\Source\DECHashBase.pas',
   DECCipherFormats in '..\Source\DECCipherFormats.pas',

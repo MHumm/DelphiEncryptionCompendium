@@ -16,7 +16,9 @@
 *****************************************************************************}
 
 /// <summary>
-///   Secure Pseudo Random Number Generator based on Yarrow
+///   Secure Pseudo Random Number Generator based on Yarrow. If used without
+///   doing anything special for initialization a repeatable generator will be
+///   initialized always using the same start value.
 /// </summary>
 unit DECRandom;
 
@@ -25,20 +27,122 @@ interface
 {$I DECOptions.inc}
 
 uses
-  SysUtils, DECUtil, DECHashBase, DECHash;
+  SysUtils, DECHashBase, DECHash;
 
+/// <summary>
+///   Create a seed for the random number generator from system time and
+///   PerformanceCounter.
+/// </summary>
+/// <remarks>
+///   Avoid initializing the seed using this fuction if you can as it is not
+///   really secure. Use RandomBuffer instead and provide user generated input
+///   as Buffer value but ensure that this is not uniform e.g. not a buffer only
+///   containing $00 all over or something like this.
+/// </remarks>
+/// <returns>
+///   Created hash value
+/// </returns>
 function RandomSystemTime: Int64;
+
+/// <summary>
+///   Fills the provided buffer with random values. If the DoRandomBuffer
+///   variable is assigned (which is usually the case because DoBuffer is
+///   assigned to it in initialization of this unit) the hash based algorithm
+///   in DoBuffer will be used, otherwise the weaker one in DoRndBuffer.
+/// </summary>
+/// <param name="Buffer">
+///   Buffer to be filled with random values
+/// </param>
+/// <param name="Size">
+///   Size of the buffer in byte
+/// </param>
 procedure RandomBuffer(var Buffer; Size: Integer);
+
+/// <summary>
+///   Creates a buffer of the specified size filled with random bytes
+/// </summary>
+/// <param name="Size">
+///   Size of the buffer to be created in bytes
+/// </param>
+/// <returns>
+///   Buffer of the specified size in bytes filled with random data
+/// </returns>
 function RandomBytes(Size: Integer): TBytes;
-function RandomRawByteString(Size: Integer): RawByteString; deprecated; // please use RandomBytes now
+/// <summary>
+///   Creates a RawByteString of the specified length filled with random bytes.
+/// </summary>
+/// <remarks>
+///   This function is deprecated. Better use RandomBytes where ever possible!
+/// </remarks>
+/// <param name="Size">
+///   Length of the string to be created in bytes
+/// </param>
+/// <returns>
+///   String of the specified length in bytes filled with random data
+/// </returns>
+function RandomRawByteString(Size: Integer): RawByteString; deprecated 'please use RandomBytes now';
+/// <summary>
+///   Creates a random UInt32 value
+/// </summary>
+/// <returns>
+///   Random value
+/// </returns>
 function RandomLong: UInt32;
+
+/// <summary>
+///   If the default value of the global DoRandomSeed variable is kept, this
+///   procedure initializes a repeatable or a non repeatable seed,
+///   depending on the parameters specified. Otherwise the alternative DoRandomSeed
+///   implementation is called. The FRndSeed variable is initialized with the
+///   seed value generated.
+/// </summary>
+/// <param name="Buffer">
+///   If a repeatable seed is to be initialized, the contents of this buffer is
+///   a parameter to the seed generation and a buffer containing at least Size
+///   bytes needs to be passed.
+/// </param>
+/// <param name="Size">
+///   If Size is > 0 a repeatable seed is initialized. If Size is 0 the
+///   internal seed variable FRndSeed is initialized with 0. If Size is
+///   less than 0 the internal FRndSeed variable is initialized with
+///   a value derrived from current system time/performance counter using
+///   RandomSystemTime.
+/// </param>
 procedure RandomSeed(const Buffer; Size: Integer); overload;
+/// <summary>
+///   Creates a seed (starting) value for the random number generator. If the
+///   default value of the global DoRandomSeed variable is kept, a non repeatable
+///   seed based on RandomSystemTime (based on system time and potentially
+///   QueryPerformanceCounter) is created and assigned to the internal FRndSeed
+///   variable.
+/// </summary>
 procedure RandomSeed; overload;
 
 var
   // secure PRNG initialized by this unit
+
+  /// <summary>
+  ///   This variable allows overriding the random number generation procedure
+  ///   used for data buffers. By default it is initialized to point to DoBuffer,
+  ///   which is a DECRandom internal procedure.
+  /// </summary>
+  /// <param name="Buffer">
+  ///   Buffer in which the random bytes shall be written. The buffer needs to
+  ///   exist and must be of at least Size bytes length.
+  /// </param>
+  /// <param name="Size">
+  ///   Length of the buffer to be filled in Byte.
+  /// </param>
   DoRandomBuffer: procedure(var Buffer; Size: Integer); register = nil;
+
+  /// <summary>
+  ///   This variable allows overriding the seed value generation procedure.
+  ///   By default it is initialized with the DECRandom internal procedure DoSeed.
+  /// </summary>
   DoRandomSeed: procedure(const Buffer; Size: Integer); register = nil;
+  /// <summary>
+  ///   Defines the hash-algorithm used for generatin seed values or hashed buffers
+  /// </summary>
   RandomClass: TDECHashClass = THash_SHA256;
 
 implementation
@@ -61,13 +165,32 @@ uses
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 var
+  /// <summary>
+  ///   A sequence of values which over time will be random by replacing each
+  ///   value with a derived value generated by applying the hash algorithm.
+  /// </summary>
   FRegister: array[0..127] of Byte;
+  /// <summary>
+  ///   The hash used to generate derived values stored in FRegister is calculated
+  ///   using this counter as input and this counter additionaly defines the index
+  ///   in FRegister where the value will be stored. The counter can assume higher
+  ///   values than the lngth of FRegister. The index calculation takes this into
+  ///   account.
+  /// </summary>
   FCounter: Cardinal;
+  /// <summary>
+  ///   Object instance for the hash generation algorithm used. The object is
+  ///   created the first time it is needed and freed in finalization of this unit.
+  /// </summary>
   FHash: TDECHash = nil;
+
+  /// <summary>
+  ///   Seed value, stores the last generated random number as start value for
+  ///   the next randum number generation
+  /// </summary>
   FRndSeed: Cardinal = 0;
 
 function RandomSystemTime: Int64;
-// create Seed from Systemtime and PerformanceCounter
 type
   TInt64Rec = packed record
     Lo, Hi: UInt32;
@@ -102,6 +225,24 @@ begin
   Inc(Result, Counter.Lo);
 end;
 
+/// <summary>
+///   Simplistic algorithm for filling a buffer with random numbers. This
+///   algorithm is directly dependant on the seed passed, which by internal use
+///   will normally be FRndSeed.
+/// </summary>
+/// <param name="Seed">
+///   Seed value as starting value
+/// </param>
+/// <param name="Buffer">
+///   Buffer which shall be filled with random bytes
+/// </param>
+/// <param name="Size">
+///   Size of the buffer in byte
+/// </param>
+/// <returns>
+///   New seed value after calculating the random number for the last byte in
+///   the buffer.
+/// </returns>
 function DoRndBuffer(Seed: Cardinal; var Buffer; Size: Integer): Cardinal;
 // comparable to Delphi Random() function
 var
@@ -171,26 +312,22 @@ begin
   RandomSeed('', -1);
 end;
 
-function DoProcess: Byte;
+/// <summary>
+///   Generate one random byte and modify FCounter and FRegister
+/// </summary>
+function DoGenerateRandomByte: Byte;
 begin
   if FHash = nil then
     FHash := RandomClass.Create;
 
   FHash.Init;
   FHash.Calc(FCounter, SizeOf(FCounter));
-{ TODO : Wenn in DECOptions.inc die Benutzung von ASM Code aktiviert ist, crasht
-  das Programm mit Zugriffsverletzung  in der nächsten Zeile. Grund ist jedoch noch
-  unbekannt.}
   FHash.Calc(FRegister, SizeOf(FRegister));
   FHash.Done;
 
-{ TODO : Auskommentiert wegen Verlegung von Digest nach Protected in DECHash um
- von PByteArray weg zu kommen}
-//  FRegister[FCounter mod SizeOf(FRegister)] := FRegister[FCounter mod SizeOf(FRegister)] xor FHash.Digest[0];
   FRegister[FCounter mod SizeOf(FRegister)] := FRegister[FCounter mod SizeOf(FRegister)] xor FHash.DigestAsBytes[0];
   Inc(FCounter);
 
-//  Result := FHash.Digest[1]; // no real predictable dependency to above FHash.Digest[0] !
   Result := FHash.DigestAsBytes[1]; // no real predictable dependency to above FHash.Digest[0] !
 end;
 
@@ -199,9 +336,22 @@ var
   i: Integer;
 begin
   for i := 0 to Size - 1 do
-    TByteArray(Buffer)[i] := DoProcess;
+    TByteArray(Buffer)[i] := DoGenerateRandomByte;
 end;
 
+/// <summary>
+///   Initializes a repeatable or a non repeatable seed, depending on the
+///   parameters specified
+/// </summary>
+/// <param name="Buffer">
+///   If a repeatable seed is to be initialized, the contents of this buffer is
+///   a parameter to the seed generation and a buffer containing at least Size
+///   bytes needs to be passed.
+/// </param>
+/// <param name="Size">
+///   If Size is >= 0 a repeatable seed is initialized, otherwise a non repeatable
+///   based on system time
+/// </param>
 procedure DoSeed(const Buffer; Size: Integer);
 var
   i: Integer;
@@ -229,7 +379,7 @@ begin
     end;
   end;
   for i := Low(FRegister) to High(FRegister) do
-    DoProcess;
+    DoGenerateRandomByte;
   FCounter := 0;
 end;
 
@@ -256,6 +406,8 @@ end;
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
+  {$DEFINE AUTO_PRNG}
+
   DoInit;
 
   {$IFDEF AUTO_PRNG} // see DECOptions.inc

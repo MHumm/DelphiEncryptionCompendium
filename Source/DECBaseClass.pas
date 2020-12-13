@@ -138,8 +138,6 @@ type
     procedure FreeInstance; override;
     {$ENDIF X86ASM}
 
-    class function SelfTest: Boolean; virtual;
-
     /// <summary>
     ///   Registers this class type in the list of DEC classes (ClassList).
     ///   Trying to register an already registered class will raise an exception.
@@ -257,16 +255,6 @@ asm
       POP     EBX
 end;
 {$ENDIF X86ASM}
-
-class function TDECObject.SelfTest: Boolean;
-begin
-  {$IFDEF FPC}
-  Result := False; // suppress FPC compiler warning
-  {$ENDIF FPC}
-  // C++ does not support virtual static functions thus the base cannot be
-  // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
-end;
 
 class procedure TDECObject.UnregisterClass(ClassList : TDECClassList);
 begin

@@ -67,10 +67,26 @@ type
     /// </summary>
     BufferSize : Integer;
     /// <summary>
-    ///   internal size in bytes of cipher dependend structures
+    ///   Size in bytes of the FAdditionalBuffer used by some of the cipher algorithms
     /// </summary>
-    UserSize   : Integer;
-    UserSave   : Boolean;
+    AdditionalBufferSize   : Integer;
+    /// <summary>
+    ///   When true the memory a certain internal pointer (FAdditionalBuffer)
+    ///   points to needs to be backuped during key initialization if no init
+    ///   vector is specified and restored at the end of that init method.
+    ///   Same in Done method as well.
+    /// </summary>
+    NeedsAdditionalBufferBackup : Boolean;
+    /// <summary>
+    ///   Minimum number of rounds allowed for any block cipher having a rounds
+    ///   property. In all other cases it will be set to 1.
+    /// </summary>
+    MinRounds : UInt16;
+    /// <summary>
+    ///   Maximum number of rounds allowed for any block cipher having a rounds
+    ///   property. In all other cases it will be set to 1.
+    /// </summary>
+    MaxRounds : UInt16;
 
     /// <summary>
     ///   Specifies the kind of cipher
@@ -123,8 +139,8 @@ type
   ///   Modes cmCFB8, cmOFB8, cmCFS8 work on 8 bit Feedback Shift Registers.
   ///
   ///   Modes cmCTSx, cmCFSx, cmCFS8 are proprietary modes developed by Hagen
-  ///   Reddmann. These modes works as cmCBCx, cmCFBx, cmCFB8 but with double
-  ///   XOR'ing of the inputstream into Feedback register.
+  ///   Reddmann. These modes work like cmCBCx, cmCFBx, cmCFB8 but with double
+  ///   XOR'ing of the inputstream into the feedback register.
   ///
   ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize and
   ///   should be used only in 1-byte Streamciphers.
@@ -221,16 +237,60 @@ type
     /// </summary>
     FBufferIndex: Integer;
 
-    FUserSize: Integer;
-
-    FBuffer: PByteArray;
-    FVector: PByteArray;
-    FFeedback: PByteArray;
     /// <summary>
-    ///   Seems to be a pointer to the last element of FBuffer?
+    ///   Some algorithms, mostly the cipher mode ones, need a temporary buffer
+    ///   to work with. Some other methods like Done or Valid cipher need to pass
+    ///   a buffer as parameter as that is ecpected by the called method.
     /// </summary>
-    FUser: Pointer;
-    FUserSave: Pointer;
+    FBuffer: PByteArray;
+
+    /// <summary>
+    ///   Initialization vector. When using cipher modes to derive a stream
+    ///   cipher from a block cipher algorithm some data from each encrypted block
+    ///   is fed into the encryption of the next block. For the first block there
+    ///   is no such encrypted data yet, so this initialization vector fills this
+    ///   "gap".
+    /// </summary>
+    FInitializationVector: PByteArray;
+
+    /// <summary>
+    ///   Cipher modes are used to derive a stream cipher from block cipher
+    ///   algorithms. For this something from the last entrypted block (or for
+    ///   the first block from the vector) is used in the encryption of the next
+    ///   block. It may be XORed with the next block cipher text for isntance.
+    ///   That data "going into the next block encryption" is this feedback array
+    /// </summary>
+    FFeedback: PByteArray;
+
+    /// <summary>
+    ///   Size of FAdditionalBuffer in Byte
+    /// </summary>
+    FAdditionalBufferSize: Integer;
+    /// <summary>
+    ///   A buffer some of the cipher algorithms need to operate on. It is
+    ///   some part of FBuffer like FInitializationVector and FFeedback as well.
+    /// </summary>
+    FAdditionalBuffer: Pointer;
+
+    /// <summary>
+    ///   If a user does not specify an init vector (IV) during key setup
+    ///   (IV length = 0) the init method generates an IV by encrypting the
+    ///   complete memory reserved for IV. Within this memory block is the memory
+    ///   FAdditionalBuffer points to as well, and for some algorithms this part
+    ///   of the memory may not be altered during initialization so it is
+    ///   backupped to this memory location and restored after the IV got encrypted.
+    ///   In DoDone it needs to be restored as well to prevent any unwanted
+    ///   leftovers which might pose a security issue.
+    /// </summary>
+    FAdditionalBufferBackup: Pointer;
+
+    /// <summary>
+    ///   Checks whether the state machine is in one of the states specified as
+    ///   parameter. If not a EDECCipherException will be raised.
+    /// </summary>
+    /// <param name="States">
+    ///   List of states the state machine should be at currently
+    /// </param>
     procedure CheckState(States: TCipherStates);
 
     /// <summary>
@@ -243,7 +303,36 @@ type
     ///   Size of the key passed in bytes. 
     /// </param>
     procedure DoInit(const Key; Size: Integer); virtual; abstract;
+
+    /// <summary>
+    ///   This abstract method needs to be overwritten by each concrete encryption
+    ///   algorithm as this is the routine used internally to encrypt a single
+    ///   block of data.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be encrypted
+    /// </param>
+    /// <param name="Dest">
+    ///   In this memory the encrypted result will be written
+    /// </param>
+    /// <param name="Size">
+    ///   Size of source in byte
+    /// </param>
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
+    /// <summary>
+    ///   This abstract method needs to be overwritten by each concrete encryption
+    ///   algorithm as this is the routine used internally to decrypt a single
+    ///   block of data.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be decrypted
+    /// </param>
+    /// <param name="Dest">
+    ///   In this memory the decrypted result will be written
+    /// </param>
+    /// <param name="Size">
+    ///   Size of source in byte
+    /// </param>
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
   public
     /// <summary>
@@ -442,7 +531,11 @@ type
     ///   order to not support mistreating strings as binary buffers.
     /// </summary>
     /// <remarks>
-    ///   This is the direct successor of the EncodeBinary method from DEC 5.2
+    ///   This is the direct successor of the EncodeBinary method from DEC 5.2.
+    ///   When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </remarks>
     /// <param name="Source">
     ///   The data to be encrypted
@@ -464,6 +557,10 @@ type
     /// </summary>
     /// <remarks>
     ///   This is the direct successor of the DecodeBinary method from DEC 5.2
+    ///   When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </remarks>
     /// <param name="Source">
     ///   The data to be decrypted
@@ -485,7 +582,10 @@ type
     ///   Encrypts the contents of a ByteArray.
     /// </summary>
     /// <param name="Source">
-    ///   The data to be encrypted
+    ///   The data to be encrypted. When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. Here a formatting method can be passed. The
@@ -500,7 +600,10 @@ type
     ///   Decrypts the contents of a ByteArray.
     /// </summary>
     /// <param name="Source">
-    ///   The data to be decrypted
+    ///   The data to be decrypted. When block chaining mode ECBx is used
+    ///   (not recommended!), the size of the data passed via this parameter
+    ///   needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. Here a formatting method can be passed. The
@@ -538,8 +641,15 @@ type
     ///   Provides access to the contents of the initialization vector
     /// </summary>
     property InitVector: PByteArray
-      read   FVector;
+      read   FInitializationVector;
 
+    /// <summary>
+    ///   Cipher modes are used to derive a stream cipher from block cipher
+    ///   algorithms. For this something from the last entrypted block (or for
+    ///   the first block from the vector) is used in the encryption of the next
+    ///   block. It may be XORed with the next block cipher text for instance.
+    ///   That data "going into the next block encryption" is this feedback array
+    /// </summary>
     property Feedback: PByteArray
       read   FFeedback;
     /// <summary>
@@ -624,30 +734,35 @@ end;
 
 constructor TDECCipher.Create;
 var
-  MustUserSave: Boolean;
+  MustAdditionalBufferSave: Boolean;
 begin
   inherited Create;
 
-  FBufferSize  := Context.BufferSize;
-  FUserSize    := Context.UserSize;
-  MustUserSave := Context.UserSave;
+  FBufferSize              := Context.BufferSize;
+  FAdditionalBufferSize    := Context.AdditionalBufferSize;
+  MustAdditionalBufferSave := Context.NeedsAdditionalBufferBackup;
 
-  FDataSize := FBufferSize * 3 + FUserSize;
+  // Initialization vector, feedback, buffer, additional buffer
+  FDataSize := FBufferSize * 3 + FAdditionalBufferSize;
 
-  if MustUserSave then
-    Inc(FDataSize, FUserSize);
+  if MustAdditionalBufferSave then
+    // if contents of the FAdditionalBuffer needs to be saved increase buffer size
+    // by FAdditionalBufferSize so FAdditionalBuffer and then FAdditionalBufferBackup
+    // fit in the buffer
+    Inc(FDataSize, FAdditionalBufferSize);
 
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FData     := ReallocMemory(FData, FDataSize);
-  FVector   := @FData[0];
-  FFeedback := @FVector[FBufferSize];
-  FBuffer   := @FFeedback[FBufferSize];
-  FUser     := @FBuffer[FBufferSize];
+  FData                 := ReallocMemory(FData, FDataSize);
+  FInitializationVector := @FData[0];
+  FFeedback             := @FInitializationVector[FBufferSize];
+  FBuffer               := @FFeedback[FBufferSize];
+  FAdditionalBuffer     := @FBuffer[FBufferSize];
 
-  if MustUserSave then
-    FUserSave := @PByteArray(FUser)[FUserSize]
+  if MustAdditionalBufferSave then
+    // buffer contents: FData, then FUser then FUserSave
+    FAdditionalBufferBackup := @PByteArray(FAdditionalBuffer)[FAdditionalBufferSize]
   else
-    FUserSave := nil;
+    FAdditionalBufferBackup := nil;
 
   Protect;
 end;
@@ -658,11 +773,11 @@ begin
   // FreeMem instead of ReallocMemory which produced a memory leak. ReallocMemory
   // was used instead of ReallocMem due to C++ compatibility as per 10.1 help
   FreeMem(FData, FDataSize);
-  FVector   := nil;
+  FInitializationVector   := nil;
   FFeedback := nil;
   FBuffer   := nil;
-  FUser     := nil;
-  FUserSave := nil;
+  FAdditionalBuffer     := nil;
+  FAdditionalBufferBackup := nil;
   inherited Destroy;
 end;
 
@@ -716,20 +831,22 @@ begin
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);
-  if FUserSave <> nil then
-    Move(FUser^, FUserSave^, FUserSize);
+  if FAdditionalBufferBackup <> nil then
+    // create backup of FUser
+    Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
 
-  FillChar(FVector^, FBufferSize, IFiller);
+  FillChar(FInitializationVector^, FBufferSize, IFiller);
   if IVectorSize = 0 then
   begin
-    DoEncode(FVector, FVector, FBufferSize);
-    if FUserSave <> nil then
-      Move(FUserSave^, FUser^, FUserSize);
+    DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
+    if FAdditionalBufferBackup <> nil then
+      // Restore backup fo FUser
+      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
   end
   else
-    Move(IVector, FVector^, IVectorSize);
+    Move(IVector, FInitializationVector^, IVectorSize);
 
-  Move(FVector^, FFeedback^, FBufferSize);
+  Move(FInitializationVector^, FFeedback^, FBufferSize);
 
   FState := csInitialized;
 end;
@@ -794,9 +911,9 @@ begin
     FState := csDone;
     FBufferIndex := 0;
     DoEncode(FFeedback, FBuffer, FBufferSize);
-    Move(FVector^, FFeedback^, FBufferSize);
-    if FUserSave <> nil then
-      Move(FUserSave^, FUser^, FUserSize);
+    Move(FInitializationVector^, FFeedback^, FBufferSize);
+    if FAdditionalBufferBackup <> nil then
+      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
   end;
 end;
 

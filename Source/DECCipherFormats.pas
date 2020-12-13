@@ -79,7 +79,10 @@ type
     ///   Encrypts the contents of a given byte array
     /// </summary>
     /// <param name="Source">
-    ///   Byte array with data to be encrypted
+    ///   Byte array with data to be encrypted. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <returns>
     ///   Byte array with encrypted data
@@ -90,7 +93,10 @@ type
     ///   Decrypts the contents of a given byte array
     /// </summary>
     /// <param name="Source">
-    ///   Byte array with data to be decrypted
+    ///   Byte array with data to be decrypted. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <returns>
     ///   Byte array with decrypted data
@@ -101,7 +107,10 @@ type
     ///   Encrypts the data contained in a given stream
     /// </summary>
     /// <param name="Source">
-    ///   Source stream containing the data to encrypt
+    ///   Source stream containing the data to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Dest">
     ///   Destination stream, where the encrypted data shall be put in
@@ -119,7 +128,10 @@ type
     ///   Decrypts the data contained in a given stream
     /// </summary>
     /// <param name="Source">
-    ///   Source stream containing the data to decrypt
+    ///   Source stream containing the data to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm used,
+    ///   otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Dest">
     ///   Destination stream, where the decrypted data shall be put in
@@ -137,7 +149,10 @@ type
     ///   Reads the contents of one file, encrypts it and stores it in another file
     /// </summary>
     /// <param name="SourceFileName">
-    ///   Path and name of the file to encrypt
+    ///   Path and name of the file to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="DestFileName">
     ///   Path and name of the file the encrypted data shall be stored in
@@ -153,7 +168,10 @@ type
     ///   Reads the contents of one file, decrypts it and stores it in another file
     /// </summary>
     /// <param name="SourceFileName">
-    ///   Path and name of the file to decrypt
+    ///   Path and name of the file to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="DestFileName">
     ///   Path and name of the file the decrypted data shall be stored in
@@ -169,7 +187,10 @@ type
     ///   Encrypts the contents of the passed unicode string
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -188,7 +209,10 @@ type
     ///   Encrypts the contents of the passed RawByteString
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -207,7 +231,10 @@ type
     ///   Encrypts the contents of the passed unicode string
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -233,7 +260,10 @@ type
     ///   Encrypts the contents of the passed unicode string
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -259,7 +289,10 @@ type
     ///   Decrypts the contents of the passed encrypted unicode string
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -278,7 +311,10 @@ type
     ///   Decrypts the contents of the passed encrypted RawByteString
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -297,7 +333,10 @@ type
     ///   Decrypts the contents of the passed Unicode string
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -321,7 +360,10 @@ type
     ///   Decrypts the contents of the passed RawByteString string
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -346,7 +388,10 @@ type
     ///   Encrypts the contents of the passed Ansistring
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -365,7 +410,10 @@ type
     ///   Encrypts the contents of the passed Ansistring
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -391,7 +439,10 @@ type
     ///   Decrypts the contents of the passed encrypted Ansistring
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -410,7 +461,10 @@ type
     ///   Decrypts the contents of the passed AnsiString string
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -436,7 +490,10 @@ type
     ///   Encrypts the contents of the passed Widestring
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -455,7 +512,10 @@ type
     ///   Encrypts the contents of the passed Widestring
     /// </summary>
     /// <param name="Source">
-    ///   String to encrypt
+    ///   String to encrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -481,7 +541,10 @@ type
     ///   Decrypts the contents of the passed encrypted Widestring
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -500,7 +563,10 @@ type
     ///   Decrypts the contents of the passed WideString string
     /// </summary>
     /// <param name="Source">
-    ///   String to decrypt
+    ///   String to decrypt. When block chaining mode ECBx
+    ///   is used (not recommended!), the size of the data passed via this
+    ///   parameter needs to be a multiple of the block size of the algorithm
+    ///   used, otherwise a EDECCipherException exception will be raised!
     /// </param>
     /// <param name="Format">
     ///   Optional parameter. One can pass a class reference of one of the
@@ -539,10 +605,6 @@ begin
   Result := Source;
   if Length(Result) > 0 then
     Decode(Result[0], Result[0], Length(Source));
-
-//  SetLength(Result, Length(Source));
-//  if Length(Result) > 0 then
-//    Decode(Source[0], Result[0], Length(Source));
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;

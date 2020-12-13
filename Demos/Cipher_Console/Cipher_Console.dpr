@@ -46,7 +46,6 @@ var
   // We use raw byte string here since Unicode handling of Windows console
   // is not given
   SourceText : RawByteString;
-  CipherText : string;
   // Key for the initialization of our encryption run
   CipherKey  : RawByteString;
   IV         : RawByteString;
@@ -81,7 +80,7 @@ begin
       Cipher.Init(CipherKey, IV, 0);
       Output := Cipher.DecodeBytes(Output);
 
-      SourceText := System.SysUtils.StringOf(Output);
+      SourceText := RawByteString(System.SysUtils.StringOf(Output));
 
       WriteLn('Decrypted data: ' + SourceText);
 
@@ -92,7 +91,7 @@ begin
       Cipher.Init(CipherKey, IV, 0);
       Output := Cipher.DecodeBytes(Output);
 
-      SourceText := System.SysUtils.StringOf(Output);
+      SourceText := RawByteString(System.SysUtils.StringOf(Output));
 
       WriteLn('Decrypted with different key: ' + SourceText);
 

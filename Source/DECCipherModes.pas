@@ -56,7 +56,7 @@ type
     /// </summary>
     procedure EncodeOFB8(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   8bit Cipher Feedback mode, needs no padding and works on 8 bit
+    ///   8 bit Cipher Feedback mode, needs no padding and works on 8 bit
     ///   Feedback Shift Registers.
     /// </summary>
     procedure EncodeCFB8(Source, Dest: PByteArray; Size: Integer); virtual;
@@ -95,7 +95,7 @@ type
     ///   It needs no external padding, because internally the last
     ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these Modes
     ///   cannot be used to process any more data. If needed to process chunks of
-    ///   data then each chunk must be algined to Cipher.BufferSize bytes.
+    ///   data then each chunk must be aligned to Cipher.BufferSize bytes.
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
     ///   Blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
@@ -105,7 +105,7 @@ type
     ///   It needs no external padding, because internally the last
     ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these Modes
     ///   cannot be used to process any more data. If needed to process chunks of
-    ///   data then each chunk must be algined to Cipher.BufferSize bytes.
+    ///   data then each chunk must be aligned to Cipher.BufferSize bytes.
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
     ///   Blockcipher that's equal to Cipher.BlockSize.
     ///   This one is a proprietary mode developed by Hagen Reddmann. This mode
@@ -130,21 +130,21 @@ type
     ///   Electronic Code Book
     ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize
     ///   and should be used only in 1-byte Streamciphers.
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
     procedure DecodeECBx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   8bit Output Feedback mode, needs no padding
+    ///   8 bit Output Feedback mode, needs no padding
     /// </summary>
     procedure DecodeOFB8(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   8bit Cipher Feedback mode, needs no padding and works on 8 bit
+    ///   8 bit Cipher Feedback mode, needs no padding and works on 8 bit
     ///   Feedback Shift Registers.
     /// </summary>
     procedure DecodeCFB8(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   8Bit CFS, double Cipher Feedback mode (CFB), needs no padding and
+    ///   8 Bit CFS, double Cipher Feedback mode (CFB), needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
     ///   This one is a proprietary mode developed by Hagen Reddmann. This mode
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
@@ -153,34 +153,34 @@ type
     procedure DecodeCFS8(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
     ///   Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
     procedure DecodeCFBx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
     ///   Output Feedback mode on Blocksize of Cipher, needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
     procedure DecodeOFBx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
     ///   double Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding.
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     ///   This one is a proprietary mode developed by Hagen Reddmann. This mode
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
     procedure DecodeCFSx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   Cipher Block Chaining, with CFB8 padding of truncated final block
+    ///   Cipher Block Chaining, with CFB8 padding of truncated final block.
     ///   It needs no external padding, because internally the last
-    ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these Modes
+    ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these modes
     ///   cannot be used to process any more data. If needed to process chunks of
     ///   data then each chunk must be algined to Cipher.BufferSize bytes.
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
     procedure DecodeCBCx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
@@ -189,11 +189,11 @@ type
     ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these Modes
     ///   cannot be used to process any more data. If needed to process chunks of
     ///   data then each chunk must be algined to Cipher.BufferSize bytes.
-    ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
-    ///   Blockcipher that's equal to Cipher.BlockSize.
+    ///   This one works on blocks of Cipher.BufferSize bytes, when using a
+    ///   blockcipher that's equal to Cipher.BlockSize.
     ///   This one is a proprietary mode developed by Hagen Reddmann. This mode
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
-    ///   inputstream into Feedback register.
+    ///   inputstream into feedback register.
     /// </summary>
     procedure DecodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
@@ -260,9 +260,6 @@ procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);
 begin
   CheckState([csInitialized, csEncode, csDone]);
 
-//  if (ctNull in Context.CipherType) then
-//    DoEncode(@Source, @Dest, DataSize) // copy the data untouched
-//  else
   case FMode of
     cmECBx:   EncodeECBx(@Source, @Dest, DataSize);
     cmCBCx:   EncodeCBCx(@Source, @Dest, DataSize);

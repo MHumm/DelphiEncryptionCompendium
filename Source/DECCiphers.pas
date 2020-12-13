@@ -795,9 +795,9 @@ type
     class function Context: TCipherContext; override;
 
     /// <summary>
-    ///   16 - 32 Rounds, 16 (default) is sufficient, 32 is secure. If a value
-    ///   outside the range of 16 to 32 is assigned it will be limited to that
-    ///   range.
+    ///   16 - 256 Rounds, 16 (default) is sufficient, 64 is the official
+    ///   recommendation. If a value outside the range of 16 to 256 is assigned
+    ///   it will be limited to that range.
     /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
   end;
@@ -805,6 +805,13 @@ type
   /// <summary>
   ///   XTEA is an improved version of the TEA algorithm.
   /// </summary>
+  /// <remarks>
+  ///   In DEC V5.2 at least and in former commits of DEC 6.0 development version
+  ///   this algorithm was broken due to differences in brackets and thus returned
+  ///   a different result. It is unclear why nobody reported this as bug yet
+  ///   but be aware that if you need the old variant for compatibility reasons
+  ///   you need a commit from before 3rd December 2020.
+  /// </remarks>
   TCipher_XTEA = class(TCipher_TEA)
   protected
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -825,12 +832,14 @@ uses
 
 class function TCipher_Null.Context: TCipherContext;
 begin
-  Result.KeySize := 0;
-  Result.BlockSize := 1;
-  Result.BufferSize := 8;
-  Result.UserSize := 0;
-  Result.UserSave := False;
-  Result.CipherType := [ctNull, ctSymmetric];
+  Result.KeySize                     := 0;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 0;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctNull, ctSymmetric];
 end;
 
 procedure TCipher_Null.DoInit(const Key; Size: Integer);
@@ -858,11 +867,13 @@ type
 
 class function TCipher_Blowfish.Context: TCipherContext;
 begin
-  Result.KeySize    := 56;
-  Result.BufferSize := 8;
-  Result.BlockSize  := 8;
-  Result.UserSize   := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
-  Result.UserSave   := False;
+  Result.KeySize                     := 56;
+  Result.BufferSize                  := 8;
+  Result.BlockSize                   := 8;
+  Result.AdditionalBufferSize        := SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key);
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -875,8 +886,8 @@ var
   S: PBlowfish;
 begin
   K := @Key;
-  S := FUser;
-  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // for Pointer Math
+  S := FAdditionalBuffer;
+  P := Pointer(PByte(FAdditionalBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
 
   Move(Blowfish_Data, S^, SizeOf(Blowfish_Data));
   Move(Blowfish_Key, P^, Sizeof(Blowfish_Key));
@@ -917,7 +928,7 @@ asm
         PUSH   EBX
         PUSH   EBP
         PUSH   ECX
-        MOV    ESI,[EAX].TCipher_Blowfish.FUser
+        MOV    ESI,[EAX].TCipher_Blowfish.FAdditionalBuffer
         MOV    EBX,[EDX + 0]     // A
         MOV    EBP,[EDX + 4]     // B
         BSWAP  EBX               // CPU >= 486
@@ -993,7 +1004,7 @@ asm
         PUSH   EBX
         PUSH   EBP
         PUSH   ECX
-        MOV    ESI,[EAX].TCipher_Blowfish.FUser
+        MOV    ESI,[EAX].TCipher_Blowfish.FAdditionalBuffer
         MOV    EBX,[EDX + 0]     // A
         MOV    EBP,[EDX + 4]     // B
         BSWAP  EBX
@@ -1073,12 +1084,14 @@ type
 
 class function TCipher_Twofish.Context: TCipherContext;
 begin
-  Result.KeySize    := 32;
-  Result.BufferSize := 16;
-  Result.BlockSize  := 16;
-  Result.UserSize   := 4256;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 32;
+  Result.BufferSize                  := 16;
+  Result.BlockSize                   := 16;
+  Result.AdditionalBufferSize        := 4256;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Twofish.DoInit(const Key; Size: Integer);
@@ -1289,7 +1302,7 @@ var
   end;
 
 begin
-  SubKey := FUser;
+  SubKey := FAdditionalBuffer;
   Box    := @SubKey[40];
   SetupKey;
   if Size = 16 then
@@ -1310,7 +1323,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  S   := FUser;
+  S   := FAdditionalBuffer;
   A.L := PUInt32Array(Source)[0] xor S[0];
   B.L := PUInt32Array(Source)[1] xor S[1];
   C.L := PUInt32Array(Source)[2] xor S[2];
@@ -1336,7 +1349,7 @@ begin
 
     S := @S[4];
   end;
-  S := FUser;
+  S := FAdditionalBuffer;
   PUInt32Array(Dest)[0] := C.L xor S[4];
   PUInt32Array(Dest)[1] := D.L xor S[5];
   PUInt32Array(Dest)[2] := A.L xor S[6];
@@ -1352,7 +1365,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  S := FUser;
+  S := FAdditionalBuffer;
   Box := @S[40];
   C.L := PUInt32Array(Source)[0] xor S[4];
   D.L := PUInt32Array(Source)[1] xor S[5];
@@ -1377,7 +1390,7 @@ begin
 
     Dec(PUInt32(S), 4);
   end;
-  S := FUser;
+  S := FAdditionalBuffer;
   PUInt32Array(Dest)[0] := A.L xor S[0];
   PUInt32Array(Dest)[1] := B.L xor S[1];
   PUInt32Array(Dest)[2] := C.L xor S[2];
@@ -1388,11 +1401,13 @@ end;
 
 class function TCipher_IDEA.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BufferSize := 8;
-  Result.BlockSize  := 8;
-  Result.UserSize   := 208;
-  Result.UserSave   := False;
+  Result.KeySize                     := 16;
+  Result.BufferSize                  := 8;
+  Result.BlockSize                   := 8;
+  Result.AdditionalBufferSize        := 208;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1433,7 +1448,7 @@ var
   A, B, C: Word;
   K, D: PWordArray;
 begin
-  E := FUser;
+  E := FAdditionalBuffer;
   Move(Key, E^, Size);
   for I := 0 to 7 do
     E[I] := Swap(E[I]);
@@ -1549,25 +1564,27 @@ procedure TCipher_IDEA.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BlockSize);
 
-  IDEACipher(Source, Dest, FUser);
+  IDEACipher(Source, Dest, FAdditionalBuffer);
 end;
 
 procedure TCipher_IDEA.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BlockSize);
 
-  IDEACipher(Source, Dest, @PUInt32Array(FUser)[26]);
+  IDEACipher(Source, Dest, @PUInt32Array(FAdditionalBuffer)[26]);
 end;
 
 { TCipher_Cast256 }
 
 class function TCipher_Cast256.Context: TCipherContext;
 begin
-  Result.KeySize    := 32;
-  Result.BlockSize  := 16;
-  Result.BufferSize := 16;
-  Result.UserSize   := 384;
-  Result.UserSave   := False;
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := 16;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 384;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -1580,7 +1597,7 @@ begin
   FillChar(X, SizeOf(X), 0);
   Move(Key, X, Size);
   SwapUInt32Buffer(X, X, 8);
-  K := FUser;
+  K := FAdditionalBuffer;
   M := $5A827999;
   R := 19;
   for I := 0 to 11 do
@@ -1686,7 +1703,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   SwapUInt32Buffer(Source^, Dest^, 4);
   A := PUInt32Array(Dest)[0];
   B := PUInt32Array(Dest)[1];
@@ -1762,7 +1779,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FUser)[44];
+  K := @PUInt32Array(FAdditionalBuffer)[44];
   SwapUInt32Buffer(Source^, Dest^, 4);
   A := PUInt32Array(Dest)[0];
   B := PUInt32Array(Dest)[1];
@@ -1835,12 +1852,14 @@ end;
 
 class function TCipher_Mars.Context: TCipherContext;
 begin
-  Result.KeySize    := 56;
-  Result.BlockSize  := 16;
-  Result.BufferSize := 16;
-  Result.UserSize   := 160;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 56;
+  Result.BlockSize                   := 16;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 160;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Mars.DoInit(const Key; Size: Integer);
@@ -1879,7 +1898,7 @@ var
   U: UInt32;
   K: PUInt32Array;
 begin
-  K := FUser;
+  K := FAdditionalBuffer;
   B := @Mars_Data;
   FillChar(T, SizeOf(T), 0);
   Move(Key, T, Size);
@@ -1917,7 +1936,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := PUInt32Array(Source)[0] + K[0];
   B := PUInt32Array(Source)[1] + K[1];
   C := PUInt32Array(Source)[2] + K[2];
@@ -2061,7 +2080,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FUser)[28];
+  K := @PUInt32Array(FAdditionalBuffer)[28];
   A := PUInt32Array(Source)[0] + K[8];
   B := PUInt32Array(Source)[1] + K[9];
   C := PUInt32Array(Source)[2] + K[10];
@@ -2198,12 +2217,14 @@ end;
 
 class function TCipher_RC4.Context: TCipherContext;
 begin
-  Result.KeySize    := 256;
-  Result.BlockSize  := 1;
-  Result.BufferSize := 16;
-  Result.UserSize   := 256 + 2;
-  Result.UserSave   := True;
-  Result.CipherType := [ctSymmetric, ctStream];
+  Result.KeySize                     := 256;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 256 + 2;
+  Result.NeedsAdditionalBufferBackup := true;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_RC4.DoInit(const Key; Size: Integer);
@@ -2212,7 +2233,7 @@ var
   D: PByteArray;
   I, J, T: Byte;
 begin
-  D := FUser;
+  D := FAdditionalBuffer;
   for I := 0 to 255 do
   begin
     D[I] := I;
@@ -2238,7 +2259,7 @@ var
   S: Integer;
   T, I, J: Byte;
 begin
-  D := FUser;
+  D := FAdditionalBuffer;
   I := D[256];
   J := D[257];
   for S := 0 to Size - 1 do
@@ -2263,21 +2284,23 @@ end;
 
 class function TCipher_RC6.Context: TCipherContext;
 begin
-  Result.KeySize    := 256;
-  Result.BlockSize  := 16;
-  Result.BufferSize := 16;
-  Result.UserSize   := 272;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 256;
+  Result.BlockSize                   := 16;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 272;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 16;
+  Result.MaxRounds                   := 24;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC6.SetRounds(Value: Integer);
 begin
-  if Value < 16 then
-    Value := 16
+  if Value < Context.MinRounds then
+    Value := Context.MinRounds
   else
-  if Value > 24 then
-    Value := 24;
+  if Value > Context.MaxRounds then
+    Value := Context.MaxRounds;
   if Value <> FRounds then
   begin
     if not (FState in [csNew, csInitialized, csDone]) then
@@ -2294,7 +2317,7 @@ var
 begin
   LimitRounds;
 
-  D := FUser;
+  D := FAdditionalBuffer;
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
   L := Size shr 2;
@@ -2351,8 +2374,8 @@ asm
       PUSH  EDI
       PUSH  EBP
       PUSH  ECX
-      MOV   EBP,[EAX].TCipher_RC6.FRounds  // Rounds
-      MOV   ESI,[EAX].TCipher_RC6.FUser    // Key
+      MOV   EBP,[EAX].TCipher_RC6.FRounds           // Rounds
+      MOV   ESI,[EAX].TCipher_RC6.FAdditionalBuffer // Key
       MOV   EAX,[EDX +  0]    // A
       MOV   EBX,[EDX +  4]    // B
       MOV   EDI,[EDX +  8]    // C
@@ -2434,9 +2457,9 @@ asm
       PUSH  EDI
       PUSH  EBP
       PUSH  ECX
-      MOV   EBP,[EAX].TCipher_RC6.FRounds  // Rounds
-      MOV   ESI,[EAX].TCipher_RC6.FUser    // Key
-      LEA   ESI,[ESI + EBP * 8]            // Key[FRounds * 2]
+      MOV   EBP,[EAX].TCipher_RC6.FRounds           // Rounds
+      MOV   ESI,[EAX].TCipher_RC6.FAdditionalBuffer // Key
+      LEA   ESI,[ESI + EBP * 8]                     // Key[FRounds * 2]
       MOV   EAX,[EDX +  0]    // A
       MOV   EBX,[EDX +  4]    // B
       MOV   EDI,[EDX +  8]    // C
@@ -2519,12 +2542,14 @@ const
   Rijndael_Blocks =  4;
   Rijndael_Rounds = 14;
 begin
-  Result.KeySize    := 32;
-  Result.BlockSize  := Rijndael_Blocks * 4;
-  Result.BufferSize := Rijndael_Blocks * 4;
-  Result.UserSize   := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
@@ -2625,7 +2650,7 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
     T: UInt32;
     P: PUInt32Array;
   begin
-    P := FUser;
+    P := FAdditionalBuffer;
     if Size <= 16 then
     begin
       for I := 0 to 9 do
@@ -2693,8 +2718,8 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
     P: PUInt32;
     I: Integer;
   begin
-    P := Pointer(PByte(FUser) + FUserSize shr 1); // for Pointer Math
-    Move(FUser^, P^, FUserSize shr 1);
+    P := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1); // for Pointer Math
+    Move(FAdditionalBuffer^, P^, FAdditionalBufferSize shr 1);
     Inc(P, 4);
     for I := 0 to FRounds * 4 - 5 do
     begin
@@ -2714,8 +2739,8 @@ begin
     FRounds := 12
   else
     FRounds := 14;
-  FillChar(FUser^, 32, 0);
-  Move(Key, FUser^, Size);
+  FillChar(FAdditionalBuffer^, 32, 0);
+  Move(Key, FAdditionalBuffer^, Size);
   BuildEncodeKey;
   BuildDecodeKey;
 end;
@@ -2729,7 +2754,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  P  := FUser;
+  P  := FAdditionalBuffer;
   A1 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   C1 := PUInt32Array(Source)[2];
@@ -2794,7 +2819,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  P  := Pointer(PByte(FUser) + FUserSize shr 1 + FRounds * 16); // for Pointer Math
+  P  := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1 + FRounds * 16); // for Pointer Math
   A1 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   C1 := PUInt32Array(Source)[2];
@@ -2856,12 +2881,14 @@ end;
 
 class function TCipher_Square.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 16;
-  Result.BufferSize := 16;
-  Result.UserSize   := 9 * 4 * 2 * SizeOf(UInt32);
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 16;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 9 * 4 * 2 * SizeOf(UInt32);
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Square.DoInit(const Key; Size: Integer);
@@ -2873,8 +2900,8 @@ var
   S, T, R: UInt32;
   I, J: Integer;
 begin
-  E := FUser;
-  D := FUser; Inc(D);
+  E := FAdditionalBuffer;
+  D := FAdditionalBuffer; Inc(D);
   Move(Key, E^, Size);
 
   for I := 1 to 8 do
@@ -2918,7 +2945,7 @@ var
   AA, BB, CC: UInt32;
   I: Integer;
 begin
-  Key := FUser;
+  Key := FAdditionalBuffer;
   A := PUInt32Array(Source)[0] xor Key[0];
   B := PUInt32Array(Source)[1] xor Key[1];
   C := PUInt32Array(Source)[2] xor Key[2];
@@ -2974,7 +3001,7 @@ var
   AA, BB, CC: UInt32;
   I: Integer;
 begin
-  Key := @PUInt32Array(FUser)[9 * 4];
+  Key := @PUInt32Array(FAdditionalBuffer)[9 * 4];
   A := PUInt32Array(Source)[0] xor Key[0];
   B := PUInt32Array(Source)[1] xor Key[1];
   C := PUInt32Array(Source)[2] xor Key[2];
@@ -3026,12 +3053,14 @@ end;
 
 class function TCipher_SCOP.Context: TCipherContext;
 begin
-  Result.KeySize    := 48;
-  Result.BlockSize  := 4;
-  Result.BufferSize := 32;
-  Result.UserSize   := 384 * 4 + 3 * SizeOf(UInt32);
-  Result.UserSave   := True;
-  Result.CipherType := [ctSymmetric, ctStream];
+  Result.KeySize                     := 48;
+  Result.BlockSize                   := 4;
+  Result.BufferSize                  := 32;
+  Result.AdditionalBufferSize        := 384 * 4 + 3 * SizeOf(UInt32);
+  Result.NeedsAdditionalBufferBackup := True;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_SCOP.DoInit(const Key; Size: Integer);
@@ -3104,7 +3133,7 @@ var
 begin
   FillChar(Init_State, SizeOf(Init_State), 0);
   FillChar(T, SizeOf(T), 0);
-  P := Pointer(PByte(FUser) + 12); // for Pointer Math
+  P := Pointer(PByte(FAdditionalBuffer) + 12); // for Pointer Math
   ExpandKey;
   for I := 0 to 7 do
     GP8(@T);
@@ -3117,7 +3146,7 @@ begin
   GP8(@T);
   I := T[3] and $7F;
   P[I + 3] := P[I + 3] or 1;
-  P := FUser;
+  P := FAdditionalBuffer;
   P[0] := T[3] shr 24 and $FF;
   P[1] := T[3] shr 16 and $FF;
   P[2] := T[3] shr  8 and $FF;
@@ -3131,7 +3160,7 @@ var
   P: PUInt32Array;
   W: Integer;
 begin
-  P  := FUser;
+  P  := FAdditionalBuffer;
   I  := P[0];
   J  := P[1];
   T3 := P[2];
@@ -3156,7 +3185,7 @@ var
   P: PUInt32Array;
   W: Integer;
 begin
-  P  := FUser;
+  P  := FAdditionalBuffer;
   I  := P[0];
   J  := P[1];
   T3 := P[2];
@@ -3190,12 +3219,14 @@ type
 
 class function TCipher_Sapphire.Context: TCipherContext;
 begin
-  Result.KeySize    := 1024;
-  Result.BlockSize  := 1;
-  Result.BufferSize := 32;
-  Result.UserSize   := SizeOf(TSapphireKey);
-  Result.UserSave   := True;
-  Result.CipherType := [ctSymmetric, ctStream];
+  Result.KeySize                     := 1024;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := 32;
+  Result.AdditionalBufferSize        := SizeOf(TSapphireKey);
+  Result.NeedsAdditionalBufferBackup := True;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
 end;
 
 procedure TCipher_Sapphire.DoInit(const Key; Size: Integer);
@@ -3235,7 +3266,7 @@ var
   I, S, T: Integer;
   SKey : PSapphireKey;
 begin
-  SKey := PSapphireKey(FUser);
+  SKey := PSapphireKey(FAdditionalBuffer);
   if Size <= 0 then
   begin
     SKey.Rotor     := 1;
@@ -3273,7 +3304,7 @@ var
   I: Integer;
   SKey: TSapphireKey;
 begin
-  SKey := PSapphireKey(FUser)^;
+  SKey := PSapphireKey(FAdditionalBuffer)^;
   for I := 0 to Size - 1 do
   begin
     SKey.Ratchet := (SKey.Ratchet + SKey.Cards[SKey.Rotor]) and $FF;
@@ -3299,7 +3330,7 @@ var
   I: Integer;
   SKey: TSapphireKey;
 begin
-  SKey := PSapphireKey(FUser)^;
+  SKey := PSapphireKey(FAdditionalBuffer)^;
   for I := 0 to Size - 1 do
   begin
     SKey.Ratchet := (SKey.Ratchet + SKey.Cards[SKey.Rotor]) and $FF;
@@ -3374,12 +3405,14 @@ end;
 
 class function TCipher_1DES.Context: TCipherContext;
 begin
-  Result.KeySize    := 8;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 32 * 4 * 2;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 8;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 32 * 4 * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_1DES.DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
@@ -3454,33 +3487,35 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  DoInitKey(K, FUser, False);
-  DoInitKey(K, @PUInt32Array(FUser)[32], True);
+  DoInitKey(K, FAdditionalBuffer, False);
+  DoInitKey(K, @PUInt32Array(FAdditionalBuffer)[32], True);
   ProtectBuffer(K, SizeOf(K));
 end;
 
 procedure TCipher_1DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, FUser);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, FAdditionalBuffer);
 end;
 
 procedure TCipher_1DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[32]);
 end;
 
 { TCipher_2DES }
 
 class function TCipher_2DES.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 32 * 4 * 2 * 2;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 32 * 4 * 2 * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_2DES.DoInit(const Key; Size: Integer);
@@ -3490,7 +3525,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  P := FUser;
+  P := FAdditionalBuffer;
   DoInitKey(K[0], @P[ 0], False);
   DoInitKey(K[8], @P[32], True);
   DoInitKey(K[0], @P[64], True);
@@ -3500,30 +3535,32 @@ end;
 
 procedure TCipher_2DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, FUser);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
-  DES_Func(Source, Dest, FUser);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, FAdditionalBuffer);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(Source, Dest, FAdditionalBuffer);
 end;
 
 procedure TCipher_2DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[96]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 { TCipher_3DES }
 
 class function TCipher_3DES.Context: TCipherContext;
 begin
-  Result.KeySize    := 24;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 32 * 4 * 2 * 3;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 24;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 32 * 4 * 2 * 3;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3DES.DoInit(const Key; Size: Integer);
@@ -3533,7 +3570,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  P := FUser;
+  P := FAdditionalBuffer;
   DoInitKey(K[ 0], @P[  0], False);
   DoInitKey(K[ 8], @P[ 32], True);
   DoInitKey(K[16], @P[ 64], False);
@@ -3545,18 +3582,18 @@ end;
 
 procedure TCipher_3DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[ 0]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[32]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[64]);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[ 0]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 procedure TCipher_3DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[96]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[128]);
-  DES_Func(Source, Dest, @PUInt32Array(FUser)[160]);
+  Assert(Size = Context.BlockSize);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[128]);
+  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[160]);
 end;
 
 { TCipher_2DDES }
@@ -3566,87 +3603,49 @@ begin
   Result            := inherited Context;
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
+  Result.MinRounds  := 1;
+  Result.MaxRounds  := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
-
-// Preserved until unit tests for encoding are in place and we can thus verify
-// that the removal of absolute was done properly
-//procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
-//var
-//  T: UInt32;
-//  S: PUInt32Array absolute Source;
-//  D: PUInt32Array absolute Dest;
-//begin
-//  Assert(Size = Context.BufferSize);
-//
-//  DES_Func(@S[0], @D[0], FUser);
-//  DES_Func(@S[2], @D[2], FUser);
-//  T := D[1]; D[1] := D[2]; D[2] := T;
-//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[32]);
-//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[32]);
-//  T := D[1]; D[1] := D[2]; D[2] := T;
-//  DES_Func(@D[0], @D[0], FUser);
-//  DES_Func(@D[2], @D[2], FUser);
-//end;
 
 procedure TCipher_2DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FAdditionalBuffer);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FAdditionalBuffer);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[32]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], FUser);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], FUser);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], FAdditionalBuffer);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], FAdditionalBuffer);
 end;
-
-// Preserved until unit tests for encoding are in place and we can thus verify
-// that the removal of absolute was done properly
-//procedure TCipher_2DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
-//var
-//  T: UInt32;
-//  S: PUInt32Array absolute Source;
-//  D: PUInt32Array absolute Dest;
-//begin
-//  Assert(Size = Context.BufferSize);
-//
-//  DES_Func(@S[0], @D[0], @PUInt32Array(FUser)[64]);
-//  DES_Func(@S[2], @D[2], @PUInt32Array(FUser)[64]);
-//  T := D[1]; D[1] := D[2]; D[2] := T;
-//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[96]);
-//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[96]);
-//  T := D[1]; D[1] := D[2]; D[2] := T;
-//  DES_Func(@D[0], @D[0], @PUInt32Array(FUser)[64]);
-//  DES_Func(@D[2], @D[2], @PUInt32Array(FUser)[64]);
-//end;
 
 procedure TCipher_2DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[64]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[96]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 { TCipher_3DDES }
@@ -3656,6 +3655,8 @@ begin
   Result            := inherited Context;
   Result.BlockSize  := 16;
   Result.BufferSize := 16;
+  Result.MinRounds  := 1;
+  Result.MaxRounds  := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3663,40 +3664,40 @@ procedure TCipher_3DDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FAdditionalBuffer);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FAdditionalBuffer);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[32]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 procedure TCipher_3DDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[96]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[128]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[128]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[128]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[128]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[160]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[160]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[160]);
 end;
 
 { TCipher_3TDES }
@@ -3706,6 +3707,8 @@ begin
   Result            := inherited Context;
   Result.BlockSize  := 24;
   Result.BufferSize := 24;
+  Result.MinRounds  := 1;
+  Result.MaxRounds  := 1;
   Result.CipherType := [ctSymmetric, ctBlock];
 end;
 
@@ -3713,58 +3716,58 @@ procedure TCipher_3TDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FUser);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FUser);
-  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], FUser);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], FAdditionalBuffer);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], FAdditionalBuffer);
+  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], FAdditionalBuffer);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
   T := PUInt32Array(Dest)[3];
   PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
   PUInt32Array(Dest)[4] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[32]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[32]);
-  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[32]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FAdditionalBuffer)[32]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
   T := PUInt32Array(Dest)[3];
   PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
   PUInt32Array(Dest)[4] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[64]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[64]);
-  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[64]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 procedure TCipher_3TDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[96]);
-  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[96]);
-  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[96]);
+  DES_Func(@PUInt32Array(Source)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(@PUInt32Array(Source)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[96]);
+  DES_Func(@PUInt32Array(Source)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FAdditionalBuffer)[96]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
   T := PUInt32Array(Dest)[3];
   PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
   PUInt32Array(Dest)[4] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[128]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[128]);
-  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[128]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[128]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[128]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FAdditionalBuffer)[128]);
   T := PUInt32Array(Dest)[1];
   PUInt32Array(Dest)[1] := PUInt32Array(Dest)[2];
   PUInt32Array(Dest)[2] := T;
   T := PUInt32Array(Dest)[3];
   PUInt32Array(Dest)[3] := PUInt32Array(Dest)[4];
   PUInt32Array(Dest)[4] := T;
-  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FUser)[160]);
-  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FUser)[160]);
-  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FUser)[160]);
+  DES_Func(@PUInt32Array(Dest)[0], @PUInt32Array(Dest)[0], @PUInt32Array(FAdditionalBuffer)[160]);
+  DES_Func(@PUInt32Array(Dest)[2], @PUInt32Array(Dest)[2], @PUInt32Array(FAdditionalBuffer)[160]);
+  DES_Func(@PUInt32Array(Dest)[4], @PUInt32Array(Dest)[4], @PUInt32Array(FAdditionalBuffer)[160]);
 end;
 
 { TCipher_3Way }
@@ -3780,12 +3783,14 @@ type
 
 class function TCipher_3Way.Context: TCipherContext;
 begin
-  Result.KeySize    := 12;
-  Result.BlockSize  := 12;
-  Result.BufferSize := 12;
-  Result.UserSize   := SizeOf(T3Way_Key);
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 12;
+  Result.BlockSize                   := 12;
+  Result.BufferSize                  := 12;
+  Result.AdditionalBufferSize        := SizeOf(T3Way_Key);
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_3Way.DoInit(const Key; Size: Integer);
@@ -3808,7 +3813,7 @@ var
   B0, B1, B2: UInt32;
   P3WayKey: P3Way_Key;
 begin
-  P3WayKey := P3Way_Key(FUser);
+  P3WayKey := P3Way_Key(FAdditionalBuffer);
 
   Move(Key, P3WayKey.E_Key, Size);
   Move(Key, P3WayKey.D_Key, Size);
@@ -3840,8 +3845,8 @@ var
   E: PUInt32;
   P3WayKey: P3Way_Key;
 begin
-  Assert(Size = Context.BufferSize);
-  P3WayKey := P3Way_Key(FUser);
+  Assert(Size = Context.BlockSize);
+  P3WayKey := P3Way_Key(FAdditionalBuffer);
 
   K0 := P3WayKey.E_Key[0];
   K1 := P3WayKey.E_Key[1];
@@ -3898,8 +3903,8 @@ var
   E: PUInt32;
   P3WayKey: P3Way_Key;
 begin
-  Assert(Size = Context.BufferSize);
-  P3WayKey := P3Way_Key(FUser);
+  Assert(Size = Context.BlockSize);
+  P3WayKey := P3Way_Key(FAdditionalBuffer);
 
   K0 := P3WayKey.D_Key[0];
   K1 := P3WayKey.D_Key[1];
@@ -3955,12 +3960,14 @@ end;
 
 class function TCipher_Cast128.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 128;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 128;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 256;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Cast128.SetRounds(Value: Integer);
@@ -3988,7 +3995,7 @@ begin
     else
       FRounds := 16;
   end;
-  K := FUser;
+  K := FAdditionalBuffer;
   FillChar(X, SizeOf(X), 0);
   Move(Key, X, Size);
   SwapUInt32Buffer(X, X, 4);
@@ -4134,9 +4141,9 @@ var
   T, I, A, B: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := SwapUInt32(PUInt32Array(Source)[0]);
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 2 do
@@ -4193,10 +4200,10 @@ var
   K: PUInt32Array;
   JumpStart: Boolean;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
   JumpStart := False;
 
-  K := @PUInt32Array(FUser)[12];
+  K := @PUInt32Array(FAdditionalBuffer)[12];
   B := SwapUInt32(PUInt32Array(Source)[0]);
   A := SwapUInt32(PUInt32Array(Source)[1]);
   I := 2;
@@ -4262,17 +4269,19 @@ end;
 
 class function TCipher_Gost.Context: TCipherContext;
 begin
-  Result.KeySize    := 32;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 32;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 32;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Gost.DoInit(const Key; Size: Integer);
 begin
-  Move(Key, FUser^, Size);
+  Move(Key, FAdditionalBuffer^, Size);
 end;
 
 procedure TCipher_Gost.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4280,16 +4289,16 @@ var
   I, A, B, T: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
 
   for I := 0 to 11 do
   begin
     if I and 3 = 0 then
-      K := FUser;
+      K := FAdditionalBuffer;
     T := A + K[0];
     B := B xor Gost_Data[0, T        and $FF] xor
                Gost_Data[1, T shr  8 and $FF] xor
@@ -4303,7 +4312,7 @@ begin
     K := @K[2];
   end;
 
-  K := @PUInt32Array(FUser)[6];
+  K := @PUInt32Array(FAdditionalBuffer)[6];
 
   for I := 0 to 3 do
   begin
@@ -4329,11 +4338,11 @@ var
   I, A, B, T: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
-  K := FUser;
+  K := FAdditionalBuffer;
 
   for I := 0 to 3 do
   begin
@@ -4353,7 +4362,7 @@ begin
   for I := 0 to 11 do
   begin
     if I and 3 = 0 then
-      K := @PUInt32Array(FUser)[6];
+      K := @PUInt32Array(FAdditionalBuffer)[6];
     T := A + K[1];
     B := B xor Gost_Data[0, T and $FF] xor
                Gost_Data[1, T shr  8 and $FF] xor
@@ -4375,12 +4384,14 @@ end;
 
 class function TCipher_Misty.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 128;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 128;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 function Misty_I(Value, Key: UInt32): UInt32;
@@ -4448,7 +4459,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  D := FUser;
+  D := FAdditionalBuffer;
 
   for I := 0 to 7 do
     D[I] := K[I * 2] * 256 + K[I * 2 + 1];
@@ -4467,48 +4478,48 @@ procedure TCipher_Misty.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
-  A := Misty_E(A, 0, FUser);
-  B := Misty_E(B, 1, FUser) xor Misty_O(A, 0, FUser);
-  A := A xor Misty_O(B, 1, FUser);
-  A := Misty_E(A, 2, FUser);
-  B := Misty_E(B, 3, FUser) xor Misty_O(A, 2, FUser);
-  A := A xor Misty_O(B, 3, FUser);
-  A := Misty_E(A, 4, FUser);
-  B := Misty_E(B, 5, FUser) xor Misty_O(A, 4, FUser);
-  A := A xor Misty_O(B, 5, FUser);
-  A := Misty_E(A, 6, FUser);
-  B := Misty_E(B, 7, FUser) xor Misty_O(A, 6, FUser);
-  A := A xor Misty_O(B, 7, FUser);
+  A := Misty_E(A, 0, FAdditionalBuffer);
+  B := Misty_E(B, 1, FAdditionalBuffer) xor Misty_O(A, 0, FAdditionalBuffer);
+  A := A xor Misty_O(B, 1, FAdditionalBuffer);
+  A := Misty_E(A, 2, FAdditionalBuffer);
+  B := Misty_E(B, 3, FAdditionalBuffer) xor Misty_O(A, 2, FAdditionalBuffer);
+  A := A xor Misty_O(B, 3, FAdditionalBuffer);
+  A := Misty_E(A, 4, FAdditionalBuffer);
+  B := Misty_E(B, 5, FAdditionalBuffer) xor Misty_O(A, 4, FAdditionalBuffer);
+  A := A xor Misty_O(B, 5, FAdditionalBuffer);
+  A := Misty_E(A, 6, FAdditionalBuffer);
+  B := Misty_E(B, 7, FAdditionalBuffer) xor Misty_O(A, 6, FAdditionalBuffer);
+  A := A xor Misty_O(B, 7, FAdditionalBuffer);
 
-  PUInt32Array(Dest)[0] := Misty_E(B, 9, FUser);
-  PUInt32Array(Dest)[1] := Misty_E(A, 8, FUser);
+  PUInt32Array(Dest)[0] := Misty_E(B, 9, FAdditionalBuffer);
+  PUInt32Array(Dest)[1] := Misty_E(A, 8, FAdditionalBuffer);
 end;
 
 procedure TCipher_Misty.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  B := Misty_D(PUInt32Array(Source)[0], 9, FUser);
-  A := Misty_D(PUInt32Array(Source)[1], 8, FUser);
-  A := A xor Misty_O(B, 7, FUser);
-  B := Misty_D(B xor Misty_O(A, 6, FUser), 7, FUser);
-  A := Misty_D(A, 6, FUser);
-  A := A xor Misty_O(B, 5, FUser);
-  B := Misty_D(B xor Misty_O(A, 4, FUser), 5, FUser);
-  A := Misty_D(A, 4, FUser);
-  A := A xor Misty_O(B, 3, FUser);
-  B := Misty_D(B xor Misty_O(A, 2, FUser), 3, FUser);
-  A := Misty_D(A, 2, FUser);
-  A := A xor Misty_O(B, 1, FUser);
+  B := Misty_D(PUInt32Array(Source)[0], 9, FAdditionalBuffer);
+  A := Misty_D(PUInt32Array(Source)[1], 8, FAdditionalBuffer);
+  A := A xor Misty_O(B, 7, FAdditionalBuffer);
+  B := Misty_D(B xor Misty_O(A, 6, FAdditionalBuffer), 7, FAdditionalBuffer);
+  A := Misty_D(A, 6, FAdditionalBuffer);
+  A := A xor Misty_O(B, 5, FAdditionalBuffer);
+  B := Misty_D(B xor Misty_O(A, 4, FAdditionalBuffer), 5, FAdditionalBuffer);
+  A := Misty_D(A, 4, FAdditionalBuffer);
+  A := A xor Misty_O(B, 3, FAdditionalBuffer);
+  B := Misty_D(B xor Misty_O(A, 2, FAdditionalBuffer), 3, FAdditionalBuffer);
+  A := Misty_D(A, 2, FAdditionalBuffer);
+  A := A xor Misty_O(B, 1, FAdditionalBuffer);
 
-  PUInt32Array(Dest)[0] := Misty_D(A, 0, FUser);
-  PUInt32Array(Dest)[1] := Misty_D(B xor Misty_O(A, 0, FUser), 1, FUser);
+  PUInt32Array(Dest)[0] := Misty_D(A, 0, FAdditionalBuffer);
+  PUInt32Array(Dest)[1] := Misty_D(B xor Misty_O(A, 0, FAdditionalBuffer), 1, FAdditionalBuffer);
 end;
 
 { TCipher_NewDES }
@@ -4557,12 +4568,14 @@ end;
 
 class function TCipher_NewDES.Context: TCipherContext;
 begin
-  Result.KeySize    := 15;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 60 * 2;
-  Result.UserSave   := True;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 15;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 60 * 2;
+  Result.NeedsAdditionalBufferBackup := true;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_NewDES.DoInit(const Key; Size: Integer);
@@ -4573,7 +4586,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  E := FUser;
+  E := FAdditionalBuffer;
   Move(K, E[ 0], 15);
   Move(K, E[15], 15);
   Move(K, E[30], 15);
@@ -4599,26 +4612,28 @@ end;
 
 procedure TCipher_NewDES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  NewDES_Func(Source, Dest, FUser);
+  Assert(Size = Context.BlockSize);
+  NewDES_Func(Source, Dest, FAdditionalBuffer);
 end;
 
 procedure TCipher_NewDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
-  Assert(Size = Context.BufferSize);
-  NewDES_Func(Source, Dest, @PByteArray(FUser)[60]);
+  Assert(Size = Context.BlockSize);
+  NewDES_Func(Source, Dest, @PByteArray(FAdditionalBuffer)[60]);
 end;
 
 { TCipher_Q128 }
 
 class function TCipher_Q128.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 16;
-  Result.BufferSize := 16;
-  Result.UserSize   := 256;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 16;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := 256;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Q128.DoInit(const Key; Size: Integer);
@@ -4629,7 +4644,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  D := FUser;
+  D := FAdditionalBuffer;
 
   for I := 19 downto 1 do
   begin
@@ -4658,7 +4673,7 @@ asm
        PUSH   EBX
        PUSH   EBP
        PUSH   ECX
-       MOV    EDI,[EAX].TCipher_Q128.FUser
+       MOV    EDI,[EAX].TCipher_Q128.FAdditionalBuffer
        MOV    EAX,[EDX +  0]  // B0
        MOV    EBX,[EDX +  4]  // B1
        MOV    ECX,[EDX +  8]  // B2
@@ -4706,7 +4721,7 @@ var
   D: PUInt32Array;
   B0, B1, B2, B3, I: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   D  := FUser;
   B0 := PUInt32Array(Source)[0];
@@ -4736,7 +4751,7 @@ asm
        PUSH   EBX
        PUSH   EBP
        PUSH   ECX
-       MOV    EDI,[EAX].TCipher_Q128.FUser
+       MOV    EDI,[EAX].TCipher_Q128.FAdditionalBuffer
        LEA    EDI,[EDI + 64 * 4]
        MOV    ESI,[EDX +  0]   // B0
        MOV    EBX,[EDX +  4]  // B1
@@ -4785,7 +4800,7 @@ var
   D: PUInt32Array;
   B0, B1, B2, B3, I: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   D  := @PUInt32Array(FUser)[60];
   B0 := PUInt32Array(Source)[0];
@@ -4811,12 +4826,14 @@ end;
 
 class function TCipher_RC2.Context: TCipherContext;
 begin
-  Result.KeySize    := 128;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 128;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 128;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 128;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC2.DoInit(const Key; Size: Integer);
@@ -4836,7 +4853,7 @@ begin
   else
     Mask := $FF shr (8 - L);
   L := (KeyEffectiveBits + 7) shr 3;
-  K := FUser;
+  K := FAdditionalBuffer;
   Move(Key, K[0], Size);
   for I := Size to 127 do
     K[I] := RC2_Data[(K[I - Size] + K[I - 1]) and $FF];
@@ -4851,9 +4868,9 @@ var
   K: PWordArray;
   A, B, C, D: Word;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := PWordArray(Source)[0];
   B := PWordArray(Source)[1];
   C := PWordArray(Source)[2];
@@ -4886,7 +4903,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := PWordArray(Source)[0];
   B := PWordArray(Source)[1];
   C := PWordArray(Source)[2];
@@ -4915,12 +4932,14 @@ end;
 
 class function TCipher_RC5.Context: TCipherContext;
 begin
-  Result.KeySize    := 256;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 136;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 256;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 136;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 256;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_RC5.SetRounds(Value: Integer);
@@ -4946,7 +4965,7 @@ begin
     FRounds := 12;
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  D := FUser;
+  D := FAdditionalBuffer;
   L := (Size + 3) shr 2;
   if L <= 0 then
     L := 1;
@@ -4985,9 +5004,9 @@ var
   I: Integer;
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   A := PUInt32Array(Source)[0] + K[0];
   B := PUInt32Array(Source)[1] + K[1];
   for I := 1 to FRounds do
@@ -5005,9 +5024,9 @@ var
   I: Integer;
   A, B: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FUser)[0];
+  K := @PUInt32Array(FAdditionalBuffer)[0];
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1];
   for I := FRounds downto 1 do
@@ -5023,12 +5042,14 @@ end;
 
 class function TCipher_SAFER.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 768;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 768;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 4;
+  Result.MaxRounds                   := 13;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_SAFER.SetRounds(Value: Integer);
@@ -5065,7 +5086,7 @@ procedure TCipher_SAFER.DoInit(const Key; Size: Integer);
     Exp: PByteArray;
     Log: PByteArray;
   begin
-    Exp := FUser;
+    Exp := FAdditionalBuffer;
     Log := @Exp[256];
     E   := 1;
     for I := 0 to 255 do
@@ -5085,7 +5106,7 @@ procedure TCipher_SAFER.DoInit(const Key; Size: Integer);
     I, J: Integer;
   begin
     Strong := FVersion in [svSK40, svSK64, svSK128];
-    Exp := FUser;
+    Exp := FAdditionalBuffer;
     D := @Exp[512];
     FillChar(K, SizeOf(K), 0);
     // Setup Key A
@@ -5172,9 +5193,9 @@ var
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  Exp := FUser;
+  Exp := FAdditionalBuffer;
   Log := @Exp[256];
   Key := @Exp[512];
 
@@ -5239,9 +5260,9 @@ var
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  Exp := FUser;
+  Exp := FAdditionalBuffer;
   Log := @Exp[256];
   Key := @Exp[504 + 8 * (FRounds * 2 + 1)];
 
@@ -5312,12 +5333,14 @@ type
 
 class function TCipher_Shark.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := 112;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 112;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
@@ -5423,7 +5446,7 @@ begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
   InitLog;
-  E := FUser;
+  E := FAdditionalBuffer;
   D := @E[7];
   Move(Shark_CE[0], T, SizeOf(T));
   T[6] := Transform(T[6]);
@@ -5469,9 +5492,9 @@ var
   T, L, R: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FAdditionalBuffer;
   L := PLong64(Source).L;
   R := PLong64(Source).R;
   for I := 0 to 4 do
@@ -5516,9 +5539,9 @@ var
   T, R, L: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FUser)[14];
+  K := @PUInt32Array(FAdditionalBuffer)[14];
   L := PLong64(Source).L;
   R := PLong64(Source).R;
   for I := 0 to 4 do
@@ -5561,12 +5584,14 @@ end;
 
 class function TCipher_Skipjack.Context: TCipherContext;
 begin
-  Result.KeySize    := 10;
-  Result.BlockSize  := 8;
-  Result.BufferSize := 8;
-  Result.UserSize   := $A00;
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 10;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := $A00;
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_Skipjack.DoInit(const Key; Size: Integer);
@@ -5577,7 +5602,7 @@ var
 begin
   FillChar(K, SizeOf(K), 0);
   Move(Key, K, Size);
-  D := FUser;
+  D := FAdditionalBuffer;
   for I := 0 to 9 do
     for J := 0 to 255 do
     begin
@@ -5594,9 +5619,9 @@ var
   K, T, A, B, C, D: UInt32;
 
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  Min := FUser;
+  Min := FAdditionalBuffer;
   Max := PByte(Min) + 9 * 256; // for Pointer Math
   Tab := Min;
   A   := Swap(PWordArray(Source)[0]);
@@ -5666,13 +5691,8 @@ end;
 procedure TCipher_Skipjack.SkipjackIncCheck(var ATab: PSkipjackTab; AMin: PSkipjackTab; AMax: PByte);
 begin
   Inc(ATab);
-//    {$IFDEF DELPHIORBCB}
-//    if ATab > AMax then
-//    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
-diese interne procedure eher zu einer strict private methode werden}
+
   if PByte(ATab) > AMax then
-//    {$ENDIF !DELPHIORBCB}
     ATab := AMin;
 end;
 
@@ -5683,9 +5703,9 @@ var
   K, T, A, B, C, D: UInt32;
 
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
-  Min := FUser;
+  Min := FAdditionalBuffer;
   Max := Pointer(Min + 9 * 256);
   Tab := Pointer(Min + 7 * 256);
   A   := Swap(PWordArray(Source)[0]); // holds an Integer, Compiler makes faster Code
@@ -5772,12 +5792,14 @@ const
 
 class function TCipher_TEA.Context: TCipherContext;
 begin
-  Result.KeySize    := 16;   // 128 bits
-  Result.BlockSize  := 8;  // 64 bits
-  Result.BufferSize := 8; // 64 bits
-  Result.UserSize   := 32;  // 256 bits
-  Result.UserSave   := False;
-  Result.CipherType := [ctSymmetric, ctBlock];
+  Result.KeySize                     := 16;   // 128 bits
+  Result.BlockSize                   := 8;    // 64 bits
+  Result.BufferSize                  := 8;    // 64 bits
+  Result.AdditionalBufferSize        := 32;   // 256 bits
+  Result.NeedsAdditionalBufferBackup := false;
+  Result.MinRounds                   := 16;
+  Result.MaxRounds                   := 256;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_TEA.SetRounds(Value: Integer);
@@ -5787,14 +5809,14 @@ begin
   if Value < 16 then
     Value := 16
   else
-  if Value > 32 then
-    Value := 32;
+  if Value > 256 then
+    Value := 256;
   FRounds := Value;
 end;
 
 procedure TCipher_TEA.DoInit(const Key; Size: Integer);
 begin
-  Move(Key, FUser^, Size);
+  Move(Key, FAdditionalBuffer^, Size);
   SetRounds(FRounds);
 end;
 
@@ -5804,14 +5826,14 @@ var
   Sum,
   X, Y, A, B, C, D: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := 0;
 
-  A := PUInt32Array(FUser)[0];
-  B := PUInt32Array(FUser)[1];
-  C := PUInt32Array(FUser)[2];
-  D := PUInt32Array(FUser)[3];
+  A := PUInt32Array(FAdditionalBuffer)[0];
+  B := PUInt32Array(FAdditionalBuffer)[1];
+  C := PUInt32Array(FAdditionalBuffer)[2];
+  D := PUInt32Array(FAdditionalBuffer)[3];
   X := PUInt32Array(Source)[0];
   Y := PUInt32Array(Source)[1];
 
@@ -5832,14 +5854,14 @@ var
   Sum,
   X, Y, A, B, C, D: UInt32;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := TEA_Delta * UInt32(FRounds);
 
-  A := PUInt32Array(FUser)[0];
-  B := PUInt32Array(FUser)[1];
-  C := PUInt32Array(FUser)[2];
-  D := PUInt32Array(FUser)[3];
+  A := PUInt32Array(FAdditionalBuffer)[0];
+  B := PUInt32Array(FAdditionalBuffer)[1];
+  C := PUInt32Array(FAdditionalBuffer)[2];
+  D := PUInt32Array(FAdditionalBuffer)[3];
   X := PUInt32Array(Source)[0];
   Y := PUInt32Array(Source)[1];
 
@@ -5862,19 +5884,19 @@ var
   I, X, Y: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := 0;
 
   X := PUInt32Array(Source)[0];
   Y := PUInt32Array(Source)[1];
-  K := FUser;
+  K := FAdditionalBuffer;
 
   for I := 0 to FRounds - 1 do
   begin
-    Inc(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+    Inc(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
     Inc(Sum, TEA_Delta);
-    Inc(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+    Inc(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
   end;
 
   PUInt32Array(Dest)[0] := X;
@@ -5888,19 +5910,19 @@ var
   X, Y: UInt32;
   K: PUInt32Array;
 begin
-  Assert(Size = Context.BufferSize);
+  Assert(Size = Context.BlockSize);
 
   Sum := TEA_Delta * UInt32(FRounds);
 
   X := PUInt32Array(Source)[0];
   Y := PUInt32Array(Source)[1];
-  K := FUser;
+  K := FAdditionalBuffer;
 
   for I := 0 to FRounds - 1 do
   begin
-    Dec(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+    Dec(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
     Dec(Sum, TEA_Delta);
-    Dec(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+    Dec(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
   end;
 
   PUInt32Array(Dest)[0] := X;
