@@ -7,7 +7,7 @@ The following versions are currently supported with security fixes:
 | Version  | Supported          |
 | -------- | ------------------ |
 | 5.2      | :negative_squared_cross_mark: |
-| 6.0 Beta | :white_check_mark: |
+| 6.0      | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
