@@ -268,8 +268,8 @@ begin
   StringGridContext.Cells[1, 0] :=  (Context.KeySize*8).ToString;
   StringGridContext.Cells[1, 1] :=  (Context.BlockSize*8).ToString;
   StringGridContext.Cells[1, 2] :=  (Context.BufferSize*8).ToString;
-  StringGridContext.Cells[1, 3] :=  (Context.UserSize*8).ToString;
-  StringGridContext.Cells[1, 4] :=  BoolToStr(Context.UserSave, true);
+  StringGridContext.Cells[1, 3] :=  (Context.AdditionalBufferSize*8).ToString;
+  StringGridContext.Cells[1, 4] :=  BoolToStr(Context.NeedsAdditionalBufferBackup, true);
 
   if ctBlock in Context.CipherType then
     StringGridContext.Cells[1, 5] := 'block cipher'

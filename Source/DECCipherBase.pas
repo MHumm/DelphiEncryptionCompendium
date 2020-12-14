@@ -205,8 +205,8 @@ type
   TDECCipher = class(TDECObject)
   strict private
     /// <summary>
-    ///   This is the complete memory block containing FVector, FFeedback, FBuffer
-    ///   and FUser
+    ///   This is the complete memory block containing FInitializationVector,
+    ///   FFeedback, FBuffer and FAdditionalBuffer
     /// </summary>
     FData     : PByteArray;
     /// <summary>
@@ -759,7 +759,7 @@ begin
   FAdditionalBuffer     := @FBuffer[FBufferSize];
 
   if MustAdditionalBufferSave then
-    // buffer contents: FData, then FUser then FUserSave
+    // buffer contents: FData, then FFeedback, then FBuffer then FAdditionalBuffer
     FAdditionalBufferBackup := @PByteArray(FAdditionalBuffer)[FAdditionalBufferSize]
   else
     FAdditionalBufferBackup := nil;
@@ -832,7 +832,7 @@ begin
 
   DoInit(Key, Size);
   if FAdditionalBufferBackup <> nil then
-    // create backup of FUser
+    // create backup of FBuffer
     Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
 
   FillChar(FInitializationVector^, FBufferSize, IFiller);
@@ -840,7 +840,7 @@ begin
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
     if FAdditionalBufferBackup <> nil then
-      // Restore backup fo FUser
+      // Restore backup fo FBuffer
       Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
   end
   else

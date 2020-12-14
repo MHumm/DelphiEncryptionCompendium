@@ -974,8 +974,8 @@ begin
   Assert(Size = Context.BlockSize, 'Size of ' + IntToStr(Size) + ' does not equal '+
                                    'block size of ' + IntToStr(Context.BlockSize));
 
-  D := FUser;
-  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data)); // for Pointer Math
+  D := FBuffer;
+  P := Pointer(PByte(FBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
@@ -1048,8 +1048,8 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D := FUser;
-  P := Pointer(PByte(FUser) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
+  D := FBuffer;
+  P := Pointer(PByte(FBuffer) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0];
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
@@ -2424,7 +2424,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := FUser;
+  K := FBuffer;
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1] + K[0];
   C := PUInt32Array(Source)[2];
@@ -2507,7 +2507,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FUser)[FRounds * 2];
+  K := @PUInt32Array(FBuffer)[FRounds * 2];
   A := PUInt32Array(Source)[0] - K[2];
   B := PUInt32Array(Source)[1];
   C := PUInt32Array(Source)[2] - K[3];
@@ -2574,7 +2574,7 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
       begin
         while (J < FRounds - 6) and (T < Rijndael_Blocks) do
         begin
-          PUInt32Array(FUser)[R * Rijndael_Blocks + T] := K[J];
+          PUInt32Array(FBuffer)[R * Rijndael_Blocks + T] := K[J];
           Inc(J);
           Inc(T);
         end;
@@ -2627,8 +2627,8 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
     I: Integer;
     D: PUInt32;
   begin
-    D := Pointer(PAnsiChar(FUser) + FUserSize shr 1); // for Pointer Math
-    Move(FUser^, D^, FUserSize shr 1);
+    D := Pointer(PAnsiChar(FBuffer) + FBufferSize shr 1); // for Pointer Math
+    Move(FBuffer^, D^, FBufferSize shr 1);
     Inc(D, 4);
     for I := 0 to FRounds * 4 - 5 do
     begin
@@ -4723,7 +4723,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D  := FUser;
+  D  := FBuffer;
   B0 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   B2 := PUInt32Array(Source)[2];
@@ -4802,7 +4802,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D  := @PUInt32Array(FUser)[60];
+  D  := @PUInt32Array(FBuffer)[60];
   B0 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   B2 := PUInt32Array(Source)[2];
