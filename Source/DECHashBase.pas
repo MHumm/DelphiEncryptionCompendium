@@ -1108,7 +1108,7 @@ begin
     while Size > 0 do
     begin
       if Assigned(Progress) then
-        Progress.Process(Min, Max, Pos);
+        Progress.OnProgress(Min, Max, Pos);
       Bytes := Length(Buffer);
       if Bytes > Size then
         Bytes := Size;
@@ -1123,7 +1123,7 @@ begin
   finally
     ProtectBytes(Buffer);
     if Assigned(Progress) then
-      Progress.Process(Min, Max, Max);
+      Progress.OnProgress(Min, Max, Max);
   end;
 end;
 

@@ -14,7 +14,7 @@ type
     procedure Button1Click(Sender: TObject);
   private
   public
-    procedure Process(const Min, Max, Pos: Int64); stdcall;
+    procedure OnProgress(const Min, Max, Pos: Int64); stdcall;
   end;
 
 var
@@ -64,7 +64,7 @@ begin
   end;
 end;
 
-procedure TForm1.Process(const Min, Max, Pos: Int64);
+procedure TForm1.OnProgress(const Min, Max, Pos: Int64);
 begin
   ProgressBar1.Min := Min;
   ProgressBar1.Max := Max;

@@ -636,7 +636,7 @@ begin
     while DataSize > 0 do
     begin
       if Assigned(Progress) then
-        Progress.Process(Min, Max, Pos);
+        Progress.OnProgress(Min, Max, Pos);
       Bytes := BufferSize;
       if Bytes > DataSize then
         Bytes := DataSize;
@@ -650,7 +650,7 @@ begin
   finally
     ProtectBytes(Buffer);
     if Assigned(Progress) then
-      Progress.Process(Min, Max, Max);
+      Progress.OnProgress(Min, Max, Max);
   end;
 end;
 

@@ -102,7 +102,23 @@ type
     ///   Callback used by stream oriented Cipher and Hash functions for reporting
     ///   the progress of the operation
     /// </summary>
-    procedure Process(const Min, Max, Pos: Int64); stdcall;
+    /// <param name="Min">
+    ///   Minimum value for a progress display (in byte). If used for files this is
+    ///   usually set to 0 but a stream might be processed starting at a certain
+    ///   position and this would be that start position.
+    /// </param>
+    /// <param name="Max">
+    ///   End position for the operation. In most situations this is Min + Size
+    ///   where size would be the size (in byte) specified by the caller of the
+    ///   cipher or hashing method to be processed.
+    /// </param>
+    /// <param name="Pos">
+    ///   Position (in byte) in regards to Min. e.g. if a stream is used and min
+    ///   is set to 100 because the first 100 bytes shall be skipped, Pos will
+    ///   start at 100 as well and when this event is called after processing
+    ///   64 byte Pos will be 164.
+    /// </param>
+    procedure OnProgress(const Min, Max, Pos: Int64); stdcall;
   end;
 
 // Byte Ordering
