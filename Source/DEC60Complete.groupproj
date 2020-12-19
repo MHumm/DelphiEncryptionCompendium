@@ -21,9 +21,6 @@
         <Projects Include="..\Demos\Hash_Console\Hash_Console.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Demos\Cipher_Console\Cipher_Console.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj">
             <Dependencies/>
         </Projects>
@@ -31,6 +28,12 @@
             <Dependencies/>
         </Projects>
         <Projects Include="..\Demos\Random_Console\Random_Console.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Demos\Cipher_Console\Cipher_Console.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\Demos\Progress_VCL\ProgressDemoVCL.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -95,15 +98,6 @@
     <Target Name="Hash_Console:Make">
         <MSBuild Projects="..\Demos\Hash_Console\Hash_Console.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Cipher_Console">
-        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj"/>
-    </Target>
-    <Target Name="Cipher_Console:Clean">
-        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="Cipher_Console:Make">
-        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Make"/>
-    </Target>
     <Target Name="CryptoWorkbench">
         <MSBuild Projects="..\Demos\CryptoWorkbenchVCL\CryptoWorkbench.dproj"/>
     </Target>
@@ -131,14 +125,32 @@
     <Target Name="Random_Console:Make">
         <MSBuild Projects="..\Demos\Random_Console\Random_Console.dproj" Targets="Make"/>
     </Target>
+    <Target Name="Cipher_Console">
+        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj"/>
+    </Target>
+    <Target Name="Cipher_Console:Clean">
+        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Cipher_Console:Make">
+        <MSBuild Projects="..\Demos\Cipher_Console\Cipher_Console.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProgressDemoVCL">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj"/>
+    </Target>
+    <Target Name="ProgressDemoVCL:Clean">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProgressDemoVCL:Make">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Cipher_FMX;Format_Console;Hash_Console;Cipher_Console;CryptoWorkbench;Hash_FMX;Random_Console"/>
+        <CallTarget Targets="DEC60;DECDUnitXTestSuite;DECDUnitTestSuite;Cipher_FMX;Format_Console;Hash_Console;CryptoWorkbench;Hash_FMX;Random_Console;Cipher_Console;ProgressDemoVCL"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Cipher_Console:Clean;CryptoWorkbench:Clean;Hash_FMX:Clean;Random_Console:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitXTestSuite:Clean;DECDUnitTestSuite:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;CryptoWorkbench:Clean;Hash_FMX:Clean;Random_Console:Clean;Cipher_Console:Clean;ProgressDemoVCL:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Cipher_Console:Make;CryptoWorkbench:Make;Hash_FMX:Make;Random_Console:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitXTestSuite:Make;DECDUnitTestSuite:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;CryptoWorkbench:Make;Hash_FMX:Make;Random_Console:Make;Cipher_Console:Make;ProgressDemoVCL:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
