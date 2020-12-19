@@ -16,10 +16,10 @@ For using it with newer versions some small modification is necessary in order
 to compile it. If done it is compatible up to 10.2 Tokio at least.
 This version is only compatible with Win32/Win64!
 
-The version 6.0 which is still in development is compatible with
-Delphi 2009 - Delphi 10.4.1 Sydney. When defining the NO_ASM define
-in DECOptions.inc it is compatible with all platforms!
-It might be compatible with FPC, but this has not been focus and is not tested.
+This version 6.0 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
+When defining the NO_ASM define in DECOptions.inc it is compatible with all 
+platforms! It might be compatible with FPC, but this has not been focus and 
+is not tested.
 
 ## What is the current status of this project?
 After some years of work we finally managed to release V6.0 now. 
