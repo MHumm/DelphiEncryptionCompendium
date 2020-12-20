@@ -61,7 +61,7 @@ type
   TFormat_ESCAPE      = class;
 
   TFormat_BigEndian16 = class;
-//  TFormat_BigEndian32 = class;
+  TFormat_BigEndian32 = class;
 
   /// <summary>
   ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
@@ -271,6 +271,19 @@ type
   ///   Conversion from/to 16 bit big endian
   /// </summary>
   TFormat_BigEndian16 = class(TDECFormat)
+  private
+    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  public
+  end;
+
+  /// <summary>
+  ///   Conversion from/to 32 bit big endian
+  /// </summary>
+  TFormat_BigEndian32 = class(TDECFormat)
   private
     class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
   protected
@@ -1302,6 +1315,51 @@ begin
   end;
 end;
 
+{ TFormat_BigEndian32 }
+
+class procedure TFormat_BigEndian32.DoDecode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class procedure TFormat_BigEndian32.DoEncode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class function TFormat_BigEndian32.DoIsValid(const Data;
+  Size: Integer): Boolean;
+begin
+  result := (Size mod 4) = 0;
+end;
+
+class procedure TFormat_BigEndian32.DoSawp(const Source; var Dest: TBytes;
+  Size: Integer);
+var
+  i       : Integer;
+  SwapRes : UInt32;
+begin
+  if (Size < 0) or ((Size mod 4) <> 0) then
+    Exit;
+  SetLength(Dest, Size);
+
+  if (Size > 0) then
+  begin
+    Move(Source, Dest[0], Size);
+
+    i := 0;
+    while (i < length(Dest)) do
+    begin
+      Move(Dest[i], SwapRes, 4);
+      SwapRes := DECUtil.SwapUInt32(SwapRes);
+      Move(SwapRes, Dest[i], 4);
+      inc(i, 4);
+    end;
+  end;
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -1331,6 +1389,7 @@ initialization
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
   TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
+  TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
   {$ENDIF}
 
   // Init the number of chars per line as per RFC 4880 to 76 chars
