@@ -539,33 +539,11 @@ type
     FFormat_BigEndian16: TFormat_BigEndian16;
 
     const
-      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+      cTestDataEncode : array[1..2] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: ''),
-        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
-         Output: '6J4JnR+c7eZI+'),
-        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
-         Output: '7J4JnR+c7eZKe'),
-        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
-         Output: '8J4JnR+c7eZKeJE++'),
-        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
-         Output: '9J4JnR+c7eZKeJOc+'),
-        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: 'AJ4JnR+c7eZKeJOdJ'));
-
-      cTestDataDecode : array[1..6] of TestRecRawByteString = (
-        (Input:  RawByteString('');
-         Output: ''),
-        (Input:  RawByteString('6J4JnR+c7eZI+');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
-        (Input:  RawByteString('7J4JnR+c7eZKe');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
-        (Input:  RawByteString('8J4JnR+c7eZKeJE++');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
-        (Input:  RawByteString('9J4JnR+c7eZKeJOc+');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
-        (Input:  RawByteString('AJ4JnR+c7eZKeJOdJ');
-         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
+        (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF+'1');
+         Output: RawByteString('eTts'+#9+#10+#$55+#$AA+#$CD+#$AB+'1'+#$EF)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -1817,32 +1795,32 @@ end;
 
 procedure TestTFormat_BigEndian16.TestDecodeBytes;
 begin
-
+  DoTestEncodeDecode(FFormat_BigEndian16.Decode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestDecodeRawByteString;
 begin
-
+  DoTestEncodeDecodeRawByteString(FFormat_BigEndian16.Decode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestDecodeTypeless;
 begin
-
+  DoTestEncodeDecodeTypeless(FFormat_BigEndian16.Decode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestEncodeBytes;
 begin
-
+  DoTestEncodeDecode(FFormat_BigEndian16.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestEncodeRawByteString;
 begin
-
+  DoTestEncodeDecodeRawByteString(FFormat_BigEndian16.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestEncodeTypeless;
 begin
-
+  DoTestEncodeDecodeTypeless(FFormat_BigEndian16.Encode, cTestDataEncode);
 end;
 
 procedure TestTFormat_BigEndian16.TestIdentity;
@@ -1852,17 +1830,46 @@ end;
 
 procedure TestTFormat_BigEndian16.TestIsValidRawByteString;
 begin
-
+  CheckEquals(true, TFormat_BigEndian16.IsValid(RawByteString('')),'Failure on empty string');
+  CheckEquals(false, TFormat_BigEndian16.IsValid(RawByteString('1')),'Failure on odd length string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(RawByteString('12')),'Failure on 2-byte string');
+  CheckEquals(false, TFormat_BigEndian16.IsValid(RawByteString('123')),'Failure on 1-byte string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(RawByteString('1234')),'Failure on 4-byte string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(RawByteString('1234abCdeFghijkl')),'Failure on 16-byte string');
 end;
 
 procedure TestTFormat_BigEndian16.TestIsValidTBytes;
 begin
+  CheckEquals(true, TFormat_BigEndian16.IsValid(BytesOf(RawByteString(''))),'Failure on empty string ');
 
+  CheckEquals(false, TFormat_BigEndian16.IsValid(BytesOf(RawByteString('1'))),'Failure on 1-byte string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(BytesOf(RawByteString('12'))),'Failure on 2-byte string');
+  CheckEquals(false, TFormat_BigEndian16.IsValid(BytesOf(RawByteString('123'))),'Failure on 3-byte string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(BytesOf(RawByteString('1234'))),'Failure on 4-byte string');
+  CheckEquals(true, TFormat_BigEndian16.IsValid(BytesOf(RawByteString('1234abCdeFghijkl'))),'Failure on 16-byte string');
 end;
 
 procedure TestTFormat_BigEndian16.TestIsValidTypeless;
+var
+  Bytes : TBytes;
 begin
+  SetLength(Bytes, 0);
+  CheckEquals(true, TFormat_BigEndian16.IsValid(Bytes, 0),'Failure on empty data');
 
+  Bytes := TBytes.Create(1);
+  CheckEquals(false, TFormat_BigEndian16.IsValid(Bytes, length(Bytes)),'Failure on 1-byte data');
+
+  Bytes := TBytes.Create(254, 255);
+  CheckEquals(true, TFormat_BigEndian16.IsValid(Bytes, length(Bytes)),'Failure on 2-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3);
+  CheckEquals(false, TFormat_BigEndian16.IsValid(Bytes, length(Bytes)),'Failure on 3-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3, 4);
+  CheckEquals(true, TFormat_BigEndian16.IsValid(Bytes, length(Bytes)),'Failure on 4-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  CheckEquals(true, TFormat_BigEndian16.IsValid(Bytes, length(Bytes)),'Failure on 16-byte data');
 end;
 
 initialization

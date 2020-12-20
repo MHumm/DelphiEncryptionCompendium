@@ -1282,13 +1282,24 @@ end;
 
 class procedure TFormat_BigEndian16.DoSawp(const Source; var Dest: TBytes;
   Size: Integer);
+var
+  i : Integer;
 begin
-  if (Size <= 0) or Odd(Size) then
+  if (Size < 0) or Odd(Size) then
     Exit;
   SetLength(Dest, Size);
 
-  Move(Source, Dest[0], Size);
-  DECUtil.SwapBytes(Dest[0], Size);
+  if (Size > 0) then
+  begin
+    Move(Source, Dest[0], Size);
+
+    i := 0;
+    while (i < length(Dest)) do
+    begin
+      DECUtil.SwapBytes(Dest[i], 2);
+      inc(i, 2);
+    end;
+  end;
 end;
 
 initialization
