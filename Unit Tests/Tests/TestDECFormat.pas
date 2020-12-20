@@ -590,6 +590,36 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class TFormat_BigEndian64
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_BigEndian64 = class(TFormatTestsBase)
+  strict private
+    FFormat_BigEndian64: TFormat_BigEndian64;
+
+    const
+      cTestDataEncode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test'+#10+#9+#$AA+#$55+#$AB+#$CD+#$EF+'1ABCD');
+         Output: RawByteString(#$55+#$AA+#9+#10+'tseTDCBA1'+#$EF+#$CD+#$AB)));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+
 implementation
 
 procedure TestTFormat_HEX.SetUp;
@@ -2001,6 +2031,111 @@ begin
   CheckEquals(true, TFormat_BigEndian32.IsValid(Bytes, length(Bytes)),'Failure on 16-byte data');
 end;
 
+{ TestTFormat_BigEndian64 }
+
+procedure TestTFormat_BigEndian64.SetUp;
+begin
+  FFormat_BigEndian64 := TFormat_BigEndian64.Create;
+end;
+
+procedure TestTFormat_BigEndian64.TearDown;
+begin
+  FFormat_BigEndian64.Free;
+  FFormat_BigEndian64 := nil;
+end;
+
+procedure TestTFormat_BigEndian64.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_BigEndian64.ClassByName('TFormat_BigEndian64');
+  CheckEquals(TFormat_BigEndian64, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_BigEndian64.TestDecodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BigEndian64.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BigEndian64.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BigEndian64.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestEncodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BigEndian64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BigEndian64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BigEndian64.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BigEndian64.TestIdentity;
+begin
+  CheckEquals($3432278F, FFormat_BigEndian64.Identity);
+end;
+
+procedure TestTFormat_BigEndian64.TestIsValidRawByteString;
+begin
+  CheckEquals(true, TFormat_BigEndian64.IsValid(RawByteString('')),'Failure on empty string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(RawByteString('1')),'Failure on odd length string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(RawByteString('12')),'Failure on 2-byte string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(RawByteString('123')),'Failure on 1-byte string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(RawByteString('1234')),'Failure on 4-byte string');
+  CheckEquals(true, TFormat_BigEndian64.IsValid(RawByteString('1234abCd')),'Failure on 8-byte string');
+  CheckEquals(true, TFormat_BigEndian64.IsValid(RawByteString('1234abCdeFghijkl')),'Failure on 16-byte string');
+end;
+
+procedure TestTFormat_BigEndian64.TestIsValidTBytes;
+begin
+  CheckEquals(true, TFormat_BigEndian64.IsValid(BytesOf(RawByteString(''))),'Failure on empty string ');
+
+  CheckEquals(false, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('1'))),'Failure on 1-byte string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('12'))),'Failure on 2-byte string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('123'))),'Failure on 3-byte string');
+  CheckEquals(false, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('1234'))),'Failure on 4-byte string');
+  CheckEquals(true, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('1234abCd'))),'Failure on 8-byte string');
+  CheckEquals(true, TFormat_BigEndian64.IsValid(BytesOf(RawByteString('1234abCdeFghijkl'))),'Failure on 16-byte string');
+end;
+
+procedure TestTFormat_BigEndian64.TestIsValidTypeless;
+var
+  Bytes : TBytes;
+begin
+  SetLength(Bytes, 0);
+  CheckEquals(true, TFormat_BigEndian64.IsValid(Bytes, 0),'Failure on empty data');
+
+  Bytes := TBytes.Create(1);
+  CheckEquals(false, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 1-byte data');
+
+  Bytes := TBytes.Create(254, 255);
+  CheckEquals(false, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 2-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3);
+  CheckEquals(false, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 3-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3, 4);
+  CheckEquals(false, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 4-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3, 4, 5, 6, 7, 8);
+  CheckEquals(true, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 8-byte data');
+
+  Bytes := TBytes.Create(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  CheckEquals(true, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 16-byte data');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
@@ -2010,7 +2145,8 @@ initialization
                               TestTFormat_UU.Suite,     TestTFormat_XX.Suite,
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
-                              TestTFormat_BigEndian32.Suite]);
+                              TestTFormat_BigEndian32.Suite,
+                              TestTFormat_BigEndian64.Suite]);
   {$ELSE}
 //  TDUnitX.RegisterTestFixture(TestTFormat);
   TDUnitX.RegisterTestFixture(TestTFormat_HEX);
@@ -2023,8 +2159,10 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_ESCAPE);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian16);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian32);
+  TDUnitX.RegisterTestFixture(TestTFormat_BigEndian64);
   {$ENDIF}
 
 finalization
 end.
+
 

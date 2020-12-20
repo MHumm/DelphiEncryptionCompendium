@@ -293,6 +293,19 @@ type
   public
   end;
 
+  /// <summary>
+  ///   Conversion from/to 64 bit big endian
+  /// </summary>
+  TFormat_BigEndian64 = class(TDECFormat)
+  private
+    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  public
+  end;
+
 implementation
 
 uses
@@ -1360,6 +1373,51 @@ begin
   end;
 end;
 
+{ TFormat_BigEndian64 }
+
+class procedure TFormat_BigEndian64.DoDecode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class procedure TFormat_BigEndian64.DoEncode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class function TFormat_BigEndian64.DoIsValid(const Data;
+  Size: Integer): Boolean;
+begin
+  result := (Size mod 8) = 0;
+end;
+
+class procedure TFormat_BigEndian64.DoSawp(const Source; var Dest: TBytes;
+  Size: Integer);
+var
+  i       : Integer;
+  SwapRes : Int64;
+begin
+  if (Size < 0) or ((Size mod 8) <> 0) then
+    Exit;
+  SetLength(Dest, Size);
+
+  if (Size > 0) then
+  begin
+    Move(Source, Dest[0], Size);
+
+    i := 0;
+    while (i < length(Dest)) do
+    begin
+      Move(Dest[i], SwapRes, 8);
+      SwapRes := DECUtil.SwapInt64(SwapRes);
+      Move(SwapRes, Dest[i], 8);
+      inc(i, 8);
+    end;
+  end;
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -1390,6 +1448,7 @@ initialization
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
   TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
   TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
+  TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
   {$ENDIF}
 
   // Init the number of chars per line as per RFC 4880 to 76 chars
