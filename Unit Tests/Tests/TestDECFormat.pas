@@ -532,6 +532,57 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class TFormat_XX
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_BigEndian16 = class(TFormatTestsBase)
+  strict private
+    FFormat_BigEndian16: TFormat_BigEndian16;
+
+    const
+      cTestDataEncode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55);
+         Output: '6J4JnR+c7eZI+'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA);
+         Output: '7J4JnR+c7eZKe'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55);
+         Output: '8J4JnR+c7eZKeJE++'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
+         Output: '9J4JnR+c7eZKeJOc+'),
+        (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
+         Output: 'AJ4JnR+c7eZKeJOdJ'));
+
+      cTestDataDecode : array[1..6] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('6J4JnR+c7eZI+');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
+        (Input:  RawByteString('7J4JnR+c7eZKe');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('8J4JnR+c7eZKeJE++');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55)),
+        (Input:  RawByteString('9J4JnR+c7eZKeJOc+');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA)),
+        (Input:  RawByteString('AJ4JnR+c7eZKeJOdJ');
+         Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55)));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 implementation
 
 procedure TestTFormat_HEX.SetUp;
@@ -1743,6 +1794,77 @@ begin
   end;
 end;
 
+{ TestTFormat_BigEndian16 }
+
+procedure TestTFormat_BigEndian16.SetUp;
+begin
+  FFormat_BigEndian16 := TFormat_BigEndian16.Create;
+end;
+
+procedure TestTFormat_BigEndian16.TearDown;
+begin
+  FFormat_BigEndian16.Free;
+  FFormat_BigEndian16 := nil;
+end;
+
+procedure TestTFormat_BigEndian16.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_BigEndian16.ClassByName('TFormat_BigEndian16');
+  CheckEquals(TFormat_BigEndian16, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_BigEndian16.TestDecodeBytes;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestDecodeRawByteString;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestDecodeTypeless;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestEncodeBytes;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestEncodeRawByteString;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestEncodeTypeless;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestIdentity;
+begin
+  CheckEquals($957DD064, FFormat_BigEndian16.Identity);
+end;
+
+procedure TestTFormat_BigEndian16.TestIsValidRawByteString;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestIsValidTBytes;
+begin
+
+end;
+
+procedure TestTFormat_BigEndian16.TestIsValidTypeless;
+begin
+
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
@@ -1750,7 +1872,8 @@ initialization
                               TestTFormat_HEXL.Suite,   TestTFormat_DECMIME32.Suite,
                               TestTFormat_Base64.Suite, TestTFormat_Radix64.Suite,
                               TestTFormat_UU.Suite,     TestTFormat_XX.Suite,
-                              TestTFormat_ESCAPE.Suite]);
+                              TestTFormat_ESCAPE.Suite,
+                              TestTFormat_BigEndian16.Suite]);
   {$ELSE}
 //  TDUnitX.RegisterTestFixture(TestTFormat);
   TDUnitX.RegisterTestFixture(TestTFormat_HEX);
@@ -1761,6 +1884,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_UU);
   TDUnitX.RegisterTestFixture(TestTFormat_XX);
   TDUnitX.RegisterTestFixture(TestTFormat_ESCAPE);
+  TDUnitX.RegisterTestFixture(TestTFormat_BigEndian16);
   {$ENDIF}
 
 finalization

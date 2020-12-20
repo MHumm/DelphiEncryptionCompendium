@@ -42,23 +42,26 @@ type
   /// </summary>
   TFormat_Copy      = DECFormatBase.TFormat_Copy;
 
-  TFormat_HEX       = class;
-  TFormat_HEXL      = class;
+  TFormat_HEX         = class;
+  TFormat_HEXL        = class;
 
-  TFormat_Base16    = class;
-  TFormat_Base16L   = class;
+  TFormat_Base16      = class;
+  TFormat_Base16L     = class;
 
-  TFormat_DECMIME32 = class;
+  TFormat_DECMIME32   = class;
 
-  TFormat_Base64    = class;
-  TFormat_MIME64    = class;
+  TFormat_Base64      = class;
+  TFormat_MIME64      = class;
 
-  TFormat_Radix64   = class;
-  TFormat_PGP       = class;
+  TFormat_Radix64     = class;
+  TFormat_PGP         = class;
 
-  TFormat_UU        = class;
-  TFormat_XX        = class;
-  TFormat_ESCAPE    = class;
+  TFormat_UU          = class;
+  TFormat_XX          = class;
+  TFormat_ESCAPE      = class;
+
+  TFormat_BigEndian16 = class;
+//  TFormat_BigEndian32 = class;
 
   /// <summary>
   ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
@@ -262,6 +265,19 @@ type
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
+  end;
+
+  /// <summary>
+  ///   Conversion from/to 16 bit big endian
+  /// </summary>
+  TFormat_BigEndian16 = class(TDECFormat)
+  private
+    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  public
   end;
 
 implementation
@@ -1243,6 +1259,38 @@ begin
   SetLength(Dest, PByte(D) - PByte(Dest));
 end;
 
+{ TFormat_BigEndian16 }
+
+class procedure TFormat_BigEndian16.DoDecode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class procedure TFormat_BigEndian16.DoEncode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  DoSawp(Source, Dest, Size);
+end;
+
+class function TFormat_BigEndian16.DoIsValid(const Data;
+  Size: Integer): Boolean;
+begin
+  // swapping bytes in 16 bit mode requires even number of bytes
+  result := not Odd(Size);
+end;
+
+class procedure TFormat_BigEndian16.DoSawp(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+  if (Size <= 0) or Odd(Size) then
+    Exit;
+  SetLength(Dest, Size);
+
+  Move(Source, Dest[0], Size);
+  DECUtil.SwapBytes(Dest[0], Size);
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -1271,6 +1319,7 @@ initialization
   TFormat_UU.RegisterClass(TDECFormat.ClassList);
   TFormat_XX.RegisterClass(TDECFormat.ClassList);
   TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
+  TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
   {$ENDIF}
 
   // Init the number of chars per line as per RFC 4880 to 76 chars
