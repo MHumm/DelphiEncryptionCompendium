@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -18,10 +18,11 @@ unit DECCipherModes;
 
 interface
 
-uses
-  System.SysUtils, DECCipherBase;
+{$INCLUDE DECOptions.inc}
 
-{$I DECOptions.inc}
+uses
+  System.SysUtils, System.TypInfo,
+  DECCipherBase, DECUtil;
 
 type
   /// <summary>
@@ -241,9 +242,6 @@ type
   end;
 
 implementation
-
-uses
-  System.TypInfo, DECUtil;
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';

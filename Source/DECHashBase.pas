@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ unit DECHashBase;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
   SysUtils, Classes, Generics.Collections,
@@ -742,22 +742,22 @@ var
   /// <summary>
   ///   Hash class returned by ValidHash if nil is passed as parameter to it
   /// </summary>
-  FDefaultHashClass: TDECHashClass = nil;
+  FDefaultHashClass: TDECHashClass;
 
 function ValidHash(HashClass: TDECHashClass): TDECHashClass;
 begin
-  if HashClass <> nil then
+  if Assigned(HashClass) then
     Result := HashClass
   else
     Result := FDefaultHashClass;
 
-  if Result = nil then
+  if not Assigned(Result) then
     raise EDECHashException.CreateRes(@sHashNoDefault);
 end;
 
 procedure SetDefaultHashClass(HashClass: TDECHashClass);
 begin
-  assert(assigned(HashClass), 'Do not set a nil default hash class!');
+  Assert(Assigned(HashClass), 'Do not set a nil default hash class!');
 
   FDefaultHashClass := HashClass;
 end;
@@ -937,7 +937,7 @@ begin
   if DataSize <= 0 then
     Exit;
 
-  if FBuffer = nil then
+  if not Assigned(FBuffer) then
     RaiseHashNotInitialized;
 
   Increment8(FCount, DataSize);
@@ -1064,13 +1064,13 @@ begin
 end;
 
 procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
-  var HashResult: TBytes; const Progress: IDECProgress = nil);
+  var HashResult: TBytes; const Progress: IDECProgress);
 var
   Buffer: TBytes;
   Bytes: Integer;
   Min, Max, Pos: Int64;
 begin
-  assert(assigned(Stream), 'Stream to calculate hash on is not assigned');
+  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
   SetLength(HashResult, 0);
   Min := 0;
@@ -1128,7 +1128,7 @@ begin
 end;
 
 function TDECHash.CalcStream(const Stream: TStream; Size: Int64;
-  Format: TDECFormatClass = nil; const Progress: IDECProgress = nil): RawByteString;
+  Format: TDECFormatClass; const Progress: IDECProgress): RawByteString;
 var
   Hash: TBytes;
 begin
@@ -1137,7 +1137,7 @@ begin
 end;
 
 procedure TDECHash.CalcFile(const FileName: string; var HashResult: TBytes;
-  const Progress: IDECProgress = nil);
+  const Progress: IDECProgress);
 var
   S: TFileStream;
 begin
@@ -1150,8 +1150,8 @@ begin
   end;
 end;
 
-function TDECHash.CalcFile(const FileName: string; Format: TDECFormatClass = nil;
-  const Progress: IDECProgress = nil): RawByteString;
+function TDECHash.CalcFile(const FileName: string; Format: TDECFormatClass;
+  const Progress: IDECProgress): RawByteString;
 var
   Hash: TBytes;
 begin

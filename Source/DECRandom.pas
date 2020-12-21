@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -24,10 +24,22 @@ unit DECRandom;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, DECHashBase, DECHash;
+  System.SysUtils,
+  {$IFDEF DELPHI_2010_UP}
+    System.Diagnostics,
+  {$ELSE !DELPHI_2010_UP}
+    {$IFDEF MSWINDOWS}
+    Winapi.Windows,
+    {$ELSE !MSWINDOWS}
+      {$IFDEF FPC}
+      LclIntf,
+      {$ENDIF !FPC}
+    {$ENDIF !MSWINDOWS}
+  {$ENDIF !DELPHI_2010_UP}
+  DECHashBase, DECHash;
 
 /// <summary>
 ///   Create a seed for the random number generator from system time and
@@ -146,20 +158,6 @@ var
   RandomClass: TDECHashClass = THash_SHA256;
 
 implementation
-
-uses
-  {$IFDEF DELPHI_2010_UP}
-    Diagnostics
-  {$ELSE !DELPHI_2010_UP}
-    {$IFDEF MSWINDOWS}
-    Windows
-    {$ELSE !MSWINDOWS}
-      {$IFDEF FPC}
-      LclIntf
-      {$ENDIF !FPC}
-    {$ENDIF !MSWINDOWS}
-  {$ENDIF !DELPHI_2010_UP}
-  ;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
