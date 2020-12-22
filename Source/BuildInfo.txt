@@ -1,0 +1,21 @@
+ProjektOptions:
+    SearchPath:        {DECInstallPath}\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Release
+or
+    SearchPath:        {DECInstallPath}\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)
+
+or IDE-Options (Tools\Options: Language\Delphi\Library):
+    Bibliothekspfad:   {DECInstallPath}\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Release
+    Debug-DCU-Pfad:    {DECInstallPath}\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Debug
+    Suchpfad:          {DECInstallPath}\Source
+
+
+
+
+DEC-SourceCodes:       {DECInstallPath}\Source\*
+DEC-Help:              {DECInstallPath}\Docs\*
+
+PreCompiled Units:     {DECInstallPath}\Compiled\DCU_IDE{21.0}_{Win32}_{Release}\*
+Temp for Demos&Tests:  {DECInstallPath}\Compiled\DCU_IDE{21.0}_{Win32}__Demos\*
+
+PreCompiled Lib&Tests: {DECInstallPath}\Compiled\BIN_IDE{21.0}_{Win32}_{Release}\*
+PreCompiled Demos:     {DECInstallPath}\Compiled\BIN_IDExx.x_{Win32}__Demos\*

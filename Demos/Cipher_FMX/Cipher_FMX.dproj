@@ -86,13 +86,13 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_DcuOutput>
-        <DCC_ExeOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ExeOutput>
+        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)__Demos</DCC_DcuOutput>
+        <DCC_ExeOutput>.\..\..\Compiled\BIN_IDExx.x_$(Platform)__Demos</DCC_ExeOutput>
         <DCC_HppOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_HppOutput>
-        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_ObjOutput>
+        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)__Demos</DCC_ObjOutput>
         <DCC_BpiOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BpiOutput>
         <DCC_UnitSearchPath>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_BplOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
+        <DCC_BplOutput>.\..\..\Compiled\BIN_IDExx.x_$(Platform)__Demos</DCC_BplOutput>
         <DCC_DcpOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcpOutput>
         <SanitizedProjectName>Cipher_FMX</SanitizedProjectName>
     </PropertyGroup>
@@ -282,7 +282,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDE21.0_Win32_Debug\Cipher_FMX.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Win32__Demos\Cipher_FMX.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Cipher_FMX.exe</RemoteName>
                         <Overwrite>true</Overwrite>

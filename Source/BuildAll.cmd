@@ -55,10 +55,10 @@ for %%P in (Win32,Win64,Linux64,Android,Android64,iOSDevice64,iOSSimulator,OSX32
 
 echo. >> "%~dpn0.log" 
 for %%P in (Win32) do (
-  for %%C in (Debug,GUI,MobileGUI,TestInsight) do (
+  for %%C in (Debug,Console) do (
     call :do_compile "Unit Tests\DECDUnitTestSuite.dproj" %%P %%C
   )
-  for %%C in (Debug,Console) do (
+  for %%C in (Debug,GUI,MobileGUI,TestInsight) do (
     call :do_compile "Unit Tests\DECDUnitXTestSuite.dproj" %%P %%C
   )
 )
@@ -83,10 +83,10 @@ REM     call :do_execute DECDUnitTestSuite.exe %%P %%C
 REM     call :do_execute DECDUnitXTestSuite.exe %%P %%C
 REM   )
 REM )
+call :do_execute DECDUnitTestSuite.exe Win32 Console
 call :do_execute DECDUnitTestSuite.exe Win32 Debug
-call :do_execute DECDUnitTestSuite.exe Win32 GUI
-call :do_execute DECDUnitXTestSuite.exe Win32 Console
 call :do_execute DECDUnitXTestSuite.exe Win32 Debug
+call :do_execute DECDUnitXTestSuite.exe Win32 GUI
 
 endlocal
 exit /b
