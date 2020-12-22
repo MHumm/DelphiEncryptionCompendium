@@ -46,10 +46,10 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_DcuOutput>
         <DCC_ExeOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ExeOutput>
         <DCC_HppOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_HppOutput>
-        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ObjOutput>
+        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_ObjOutput>
         <DCC_BpiOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BpiOutput>
         <DCC_UnitSearchPath>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
@@ -123,11 +123,6 @@
                 <Source>
                     <Source Name="MainSource">CryptoWorkbench_VCL.dpr</Source>
                 </Source>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\RXShapesSample.bpl">Datei C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\RXShapesSample.bpl nicht gefunden</Excluded_Packages>
-                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="..\..\Compiled\BIN_IDE21.0_Win32_Debug\CryptoWorkbench_VCL.exe" Configuration="Debug" Class="ProjectOutput">

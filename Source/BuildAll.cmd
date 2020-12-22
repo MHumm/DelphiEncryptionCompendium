@@ -100,17 +100,17 @@ if not "%2" == "" set params=/p:Platform=%2 /p:Config=%3
 REM msbuild "%~dp0..\%~1" /t:Rebuild %params%     :: $(ProductVersion) fehlt im msbuild, aber in InlineCompiler der IDE ist es vorhanden
 msbuild "%~dp0..\%~1" /t:Rebuild %params% /p:ProductVersion=%IDEVER%
 if errorlevel 1 (
-  :: remove if dir is empty
-  if not "%2" == "" (
-    rd /q "%~dp0..\Compiled\BIN_IDE%IDEVER%_%2_%3" >nul
-    rd /q "%~dp0..\Compiled\DCP_IDE%IDEVER%_%2_%3" >nul
-    rd /q "%~dp0..\Compiled\DCU_IDE%IDEVER%_%2_%3" >nul
-  )
   echo FAIL   %~1   : %2 %3 >> "%~dpn0.log"
   rundll32 user32.dll,MessageBeep
   timeout 11
 ) else (
   echo OK     %~1   : %2 %3 >> "%~dpn0.log" 
+)
+:: remove dir if empty
+if not "%2" == "" (
+  rd /q "%~dp0..\Compiled\BIN_IDE%IDEVER%_%2_%3" >nul
+  rd /q "%~dp0..\Compiled\DCP_IDE%IDEVER%_%2_%3" >nul
+  rd /q "%~dp0..\Compiled\DCU_IDE%IDEVER%_%2_%3" >nul
 )
 echo.
 exit /b

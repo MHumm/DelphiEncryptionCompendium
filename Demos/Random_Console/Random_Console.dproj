@@ -50,10 +50,10 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_DcuOutput>
         <DCC_ExeOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ExeOutput>
         <DCC_HppOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_HppOutput>
-        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ObjOutput>
+        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_ObjOutput>
         <DCC_BpiOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BpiOutput>
         <DCC_UnitSearchPath>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
@@ -156,6 +156,11 @@
                 <Source>
                     <Source Name="MainSource">Random_Console.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\bpl\LockBox3FMXDD270.bpl">TurboPack LockBox 3 FMX designtime package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">

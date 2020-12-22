@@ -46,10 +46,10 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcuOutput>
+        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_DcuOutput>
         <DCC_ExeOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ExeOutput>
         <DCC_HppOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_HppOutput>
-        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_ObjOutput>
+        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_Demos</DCC_ObjOutput>
         <DCC_BpiOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BpiOutput>
         <DCC_UnitSearchPath>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
