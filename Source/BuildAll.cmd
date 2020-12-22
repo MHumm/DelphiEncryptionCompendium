@@ -76,24 +76,25 @@ call :do_compile "Demos\Random_Console\Random_Console.dproj"
 echo. >> "%~dpn0.log" 
 title RUN Tests
 echo ##### RUN Tests #####
+echo.
 REM for %%C in (Debug,Console,GUI) do (
 REM   for %%P in (Win32) do (
-REM     echo ### Test # %~dp0..\Compiled\BIN_IDE%IDEVER%_%%P_%%C\DECDUnitTestSuite.exe
-REM     "%~dp0..\Compiled\BIN_IDE%IDEVER%_%%P_%%C\DECDUnitTestSuite.exe"
-REM     "%~dp0..\Compiled\BIN_IDE%IDEVER%_%%P_%%C\DECDUnitXTestSuite.exe"
-REM ) )
-"%~dp0..\Compiled\BIN_IDE%IDEVER%_Win32_Console\DECDUnitTestSuite.exe"
-"%~dp0..\Compiled\BIN_IDE%IDEVER%_Win32_Debug\DECDUnitTestSuite.exe"
-"%~dp0..\Compiled\BIN_IDE%IDEVER%_Win32_Debug\DECDUnitXTestSuite.exe"
-"%~dp0..\Compiled\BIN_IDE%IDEVER%_Win32_GUI\DECDUnitXTestSuite.exe"
+REM     call :do_execute DECDUnitTestSuite.exe %%P %%C
+REM     call :do_execute DECDUnitXTestSuite.exe %%P %%C
+REM   )
+REM )
+call :do_execute DECDUnitTestSuite.exe Win32 Debug
+call :do_execute DECDUnitTestSuite.exe Win32 GUI
+call :do_execute DECDUnitXTestSuite.exe Win32 Console
+call :do_execute DECDUnitXTestSuite.exe Win32 Debug
 
 endlocal
 exit /b
 
 
 :do_compile
-title COMPILE %2 %3 : %~1
-echo ### %2 %3 # %~1
+title COMPILE %IDEVER% %2 %3 : %~1
+echo ### %IDEVER% %2 %3 # %~1
 set params=
 if not "%2" == "" set params=/p:Platform=%2 /p:Config=%3
 REM msbuild "%~dp0..\%~1" /t:Rebuild %params%     :: $(ProductVersion) fehlt im msbuild, aber in InlineCompiler der IDE ist es vorhanden
@@ -101,15 +102,26 @@ msbuild "%~dp0..\%~1" /t:Rebuild %params% /p:ProductVersion=%IDEVER%
 if errorlevel 1 (
   :: remove if dir is empty
   if not "%2" == "" (
-    rd /q "%~dp0..\Compiled\BIN_IDE%IDEVER%_%%P_%%C" >nul
-    rd /q "%~dp0..\Compiled\DCP_IDE%IDEVER%_%%P_%%C" >nul
-    rd /q "%~dp0..\Compiled\DCU_IDE%IDEVER%_%%P_%%C" >nul
+    rd /q "%~dp0..\Compiled\BIN_IDE%IDEVER%_%2_%3" >nul
+    rd /q "%~dp0..\Compiled\DCP_IDE%IDEVER%_%2_%3" >nul
+    rd /q "%~dp0..\Compiled\DCU_IDE%IDEVER%_%2_%3" >nul
   )
-  echo FAIL   %2 %3 : %~1 >> "%~dpn0.log"
+  echo FAIL   %~1   : %2 %3 >> "%~dpn0.log"
   rundll32 user32.dll,MessageBeep
   timeout 11
 ) else (
-  echo OK     %2 %3 : %~1 >> "%~dpn0.log" 
+  echo OK     %~1   : %2 %3 >> "%~dpn0.log" 
 )
+echo.
+exit /b
+
+
+:do_execute
+title EXECUTE %IDEVER% %2 %3 : %~1
+echo ### %IDEVER% %2 %3 # %~1
+"%~dp0..\Compiled\BIN_IDE%IDEVER%_%2_%3\%~1"
+set "ERR=%ERRORLEVEL%     "
+echo RUN:%ERR:~0,6%  %~1   : %2 %3 >> "%~dpn0.log"
+echo EXITCODE:%ERR%
 echo.
 exit /b
