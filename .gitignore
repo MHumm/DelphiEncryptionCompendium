@@ -1,6 +1,7 @@
 /Compiled
 /Source/BuildAll.log
 
+backup
 __history
 __recovery
 **/Android/
@@ -14,4 +15,3 @@ __recovery
 *.~*
 *.stat
 Thumbs.db
-

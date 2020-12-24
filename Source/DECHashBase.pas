@@ -26,7 +26,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, Generics.Collections,
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes,
+  {$ENDIF}
+  Generics.Collections,
   DECBaseClass, DECFormatBase, DECUtil, DECTypes, DECHashInterface;
 
 type
@@ -44,7 +49,11 @@ type
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
   /// </summary>
+  {$IFDEF FPC}
+  TDECHash = class(TDECObject)  // findet Methoden des Interface nicht ... sucht nach AnsiString statt RawByteString und findet das natürlich nicht
+  {$ELSE}
   TDECHash = class(TDECObject, IDECHash)
+  {$ENDIF}
   strict private
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -799,21 +808,21 @@ end;
 
 function TDECHash.GetPaddingByte: Byte;
 begin
-  result := FPaddingByte;
+  Result := FPaddingByte;
 end;
 
 class function TDECHash.IsPasswordHash: Boolean;
 var
   Parent : TClass;
 begin
-  result := false;
+  Result := false;
 
   Parent := ClassParent;
   while assigned(Parent) do
   begin
     if (ClassParent = TDECPasswordHash) then
     begin
-      result := true;
+      Result := true;
       break;
     end
     else
@@ -1027,12 +1036,12 @@ begin
   begin
     Size := Length(Value) * SizeOf(Value[low(Value)]);
     Data := CalcBuffer(Value[low(Value)], Size);
-    result := System.SysUtils.StringOf(ValidFormat(Format).Encode(Data));
+    Result := StringOf(ValidFormat(Format).Encode(Data));
   end
   else
   begin
     SetLength(Data, 0);
-    result := System.SysUtils.StringOf(ValidFormat(Format).Encode(CalcBuffer(Data, 0)));
+    Result := StringOf(ValidFormat(Format).Encode(CalcBuffer(Data, 0)));
   end;
 end;
 
@@ -1042,25 +1051,25 @@ var
 begin
   Result := '';
   if Length(Value) > 0 then
-    result := BytesToRawString(
+    Result := BytesToRawString(
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[low(Value)],
                              Length(Value) * SizeOf(Value[low(Value)]))))
   else
   begin
     SetLength(Buf, 0);
-    result := BytesToRawString(ValidFormat(Format).Encode(CalcBuffer(Buf, 0)));
+    Result := BytesToRawString(ValidFormat(Format).Encode(CalcBuffer(Buf, 0)));
   end;
 end;
 
 class function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
 begin
-  result := TDECHashClass(ClassList.ClassByIdentity(Identity));
+  Result := TDECHashClass(ClassList.ClassByIdentity(Identity));
 end;
 
 class function TDECHash.ClassByName(const Name: string): TDECHashClass;
 begin
-  result := TDECHashClass(ClassList.ClassByName(Name));
+  Result := TDECHashClass(ClassList.ClassByName(Name));
 end;
 
 procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
@@ -1175,22 +1184,22 @@ end;
 class function TDECHash.KDF1(const Data; DataSize: Integer; const Seed;
   SeedSize, MaskSize: Integer): TBytes;
 begin
-  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF1);
+  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF1);
 end;
 
 class function TDECHash.KDF1(const Data, Seed: TBytes;
   MaskSize: Integer): TBytes;
 begin
-  if (length(Seed) > 0) then
-    result := KDFInternal(Data[0], length(Data), Seed[0], length(Seed), MaskSize, ktKDF1)
+  if (Length(Seed) > 0) then
+    Result := KDFInternal(Data[0], length(Data), Seed[0], length(Seed), MaskSize, ktKDF1)
   else
-    result := KDFInternal(Data[0], length(Data), NullStr, 0, MaskSize, ktKDF1);
+    Result := KDFInternal(Data[0], length(Data), NullStr, 0, MaskSize, ktKDF1);
 end;
 
 class function TDECHash.KDF2(const Data; DataSize: Integer; const Seed;
                              SeedSize, MaskSize: Integer): TBytes;
 begin
-  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
+  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
 end;
 
 class function TDECHash.KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
@@ -1204,7 +1213,7 @@ end;
 class function TDECHash.KDF3(const Data; DataSize: Integer; const Seed;
                              SeedSize, MaskSize: Integer): TBytes;
 begin
-  result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
+  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
 end;
 
 class function TDECHash.KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes;

@@ -22,7 +22,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  System.SysUtils, System.Classes, Generics.Collections,
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes,
+  {$ENDIF}
+  Generics.Collections,
   DECCRC;
 
 type

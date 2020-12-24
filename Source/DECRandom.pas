@@ -27,18 +27,24 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
+  {$IFDEF FPC}
+  SysUtils,
+  {$ELSE}
   System.SysUtils,
+  {$ENDIF}
   {$IFDEF DELPHI_2010_UP}
     System.Diagnostics,
-  {$ELSE !DELPHI_2010_UP}
-    {$IFDEF MSWINDOWS}
-    Winapi.Windows,
-    {$ELSE !MSWINDOWS}
-      {$IFDEF FPC}
+  {$ELSE}
+    {$IFDEF FPC}
+      {$IFDEF MSWINDOWS}
+      Windows,
+      {$ELSE}
       LclIntf,
-      {$ENDIF !FPC}
-    {$ENDIF !MSWINDOWS}
-  {$ENDIF !DELPHI_2010_UP}
+      {$ENDIF}
+    {$ELSE}
+    Winapi.Windows
+    {$ENDIF}
+  {$ENDIF}
   DECHashBase, DECHash;
 
 /// <summary>

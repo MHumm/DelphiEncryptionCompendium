@@ -19,7 +19,11 @@ unit DECCipherFormats;
 interface
 
 uses
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
   System.SysUtils, System.Classes,
+  {$ENDIF}
   DECCipherBase, DECCipherModes, DECUtil, DECFormatBase,
   DECCipherInterface, DECBaseClass;
 
@@ -736,7 +740,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(BytesOf(Source));
 
     Len := Length(Src);
     Result := Src;
@@ -753,7 +757,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(BytesOf(Source));
 
     Len := Length(Src);
     Result := Src;
@@ -789,7 +793,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));
 
     Len := Length(Src);
     SetLength(Result, Len);
@@ -894,7 +898,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(BytesOf(Source));
 
     Len := Length(Src);
     SetLength(Result, Len);
@@ -915,7 +919,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));
 
     Len := Length(Src);
     SetLength(Tmp, Len);
@@ -946,7 +950,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(BytesOf(Source));
 
     Len := Length(Src);
     SetLength(Tmp, Len);
@@ -968,7 +972,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    Src := ValidFormat(Format).Decode(System.SysUtils.BytesOf(Source));
+    Src := ValidFormat(Format).Decode(BytesOf(Source));
 
     Len := Length(Src);
     SetLength(Tmp, Len);

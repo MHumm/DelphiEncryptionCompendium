@@ -173,24 +173,27 @@
         </DelphiCompile>
         <DCCReference Include="DECBaseClass.pas"/>
         <DCCReference Include="DECCipherBase.pas"/>
+        <DCCReference Include="DECCipherFormats.pas"/>
+        <DCCReference Include="DECCipherModes.pas"/>
+        <DCCReference Include="DECCipherInterface.pas"/>
+        <DCCReference Include="DECCiphers.pas"/>
         <DCCReference Include="DECCRC.pas"/>
         <DCCReference Include="DECData.pas"/>
+        <DCCReference Include="DECDataCipher.pas"/>
+        <DCCReference Include="DECDataHash.pas"/>
         <DCCReference Include="DECFormat.pas"/>
         <DCCReference Include="DECFormatBase.pas"/>
         <DCCReference Include="DECHash.pas"/>
-        <DCCReference Include="DECRandom.pas"/>
-        <DCCReference Include="DECUtil.pas"/>
-        <DCCReference Include="DECCiphers.pas"/>
         <DCCReference Include="DECHashBase.pas"/>
-        <DCCReference Include="DECCipherFormats.pas"/>
-        <DCCReference Include="DECTypes.pas"/>
-        <DCCReference Include="DECCipherModes.pas"/>
-        <DCCReference Include="DECCipherInterface.pas"/>
         <DCCReference Include="DECHashInterface.pas"/>
-        <DCCReference Include="DECDataCipher.pas"/>
-        <DCCReference Include="DECDataHash.pas"/>
+        <DCCReference Include="DECRandom.pas"/>
+        <DCCReference Include="DECTypes.pas"/>
+        <DCCReference Include="DECUtil.pas"/>
+        <DCCReference Include="DECUtilRawByteStringHelper.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
+        <None Include="BuildInfo.txt"/>
+        <None Include="BuildAll.cmd"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -218,9 +221,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\DEC60.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_Debug\DEC60.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DEC60.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="BuildInfo.txt" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -256,6 +265,12 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="DECOptions.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="BuildAll.cmd" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

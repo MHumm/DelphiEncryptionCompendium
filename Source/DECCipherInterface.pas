@@ -19,7 +19,11 @@ unit DECCipherInterface;
 interface
 
 uses
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
   System.SysUtils, System.Classes,
+  {$ENDIF}
   DECUtil, DECFormatBase;
 
 type

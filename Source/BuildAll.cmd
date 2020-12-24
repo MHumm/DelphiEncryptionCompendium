@@ -8,6 +8,8 @@ echo Kompiliert für alle Delphis in %ProgramFiles(x86)%\Embarcadero
 echo TODO : auf Pfade aus Registry umstellen
 echo HKCU\Software\Embarcadero\BDS\*.0 : RootDir
 echo.
+echo Kompiliert ebenso für Lazarus/FPC in C:\lazarus
+echo.
 echo erstellt pro DelphiVersion+ProjectConfig ein Vergeichnis mit den DCUs 
 echo ..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)
 echo.
@@ -47,12 +49,39 @@ echo. >> "%~dpn0.log"
 echo ### Delphi %IDEVER% ### >> "%~dpn0.log" 
 echo. >> "%~dpn0.log" 
 
+::::: DCUs :::::
 for %%P in (Win32,Win64,Linux64,Android,Android64,iOSDevice64,iOSSimulator,OSX32,OSX64) do (
   for %%C in (Debug,Release) do (
     call :do_compile "Source\DEC60.dproj" %%P %%C
   )
 )
 
+::::: Lazarus-DCUs :::::
+title COMPILE Lazarus x86_64 win64 : Source\DEC60Lazarus.lpk
+echo ### Lazarus x86_64 win64 # Source\DEC60Lazarus.lpk
+C:\lazarus\lazbuild.exe --build-all --cpu=x86_64 --build-mode=Default "%~dp0\DEC60Lazarus.lpk"
+if errorlevel 1 (
+  echo FAIL   Source\DEC60Lazarus.lpk   : x86_64 win64 >> "%~dpn0.log"
+  rundll32 user32.dll,MessageBeep
+  timeout 11
+) else (
+  echo OK     Source\DEC60Lazarus.lpk   : x86_64 win64 >> "%~dpn0.log" 
+)
+echo.
+
+title COMPILE Lazarus i386 win32 : Source\DEC60Lazarus.lpk
+echo ### Lazarus i386 win32 # Source\DEC60Lazarus.lpk
+C:\lazarus\lazbuild.exe --build-all --cpu=i386 --build-mode=Default "%~dp0\DEC60Lazarus.lpk"
+if errorlevel 1 (
+  echo FAIL   Source\DEC60Lazarus.lpk   : i386 win32 >> "%~dpn0.log"
+  rundll32 user32.dll,MessageBeep
+  timeout 11
+) else (
+  echo OK     Source\DEC60Lazarus.lpk   : i386 win32 >> "%~dpn0.log" 
+)
+echo.
+
+::::: TestApps :::::
 echo. >> "%~dpn0.log" 
 for %%P in (Win32) do (
   for %%C in (Debug,Console) do (
@@ -63,6 +92,7 @@ for %%P in (Win32) do (
   )
 )
 
+::::: DemoApps :::::
 echo. >> "%~dpn0.log" 
 call :do_compile "Demos\Cipher_Console\Cipher_Console.dproj"
 call :do_compile "Demos\Cipher_FMX\Cipher_FMX.dproj"

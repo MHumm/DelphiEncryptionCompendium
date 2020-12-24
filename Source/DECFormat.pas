@@ -26,7 +26,11 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
   System.SysUtils, System.Classes,
+  {$ENDIF}
   DECBaseClass, DECFormatBase, DECUtil,
   DECCRC; // needed by TFormat_Radix64
 

@@ -25,7 +25,11 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
   System.SysUtils, System.Classes,
+  {$ENDIF}
   {$IFDEF FMXTranslateableExceptions}
   FMX.Types,
   {$ENDIF}
@@ -264,16 +268,10 @@ procedure ProtectString(var Source: string); overload;
 /// <param name="Source">
 ///   String to be safely overwritten
 /// </param>
-procedure ProtectString(var Source: RawByteString); overload;
-
 {$IFDEF ANSISTRINGSUPPORTED}
-/// <summary>
-///   Overwrites the string's contents in a secure way and returns an empty string.
-/// </summary>
-/// <param name="Source">
-///   String to be safely overwritten
-/// </param>
 procedure ProtectString(var Source: AnsiString); overload;
+{$ELSE}
+procedure ProtectString(var Source: RawByteString); overload;
 {$ENDIF}
 
 {$IFNDEF NEXTGEN}
@@ -610,7 +608,7 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: string); overload;
+procedure ProtectString(var Source: string);
 begin
   if Length(Source) > 0 then
   begin
@@ -620,30 +618,28 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: RawByteString); overload;
+{$IFDEF ANSISTRINGSUPPORTED}
+procedure ProtectString(var Source: AnsiString);
+{$ELSE}
+procedure ProtectString(var Source: RawByteString);
+{$ENDIF}
 begin
   if Length(Source) > 0 then
   begin
+    {$IFDEF ANSISTRINGSUPPORTED}
+    System.UniqueString(Source);
+    {$ELSE}
     // UniqueString(Source); cannot be called with a RawByteString as there is
     // no overload for it, so we need to call our own one.
     DECUtilRawByteStringHelper.UniqueString(Source);
+    {$ENDIF}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     Source := '';
   end;
 end;
 
 {$IFNDEF NEXTGEN}
-procedure ProtectString(var Source: AnsiString); overload;
-begin
-  if Length(Source) > 0 then
-  begin
-    System.UniqueString(Source);
-    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
-    Source := '';
-  end;
-end;
-
-procedure ProtectString(var Source: WideString); overload;
+procedure ProtectString(var Source: WideString);
 begin
   if Length(Source) > 0 then
   begin

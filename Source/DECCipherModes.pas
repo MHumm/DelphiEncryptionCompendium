@@ -21,7 +21,11 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
+  {$IFDEF FPC}
+  SysUtils, TypInfo,
+  {$ELSE}
   System.SysUtils, System.TypInfo,
+  {$ENDIF}
   DECCipherBase, DECUtil;
 
 type
@@ -249,7 +253,7 @@ resourcestring
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
   raise EDECCipherException.CreateResFmt(@sInvalidMessageLength,
-                                         [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
+                                         [GetEnumName(TypeInfo(TCipherMode),
                                          Integer(Cipher.Mode)),
                                          Cipher.Context.BlockSize]);
 end;
