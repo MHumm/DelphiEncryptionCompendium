@@ -49,13 +49,6 @@ echo. >> "%~dpn0.log"
 echo ### Delphi %IDEVER% ### >> "%~dpn0.log" 
 echo. >> "%~dpn0.log" 
 
-::::: DCUs :::::
-for %%P in (Win32,Win64,Linux64,Android,Android64,iOSDevice64,iOSSimulator,OSX32,OSX64) do (
-  for %%C in (Debug,Release) do (
-    call :do_compile "Source\DEC60.dproj" %%P %%C
-  )
-)
-
 ::::: Lazarus-DCUs :::::
 title COMPILE Lazarus x86_64 win64 : Source\DEC60Lazarus.lpk
 echo ### Lazarus x86_64 win64 # Source\DEC60Lazarus.lpk
@@ -80,6 +73,13 @@ if errorlevel 1 (
   echo OK     Source\DEC60Lazarus.lpk   : i386 win32 >> "%~dpn0.log" 
 )
 echo.
+
+::::: Delphi-DCUs :::::
+for %%P in (Win32,Win64,Linux64,Android,Android64,iOSDevice64,iOSSimulator,OSX32,OSX64) do (
+  for %%C in (Debug,Release) do (
+    call :do_compile "Source\DEC60.dproj" %%P %%C
+  )
+)
 
 ::::: TestApps :::::
 echo. >> "%~dpn0.log" 
