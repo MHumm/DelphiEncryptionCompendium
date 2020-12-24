@@ -21,7 +21,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, TypInfo, DECBaseClass, DECFormatBase, DECUtil;
+  {$IFDEF FPC}
+  SysUtils, Classes, TypInfo,
+  {$ELSE}
+  System.SysUtils, System.Classes, System.TypInfo,
+  {$ENDIF}
+  DECBaseClass, DECFormatBase, DECUtil;
 
 type
   /// <summary>
