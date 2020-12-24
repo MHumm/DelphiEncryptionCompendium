@@ -51,6 +51,12 @@ type
   TCipherType = set of TCipherTypes;
 
   /// <summary>
+  ///   Padding used to fill the last incomplete block of a block encryption
+  ///   algorithm. To be expanded in a future version
+  /// </summary>
+  TBlockFillMode = (fmByte);
+
+  /// <summary>
   ///   Record containing meta data about a certain cipher
   /// </summary>
   TCipherContext = packed record
@@ -221,9 +227,13 @@ type
     procedure SetMode(Value: TCipherMode);
   strict protected
     /// <summary>
-    ///   Padding Mode
+    ///   Padding mode used to concatenate/connect blocks in a block cipher
     /// </summary>
-    FMode: TCipherMode;
+    FMode     : TCipherMode;
+    /// <summary>
+    ///   Mode used for filling up an incomplete last block in a block cipher
+    /// </summary>
+    FFillMode : TBlockFillMode;
     /// <summary>
     ///   Current processing state
     /// </summary>
@@ -663,6 +673,13 @@ type
     property Mode: TCipherMode
       read   FMode
       write  SetMode;
+
+    /// <summary>
+    ///   Mode used for filling up an incomplete last block in a block cipher
+    /// </summary>
+    property FillMode: TBlockFillMode
+      read   FFillMode
+      write  FFillMode;
   end;
 
 /// <summary>
@@ -764,6 +781,8 @@ begin
   else
     FAdditionalBufferBackup := nil;
 
+  FFillMode := fmByte;
+
   Protect;
 end;
 
@@ -774,9 +793,9 @@ begin
   // was used instead of ReallocMem due to C++ compatibility as per 10.1 help
   FreeMem(FData, FDataSize);
   FInitializationVector   := nil;
-  FFeedback := nil;
-  FBuffer   := nil;
-  FAdditionalBuffer     := nil;
+  FFeedback               := nil;
+  FBuffer                 := nil;
+  FAdditionalBuffer       := nil;
   FAdditionalBufferBackup := nil;
   inherited Destroy;
 end;
