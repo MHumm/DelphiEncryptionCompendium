@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -674,7 +674,7 @@ procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileN
 var
   S, D: TStream;
 begin
-  assert(SourceFileName <> DestFileName, 'Source and Dest file name may not be equal');
+  Assert(SourceFileName <> DestFileName, 'Source and Dest file name may not be equal');
 
   S := TFileStream.Create(SourceFileName, fmOpenRead or fmShareDenyNone);
   try
@@ -715,7 +715,7 @@ begin
     SetLength(Result, 0);
 end;
 
-function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
 begin
@@ -731,7 +731,7 @@ begin
     SetLength(Result, 0);
 end;
 
-function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
   Src: TBytes;
@@ -748,7 +748,7 @@ begin
     SetLength(Result, 0);
 end;
 
-function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
   Src: TBytes;
@@ -766,7 +766,7 @@ begin
 end;
 
 {$IFDEF ANSISTRINGSUPPORTED}
-function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
 begin
@@ -784,7 +784,7 @@ end;
 {$ENDIF}
 
 {$IFDEF ANSISTRINGSUPPORTED}
-function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
   Src: TBytes;
@@ -803,7 +803,7 @@ end;
 {$ENDIF}
 
 {$IFNDEF NEXTGEN}
-function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
 begin
@@ -889,7 +889,7 @@ begin
 end;
 
 {$IFNDEF NEXTGEN}
-function TDECFormattedCipher.DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass = nil): TBytes;
+function TDECFormattedCipher.DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;
 var
   Len: Integer;
   Src: TBytes;

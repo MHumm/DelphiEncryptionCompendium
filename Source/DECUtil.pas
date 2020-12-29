@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -22,7 +22,7 @@ unit DECUtil;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
   SysUtils, Classes, DECTypes;
@@ -666,11 +666,10 @@ end;
 function BytesToRawString(const Source: TBytes): RawByteString;
 begin
   SetLength(Result, Length(Source));
-
-  if (Length(Source) > 0) then
+  if Length(Source) > 0 then
   begin
     // determine lowest string index for handling of ZeroBasedStrings
-    Move(Source[0], Result[Low(result)], length(Source));
+    Move(Source[0], Result[Low(result)], Length(Source));
   end;
 end;
 

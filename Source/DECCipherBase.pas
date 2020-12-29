@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -18,10 +18,10 @@ unit DECCipherBase;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECFormatBase, DECUtil;
+  SysUtils, Classes, DECBaseClass, DECFormatBase;
 
 type
   /// <summary>
@@ -709,7 +709,7 @@ procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 implementation
 
 uses
-  TypInfo;
+  TypInfo, DECUtil;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
@@ -742,7 +742,7 @@ end;
 
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 begin
-  assert(assigned(CipherClass), 'Do not set a nil default cipher class!');
+  Assert(Assigned(CipherClass), 'Do not set a nil default cipher class!');
 
   FDefaultCipherClass := CipherClass;
 end;
@@ -836,7 +836,7 @@ class function TDECCipher.Context: TCipherContext;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 procedure TDECCipher.Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte);

@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ unit DECFormat;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
   SysUtils, Classes, DECBaseClass, DECFormatBase, DECUtil;
@@ -32,15 +32,15 @@ type
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormat        = DECFormatBase.TDECFormat;
+  TDECFormat          = DECFormatBase.TDECFormat;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormatClass   = DECFormatBase.TDECFormatClass;
+  TDECFormatClass     = DECFormatBase.TDECFormatClass;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TFormat_Copy      = DECFormatBase.TFormat_Copy;
+  TFormat_Copy        = DECFormatBase.TFormat_Copy;
 
   TFormat_HEX         = class;
   TFormat_HEXL        = class;
@@ -819,7 +819,7 @@ end;
 
 class procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
 begin
-  assert(Value > 0, 'Invalid number of chars per line: ' + IntToStr(Value));
+  Assert(Value > 0, 'Invalid number of chars per line: ' + IntToStr(Value));
 
   if (Value > 0) then
     FCharsPerLine := Value

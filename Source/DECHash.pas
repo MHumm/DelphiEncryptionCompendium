@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -23,7 +23,7 @@ unit DECHash;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
   SysUtils, Classes, DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECTypes;
@@ -521,7 +521,7 @@ uses
 
 {$IFDEF X86ASM}
   {$DEFINE INCLUDED} // allows having the DECHash.inc in the IDE's project manager
-  {$I DECHash.asm86.inc}
+  {$INCLUDE DECHash.asm86.inc}
 {$ENDIF !X86ASM}
 
 { Speed comparison of ASM vs. PurePascal Implementation. Valid onbly for Win32 compiler
