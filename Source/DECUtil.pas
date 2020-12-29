@@ -25,7 +25,7 @@ interface
 {$I DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECTypes;
+  SysUtils, Classes, DECTypes;
 
 type
   // Exception Classes
@@ -83,6 +83,11 @@ type
   EDECCipherException = class(EDECException);
 
   /// <summary>
+  ///   class function compatible type definition
+  /// </summary>
+  TGetShortClassNameFunc = TFunc<string>;
+
+  /// <summary>
   ///   Exception class for reporting the use of abstract things which cannot
   ///   be called directly
   /// </summary>
@@ -90,7 +95,7 @@ type
     /// <summary>
     ///   Create the exception using a meaningfull error message
     /// </summary>
-    constructor Create(ClassType: TDECClass); overload;
+    constructor Create(ClassType: TGetShortClassNameFunc); overload;
   end;
 
   /// <summary>
@@ -320,9 +325,9 @@ benutzt wird. Weil es keine Ressorcestrings bei FMX gibt? }
 resourcestring
   sAbstractError = cAbstractError;
 
-constructor EDECAbstractError.Create(ClassType: TDECClass);
+constructor EDECAbstractError.Create(ClassType: TGetShortClassNameFunc);
 begin
-  inherited CreateResFmt(@sAbstractError, [ClassType.GetShortClassName]);
+  inherited CreateResFmt(@sAbstractError, [ClassType]);
 end;
 
 const

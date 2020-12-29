@@ -990,14 +990,14 @@ class function TDECHash.DigestSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 class function TDECHash.BlockSize: UInt32;
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 function TDECHash.CalcBuffer(const Buffer; BufferSize: Integer): TBytes;

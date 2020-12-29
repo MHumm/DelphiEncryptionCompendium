@@ -398,14 +398,14 @@ class procedure TDECFormat.DoEncode(const Source; var Dest: TBytes; Size: Intege
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 class procedure TDECFormat.DoDecode(const Source; var Dest: TBytes; Size: Integer);
 begin
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 class function TDECFormat.DoIsValid(const Data; Size: Integer): Boolean;
@@ -415,7 +415,7 @@ begin
   {$ENDIF FPC}
   // C++ does not support virtual static functions thus the base cannot be
   // marked 'abstract'. This is our workaround:
-  raise EDECAbstractError.Create(Self);
+  raise EDECAbstractError.Create(GetShortClassName);
 end;
 
 class function TDECFormat.Encode(const Data: RawByteString): RawByteString;
