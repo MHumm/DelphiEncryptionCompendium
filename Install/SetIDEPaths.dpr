@@ -116,26 +116,33 @@ const
   begin
     Assert(Assigned(IDEVersions), 'Empty list of IDE versions passed');
 
+
     for IDEVersion in IDEVersions do
     begin
       WriteLn;
       WriteLn('RADStudio: ' + IDEVersion);
 
-      // Fetch all platforms for the currently processed IDE version
-      if reg.OpenKey(IDERootKey + '\' + IDEVersion + '\' + LibraryKey, false) then
+      // Skip versions older than D2009
+      if (StrToFloat(IDEVersion, TFormatSettings.Create('en-US'))  >= 6.0) then
       begin
-        PlatformKeys := TStringList.Create;
-        try
-          reg.GetKeyNames(PlatformKeys);
-          reg.CloseKey;
+        // Fetch all platforms for the currently processed IDE version
+        if reg.OpenKey(IDERootKey + '\' + IDEVersion + '\' + LibraryKey, false) then
+        begin
+          PlatformKeys := TStringList.Create;
+          try
+            reg.GetKeyNames(PlatformKeys);
+            reg.CloseKey;
 
-          ProcessAllPlatforms(PlatformKeys, IDEVersion);
-        finally
-          PlatformKeys.Free;
-        end;
+            ProcessAllPlatforms(PlatformKeys, IDEVersion);
+          finally
+            PlatformKeys.Free;
+          end;
+        end
+        else
+          WriteLn('No platforms found');
       end
       else
-        WriteLn('No platforms found');
+        WriteLn('Versions prior to D2009 are not supported');
     end;
   end;
 
