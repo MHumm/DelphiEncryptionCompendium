@@ -98,6 +98,18 @@ type
   end;
 
   /// <summary>
+  ///   Reason for calling the progress event
+  /// </summary>
+  TDECProgressState = (Start, Progress, Finish {, Error});
+
+  /// <summary>
+  ///   Event type used by several hash- and cipther methods to display their
+  ///   progress. It can be implemented as regular method, procedure and as
+  ///   anonymous method, means: in place.
+  /// </summary>
+  TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);
+
+  /// <summary>
   ///   Progress Callback used by Cipher and Hash for Stream and File methods
   /// </summary>
   IDECProgress = interface
