@@ -2,7 +2,7 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'ProgressTest'
-  ClientHeight = 111
+  ClientHeight = 187
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,7 +13,7 @@ object FormMain: TFormMain
   OldCreateOrder = False
   DesignSize = (
     635
-    111)
+    187)
   PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
@@ -41,5 +41,31 @@ object FormMain: TFormMain
     Height = 17
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 2
+  end
+  object RadioButtonMethod: TRadioButton
+    Left = 8
+    Top = 96
+    Width = 193
+    Height = 17
+    Caption = 'Use method as progress event'
+    Checked = True
+    TabOrder = 3
+    TabStop = True
+  end
+  object RadioButtonProcedure: TRadioButton
+    Left = 8
+    Top = 128
+    Width = 193
+    Height = 17
+    Caption = 'Use procedure as progress event'
+    TabOrder = 4
+  end
+  object RadioButtonAnonMethod: TRadioButton
+    Left = 8
+    Top = 162
+    Width = 233
+    Height = 17
+    Caption = 'Use anonymous method as progress event'
+    TabOrder = 5
   end
 end
