@@ -312,9 +312,8 @@ type
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
-    ///   The stream must be assigned and the hash value will either be calculated
-    ///   from the beginning of the stream (if size < 0) or from the current
-    ///   stream position (size > 0) to the end
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
     /// </param>
     /// <param name="Size">
     ///   Number of bytes within the stream over which to calculate the hash value
@@ -322,20 +321,19 @@ type
     /// <param name="HashResult">
     ///   In this byte array the calculated hash value will be returned
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
     procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes;
-                         const Progress: IDECProgress = nil); overload;
+                         const OnProgress:TDECProgressEvent = nil); overload;
     /// <summary>
     ///   Calculates the hash value over a givens stream of bytes
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
-    ///   The stream must be assigned and the hash value will either be calculated
-    ///   from the beginning of the stream (if size < 0) or from the current
-    ///   stream position (size > 0) to the end
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
     /// </param>
     /// <param name="Size">
     ///   Number of bytes within the stream over which to calculate the hash value
@@ -344,7 +342,7 @@ type
     ///   Optional formatting class. The formatting of that will be applied to
     ///   the returned hash value.
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
@@ -353,7 +351,7 @@ type
     ///   passed as format parameter, if used.
     /// </returns>
     function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil;
-                        const Progress: IDECProgress = nil): RawByteString; overload;
+                        const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
@@ -364,12 +362,12 @@ type
     /// <param name="HashResult">
     ///   Here the resulting hash value is being returned as byte array
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback. If being used the hash calculation will call it from
     ///   time to time to return the current progress of the operation
     /// </param>
     procedure CalcFile(const FileName: string; var HashResult: TBytes;
-                       const Progress: IDECProgress = nil); overload;
+                       const OnProgress:TDECProgressEvent = nil); overload;
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
     /// </summary>
@@ -380,7 +378,7 @@ type
     ///   Optional parameter: Formatting class. If being used the formatting is
     ///   being applied to the returned string with the calculated hash value
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback. If being used the hash calculation will call it from
     ///   time to time to return the current progress of the operation
     /// </param>
@@ -393,7 +391,7 @@ type
     ///   result in strange characters in the returned result.
     /// </remarks>
     function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
-                      const Progress: IDECProgress = nil): RawByteString; overload;
+                      const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     // mask generation
 
@@ -1074,31 +1072,31 @@ begin
 end;
 
 procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
-  var HashResult: TBytes; const Progress: IDECProgress);
+  var HashResult: TBytes; const OnProgress:TDECProgressEvent);
 var
   Buffer: TBytes;
   Bytes: Integer;
-  Min, Max, Pos: Int64;
+  Max, StartPos, Pos: Int64;
 begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
   SetLength(HashResult, 0);
-  Min := 0;
-  Max := 0;
   try
     Init;
 
     if StreamBufferSize <= 0 then
       StreamBufferSize := 8192;
 
+    Pos := Stream.Position;
+
     if Size < 0 then
-    begin
-      Stream.Position := 0;
-      Size := Stream.Size;
-      Pos := 0;
-    end
-    else
-      Pos := Stream.Position;
+      Size := Stream.Size - Pos;
+
+    StartPos := Pos;
+    Max      := Pos + Size;
+
+    if Assigned(OnProgress) then
+      OnProgress(Max, 0, Started);
 
     Bytes := StreamBufferSize mod FBufferSize;
 
@@ -1112,13 +1110,8 @@ begin
     else
       SetLength(Buffer, Bytes);
 
-    Min := Pos;
-    Max := Pos + Size;
-
     while Size > 0 do
     begin
-      if Assigned(Progress) then
-        Progress.OnProgress(Min, Max, Pos);
       Bytes := Length(Buffer);
       if Bytes > Size then
         Bytes := Size;
@@ -1126,46 +1119,49 @@ begin
       Calc(Buffer[0], Bytes);
       Dec(Size, Bytes);
       Inc(Pos, Bytes);
+
+      if Assigned(OnProgress) then
+        OnProgress(Max, Pos, Processing);
     end;
 
     Done;
     HashResult := DigestAsBytes;
   finally
     ProtectBytes(Buffer);
-    if Assigned(Progress) then
-      Progress.OnProgress(Min, Max, Max);
+    if Assigned(OnProgress) then
+      OnProgress(Max, Max, Finished);
   end;
 end;
 
 function TDECHash.CalcStream(const Stream: TStream; Size: Int64;
-  Format: TDECFormatClass; const Progress: IDECProgress): RawByteString;
+  Format: TDECFormatClass; const OnProgress:TDECProgressEvent): RawByteString;
 var
   Hash: TBytes;
 begin
-  CalcStream(Stream, Size, Hash, Progress);
+  CalcStream(Stream, Size, Hash, OnProgress);
   Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
 end;
 
 procedure TDECHash.CalcFile(const FileName: string; var HashResult: TBytes;
-  const Progress: IDECProgress);
+                            const OnProgress:TDECProgressEvent);
 var
   S: TFileStream;
 begin
   SetLength(HashResult, 0);
   S := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   try
-    CalcStream(S, S.Size, HashResult, Progress);
+    CalcStream(S, S.Size, HashResult, OnProgress);
   finally
     S.Free;
   end;
 end;
 
 function TDECHash.CalcFile(const FileName: string; Format: TDECFormatClass;
-  const Progress: IDECProgress): RawByteString;
+                           const OnProgress:TDECProgressEvent): RawByteString;
 var
   Hash: TBytes;
 begin
-  CalcFile(FileName, Hash, Progress);
+  CalcFile(FileName, Hash, OnProgress);
   Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
 end;
 

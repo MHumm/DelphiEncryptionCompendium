@@ -657,7 +657,7 @@ begin
         Inc(Pos, Bytes);
 
         if Assigned(OnProgress) then
-          OnProgress(Max, Pos - StartPos, Progress);
+          OnProgress(Max, Pos - StartPos, Processing);
       end;
     finally
       ProtectBytes(Buffer);
