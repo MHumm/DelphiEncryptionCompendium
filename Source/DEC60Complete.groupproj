@@ -18,9 +18,6 @@
         <Projects Include="..\Demos\Cipher_FMX\Cipher_FMX.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Demos\CryptoWorkbench_VCL\CryptoWorkbench_VCL.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\Demos\Format_Console\Format_Console.dproj">
             <Dependencies/>
         </Projects>
@@ -92,15 +89,6 @@
     <Target Name="Cipher_FMX:Make">
         <MSBuild Projects="..\Demos\Cipher_FMX\Cipher_FMX.dproj" Targets="Make"/>
     </Target>
-    <Target Name="CryptoWorkbench_VCL">
-        <MSBuild Projects="..\Demos\CryptoWorkbench_VCL\CryptoWorkbench_VCL.dproj"/>
-    </Target>
-    <Target Name="CryptoWorkbench_VCL:Clean">
-        <MSBuild Projects="..\Demos\CryptoWorkbench_VCL\CryptoWorkbench_VCL.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="CryptoWorkbench_VCL:Make">
-        <MSBuild Projects="..\Demos\CryptoWorkbench_VCL\CryptoWorkbench_VCL.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Format_Console">
         <MSBuild Projects="..\Demos\Format_Console\Format_Console.dproj"/>
     </Target>
@@ -150,13 +138,13 @@
         <MSBuild Projects="..\Install\SetIDEPaths.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;CryptoWorkbench_VCL;Format_Console;Hash_Console;Hash_FMX;Random_Console;Progress_VCL"/>
+        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;Progress_VCL"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;CryptoWorkbench_VCL:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;Progress_VCL:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;Progress_VCL:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;CryptoWorkbench_VCL:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;Progress_VCL:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;Progress_VCL:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
