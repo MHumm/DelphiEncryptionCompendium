@@ -1,12 +1,12 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{E6A23F63-4CF8-4715-BB2C-BFCA7EFA2431}</ProjectGuid>
-        <ProjectVersion>19.2</ProjectVersion>
+        <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>FMX</FrameworkType>
         <MainSource>Hash_FMX.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
-        <Platform Condition="'$(Platform)'==''">Android</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>32787</TargetedPlatforms>
         <AppType>Application</AppType>
         <PlatformSDK Condition="'$(PlatformSDK)'=='' And '$(Platform)'=='Android64'">AndroidSDK25.2.5_64bit.sdk</PlatformSDK>
@@ -93,27 +93,15 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <AUP_WRITE_CALENDAR>true</AUP_WRITE_CALENDAR>
-        <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <AUP_WRITE_EXTERNAL_STORAGE>true</AUP_WRITE_EXTERNAL_STORAGE>
-        <AUP_ACCESS_COARSE_LOCATION>true</AUP_ACCESS_COARSE_LOCATION>
-        <AUP_READ_EXTERNAL_STORAGE>true</AUP_READ_EXTERNAL_STORAGE>
-        <AUP_ACCESS_FINE_LOCATION>true</AUP_ACCESS_FINE_LOCATION>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_DcuOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)__Demos</DCC_DcuOutput>
+        <DCC_ExeOutput>.\..\..\Compiled\BIN_IDExx.x_$(Platform)__Demos</DCC_ExeOutput>
+        <DCC_HppOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_HppOutput>
+        <DCC_ObjOutput>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)__Demos</DCC_ObjOutput>
+        <DCC_BpiOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BpiOutput>
+        <DCC_UnitSearchPath>.\..\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_BplOutput>.\..\..\Compiled\BIN_IDExx.x_$(Platform)__Demos</DCC_BplOutput>
+        <DCC_DcpOutput>.\..\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcpOutput>
         <SanitizedProjectName>Hash_FMX</SanitizedProjectName>
-        <AUP_INTERNET>true</AUP_INTERNET>
-        <AUP_CAMERA>true</AUP_CAMERA>
-        <AUP_READ_CALENDAR>true</AUP_READ_CALENDAR>
-        <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
-        <AUP_READ_PHONE_STATE>true</AUP_READ_PHONE_STATE>
-        <AUP_CALL_PHONE>true</AUP_CALL_PHONE>
-        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <VerInfo_Build>1</VerInfo_Build>
@@ -189,7 +177,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-        <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
@@ -284,6 +271,8 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -297,18 +286,6 @@
             <Form>FormMain</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="..\..\Source\DECBaseClass.pas"/>
-        <DCCReference Include="..\..\Source\DECHash.pas"/>
-        <DCCReference Include="..\..\Source\DECUtil.pas"/>
-        <DCCReference Include="..\..\Source\DECTypes.pas"/>
-        <DCCReference Include="..\..\Source\DECCRC.pas"/>
-        <DCCReference Include="..\..\Source\DECFormatBase.pas"/>
-        <DCCReference Include="..\..\Source\DECHashBase.pas"/>
-        <DCCReference Include="..\..\Source\DECData.pas"/>
-        <DCCReference Include="..\..\Source\DECFormat.pas"/>
-        <DCCReference Include="..\..\Source\DECUtilRawByteStringHelper.pas"/>
-        <DCCReference Include="..\..\Source\DECHashInterface.pas"/>
-        <DCCReference Include="..\..\Source\DECDataHash.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -329,10 +306,6 @@
                 <Source>
                     <Source Name="MainSource">Hash_FMX.dpr</Source>
                 </Source>
-                <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
-                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="Hash144.png" Configuration="Release" Class="Android_LauncherIcon144">
@@ -343,6 +316,12 @@
                 </DeployFile>
                 <DeployFile LocalName="Android\Release\splash_image_def.xml" Configuration="Release" Class="AndroidSplashImageDef">
                     <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Win32__Demos\Hash_FMX.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>Hash_FMX.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -543,12 +522,6 @@
                 <DeployFile LocalName="Android64\Release\classes.dex" Configuration="Release" Class="AndroidClassesDexFile">
                     <Platform Name="Android64">
                         <RemoteName>classes.dex</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win32\Release\Hash_FMX.exe" Configuration="Release" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>Hash_FMX.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

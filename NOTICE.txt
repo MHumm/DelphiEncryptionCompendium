@@ -14,6 +14,9 @@ The DEC team wishes to thank the following other people for their contributions:
 
 Andreas Hausladen
 Remy Lebeau
+himitsu
+NamenLozer
+jaenicke
 
 
                       *** Export/Import Controls ***

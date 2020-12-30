@@ -21,17 +21,16 @@ unit TestDECCipher;
 interface
 
 // Needs to be included before any other statements
-{$I defines.inc}
+{$INCLUDE TestDefines.inc}
 
 uses
-  {$IFNDEF DUnitX}
-  TestFramework,
-  {$ENDIF}
+  System.SysUtils, System.Classes,
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
+  {$ELSE}
+  TestFramework,
   {$ENDIF}
-  DECBaseClass, DECCipherBase, DECCiphers, Classes, SysUtils,
-  DECUtil, DECFormatBase, DECFormat;
+  DECBaseClass, DECCipherBase, DECCiphers, DECUtil, DECFormatBase, DECFormat;
 
 type
   // A function with these parameters has to be passed to DoTestEncode/Decode to
@@ -3130,48 +3129,46 @@ end;
 
 procedure TestTCipher_XTEA.SetUp;
 begin
+  // Source of the test data used:
+  // https://github.com/froydnj/ironclad/blob/master/testing/test-vectors/xtea.testvec
   FCipher_XTEA := TCipher_XTEA.Create;
 { TODO : Should be specified via FTestData? But how to apply? }
   FCipher_XTEA.Rounds := 32;
 
-  SetLength(FTestData, 3);
-  FTestData[0].OutputData  := 'd8d4e9ded91e13f7';
-  FTestData[0].InputData   := TFormat_HEX.Decode('0000000000000000');
+  SetLength(FTestData, 4);
+  FTestData[0].OutputData := 'd8d4e9ded91e13f7';
+  FTestData[0].InputData  := TFormat_HEX.Decode('0000000000000000');
 
   FTestData[0].Key        := #$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00;
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $00;
   FTestData[0].Mode       := cmECBx;
 
-  FTestData[1].OutputData  := '058c7e0537191550';
-  FTestData[1].InputData   := TFormat_HEX.Decode('0000000000000000');
+  FTestData[1].OutputData := '058c7e0537191550';
+  FTestData[1].InputData  := TFormat_HEX.Decode('0000000000000000');
 
-  FTestData[1].Key        := #$00#$00#$00#$80#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00;
+  FTestData[1].Key        := RawByteString(#$00#$00#$00#$80#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00#$00);
   FTestData[1].InitVector := '';
   FTestData[1].Filler     := $00;
   FTestData[1].Mode       := cmECBx;
 
-  FTestData[2].OutputData  := 'ef175e2818e3d22f';
-  FTestData[2].InputData   := TFormat_HEX.Decode('1a1a1a1a1a1a1a1a');
+  FTestData[2].OutputData := 'ef175e2818e3d22f';
+  FTestData[2].InputData  := TFormat_HEX.Decode('1a1a1a1a1a1a1a1a');
 
   FTestData[2].Key        := #$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a#$1a;
   FTestData[2].InitVector := '';
   FTestData[2].Filler     := $00;
   FTestData[2].Mode       := cmECBx;
 
-// There are further byte order issues regarding endianess. Since the preceeding
-// tests run properly it is assumed that the following one would as well when the
-// byte order issue has been cleared up
-////(:ecb-mode-test #h"2BD6459F82C5B300952C49104881FF48" #h"EA024714AD5C4D84" #h"67b41e0aa05f593a")
-//  FTestData[2].OutputData  := '0a1eb4673a595fa0';
-//  FTestData[2].InputData   := TFormat_HEX.Decode('144702ea844d5cad');
-//
-//
-//
-//  FTestData[2].Key        := #$9f#$45#$d6#$2b#$00#$be#$c5#$82#$10#$49#$2c#$95#$48#$ff#$81#$48;
-//  FTestData[2].InitVector := '';
-//  FTestData[2].Filler     := $00;
-//  FTestData[2].Mode       := cmECBx;
+  FTestData[3].Key        := TFormat_BigEndian32.Decode(
+                               RawByteString(#$2B#$D6#$45#$9F#$82#$C5#$B3#$00 +
+                                             #$95#$2C#$49#$10#$48#$81#$FF#$48));
+  FTestData[3].InitVector := '';
+  FTestData[3].Filler     := $00;
+  FTestData[3].Mode       := cmECBx;
+
+  FTestData[3].OutputData := '0a1eb4673a595fa0';
+  FTestData[3].InputData  := TFormat_HEX.Decode('144702ea844d5cad');
 end;
 
 procedure TestTCipher_XTEA.TearDown;
@@ -3518,42 +3515,7 @@ end;
 
 initialization
   // Register all test classes
-  {$IFNDEF DUnitX}
-  RegisterTests('DECCipher', [TestTDECCipher.Suite,
-                              TestTCipher_Null.Suite,
-                              TestTCipher_Blowfish.Suite,
-                              TestTCipher_Twofish.Suite,
-                              TestTCipher_IDEA.Suite,
-                              TestTCipher_Cast256.Suite,
-                              TestTCipher_Mars.Suite,
-                              TestTCipher_RC4.Suite,
-                              TestTCipher_RC6.Suite,
-                              TestTCipher_AES.Suite,
-                              TestTCipher_Rijndael.Suite,
-                              TestTCipher_Square.Suite,
-                              TestTCipher_SCOP.Suite,
-                              TestTCipher_Sapphire.Suite,
-                              TestTCipher_1DES.Suite,
-                              TestTCipher_2DES.Suite,
-                              TestTCipher_3DES.Suite,
-                              TestTCipher_2DDES.Suite,
-                              TestTCipher_3DDES.Suite,
-                              TestTCipher_3TDES.Suite,
-                              TestTCipher_3Way.Suite,
-                              TestTCipher_Cast128.Suite,
-                              TestTCipher_Gost.Suite,
-                              TestTCipher_Magma.Suite,
-                              TestTCipher_Misty.Suite,
-                              TestTCipher_NewDES.Suite,
-                              TestTCipher_Q128.Suite,
-                              TestTCipher_RC2.Suite,
-                              TestTCipher_RC5.Suite,
-                              TestTCipher_SAFER.Suite,
-                              TestTCipher_Shark.Suite,
-                              TestTCipher_Skipjack.Suite,
-                              TestTCipher_TEA.Suite,
-                              TestTCipher_XTEA.Suite]);
-  {$ELSE}
+  {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECCipher);
   TDUnitX.RegisterTestFixture(TestTCipher_Null);
   TDUnitX.RegisterTestFixture(TestTCipher_Blowfish);
@@ -3588,6 +3550,41 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_Skipjack);
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
+  {$ELSE}
+  RegisterTests('DECCipher', [TestTDECCipher.Suite,
+                              TestTCipher_Null.Suite,
+                              TestTCipher_Blowfish.Suite,
+                              TestTCipher_Twofish.Suite,
+                              TestTCipher_IDEA.Suite,
+                              TestTCipher_Cast256.Suite,
+                              TestTCipher_Mars.Suite,
+                              TestTCipher_RC4.Suite,
+                              TestTCipher_RC6.Suite,
+                              TestTCipher_AES.Suite,
+                              TestTCipher_Rijndael.Suite,
+                              TestTCipher_Square.Suite,
+                              TestTCipher_SCOP.Suite,
+                              TestTCipher_Sapphire.Suite,
+                              TestTCipher_1DES.Suite,
+                              TestTCipher_2DES.Suite,
+                              TestTCipher_3DES.Suite,
+                              TestTCipher_2DDES.Suite,
+                              TestTCipher_3DDES.Suite,
+                              TestTCipher_3TDES.Suite,
+                              TestTCipher_3Way.Suite,
+                              TestTCipher_Cast128.Suite,
+                              TestTCipher_Gost.Suite,
+                              TestTCipher_Magma.Suite,
+                              TestTCipher_Misty.Suite,
+                              TestTCipher_NewDES.Suite,
+                              TestTCipher_Q128.Suite,
+                              TestTCipher_RC2.Suite,
+                              TestTCipher_RC5.Suite,
+                              TestTCipher_SAFER.Suite,
+                              TestTCipher_Shark.Suite,
+                              TestTCipher_Skipjack.Suite,
+                              TestTCipher_TEA.Suite,
+                              TestTCipher_XTEA.Suite]);
   {$ENDIF}
 end.
 

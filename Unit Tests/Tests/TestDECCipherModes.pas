@@ -21,16 +21,16 @@ unit TestDECCipherModes;
 interface
 
 // Needs to be included before any other statements
-{$I defines.inc}
+{$INCLUDE TestDefines.inc}
 
 uses
-  {$IFNDEF DUnitX}
-  TestFramework,
-  {$ENDIF}
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
+  {$ELSE}
+  TestFramework,
   {$ENDIF}
-  DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers, System.SysUtils;
+  System.SysUtils,
+  DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
 
 type
   /// <summary>
@@ -494,9 +494,9 @@ end;
 
 initialization
   // Register all test cases to be run
-  {$IFNDEF DUnitX}
-  RegisterTest(TestTDECCipherModes.Suite);
-  {$ELSE}
+  {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECCipherModes);
+  {$ELSE}
+  RegisterTest(TestTDECCipherModes.Suite);
   {$ENDIF}
 end.

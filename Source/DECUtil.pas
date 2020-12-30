@@ -2,8 +2,8 @@
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
-  with the License. A copy of this licence is found in the root directory of
-  this project in the file LICENCE.txt or alternatively at
+  with the License. A copy of this licence is found in the root directory
+  of this project in the file LICENCE.txt or alternatively at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
@@ -22,10 +22,14 @@ unit DECUtil;
 
 interface
 
-{$I DECOptions.inc}
+{$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECTypes;
+  {$IFDEF FPC}
+  SysUtils, Classes;
+  {$ELSE}
+  System.SysUtils, System.Classes;
+  {$ENDIF}
 
 type
   // Exception Classes
@@ -90,7 +94,7 @@ type
     /// <summary>
     ///   Create the exception using a meaningfull error message
     /// </summary>
-    constructor Create(ClassType: TDECClass); overload;
+    constructor Create(ClassName: string); overload;
   end;
 
   /// <summary>
@@ -102,7 +106,23 @@ type
     ///   Callback used by stream oriented Cipher and Hash functions for reporting
     ///   the progress of the operation
     /// </summary>
-    procedure Process(const Min, Max, Pos: Int64); stdcall;
+    /// <param name="Min">
+    ///   Minimum value for a progress display (in byte). If used for files this is
+    ///   usually set to 0 but a stream might be processed starting at a certain
+    ///   position and this would be that start position.
+    /// </param>
+    /// <param name="Max">
+    ///   End position for the operation. In most situations this is Min + Size
+    ///   where size would be the size (in byte) specified by the caller of the
+    ///   cipher or hashing method to be processed.
+    /// </param>
+    /// <param name="Pos">
+    ///   Position (in byte) in regards to Min. e.g. if a stream is used and min
+    ///   is set to 100 because the first 100 bytes shall be skipped, Pos will
+    ///   start at 100 as well and when this event is called after processing
+    ///   64 byte Pos will be 164.
+    /// </param>
+    procedure OnProgress(const Min, Max, Pos: Int64); stdcall;
   end;
 
 // Byte Ordering
@@ -303,11 +323,6 @@ benutzt wird. Weil es keine Ressorcestrings bei FMX gibt? }
 
 resourcestring
   sAbstractError = cAbstractError;
-
-constructor EDECAbstractError.Create(ClassType: TDECClass);
-begin
-  inherited CreateResFmt(@sAbstractError, [ClassType.GetShortClassName]);
-end;
 
 const
   // Bit Lookup Table - see 'Bit Twiddling Hacks' by Sean Eron Anderson
@@ -598,7 +613,7 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: string); overload;
+procedure ProtectString(var Source: string);
 begin
   if Length(Source) > 0 then
   begin
@@ -608,7 +623,7 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: RawByteString); overload;
+procedure ProtectString(var Source: RawByteString);
 begin
   if Length(Source) > 0 then
   begin
@@ -645,11 +660,10 @@ end;
 function BytesToRawString(const Source: TBytes): RawByteString;
 begin
   SetLength(Result, Length(Source));
-
-  if (Length(Source) > 0) then
+  if Length(Source) > 0 then
   begin
     // determine lowest string index for handling of ZeroBasedStrings
-    Move(Source[0], Result[Low(result)], length(Source));
+    Move(Source[0], Result[Low(result)], Length(Source));
   end;
 end;
 
@@ -665,6 +679,16 @@ constructor EDECException.CreateFmt(const Msg: string;
                                     const Args: array of const);
 begin
   inherited Create(Format(Translate(Msg), Args));
+end;
+
+constructor EDECAbstractError.Create(ClassName: string);
+begin
+  inherited Create(Format(Translate(sAbstractError), [ClassName]));
+end;
+{$ELSE}
+constructor EDECAbstractError.Create(ClassName: string);
+begin
+  inherited CreateResFmt(@sAbstractError, [ClassName]);
 end;
 {$ENDIF}
 
