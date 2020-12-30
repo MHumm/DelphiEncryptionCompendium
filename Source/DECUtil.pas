@@ -100,7 +100,7 @@ type
   /// <summary>
   ///   Reason for calling the progress event
   /// </summary>
-  TDECProgressState = (Start, Progress, Finish {, Error});
+  TDECProgressState = (Started, Progress, Finished {, Error});
 
   /// <summary>
   ///   Event type used by several hash- and cipther methods to display their
