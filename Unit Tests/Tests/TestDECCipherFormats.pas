@@ -19,19 +19,18 @@
 unit TestDECCipherFormats;
 
 // Needs to be included before any other statements
-{$I defines.inc}
+{$INCLUDE TestDefines.inc}
 
 interface
 
 uses
-  {$IFNDEF DUnitX}
-  TestFramework,
-  {$ENDIF}
   {$IFDEF DUnitX}
   DUnitX.TestFramework,DUnitX.DUnitCompatibility,
+  {$ELSE}
+  TestFramework,
   {$ENDIF}
-
-  Classes, SysUtils, DECCipherBase, DECCiphers, DECCipherFormats;
+  System.Classes, System.SysUtils,
+  DECCipherBase, DECCiphers, DECCipherFormats;
 
 type
   /// <summary>

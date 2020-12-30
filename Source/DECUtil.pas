@@ -83,11 +83,6 @@ type
   EDECCipherException = class(EDECException);
 
   /// <summary>
-  ///   class function compatible type definition
-  /// </summary>
-  TGetShortClassNameFunc = TFunc<string>;
-
-  /// <summary>
   ///   Exception class for reporting the use of abstract things which cannot
   ///   be called directly
   /// </summary>
@@ -95,7 +90,7 @@ type
     /// <summary>
     ///   Create the exception using a meaningfull error message
     /// </summary>
-    constructor Create(ClassType: TGetShortClassNameFunc); overload;
+    constructor Create(ClassName: string); overload;
   end;
 
   /// <summary>
@@ -324,11 +319,6 @@ benutzt wird. Weil es keine Ressorcestrings bei FMX gibt? }
 
 resourcestring
   sAbstractError = cAbstractError;
-
-constructor EDECAbstractError.Create(ClassType: TGetShortClassNameFunc);
-begin
-  inherited CreateResFmt(@sAbstractError, [ClassType]);
-end;
 
 const
   // Bit Lookup Table - see 'Bit Twiddling Hacks' by Sean Eron Anderson
@@ -685,6 +675,16 @@ constructor EDECException.CreateFmt(const Msg: string;
                                     const Args: array of const);
 begin
   inherited Create(Format(Translate(Msg), Args));
+end;
+
+constructor EDECAbstractError.Create(ClassName: string);
+begin
+  inherited Create(Format(Translate(sAbstractError), [ClassName]));
+end;
+{$ELSE}
+constructor EDECAbstractError.Create(ClassName: string);
+begin
+  inherited CreateResFmt(@sAbstractError, [ClassName]);
 end;
 {$ENDIF}
 
