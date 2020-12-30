@@ -107,6 +107,15 @@ type
   ///   progress. It can be implemented as regular method, procedure and as
   ///   anonymous method, means: in place.
   /// </summary>
+  /// <param name="Size">
+  ///   Number of bytes to process. For files this is usually the file size. For
+  ///   streams this can be less than the stream size if the stream is not being
+  ///   processed from the beginning.
+  /// </param>
+  /// <param name="Pos">
+  ///   Position within size in byte. For streams this may be a position
+  ///   relative to the starting position for processing.
+  /// </param>
   TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);
 
   /// <summary>

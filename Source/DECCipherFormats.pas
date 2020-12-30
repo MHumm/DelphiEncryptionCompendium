@@ -611,51 +611,59 @@ begin
     Decode(Result[0], Result[0], Length(Source));
 end;
 
-procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
+procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
+                                                   DataSize: Int64;
                                                    const CipherProc: TDECCipherCodeEvent;
                                                    const OnProgress: TDECProgressEvent);
 var
   Buffer: TBytes;
   BufferSize, Bytes: Integer;
-  Min, Max, Pos: Int64;
+  Max, StartPos, Pos: Int64;
 begin
   Pos := Source.Position;
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
-  Min := Pos;
-  Max := Pos + DataSize;
+
+  Max      := Pos + DataSize;
+  StartPos := Pos;
+
   if DataSize > 0 then
-  try
-    if StreamBufferSize <= 0 then
-      StreamBufferSize := 8192;
-    BufferSize := StreamBufferSize mod Context.BlockSize;
-    if BufferSize = 0 then
-      BufferSize := StreamBufferSize
-    else
-      BufferSize := StreamBufferSize + Context.BlockSize - BufferSize;
-    if DataSize > BufferSize then
-      SetLength(Buffer, BufferSize)
-    else
-      SetLength(Buffer, DataSize);
-    while DataSize > 0 do
-    begin
+    try
       if Assigned(OnProgress) then
-        OnProgress(Max, Pos, Progress);
-      Bytes := BufferSize;
-      if Bytes > DataSize then
-        Bytes := DataSize;
-      Source.ReadBuffer(Buffer[0], Bytes);
-      // The real encryption or decryption routine
-      CipherProc(Buffer[0], Buffer[0], Bytes);
-      Dest.WriteBuffer(Buffer[0], Bytes);
-      Dec(DataSize, Bytes);
-      Inc(Pos, Bytes);
+        OnProgress(Max, 0, Started);
+
+      if StreamBufferSize <= 0 then
+        StreamBufferSize := 8192;
+      BufferSize := StreamBufferSize mod Context.BlockSize;
+      if BufferSize = 0 then
+        BufferSize := StreamBufferSize
+      else
+        BufferSize := StreamBufferSize + Context.BlockSize - BufferSize;
+      if DataSize > BufferSize then
+        SetLength(Buffer, BufferSize)
+      else
+        SetLength(Buffer, DataSize);
+      while DataSize > 0 do
+      begin
+        Bytes := BufferSize;
+        if Bytes > DataSize then
+          Bytes := DataSize;
+        Source.ReadBuffer(Buffer[0], Bytes);
+
+        // The real encryption or decryption routine
+        CipherProc(Buffer[0], Buffer[0], Bytes);
+        Dest.WriteBuffer(Buffer[0], Bytes);
+        Dec(DataSize, Bytes);
+        Inc(Pos, Bytes);
+
+        if Assigned(OnProgress) then
+          OnProgress(Max, Pos - StartPos, Progress);
+      end;
+    finally
+      ProtectBytes(Buffer);
+      if Assigned(OnProgress) then
+        OnProgress(Max, Max, Finished);
     end;
-  finally
-    ProtectBytes(Buffer);
-    if Assigned(OnProgress) then
-      OnProgress(Max, Max, Finished);
-  end;
 end;
 
 procedure TDECFormattedCipher.EncodeStream(const Source, Dest: TStream; DataSize: Int64;
