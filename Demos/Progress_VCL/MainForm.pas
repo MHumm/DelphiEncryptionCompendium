@@ -32,9 +32,12 @@ type
     Button1: TButton;
     Edit1: TEdit;
     ProgressBar1: TProgressBar;
+    RadioButtonMethod: TRadioButton;
+    RadioButtonProcedure: TRadioButton;
+    RadioButtonAnonMethod: TRadioButton;
     procedure Button1Click(Sender: TObject);
   public
-    procedure OnProgress(Max, Pos: Int64; State: TDECProgressState);
+    procedure OnProgress(Size, Pos: Int64; State: TDECProgressState);
   end;
 
 var
@@ -49,6 +52,17 @@ uses
 
 resourcestring
   rFileNameEmptyFailure = 'No input file specified!';
+
+procedure OnProgressProc(Size, Pos: Int64; State: TDECProgressState);
+begin
+  FormMain.ProgressBar1.Min := 0;
+  FormMain.ProgressBar1.Max := Size;
+
+  if (State = Finished) then
+    FormMain.ProgressBar1.Position := FormMain.ProgressBar1.Max
+  else
+    FormMain.ProgressBar1.Position := Pos;
+end;
 
 procedure TFormMain.Button1Click(Sender: TObject);
 var
@@ -74,7 +88,25 @@ begin
       Delete(TargetFile, pos('.', TargetFile), length(TargetFile));
       TargetFile := TargetFile + '.enc';
 
-      Cipher.EncodeFile(Edit1.Text, TargetFile, OnProgress);
+      // depending on selected radio button demo a different progress event technique
+      if RadioButtonMethod.Checked then
+        Cipher.EncodeFile(Edit1.Text, TargetFile, OnProgress)
+      else
+        if RadioButtonProcedure.Checked then
+          Cipher.EncodeFile(Edit1.Text, TargetFile, OnProgressProc)
+        else
+          if RadioButtonAnonMethod.Checked then
+            Cipher.EncodeFile(Edit1.Text, TargetFile,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressBar1.Min := 0;
+                                ProgressBar1.Max := Size;
+
+                                if (State = Finished) then
+                                  ProgressBar1.Position := ProgressBar1.Max
+                                else
+                                  ProgressBar1.Position := Pos;
+                              end);
     except
       on E: Exception do
         MessageDlg(E.Message, mtError, [mbOK], -1);
@@ -84,11 +116,15 @@ begin
   end;
 end;
 
-procedure TFormMain.OnProgress(Max, Pos: Int64; State: TDECProgressState);
+procedure TFormMain.OnProgress(Size, Pos: Int64; State: TDECProgressState);
 begin
   ProgressBar1.Min := 0;
-  ProgressBar1.Max := Max;
-  ProgressBar1.Position := Pos;
+  ProgressBar1.Max := Size;
+
+  if (State = Finished) then
+    ProgressBar1.Position := ProgressBar1.Max
+  else
+    ProgressBar1.Position := Pos;
 end;
 
 end.
