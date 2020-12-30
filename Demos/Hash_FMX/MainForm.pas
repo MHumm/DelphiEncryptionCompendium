@@ -26,7 +26,7 @@ uses
   FMX.Edit;
 
 type
-  TMainForm = class(TForm)
+  TFormMain = class(TForm)
     VertScrollBox1: TVertScrollBox;
     LayoutBottom: TLayout;
     Label3: TLabel;
@@ -72,7 +72,7 @@ type
   end;
 
 var
-  FormMain: TMainForm;
+  FormMain: TFormMain;
 
 implementation
 
@@ -88,7 +88,7 @@ uses
 
 {$R *.fmx}
 
-procedure TMainForm.ButtonCalcClick(Sender: TObject);
+procedure TFormMain.ButtonCalcClick(Sender: TObject);
 var
   Hash             : TDECHash;
   InputFormatting  : TDECFormatClass;
@@ -143,7 +143,7 @@ begin
   end;
 end;
 
-procedure TMainForm.ShowErrorMessage(ErrorMsg: string);
+procedure TFormMain.ShowErrorMessage(ErrorMsg: string);
 var
   AsyncDlg : IFMXDialogServiceASync;
 begin
@@ -156,27 +156,27 @@ begin
     end);
 end;
 
-procedure TMainForm.ComboBoxHashFunctionChange(Sender: TObject);
+procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
 begin
   CheckBoxIsPasswordHash.IsChecked :=
     TDECHash.ClassByName(
       ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).IsPasswordHash;
 end;
 
-procedure TMainForm.EditInputChangeTracking(Sender: TObject);
+procedure TFormMain.EditInputChangeTracking(Sender: TObject);
 begin
   if CheckBoxLiveCalc.IsChecked then
     ButtonCalcClick(self);
 end;
 
-procedure TMainForm.EditInputKeyUp(Sender: TObject; var Key: Word;
+procedure TFormMain.EditInputKeyUp(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 begin
   if (Key = vkReturn) then
     ButtonCalcClick(self);
 end;
 
-procedure TMainForm.FormCreate(Sender: TObject);
+procedure TFormMain.FormCreate(Sender: TObject);
 var
   AppService : IFMXApplicationService;
 begin
@@ -190,7 +190,7 @@ begin
   InitFormatCombos;
 end;
 
-procedure TMainForm.InitFormatCombos;
+procedure TFormMain.InitFormatCombos;
 var
   MyClass : TPair<Int64, TDECClass>;
   Formats : TStringList;
@@ -224,7 +224,7 @@ begin
   end;
 end;
 
-procedure TMainForm.InitHashCombo;
+procedure TFormMain.InitHashCombo;
 var
   MyClass : TPair<Int64, TDECClass>;
   Hashes  : TStringList;
@@ -245,7 +245,7 @@ begin
   end;
 end;
 
-procedure TMainForm.FormResize(Sender: TObject);
+procedure TFormMain.FormResize(Sender: TObject);
 begin
   LayoutTop.Width    := VertScrollBox1.Width;
   LayoutBottom.Width := VertScrollBox1.Width;
