@@ -158,9 +158,8 @@ type
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
-    ///   The stream must be assigned and the hash value will either be calculated
-    ///   from the beginning of the stream (if size < 0) or from the current
-    ///   stream position (size > 0) to the end
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
     /// </param>
     /// <param name="Size">
     ///   Number of bytes within the stream over which to calculate the hash value
@@ -168,20 +167,19 @@ type
     /// <param name="HashResult">
     ///   In this byte array the calculated hash value will be returned
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
     procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes;
-                         const Progress: IDECProgress = nil); overload;
+                         const OnProgress:TDECProgressEvent = nil); overload;
     /// <summary>
     ///   Calculates the hash value over a givens stream of bytes
     /// </summary>
     /// <param name="Stream">
     ///   Memory or file stream over which the hash value shall be calculated.
-    ///   The stream must be assigned and the hash value will either be calculated
-    ///   from the beginning of the stream (if size < 0) or from the current
-    ///   stream position (size > 0) to the end
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
     /// </param>
     /// <param name="Size">
     ///   Number of bytes within the stream over which to calculate the hash value
@@ -199,7 +197,7 @@ type
     ///   passed as format parameter, if used.
     /// </returns>
     function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil;
-                        const Progress: IDECProgress = nil): RawByteString; overload;
+                        const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
@@ -215,7 +213,7 @@ type
     ///   time to time to return the current progress of the operation
     /// </param>
     procedure CalcFile(const FileName: string; var HashResult: TBytes;
-                       const Progress: IDECProgress = nil); overload;
+                       const OnProgress:TDECProgressEvent = nil); overload;
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
     /// </summary>
@@ -239,7 +237,7 @@ type
     ///   result in strange characters in the returned result.
     /// </remarks>
     function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
-                      const Progress: IDECProgress = nil): RawByteString; overload;
+                      const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
     ///   Returns the current value of the padding byte used to fill up data
