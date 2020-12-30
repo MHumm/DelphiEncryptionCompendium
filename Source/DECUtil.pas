@@ -25,7 +25,11 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECTypes;
+  {$IFDEF FPC}
+  SysUtils, Classes;
+  {$ELSE}
+  System.SysUtils, System.Classes;
+  {$ENDIF}
 
 type
   // Exception Classes
@@ -609,7 +613,7 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: string); overload;
+procedure ProtectString(var Source: string);
 begin
   if Length(Source) > 0 then
   begin
@@ -619,7 +623,7 @@ begin
   end;
 end;
 
-procedure ProtectString(var Source: RawByteString); overload;
+procedure ProtectString(var Source: RawByteString);
 begin
   if Length(Source) > 0 then
   begin

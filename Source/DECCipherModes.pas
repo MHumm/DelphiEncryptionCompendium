@@ -21,7 +21,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  System.SysUtils, DECCipherBase;
+  {$IFDEF FPC}
+  SysUtils,
+  {$ELSE}
+  System.SysUtils,
+  {$ENDIF}
+  DECCipherBase;
 
 {$I DECOptions.inc}
 
@@ -245,7 +250,12 @@ type
 implementation
 
 uses
-  System.TypInfo, DECUtil;
+  {$IFDEF FPC}
+  TypInfo,
+  {$ELSE}
+  System.TypInfo,
+  {$ENDIF}
+  DECUtil;
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';

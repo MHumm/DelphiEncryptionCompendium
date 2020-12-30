@@ -27,7 +27,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, DECHashBase, DECHash;
+  {$IFDEF FPC}
+  SysUtils,
+  {$ELSE}
+  System.SysUtils,
+  {$ENDIF}
+  DECHashBase, DECHash;
 
 /// <summary>
 ///   Create a seed for the random number generator from system time and
@@ -56,7 +61,7 @@ function RandomSystemTime: Int64;
 /// <param name="Size">
 ///   Size of the buffer in byte
 /// </param>
-procedure RandomBuffer(var Buffer; Size: Integer);
+procedure RandomBuffer(out Buffer; Size: Integer);
 
 /// <summary>
 ///   Creates a buffer of the specified size filled with random bytes
@@ -133,7 +138,7 @@ var
   /// <param name="Size">
   ///   Length of the buffer to be filled in Byte.
   /// </param>
-  DoRandomBuffer: procedure(var Buffer; Size: Integer); register = nil;
+  DoRandomBuffer: procedure(out Buffer; Size: Integer); register = nil;
 
   /// <summary>
   ///   This variable allows overriding the seed value generation procedure.
@@ -149,16 +154,18 @@ implementation
 
 uses
   {$IFDEF DELPHI_2010_UP}
-    Diagnostics
-  {$ELSE !DELPHI_2010_UP}
-    {$IFDEF MSWINDOWS}
-    Windows
-    {$ELSE !MSWINDOWS}
-      {$IFDEF FPC}
+    System.Diagnostics
+  {$ELSE}
+    {$IFDEF FPC}
+      {$IFDEF MSWINDOWS}
+      Windows
+      {$ELSE}
       LclIntf
-      {$ENDIF !FPC}
-    {$ENDIF !MSWINDOWS}
-  {$ENDIF !DELPHI_2010_UP}
+      {$ENDIF}
+    {$ELSE}
+    Winapi.Windows
+    {$ENDIF}
+  {$ENDIF}
   ;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
@@ -243,7 +250,7 @@ end;
 ///   New seed value after calculating the random number for the last byte in
 ///   the buffer.
 /// </returns>
-function DoRndBuffer(Seed: Cardinal; var Buffer; Size: Integer): Cardinal;
+function DoRndBuffer(Seed: Cardinal; out Buffer; Size: Integer): Cardinal;
 // comparable to Delphi Random() function
 var
   P: PByte;
@@ -262,7 +269,7 @@ begin
   end;
 end;
 
-procedure RandomBuffer(var Buffer; Size: Integer);
+procedure RandomBuffer(out Buffer; Size: Integer);
 begin
   if Assigned(DoRandomBuffer) then
     DoRandomBuffer(Buffer, Size)
@@ -331,7 +338,7 @@ begin
   Result := FHash.DigestAsBytes[1]; // no real predictable dependency to above FHash.Digest[0] !
 end;
 
-procedure DoBuffer(var Buffer; Size: Integer);
+procedure DoBuffer(out Buffer; Size: Integer);
 var
   i: Integer;
 begin

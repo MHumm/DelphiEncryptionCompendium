@@ -21,7 +21,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECFormatBase;
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes,
+  {$ENDIF}
+  DECBaseClass, DECFormatBase;
 
 type
   /// <summary>
@@ -709,7 +714,12 @@ procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 implementation
 
 uses
-  TypInfo, DECUtil;
+  {$IFDEF FPC}
+  TypInfo,
+  {$ELSE}
+  System.TypInfo,
+  {$ENDIF}
+  DECUtil;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}

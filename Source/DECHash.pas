@@ -26,7 +26,12 @@ interface
 {$INCLUDE DECOptions.inc}
 
 uses
-  SysUtils, Classes, DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECTypes;
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes,
+  {$ENDIF}
+  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECTypes;
 
 type
   // Hash Classes

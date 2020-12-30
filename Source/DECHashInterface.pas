@@ -19,7 +19,11 @@ unit DECHashInterface;
 interface
 
 uses
-  System.SysUtils, System.CLasses,
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes,
+  {$ENDIF}
   DECFormat, DECUtil;
 
 type

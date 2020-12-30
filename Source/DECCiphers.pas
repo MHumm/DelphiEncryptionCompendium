@@ -826,7 +826,12 @@ implementation
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 uses
-  System.SysUtils, DECData, DECDataCipher;
+  {$IFDEF FPC}
+  SysUtils,
+  {$ELSE}
+  System.SysUtils,
+  {$ENDIF}
+  DECData, DECDataCipher;
 
 { TCipher_Null }
 
