@@ -271,6 +271,19 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class THash_SHA224
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA224 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
   // Test methods for class THash_SHA384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA384 = class(THash_TestBase)
@@ -1374,7 +1387,6 @@ begin
 
 end;
 
-
 procedure TestTHash_SHA256.TestDigestSize;
 begin
   CheckEquals(32, FHash.DigestSize);
@@ -1398,6 +1410,40 @@ end;
 procedure TestTHash_SHA256.TestClassByName;
 begin
   DoTestClassByName('THash_SHA256', THash_SHA256);
+end;
+
+{ TestTHash_SHA224 }
+
+procedure TestTHash_SHA224.SetUp;
+begin
+  inherited;
+  FHash := THash_SHA224.Create;
+
+end;
+
+procedure TestTHash_SHA224.TestBlockSize;
+begin
+  CheckEquals(64, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA224.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA224', THash_SHA224);
+end;
+
+procedure TestTHash_SHA224.TestDigestSize;
+begin
+  CheckEquals(28, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA224.TestIdentity;
+begin
+  CheckEquals($3FA807DA, FHash.Identity);
+end;
+
+procedure TestTHash_SHA224.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
 procedure TestTHash_SHA384.SetUp;
@@ -3875,6 +3921,7 @@ initialization
 
   TDUnitX.RegisterTestFixture(TestTHash_SHA1);
   TDUnitX.RegisterTestFixture(TestTHash_SHA256);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA224);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
   TDUnitX.RegisterTestFixture(TestTHash_Haval128);
@@ -3914,6 +3961,7 @@ initialization
                             {$ENDIF}
                             TestTHash_SHA1.Suite,
                             TestTHash_SHA256.Suite,
+                            TestTHash_SHA224.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
                             TestTHash_Haval128.Suite,

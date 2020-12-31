@@ -44,6 +44,7 @@ type
   THash_RipeMD320   = class;
   THash_SHA0        = class;  // SHA-0
   THash_SHA1        = class;  // SHA-1
+  THash_SHA224      = class;  // SHA-2, SHA-224
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
@@ -199,6 +200,23 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   This algorithm is part of the SHA2 series of hash algorithms.
+{ TODO : Check if SHA384 can in herit from this one as does 512 from 384 }
+  /// </summary>
+  THash_SHA224 = class(TDECHash)
+  private
+    FDigest: array[0..7] of Int64;
+  protected
+//    procedure DoInit; override;
+//    procedure DoTransform(Buffer: PUInt32Array); override;
+//    procedure DoDone; override;
+  public
+    function Digest: PByteArray; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
   end;
 
   /// <summary>
@@ -1931,6 +1949,23 @@ begin
   Result := 32;
 end;
 
+{ THash_SHA224 }
+
+class function THash_SHA224.BlockSize: UInt32;
+begin
+  Result := 64;
+end;
+
+function THash_SHA224.Digest: PByteArray;
+begin
+  Result := @FDigest;
+end;
+
+class function THash_SHA224.DigestSize: UInt32;
+begin
+  Result := 28;
+end;
+
 { THash_SHA384 }
 
 procedure THash_SHA384.DoInit;
@@ -3570,6 +3605,7 @@ initialization
   THash_RipeMD320.RegisterClass(TDECHash.ClassList);
   THash_SHA0.RegisterClass(TDECHash.ClassList);
   THash_SHA1.RegisterClass(TDECHash.ClassList);
+  THash_SHA224.RegisterClass(TDECHash.ClassList);
   THash_SHA256.RegisterClass(TDECHash.ClassList);
   THash_SHA384.RegisterClass(TDECHash.ClassList);
   THash_SHA512.RegisterClass(TDECHash.ClassList);
