@@ -80,7 +80,7 @@ begin
   try
     try
       // Init encryption
-      Cipher.Init('Passwort', #1#2#3#4#5#6#7#99, 0);
+      Cipher.Init(RawByteString('Passwort1234567890'), RawByteString(#1#2#3#4#5#6#7#99), 0);
       Cipher.Mode := cmCBCx;
 
       // replace file extension of input file
