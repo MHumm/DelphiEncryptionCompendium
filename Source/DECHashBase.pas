@@ -121,6 +121,20 @@ type
     ///   to finalize the calculation of a hash value over the data passed.
     /// </summary>
     procedure DoDone; virtual; abstract;
+    /// <summary>
+    ///   Adds the value of 8*Add to the value (which is interpreted as an
+    ///   8*32 bit unsigned integer array. The carry is taken care of.
+    /// </summary>
+    /// <param name="Value">
+    ///   Value which is incremented
+    /// </param>
+    /// <param name="Add">
+    ///   Value (which is being multiplied by 8) by which to increment Value
+    /// </param>
+    /// <remarks>
+    ///   Raises an EDECHashException overflow error if the last operation has
+    ///   set the carry flag
+    /// </remarks>
     procedure Increment8(var Value; Add: UInt32);
     /// <summary>
     ///   Raises an EDECHashException overflow error

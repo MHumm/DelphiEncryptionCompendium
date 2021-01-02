@@ -204,17 +204,21 @@ type
 
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
-{ TODO : Check if SHA384 can in herit from this one as does 512 from 384 }
   /// </summary>
-  THash_SHA224 = class(TDECHash)
-  private
-    FDigest: array[0..7] of Int64;
+  /// <remarks>
+  ///   WARNING: this algorithm is not fully implemented yet! This is only the
+  ///   start for the planned implementation!
+  /// </remarks>
+  THash_SHA224 = class(THash_SHA256)
   protected
-//    procedure DoInit; override;
-//    procedure DoTransform(Buffer: PUInt32Array); override;
+    procedure DoInit; override;
+{ TODO :
+Implement unit tests and check if they can be made to succeed.
+If not check if DoDone really needs to be overwritten.
+Final step of SHA224 is returning the digest like for SHA256 but
+ommiting the 8th 32 bit value. }
 //    procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -1956,14 +1960,21 @@ begin
   Result := 64;
 end;
 
-function THash_SHA224.Digest: PByteArray;
-begin
-  Result := @FDigest;
-end;
-
 class function THash_SHA224.DigestSize: UInt32;
 begin
   Result := 28;
+end;
+
+procedure THash_SHA224.DoInit;
+begin
+  FDigest[0]:= $C1059ED8;
+  FDigest[1]:= $367CD507;
+  FDigest[2]:= $3070DD17;
+  FDigest[3]:= $F70E5939;
+  FDigest[4]:= $FFC00B31;
+  FDigest[5]:= $68581511;
+  FDigest[6]:= $64F98FA7;
+  FDigest[7]:= $BEFA4FA4;
 end;
 
 { THash_SHA384 }
