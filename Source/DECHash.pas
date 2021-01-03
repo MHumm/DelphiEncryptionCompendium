@@ -69,7 +69,8 @@ type
   THash_Sapphire    = class;
 
   /// <summary>
-  ///   Implementation of the MD2 hash algorithm
+  ///   Implementation of the MD2 hash algorithm. Considered to be broken,
+  ///   at least on paper.
   /// </summary>
   THash_MD2 = class(TDECHash)
   private
@@ -101,8 +102,7 @@ type
   end;
 
   /// <summary>
-  ///   The MD4 algorithm is being considered to be unsafe. Support is only
-  ///   being provided for backward compatibility.
+  ///   The MD4 algorithm is considered to be broken, at least on paper.
   /// </summary>
   THash_MD4 = class(THashBaseMD4)
   protected
@@ -110,8 +110,8 @@ type
   end;
 
   /// <summary>
-  ///   The MD5 algorithm is being considered to be unsafe. Support is only
-  ///   being provided for backward compatibility.
+  ///   The MD5 algorithm is considered to be broken. Using it in HMAC algorithms
+  ///   is still ok.
   /// </summary>
   THash_MD5 = class(THashBaseMD4)
   protected
@@ -120,7 +120,8 @@ type
 
   /// <summary>
   ///   Do not confuse with the original RipeMD algorithm which ís being
-  ///   considered to be unsafe anyway.
+  ///   considered to be unsafe anyway. Considered to be broken due to the only
+  ///   128 Bit long message digest result.
   /// </summary>
   THash_RipeMD128 = class(THashBaseMD4)
   protected
@@ -204,6 +205,8 @@ type
 
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
+  ///   German BSI recommends not to use this algorithm, they recommend SHA256
+  ///   or higher instead.
   /// </summary>
   /// <remarks>
   ///   WARNING: this algorithm is not fully implemented yet! This is only the
@@ -311,7 +314,8 @@ ommiting the 8th 32 bit value. }
   /// <summary>
   ///   This is actually an implementation of the 192 bit variant of the Tiger
   ///   hash algorithm with 3 rounds, unless a different value is assigned
-  ///   to the rounds property
+  ///   to the rounds property. It is considered to be unsafe at least in the
+  ///   192 Bit variant!
   /// </summary>
   THash_Tiger = class(THashBaseMD4)
   private
@@ -336,6 +340,7 @@ ommiting the 8th 32 bit value. }
   ///   As there seem to exist 128 and 160 bit variants of Tiger which seem to
   ///   be truncated variants of Tiger 192 but we want to keep compatibility
   ///   with old code we introduce an alias for the time being.
+  ///   It is considered to be unsafe at least in the 192 Bit variant!
   /// </summary>
   THash_Tiger192 = THash_Tiger;
 
@@ -408,10 +413,36 @@ ommiting the 8th 32 bit value. }
   end;
 
   {$IFDEF OLD_WHIRLPOOL_NAMES}
+  /// <summary>
+  ///   This is the original variant of the algorithmus. Do not use it as some
+  ///   security flaw has been detected early on by its inventors. DEC contains
+  ///   it for backwards compatibility and completeness.
+  /// </summary>
   THash_Whirlpool = class(THash_Whirlpool0);
+  /// <summary>
+  ///   This is variant of the algorithmus fixing the security flaw of the
+  ///   original version Whirlpool0. Do not use it in new code as it has been
+  ///   superseeded by the optimized Whirlpool1 (THash_Whirlpool1 class in DEC)
+  ///   variant which is additionally more safe as well! It is there for
+  ///   backwards compatibility and completeness only.
+  /// </summary>
   THash_Whirlpool1 = class(THash_WhirlpoolT);
+  /// <summary>
+  ///   The current version of Whirlpool but not the one used in code developed
+  ///   against the older DEC 5.x versions. The name of the one used in your
+  ///   code differs, depending whether you opt tu use the old DEC 5.2 compatible
+  ///   class names where the name Whirlpool1 was already taken by the variant
+  ///   nowadays known as Whirlpool-T.
+  /// </summary>
   THash_Whirlpool1New = class(THash_Whirlpool1_);
   {$ELSE}
+  /// <summary>
+  ///   The current version of Whirlpool but not the one used in code developed
+  ///   against the older DEC 5.x versions. The name of the one used in your
+  ///   code differs, depending whether you opt tu use the old DEC 5.2 compatible
+  ///   class names where the name Whirlpool1 was already taken by the variant
+  ///   nowadays known as Whirlpool-T.
+  /// </summary>
   THash_Whirlpool1 = class(THash_Whirlpool1_);
   {$ENDIF}
 
