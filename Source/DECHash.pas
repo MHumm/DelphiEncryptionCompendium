@@ -48,6 +48,10 @@ type
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
+  THash_SHA3_224    = class;
+  THash_SHA3_256    = class;
+  THash_SHA3_384    = class;
+  THash_SHA3_512    = class;
   THash_Haval128    = class;
   THash_Haval160    = class;  // Haval 160, 3 Rounds
   THash_Haval192    = class;  // Haval 192, 4 Rounds
@@ -239,6 +243,48 @@ type
   protected
     procedure DoInit; override;
   public
+    class function DigestSize: UInt32; override;
+  end;
+
+/// <remarks>
+///   Not fully implemented yet
+/// </remarks>
+  THash_SHA3Base = class(TDECHash)
+  end;
+
+/// <remarks>
+///   Not fully implemented yet
+/// </remarks>
+  THash_SHA3_224 = class(THash_SHA3Base)
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+/// <remarks>
+///   Not fully implemented yet
+/// </remarks>
+  THash_SHA3_256 = class(THash_SHA3Base)
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+/// <remarks>
+///   Not fully implemented yet
+/// </remarks>
+  THash_SHA3_384 = class(THash_SHA3Base)
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+/// <remarks>
+///   Not fully implemented yet
+/// </remarks>
+  THash_SHA3_512 = class(THash_SHA3Base)
+  public
+    class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
   end;
 
@@ -3623,6 +3669,54 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+{ THash_SHA3_224 }
+
+class function THash_SHA3_224.BlockSize: UInt32;
+begin
+  Result := 144;
+end;
+
+class function THash_SHA3_224.DigestSize: UInt32;
+begin
+  Result := 28;
+end;
+
+{ THash_SHA3_256 }
+
+class function THash_SHA3_256.BlockSize: UInt32;
+begin
+  Result := 136;
+end;
+
+class function THash_SHA3_256.DigestSize: UInt32;
+begin
+  Result := 32;
+end;
+
+{ THash_SHA3_384 }
+
+class function THash_SHA3_384.BlockSize: UInt32;
+begin
+  Result := 104;
+end;
+
+class function THash_SHA3_384.DigestSize: UInt32;
+begin
+  Result := 48;
+end;
+
+{ THash_SHA3_512 }
+
+class function THash_SHA3_512.BlockSize: UInt32;
+begin
+  Result := 72;
+end;
+
+class function THash_SHA3_512.DigestSize: UInt32;
+begin
+  Result := 64;
+end;
+
 initialization
   // Define the has returned by ValidHash if passing nil as parameter
   SetDefaultHashClass(THash_SHA256);
@@ -3641,6 +3735,10 @@ initialization
   THash_SHA256.RegisterClass(TDECHash.ClassList);
   THash_SHA384.RegisterClass(TDECHash.ClassList);
   THash_SHA512.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_224.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_256.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_384.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_512.RegisterClass(TDECHash.ClassList);
   THash_Haval128.RegisterClass(TDECHash.ClassList);
   THash_Haval160.RegisterClass(TDECHash.ClassList);
   THash_Haval192.RegisterClass(TDECHash.ClassList);
