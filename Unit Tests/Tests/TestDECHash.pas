@@ -310,6 +310,58 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class THash_SHA3_224
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_224 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_SHA3_256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_256 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_SHA3_384
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_384 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_SHA3_512
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_512 = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
   // Test methods for class THash_Haval128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Haval128 = class(THash_TestBase)
@@ -3590,7 +3642,6 @@ end;
 
 { THash_TestBase }
 
-
 procedure THash_TestBase.ConfigHashClass(HashClass: TDECHash; IdxTestData: Integer);
 begin
   HashClass.PaddingByte := FTestData[IdxTestData].PaddingByte;
@@ -3748,7 +3799,6 @@ begin
                       System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
     end;
 end;
-
 
 procedure THash_TestBase.DoTestClassByName(ExpectedClassName: String; ExpectedClass: TClass);
 var
@@ -3915,6 +3965,166 @@ begin
   end;
 end;
 
+{ TestTHash_SHA3_224 }
+
+procedure TestTHash_SHA3_224.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_224.Create;
+
+{ TODO : Testdata is known to be wrong }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.AddInputVector('');
+end;
+
+procedure TestTHash_SHA3_224.TestBlockSize;
+begin
+  CheckEquals(144, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_224.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_224', THash_SHA3_224);
+end;
+
+procedure TestTHash_SHA3_224.TestDigestSize;
+begin
+  CheckEquals(28, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_224.TestIdentity;
+begin
+  CheckEquals($8442C643, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_224.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+{ TestTHash_SHA3_256 }
+
+procedure TestTHash_SHA3_256.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_256.Create;
+
+{ TODO : Testdata is known to be wrong }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.AddInputVector('');
+end;
+
+procedure TestTHash_SHA3_256.TestBlockSize;
+begin
+  CheckEquals(136, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_256.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_256', THash_SHA3_256);
+end;
+
+procedure TestTHash_SHA3_256.TestDigestSize;
+begin
+  CheckEquals(32, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_256.TestIdentity;
+begin
+  CheckEquals($8442C643, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+{ TestTHash_SHA3_384 }
+
+procedure TestTHash_SHA3_384.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_384.Create;
+
+{ TODO : Testdata is known to be wrong }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.AddInputVector('');
+end;
+
+procedure TestTHash_SHA3_384.TestBlockSize;
+begin
+  CheckEquals(104, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_384.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_384', THash_SHA3_384);
+end;
+
+procedure TestTHash_SHA3_384.TestDigestSize;
+begin
+  CheckEquals(48, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_384.TestIdentity;
+begin
+  CheckEquals($8442C643, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_384.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+{ TestTHash_SHA3_512 }
+
+procedure TestTHash_SHA3_512.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_512.Create;
+
+{ TODO : Testdata is known to be wrong }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.AddInputVector('');
+end;
+
+procedure TestTHash_SHA3_512.TestBlockSize;
+begin
+  CheckEquals(72, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_512.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_512', THash_SHA3_512);
+end;
+
+procedure TestTHash_SHA3_512.TestDigestSize;
+begin
+  CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_512.TestIdentity;
+begin
+  CheckEquals($8442C643, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_512.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -3938,6 +4148,10 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA224);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
   TDUnitX.RegisterTestFixture(TestTHash_Haval128);
   TDUnitX.RegisterTestFixture(TestTHash_Haval160);
   TDUnitX.RegisterTestFixture(TestTHash_Haval192);
@@ -3978,6 +4192,10 @@ initialization
                             TestTHash_SHA224.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
+                            TestTHash_SHA3_224.Suite,
+                            TestTHash_SHA3_256.Suite,
+                            TestTHash_SHA3_384.Suite,
+                            TestTHash_SHA3_512.Suite,
                             TestTHash_Haval128.Suite,
                             TestTHash_Haval160.Suite,
                             TestTHash_Haval192.Suite,
