@@ -1384,7 +1384,6 @@ begin
   lDataRow.ExpectedOutput           := 'c8a0bcda5fec642e44488fd7b782821d478ef17e651eaec0e43f9036388340bb';
   lDataRow.ExpectedOutputUTFStrTest := '2f8aa82881b1140af41e95bf96ded6d034654492007b7302e1bd9231ce99bdf3';
   lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
-
 end;
 
 procedure TestTHash_SHA256.TestDigestSize;
@@ -1415,10 +1414,25 @@ end;
 { TestTHash_SHA224 }
 
 procedure TestTHash_SHA224.SetUp;
+var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
   FHash := THash_SHA224.Create;
 
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '49b08defa65e644cbf8a2dd9270bdededabc741997d1dadd42026d7b';
+  lDataRow.ExpectedOutputUTFStrTest := '17736c9fe07a99442d402a22f6a4a46014e0ea8196508d330e716674';
+  lDataRow.AddInputVector('Franz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '58911e7fccf2971a7d07f93162d8bd13568e71aa8fc86fc1fe9043d1';
+  lDataRow.ExpectedOutputUTFStrTest := 'a90f803e04789e2e0984730b4d9c1c71a0921bd714f1a874e13fef29';
+  lDataRow.AddInputVector('Frank jagt im komplett verwahrlosten Taxi quer durch Bayern');
 end;
 
 procedure TestTHash_SHA224.TestBlockSize;
