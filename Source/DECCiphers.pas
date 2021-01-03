@@ -40,7 +40,8 @@ type
   TCipher_Twofish       = class;
   /// <summary>
   ///   International Data Encryption Algorithm, formerly patentet,
-  ///   now patent free
+  ///   now patent free. The algorithm is no longer to be really recommended due
+  ///   to some classes of weak keys and other successfull attacks.
   /// </summary>
   TCipher_IDEA          = class;
   /// <summary>
@@ -85,11 +86,12 @@ type
   /// </summary>
   TCipher_SCOP          = class;
   /// <summary>
-  ///   Stream Cipher, eq. Design from german ENIGMA Machine
+  ///   Stream Cipher, eq. design from German ENIGMA Machine
   /// </summary>
   TCipher_Sapphire      = class;
   /// <summary>
-  ///   Single DES  8 byte Blocksize,  8 byte Keysize,  56 bits relevant
+  ///   Single DES  8 byte Blocksize,  8 byte Keysize,  56 bits relevant.
+  ///   Considered to be too weak nowadays. Included for compatibility reasons.
   /// </summary>
   TCipher_1DES          = class;
   /// <summary>
