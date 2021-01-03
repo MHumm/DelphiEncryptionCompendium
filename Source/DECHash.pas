@@ -208,19 +208,9 @@ type
   ///   German BSI recommends not to use this algorithm, they recommend SHA256
   ///   or higher instead.
   /// </summary>
-  /// <remarks>
-  ///   WARNING: this algorithm is not fully implemented yet! This is only the
-  ///   start for the planned implementation!
-  /// </remarks>
   THash_SHA224 = class(THash_SHA256)
   protected
     procedure DoInit; override;
-{ TODO :
-Implement unit tests and check if they can be made to succeed.
-If not check if DoDone really needs to be overwritten.
-Final step of SHA224 is returning the digest like for SHA256 but
-ommiting the 8th 32 bit value. }
-//    procedure DoDone; override;
   public
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
