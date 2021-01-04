@@ -250,12 +250,21 @@ type
 ///   Not fully implemented yet
 /// </remarks>
   THash_SHA3Base = class(TDECHash)
+  private
+    FDigest: array[0..9] of UInt32;
+  protected
+    procedure DoTransform(Buffer: PUInt32Array); override;
+    procedure DoDone; override;
+  public
+    function Digest: PByteArray; override;
   end;
 
 /// <remarks>
 ///   Not fully implemented yet
 /// </remarks>
   THash_SHA3_224 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
   public
     class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
@@ -265,6 +274,8 @@ type
 ///   Not fully implemented yet
 /// </remarks>
   THash_SHA3_256 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
   public
     class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
@@ -274,6 +285,8 @@ type
 ///   Not fully implemented yet
 /// </remarks>
   THash_SHA3_384 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
   public
     class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
@@ -283,6 +296,8 @@ type
 ///   Not fully implemented yet
 /// </remarks>
   THash_SHA3_512 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
   public
     class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
@@ -3681,6 +3696,12 @@ begin
   Result := 28;
 end;
 
+procedure THash_SHA3_224.DoInit;
+begin
+  inherited;
+
+end;
+
 { THash_SHA3_256 }
 
 class function THash_SHA3_256.BlockSize: UInt32;
@@ -3691,6 +3712,12 @@ end;
 class function THash_SHA3_256.DigestSize: UInt32;
 begin
   Result := 32;
+end;
+
+procedure THash_SHA3_256.DoInit;
+begin
+  inherited;
+
 end;
 
 { THash_SHA3_384 }
@@ -3705,6 +3732,12 @@ begin
   Result := 48;
 end;
 
+procedure THash_SHA3_384.DoInit;
+begin
+  inherited;
+
+end;
+
 { THash_SHA3_512 }
 
 class function THash_SHA3_512.BlockSize: UInt32;
@@ -3715,6 +3748,31 @@ end;
 class function THash_SHA3_512.DigestSize: UInt32;
 begin
   Result := 64;
+end;
+
+procedure THash_SHA3_512.DoInit;
+begin
+  inherited;
+
+end;
+
+{ THash_SHA3Base }
+
+function THash_SHA3Base.Digest: PByteArray;
+begin
+  Result := @FDigest;
+end;
+
+procedure THash_SHA3Base.DoDone;
+begin
+  inherited;
+
+end;
+
+procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
+begin
+  inherited;
+
 end;
 
 initialization
