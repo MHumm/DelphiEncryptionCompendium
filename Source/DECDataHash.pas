@@ -2623,6 +2623,37 @@ const
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+  /// <summary>
+  ///   Constant used in the Keccak/SHA3 permutation. The 24 in the array size
+  ///   definition is most likely the same as the cKeccakNumberOfRounds constants
+  ///   in THash_SHA3Base
+  /// </summary>
+  KeccakF1600RoundConstants_int2: array[0..2*24-1] of longint =
+    (Int32($00000001), Int32($00000000),
+     Int32($00000000), Int32($00000089),
+     Int32($00000000), Int32($8000008b),
+     Int32($00000000), Int32($80008080),
+     Int32($00000001), Int32($0000008b),
+     Int32($00000001), Int32($00008000),
+     Int32($00000001), Int32($80008088),
+     Int32($00000001), Int32($80000082),
+     Int32($00000000), Int32($0000000b),
+     Int32($00000000), Int32($0000000a),
+     Int32($00000001), Int32($00008082),
+     Int32($00000000), Int32($00008003),
+     Int32($00000001), Int32($0000808b),
+     Int32($00000001), Int32($8000000b),
+     Int32($00000001), Int32($8000008a),
+     Int32($00000001), Int32($80000081),
+     Int32($00000000), Int32($80000081),
+     Int32($00000000), Int32($80000008),
+     Int32($00000000), Int32($00000083),
+     Int32($00000000), Int32($80008003),
+     Int32($00000001), Int32($80008088),
+     Int32($00000000), Int32($80000088),
+     Int32($00000001), Int32($00008000),
+     Int32($00000000), Int32($80008082));
+
 implementation
 
 end.
