@@ -3997,7 +3997,7 @@ end;
 
 procedure TestTHash_SHA3_224.TestIdentity;
 begin
-  CheckEquals($8442C643, FHash.Identity);
+  CheckEquals($D0579DA9, FHash.Identity);
 end;
 
 procedure TestTHash_SHA3_224.TestIsPasswordHash;
@@ -4037,7 +4037,7 @@ end;
 
 procedure TestTHash_SHA3_256.TestIdentity;
 begin
-  CheckEquals($8442C643, FHash.Identity);
+  CheckEquals($71186A42, FHash.Identity);
 end;
 
 procedure TestTHash_SHA3_256.TestIsPasswordHash;
@@ -4077,7 +4077,7 @@ end;
 
 procedure TestTHash_SHA3_384.TestIdentity;
 begin
-  CheckEquals($8442C643, FHash.Identity);
+  CheckEquals($2B7A1F14, FHash.Identity);
 end;
 
 procedure TestTHash_SHA3_384.TestIsPasswordHash;
@@ -4117,7 +4117,7 @@ end;
 
 procedure TestTHash_SHA3_512.TestIdentity;
 begin
-  CheckEquals($8442C643, FHash.Identity);
+  CheckEquals($17567DDA, FHash.Identity);
 end;
 
 procedure TestTHash_SHA3_512.TestIsPasswordHash;
