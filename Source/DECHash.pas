@@ -281,7 +281,7 @@ type
       TBABytes = array[0..$FFF0-1] of byte;
       PBA = ^TBABytes;
   private
-    FDigest: array[0..9] of UInt32;
+    FDigest: Pointer;
 
     /// <summary>
     ///   Contains the current state of the algorithm/sponge part
@@ -319,6 +319,30 @@ type
     ///   Length of the data in bits
     /// </param>
     function DoUpdate(data: Pointer; DataBitLen: Int32): Integer;
+
+    /// <summary>
+    ///   Squeeze output data from the sponge function. If the sponge function
+    ///   was in the absorbing phase, this function switches it to the squeezing
+    ///   phase.
+    /// </summary>
+    /// <param name="Output">
+    ///   pointer to the buffer where to store the output data
+    /// </param>
+    /// <param name="OutputLength">
+    ///   number of output bits desired, must be a multiple of 8.
+    /// </param>
+    /// <returns>
+    ///   0 if successful, 1 otherwise.
+    /// </returns>
+    function Squeeze(Output: pointer; OutputLength: Int32): Integer;
+
+    procedure PadAndSwitchToSqueezingPhase;
+    procedure extractFromState(outp: pointer; const state: TState_L; laneCount: Int16);
+
+    /// <summary>
+    ///   Update final bits in LSB format, pad, and compute hashval
+    /// </summary>
+    function FinalBit_LSB(bits: Byte; bitlen: Int16; hashval: pointer; numbits: Integer): Integer;
   protected
     /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
@@ -4292,6 +4316,80 @@ begin
   state[49] := Asu1;
 end;
 
+procedure THash_SHA3Base.PadAndSwitchToSqueezingPhase;
+var
+  i: integer;
+begin
+  {Note: the bits are numbered from 0=LSB to 7=MSB}
+  if (FSpongeState.bitsInQueue + 1 = FSpongeState.rate) then
+  begin
+    i := FSpongeState.bitsInQueue div 8;
+    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
+                                 (1 shl (FSpongeState.bitsInQueue and 7));
+    AbsorbQueue;
+    fillchar(FSpongeState.dataQueue, FSpongeState.rate div 8, 0);
+  end
+  else
+  begin
+    i := FSpongeState.bitsInQueue div 8;
+    fillchar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
+             FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8,0);
+    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
+                                 (1 shl (FSpongeState.bitsInQueue and 7));
+  end;
+
+  i := (FSpongeState.rate-1) div 8;
+  FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
+                               (1 shl ((FSpongeState.rate-1) and 7));
+  AbsorbQueue;
+  extractFromState(@FSpongeState.dataQueue,
+                   TState_L(FSpongeState.state),
+                   FSpongeState.rate div 64);
+  FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
+  FSpongeState.squeezing := 1;
+end;
+
+function THash_SHA3Base.Squeeze(Output: pointer; OutputLength: Int32): Integer;
+var
+  i            : Int32;
+  partialBlock : Int16;
+begin
+  Result := 1;
+  if FSpongeState.error <> 0 then
+    exit; // No further action
+  if FSpongeState.squeezing = 0 then
+    PadAndSwitchToSqueezingPhase;
+
+  if outputLength and 7 <> 0 then
+  begin
+    // Only multiple of 8 bits are allowed, truncation can be done at user level
+    FSpongeState.error := 1;
+    exit;
+  end;
+  i := 0;
+  while i < outputLength do
+  begin
+    if FSpongeState.bitsAvailableForSqueezing = 0 then
+    begin
+      KeccakPermutation(TState_L(FSpongeState.state));
+      extractFromState(@FSpongeState.dataQueue, TState_L(FSpongeState.state),
+                       FSpongeState.rate div 64);
+      FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
+    end;
+
+    partialBlock := FSpongeState.bitsAvailableForSqueezing;
+    if partialBlock > OutputLength - i then
+      partialBlock := OutputLength - i;
+
+    move(FSpongeState.dataQueue[(FSpongeState.rate - FSpongeState.bitsAvailableForSqueezing) div 8],
+         PBA(output)^[i div 8], partialBlock div 8);
+    dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
+    inc(i,partialBlock);
+  end;
+
+  Result := 0;
+end;
+
 procedure THash_SHA3Base.xorIntoState(var state: TState_L; inp: pointer;
   laneCount: Integer);
 var
@@ -4399,9 +4497,20 @@ begin
 end;
 
 procedure THash_SHA3Base.DoDone;
+var
+  err: integer;
 begin
-  inherited;
-
+  err := 1;
+  if FSpongeState.error = 0 then
+  begin
+//    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
+//    else
+    err := FinalBit_LSB(0, 0, FDigest, FSpongeState.fixedOutputLength);
+  end;
+  // Update error only with old error = 0, i.e. do no reset a non-zero value
+  if FSpongeState.error = 0 then
+    FSpongeState.error := err;
+//  SHA3_FinalHash := err;
 end;
 
 function THash_SHA3Base.DoUpdate(data: Pointer; DataBitLen: Int32):Integer;
@@ -4425,6 +4534,7 @@ begin
       ret := Absorb(@lastByte, DataBitLen and 7);
     end
   end;
+
   Result := ret;
 
   // Update error only with old error=0, i.e. do no reset a non-zero value}
@@ -4432,9 +4542,94 @@ begin
     FSpongeState.error := ret;
 end;
 
+procedure THash_SHA3Base.extractFromState(outp: pointer; const state: TState_L;
+  laneCount: Int16);
+var
+  pI, pS: PLongint;
+  i: integer;
+  t,x0,x1: longint;
+const
+  xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
+begin
+   // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
+   pI := outp;
+   pS := @state[0];
+   for i:=laneCount-1 downto 0 do begin
+     x0 := pS^; inc(PByte(pS),sizeof(pS^));
+     x1 := pS^; inc(PByte(pS),sizeof(pS^));
+     t  := (x0 and $0000FFFF) or (x1 shl 16);
+     x1 := (x0 shr 16) or (x1 and xFFFF0000);
+     x0 := t;
+     t  := (x0 xor (x0 shr  8)) and $0000FF00;  x0 := x0 xor t xor (t shl  8);
+     t  := (x0 xor (x0 shr  4)) and $00F000F0;  x0 := x0 xor t xor (t shl  4);
+     t  := (x0 xor (x0 shr  2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl  2);
+     t  := (x0 xor (x0 shr  1)) and $22222222;  x0 := x0 xor t xor (t shl  1);
+     t  := (x1 xor (x1 shr  8)) and $0000FF00;  x1 := x1 xor t xor (t shl  8);
+     t  := (x1 xor (x1 shr  4)) and $00F000F0;  x1 := x1 xor t xor (t shl  4);
+     t  := (x1 xor (x1 shr  2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl  2);
+     t  := (x1 xor (x1 shr  1)) and $22222222;  x1 := x1 xor t xor (t shl  1);
+     pI^:= x0; inc(PByte(pI),sizeof(pI^));
+     pI^:= x1; inc(PByte(pI),sizeof(pI^));
+   end;
+end;
+
+function THash_SHA3Base.FinalBit_LSB(bits: Byte; bitlen: Int16;
+  hashval: pointer; numbits: Integer): Integer;
+var
+  err, ll : Int16;
+  lw      : UInt16;
+begin
+  // normalize bitlen and bits (zero high bits)
+  bitlen := bitlen and 7;
+  if bitlen = 0 then
+    lw := 0
+  else
+    lw := bits and pred(word(1) shl bitlen);
+
+  // 'append' (in LSB language) the domain separation bits
+  if FSpongeState.fixedOutputLength = 0 then
+  begin
+    lw := lw or (word($F) shl bitlen);
+    ll := bitlen+4;
+  end
+  else
+  begin
+    // SHA3: append two bits 01
+    lw := lw or (word($2) shl bitlen);
+    ll := bitlen+2;
+  end;
+
+  // update state with final bits
+  if ll < 9 then begin
+    // 0..8 bits, one call to update
+    lw := lw shl (8-ll);
+    err := DoUpdate(@lw, ll);
+    // squeeze the digits from the sponge
+    if err=0 then err := Squeeze(hashval, numbits);
+  end
+  else
+  begin
+    // More than 8 bits, first a regular update with low byte
+    err := DoUpdate(@lw, 8);
+    if err=0 then begin
+      // Finally update remaining last bits
+      dec(ll,8);
+      lw := lw shr ll;
+      err := DoUpdate(@lw, ll);
+      if err = 0 then
+        err := Squeeze(hashval, numbits);
+    end;
+  end;
+
+  Result := err;
+  if FSpongeState.error = 0 then
+    FSpongeState.error := err;
+end;
+
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
 begin
-{ TODO : most likely not complete yet }
+{ TODO : most likely not complete yet, what to do with the returnvalue?
+  DoDone also still missing... }
   // Size is in bit
   DoUpdate(@Buffer, BlockSize * 8);
 end;
