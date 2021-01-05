@@ -3973,9 +3973,9 @@ begin
   inherited;
   FHash := THash_SHA3_224.Create;
 
-{ TODO : Testdata is known to be wrong }
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3F5B5A6BC7';
+{ TODO : UTF output might still be wrong, even if test for empty data }
   lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
   lDataRow.AddInputVector('');
 end;
