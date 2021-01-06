@@ -282,7 +282,18 @@ type
       TPBABytes = ^TBABytes;
       TSHA3Digest = array[0..$FFF0-1] of byte;
   private
-    FDigest: TSHA3Digest;
+    FDigest      : TSHA3Digest;
+
+    /// <summary>
+    ///   Setting this to a number of bits allows to process messages which have
+    ///   a length which is not a exact multiple of bytes.
+    /// </summary>
+    FFinalBitLen : Int16;
+    /// <summary>
+    ///   Byte used for padding in case of of specifying a final bit length which
+    ///   is not an exact multiple of bytes.
+    /// </summary>
+    FPaddingByte : Byte;
 
     /// <summary>
     ///   Contains the current state of the algorithm/sponge part
@@ -369,6 +380,20 @@ type
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
+    /// <summary>
+    ///   Setting this to a number of bits allows to process messages which have
+    ///   a length which is not a exact multiple of bytes.
+    /// </summary>
+    property FinalBitLength : Int16
+      read   FFinalBitLen
+      write  FFinalBitLen;
+    /// <summary>
+    ///   Byte used for padding in case of of specifying a final bit length which
+    ///   is not an exact multiple of bytes.
+    /// </summary>
+    property PaddingByte : Byte
+      read   FPaddingByte
+      write  FPaddingByte;
   end;
 
 /// <remarks>
@@ -4523,10 +4548,7 @@ begin
 //    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
 //    else
 
-{ TODO :
-Why is FDigest nil? Where does it need to be initialized and how?
-Is it nil because an empty data buffer is to be hashed? }
-    err := FinalBit_LSB(0, 0, FDigest, FSpongeState.fixedOutputLength);
+    err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest, FSpongeState.fixedOutputLength);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
   if FSpongeState.error = 0 then
@@ -4630,18 +4652,21 @@ begin
   end;
 
   // update state with final bits
-  if ll < 9 then begin
+  if ll < 9 then
+  begin
     // 0..8 bits, one call to update
     lw := lw shl (8-ll);
     err := DoUpdate(@lw, ll);
     // squeeze the digits from the sponge
-    if err=0 then err := Squeeze(hashval, numbits);
+    if err = 0 then
+      err := Squeeze(hashval, numbits);
   end
   else
   begin
     // More than 8 bits, first a regular update with low byte
     err := DoUpdate(@lw, 8);
-    if err=0 then begin
+    if err=0 then
+    begin
       // Finally update remaining last bits
       dec(ll,8);
       lw := lw shr ll;
