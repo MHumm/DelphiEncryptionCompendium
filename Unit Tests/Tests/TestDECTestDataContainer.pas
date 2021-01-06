@@ -96,22 +96,31 @@ type
   ['{ADB4AFA2-4199-47F4-86F6-E84A20C3AA8E}']
     procedure SetRequiredDigestSize(const aValue:UInt32);
     procedure SetPaddingByte(const aValue:Byte);
+    procedure SetFinalBitLength(const aValue: Int16);
 
     property RequiredDigestSize : UInt32
       Write  SetRequiredDigestSize;
     property PaddingByte        : Byte
       Write  SetPaddingByte;
+    /// <summary>
+    ///   Required parameter for SHA3 tests
+    /// </summary>
+    property FinalBitLength     : Int16
+      write  SetFinalBitLength;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
   ['{73ED2877-967A-410B-8493-636F099FBA60}']
     function GetRequiredDigestSize:UInt32;
     function GetPaddingByte:Byte;
+    function GetFinalBitLength:Int16;
 
     property RequiredDigestSize : UInt32
       read   GetRequiredDigestSize;
     property PaddingByte        : Byte
       read   GetPaddingByte;
+    property FinalBitLength     : Int16
+      read   GetFinalBitLength;
   end;
 
   IHashTestDataContainer = interface(ITestDataContainer)
@@ -188,6 +197,7 @@ type
     FOutputUTFStrTest:RawByteString;
     FReqDigSize:UInt32;
     FPaddingByte:Byte;
+    FFinalBitLength: Int16;
   protected // ITestDataRow
     function GetInputData:RawByteString;
     function GetInputVectors:ITestDataInputVectorList;
@@ -201,9 +211,11 @@ type
   protected // IHashTestDataRow
     function GetRequiredDigestSize:UInt32;
     function GetPaddingByte:Byte;
+    function GetFinalBitLength:Int16;
   protected // IHashTestDataRowSetup
     procedure SetRequiredDigestSize(const aValue:UInt32);
     procedure SetPaddingByte(const aValue:Byte);
+    procedure SetFinalBitLength(const aValue: Int16);
   public
     constructor Create;
     destructor Destroy; override;
@@ -303,6 +315,11 @@ begin
   inherited;
 end;
 
+function THashTestDataRow.GetFinalBitLength: Int16;
+begin
+  result := FFinalBitLength;
+end;
+
 function THashTestDataRow.GetInputData: RawByteString;
 begin
   result := FInputData;
@@ -341,6 +358,11 @@ end;
 procedure THashTestDataRow.SetExpectedOutputUTFStrTest(const aValue: RawByteString);
 begin
   FOutputUTFStrTest := aValue;
+end;
+
+procedure THashTestDataRow.SetFinalBitLength(const aValue: Int16);
+begin
+  FFinalBitLength := aValue;
 end;
 
 procedure THashTestDataRow.SetPaddingByte(const aValue: Byte);

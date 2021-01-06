@@ -107,6 +107,11 @@ type
 
     procedure DoTestClassByName(ExpectedClassName:String; ExpectedClass:TClass);
   protected
+    /// <summary>
+    ///   This method has to be overridden in test classes where the hash object
+    ///   to be tested needs to have some special properties set. They have to
+    ///   be set in this class.
+    /// </summary>
     procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); virtual;
   public
     procedure SetUp; override;
@@ -313,6 +318,12 @@ type
   // Test methods for class THash_SHA3_224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA3_224 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
   public
     procedure SetUp; override;
   published
@@ -326,6 +337,12 @@ type
   // Test methods for class THash_SHA3_256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA3_256 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
   public
     procedure SetUp; override;
   published
@@ -339,6 +356,12 @@ type
   // Test methods for class THash_SHA3_384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA3_384 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
   public
     procedure SetUp; override;
   published
@@ -352,6 +375,12 @@ type
   // Test methods for class THash_SHA3_512
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_SHA3_512 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
   public
     procedure SetUp; override;
   published
@@ -3967,6 +3996,15 @@ end;
 
 { TestTHash_SHA3_224 }
 
+procedure TestTHash_SHA3_224.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_224(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_224(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
 procedure TestTHash_SHA3_224.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
@@ -3977,11 +4015,23 @@ begin
   lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
   lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
   lDataRow.AddInputVector('');
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
   lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
   lDataRow.AddInputVector(#$13);
+  lDataRow.FinalBitLength := 5;
+  lDataRow.PaddingByte    := $13;
+
+{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+  lDataRow.FinalBitLength := 6;
+  lDataRow.PaddingByte    := $14;
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
@@ -4010,6 +4060,15 @@ begin
 end;
 
 { TestTHash_SHA3_256 }
+
+procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_256(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_256(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
 
 procedure TestTHash_SHA3_256.SetUp;
 var lDataRow:IHashTestDataRowSetup;
@@ -4051,6 +4110,15 @@ end;
 
 { TestTHash_SHA3_384 }
 
+procedure TestTHash_SHA3_384.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_384(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_384(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
 procedure TestTHash_SHA3_384.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
@@ -4090,6 +4158,15 @@ begin
 end;
 
 { TestTHash_SHA3_512 }
+
+procedure TestTHash_SHA3_512.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_512(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_512(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
 
 procedure TestTHash_SHA3_512.SetUp;
 var lDataRow:IHashTestDataRowSetup;
