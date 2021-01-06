@@ -3974,10 +3974,14 @@ begin
   FHash := THash_SHA3_224.Create;
 
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3F5B5A6BC7';
-{ TODO : UTF output might still be wrong, even if test for empty data }
+  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
   lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
   lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+  lDataRow.AddInputVector(#$13);
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
