@@ -188,7 +188,7 @@ type
     ///   Optional formatting class. The formatting of that will be applied to
     ///   the returned hash value.
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
@@ -208,7 +208,7 @@ type
     /// <param name="HashResult">
     ///   Here the resulting hash value is being returned as byte array
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback. If being used the hash calculation will call it from
     ///   time to time to return the current progress of the operation
     /// </param>
@@ -224,7 +224,7 @@ type
     ///   Optional parameter: Formatting class. If being used the formatting is
     ///   being applied to the returned string with the calculated hash value
     /// </param>
-    /// <param name="Progress">
+    /// <param name="OnProgress">
     ///   Optional callback. If being used the hash calculation will call it from
     ///   time to time to return the current progress of the operation
     /// </param>
@@ -264,3 +264,4 @@ type
 implementation
 
 end.
+

@@ -279,9 +279,10 @@ type
                      end;
 
       TBABytes = array[0..$FFF0-1] of byte;
-      PBA = ^TBABytes;
+      TPBABytes = ^TBABytes;
+      TSHA3Digest = array[0..$FFF0-1] of byte;
   private
-    FDigest: Pointer;
+    FDigest: TSHA3Digest;
 
     /// <summary>
     ///   Contains the current state of the algorithm/sponge part
@@ -334,7 +335,7 @@ type
     /// <returns>
     ///   0 if successful, 1 otherwise.
     /// </returns>
-    function Squeeze(Output: pointer; OutputLength: Int32): Integer;
+    function Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
 
     procedure PadAndSwitchToSqueezingPhase;
     procedure extractFromState(outp: pointer; const state: TState_L; laneCount: Int16);
@@ -342,7 +343,7 @@ type
     /// <summary>
     ///   Update final bits in LSB format, pad, and compute hashval
     /// </summary>
-    function FinalBit_LSB(bits: Byte; bitlen: Int16; hashval: pointer; numbits: Integer): Integer;
+    function FinalBit_LSB(bits: Byte; bitlen: Int16; var hashval: TSHA3Digest; numbits: Integer): Integer;
   protected
     /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
@@ -357,9 +358,13 @@ type
     ///   Capacity c (it could directly be calculated from the rate as
     ///   c = 1600 - r but the original author Wolfgang Erhardt decided against
     ///   this.
+    ///   The capacity is the size of that part of the state vector which, when
+    ///   xored with the message blocks and when extracting the resulting hash,
+    ///   stays untouched.
     /// </param>
     procedure InitSponge(rate, capacity: integer);
 
+    procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
@@ -3808,6 +3813,8 @@ end;
 
 procedure THash_SHA3_224.DoInit;
 begin
+  inherited;
+
   InitSponge(1152,  448);
   FSpongeState.fixedOutputLength := 224;
 end;
@@ -3826,6 +3833,8 @@ end;
 
 procedure THash_SHA3_256.DoInit;
 begin
+  inherited;
+
   InitSponge(1088,  512);
   FSpongeState.fixedOutputLength := 256;
 end;
@@ -3844,6 +3853,8 @@ end;
 
 procedure THash_SHA3_384.DoInit;
 begin
+  inherited;
+
   InitSponge(832,  768);
   FSpongeState.fixedOutputLength := 384;
 end;
@@ -3862,6 +3873,8 @@ end;
 
 procedure THash_SHA3_512.DoInit;
 begin
+  inherited;
+
   InitSponge(576, 1024);
   FSpongeState.fixedOutputLength := 512;
 end;
@@ -4353,7 +4366,7 @@ begin
   FSpongeState.squeezing := 1;
 end;
 
-function THash_SHA3Base.Squeeze(Output: pointer; OutputLength: Int32): Integer;
+function THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
 var
   i            : Int32;
   partialBlock : Int16;
@@ -4386,7 +4399,7 @@ begin
       partialBlock := OutputLength - i;
 
     move(FSpongeState.dataQueue[(FSpongeState.rate - FSpongeState.bitsAvailableForSqueezing) div 8],
-         PBA(output)^[i div 8], partialBlock div 8);
+         output[i div 8], partialBlock div 8);
     dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
     inc(i,partialBlock);
   end;
@@ -4450,7 +4463,7 @@ begin
         (i <= (databitlen-FSpongeState.rate))) then
     begin
       wholeBlocks := (databitlen-i) div FSpongeState.rate;
-      curData := @PBA(data)^[i div 8];
+      curData := @TPBABytes(data)^[i div 8];
       j := 0;
       while j < wholeBlocks do begin
         KeccakAbsorb(FSpongeState.state, curData, FSpongeState.rate div 64);
@@ -4468,7 +4481,7 @@ begin
 
       partialByte := partialBlock and 7;
       dec(partialBlock, partialByte);
-      move(PBA(data)^[i div 8], FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8], partialBlock div 8);
+      move(TPBABytes(data)^[i div 8], FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8], partialBlock div 8);
       inc(FSpongeState.bitsInQueue, partialBlock);
       inc(i, partialBlock);
 
@@ -4478,7 +4491,7 @@ begin
       if partialByte > 0 then
       begin
         FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8] :=
-          PBA(data)^[i div 8] and ((1 shl partialByte)-1);
+          TPBABytes(data)^[i div 8] and ((1 shl partialByte)-1);
 
         inc(FSpongeState.bitsInQueue, partialByte);
         inc(i, partialByte);
@@ -4509,12 +4522,23 @@ begin
   begin
 //    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
 //    else
+
+{ TODO :
+Why is FDigest nil? Where does it need to be initialized and how?
+Is it nil because an empty data buffer is to be hashed? }
     err := FinalBit_LSB(0, 0, FDigest, FSpongeState.fixedOutputLength);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
   if FSpongeState.error = 0 then
     FSpongeState.error := err;
 //  SHA3_FinalHash := err;
+end;
+
+procedure THash_SHA3Base.DoInit;
+begin
+  inherited;
+
+  FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
 function THash_SHA3Base.DoUpdate(data: Pointer; DataBitLen: Int32):Integer;
@@ -4536,7 +4560,7 @@ begin
     if ret=0 then
     begin
       // Align the last partial byte to the least significant bits
-      lastByte := PBA(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+      lastByte := TPBABytes(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
       ret := Absorb(@lastByte, DataBitLen and 7);
     end
   end;
@@ -4580,7 +4604,7 @@ begin
 end;
 
 function THash_SHA3Base.FinalBit_LSB(bits: Byte; bitlen: Int16;
-  hashval: pointer; numbits: Integer): Integer;
+  var hashval: TSHA3Digest; numbits: Integer): Integer;
 var
   err, ll : Int16;
   lw      : UInt16;
