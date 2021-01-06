@@ -11,15 +11,16 @@ It contains algorithms for these categories:
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
+The current version 6.0 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
+When defining the NO_ASM define in DECOptions.inc it is compatible with all 
+platforms supported by Delphi! It might be compatible with FPC, but this has 
+not been focus and is not tested. The development branch contains a more
+FPC compatible version already.
+
 The last released version 5.2 is compatible with Delphi 7-2007 at least.
 For using it with newer versions some small modification is necessary in order 
 to compile it. If done it is compatible up to 10.2 Tokio at least.
-This version is only compatible with Win32/Win64!
-
-This version 6.0 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
-When defining the NO_ASM define in DECOptions.inc it is compatible with all 
-platforms! It might be compatible with FPC, but this has not been focus and 
-is not tested.
+This version 5.2 is compatible with Win32/Win64 only!
 
 ## What is the current status of this project?
 After some years of work we finally managed to release V6.0 now. 
@@ -37,17 +38,18 @@ Also take the time to read DEC60.pdf in the *Docs* folder or look at the demos
 provided in the *Demos* subfolder.
 
 ## Has it been tested?
-DEC 5.2 comes with some "arcane" test program testing the algoithms implemented
+DEC 5.2 came with some "arcane" test program testing the algoithms implemented
 using test data supplied via some text file. For many algorithms this test data
 stems from official documentation of the algorithms itsself. DEC 5.2 passes these 
 tests.
 
 DEC 6.0 reworked these tests into DUnit and DUnitX tests. We also added some more 
 tests and with this replaced the "arcane" test program which used hard to understand 
-code. A few of the implemented unit tests still fail, but this is simply because
+code. A few of the implemented unit tests may still fail, but this is simply because
 they are empty sceletons at this point in time waiting to be filled in. We first 
 need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
+We're talking at block chaining mode tests for the ciphers specifically.
 
 ## Contained hash algorithms
 * MD2        
