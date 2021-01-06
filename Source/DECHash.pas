@@ -3809,6 +3809,7 @@ end;
 procedure THash_SHA3_224.DoInit;
 begin
   InitSponge(1152,  448);
+  FSpongeState.fixedOutputLength := 224;
 end;
 
 { THash_SHA3_256 }
@@ -3826,6 +3827,7 @@ end;
 procedure THash_SHA3_256.DoInit;
 begin
   InitSponge(1088,  512);
+  FSpongeState.fixedOutputLength := 256;
 end;
 
 { THash_SHA3_384 }
@@ -3843,6 +3845,7 @@ end;
 procedure THash_SHA3_384.DoInit;
 begin
   InitSponge(832,  768);
+  FSpongeState.fixedOutputLength := 384;
 end;
 
 { THash_SHA3_512 }
@@ -3860,6 +3863,7 @@ end;
 procedure THash_SHA3_512.DoInit;
 begin
   InitSponge(576, 1024);
+  FSpongeState.fixedOutputLength := 512;
 end;
 
 { THash_SHA3Base }
@@ -4524,8 +4528,10 @@ begin
     exit;
   end;
 
-  if DataBitLen and 7 = 0 then ret := Absorb(data, DataBitLen)
-  else begin
+  if DataBitLen and 7 = 0 then
+    ret := Absorb(data, DataBitLen)
+  else
+  begin
     ret := Absorb(data, DataBitLen - (DataBitLen and 7));
     if ret=0 then
     begin
