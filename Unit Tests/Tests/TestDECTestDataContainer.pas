@@ -21,13 +21,13 @@ interface
 type
   ITestDataInputVector = interface
   ['{CEC7AE49-DA2D-438A-BE8B-2BC2FA1DBCD0}']
-    function GetRunCount:Cardinal;
+    function GetRunCount:UInt32;
     function GetData:RawByteString;
 
     /// <summary>
     ///   Number of times this test needs to be run to produce the final test data
     /// </summary>
-    property RepeatCount:Cardinal
+    property RepeatCount:UInt32
       read   GetRunCount;
     /// <summary>
     ///   Input data for the test
@@ -39,15 +39,16 @@ type
   ITestDataInputVectorList = interface
   ['{34CEDD4B-4249-4C69-A0CC-C89F90A9B4E3}']
     function GetCount:Integer;
-    function GetVectors(aIndex:Integer):ITestDataInputVector;
+    function GetVector(aIndex:Integer):ITestDataInputVector;
 
     property Count:Integer
       read   GetCount;
     property Vectors[aIndex:integer]:ITestDataInputVector
-      read   GetVectors; default;
+      read   GetVector; default;
 
-    function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
-                            const aConcatCount:Cardinal=1):ITestDataInputVector;
+    function AddInputVector(const aData:RawByteString; const aRunCount:UInt32=1;
+                            const aConcatCount:UInt32=1;
+                            const aFinalBitCount:UInt32 = 0):ITestDataInputVector;
   end;
 
   ITestDataRow = interface
@@ -77,8 +78,8 @@ type
     property ExpectedOutputUTFStrTest : RawByteString
       Write  SetExpectedOutputUTFStrTest;
 
-    procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
-                             const aConcatCount:Cardinal=1);
+    procedure AddInputVector(const aData:RawByteString; const aRunCount:UInt32=1;
+                             const aConcatCount:UInt32=1);
   end;
 
   ITestDataContainer = interface
@@ -94,16 +95,63 @@ type
 
   IHashTestDataRowSetup = interface(ITestDataRowSetup)
   ['{ADB4AFA2-4199-47F4-86F6-E84A20C3AA8E}']
+    /// <summary>
+    ///   Specifies the length of the hash value generated for those hash classes
+    ///   which support configurable output lengths.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Length of the calculated hash value in byte
+    /// </param>
     procedure SetRequiredDigestSize(const aValue:UInt32);
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. The SHA3 tests using this require to specify what this last
+    ///   byte contains if it is not contained in the test data itsself already
+    ///   (because that would influence the length of that test data)
+    /// </summary>
+    /// <param name="aValue">
+    ///   Value which is used in the finalization of the hash calculation if
+    ///   SHA3's feature of bit length specification of the input data is being
+    ///   used.
+    /// </param>
     procedure SetPaddingByte(const aValue:Byte);
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Number of bits of the last byte within the test data to process
+    /// </param>
     procedure SetFinalBitLength(const aValue: Int16);
 
+    /// <summary>
+    ///   Specifies the length of the hash value generated for those hash classes
+    ///   which support configurable output lengths. The length is specified in
+    ///   byte.
+    /// </summary>
     property RequiredDigestSize : UInt32
       Write  SetRequiredDigestSize;
+
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
+    /// </summary>
     property PaddingByte        : Byte
       Write  SetPaddingByte;
     /// <summary>
-    ///   Required parameter for SHA3 tests
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
     /// </summary>
     property FinalBitLength     : Int16
       write  SetFinalBitLength;
@@ -111,14 +159,64 @@ type
 
   IHashTestDataRow = interface(ITestDataRow)
   ['{73ED2877-967A-410B-8493-636F099FBA60}']
+    /// <summary>
+    ///   Gets the length of the hash value generated for those hash classes
+    ///   which support configurable output lengths.
+    /// </summary>
+    /// <returns>
+    ///   Length of the calculated hash value in byte
+    /// </returns>
     function GetRequiredDigestSize:UInt32;
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. The SHA3 tests using this require to specify what this last
+    ///   byte contains if it is not contained in the test data itsself already
+    ///   (because that would influence the length of that test data)
+    /// </summary>
+    /// <returns>
+    ///   Value which is used in the finalization of the hash calculation if
+    ///   SHA3's feature of bit length specification of the input data is being
+    ///   used.
+    /// </returns>
     function GetPaddingByte:Byte;
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
+    /// </summary>
     function GetFinalBitLength:Int16;
 
+    /// <summary>
+    ///   Gets the length in bytes of the hash value generated for those
+    ///   hash classes which support configurable output lengths.
+    /// </summary>
     property RequiredDigestSize : UInt32
       read   GetRequiredDigestSize;
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. The SHA3 tests using this require to specify what this last
+    ///   byte contains if it is not contained in the test data itsself already
+    ///   (because that would influence the length of that test data).
+    ///
+    ///   Value which is used in the finalization of the hash calculation if
+    ///   SHA3's feature of bit length specification of the input data is being
+    ///   used.
+    /// </summary>
     property PaddingByte        : Byte
       read   GetPaddingByte;
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
+    /// </summary>
     property FinalBitLength     : Int16
       read   GetFinalBitLength;
   end;
@@ -142,13 +240,14 @@ uses
 type
   TTestDataInputVector = class(TInterfacedObject, ITestDataInputVector)
   private
-    FData     : RawByteString;
-    FRunCount : Cardinal;
+    FData          : RawByteString;
+    FRunCount      : UInt32;
+    FFinalBitCount : UInt32;
   protected // ITestDataInputVector
-    function GetRunCount:Cardinal;
+    function GetRunCount:UInt32;
     function GetData:RawByteString;
   public
-    constructor Create(const aData:RawByteString; const aRunCount:Cardinal);
+    constructor Create(const aData:RawByteString; const aRunCount:UInt32; const aFinalBitCOunt: UInt32);
   end;
 
   /// <summary>
@@ -163,8 +262,20 @@ type
     /// </summary>
     FVectors : TInterfaceList;
   protected // ITestDataInputVectorContainer
+    /// <summary>
+    ///   Returns the number of test data entries (vectors) stored in the list
+    /// </summary>
     function GetCount:Integer;
-    function GetVectors(aIndex:Integer):ITestDataInputVector;
+    /// <summary>
+    ///   Returns the test data vector specified by the index
+    /// </summary>
+    /// <param name="aIndex">
+    ///   Index of the vector which shall be returned
+    /// </param>
+    /// <returns>
+    ///   Test data entry
+    /// </returns>
+    function GetVector(aIndex:Integer):ITestDataInputVector;
     /// <summary>
     ///   Adds an input vector for one test to the list
     /// </summary>
@@ -178,11 +289,20 @@ type
     ///   Number of times aData is being concatenated to form the real input data
     ///   for this test vector
     /// </param>
+    /// <param name="aFinalBitCount">
+{ TODO : Rework comment as far as necessary after implementing this }
+    ///   some hash algorithms allow to specify the size of the data to calculate
+    ///   the hash from in bits. If this parameter is set to a value > 0 the last
+    ///   byte of the data specified in aData is not hashed with the "Calc" method
+    ///   but the aFinalBitCount number of bits from it are hashed in Done or so...
+    /// </param>
     /// <returns>
     ///   An interface to the generated test vector
     /// </returns>
-    function AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
-                            const aConcatCount:Cardinal=1):ITestDataInputVector;
+    function AddInputVector(const aData:RawByteString;
+                            const aRunCount:UInt32=1;
+                            const aConcatCount:UInt32=1;
+                            const aFinalBitCount:UInt32 = 0):ITestDataInputVector;
   public
     constructor Create;
     destructor Destroy; override;
@@ -206,15 +326,65 @@ type
   protected // ITestDataRowSetup
     procedure SetExpectedOutput(const aValue:RawByteString);
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
-    procedure AddInputVector(const aData:RawByteString; const aRunCount:Cardinal=1;
-                             const aConcatCount:Cardinal=1);
+    procedure AddInputVector(const aData:RawByteString; const aRunCount:UInt32=1;
+                             const aConcatCount:UInt32=1);
   protected // IHashTestDataRow
+    /// <summary>
+    ///   Gets the length of the hash value generated for those hash classes
+    ///   which support configurable output lengths.
+    /// </summary>
+    /// <returns>
+    ///   Length of the calculated hash value in byte
+    /// </returns>
     function GetRequiredDigestSize:UInt32;
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. The SHA3 tests using this require to specify what this last
+    ///   byte contains if it is not contained in the test data itsself already
+    ///   (because that would influence the length of that test data)
+    /// </summary>
+    /// <returns>
+    ///   Value which is used in the finalization of the hash calculation if
+    ///   SHA3's feature of bit length specification of the input data is being
+    ///   used.
+    /// </returns>
     function GetPaddingByte:Byte;
     function GetFinalBitLength:Int16;
   protected // IHashTestDataRowSetup
+    /// <summary>
+    ///   Specifies the length of the hash value generated for those hash classes
+    ///   which support configurable output lengths.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Length of the calculated hash value in byte
+    /// </param>
     procedure SetRequiredDigestSize(const aValue:UInt32);
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. The SHA3 tests using this require to specify what this last
+    ///   byte contains if it is not contained in the test data itsself already
+    ///   (because that would influence the length of that test data)
+    /// </summary>
+    /// <param name="aValue">
+    ///   Value which is used in the finalization of the hash calculation if
+    ///   SHA3's feature of bit length specification of the input data is being
+    ///   used.
+    /// </param>
     procedure SetPaddingByte(const aValue:Byte);
+    /// <summary>
+    ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
+    ///   bits of the input bytes which shall be processed. This can lead to the
+    ///   situation that the last byte of the input data shall not be processed
+    ///   completely. This property specifies how many bits of the last byte shall
+    ///   be processed.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Number of bits of the last byte within the test data to process
+    /// </param>
     procedure SetFinalBitLength(const aValue: Int16);
   public
     constructor Create;
@@ -286,7 +456,7 @@ end;
 
 { TTestDataRow }
 
-procedure THashTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: Cardinal);
+procedure THashTestDataRow.AddInputVector(const aData: RawByteString; const aRunCount, aConcatCount: UInt32);
 var
   lData:RawByteString;
   Idx:Integer;
@@ -378,7 +548,8 @@ end;
 { TTestDataInputVectorContainer }
 
 function TTestDataInputVectorList.AddInputVector(const aData:RawByteString;
-           const aRunCount:Cardinal=1; const aConcatCount:Cardinal=1):ITestDataInputVector;
+           const aRunCount:UInt32=1; const aConcatCount:UInt32=1;
+           const aFinalBitCount:UInt32 = 0):ITestDataInputVector;
 var
   lData : RawByteString;
   Idx   : Integer;
@@ -388,7 +559,7 @@ begin
   begin
     lData := lData + aData;
   end;
-  Result := TTestDataInputVector.Create(lData, aRunCount);
+  Result := TTestDataInputVector.Create(lData, aRunCount, aFinalBitCount);
   FVectors.Add(Result);
 end;
 
@@ -409,18 +580,21 @@ begin
   result := FVectors.Count;
 end;
 
-function TTestDataInputVectorList.GetVectors(aIndex: Integer): ITestDataInputVector;
+function TTestDataInputVectorList.GetVector(aIndex: Integer): ITestDataInputVector;
 begin
   result := FVectors.Items[aIndex] as ITestDataInputVector;
 end;
 
 { TTestDataInputVector }
 
-constructor TTestDataInputVector.Create(const aData: RawByteString; const aRunCount: Cardinal);
+constructor TTestDataInputVector.Create(const aData: RawByteString;
+                                        const aRunCount: UInt32;
+                                        const aFinalBitCOunt: UInt32);
 begin
   inherited Create;
-  FData     := aData;
-  FRunCount := aRunCount;
+  FData          := aData;
+  FRunCount      := aRunCount;
+  FFinalBitCount := aFinalBitCount;
 end;
 
 function TTestDataInputVector.GetData: RawByteString;
@@ -428,7 +602,7 @@ begin
   result := FData;
 end;
 
-function TTestDataInputVector.GetRunCount: Cardinal;
+function TTestDataInputVector.GetRunCount: UInt32;
 begin
   result := FRunCount;
 end;

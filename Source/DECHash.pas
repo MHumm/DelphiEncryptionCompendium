@@ -770,7 +770,7 @@ uses
   {$INCLUDE DECHash.asm86.inc}
 {$ENDIF !X86ASM}
 
-{ Speed comparison of ASM vs. PurePascal Implementation. Valid onbly for Win32 compiler
+{ Speed comparison of ASM vs. PurePascal Implementation. Valid only for Win32 compiler
   and this was for DEC 5.1 and thus compiler versions < D2009!
 
                                            assembler                             pascal

@@ -103,7 +103,7 @@ type
   TDECProgressState = (Started, Processing, Finished {, Error});
 
   /// <summary>
-  ///   Event type used by several hash- and cipther methods to display their
+  ///   Event type used by several hash- and cipher methods to display their
   ///   progress. It can be implemented as regular method, procedure and as
   ///   anonymous method, means: in place.
   /// </summary>
