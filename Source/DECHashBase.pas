@@ -708,6 +708,44 @@ type
     class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
+    ///   HMAC according to rfc2202: hash message authentication code allow to
+    ///   verify both the data integrity and the authenticity of a message.
+    /// </summary>
+    /// <param name="Key">
+    ///   This is the secret key which shall not be transmitted over the line.
+    ///   The sender uses this key to create the resulting HMAC, transmits the
+    ///   text and the HMAC over the line and the receiver recalculates the HMAC
+    ///   based on his copy of the secret key. If his calculated HMAC equals the
+    ///   transfered HMAC value the message has not been tampered.
+    /// </param>
+    /// <param name="Text">
+    ///   Text over which to calculate the HMAC
+    /// </param>
+    /// <returns>
+    ///   Calculated HMAC
+    /// </returns>
+    class function HMAC(const Key, Text: TBytes): TBytes; overload;
+
+    /// <summary>
+    ///   HMAC according to rfc2202: hash message authentication code allow to
+    ///   verify both the data integrity and the authenticity of a message.
+    /// </summary>
+    /// <param name="Key">
+    ///   This is the secret key which shall not be transmitted over the line.
+    ///   The sender uses this key to create the resulting HMAC, transmits the
+    ///   text and the HMAC over the line and the receiver recalculates the HMAC
+    ///   based on his copy of the secret key. If his calculated HMAC equals the
+    ///   transfered HMAC value the message has not been tampered.
+    /// </param>
+    /// <param name="Text">
+    ///   Text over which to calculate the HMAC
+    /// </param>
+    /// <returns>
+    ///   Calculated HMAC
+    /// </returns>
+    class function HMAC(const Key, Text: RawByteString): TBytes; overload;
+
+    /// <summary>
     ///   Defines the byte used in the KDF methods to padd the end of the data
     ///   if the length of the data cannot be divided by required size for the
     ///   hash algorithm without reminder
@@ -1090,10 +1128,11 @@ procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
 var
   Buffer: TBytes;
   Bytes: Integer;
-  Max, StartPos, Pos: Int64;
+  Max, Pos: Int64;
 begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
+  Max := 0;
   SetLength(HashResult, 0);
   try
     Init;
@@ -1106,7 +1145,6 @@ begin
     if Size < 0 then
       Size := Stream.Size - Pos;
 
-    StartPos := Pos;
     Max      := Pos + Size;
 
     if Assigned(OnProgress) then
@@ -1358,6 +1396,81 @@ end;
 class function TDECHash.MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
 begin
   Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
+end;
+
+class function TDECHash.HMAC(const Key, Text: RawByteString): TBytes;
+begin
+  result := HMAC(BytesOf(Key), BytesOf(Text));
+end;
+
+class function TDECHash.HMAC(const Key, Text: TBytes): TBytes;
+const
+  CONST_UINT_OF_0x36 = $3636363636363636;
+  CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
+var
+  HashInstance: TDECHash;
+  InnerKeyPad, OuterKeyPad: array[0..127] of Byte;    // 128 will fit all, but it should be based on HashClass.BlockSize
+  I, KeyLength, BlockSize, DigestLength: Integer;
+begin
+  HashInstance := TDECHashstype(self).Create;
+  try
+    BlockSize := HashInstance.BlockSize; // 64 for sha1, ...
+    DigestLength := HashInstance.DigestSize;
+    KeyLength := Length(Key);
+    I := 0;
+
+    if KeyLength > BlockSize then
+    begin
+      Result := HashInstance.CalcBytes(Key);
+      KeyLength := DigestLength;
+    end
+    else
+      Result := Key;
+
+    while I <= KeyLength - SizeOf(NativeUInt) do
+    begin
+      PNativeUInt(@InnerKeyPad[I])^ := PNativeUInt(@Result[I])^ xor CONST_UINT_OF_0x36;
+      PNativeUInt(@OuterKeyPad[I])^ := PNativeUInt(@Result[I])^ xor CONST_UINT_OF_0x5C;
+      Inc(I, SizeOf(NativeUInt));
+    end;
+
+    while I < KeyLength do
+    begin
+      InnerKeyPad[I] := Result[I] xor $36;
+      OuterKeyPad[I] := Result[I] xor $5C;
+      Inc(I);
+    end;
+
+    while I <= BlockSize - SizeOf(NativeUInt) do
+    begin
+      PNativeUInt(@InnerKeyPad[I])^ := NativeUInt(CONST_UINT_OF_0x36);
+      PNativeUInt(@OuterKeyPad[I])^ := NativeUInt(CONST_UINT_OF_0x5C);
+      Inc(I, SizeOf(NativeUInt));
+    end;
+
+    while I < BlockSize do
+    begin
+      InnerKeyPad[I] := $36;
+      OuterKeyPad[I] := $5C;
+      Inc(I);
+    end;
+
+    HashInstance.Init;
+    HashInstance.Calc(InnerKeyPad[0], BlockSize);
+    if Length(Text) > 0 then
+      HashInstance.Calc(Text[0], Length(Text));
+    HashInstance.Done;
+    Result := HashInstance.DigestAsBytes;
+
+    HashInstance.Init;
+    HashInstance.Calc(OuterKeyPad[0], BlockSize);
+    HashInstance.Calc(Result[0], DigestLength);
+    HashInstance.Done;
+
+    Result := HashInstance.DigestAsBytes;
+  finally
+    HashInstance.Free;
+  end;
 end;
 
 {$IFDEF DELPHIORBCB}
