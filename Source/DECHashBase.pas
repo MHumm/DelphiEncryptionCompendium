@@ -748,6 +748,50 @@ type
     class function HMAC(const Key, Text: RawByteString): TBytes; overload;
 
     /// <summary>
+    ///   Password based key deviation function 2
+    ///   RFC 2898, PKCS #5.
+    ///   This can be used to create a login sheme by storing the output,
+    ///   number of iterations and the salt. When the user enters a password
+    ///   this calculation is done using the same parameters as stored for his
+    ///   user account and comparing the output.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to create the deviation from
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt used to modify the password
+    /// </param>
+    /// <param name="Iterations">
+    ///   Number of iterations to perform
+    /// </param>
+    /// <param name="KeyLength">
+    ///   Length of the resulting key in byte
+    /// </param>
+    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+
+    /// <summary>
+    ///   Password based key deviation function 2
+    ///   RFC 2898, PKCS #5.
+    ///   This can be used to create a login sheme by storing the output,
+    ///   number of iterations and the salt. When the user enters a password
+    ///   this calculation is done using the same parameters as stored for his
+    ///   user account and comparing the output.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to create the deviation from
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt used to modify the password
+    /// </param>
+    /// <param name="Iterations">
+    ///   Number of iterations to perform
+    /// </param>
+    /// <param name="KeyLength">
+    ///   Length of the resulting key in byte
+    /// </param>
+    class function PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+
+    /// <summary>
     ///   Defines the byte used in the KDF methods to padd the end of the data
     ///   if the length of the data cannot be divided by required size for the
     ///   hash algorithm without reminder
@@ -1474,6 +1518,109 @@ begin
   finally
     HashInstance.Free;
   end;
+end;
+
+class function TDECHash.PBKDF2(const Password, Salt: TBytes; Iterations: Integer; KeyLength: Integer): TBytes;
+const
+  CONST_UINT_OF_0x36 = $3636363636363636;
+  CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
+var
+  Hash: TDECHash;
+  I, J, C: Integer;
+  BlockCount, HashLengthRounded, SaltLength: Integer;
+  PassLength, DigestLength, BlockSize: Integer;
+  InnerKeyPad, OuterKeyPad: TBytes;
+  SaltEx, T, U, TrimmedKey: TBytes;
+begin
+  Hash := TDECHashstype(self).Create;
+  try
+    // Setup needed parameters
+    DigestLength      := Hash.DigestSize;
+    HashLengthRounded := DigestLength - SizeOf(NativeUInt) + 1;
+    BlockCount        := Trunc((KeyLength + DigestLength - 1) / DigestLength);
+    BlockSize         := Hash.BlockSize;
+    PassLength        := Length(Password);
+    SaltLength        := Length(Salt);
+    SaltEx            := Salt;
+    SetLength(SaltEx, SaltLength + 4);  // reserve 4 bytes for INT_32_BE(i)
+    SetLength(T, DigestLength);
+
+    // Prepare Key for HMAC calculation
+    // PrepareKeyForHMAC;
+    I := 0;
+    if PassLength > BlockSize then
+    begin
+      TrimmedKey := Hash.CalcBytes(Password);
+      PassLength := DigestLength;
+    end
+    else
+      TrimmedKey := Password;
+
+    SetLength(InnerKeyPad, BlockSize);
+    SetLength(OuterKeyPad, BlockSize);
+    while I < PassLength do
+    begin
+      InnerKeyPad[I] := TrimmedKey[I] xor $36;
+      OuterKeyPad[I] := TrimmedKey[I] xor $5C;
+      Inc(I);
+    end;
+    while I < BlockSize do
+    begin
+      InnerKeyPad[I] := $36;
+      OuterKeyPad[I] := $5C;
+      Inc(I);
+    end;
+
+    // Calculate DK
+    for I := 1 to BlockCount do
+    begin
+      SaltEx[SaltLength + 0] := Byte(I shr 24);   // INT_32_BE(i)
+      SaltEx[SaltLength + 1] := Byte(I shr 16);
+      SaltEx[SaltLength + 2] := Byte(I shr 8);
+      SaltEx[SaltLength + 3] := Byte(I shr 0);
+      FillChar(T[0], DigestLength, 0);            // reset Ti / F
+      U := SaltEx;                                // initialize U to U1 = Salt + INT_32_BE(i)
+      // Calculate F(Password, Salt, c, i) = U1 ^ U2 ^ ... ^ Uc
+      for C := 1 to Iterations do
+      begin
+        Hash.Init;
+        Hash.Calc(InnerKeyPad[0], BlockSize);
+        Hash.Calc(U[0], Length(U));
+        Hash.Done;
+        U := Hash.DigestAsBytes;
+
+        Hash.Init;
+        Hash.Calc(OuterKeyPad[0], BlockSize);
+        Hash.Calc(U[0], DigestLength);
+        Hash.Done;
+        U := Hash.DigestAsBytes;                  // Ui
+        // F = U1 ^ U2 ^ ... ^ Uc
+        J := 0;
+        while J < HashLengthRounded do
+        begin
+          PNativeUInt(@T[J])^ := PNativeUInt(@T[J])^ xor PNativeUInt(@U[J])^;
+          Inc(J, SizeOf(NativeUInt));
+        end;
+        while J < DigestLength do
+        begin
+          T[J] := T[J] xor U[J];
+          Inc(J);
+        end;
+      end;
+
+      Result := Result + T;                       // DK += F    , DK = DK || Ti
+    end;
+  finally
+    Hash.Free;
+  end;
+
+  // Trim to the needed key length
+  SetLength(Result, KeyLength);
+end;
+
+class function TDECHash.PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes;
+begin
+  result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
 end;
 
 {$IFDEF DELPHIORBCB}
