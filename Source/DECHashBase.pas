@@ -1408,7 +1408,7 @@ const
   CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
 var
   HashInstance: TDECHash;
-  InnerKeyPad, OuterKeyPad: array of Byte;    // 128 will fit all, but it should be based on HashClass.BlockSize
+  InnerKeyPad, OuterKeyPad: array of Byte;
   I, KeyLength, BlockSize, DigestLength: Integer;
 begin
   HashInstance := TDECHashstype(self).Create;

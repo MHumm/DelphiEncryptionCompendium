@@ -46,6 +46,8 @@ type
   published
     procedure TestHMACBytes;
     procedure TestHMACRawByteString;
+    procedure TestAAx80StringBytes;
+    procedure TestAAx80StringString;
   end;
 
 implementation
@@ -67,11 +69,68 @@ begin
 
 end;
 
+procedure TestTHash_HMAC.TestAAx80StringBytes;
+var
+  AAx80String : TBytes;
+  Result      : TBytes;
+begin
+  SetLength(AAx80String, 80);
+  FillChar(AAx80String[0], 80, $AA);
+
+  Result := THash_MD5.HMAC(AAx80String,
+                           BytesOf('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
+  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+
+  Result := THash_MD5.HMAC(AAx80String, BytesOf('Test Using Larger Than Block-Size Key - Hash Key First'));
+  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'MD5 Test Using Larger Than Block-Size Key - Hash Key First');
+
+  Result := THash_SHA1.HMAC(AAx80String,
+                            BytesOf('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
+  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+
+  Result := THash_SHA1.HMAC(AAx80String,
+                            BytesOf('Test Using Larger Than Block-Size Key - Hash Key First'));
+  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key - Hash Key First');
+end;
+
+procedure TestTHash_HMAC.TestAAx80StringString;
+var
+  AAx80String : TBytes;
+  Result      : TBytes;
+begin
+  SetLength(AAx80String, 80);
+  FillChar(AAx80String[0], 80, $AA);
+
+  Result := THash_MD5.HMAC(RawByteString(StringOf(AAx80String)),
+                           RawByteString('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
+  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+
+  Result := THash_MD5.HMAC(RawByteString(StringOf(AAx80String)),
+              RawByteString('Test Using Larger Than Block-Size Key - Hash Key First'));
+  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'MD5 Test Using Larger Than Block-Size Key - Hash Key First');
+
+  Result := THash_SHA1.HMAC(RawByteString(StringOf(AAx80String)),
+                            RawByteString('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
+  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+
+  Result := THash_SHA1.HMAC(RawByteString(StringOf(AAx80String)),
+                            RawByteString('Test Using Larger Than Block-Size Key - Hash Key First'));
+  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key - Hash Key First');
+end;
+
 procedure TestTHash_HMAC.TestHMACBytes;
 var
   Res: TBytes;
-  AAx80String: TBytes;
 begin
+  // test vectors from https://en.wikipedia.org/wiki/HMAC
   Res := THash_MD5.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps over the lazy dog'));
   CheckEquals('80070713463E7749B90C2DC24911E275', StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
               'MD5 failure in The quick...');
@@ -89,8 +148,8 @@ end;
 procedure TestTHash_HMAC.TestHMACRawByteString;
 var
   Res: TBytes;
-  AAx80String: TBytes;
 begin
+  // test vectors from https://en.wikipedia.org/wiki/HMAC
   Res := THash_MD5.HMAC(RawByteString('key'), RawByteString('The quick brown fox jumps over the lazy dog'));
   CheckEquals('80070713463E7749B90C2DC24911E275', StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
               'MD5 failure in The quick...');
