@@ -415,7 +415,9 @@ type
     ///   length. Use of a MGF is desirable in cases where a fixed-size hash
     ///   would be inadequate. Examples include generating padding, producing
     ///   one time pads or keystreams in symmetric key encryption, and yielding
-    ///   outputs for pseudorandom number generators
+    ///   outputs for pseudorandom number generators.
+    ///   Indexed Mask generation function, IEEE P1363 working group
+    ///   equal to KDF1 except without seed. RFC 2437 PKCS #1
     /// </summary>
     /// <param name="Data">
     ///   Data from which to generate a mask from
@@ -1218,9 +1220,6 @@ begin
 end;
 
 class function TDECHash.MGF1(const Data; DataSize, MaskSize: Integer): TBytes;
-// indexed Mask generation function, IEEE P1363 Working Group
-// equal to KDF1 except without Seed
-// RFC 2437 PKCS #1
 begin
   Result := KDF1(Data, DataSize, NullStr, 0, MaskSize);
 end;
@@ -1409,19 +1408,23 @@ const
   CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
 var
   HashInstance: TDECHash;
-  InnerKeyPad, OuterKeyPad: array[0..127] of Byte;    // 128 will fit all, but it should be based on HashClass.BlockSize
+  InnerKeyPad, OuterKeyPad: array of Byte;    // 128 will fit all, but it should be based on HashClass.BlockSize
   I, KeyLength, BlockSize, DigestLength: Integer;
 begin
   HashInstance := TDECHashstype(self).Create;
   try
-    BlockSize := HashInstance.BlockSize; // 64 for sha1, ...
+    BlockSize    := HashInstance.BlockSize; // 64 for sha1, ...
     DigestLength := HashInstance.DigestSize;
-    KeyLength := Length(Key);
+    KeyLength    := Length(Key);
+
+    SetLength(InnerKeyPad, BlockSize);
+    SetLength(OuterKeyPad, BlockSize);
+
     I := 0;
 
     if KeyLength > BlockSize then
     begin
-      Result := HashInstance.CalcBytes(Key);
+      Result    := HashInstance.CalcBytes(Key);
       KeyLength := DigestLength;
     end
     else

@@ -379,6 +379,17 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
+    /// <summary>
+    ///   Processes one chunk of data to be hashed.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data on which the hash value shall be calculated on
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the data in bytes
+    /// </param>
+    procedure Calc(const Data; DataSize: Integer); override;
+
     function Digest: PByteArray; override;
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
@@ -4531,6 +4542,14 @@ begin
   // state.bitsInQueue is assumed to be equal to state.rat
   KeccakAbsorb(FSpongeState.state, @FSpongeState.dataQueue, FSpongeState.rate div 64);
   FSpongeState.bitsInQueue := 0;
+end;
+
+procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
+begin
+{ TODO :
+Ändern! Wenn DataSIze < PufferSize mindestens dann Absorb!
+Oder evtl. ganz anders wie bei Wolfgang Erhardt }
+  inherited;
 end;
 
 function THash_SHA3Base.Digest: PByteArray;

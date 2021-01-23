@@ -38,7 +38,8 @@ uses
   TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   TestDECHashKDF in 'Tests\TestDECHashKDF.pas',
-  TestDECRandom in 'Tests\TestDECRandom.pas';
+  TestDECRandom in 'Tests\TestDECRandom.pas',
+  TestDECHashMAC in 'Tests\TestDECHashMAC.pas';
 
 var
   runner : ITestRunner;
