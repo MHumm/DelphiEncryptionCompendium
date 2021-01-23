@@ -4011,27 +4011,28 @@ begin
   inherited;
   FHash := THash_SHA3_224.Create;
 
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
-  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-  lDataRow.AddInputVector('');
-  lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
-
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-  lDataRow.AddInputVector(#$13);
-  lDataRow.FinalBitLength := 5;
-  lDataRow.PaddingByte    := $13;
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
+//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+//  lDataRow.AddInputVector('');
+//  lDataRow.FinalBitLength := 0;
+//  lDataRow.PaddingByte    := 0;
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+//  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+//  lDataRow.AddInputVector(#$13);
+//  lDataRow.FinalBitLength := 5;
+//  lDataRow.PaddingByte    := $13;
 
 { TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
   lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
   lDataRow.AddInputVector(#$53#$58#$7B#$19);
+{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
   lDataRow.FinalBitLength := 6;
-  lDataRow.PaddingByte    := $14;
+  lDataRow.PaddingByte    := $19;
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
