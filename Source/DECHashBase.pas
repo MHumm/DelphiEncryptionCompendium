@@ -1476,8 +1476,8 @@ begin
 
     while I <= KeyLength - SizeOf(NativeUInt) do
     begin
-      PNativeUInt(@InnerKeyPad[I])^ := PNativeUInt(@Result[I])^ xor CONST_UINT_OF_0x36;
-      PNativeUInt(@OuterKeyPad[I])^ := PNativeUInt(@Result[I])^ xor CONST_UINT_OF_0x5C;
+      PNativeUInt(@InnerKeyPad[I])^ := PNativeUInt(@Result[I])^ xor NativeUInt(CONST_UINT_OF_0x36);
+      PNativeUInt(@OuterKeyPad[I])^ := PNativeUInt(@Result[I])^ xor NativeUInt(CONST_UINT_OF_0x5C);
       Inc(I, SizeOf(NativeUInt));
     end;
 
