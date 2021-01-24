@@ -42,7 +42,8 @@ uses
   DECRandom in 'DECRandom.pas',
   DECTypes in 'DECTypes.pas',
   DECUtil in 'DECUtil.pas',
-  DECUtilRawByteStringHelper in 'DECUtilRawByteStringHelper.pas';
+  DECUtilRawByteStringHelper in 'DECUtilRawByteStringHelper.pas',
+  DECHashAuthentication in 'DECHashAuthentication.pas';
 
 begin
   try
