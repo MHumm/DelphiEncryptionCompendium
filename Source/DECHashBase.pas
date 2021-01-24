@@ -141,9 +141,21 @@ type
     /// </summary>
     procedure RaiseHashOverflowError;
 
-{ TODO : Sollte ersetzt werden zusammen mit PByteArray, wird aber auch in DECRandom benutzt! }
+    /// <summary>
+    ///   Overwrite internally used processing buffers to make it harder to steal
+    ///   any data from memory.
+    /// </summary>
+    procedure SecureErase; virtual;
+
+    /// <summary>
+    ///   Returns the calculated hash value
+    /// </summary>
     function Digest: PByteArray; virtual; abstract;
   public
+    /// <summary>
+    ///   Initialize internal fields
+    /// </summary>
+    constructor Create; override;
     /// <summary>
     ///   Fees internal resources
     /// </summary>
@@ -870,21 +882,40 @@ end;
 
 { TDECHash }
 
+constructor TDECHash.Create;
+begin
+  inherited;
+  FBufferSize := 0;
+  FBuffer     := nil;
+end;
+
 destructor TDECHash.Destroy;
 begin
-  ProtectBuffer(Digest^, DigestSize);
-  ProtectBuffer(FBuffer^, FBufferSize);
+  SecureErase;
   FreeMem(FBuffer, FBufferSize);
 
   inherited Destroy;
 end;
 
+procedure TDECHash.SecureErase;
+begin
+  ProtectBuffer(Digest^, DigestSize);
+  if FBuffer = nil then
+    ProtectBuffer(FBuffer^, FBufferSize);
+end;
+
 procedure TDECHash.Init;
 begin
   FBufferIndex := 0;
-  FBufferSize := BlockSize;
-  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  FBuffer := ReallocMemory(FBuffer, FBufferSize);
+
+  if (FBuffer = nil) or (UInt32(FBufferSize) <> BlockSize) then
+    begin
+      FBufferSize := BlockSize;
+      // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+      // It is necessary to reallocate the buffer as FreeMem in destructor wouldn't
+      // accept a nil pointer on some platforms.
+      FBuffer := ReallocMemory(FBuffer, FBufferSize);
+    end;
 
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
@@ -894,13 +925,6 @@ end;
 procedure TDECHash.Done;
 begin
   DoDone;
-  ProtectBuffer(FBuffer^, FBufferSize);
-
-  FBufferSize := 0;
-  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
-  // It is necessary to reallocate the buffer as FreeMem in destructor wouldn't
-  // accept a nil pointer on some platforms.
-  FBuffer := ReallocMemory(FBuffer, 0);
 end;
 
 function TDECHash.GetPaddingByte: Byte;

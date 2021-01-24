@@ -523,6 +523,7 @@ type
     {$ENDIF}
 
     /// <summary>
+{ TODO : Description needs to be revised }
     ///   Properly finishes the cryptographic operation. It needs to be called
     ///   at the end of encrypting or decrypting data, otherwise the last block
     ///   or last byte of the data will not be properly processed.
@@ -530,11 +531,10 @@ type
     procedure Done;
 
     /// <summary>
-    ///   Sets the processing state to csNew, which means that before using this
-    ///   object any further,  init must be called and it securely fills the
-    ///   processing buffer with zeroes.
+    ///   Securely fills the rocessing buffer with zeroes to make stealing data
+    ///   from memory harder.
     /// </summary>
-    procedure Protect; virtual;
+    procedure SecureErase; virtual;
 
     // Encoding / Decoding Routines
     // Do not add further methods of that kind here! If needed add them to
@@ -792,13 +792,14 @@ begin
     FAdditionalBufferBackup := nil;
 
   FFillMode := fmByte;
+  FState    := csNew;
 
-  Protect;
+  SecureErase;
 end;
 
 destructor TDECCipher.Destroy;
 begin
-  Protect;
+  SecureErase;
   // FreeMem instead of ReallocMemory which produced a memory leak. ReallocMemory
   // was used instead of ReallocMem due to C++ compatibility as per 10.1 help
   FreeMem(FData, FDataSize);
@@ -851,7 +852,8 @@ end;
 
 procedure TDECCipher.Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte);
 begin
-  Protect;
+  FState := csNew;
+  SecureErase;
 
   if (Size > Context.KeySize) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
@@ -946,9 +948,8 @@ begin
   end;
 end;
 
-procedure TDECCipher.Protect;
+procedure TDECCipher.SecureErase;
 begin
-  FState := csNew;
   ProtectBuffer(FData[0], FDataSize);
 end;
 
