@@ -66,6 +66,16 @@ type
     class function KDFInternal(const Data; DataSize: Integer; const Seed;
                                SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes; inline;
   public
+    /// <summary>
+    ///   Detects whether the given hash class is one particularily suited
+    ///   for storing hashes of passwords
+    /// </summary>
+    /// <returns>
+    ///   true if it's a hash class specifically designed to store password
+    ///   hashes, false for ordinary hash algorithms.
+    /// </returns>
+    class function IsPasswordHash: Boolean;
+
     // mask generation
 
     /// <summary>
@@ -451,10 +461,37 @@ type
     class function PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes; overload;
   end;
 
+  /// <summary>
+  ///   All hash classes with hash algorithms specially developed for password
+  ///   hashing should inherit from this class in order to be able to distinguish
+  ///   those from normal hash algorithms not really meant to be used for password
+  ///   hashing.
+  /// </summary>
+  TDECPasswordHash = class(TDECHashAuthentication);
+
 implementation
 
 uses
   DECUtil;
+
+class function TDECHashAuthentication.IsPasswordHash: Boolean;
+var
+  Parent : TClass;
+begin
+  Result := false;
+
+  Parent := ClassParent;
+  while assigned(Parent) do
+  begin
+    if (ClassParent = TDECPasswordHash) then
+    begin
+      Result := true;
+      break;
+    end
+    else
+      Parent := Parent.ClassParent;
+  end;
+end;
 
 class function TDECHashAuthentication.KDFInternal(const Data; DataSize: Integer; const Seed;
                              SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes;

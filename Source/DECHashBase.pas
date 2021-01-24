@@ -75,11 +75,23 @@ type
     /// </param>
     procedure SetPaddingByte(Value: Byte);
   strict protected
-    FCount: array[0..7] of UInt32;
-    FBuffer: PByteArray;
-    FBufferSize: Integer;
-    FBufferIndex: Integer;
-    FPaddingByte: Byte;
+    FCount       : array[0..7] of UInt32;
+    /// <summary>
+    ///   Internal processing buffer
+    /// </summary>
+    FBuffer      : PByteArray;
+    /// <summary>
+    ///   Size of the internal processing buffer in byte
+    /// </summary>
+    FBufferSize  : Integer;
+    /// <summary>
+    ///   Position the algorithm is currently at in the processing buffer
+    /// </summary>
+    FBufferIndex : Integer;
+    /// <summary>
+    ///   Value used to fill up data
+    /// </summary>
+    FPaddingByte : Byte;
     /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
     ///   to initialize the necessary data structures.
@@ -239,16 +251,6 @@ type
     /// </returns>
     class function ClassByIdentity(Identity: Int64): TDECHashClass;
 
-    /// <summary>
-    ///   Detects whether the given hash class is one particularily suited
-    ///   for storing hashes of passwords
-    /// </summary>
-    /// <returns>
-    ///   true if it's a hash class specifically designed to store password
-    ///   hashes, false for ordinary hash algorithms.
-    /// </returns>
-    class function IsPasswordHash: Boolean;
-
     // hash calculation wrappers
 
     /// <summary>
@@ -398,19 +400,6 @@ type
     property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
-  /// <summary>
-  ///   All hash classes with hash algorithms specially developed for password
-  ///   hashing should inherit from this class in order to be able to distinguish
-  ///   those from normal hash algorithms not really meant to be used for password
-  ///   hashing.
-  /// </summary>
-  TDECPasswordHash = class(TDECHash);
-
-  /// <summary>
-  ///   Type needed to be able to remove with statements in KDF functions
-  /// </summary>
-  TDECHashstype = class of TDECHash;
-
 /// <summary>
 ///   Returns the passed hash class type if it is not nil. Otherwise the
 ///   class type class set per SetDefaultHashClass is being returned. If using
@@ -517,25 +506,6 @@ end;
 function TDECHash.GetPaddingByte: Byte;
 begin
   Result := FPaddingByte;
-end;
-
-class function TDECHash.IsPasswordHash: Boolean;
-var
-  Parent : TClass;
-begin
-  Result := false;
-
-  Parent := ClassParent;
-  while assigned(Parent) do
-  begin
-    if (ClassParent = TDECPasswordHash) then
-    begin
-      Result := true;
-      break;
-    end
-    else
-      Parent := Parent.ClassParent;
-  end;
 end;
 
 procedure TDECHash.Increment8(var Value; Add: UInt32);

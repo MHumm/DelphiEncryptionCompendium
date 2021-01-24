@@ -32,7 +32,8 @@ uses
   TestFramework,
   {$ENDIF}
   TestDECTestDataContainer,
-  DECTypes, DECBaseClass, DECHash, DECHashBase, DECUtil, DECFormatBase;
+  DECTypes, DECBaseClass, DECHash, DECHashBase, DECHashAuthentication, DECUtil,
+  DECFormatBase;
 
 type
   /// <summary>
@@ -94,7 +95,7 @@ type
   THash_TestBase = class(TTestCase)
   strict protected
     FTestData  : IHashTestDataContainer;
-    FHash      : TDECHash;
+    FHash      : TDECHashAuthentication;
 
     // kind of "low-level" test, close to the original test used in DEC5.2
     procedure DoTest52(HashClass:TDECHash);
