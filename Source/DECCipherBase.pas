@@ -349,6 +349,11 @@ type
     ///   Size of source in byte
     /// </param>
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
+    /// <summary>
+    ///   Securely fills the rocessing buffer with zeroes to make stealing data
+    ///   from memory harder.
+    /// </summary>
+    procedure SecureErase; virtual;
   public
     /// <summary>
     ///   List of registered DEC classes. Key is the Identity of the class.
@@ -529,12 +534,6 @@ type
     ///   or last byte of the data will not be properly processed.
     /// </summary>
     procedure Done;
-
-    /// <summary>
-    ///   Securely fills the rocessing buffer with zeroes to make stealing data
-    ///   from memory harder.
-    /// </summary>
-    procedure SecureErase; virtual;
 
     // Encoding / Decoding Routines
     // Do not add further methods of that kind here! If needed add them to
