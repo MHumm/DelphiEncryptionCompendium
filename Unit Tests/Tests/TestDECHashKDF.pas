@@ -32,7 +32,7 @@ uses
   TestFramework,
   {$ENDIF}
   TestDECTestDataContainer, DECTypes, DECBaseClass, DECHash, DECHashBase,
-  DECUtil, DECFormatBase;
+  DECHashAuthentication, DECUtil, DECFormatBase;
 
 type
   /// <summary>
@@ -74,7 +74,7 @@ type
     /// <summary>
     ///   Class reference containing the class methods to be tested
     /// </summary>
-    HashClass  : THashClass;
+    HashClass  : TDECHashAuthenticationClass;
     /// <summary>
     ///   Index, which i being used for the KDFx and MGFx variants of the
     ///   original author of DEC
@@ -110,7 +110,7 @@ type
     ///   original author of DEC
     /// </param>
     procedure Add(const InputData, OutputData: RawByteString;
-                  MaskSize : Integer; HashClass: THashClass;
+                  MaskSize : Integer; HashClass: TDECHashAuthenticationClass;
                   AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
                   Index : UInt32 = 1); overload;
     /// <summary>
@@ -139,7 +139,7 @@ type
     ///   original author of DEC
     /// </param>
     procedure Add(const InputData, SeedData, OutputData: RawByteString;
-                  MaskSize : Integer; HashClass: THashClass;
+                  MaskSize : Integer; HashClass: TDECHashAuthenticationClass;
                   AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
                   Index : UInt32 = 1); overload;
   end;
@@ -209,7 +209,7 @@ uses
 { TKeyDeviationTestList }
 
 procedure TKeyDeviationTestList.Add(const InputData, OutputData: RawByteString;
-                                    MaskSize: Integer; HashClass: THashClass;
+                                    MaskSize: Integer; HashClass: TDECHashAuthenticationClass;
                                     AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
                                     Index : UInt32 = 1);
 var
@@ -226,7 +226,7 @@ begin
 end;
 
 procedure TKeyDeviationTestList.Add(const InputData, SeedData,
-  OutputData: RawByteString; MaskSize: Integer; HashClass: THashClass;
+  OutputData: RawByteString; MaskSize: Integer; HashClass: TDECHashAuthenticationClass;
   AlgorithmType : TKDFMGFAlgorithm = ktKDF1;
   Index : UInt32 = 1);
 var

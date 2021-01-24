@@ -31,7 +31,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECTypes;
+  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication, DECTypes;
 
 type
   // Hash Classes
@@ -76,7 +76,7 @@ type
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,
   ///   at least on paper.
   /// </summary>
-  THash_MD2 = class(TDECHash)
+  THash_MD2 = class(TDECHashAuthentication)
   private
     FDigest: array[0..63] of Byte;
   protected
@@ -93,7 +93,7 @@ type
   ///   Base class for the MD4 hash alrogithm and for other hash-algorithms which
   ///   are close relatives to the MD4 algorithm like the RipeMD ones.
   /// </summary>
-  THashBaseMD4 = class(TDECHash)
+  THashBaseMD4 = class(TDECHashAuthentication)
   private
     FDigest: array[0..9] of UInt32;
   protected
@@ -223,7 +223,7 @@ type
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
   /// </summary>
-  THash_SHA384 = class(TDECHash)
+  THash_SHA384 = class(TDECHashAuthentication)
   private
     FDigest: array[0..7] of Int64;
   protected
@@ -249,7 +249,7 @@ type
 /// <remarks>
 ///   Not fully implemented yet
 /// </remarks>
-  THash_SHA3Base = class(TDECHash)
+  THash_SHA3Base = class(TDECHashAuthentication)
   public
     // Declarations for SHA3. Must be declared here to allow private methods
     // to use these types as well.
@@ -453,7 +453,7 @@ type
 
   THavalBaseTransformMethod = procedure(Buffer: PUInt32Array) of object;
 
-  THashBaseHaval = class(TDECHash)
+  THashBaseHaval = class(TDECHashAuthentication)
   private
     FDigest: array[0..7] of UInt32;
     FRounds: UInt32;
@@ -547,7 +547,7 @@ type
   ///   The Panama algorithm is being considered to be unsafe. Support is only
   ///   being provided for backward compatibility.
   /// </summary>
-  THash_Panama = class(TDECHash)
+  THash_Panama = class(TDECHashAuthentication)
   private
     FLFSRBuffer: array[0..31, 0..7] of UInt32;
     FDigest: array[0..16] of UInt32;
@@ -563,7 +563,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THashBaseWhirlpool = class(TDECHash)
+  THashBaseWhirlpool = class(TDECHashAuthentication)
   private
     FDigest: array[0..15] of UInt32;
     FTableC: Pointer;
@@ -645,7 +645,7 @@ type
   THash_Whirlpool1 = class(THash_Whirlpool1_);
   {$ENDIF}
 
-  THash_Square = class(TDECHash)
+  THash_Square = class(TDECHashAuthentication)
   private
     FDigest: array[0..3] of UInt32;
   protected
@@ -662,7 +662,7 @@ type
   ///   This 1990 developed hash function was named after the Egyptian Pharaoh
   ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
-  THashBaseSnefru = class(TDECHash)
+  THashBaseSnefru = class(TDECHashAuthentication)
   private
     FDigest: array[0..23] of UInt32;
     /// <summary>
@@ -716,7 +716,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THash_Sapphire = class(TDECHash)
+  THash_Sapphire = class(TDECHashAuthentication)
   private
     FCards: array[0..255] of UInt32;
     FDigest: array[0..15] of UInt32;

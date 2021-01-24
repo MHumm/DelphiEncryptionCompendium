@@ -31,7 +31,8 @@ uses
   TestDECCipherModes in 'Tests\TestDECCipherModes.pas',
   TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
-  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas';
+  TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
+  TestDECHashMAC in 'Tests\TestDECHashMAC.pas';
 
 {$R *.RES}
 
