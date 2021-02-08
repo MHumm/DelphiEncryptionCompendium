@@ -302,11 +302,11 @@ implementation
 
 {$IFDEF FMXTranslateableExceptions}
 uses
-  FMX.Types, DECUtilRawByteStringHelper;
+  FMX.Types,
 {$ELSE}
 uses
-  DECUtilRawByteStringHelper;
 {$ENDIF}
+  DECUtilRawByteStringHelper, DECTypes;
 
 const
 { TODO :
