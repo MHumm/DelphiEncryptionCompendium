@@ -981,8 +981,8 @@ begin
   Assert(Size = Context.BlockSize, 'Size of ' + IntToStr(Size) + ' does not equal '+
                                    'block size of ' + IntToStr(Context.BlockSize));
 
-  D := Pointer(FBuffer);
-  P := Pointer(PByte(FBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
+  D := Pointer(FAdditionalBuffer);
+  P := Pointer(PByte(FAdditionalBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
@@ -1055,8 +1055,8 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D := Pointer(FBuffer);
-  P := Pointer(PByte(FBuffer) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
+  D := Pointer(FAdditionalBuffer);
+  P := Pointer(PByte(FAdditionalBuffer) + SizeOf(Blowfish_Data) + SizeOf(Blowfish_Key) - SizeOf(Int32));
   A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0];
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
@@ -2431,7 +2431,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := Pointer(FBuffer);
+  K := Pointer(FAdditionalBuffer);
   A := PUInt32Array(Source)[0];
   B := PUInt32Array(Source)[1] + K[0];
   C := PUInt32Array(Source)[2];
@@ -2514,7 +2514,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  K := @PUInt32Array(FBuffer)[FRounds * 2];
+  K := @PUInt32Array(FAdditionalBuffer)[FRounds * 2];
   A := PUInt32Array(Source)[0] - K[2];
   B := PUInt32Array(Source)[1];
   C := PUInt32Array(Source)[2] - K[3];
@@ -4730,7 +4730,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D  := Pointer(FBuffer);
+  D  := Pointer(FAdditionalBuffer);
   B0 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   B2 := PUInt32Array(Source)[2];
@@ -4809,7 +4809,7 @@ var
 begin
   Assert(Size = Context.BlockSize);
 
-  D  := @PUInt32Array(FBuffer)[60];
+  D  := @PUInt32Array(FAdditionalBuffer)[60];
   B0 := PUInt32Array(Source)[0];
   B1 := PUInt32Array(Source)[1];
   B2 := PUInt32Array(Source)[2];
