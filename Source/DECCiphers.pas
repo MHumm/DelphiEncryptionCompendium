@@ -3309,9 +3309,9 @@ procedure TCipher_Sapphire.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
   I: Integer;
-  SKey: TSapphireKey;
+  SKey: PSapphireKey;
 begin
-  SKey := PSapphireKey(FAdditionalBuffer)^;
+  SKey := PSapphireKey(FAdditionalBuffer);
   for I := 0 to Size - 1 do
   begin
     SKey.Ratchet := (SKey.Ratchet + SKey.Cards[SKey.Rotor]) and $FF;
@@ -3335,9 +3335,9 @@ procedure TCipher_Sapphire.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   T: UInt32;
   I: Integer;
-  SKey: TSapphireKey;
+  SKey: PSapphireKey;
 begin
-  SKey := PSapphireKey(FAdditionalBuffer)^;
+  SKey := PSapphireKey(FAdditionalBuffer);
   for I := 0 to Size - 1 do
   begin
     SKey.Ratchet := (SKey.Ratchet + SKey.Cards[SKey.Rotor]) and $FF;
