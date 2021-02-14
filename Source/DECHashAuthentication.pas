@@ -475,22 +475,8 @@ uses
   DECUtil;
 
 class function TDECHashAuthentication.IsPasswordHash: Boolean;
-var
-  Parent : TClass;
 begin
-  Result := false;
-
-  Parent := ClassParent;
-  while assigned(Parent) do
-  begin
-    if (ClassParent = TDECPasswordHash) then
-    begin
-      Result := true;
-      break;
-    end
-    else
-      Parent := Parent.ClassParent;
-  end;
+  Result := self.InheritsFrom(TDECPasswordHash);
 end;
 
 class function TDECHashAuthentication.KDFInternal(const Data; DataSize: Integer; const Seed;
