@@ -6,35 +6,40 @@ It contains algorithms for these categories:
 
 * Ciphers: encryption/decryption of data
 * Hashes: "cryptographic checksums"
-* Key deviation algorithms like Kdf1-Kdf3
+* Key deviation algorithms like Kdf1-Kdf3 and pbkdf2
+* HMAC message authentication
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The current version 6.0 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
+The current version 6.1 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
 FPC compatible version already.
 
-The last released version 5.2 is compatible with Delphi 7-2007 at least.
-For using it with newer versions some small modification is necessary in order 
-to compile it. If done it is compatible up to 10.2 Tokio at least.
-This version 5.2 is compatible with Win32/Win64 only!
+If you need support for older Delphi versions use version 5.2, which is compatible 
+with Delphi 7-2007 at least but lacks some hash implementations, HMAC and KDF 
+improvements. While V5.2 can be made compatible with newer Delphi versions with
+small modifications we strongly recommend to better adapt your code to use the
+current version of DEC, given all these improvements made since then.
+A list of changes is available in the docs folder.
 
 ## What is the current status of this project?
-After some years of work we finally managed to release V6.0 now. 
-Details about the changes and additions in V6.0 can be found in the DEC60.pdf 
-file in the docs subfolder of the development branch.
+V6.0 was released shortly before Christmas 2020. Since then work continued
+by some users supplying code, reporting bugs (regressions) along with fixes
+and by adding SHA2-224 which was still missing.
+Details about the changes and additions in V6.1 can be found in the 
+VersionHistory.pdf file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
 The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.0 you will find further files with information about 
+In the root folder of DEC V6.1 you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
-Also take the time to read DEC60.pdf in the *Docs* folder or look at the demos 
+Also take the time to read DEC61.pdf in the *Docs* folder or look at the demos 
 provided in the *Demos* subfolder.
 
 ## Has it been tested?
@@ -60,7 +65,8 @@ We're talking at block chaining mode tests for the ciphers specifically.
 * RipeMD256  
 * RipeMD320  
 * SHA0       
-* SHA1       
+* SHA1    
+* SHA224   
 * SHA256     
 * SHA384     
 * SHA512     
@@ -132,6 +138,10 @@ Modes ending on x have been invented by the original developer of DEC
 * KDF2
 * KDF3
 * MGF1
+* PBKDF2
+
+## Contained message authentication algorithms
+* HMAC
 
 ## Contained formattings
 * Copy
