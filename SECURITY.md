@@ -6,11 +6,7 @@ The following versions are currently supported with security fixes:
 
 | Version  | Supported          |
 | -------- | ------------------ |
-<<<<<<< HEAD
-| 6.0      | :white_check_mark: |
-=======
-| 6.1      | :white_check_mark: |
->>>>>>> development
+| 6.1      | :white_check_mark: | 
 
 ## Reporting a Vulnerability
 
