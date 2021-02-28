@@ -74,7 +74,7 @@ type
     ///   true if it's a hash class specifically designed to store password
     ///   hashes, false for ordinary hash algorithms.
     /// </returns>
-    class function IsPasswordHash: Boolean;
+    class function IsPasswordHash: Boolean; override;
 
     // mask generation
 

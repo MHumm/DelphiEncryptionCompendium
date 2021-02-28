@@ -251,6 +251,16 @@ type
     /// </returns>
     class function ClassByIdentity(Identity: Int64): TDECHashClass;
 
+    /// <summary>
+    ///   Detects whether the given hash class is one particularily suited
+    ///   for storing hashes of passwords
+    /// </summary>
+    /// <returns>
+    ///   true if it's a hash class specifically designed to store password
+    ///   hashes, false for ordinary hash algorithms.
+    /// </returns>
+    class function IsPasswordHash: Boolean; virtual;
+
     // hash calculation wrappers
 
     /// <summary>
@@ -496,6 +506,12 @@ begin
   FillChar(FBuffer^, FBufferSize, 0);
   FillChar(FCount, SizeOf(FCount), 0);
   DoInit;
+end;
+
+class function TDECHash.IsPasswordHash: Boolean;
+begin
+  // has to be overwritten by the base class for password hash algorithms
+  result := false;
 end;
 
 procedure TDECHash.Done;

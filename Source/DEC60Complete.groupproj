@@ -30,10 +30,7 @@
         <Projects Include="..\Demos\Random_Console\Random_Console.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\Demos\Progress_VCL\Progress_VCL.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="..\Install\SetIDEPaths.dproj">
+        <Projects Include="..\Demos\Progress_VCL\ProgressDemoVCL.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -125,26 +122,23 @@
     <Target Name="Random_Console:Make">
         <MSBuild Projects="..\Demos\Random_Console\Random_Console.dproj" Targets="Make"/>
     </Target>
-    <Target Name="Progress_VCL">
-        <MSBuild Projects="..\Demos\Progress_VCL\Progress_VCL.dproj"/>
+    <Target Name="ProgressDemoVCL">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj"/>
     </Target>
-    <Target Name="Progress_VCL:Clean">
-        <MSBuild Projects="..\Demos\Progress_VCL\Progress_VCL.dproj" Targets="Clean"/>
+    <Target Name="ProgressDemoVCL:Clean">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="Progress_VCL:Make">
-        <MSBuild Projects="..\Demos\Progress_VCL\Progress_VCL.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="SetIDEPaths:Make">
-        <MSBuild Projects="..\Install\SetIDEPaths.dproj" Targets="Make"/>
+    <Target Name="ProgressDemoVCL:Make">
+        <MSBuild Projects="..\Demos\Progress_VCL\ProgressDemoVCL.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;Progress_VCL"/>
+        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;ProgressDemoVCL"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;Progress_VCL:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;ProgressDemoVCL:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;Progress_VCL:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;ProgressDemoVCL:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
