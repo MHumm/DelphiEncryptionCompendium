@@ -55,7 +55,6 @@ begin
 end;
 {$ENDIF}
 
-
 begin
   ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;

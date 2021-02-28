@@ -18,7 +18,7 @@ object FormMain: TFormMain
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 0
-    Viewport.Width = 409.000000000000000000
+    Viewport.Width = 425.000000000000000000
     Viewport.Height = 711.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 425.000000000000000000
@@ -209,8 +209,8 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'gridstyle'
         TabOrder = 8
-        Viewport.Width = 365.000000000000000000
-        Viewport.Height = 75.000000000000000000
+        Viewport.Width = 385.000000000000000000
+        Viewport.Height = 100.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Property'
           Size.Width = 250.000000000000000000
