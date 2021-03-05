@@ -474,6 +474,23 @@ implementation
 uses
   DECUtil;
 
+// Source from: https://stackoverflow.com/questions/35406753/how-to-append-one-array-to-another-array-of-same-type-in-delphi
+type
+  TArrHelper = class
+    class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
+  end;
+
+class procedure TArrHelper.AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
+var
+  i, L: Integer;
+begin
+  L := Length(A);
+  SetLength(A, L + Length(B));
+  for i := 0 to High(B) do
+    A[L + i] := B[i];
+end;
+
+
 class function TDECHashAuthentication.IsPasswordHash: Boolean;
 begin
   Result := self.InheritsFrom(TDECPasswordHash);
@@ -824,7 +841,8 @@ begin
         end;
       end;
 
-      Result := Result + T;                       // DK += F    , DK = DK || Ti
+      //Result := Result + T;                       // DK += F    , DK = DK || Ti
+      TArrHelper.AppendArrays<Byte>(Result, T);
     end;
   finally
     Hash.Free;
