@@ -2560,6 +2560,7 @@ begin
 end;
 
 procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
+{$REGION OldKeyShedule}
 {
   // Old Rijndael Key Scheduling:
 
@@ -2646,6 +2647,7 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
       Inc(D);
     end;
   end; }
+{$ENDREGION}
 
   // New AES conform Key Scheduling
 
