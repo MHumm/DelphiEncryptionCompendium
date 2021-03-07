@@ -1168,12 +1168,90 @@ begin
   // ' '+CHR(9)+CHR(10)+CHR(13);
 
   SetLength(result, 68);
+  {$IF CompilerVersion >= 28.0}
   result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,
              $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,
              $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,
              $47, $48, $49, $4A, $4B, $4C, $4D, $4E, $4F, $50, $51, $52, $53,
              $54, $55, $56, $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $20,
              $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$60;
+  result[ 1]:=$21;
+  result[ 2]:=$22;
+  result[ 3]:=$23;
+  result[ 4]:=$24;
+  result[ 5]:=$25;
+  result[ 6]:=$26;
+  result[ 7]:=$27;
+  result[ 8]:=$28;
+  result[ 9]:=$29;
+  result[10]:=$2A;
+  result[11]:=$2B;
+  result[12]:=$2C;
+
+  result[13]:=$2D;
+  result[14]:=$2E;
+  result[15]:=$2F;
+  result[16]:=$30;
+  result[17]:=$31;
+  result[18]:=$32;
+  result[19]:=$33;
+  result[20]:=$34;
+  result[21]:=$35;
+  result[22]:=$36;
+  result[23]:=$37;
+  result[24]:=$38;
+  result[25]:=$39;
+
+  result[26]:=$3A;
+  result[27]:=$3B;
+  result[28]:=$3C;
+  result[29]:=$3D;
+  result[30]:=$3E;
+  result[31]:=$3F;
+  result[32]:=$40;
+  result[33]:=$41;
+  result[34]:=$42;
+  result[35]:=$43;
+  result[36]:=$44;
+  result[37]:=$45;
+  result[38]:=$46;
+
+  result[39]:=$47;
+  result[40]:=$48;
+  result[41]:=$49;
+  result[42]:=$4A;
+  result[43]:=$4B;
+  result[44]:=$4C;
+  result[45]:=$4D;
+  result[46]:=$4E;
+  result[47]:=$4F;
+  result[48]:=$50;
+  result[49]:=$51;
+  result[50]:=$52;
+  result[51]:=$53;
+
+  result[52]:=$54;
+  result[53]:=$55;
+  result[54]:=$56;
+  result[55]:=$57;
+  result[56]:=$58;
+  result[57]:=$59;
+  result[58]:=$5A;
+  result[59]:=$5B;
+  result[60]:=$5C;
+  result[61]:=$5D;
+  result[62]:=$5E;
+  result[63]:=$5F;
+  result[64]:=$20;
+
+  result[65]:=$09;
+  result[66]:=$0A;
+  result[67]:=$0D;
+  {$ENDIF}
 end;
 
 class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);
