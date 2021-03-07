@@ -325,10 +325,63 @@ begin
   // special and skipped chars
   // '0123456789ABCDEFX$ abcdefhHx()[]{},;:-_/\*+"'''+CHR(9)+CHR(10)+CHR(13);
 
+  {$IF CompilerVersion >= 28.0}
   result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41, $42, $43,
              $44, $45, $46, $58, $24, $20, $61, $62, $63, $64, $65, $66, $68,
              $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $2F, $5C, $2A, $2B, $22, $27, $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$30;
+  result[ 1]:=$31;
+  result[ 2]:=$32;
+  result[ 3]:=$33;
+  result[ 4]:=$34;
+  result[ 5]:=$35;
+  result[ 6]:=$36;
+  result[ 7]:=$37;
+  result[ 8]:=$38;
+  result[ 9]:=$39;
+  result[10]:=$41;
+  result[11]:=$42;
+  result[12]:=$43;
+  result[13]:=$44;
+  result[14]:=$45;
+  result[15]:=$46;
+  result[16]:=$58;
+  result[17]:=$24;
+  result[18]:=$20;
+  result[19]:=$61;
+  result[20]:=$62;
+  result[21]:=$63;
+  result[22]:=$64;
+  result[23]:=$65;
+  result[24]:=$66;
+  result[25]:=$68;
+  result[26]:=$48;
+  result[27]:=$78;
+  result[28]:=$28;
+  result[29]:=$29;
+  result[30]:=$5B;
+  result[31]:=$5D;
+  result[32]:=$7B;
+  result[33]:=$7D;
+  result[34]:=$2C;
+  result[35]:=$3B;
+  result[36]:=$3A;
+  result[37]:=$2D;
+  result[38]:=$5F;
+  result[39]:=$2F;
+  result[40]:=$5C;
+  result[41]:=$2A;
+  result[42]:=$2B;
+  result[43]:=$22;
+  result[44]:=$27;
+  result[45]:=$09;
+  result[47]:=$0A;
+  result[47]:=$0D;
+  {$ENDIF}
 end;
 
 class procedure TFormat_HEX.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -438,10 +491,63 @@ begin
   // special and skipped chars
   // '0123456789abcdefX$ ABCDEFhHx()[]{},;:-_/\*+"'''+CHR(9)+CHR(10)+CHR(13);
 
+  {$IF CompilerVersion >= 28.0}
   result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $61, $62, $63,
              $64, $65, $66, $68, $58, $24, $20, $41, $42, $43, $44, $45, $46,
              $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $2F, $5C, $2A, $2B, $22, $27, $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$30;
+  result[ 1]:=$31;
+  result[ 2]:=$32;
+  result[ 3]:=$33;
+  result[ 4]:=$34;
+  result[ 5]:=$35;
+  result[ 6]:=$36;
+  result[ 7]:=$37;
+  result[ 8]:=$38;
+  result[ 9]:=$39;
+  result[10]:=$61;
+  result[11]:=$62;
+  result[12]:=$63;
+  result[13]:=$64;
+  result[14]:=$65;
+  result[15]:=$66;
+  result[16]:=$68;
+  result[17]:=$58;
+  result[18]:=$24;
+  result[19]:=$20;
+  result[20]:=$41;
+  result[21]:=$42;
+  result[22]:=$43;
+  result[23]:=$44;
+  result[24]:=$45;
+  result[25]:=$46;
+  result[26]:=$48;
+  result[27]:=$78;
+  result[28]:=$28;
+  result[29]:=$29;
+  result[30]:=$5B;
+  result[31]:=$5D;
+  result[32]:=$7B;
+  result[33]:=$7D;
+  result[34]:=$2C;
+  result[35]:=$3B;
+  result[36]:=$3A;
+  result[37]:=$2D;
+  result[38]:=$5F;
+  result[39]:=$2F;
+  result[40]:=$5C;
+  result[41]:=$2A;
+  result[42]:=$2B;
+  result[43]:=$22;
+  result[44]:=$27;
+  result[45]:=$09;
+  result[46]:=$0A;
+  result[47]:=$0D;
+  {$ENDIF}
 end;
 
 class function TFormat_DECMIME32.CharTableBinary: TBytes;
@@ -449,10 +555,71 @@ begin
   // special and skipped chars
   // 'abcdefghijklnpqrstuwxyz123456789 =$()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13);
   SetLength(result, 53);
+  {$IF CompilerVersion >= 28.0}
   result := [$61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6E, $70,
              $71, $72, $73, $74, $75, $77, $78, $79, $7A, $31, $32, $33, $34, $35,
              $36, $37, $38, $39, $20, $3D, $24, $28, $29, $5B, $5D, $7B, $7D, $2C,
              $3B, $3A, $2D, $5F, $5C, $2A, $22, $27, $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$61;
+  result[ 1]:=$62;
+  result[ 2]:=$63;
+  result[ 3]:=$64;
+  result[ 4]:=$65;
+  result[ 5]:=$66;
+  result[ 6]:=$67;
+  result[ 7]:=$68;
+  result[ 8]:=$69;
+  result[ 9]:=$6A;
+  result[10]:=$6B;
+  result[11]:=$6C;
+  result[12]:=$6E;
+  result[13]:=$70;
+
+  result[14]:=$71;
+  result[15]:=$72;
+  result[16]:=$73;
+  result[17]:=$74;
+  result[18]:=$75;
+  result[19]:=$77;
+  result[20]:=$78;
+  result[21]:=$79;
+  result[22]:=$7A;
+  result[23]:=$31;
+  result[24]:=$32;
+  result[25]:=$33;
+  result[26]:=$34;
+  result[27]:=$35;
+
+  result[28]:=$36;
+  result[29]:=$37;
+  result[30]:=$38;
+  result[31]:=$39;
+  result[32]:=$20;
+  result[33]:=$3D;
+  result[34]:=$24;
+  result[35]:=$28;
+  result[36]:=$29;
+  result[37]:=$5B;
+  result[38]:=$5D;
+  result[39]:=$7B;
+  result[40]:=$7D;
+  result[41]:=$2C;
+
+  result[42]:=$3B;
+  result[43]:=$3A;
+  result[44]:=$2D;
+  result[45]:=$5F;
+  result[46]:=$5C;
+  result[47]:=$2A;
+  result[48]:=$22;
+  result[49]:=$27;
+  result[50]:=$09;
+  result[51]:=$0A;
+  result[52]:=$0D;
+  {$ENDIF}
 end;
 
 class procedure TFormat_DECMIME32.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -564,6 +731,8 @@ begin
   //  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=' +
   //  ' $()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13); // special and skipped chars
   SetLength(result, 85);
+
+  {$IF CompilerVersion >= 28.0}
   result := [$41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
              $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
              $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
@@ -571,6 +740,101 @@ begin
              $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $2B, $2F, $3D,
              $20, $24, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $5C, $2A, $22, $27, $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[0 ]:=$41;
+  result[1 ]:=$42;
+  result[2 ]:=$43;
+  result[3 ]:=$44;
+  result[4 ]:=$45;
+  result[5 ]:=$46;
+  result[6 ]:=$47;
+  result[7 ]:=$48;
+  result[8 ]:=$49;
+  result[9 ]:=$4A;
+  result[10]:=$4B;
+  result[11]:=$4C;
+  result[12]:=$4D;
+
+  result[13]:=$4E;
+  result[14]:=$4F;
+  result[15]:=$50;
+  result[16]:=$51;
+  result[17]:=$52;
+  result[18]:=$53;
+  result[19]:=$54;
+  result[20]:=$55;
+  result[21]:=$56;
+  result[22]:=$57;
+  result[23]:=$58;
+  result[24]:=$59;
+  result[25]:=$5A;
+
+  result[26]:=$61;
+  result[27]:=$62;
+  result[28]:=$63;
+  result[29]:=$64;
+  result[30]:=$65;
+  result[31]:=$66;
+  result[32]:=$67;
+  result[33]:=$68;
+  result[34]:=$69;
+  result[35]:=$6A;
+  result[36]:=$6B;
+  result[37]:=$6C;
+  result[38]:=$6D;
+
+  result[39]:=$6E;
+  result[40]:=$6F;
+  result[41]:=$70;
+  result[42]:=$71;
+  result[43]:=$72;
+  result[44]:=$73;
+  result[45]:=$74;
+  result[46]:=$75;
+  result[47]:=$76;
+  result[48]:=$77;
+  result[49]:=$78;
+  result[50]:=$79;
+  result[51]:=$7A;
+
+  result[52]:=$30;
+  result[53]:=$31;
+  result[54]:=$32;
+  result[55]:=$33;
+  result[56]:=$34;
+  result[57]:=$35;
+  result[58]:=$36;
+  result[59]:=$37;
+  result[60]:=$38;
+  result[61]:=$39;
+  result[62]:=$2B;
+  result[63]:=$2F;
+  result[64]:=$3D;
+
+  result[65]:=$20;
+  result[66]:=$24;
+  result[67]:=$28;
+  result[68]:=$29;
+  result[69]:=$5B;
+  result[70]:=$5D;
+  result[71]:=$7B;
+  result[72]:=$7D;
+  result[73]:=$2C;
+  result[74]:=$3B;
+  result[75]:=$3A;
+  result[76]:=$2D;
+  result[77]:=$5F;
+
+  result[78]:=$5C;
+  result[79]:=$2A;
+  result[80]:=$22;
+  result[81]:=$27;
+  result[82]:=$09;
+  result[83]:=$0A;
+  result[84]:=$0D;
+  {$ENDIF}
 end;
 
 class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -904,12 +1168,90 @@ begin
   // ' '+CHR(9)+CHR(10)+CHR(13);
 
   SetLength(result, 68);
+  {$IF CompilerVersion >= 28.0}
   result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,
              $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,
              $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,
              $47, $48, $49, $4A, $4B, $4C, $4D, $4E, $4F, $50, $51, $52, $53,
              $54, $55, $56, $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $20,
              $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$60;
+  result[ 1]:=$21;
+  result[ 2]:=$22;
+  result[ 3]:=$23;
+  result[ 4]:=$24;
+  result[ 5]:=$25;
+  result[ 6]:=$26;
+  result[ 7]:=$27;
+  result[ 8]:=$28;
+  result[ 9]:=$29;
+  result[10]:=$2A;
+  result[11]:=$2B;
+  result[12]:=$2C;
+
+  result[13]:=$2D;
+  result[14]:=$2E;
+  result[15]:=$2F;
+  result[16]:=$30;
+  result[17]:=$31;
+  result[18]:=$32;
+  result[19]:=$33;
+  result[20]:=$34;
+  result[21]:=$35;
+  result[22]:=$36;
+  result[23]:=$37;
+  result[24]:=$38;
+  result[25]:=$39;
+
+  result[26]:=$3A;
+  result[27]:=$3B;
+  result[28]:=$3C;
+  result[29]:=$3D;
+  result[30]:=$3E;
+  result[31]:=$3F;
+  result[32]:=$40;
+  result[33]:=$41;
+  result[34]:=$42;
+  result[35]:=$43;
+  result[36]:=$44;
+  result[37]:=$45;
+  result[38]:=$46;
+
+  result[39]:=$47;
+  result[40]:=$48;
+  result[41]:=$49;
+  result[42]:=$4A;
+  result[43]:=$4B;
+  result[44]:=$4C;
+  result[45]:=$4D;
+  result[46]:=$4E;
+  result[47]:=$4F;
+  result[48]:=$50;
+  result[49]:=$51;
+  result[50]:=$52;
+  result[51]:=$53;
+
+  result[52]:=$54;
+  result[53]:=$55;
+  result[54]:=$56;
+  result[55]:=$57;
+  result[56]:=$58;
+  result[57]:=$59;
+  result[58]:=$5A;
+  result[59]:=$5B;
+  result[60]:=$5C;
+  result[61]:=$5D;
+  result[62]:=$5E;
+  result[63]:=$5F;
+  result[64]:=$20;
+
+  result[65]:=$09;
+  result[66]:=$0A;
+  result[67]:=$0D;
+  {$ENDIF}
 end;
 
 class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1063,12 +1405,96 @@ begin
   // '+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
   // ' "()[]'''+CHR(9)+CHR(10)+CHR(13);
   SetLength(result, 74);
+  {$IF CompilerVersion >= 28.0}
   result := [$2B, $2D, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41,
              $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E,
              $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A, $61,
              $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D, $6E,
              $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A, $20,
              $22, $28, $29, $5B, $5D, $27, $09, $0A, $0D];
+  {$ELSE}
+  // Remove this initialisation variant as soon as XE7+ is the new minimum
+  // supported Delphi version
+  result[ 0]:=$2B;
+  result[ 1]:=$2D;
+  result[ 2]:=$30;
+  result[ 3]:=$31;
+  result[ 4]:=$32;
+  result[ 5]:=$33;
+  result[ 6]:=$34;
+  result[ 7]:=$35;
+  result[ 8]:=$36;
+  result[ 9]:=$37;
+  result[10]:=$38;
+  result[11]:=$39;
+  result[12]:=$41;
+
+  result[13]:=$42;
+  result[14]:=$43;
+  result[15]:=$44;
+  result[16]:=$45;
+  result[17]:=$46;
+  result[18]:=$47;
+  result[19]:=$48;
+  result[20]:=$49;
+  result[21]:=$4A;
+  result[22]:=$4B;
+  result[23]:=$4C;
+  result[24]:=$4D;
+  result[25]:=$4E;
+
+  result[26]:=$4F;
+  result[27]:=$50;
+  result[28]:=$51;
+  result[29]:=$52;
+  result[30]:=$53;
+  result[31]:=$54;
+  result[32]:=$55;
+  result[33]:=$56;
+  result[34]:=$57;
+  result[35]:=$58;
+  result[36]:=$59;
+  result[37]:=$5A;
+  result[38]:=$61;
+
+  result[39]:=$62;
+  result[40]:=$63;
+  result[41]:=$64;
+  result[42]:=$65;
+  result[43]:=$66;
+  result[44]:=$67;
+  result[45]:=$68;
+  result[46]:=$69;
+  result[47]:=$6A;
+  result[48]:=$6B;
+  result[49]:=$6C;
+  result[50]:=$6D;
+  result[51]:=$6E;
+
+  result[52]:=$6F;
+  result[53]:=$70;
+  result[54]:=$71;
+  result[55]:=$72;
+  result[56]:=$73;
+  result[57]:=$74;
+  result[58]:=$75;
+  result[59]:=$76;
+  result[60]:=$77;
+  result[61]:=$78;
+  result[62]:=$79;
+  result[63]:=$7A;
+  result[64]:=$20;
+
+  result[65]:=$22;
+  result[66]:=$28;
+  result[67]:=$29;
+  result[68]:=$5B;
+  result[69]:=$5D;
+  result[70]:=$27;
+  result[71]:=$09;
+  result[72]:=$0A;
+  result[73]:=$0D;
+  {$ENDIF}
 end;
 
 var

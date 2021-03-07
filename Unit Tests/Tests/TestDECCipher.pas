@@ -3365,7 +3365,7 @@ procedure TestTCipher_AES.SetUp;
 begin
   FCipher_AES := TCipher_AES.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 5);
   FTestData[0].OutputData  := '946d2b5ee0ad1b5ca523a513958b3d2d9387f3374551f6589be7901b3687f9a9';
   FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
                                                     '\x96\xF5\xF6\x35\xA2\xEB' +
@@ -3378,6 +3378,44 @@ begin
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
   FTestData[0].Mode       := cmCTSx;
+
+  // Original test vectors from Nist FIPS 197 AES standard description
+  // AES 128
+  FTestData[1].OutputData  := '69c4e0d86a7b0430d8cdb78070b4c55a';
+  FTestData[1].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[1].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f');
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
+
+  // AES 192
+  FTestData[2].OutputData  := 'dda97ca4864cdfe06eaf70a0ec0d7191';
+  FTestData[2].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[2].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f1011121314151617');
+  FTestData[2].InitVector := '';
+  FTestData[2].Filler     := $FF;
+  FTestData[2].Mode       := cmECBx;
+
+  // AES 256
+  FTestData[3].OutputData  := '8ea2b7ca516745bfeafc49904b496089';
+  FTestData[3].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[3].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f'+
+                                                 '101112131415161718191a1b1c1d1e1f');
+  FTestData[3].InitVector := '';
+  FTestData[3].Filler     := $FF;
+  FTestData[3].Mode       := cmECBx;
+
+  // CBC
+  FTestData[4].OutputData  := '8859653cb4c4e4ca3add490015ac8860fa59d1e233301563b184fcca95790c8c';
+  FTestData[4].InputData   := 'abcdefghijklmnopqrstuv0123456789';
+
+  FTestData[4].Key        := TFormat_HEXL.Decode('30313233343536373839303132333435');
+  FTestData[4].InitVector := TFormat_HEXL.Decode('30313233343536373839303132333435');
+  FTestData[4].Filler     := $FF;
+  FTestData[4].Mode       := cmCBCx;
 end;
 
 procedure TestTCipher_AES.TearDown;

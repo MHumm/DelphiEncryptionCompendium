@@ -1,3 +1,4 @@
+{$UNDEF GUI}
 {.$DEFINE GUI}
 {.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;
@@ -8,22 +9,23 @@ program DECDUnitXTestSuite;
 {$INCLUDE Tests\TestDefines.inc}
 
 {$IFNDEF GUI}
-{$IFNDEF TESTINSIGHT}
-{$APPTYPE CONSOLE}
-{$ENDIF}
+  {$IFNDEF TESTINSIGHT}
+    {$APPTYPE CONSOLE}
+  {$ENDIF}
 {$ENDIF}
 
 {$STRONGLINKTYPES ON}
 uses
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
+  TestInsight.Client,
   TestInsight.DUnitX,
-  {$ENDIF }
-  {$IFDEF GUI}
-  DUnitX.Loggers.GUIX,
-  {$ENDIF }
-  {$IFDEF MobileGUI}
-  {$ENDIF }
+  {$ENDIF}
+//  {$IFDEF GUI}
+//  DUnitX.Loggers.GUIX,
+//  {$ENDIF }
+//  {$IFDEF MobileGUI}
+//  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -41,16 +43,27 @@ uses
   TestDECRandom in 'Tests\TestDECRandom.pas',
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas';
 
+function IsTestInsightRunning: Boolean;
+{$IFDEF TESTINSIGHT}
+var
+  client: ITestInsightClient;
+begin
+  client := TTestInsightRestClient.Create;
+  client.StartedTesting(0);
+  Result := not client.HasError;
+end;
+{$ELSE}
+begin
+  result := false;
+end;
+{$ENDIF}
+
 var
   runner : ITestRunner;
   results : IRunResults;
   logger : ITestLogger;
   nunitLogger : ITestLogger;
 begin
-{$IFDEF TESTINSIGHT}
-  TestInsight.DUnitX.RunRegisteredTests;
-  exit;
-{$ENDIF}
 
 //{$IFDEF GUI}
 // // DUnitX.Loggers.GUIX.GUIXTestRunner.Run.Execute;
@@ -60,38 +73,45 @@ begin
 //{$ENDIF}
 
   try
-    //Check command line options, will exit if invalid
-    TDUnitX.CheckCommandLine;
-    //Create the test runner
-    runner := TDUnitX.CreateRunner;
-    //Tell the runner to use RTTI to find Fixtures
-    runner.UseRTTI := True;
-    //tell the runner how we will log things
-    //Log to the console window
-    {$IFDEF GUI}
-    logger := TGUIXTestRunner.Create(nil);
-    {$ELSE}
-    logger := TDUnitXConsoleLogger.Create(true);
-    {$ENDIF}
-    runner.AddLogger(logger);
-    //Generate an NUnit compatible XML File
-    nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
-    runner.AddLogger(nunitLogger);
-    runner.FailsOnNoAsserts := False; //When true, Assertions must be made during tests;
-
-    //Run tests
-    results := runner.Execute;
-    if not results.AllPassed then
-      System.ExitCode := EXIT_ERRORS;
-
-    {$IFNDEF CI}
-    //We don't want this happening when running under CI.
-    if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
+    if IsTestInsightRunning then
+      {$IFDEF TESTINSIGHT}
+      TestInsight.DUnitX.RunRegisteredTests
+      {$ENDIF}
+    else
     begin
-      System.Write('Done.. press <Enter> key to quit.');
-      System.Readln;
+      //Check command line options, will exit if invalid
+      TDUnitX.CheckCommandLine;
+      //Create the test runner
+      runner := TDUnitX.CreateRunner;
+      //Tell the runner to use RTTI to find Fixtures
+      runner.UseRTTI := True;
+      //tell the runner how we will log things
+      //Log to the console window
+//      {$IFDEF GUI}
+//      logger := TGUIXTestRunner.Create(nil);
+//      {$ELSE}
+      logger := TDUnitXConsoleLogger.Create(true);
+//      {$ENDIF}
+      runner.AddLogger(logger);
+      //Generate an NUnit compatible XML File
+      nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
+      runner.AddLogger(nunitLogger);
+      runner.FailsOnNoAsserts := False; //When true, Assertions must be made during tests;
+
+      //Run tests
+      results := runner.Execute;
+      if not results.AllPassed then
+        System.ExitCode := EXIT_ERRORS;
+
+      {$IFNDEF CI}
+      //We don't want this happening when running under CI.
+      if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
+      begin
+        System.Write('Done.. press <Enter> key to quit.');
+        System.Readln;
+      end;
+      {$ENDIF}
     end;
-    {$ENDIF}
   except
     on E: Exception do
       System.Writeln(E.ClassName, ': ', E.Message);

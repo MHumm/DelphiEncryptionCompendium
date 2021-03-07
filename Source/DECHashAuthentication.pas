@@ -74,7 +74,7 @@ type
     ///   true if it's a hash class specifically designed to store password
     ///   hashes, false for ordinary hash algorithms.
     /// </returns>
-    class function IsPasswordHash: Boolean;
+    class function IsPasswordHash: Boolean; override;
 
     // mask generation
 
@@ -469,6 +469,19 @@ type
   /// </summary>
   TDECPasswordHash = class(TDECHashAuthentication);
 
+  {$IF CompilerVersion < 28.0}
+  /// <summary>
+  ///   Class helper for implementing array concatenation which is not available
+  ///   in Delphi XE6 or lower.
+  /// </summary>
+  /// <remarks>
+  ///   SHall be removed as soon as the minimum supported version is XE7 or higher.
+  /// </remarks>
+  TArrHelper = class
+    class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
+  end;
+  {$ENDIF}
+
 implementation
 
 uses
@@ -824,7 +837,11 @@ begin
         end;
       end;
 
+      {$IF CompilerVersion >= 28.0}
       Result := Result + T;                       // DK += F    , DK = DK || Ti
+      {$ELSE}
+      TArrHelper.AppendArrays<Byte>(Result, T);
+      {$ENDIF}
     end;
   finally
     Hash.Free;
@@ -838,5 +855,19 @@ class function TDECHashAuthentication.PBKDF2(const Password, Salt: RawByteString
 begin
   result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
 end;
+
+{ TArrHelper }
+
+{$IF CompilerVersion < 28.0}
+class procedure TArrHelper.AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
+var
+  i, L: Integer;
+begin
+  L := Length(A);
+  SetLength(A, L + Length(B));
+  for i := 0 to High(B) do
+    A[L + i] := B[i];
+end;
+{$ENDIF}
 
 end.

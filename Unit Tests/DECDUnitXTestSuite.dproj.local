@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<ActiveMobileDevice>
+<<<<<<< HEAD
 		<NoProfile Android="" Android64=""/>
+=======
+		<NoProfile Android="CB512EA59X" Android64=""/>
+>>>>>>> development
 	</ActiveMobileDevice>
 </BorlandProject>

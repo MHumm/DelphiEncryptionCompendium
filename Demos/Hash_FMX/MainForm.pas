@@ -77,7 +77,8 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECFormatBase, DECFormat, DECUtil,
+  DECBaseClass, DECHashBase, DECHash, DECHashAUthentication, DECFormatBase,
+  DECFormat, DECUtil,
   Generics.Collections, FMX.Platform
   {$IFDEF Android}
   ,

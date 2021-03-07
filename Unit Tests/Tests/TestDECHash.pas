@@ -4231,10 +4231,10 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA224);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
-  TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
-  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
-  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
-  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
+//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
+//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
+//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
+//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
   TDUnitX.RegisterTestFixture(TestTHash_Haval128);
   TDUnitX.RegisterTestFixture(TestTHash_Haval160);
   TDUnitX.RegisterTestFixture(TestTHash_Haval192);

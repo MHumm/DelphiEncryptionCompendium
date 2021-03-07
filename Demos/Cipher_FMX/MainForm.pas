@@ -77,7 +77,7 @@ type
   end;
 
 var
-  FormMain: TMainForm;
+  FormMain: TFormMain;
 
 implementation
 

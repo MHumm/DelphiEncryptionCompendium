@@ -18,6 +18,10 @@ program DECDUnitTestSuite;
 uses
   Vcl.Forms,
   TestFramework,
+  {$IFDEF TESTINSIGHT}
+  TestInsight.Client,
+  TestInsight.DUnit,
+  {$ENDIF}
   GUITestRunner,
   TextTestRunner,
   TestDECUtil in 'Tests\TestDECUtil.pas',
@@ -36,12 +40,33 @@ uses
 
 {$R *.RES}
 
+function IsTestInsightRunning: Boolean;
+{$IFDEF TESTINSIGHT}
+var
+  client: ITestInsightClient;
+begin
+  client := TTestInsightRestClient.Create;
+  client.StartedTesting(0);
+  Result := not client.HasError;
+end;
+{$ELSE}
+begin
+  result := false;
+end;
+{$ENDIF}
+
 begin
   ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;
-  if IsConsole then
-    TextTestRunner.RunRegisteredTests.Free
+
+  if IsTestInsightRunning then
+    {$IFDEF TESTINSIGHT}
+    TestInsight.DUnit.RunRegisteredTests
+    {$ENDIF}
   else
-    GUITestRunner.RunRegisteredTests;
+    if IsConsole then
+      TextTestRunner.RunRegisteredTests.Free
+    else
+      GUITestRunner.RunRegisteredTests;
 end.
 
