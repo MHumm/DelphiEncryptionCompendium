@@ -996,7 +996,7 @@ begin
                   'Failure at char: ' + Chr(i) + ' ')
     else
       CheckEquals(false, TFormat_Base64.IsValid(SrcBuf),
-                  'Failure at char nr: ' + i.ToHexString + ' ');
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
   end;
 
   SrcBuf := BytesOf('abc"');
@@ -1038,7 +1038,7 @@ begin
                   'Failure at char: ' + Chr(i) + ' ')
     else
       CheckEquals(false, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
-                  'Failure at char nr: ' + i.ToHexString + ' ');
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
   end;
 
 
@@ -1327,7 +1327,8 @@ begin
   CheckEquals(false, TFormat_UU.IsValid('(5&5S=`H)JE4`' + #$61), 'Failure on char $61 at the end ');
 
   for i := $61 to $FF do
-    CheckEquals(false, TFormat_UU.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_UU.IsValid(RawByteString(chr(i))),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTBytes;
@@ -1354,7 +1355,8 @@ begin
   CheckEquals(false, TFormat_UU.IsValid(BytesOf('(5&5S=`H)JE4`' + #$61)), 'Failure on char $61 at the end ');
 
   for i := $61 to $FF do
-    CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString(chr(i)))), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_UU.IsValid(BytesOf(RawByteString(chr(i)))),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
 end;
 
 procedure TestTFormat_UU.TestIsValidTypeless;
@@ -1397,7 +1399,8 @@ begin
   begin
     SrcBuf[0] := i;
     p := @SrcBuf;
-    CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
   end;
 end;
 
@@ -1481,7 +1484,8 @@ begin
   CheckEquals(false, TFormat_XX.IsValid('6J4JnR+c7eZI+' + #$23), 'Failure on char $23 at the end ');
 
   for i := $7B to $FF do
-    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
 end;
 
 procedure TestTFormat_XX.TestIsValidTBytes;
@@ -1513,7 +1517,8 @@ begin
   CheckEquals(false, TFormat_XX.IsValid(BytesOf('6J4JnR+c7eZI+' + #$23)), 'Failure on char $23 at the end ');
 
   for i := $7B to $FF do
-    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_XX.IsValid(RawByteString(chr(i))),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
 end;
 
 procedure TestTFormat_XX.TestIsValidTypeless;
@@ -1569,7 +1574,8 @@ begin
   begin
     SrcBuf[0] := i;
     p := @SrcBuf;
-    CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)), 'Failure on char #' + i.ToHexString + ' ');
+    CheckEquals(false, TFormat_XX.IsValid(p^, length(SrcBuf)),
+                'Failure on char #' + IntToHex(i, 8) + ' ');
   end;
 end;
 
@@ -1643,28 +1649,28 @@ begin
       Continue;
 
     CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))),
-                i.ToString + ': Failure on ' + chr(i) + ' ');
+                IntToStr(i) + ': Failure on ' + chr(i) + ' ');
   end;
 
   // check hex chars
   for i := 128 to 255 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
   for i := 0 to 31 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString('\X' + IntToHex(i, 2))),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
   begin
     CheckEquals(cTestDataIsValid[i].Result,
                 TFormat_ESCAPE.IsValid(cTestDataIsValid[i].Input),
-                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+                IntToStr(i) + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
 
   Str := 'A';
@@ -1691,28 +1697,28 @@ begin
       Continue;
 
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf(chr(i))),
-                i.ToString + ': Failure on ' + chr(i) + ' ');
+                IntToStr(i) + ': Failure on ' + chr(i) + ' ');
   end;
 
   // check hex chars
   for i := 128 to 255 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
   for i := 0 to 31 do
   begin
     CheckEquals(true, TFormat_ESCAPE.IsValid(BytesOf('\X' + IntToHex(i, 2))),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
   begin
     CheckEquals(cTestDataIsValid[i].Result,
                 TFormat_ESCAPE.IsValid(BytesOf(cTestDataIsValid[i].Input)),
-                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+                IntToStr(i) + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
 
   // Chars outside the range 32..$7F need to be hex encoded e.g. \X80
@@ -1745,7 +1751,7 @@ begin
   begin
     Bytes := BytesOf('\X' + IntToHex(i, 2));
     CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   // check hex chars
@@ -1753,7 +1759,7 @@ begin
   begin
     Bytes := BytesOf('\X' + IntToHex(i, 2));
     CheckEquals(true, TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                i.ToString + ': Failure on \X' + IntToHex(i, 2));
+                IntToStr(i) + ': Failure on \X' + IntToHex(i, 2));
   end;
 
   for i := Low(cTestDataIsValid) to High(cTestDataIsValid) do
@@ -1761,7 +1767,7 @@ begin
     Bytes := BytesOf(cTestDataIsValid[i].Input);
     CheckEquals(cTestDataIsValid[i].Result,
                 TFormat_ESCAPE.IsValid(Bytes[0], length(Bytes)),
-                i.ToString + ': Failure on ' + string(cTestDataIsValid[i].Input));
+                IntToStr(i) + ': Failure on ' + string(cTestDataIsValid[i].Input));
   end;
 
   // Chars outside the range 32..$7F need to be hex encoded e.g. \X80

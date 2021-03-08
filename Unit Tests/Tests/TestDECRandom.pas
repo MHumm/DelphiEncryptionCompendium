@@ -74,7 +74,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 
   SetLength(Result, 5);
   FillChar(Result[0], 5, 0);
@@ -85,7 +85,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 end;
 
 procedure TTestRandom.TestRandomBufferIncompletelyFilled;
@@ -106,7 +106,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 
   SetLength(Result, 10);
   FillChar(Result[0], 5, 0);
@@ -117,7 +117,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 end;
 
 procedure TTestRandom.TestRandomBytes;
@@ -135,7 +135,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 
   Result := RandomBytes(5);
 
@@ -143,7 +143,7 @@ begin
 
   for i := Low(Expected) to High(Expected) do
     CheckEquals(Expected[i], Result[i],
-                'Wrong random number in known sequence at index ' + i.ToString);
+                'Wrong random number in known sequence at index ' + IntToStr(i));
 end;
 
 procedure TTestRandom.TestRandomLong;

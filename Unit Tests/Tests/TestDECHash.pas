@@ -316,25 +316,25 @@ type
     procedure TestIdentity;
   end;
 
-//  // Test methods for class THash_SHA3_224
-//  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-//  TestTHash_SHA3_224 = class(THash_TestBase)
-//  strict protected
-//    /// <summary>
-//    ///   Some tests need to set the SHA3 specific padding byte and final bit length
-//    ///   parameters
-//    /// </summary>
-//    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
-//  public
-//    procedure SetUp; override;
-//  published
-//    procedure TestDigestSize;
-//    procedure TestBlockSize;
-//    procedure TestIsPasswordHash;
-//    procedure TestClassByName;
-//    procedure TestIdentity;
-//  end;
-//
+  // Test methods for class THash_SHA3_224
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_224 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 //  // Test methods for class THash_SHA3_256
 //  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
 //  TestTHash_SHA3_256 = class(THash_TestBase)
@@ -3681,6 +3681,8 @@ procedure THash_TestBase.DoTest52(HashClass: TDECHash);
 var
   i                : Integer;
   Buf              : TBytes;
+  BufLen           : Integer; // Buffer length in whole bytes, may differ from
+                              // input vector legtht at least for SHA3 test
   InputDataVectors : ITestDataInputVectorList;
   IdxVector        : Integer;
   IdxCount         : Integer;
@@ -3698,16 +3700,21 @@ begin
     for IdxVector := 0 to InputDataVectors.Count-1 do
     begin
       Buf := BytesOf(RawByteString(InputDataVectors[IdxVector].Data));
+      BufLen := Length(Buf);
+
+      // Last part of the test data are bits (relevant for SHA3)
+      if FTestData[i].FinalBitLength > 0 then
+        Dec(BufLen);
 
       if length(Buf) > 0 then
       begin
         for IdxCount := 1 to InputDataVectors[IdxVector].RepeatCount do
-          HashClass.Calc(Buf[0], length(Buf));
+          HashClass.Calc(Buf[0], BufLen);
       end
       else
       begin
         for IdxCount := 1 to InputDataVectors[IdxVector].RepeatCount do
-          HashClass.Calc(Buf, length(Buf));
+          HashClass.Calc(Buf, BufLen);
       end;
     end;
 
@@ -3995,72 +4002,72 @@ begin
   end;
 end;
 
-//{ TestTHash_SHA3_224 }
-//
-//procedure TestTHash_SHA3_224.ConfigHashClass(HashClass: TDECHash;
-//  IdxTestData: Integer);
-//begin
-//  inherited;
-//
-//  THash_SHA3_224(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-//  THash_SHA3_224(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
-//end;
-//
-//procedure TestTHash_SHA3_224.SetUp;
-//var lDataRow:IHashTestDataRowSetup;
-//begin
-//  inherited;
-//  FHash := THash_SHA3_224.Create;
-//
-////  lDataRow := FTestData.AddRow;
-////  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
-////  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-////  lDataRow.AddInputVector('');
-////  lDataRow.FinalBitLength := 0;
-////  lDataRow.PaddingByte    := 0;
-////
-////  lDataRow := FTestData.AddRow;
-////  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-////  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-////  lDataRow.AddInputVector(#$13);
-////  lDataRow.FinalBitLength := 5;
-////  lDataRow.PaddingByte    := $13;
-//
-//{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
+{ TestTHash_SHA3_224 }
+
+procedure TestTHash_SHA3_224.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_224(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_224(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
+procedure TestTHash_SHA3_224.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_224.Create;
+
 //  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-//  lDataRow.AddInputVector(#$53#$58#$7B#$19);
-//{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
-//  lDataRow.FinalBitLength := 6;
-//  lDataRow.PaddingByte    := $19;
-//end;
+//  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
+//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
+//  lDataRow.AddInputVector('');
+//  lDataRow.FinalBitLength := 0;
+//  lDataRow.PaddingByte    := 0;
 //
-//procedure TestTHash_SHA3_224.TestBlockSize;
-//begin
-//  CheckEquals(144, FHash.BlockSize);
-//end;
-//
-//procedure TestTHash_SHA3_224.TestClassByName;
-//begin
-//  DoTestClassByName('THash_SHA3_224', THash_SHA3_224);
-//end;
-//
-//procedure TestTHash_SHA3_224.TestDigestSize;
-//begin
-//  CheckEquals(28, FHash.DigestSize);
-//end;
-//
-//procedure TestTHash_SHA3_224.TestIdentity;
-//begin
-//  CheckEquals($D0579DA9, FHash.Identity);
-//end;
-//
-//procedure TestTHash_SHA3_224.TestIsPasswordHash;
-//begin
-//  CheckNotEquals(true, FHash.IsPasswordHash);
-//end;
-//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+//  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+//  lDataRow.AddInputVector(#$13);
+//  lDataRow.FinalBitLength := 5;
+//  lDataRow.PaddingByte    := $13;
+
+{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
+  lDataRow.FinalBitLength := 6;
+  lDataRow.PaddingByte    := $19;
+end;
+
+procedure TestTHash_SHA3_224.TestBlockSize;
+begin
+  CheckEquals(144, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_224.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_224', THash_SHA3_224);
+end;
+
+procedure TestTHash_SHA3_224.TestDigestSize;
+begin
+  CheckEquals(28, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_224.TestIdentity;
+begin
+  CheckEquals($D0579DA9, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_224.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
 //{ TestTHash_SHA3_256 }
 //
 //procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
@@ -4231,7 +4238,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA224);
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
-//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
 //  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
 //  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
 //  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
@@ -4275,7 +4282,7 @@ initialization
                             TestTHash_SHA224.Suite,
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
-//                            TestTHash_SHA3_224.Suite,
+                            TestTHash_SHA3_224.Suite,
 //                            TestTHash_SHA3_256.Suite,
 //                            TestTHash_SHA3_384.Suite,
 //                            TestTHash_SHA3_512.Suite,
