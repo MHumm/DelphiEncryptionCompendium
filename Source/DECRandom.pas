@@ -286,7 +286,11 @@ end;
 function RandomRawByteString(Size: Integer): RawByteString;
 begin
   SetLength(Result, Size);
+  {$IF CompilerVersion >= 17.0}
   RandomBuffer(Result[Low(Result)], Size);
+  {$ELSE}
+  RandomBuffer(Result[1], Size);
+  {$ENDIF}
 end;
 
 function RandomLong: UInt32;

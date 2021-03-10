@@ -160,7 +160,11 @@ begin
   if Assigned(Bytes) then
   begin
     SetLength(Result, length(Bytes));
+    {$IF CompilerVersion >= 17.0}
     Move(Bytes[0], Result[low(Result)], length(Bytes));
+    {$ELSE}
+    Move(Bytes[0], Result[1], length(Bytes));
+    {$ENDIF}
   end
   else
     Result := '';

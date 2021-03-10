@@ -319,11 +319,19 @@ begin
         for n := Low(Dest) to High(Dest) do
           Result := Result + IntToHex(Dest[n], 2);
 
+        {$IF CompilerVersion >= 17.0}
         for n := Low(Result) to High(Result) do
           CheckEquals(char(Data[i].OutputHex[n]), Result[n],
                       IntToStr(n+1) + '. position is wrong. ' +
                       IntToStr(i) + '. test series. Expected: ' +
                       string(Data[i].OutputHex) + ' was: ' + Result);
+        {$ELSE}
+        for n := 1 to Length(Result) do
+          CheckEquals(char(Data[i].OutputHex[n]), Result[n],
+                      IntToStr(n+1) + '. position is wrong. ' +
+                      IntToStr(i) + '. test series. Expected: ' +
+                      string(Data[i].OutputHex) + ' was: ' + Result);
+        {$ENDIF}
       end;
 
     finally

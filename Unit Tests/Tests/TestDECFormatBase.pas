@@ -258,6 +258,7 @@ var
   i : Integer;
   b, exp, res : Byte;
 begin
+  {$IF CompilerVersion >= 17.0}
   for i := Low(InputChars) to High(InputChars) do
   begin
     b   := ord(InputChars[i]);
@@ -266,6 +267,17 @@ begin
 
     CheckEquals(exp, res);
   end;
+
+  {$ELSE}
+  for i := 1 to Length(InputChars) do
+  begin
+    b   := ord(InputChars[i]);
+    exp := ord(OutputChars[i]);
+    res := TDECFormat.UpCaseBinary(b);
+
+    CheckEquals(exp, res);
+  end;
+  {$ENDIF}
 end;
 
 procedure TestTFormat.TestValidFormat;
