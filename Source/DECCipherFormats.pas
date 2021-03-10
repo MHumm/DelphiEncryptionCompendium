@@ -720,9 +720,15 @@ var
 begin
   if Length(Source) > 0 then
   begin
+    {$IF CompilerVersion >= 17.0}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
+    {$ELSE}
+    Len := Length(Source) * SizeOf(Source[1]);
+    SetLength(Result, Len);
+    Encode(Source[1], Result[0], Len);
+    {$ENDIF}
 
     Result := ValidFormat(Format).Encode(Result);
   end
@@ -736,9 +742,15 @@ var
 begin
   if Length(Source) > 0 then
   begin
+    {$IF CompilerVersion >= 17.0}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
+    {$ELSE}
+    Len := Length(Source) * SizeOf(Source[1]);
+    SetLength(Result, Len);
+    Encode(Source[1], Result[0], Len);
+    {$ENDIF}
 
     Result := ValidFormat(Format).Encode(Result);
   end
@@ -872,9 +884,15 @@ var
 begin
   if Length(Source) > 0 then
   begin
+    {$IF CompilerVersion >= 17.0}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
+    {$ELSE}
+    SourceSize := Length(Source) * SizeOf(Source[1]);
+    SetLength(EncryptedBuffer, SourceSize);
+    Encode(Source[1], EncryptedBuffer[0], SourceSize);
+    {$ENDIF}
 
     Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
   end
@@ -891,13 +909,23 @@ var
 begin
   if Length(Source) > 0 then
   begin
+    {$IF CompilerVersion >= 17.0}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
+    {$ELSE}
+    SourceSize := Length(Source) * SizeOf(Source[1]);
+    SetLength(EncryptedBuffer, SourceSize);
+    Encode(Source[1], EncryptedBuffer[0], SourceSize);
+    {$ENDIF}
 
     Temp   := ValidFormat(Format).Encode(EncryptedBuffer);
     SetLength(Result, length(Temp));
-    Move(Temp[0], Result[low(Result)], length(Temp));
+    {$IF CompilerVersion >= 17.0}
+    Move(Temp[0], Result[low(Result)], length(Temp))
+    {$ELSE}
+    Move(Temp[0], Result[1], length(Temp))
+    {$ENDIF}
   end
   else
     Result := '';
@@ -939,7 +967,12 @@ begin
     Decode(Src[0], Tmp[0], Len);
 
     SetLength(Result, length(Tmp));
-    Move(Tmp[0], Result[low(Result)], length(Tmp));
+
+    {$IF CompilerVersion >= 17.0}
+    Move(Tmp[0], Result[low(Result)], length(Tmp))
+    {$ELSE}
+    Move(Tmp[0], Result[1], length(Tmp))
+    {$ENDIF}
   end
   else
     SetLength(Result, 0);
@@ -970,7 +1003,12 @@ begin
     Decode(Src[0], Tmp[0], Len);
 
     SetLength(Result, length(Tmp));
-    Move(Tmp[0], Result[low(Result)], length(Tmp));
+
+    {$IF CompilerVersion >= 17.0}
+    Move(Tmp[0], Result[low(Result)], length(Tmp))
+    {$ELSE}
+    Move(Tmp[0], Result[1], length(Tmp))
+    {$ENDIF}
   end
   else
     SetLength(Result, 0);
