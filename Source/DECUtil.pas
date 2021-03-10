@@ -585,7 +585,11 @@ begin
   begin
     Stream.Position := Position;
     Size := SizeToProtect;
+    {$IF CompilerVersion >= 17.0}
     FillChar(Buffer[Low(Buffer)], BufferSize, WipeBytes[Count]);
+    {$ELSE}
+    FillChar(Buffer[1], BufferSize, WipeBytes[Count]);
+    {$ENDIF}
     while Size > 0 do
     begin
       Bytes := Size;
