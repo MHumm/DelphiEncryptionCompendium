@@ -104,10 +104,18 @@ var
   c: Cardinal;
 begin
   s := Input;
+  {$IF CompilerVersion >= 17.0}
   DECUtil.SwapBytes(s[Low(s)], Length(s));
+  {$ELSE}
+  DECUtil.SwapBytes(s[1], Length(s));
+  {$ENDIF}
   CheckEquals(Output, s);
 
+  {$IF CompilerVersion >= 17.0}
   DECUtil.SwapBytes(s[Low(s)], Length(s));
+  {$ELSE}
+  DECUtil.SwapBytes(s[1], Length(s));
+  {$ENDIF}
   CheckEquals(Input, s);
 
   c := 123456789;

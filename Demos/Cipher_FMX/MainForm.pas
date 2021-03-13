@@ -265,10 +265,10 @@ begin
   StringGridContext.Cells[0, 5] := 'Cipher mode';
   StringGridContext.Cells[0, 6] := 'Cipher key';
 
-  StringGridContext.Cells[1, 0] :=  (Context.KeySize*8).ToString;
-  StringGridContext.Cells[1, 1] :=  (Context.BlockSize*8).ToString;
-  StringGridContext.Cells[1, 2] :=  (Context.BufferSize*8).ToString;
-  StringGridContext.Cells[1, 3] :=  (Context.AdditionalBufferSize*8).ToString;
+  StringGridContext.Cells[1, 0] :=  IntToStr((Context.KeySize*8);
+  StringGridContext.Cells[1, 1] :=  IntToStr((Context.BlockSize*8);
+  StringGridContext.Cells[1, 2] :=  IntToStr((Context.BufferSize*8);
+  StringGridContext.Cells[1, 3] :=  IntToStr((Context.AdditionalBufferSize*8);
   StringGridContext.Cells[1, 4] :=  BoolToStr(Context.NeedsAdditionalBufferBackup, true);
 
   if ctBlock in Context.CipherType then

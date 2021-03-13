@@ -64,7 +64,7 @@ begin
     // null terminator.
     if CharLength >= MaxInt - SizeOf(StrRec) then
       raise EIntOverflow.Create(
-        'IntOverflow in _NewAnsiString. CharLength: ' + CharLength.ToString);
+        'IntOverflow in _NewAnsiString. CharLength: ' + IntToStr(CharLength));
 
     GetMem(P, CharLength + SizeOf(StrRec) + 1 + ((CharLength + 1) and 1));
     Result := Pointer(PByte(P) + SizeOf(StrRec));
@@ -95,7 +95,12 @@ begin
       {$IFDEF FPC}
       if InterlockedDecrement(P.refCnt) = 0 then
       {$ELSE}
-      if AtomicDecrement(P.refCnt) = 0 then
+        {$IF CompilerVersion >= 17.0}
+        if AtomicDecrement(P.refCnt) = 0 then
+        {$ELSE}
+        Dec(P.refCnt);
+        if (P.refCnt = 0) then
+        {$ENDIF}
       {$ENDIF}
         FreeMem(P);
     end;

@@ -579,9 +579,15 @@ begin
   begin
     if FTestData[i].Input <> '' then
     begin
+      {$IF CompilerVersion >= 17.0}
       CRC := CRC16(0,
                    FTestData[i].Input[low(FTestData[i].Input)],
                    length(FTestData[i].Input));
+      {$ELSE}
+      CRC := CRC16(0,
+                   FTestData[i].Input[1],
+                   length(FTestData[i].Input));
+      {$ENDIF}
 
       CheckEquals(FTestData[i].CRC, CRC,
                   'Wrong CRC16Standalone reult for iteration ' + IntToStr(i));
@@ -705,9 +711,15 @@ begin
   begin
     if FTestData[i].Input <> '' then
     begin
+      {$IF CompilerVersion >= 17.0}
       CRC := CRC32(0,
                    FTestData[i].Input[low(FTestData[i].Input)],
                    length(FTestData[i].Input));
+      {$ELSE}
+      CRC := CRC32(0,
+                   FTestData[i].Input[1],
+                   length(FTestData[i].Input));
+      {$ENDIF}
 
       CheckEquals(FTestData[i].CRC, CRC,
                   'Wrong CRC32Standalone reult for iteration ' + IntToStr(i));

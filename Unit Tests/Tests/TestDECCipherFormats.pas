@@ -160,7 +160,11 @@ begin
   if Assigned(Bytes) then
   begin
     SetLength(Result, length(Bytes));
+    {$IF CompilerVersion >= 17.0}
     Move(Bytes[0], Result[low(Result)], length(Bytes));
+    {$ELSE}
+    Move(Bytes[0], Result[1], length(Bytes));
+    {$ENDIF}
   end
   else
     Result := '';
@@ -180,7 +184,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeRawByteStringToBytes ' + i.ToString);
+                'Fehler in TestDecodeRawByteStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -203,7 +207,7 @@ begin
     ResStr := WideStringOf(result);
 
     ExpStr := string(FTestData[i].PlainTextData);
-    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeStringToBytes ' + i.ToString);
+    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -263,7 +267,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 AnsiStringOf(result),
-                'Fehler in TestDecodeAnsiStringToBytes ' + i.ToString);
+                'Fehler in TestDecodeAnsiStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -286,7 +290,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].PlainTextData),
                 result,
-                'Fehler in TestDecodeAnsiStringToString ' + i.ToString);
+                'Fehler in TestDecodeAnsiStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}
@@ -305,7 +309,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeBytes ' + i.ToString);
+                'Fehler in TestDecodeBytes ' + IntToStr(i));
   end;
 end;
 
@@ -328,7 +332,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 result,
-                'Fehler in TestDecodeRawByteStringToString ' + i.ToString);
+                'Fehler in TestDecodeRawByteStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -363,7 +367,7 @@ begin
 
         CheckEquals(FTestData[i].PlainTextData,
                     RawByteString(StringOf(result)),
-                    'Fehler in TestDecodeStream ' + i.ToString);
+                    'Fehler in TestDecodeStream ' + IntToStr(i));
       end;
 
     finally
