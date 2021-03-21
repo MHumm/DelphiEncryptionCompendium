@@ -538,9 +538,6 @@ end;
 
 class function TDECFormat.IsValid(const Text: RawByteString): Boolean;
 begin
-  Result := (Length(Text) = 0) or
-    (DoIsValid(Text[Low(Text)], Length(Text) * SizeOf(Text[Low(Text)])));
-
   {$IF CompilerVersion >= 17.0}
   Result := (Length(Text) = 0) or
     (DoIsValid(Text[Low(Text)], Length(Text) * SizeOf(Text[Low(Text)])));
