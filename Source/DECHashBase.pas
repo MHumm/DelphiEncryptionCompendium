@@ -595,7 +595,7 @@ var
       Carry := False;
 
     Value := Value + Add;
-    Carry := Carry or (Value < Add); // set Carry Flag on overflow
+    Carry := Carry or (Value < Add); // set Carry Flag on overflow or keep it if already set
   end;
 
 begin
