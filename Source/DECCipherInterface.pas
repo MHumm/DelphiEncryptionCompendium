@@ -24,7 +24,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECUtil, DECFormatBase;
+  DECUtil, DECCipherBase, DECFormatBase;
 
 type
   /// <summary>
@@ -461,6 +461,143 @@ type
     /// </remarks>
     function DecodeStringToString(const Source: WideString; Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}
+
+    /// <summary>
+    ///   Initializes the cipher with the necessary encryption/decryption key
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/decryption key. Recommended/required key length is dependant
+    ///   on the concrete algorithm.
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key in bytes
+    /// </param>
+    /// <param name="IVector">
+    ///   Initialization vector. This contains the values the first block of
+    ///   data to be processed is linked with. This is being done the same way
+    ///   as the 2nd block of the data to be processed will be linked with the
+    ///   first block and so on and this is dependant on the cypher mode set via
+    ///   Mode property
+    /// </param>
+    /// <param name="IVectorSize">
+    ///   Size of the initialization vector in bytes
+    /// </param>
+    /// <param name="IFiller">
+    ///   optional parameter defining the value with which the last block will
+    ///   be filled up if the size of the data to be processed cannot be divided
+    ///   by block size without reminder. Means: if the last block is not
+    ///   completely filled with data.
+    /// </param>
+    procedure Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte = $FF); overload;
+    /// <summary>
+    ///   Initializes the cipher with the necessary encryption/decryption key
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/decryption key. Recommended/required key length is dependant
+    ///   on the concrete algorithm.
+    /// </param>
+    /// <param name="IVector">
+    ///   Initialization vector. This contains the values the first block of
+    ///   data to be processed is linked with. This is being done the same way
+    ///   as the 2nd block of the data to be processed will be linked with the
+    ///   first block and so on and this is dependant on the cypher mode set via
+    ///   Mode property
+    /// </param>
+    /// <param name="IFiller">
+    ///   optional parameter defining the value with which the last block will
+    ///   be filled up if the size of the data to be processed cannot be divided
+    ///   by block size without reminder. Means: if the last block is not
+    ///   completely filled with data.
+    /// </param>
+    procedure Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF); overload;
+    /// <summary>
+    ///   Initializes the cipher with the necessary encryption/decryption key
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/decryption key. Recommended/required key length is dependant
+    ///   on the concrete algorithm.
+    /// </param>
+    /// <param name="IVector">
+    ///   Initialization vector. This contains the values the first block of
+    ///   data to be processed is linked with. This is being done the same way
+    ///   as the 2nd block of the data to be processed will be linked with the
+    ///   first block and so on and this is dependant on the cypher mode set via
+    ///   Mode property
+    /// </param>
+    /// <param name="IFiller">
+    ///   optional parameter defining the value with which the last block will
+    ///   be filled up if the size of the data to be processed cannot be divided
+    ///   by block size without reminder. Means: if the last block is not
+    ///   completely filled with data.
+    /// </param>
+    procedure Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF); overload;
+    {$IFDEF ANSISTRINGSUPPORTED}
+    /// <summary>
+    ///   Initializes the cipher with the necessary encryption/decryption key.
+    ///   Only for use with the classic desktop compilers.
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/decryption key. Recommended/required key length is dependant
+    ///   on the concrete algorithm.
+    /// </param>
+    /// <param name="IVector">
+    ///   Initialization vector. This contains the values the first block of
+    ///   data to be processed is linked with. This is being done the same way
+    ///   as the 2nd block of the data to be processed will be linked with the
+    ///   first block and so on and this is dependant on the cypher mode set via
+    ///   Mode property
+    /// </param>
+    /// <param name="IFiller">
+    ///   optional parameter defining the value with which the last block will
+    ///   be filled up if the size of the data to be processed cannot be divided
+    ///   by block size without reminder. Means: if the last block is not
+    ///   completely filled with data.
+    /// </param>
+    procedure Init(const Key: AnsiString; const IVector: AnsiString = ''; IFiller: Byte = $FF); overload;
+    {$ENDIF}
+    {$IFNDEF NEXTGEN}
+    /// <summary>
+    ///   Initializes the cipher with the necessary encryption/decryption key.
+    ///   Only for use with the classic desktop compilers.
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/decryption key. Recommended/required key length is dependant
+    ///   on the concrete algorithm.
+    /// </param>
+    /// <param name="IVector">
+    ///   Initialization vector. This contains the values the first block of
+    ///   data to be processed is linked with. This is being done the same way
+    ///   as the 2nd block of the data to be processed will be linked with the
+    ///   first block and so on and this is dependant on the cypher mode set via
+    ///   Mode property
+    /// </param>
+    /// <param name="IFiller">
+    ///   optional parameter defining the value with which the last block will
+    ///   be filled up if the size of the data to be processed cannot be divided
+    ///   by block size without reminder. Means: if the last block is not
+    ///   completely filled with data.
+    /// </param>
+    procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF); overload;
+    {$ENDIF}
+
+    /// <summary>
+    ///   Returns the currently set cipher block mode, means how blocks are
+    ///   linked to each other in order to avoid certain attacks.
+    /// </summary>
+    function GetMode: TCipherMode;
+
+    /// <summary>
+    ///   Sets the cipher mode, means how each block is being linked with his
+    ///   predecessor to avoid certain attacks
+    /// </summary>
+    procedure SetMode(Value: TCipherMode);
+
+    /// <summary>
+    ///   Mode used for padding data to be encrypted/decrypted. See TCipherMode.
+    /// </summary>
+    property Mode: TCipherMode
+      read   GetMode
+      write  SetMode;
   end;
 
 implementation
