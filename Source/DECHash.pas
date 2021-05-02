@@ -4556,14 +4556,14 @@ end;
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 begin
   if (DataSize > 0) then
-    inherited Calc(Data, DataSize)
+  begin
+    if (UInt32(DataSize) >= BlockSize) then
+      inherited Calc(Data, DataSize)
+    else
+      Absorb(Pointer(@Data), DataSize * 8);
+  end
   else
     FinalStep;
-
-//{ TODO :
-//Ändern! Wenn DataSize < PufferSize mindestens dann Absorb!
-//Oder evtl. ganz anders wie bei Wolfgang Erhardt }
-//  inherited;
 end;
 
 procedure THash_SHA3Base.FinalStep;
@@ -4735,10 +4735,7 @@ end;
 
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
 begin
-{ TODO : most likely not complete yet, what to do with the returnvalue?
-  DoDone also still missing... }
-  // Size is in bit and blocksize is not always the data size!!!
-
+  // Size is in bit and blocksize
   DoUpdate(@Buffer, BlockSize * 8);
 end;
 
