@@ -4519,6 +4519,7 @@ begin
     end
     else
     begin
+// der kommt hier nie vorbei, weil im geerbten Calc
       partialBlock := databitlen - i;
 
       if partialBlock + FSpongeState.bitsInQueue > FSpongeState.rate then
@@ -4555,6 +4556,9 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 begin
+// wenn das geerbte Calc aufgerufen wird muss danach geschaut werden ob alle
+// Daten verarbeitet wurden, da im Absorb Teil sonst das Else mit dem PartialBlock
+// nicht ausgeführt wird, was zu falschen Ergebnissen führt
   if (DataSize > 0) then
   begin
     if (UInt32(DataSize) >= BlockSize) then
@@ -4736,7 +4740,7 @@ end;
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
 begin
   // Size is in bit and blocksize
-  DoUpdate(@Buffer, BlockSize * 8);
+  DoUpdate(Buffer, BlockSize * 8);
 end;
 
 initialization
