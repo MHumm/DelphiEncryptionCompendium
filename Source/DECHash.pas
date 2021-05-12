@@ -4519,7 +4519,6 @@ begin
     end
     else
     begin
-// der kommt hier nie vorbei, weil im geerbten Calc
       partialBlock := databitlen - i;
 
       if partialBlock + FSpongeState.bitsInQueue > FSpongeState.rate then
@@ -4556,14 +4555,17 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 begin
-// wenn das geerbte Calc aufgerufen wird muss danach geschaut werden ob alle
-// Daten verarbeitet wurden, da im Absorb Teil sonst das Else mit dem PartialBlock
-// nicht ausgeführt wird, was zu falschen Ergebnissen führt
+  // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    if (UInt32(DataSize) >= BlockSize) then
-      inherited Calc(Data, DataSize)
-    else
+    while (UInt32(DataSize) >= BlockSize) do
+    begin
+      Absorb(Pointer(@Data), BlockSize * 8);
+      Dec(DataSize, BlockSize);
+    end;
+
+    // There's further data left
+    if (DataSize > 0) then
       Absorb(Pointer(@Data), DataSize * 8);
   end
   else
