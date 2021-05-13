@@ -490,9 +490,9 @@ begin
   if Length(Data) > 0 then
   begin
     {$IF CompilerVersion >= 17.0}
-    DoEncode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
+    DoDecode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
     {$ELSE}
-    DoEncode(Data[1], b, Length(Data) * SizeOf(Data[1]));
+    DoDecode(Data[1], b, Length(Data) * SizeOf(Data[1]));
     {$ENDIF}
     Result := BytesToRawString(b);
   end
