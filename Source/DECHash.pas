@@ -392,7 +392,7 @@ Or how to translate that into proper exception handling? }
     /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
     ///   times, only the last DataBitLen may be a non-multiple of 8
-    ///   (the corresponding byte} must be MSB aligned, i.e. in the
+    ///   (the corresponding byte) must be MSB aligned, i.e. in the
     ///   (databitlen and 7) most significant bits.
     /// </summary>
     /// <param name="data">
@@ -442,12 +442,18 @@ Or how to translate that into proper exception handling? }
     /// <summary>
     ///   Update final bits in LSB format, pad them, and compute the hash value
     /// </summary>
+    /// <param name="Bits">
+    ///   Value used for padding if the length of the message to be hashed
+    ///   is not a multiple of 8 bit bytes.
+    /// </param>
+    /// <param name="BitLen">
+    ///   Number of needed padding bits?
+    /// </param>
     /// <param name="HashValue">
     ///   The hash value which shall be updated by this method
     /// </param>
     function FinalBit_LSB(Bits: Byte; Bitlen: Int16;
-                          var HashValue: TSHA3Digest;
-                          BitCount: Integer): Integer;
+                          var HashValue: TSHA3Digest): Integer;
     /// <summary>
     ///   Final processing step if length of data to be calculated is 0
     /// </summary>
@@ -4089,7 +4095,7 @@ var
   round: integer;
 
 begin
-  {copyFromState(A, state)}
+  // copyFromState(A, state)
   Aba0 := state[ 0];
   Aba1 := state[ 1];
   Abe0 := state[ 2];
@@ -4143,7 +4149,7 @@ begin
 
   round := 0;
   while round < cKeccakNumberOfRounds do begin
-    {prepareTheta}
+    // prepareTheta
     BCa0 := Aba0 xor Aga0 xor Aka0 xor Ama0 xor Asa0;
     BCa1 := Aba1 xor Aga1 xor Aka1 xor Ama1 xor Asa1;
     BCe0 := Abe0 xor Age0 xor Ake0 xor Ame0 xor Ase0;
@@ -4155,7 +4161,7 @@ begin
     BCu0 := Abu0 xor Agu0 xor Aku0 xor Amu0 xor Asu0;
     BCu1 := Abu1 xor Agu1 xor Aku1 xor Amu1 xor Asu1;
 
-    {thetaRhoPiChiIota(round, A, E)}
+    // thetaRhoPiChiIota(round, A, E)
     Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
     Da1 := BCu1 xor BCe0;
     De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
@@ -4287,7 +4293,7 @@ begin
     Eso1 := BCo1 xor ((not BCu1) and BCa1);
     Esu1 := BCu1 xor ((not BCa1) and BCe1);
 
-    {prepareTheta}
+    // prepareTheta
     BCa0 := Eba0 xor Ega0 xor Eka0 xor Ema0 xor Esa0;
     BCa1 := Eba1 xor Ega1 xor Eka1 xor Ema1 xor Esa1;
     BCe0 := Ebe0 xor Ege0 xor Eke0 xor Eme0 xor Ese0;
@@ -4299,7 +4305,7 @@ begin
     BCu0 := Ebu0 xor Egu0 xor Eku0 xor Emu0 xor Esu0;
     BCu1 := Ebu1 xor Egu1 xor Eku1 xor Emu1 xor Esu1;
 
-    {thetaRhoPiChiIota(round+1, E, A)}
+    // thetaRhoPiChiIota(round+1, E, A)
     Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
     Da1 := BCu1 xor BCe0;
     De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
@@ -4433,7 +4439,7 @@ begin
     inc(round,2);
   end;
 
-  {copyToState(state, A)}
+  // copyToState(state, A)
   state[ 0] := Aba0;
   state[ 1] := Aba1;
   state[ 2] := Abe0;
@@ -4490,7 +4496,7 @@ procedure THash_SHA3Base.PadAndSwitchToSqueezingPhase;
 var
   i: integer;
 begin
-  // Note: the bits are numbered from 0=LSB to 7=MSB
+  // Note: the bits are numbered from 0 = LSB to 7 = MSB
   if (FSpongeState.bitsInQueue + 1 = FSpongeState.rate) then
   begin
     i := FSpongeState.bitsInQueue div 8;
@@ -4503,7 +4509,7 @@ begin
   begin
     i := FSpongeState.bitsInQueue div 8;
     FillChar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
-             FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8,0);
+             FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8, 0);
     FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
                                  (1 shl (FSpongeState.bitsInQueue and 7));
   end;
@@ -4537,6 +4543,7 @@ begin
     FSpongeState.error := 1;
     exit;
   end;
+
   i := 0;
   while i < outputLength do
   begin
@@ -4555,7 +4562,7 @@ begin
     move(FSpongeState.dataQueue[(FSpongeState.rate - FSpongeState.bitsAvailableForSqueezing) div 8],
          output[i div 8], partialBlock div 8);
     dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
-    inc(i,partialBlock);
+    inc(i, partialBlock);
   end;
 
   Result := 0;
@@ -4577,32 +4584,41 @@ begin
   for i := LaneCount-1 downto 0 do
   begin
     x0 := pI^;
-    inc(PByte(pI),sizeof(pI^));
+    inc(PByte(pI), sizeof(pI^));
+
     t := (x0 xor (x0 shr 1)) and $22222222;  x0 := x0 xor t xor (t shl 1);
     t := (x0 xor (x0 shr 2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl 2);
     t := (x0 xor (x0 shr 4)) and $00F000F0;  x0 := x0 xor t xor (t shl 4);
     t := (x0 xor (x0 shr 8)) and $0000FF00;  x0 := x0 xor t xor (t shl 8);
+
     x1 := pI^;
-    inc(PByte(pI),sizeof(pI^));
+    inc(PByte(pI), sizeof(pI^));
+
     t := (x1 xor (x1 shr 1)) and $22222222;  x1 := x1 xor t xor (t shl 1);
     t := (x1 xor (x1 shr 2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl 2);
     t := (x1 xor (x1 shr 4)) and $00F000F0;  x1 := x1 xor t xor (t shl 4);
     t := (x1 xor (x1 shr 8)) and $0000FF00;  x1 := x1 xor t xor (t shl 8);
-    pS^ := pS^ xor ((x0 and $0000FFFF) or (x1 shl 16)); inc(PByte(pS),sizeof(pS^));
-    pS^ := pS^ xor ((x0 shr 16) or (x1 and xFFFF0000)); inc(PByte(pS),sizeof(pS^));
+
+    pS^ := pS^ xor ((x0 and $0000FFFF) or (x1 shl 16));
+    inc(PByte(pS),sizeof(pS^));
+
+    pS^ := pS^ xor ((x0 shr 16) or (x1 and xFFFF0000));
+    inc(PByte(pS),sizeof(pS^));
   end;
 end;
 
 function THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32): Int32;
 var
-  i, j, wholeBlocks, partialBlock: longint;
-  partialByte: integer;
-  curData: pByte;
+  i, j, wholeBlocks, partialBlock: Longint;
+  partialByte: Integer;
+  curData: PByte;
 begin
   Result := 1;
 
   if FSpongeState.error <> 0 then exit;
 
+  // if a number of bits which cannot be divided by 8 without reminder is in the
+  // queue or squeezing is not 0 this is an error
   if (FSpongeState.bitsInQueue and 7 <> 0) or (FSpongeState.squeezing <> 0) then
   begin
     // Only the last call may contain a partial byte
@@ -4612,12 +4628,12 @@ begin
   end;
 
   i := 0;
-  while i < databitlen do
+  while i < DatabitLen do
   begin
-    if ((FSpongeState.bitsInQueue=0) and (databitlen >= FSpongeState.rate) and
-        (i <= (databitlen-FSpongeState.rate))) then
+    if ((FSpongeState.bitsInQueue=0) and (DatabitLen >= FSpongeState.rate) and
+        (i <= (DatabitLen-FSpongeState.rate))) then
     begin
-      wholeBlocks := (databitlen-i) div FSpongeState.rate;
+      wholeBlocks := (DatabitLen-i) div FSpongeState.rate;
       curData := @TPBABytes(data)^[i div 8];
       j := 0;
       while j < wholeBlocks do begin
@@ -4629,14 +4645,16 @@ begin
     end
     else
     begin
-      partialBlock := databitlen - i;
+      partialBlock := DatabitLen - i;
 
       if partialBlock + FSpongeState.bitsInQueue > FSpongeState.rate then
         partialBlock := FSpongeState.rate - FSpongeState.bitsInQueue;
 
       partialByte := partialBlock and 7;
       dec(partialBlock, partialByte);
-      move(TPBABytes(data)^[i div 8], FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8], partialBlock div 8);
+      move(TPBABytes(data)^[i div 8],
+           FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8],
+           partialBlock div 8);
       inc(FSpongeState.bitsInQueue, partialBlock);
       inc(i, partialBlock);
 
@@ -4653,6 +4671,7 @@ begin
       end;
     end;
   end;
+
   Result := 0;
 end;
 
@@ -4689,15 +4708,17 @@ begin
   err := 1;
   if FSpongeState.error = 0 then
   begin
+{ TODO : This should not be possible as FSpongeState is zeroed in InitSponge only
+  but InitSponge is only called in the DoInit methods of the real SHA3 classes and
+  these set FixedOutputLength to their hash bit size directly afterwards}
     if FSpongeState.FixedOutputLength = 0 then
       err := 2 //SHA3_ERR_WRONG_FINAL
     else
-      err := FinalBit_LSB(0, 0, FDigest, FSpongeState.FixedOutputLength);
+      err := FinalBit_LSB(0, 0, FDigest);
   end;
   {Update error only with old error=0, i.e. do no reset a non-zero value}
   if FSpongeState.error = 0 then
     FSpongeState.error := err;
-//  SHA3_FinalHash := err;
 end;
 
 
@@ -4716,7 +4737,7 @@ begin
 //    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
 //    else
 
-    err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest, FSpongeState.FixedOutputLength);
+    err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
   if FSpongeState.error = 0 then
@@ -4733,8 +4754,7 @@ end;
 
 function THash_SHA3Base.DoUpdate(data: Pointer; DataBitLen: Int32):Integer;
 var
-  ret: integer;
-  lastByte: byte;
+  LastByte: Byte;
 begin
   if FSpongeState.error <> 0 then
   begin
@@ -4743,27 +4763,26 @@ begin
   end;
 
   if DataBitLen and 7 = 0 then
-    ret := Absorb(data, DataBitLen)
+    Result := Absorb(data, DataBitLen)
   else
   begin
-    ret := Absorb(data, DataBitLen - (DataBitLen and 7));
-    if ret=0 then
+    Result := Absorb(data, DataBitLen - (DataBitLen and 7));
+
+    if (Result = 0) then
     begin
       // Align the last partial byte to the least significant bits
-      lastByte := TPBABytes(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
-      ret := Absorb(@lastByte, DataBitLen and 7);
+      LastByte := TPBABytes(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+      Result   := Absorb(@LastByte, DataBitLen and 7);
     end
   end;
 
-  Result := ret;
-
-  // Update error only with old error=0, i.e. do no reset a non-zero value}
-  if FSpongeState.error = 0 then
-    FSpongeState.error := ret;
+  // Update error only when old error = 0, i.e. do not change a non-zero value
+  if (FSpongeState.error = 0) then
+    FSpongeState.error := Result;
 end;
 
 procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
-                                          laneCount: UInt16);
+                                          LaneCount: UInt16);
 var
   pI, pS    : PLongint;
   i         : Integer;
@@ -4774,7 +4793,8 @@ begin
    // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
    pI := outp;
    pS := @state[0];
-   for i:=laneCount-1 downto 0 do
+
+   for i := LaneCount-1 downto 0 do
    begin
      x0 := pS^; inc(PByte(pS),sizeof(pS^));
      x1 := pS^; inc(PByte(pS),sizeof(pS^));
@@ -4795,29 +4815,29 @@ begin
 end;
 
 function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: Int16;
-                                     var Hashvalue: TSHA3Digest; Bitcount: Integer): Integer;
+                                     var Hashvalue: TSHA3Digest): Integer;
 var
-  err, ll : Int16;
-  lw      : UInt16;
+  ll : Int16;
+  lw : UInt16;
 begin
   // normalize bitlen and bits (zero high bits)
-  bitlen := bitlen and 7;
-  if bitlen = 0 then
+  Bitlen := Bitlen and 7;
+  if Bitlen = 0 then
     lw := 0
   else
-    lw := bits and pred(word(1) shl bitlen);
+    lw := Bits and pred(word(1) shl Bitlen);
 
   // 'append' (in LSB language) the domain separation bits
-  if FSpongeState.FixedOutputLength = 0 then
+  if (FSpongeState.FixedOutputLength = 0) then
   begin
-    lw := lw or (word($F) shl bitlen);
-    ll := bitlen+4;
+    lw := lw or (word($F) shl Bitlen);
+    ll := Bitlen+4;
   end
   else
   begin
     // SHA3: append two bits 01
-    lw := lw or (word($2) shl bitlen);
-    ll := bitlen+2;
+    lw := lw or (word($2) shl Bitlen);
+    ll := Bitlen+2;
   end;
 
   // update state with final bits
@@ -4825,29 +4845,28 @@ begin
   begin
     // 0..8 bits, one call to update
     lw := lw shl (8-ll);
-    err := DoUpdate(@lw, ll);
+    Result := DoUpdate(@lw, ll);
     // squeeze the digits from the sponge
-    if err = 0 then
-      err := Squeeze(Hashvalue, Bitcount);
+    if Result = 0 then
+      Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
   end
   else
   begin
     // More than 8 bits, first a regular update with low byte
-    err := DoUpdate(@lw, 8);
-    if err=0 then
+    Result := DoUpdate(@lw, 8);
+    if Result = 0 then
     begin
       // Finally update remaining last bits
       dec(ll,8);
       lw := lw shr ll;
-      err := DoUpdate(@lw, ll);
-      if err = 0 then
-        err := Squeeze(Hashvalue, Bitcount);
+      Result := DoUpdate(@lw, ll);
+      if Result = 0 then
+        Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
     end;
   end;
 
-  Result := err;
   if FSpongeState.error = 0 then
-    FSpongeState.error := err;
+    FSpongeState.error := Result;
 end;
 
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
