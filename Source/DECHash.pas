@@ -246,42 +246,95 @@ type
     class function DigestSize: UInt32; override;
   end;
 
-/// <remarks>
-///   Not fully implemented yet
-/// </remarks>
+  /// <summary>
+  ///   Base class for tall SHA3 implementations
+  /// </summary>
   THash_SHA3Base = class(TDECHashAuthentication)
   public
     // Declarations for SHA3. Must be declared here to allow private methods
     // to use these types as well.
     const
       KeccakPermutationSize        = 1600;
+      /// <summary>
+      ///   Maximum bitrate? If yes this would be higher than any value listed here:
+      ///   https://keccak.team/keccak.html
+      /// </summary>
       KeccakMaximumRate            = 1536;
+      /// <summary>
+      ///   KeccakPermutationSize converted into bytes instead of bits
+      /// </summary>
       KeccakPermutationSizeInBytes = KeccakPermutationSize div 8;
+      /// <summary>
+      ///   KeccakMaximumRate converted into bytes instead of bits
+      /// </summary>
       KeccakMaximumRateInBytes     = KeccakMaximumRate div 8;
 
-      cKeccakNumberOfRounds = 24;
+      /// <summary>
+      ///   Number of times to run the algorithm on the data
+      /// </summary>
+      cKeccakNumberOfRounds        = 24;
     type
       TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of Byte;
       TState_L = packed array[0..(KeccakPermutationSizeInBytes) div 4 - 1] of Int32;
       TKDQueue = packed array[0..KeccakMaximumRateInBytes-1] of Byte;
 
+      /// <summary>
+      ///   Calculation status of the algorithm
+      /// </summary>
       TSpongeState = packed record
                        state                     : TState_B;
+                       /// <summary>
+                       ///   Data of the queue to be processed
+                       /// </summary>
                        dataQueue                 : TKDQueue;
+                       /// <summary>
+                       ///   Bitrate r of Keccak
+                       /// </summary>
                        rate                      : UInt16;
+                       /// <summary>
+                       ///   Capacity c of Keccak
+                       /// </summary>
                        capacity                  : UInt16;
+                       /// <summary>
+                       ///   How many bits are in the queue
+                       /// </summary>
                        bitsInQueue               : UInt16;
+                       /// <summary>
+                       ///   Length of the hash value to generate in bit
+                       /// </summary>
                        FixedOutputLength         : UInt16;
+                       /// <summary>
+                       ///   Number of bits which can be squeezed
+                       /// </summary>
                        bitsAvailableForSqueezing : UInt16;
                        squeezing                 : UInt16;
+                       /// <summary>
+                       ///   If an operation fails it sets this error code
+                       /// </summary>
+{ TODO :
+How to handle this? If Error <> 0 certain calls are skipped.
+Can the result still be a valid hash value?
+Or how to translate that into proper exception handling? }
                        Error                     : Int16;
     //                   Fill3: packed array[407..HASHCTXSIZE] of byte;
                      end;
 
-      TBABytes = array[0..$FFF0-1] of byte;
+      /// <summary>
+      ///   Buffer type
+      /// </summary>
+      TBABytes = array[0..MaxLongint-1] of UInt8;
+      /// <summary>
+      ///   Pointer to a buffer
+      /// </summary>
       TPBABytes = ^TBABytes;
-      TSHA3Digest = array[0..$FFF0-1] of byte;
+      /// <summary>
+      ///   Type for the generated hash value
+      /// </summary>
+      TSHA3Digest = array[0..63] of UInt8;
   strict private
+    /// <summary>
+    ///   The generated hash value is stored here
+    /// </summary>
     FDigest      : TSHA3Digest;
 
     /// <summary>
@@ -293,26 +346,49 @@ type
     ///   Byte used for padding in case of specifying a final bit length which
     ///   is not an exact multiple of bytes.
     /// </summary>
-    FPaddingByte : Byte;
+    FPaddingByte : UInt8;
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
     /// </summary>
-    function Absorb(data: pointer; databitlen: Int32): Integer;
+    /// <param name="Data">
+    ///   Pointer to the data to work on
+    /// </param>
+    /// <param name="DatabitLen">
+    ///   Lengtho of the data passed via the pointer in bit
+    /// </param>
+    function Absorb(Data: Pointer; DatabitLen: Int32): Int32;
 
     /// <summary>
     ///   Absorb remaining bits from queue
     /// </summary>
     procedure AbsorbQueue;
 
-    procedure KeccakAbsorb(var state: TState_B; data: pointer; laneCount: Integer);
-
-    procedure KeccakPermutation(var state: TState_L);
+    /// <summary>
+    ///   Carries out the XorIntoState and the permutation
+    /// </summary>
+    /// <param name="State">
+    ///   State of the algorithm which gets modified by the permutation in this method
+    /// </param>
+    /// <param name="Data">
+    ///   Pointer to the data to operate on
+    /// </param>
+    /// <param name="LaneCount">
+    ///   Number of times the loop in this algorithm has tpo be carried out
+    /// </param>
+    procedure KeccakAbsorb(var State: TState_B; Data: Pointer; LaneCount: UInt16);
+    /// <summary>
+    ///   Permutates the values in the passed state
+    /// </summary>
+    /// <param name="State">
+    ///   State to permutate
+    /// </param>
+    procedure KeccakPermutation(var State: TState_L);
 
     /// <summary>
     ///   Include input message data bits into the sponge state
     /// </summary>
-    procedure xorIntoState(var state: TState_L; inp: pointer; laneCount: Integer);
+    procedure XorIntoState(var State: TState_L; Inp: Pointer; LaneCount: UInt16);
     /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
     ///   times, only the last DataBitLen may be a non-multiple of 8
@@ -342,28 +418,45 @@ type
     ///   0 if successful, 1 otherwise.
     /// </returns>
     function Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
-
+    /// <summary>
+    ///   The algorithm starts in the absorb phase (one puts data into the sponge)
+    ///   and ends with the squeze phase (one squeezes the sponge) and this method
+    ///   does everything needed at the transition point between these two phases
+    /// </summary>
     procedure PadAndSwitchToSqueezingPhase;
-    procedure ExtractFromState(outp: pointer; const state: TState_L; laneCount: Int16);
 
     /// <summary>
-    ///   Update final bits in LSB format, pad, and compute hashval
+    ///   ???
     /// </summary>
-    function FinalBit_LSB(bits: Byte; bitlen: Int16; var hashval: TSHA3Digest; numbits: Integer): Integer;
+    /// <param name="Outp">
+    ///   Pointer where the output will be stored in
+    /// </param>
+    /// <param name="State">
+    ///   State to work on
+    /// </param>
+    /// <param name="LaneCount">
+    ///   Number of iterations
+    /// </param>
+    procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: UInt16);
+
+    /// <summary>
+    ///   Update final bits in LSB format, pad them, and compute the hash value
+    /// </summary>
+    /// <param name="HashValue">
+    ///   The hash value which shall be updated by this method
+    /// </param>
+    function FinalBit_LSB(Bits: Byte; Bitlen: Int16;
+                          var HashValue: TSHA3Digest;
+                          BitCount: Integer): Integer;
     /// <summary>
     ///   Final processing step if length of data to be calculated is 0
     /// </summary>
     procedure FinalStep;
   strict protected
     /// <summary>
-    ///   Contains the current state of the algorithm/sponge part
+    ///   Contains the current state of the algorithms sponge part
     /// </summary>
     FSpongeState : TSpongeState;
-
-    /// <summary>
-    ///   Set by some methods and if set to <> 0 certain calls will be skipped
-    /// </summary>
-    FLastError   : SmallInt;
 
     /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
@@ -384,8 +477,17 @@ type
     /// </param>
     procedure InitSponge(rate, capacity: integer);
 
+    /// <summary>
+    ///   Init internal data
+    /// </summary>
     procedure DoInit; override;
+    /// <summary>
+    ///   Dummy method to avoid the compiler warning about a class with abstract method
+    /// </summary>
     procedure DoTransform(Buffer: PUInt32Array); override;
+    /// <summary>
+    ///   Final step of the calculation
+    /// </summary>
     procedure DoDone; override;
   public
     /// <summary>
@@ -398,7 +500,12 @@ type
     ///   Size of the data in bytes
     /// </param>
     procedure Calc(const Data; DataSize: Integer); override;
-
+    /// <summary>
+    ///   Returns the calculated hash value
+    /// </summary>
+    /// <returns>
+    ///   Hash value calculated
+    /// </returns>
     function Digest: PByteArray; override;
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
@@ -416,9 +523,9 @@ type
       write  FPaddingByte;
   end;
 
-/// <remarks>
-///   Not fully implemented yet
-/// </remarks>
+  /// <summary>
+  ///   224 bit SHA3 variant
+  /// </summary>
   THash_SHA3_224 = class(THash_SHA3Base)
   protected
     procedure DoInit; override;
@@ -427,38 +534,38 @@ type
     class function DigestSize: UInt32; override;
   end;
 
-///// <remarks>
-/////   Not fully implemented yet
-///// </remarks>
-//  THash_SHA3_256 = class(THash_SHA3Base)
-//  protected
-//    procedure DoInit; override;
-//  public
-//    class function BlockSize: UInt32; override;
-//    class function DigestSize: UInt32; override;
-//  end;
-//
-///// <remarks>
-/////   Not fully implemented yet
-///// </remarks>
-//  THash_SHA3_384 = class(THash_SHA3Base)
-//  protected
-//    procedure DoInit; override;
-//  public
-//    class function BlockSize: UInt32; override;
-//    class function DigestSize: UInt32; override;
-//  end;
-//
-///// <remarks>
-/////   Not fully implemented yet
-///// </remarks>
-//  THash_SHA3_512 = class(THash_SHA3Base)
-//  protected
-//    procedure DoInit; override;
-//  public
-//    class function BlockSize: UInt32; override;
-//    class function DigestSize: UInt32; override;
-//  end;
+  /// <summary>
+  ///   256 bit SHA3 variant
+  /// </summary>
+  THash_SHA3_256 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   384 bit SHA3 variant
+  /// </summary>
+  THash_SHA3_384 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   512 bit SHA3 variant
+  /// </summary>
+  THash_SHA3_512 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
 
   THavalBaseTransformMethod = procedure(Buffer: PUInt32Array) of object;
 
@@ -836,7 +943,10 @@ const
   cTigerMaxRounds = 32;
 
 resourcestring
-  sHashInitFailure = 'Invalid algorithm initialization parameters specified: %0:s';
+  /// <summary>
+  ///   Failure message when a hash algorithm is initialized with wrong parameters
+  /// </summary>
+  sHashInitFailure = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
 
 { THash_MD2 }
 
@@ -3864,90 +3974,88 @@ begin
   FSpongeState.FixedOutputLength := 224;
 end;
 
-//{ THash_SHA3_256 }
-//
-//class function THash_SHA3_256.BlockSize: UInt32;
-//begin
-//  Result := 136;
-//end;
-//
-//class function THash_SHA3_256.DigestSize: UInt32;
-//begin
-//  Result := 32;
-//end;
-//
-//procedure THash_SHA3_256.DoInit;
-//begin
-//  inherited;
-//
-//  InitSponge(1088,  512);
-//  FSpongeState.fixedOutputLength := 256;
-//end;
-//
-//{ THash_SHA3_384 }
-//
-//class function THash_SHA3_384.BlockSize: UInt32;
-//begin
-//  Result := 104;
-//end;
-//
-//class function THash_SHA3_384.DigestSize: UInt32;
-//begin
-//  Result := 48;
-//end;
-//
-//procedure THash_SHA3_384.DoInit;
-//begin
-//  inherited;
-//
-//  InitSponge(832,  768);
-//  FSpongeState.fixedOutputLength := 384;
-//end;
-//
-//{ THash_SHA3_512 }
-//
-//class function THash_SHA3_512.BlockSize: UInt32;
-//begin
-//  Result := 72;
-//end;
-//
-//class function THash_SHA3_512.DigestSize: UInt32;
-//begin
-//  Result := 64;
-//end;
-//
-//procedure THash_SHA3_512.DoInit;
-//begin
-//  inherited;
-//
-//  InitSponge(576, 1024);
-//  FSpongeState.fixedOutputLength := 512;
-//end;
+{ THash_SHA3_256 }
+
+class function THash_SHA3_256.BlockSize: UInt32;
+begin
+  Result := 136;
+end;
+
+class function THash_SHA3_256.DigestSize: UInt32;
+begin
+  Result := 32;
+end;
+
+procedure THash_SHA3_256.DoInit;
+begin
+  inherited;
+
+  InitSponge(1088,  512);
+  FSpongeState.fixedOutputLength := 256;
+end;
+
+{ THash_SHA3_384 }
+
+class function THash_SHA3_384.BlockSize: UInt32;
+begin
+  Result := 104;
+end;
+
+class function THash_SHA3_384.DigestSize: UInt32;
+begin
+  Result := 48;
+end;
+
+procedure THash_SHA3_384.DoInit;
+begin
+  inherited;
+
+  InitSponge(832,  768);
+  FSpongeState.fixedOutputLength := 384;
+end;
+
+{ THash_SHA3_512 }
+
+class function THash_SHA3_512.BlockSize: UInt32;
+begin
+  Result := 72;
+end;
+
+class function THash_SHA3_512.DigestSize: UInt32;
+begin
+  Result := 64;
+end;
+
+procedure THash_SHA3_512.DoInit;
+begin
+  inherited;
+
+  InitSponge(576, 1024);
+  FSpongeState.fixedOutputLength := 512;
+end;
 
 { THash_SHA3Base }
 
 procedure THash_SHA3Base.InitSponge(rate, capacity: Integer);
 begin
-  {This is the only place where state.error is reset to 0 = SUCCESS}
-  FillChar(FSpongeState, sizeof(FSpongeState),0);
+  // This is the only place where state.error is reset to 0 = SUCCESS
+  FillChar(FSpongeState, SizeOf(FSpongeState), 0);
+
   if (rate + capacity <> 1600) or (rate <= 0) or (rate >= 1600) or
      ((rate and 63) <> 0) then
-  begin
-    raise EDECHashException.CreateFmt(sHashInitFailure, ['rate: ' + IntToStr(rate) +
+    raise EDECHashException.CreateFmt(sHashInitFailure, ['SHA3',
+                                                         'rate: ' + IntToStr(rate) +
                                                          ' capacity: ' + IntToStr(capacity)]);
-//    state.error := 1;
-//    exit;
-  end;
+
   FSpongeState.rate     := rate;
   FSpongeState.capacity := capacity;
-  FLastError := 0;
 end;
 
-procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: pointer;
-  laneCount: Integer);
+procedure THash_SHA3Base.KeccakAbsorb(var State: TState_B; Data: Pointer;
+                                      LaneCount: UInt16);
 begin
-  xorIntoState(TState_L(state),data,laneCount);
-  KeccakPermutation(TState_L(state));
+  xorIntoState(TState_L(State), Data, LaneCount);
+  KeccakPermutation(TState_L(State));
 end;
 
 procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
@@ -4382,19 +4490,19 @@ procedure THash_SHA3Base.PadAndSwitchToSqueezingPhase;
 var
   i: integer;
 begin
-  {Note: the bits are numbered from 0=LSB to 7=MSB}
+  // Note: the bits are numbered from 0=LSB to 7=MSB
   if (FSpongeState.bitsInQueue + 1 = FSpongeState.rate) then
   begin
     i := FSpongeState.bitsInQueue div 8;
     FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
                                  (1 shl (FSpongeState.bitsInQueue and 7));
     AbsorbQueue;
-    fillchar(FSpongeState.dataQueue, FSpongeState.rate div 8, 0);
+    FillChar(FSpongeState.dataQueue, FSpongeState.rate div 8, 0);
   end
   else
   begin
     i := FSpongeState.bitsInQueue div 8;
-    fillchar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
+    FillChar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
              FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8,0);
     FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
                                  (1 shl (FSpongeState.bitsInQueue and 7));
@@ -4419,6 +4527,7 @@ begin
   Result := 1;
   if FSpongeState.error <> 0 then
     exit; // No further action
+
   if FSpongeState.squeezing = 0 then
     PadAndSwitchToSqueezingPhase;
 
@@ -4452,8 +4561,9 @@ begin
   Result := 0;
 end;
 
-procedure THash_SHA3Base.xorIntoState(var state: TState_L; inp: pointer;
-  laneCount: Integer);
+procedure THash_SHA3Base.xorIntoState(var State: TState_L;
+                                      Inp: Pointer;
+                                      LaneCount: UInt16);
 var
   t, x0, x1 : Int32;
   pI, pS    : PLongint;
@@ -4462,9 +4572,10 @@ const
   xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
 begin
   // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
-  pI := inp;
-  pS := @state[0];
-  for i:=laneCount-1 downto 0 do begin
+  pI := Inp;
+  pS := @State[0];
+  for i := LaneCount-1 downto 0 do
+  begin
     x0 := pI^;
     inc(PByte(pI),sizeof(pI^));
     t := (x0 xor (x0 shr 1)) and $22222222;  x0 := x0 xor t xor (t shl 1);
@@ -4482,8 +4593,7 @@ begin
   end;
 end;
 
-function THash_SHA3Base.Absorb(data: pointer;
-  databitlen: Int32): Integer;
+function THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32): Int32;
 var
   i, j, wholeBlocks, partialBlock: longint;
   partialByte: integer;
@@ -4652,19 +4762,20 @@ begin
     FSpongeState.error := ret;
 end;
 
-procedure THash_SHA3Base.ExtractFromState(outp: pointer; const state: TState_L;
-  laneCount: Int16);
+procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
+                                          laneCount: UInt16);
 var
-  pI, pS: PLongint;
-  i: integer;
-  t,x0,x1: longint;
+  pI, pS    : PLongint;
+  i         : Integer;
+  t, x0, x1 : Longint;
 const
   xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
 begin
    // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
    pI := outp;
    pS := @state[0];
-   for i:=laneCount-1 downto 0 do begin
+   for i:=laneCount-1 downto 0 do
+   begin
      x0 := pS^; inc(PByte(pS),sizeof(pS^));
      x1 := pS^; inc(PByte(pS),sizeof(pS^));
      t  := (x0 and $0000FFFF) or (x1 shl 16);
@@ -4683,8 +4794,8 @@ begin
    end;
 end;
 
-function THash_SHA3Base.FinalBit_LSB(bits: Byte; bitlen: Int16;
-  var hashval: TSHA3Digest; numbits: Integer): Integer;
+function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: Int16;
+                                     var Hashvalue: TSHA3Digest; Bitcount: Integer): Integer;
 var
   err, ll : Int16;
   lw      : UInt16;
@@ -4717,7 +4828,7 @@ begin
     err := DoUpdate(@lw, ll);
     // squeeze the digits from the sponge
     if err = 0 then
-      err := Squeeze(hashval, numbits);
+      err := Squeeze(Hashvalue, Bitcount);
   end
   else
   begin
@@ -4730,7 +4841,7 @@ begin
       lw := lw shr ll;
       err := DoUpdate(@lw, ll);
       if err = 0 then
-        err := Squeeze(hashval, numbits);
+        err := Squeeze(Hashvalue, Bitcount);
     end;
   end;
 
@@ -4741,8 +4852,8 @@ end;
 
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
 begin
-  // Size is in bit and blocksize
-  DoUpdate(Buffer, BlockSize * 8);
+// Empty on purpose as calculation is implemented differently for SHA3. Needed
+// to suppress the compiler warning that a class with an abstract method is created
 end;
 
 initialization
@@ -4764,9 +4875,9 @@ initialization
   THash_SHA384.RegisterClass(TDECHash.ClassList);
   THash_SHA512.RegisterClass(TDECHash.ClassList);
   THash_SHA3_224.RegisterClass(TDECHash.ClassList);
-//  THash_SHA3_256.RegisterClass(TDECHash.ClassList);
-//  THash_SHA3_384.RegisterClass(TDECHash.ClassList);
-//  THash_SHA3_512.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_256.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_384.RegisterClass(TDECHash.ClassList);
+  THash_SHA3_512.RegisterClass(TDECHash.ClassList);
   THash_Haval128.RegisterClass(TDECHash.ClassList);
   THash_Haval160.RegisterClass(TDECHash.ClassList);
   THash_Haval192.RegisterClass(TDECHash.ClassList);
