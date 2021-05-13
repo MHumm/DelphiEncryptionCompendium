@@ -379,7 +379,7 @@ begin
   result[43]:=$22;
   result[44]:=$27;
   result[45]:=$09;
-  result[47]:=$0A;
+  result[46]:=$0A;
   result[47]:=$0D;
   {$ENDIF}
 end;

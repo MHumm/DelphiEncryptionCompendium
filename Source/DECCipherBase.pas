@@ -224,12 +224,6 @@ type
     ///   This is the size of FData in byte
     /// </summary>
     FDataSize : Integer;
-
-    /// <summary>
-    ///   Sets the cipher mode, means how each block is being linked with his
-    ///   predecessor to avoid certain attacks
-    /// </summary>
-    procedure SetMode(Value: TCipherMode);
   strict protected
     /// <summary>
     ///   Padding mode used to concatenate/connect blocks in a block cipher
@@ -350,10 +344,22 @@ type
     /// </param>
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
     /// <summary>
-    ///   Securely fills the rocessing buffer with zeroes to make stealing data
+    ///   Securely fills the processing buffer with zeroes to make stealing data
     ///   from memory harder.
     /// </summary>
     procedure SecureErase; virtual;
+
+    /// <summary>
+    ///   Returns the currently set cipher block mode, means how blocks are
+    ///   linked to each other in order to avoid certain attacks.
+    /// </summary>
+    function GetMode: TCipherMode;
+
+    /// <summary>
+    ///   Sets the cipher mode, means how each block is being linked with his
+    ///   predecessor to avoid certain attacks
+    /// </summary>
+    procedure SetMode(Value: TCipherMode);
   public
     /// <summary>
     ///   List of registered DEC classes. Key is the Identity of the class.
@@ -662,7 +668,9 @@ type
     ///   algorithms. For this something from the last entrypted block (or for
     ///   the first block from the vector) is used in the encryption of the next
     ///   block. It may be XORed with the next block cipher text for instance.
-    ///   That data "going into the next block encryption" is this feedback array
+    ///   That data "going into the next block encryption" is stored in this
+    ///   feedback array. The size usually depends on the block size of the
+    ///   cipher algorithm.
     /// </summary>
     property Feedback: PByteArray
       read   FFeedback;
@@ -675,7 +683,7 @@ type
     ///   Mode used for padding data to be encrypted/decrypted. See TCipherMode.
     /// </summary>
     property Mode: TCipherMode
-      read   FMode
+      read   GetMode
       write  SetMode;
 
     /// <summary>
@@ -997,6 +1005,11 @@ begin
   end;
 end;
 
+function TDECCipher.GetMode: TCipherMode;
+begin
+  Result := FMode;
+end;
+
 function TDECCipher.EncodeBytes(const Source: TBytes; Format: TDECFormatClass = nil): TBytes;
 begin
   SetLength(Result, 0);
@@ -1048,7 +1061,7 @@ begin
     raise EDECException.CreateRes(@sInvalidMACMode)
   else
     Result := ValidFormat(Format).Encode(FBuffer^, FBufferSize);
-  { TODO : Wie umschreiben? EncodeBytes direkt kann so nicht aufgerufen werden }
+  { TODO : How to rewrite? EncodeBytes cannot be called directly like that }
 end;
 
 //function TDECCipher.CalcMACByte(Format: TDECFormatClass): TBytes;

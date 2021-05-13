@@ -335,62 +335,62 @@ type
     procedure TestIdentity;
   end;
 
-//  // Test methods for class THash_SHA3_256
-//  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-//  TestTHash_SHA3_256 = class(THash_TestBase)
-//  strict protected
-//    /// <summary>
-//    ///   Some tests need to set the SHA3 specific padding byte and final bit length
-//    ///   parameters
-//    /// </summary>
-//    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
-//  public
-//    procedure SetUp; override;
-//  published
-//    procedure TestDigestSize;
-//    procedure TestBlockSize;
-//    procedure TestIsPasswordHash;
-//    procedure TestClassByName;
-//    procedure TestIdentity;
-//  end;
-//
-//  // Test methods for class THash_SHA3_384
-//  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-//  TestTHash_SHA3_384 = class(THash_TestBase)
-//  strict protected
-//    /// <summary>
-//    ///   Some tests need to set the SHA3 specific padding byte and final bit length
-//    ///   parameters
-//    /// </summary>
-//    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
-//  public
-//    procedure SetUp; override;
-//  published
-//    procedure TestDigestSize;
-//    procedure TestBlockSize;
-//    procedure TestIsPasswordHash;
-//    procedure TestClassByName;
-//    procedure TestIdentity;
-//  end;
-//
-//  // Test methods for class THash_SHA3_512
-//  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-//  TestTHash_SHA3_512 = class(THash_TestBase)
-//  strict protected
-//    /// <summary>
-//    ///   Some tests need to set the SHA3 specific padding byte and final bit length
-//    ///   parameters
-//    /// </summary>
-//    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
-//  public
-//    procedure SetUp; override;
-//  published
-//    procedure TestDigestSize;
-//    procedure TestBlockSize;
-//    procedure TestIsPasswordHash;
-//    procedure TestClassByName;
-//    procedure TestIdentity;
-//  end;
+  // Test methods for class THash_SHA3_256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_256 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_SHA3_384
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_384 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_SHA3_512
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_SHA3_512 = class(THash_TestBase)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
 
   // Test methods for class THash_Haval128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -4016,16 +4016,49 @@ end;
 procedure TestTHash_SHA3_224.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
+  // All specified data sources are for the non unicode expected outputs
   inherited;
   FHash := THash_SHA3_224.Create;
 
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.AddInputVector('');
-//  lDataRow.FinalBitLength := 0;
-//  lDataRow.PaddingByte    := 0;
-//
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-224_Msg0.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
+  lDataRow.ExpectedOutputUTFStrTest := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
+  lDataRow.AddInputVector('');
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '9376816aba503f72f96ce7eb65ac095deee3be4bf9bbc2a1cb7e11e0';
+  lDataRow.ExpectedOutputUTFStrTest := '28a4a80fded04a676674687c8330422eedeb18c9dba976234a9e007a';
+  lDataRow.AddInputVector(RawByteString(
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+
+//  // No support for bit sized messages yet
 //  lDataRow := FTestData.AddRow;
 //  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
 //  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
@@ -4033,14 +4066,14 @@ begin
 //  lDataRow.FinalBitLength := 5;
 //  lDataRow.PaddingByte    := $13;
 
-{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-  lDataRow.AddInputVector(#$53#$58#$7B#$19);
-{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
-  lDataRow.FinalBitLength := 6;
-  lDataRow.PaddingByte    := $19;
+//{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+//  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+//  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+//{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
+//  lDataRow.FinalBitLength := 6;
+//  lDataRow.PaddingByte    := $19;
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
@@ -4068,152 +4101,243 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
-//{ TestTHash_SHA3_256 }
-//
-//procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
-//  IdxTestData: Integer);
-//begin
-//  inherited;
-//
-//  THash_SHA3_256(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-//  THash_SHA3_256(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
-//end;
-//
-//procedure TestTHash_SHA3_256.SetUp;
-//var lDataRow:IHashTestDataRowSetup;
-//begin
-//  inherited;
-//  FHash := THash_SHA3_256.Create;
-//
-//{ TODO : Testdata is known to be wrong }
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.AddInputVector('');
-//end;
-//
-//procedure TestTHash_SHA3_256.TestBlockSize;
-//begin
-//  CheckEquals(136, FHash.BlockSize);
-//end;
-//
-//procedure TestTHash_SHA3_256.TestClassByName;
-//begin
-//  DoTestClassByName('THash_SHA3_256', THash_SHA3_256);
-//end;
-//
-//procedure TestTHash_SHA3_256.TestDigestSize;
-//begin
-//  CheckEquals(32, FHash.DigestSize);
-//end;
-//
-//procedure TestTHash_SHA3_256.TestIdentity;
-//begin
-//  CheckEquals($71186A42, FHash.Identity);
-//end;
-//
-//procedure TestTHash_SHA3_256.TestIsPasswordHash;
-//begin
-//  CheckNotEquals(true, FHash.IsPasswordHash);
-//end;
-//
-//{ TestTHash_SHA3_384 }
-//
-//procedure TestTHash_SHA3_384.ConfigHashClass(HashClass: TDECHash;
-//  IdxTestData: Integer);
-//begin
-//  inherited;
-//
-//  THash_SHA3_384(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-//  THash_SHA3_384(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
-//end;
-//
-//procedure TestTHash_SHA3_384.SetUp;
-//var lDataRow:IHashTestDataRowSetup;
-//begin
-//  inherited;
-//  FHash := THash_SHA3_384.Create;
-//
-//{ TODO : Testdata is known to be wrong }
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.AddInputVector('');
-//end;
-//
-//procedure TestTHash_SHA3_384.TestBlockSize;
-//begin
-//  CheckEquals(104, FHash.BlockSize);
-//end;
-//
-//procedure TestTHash_SHA3_384.TestClassByName;
-//begin
-//  DoTestClassByName('THash_SHA3_384', THash_SHA3_384);
-//end;
-//
-//procedure TestTHash_SHA3_384.TestDigestSize;
-//begin
-//  CheckEquals(48, FHash.DigestSize);
-//end;
-//
-//procedure TestTHash_SHA3_384.TestIdentity;
-//begin
-//  CheckEquals($2B7A1F14, FHash.Identity);
-//end;
-//
-//procedure TestTHash_SHA3_384.TestIsPasswordHash;
-//begin
-//  CheckNotEquals(true, FHash.IsPasswordHash);
-//end;
-//
-//{ TestTHash_SHA3_512 }
-//
-//procedure TestTHash_SHA3_512.ConfigHashClass(HashClass: TDECHash;
-//  IdxTestData: Integer);
-//begin
-//  inherited;
-//
-//  THash_SHA3_512(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-//  THash_SHA3_512(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
-//end;
-//
-//procedure TestTHash_SHA3_512.SetUp;
-//var lDataRow:IHashTestDataRowSetup;
-//begin
-//  inherited;
-//  FHash := THash_SHA3_512.Create;
-//
-//{ TODO : Testdata is known to be wrong }
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f';
-//  lDataRow.AddInputVector('');
-//end;
-//
-//procedure TestTHash_SHA3_512.TestBlockSize;
-//begin
-//  CheckEquals(72, FHash.BlockSize);
-//end;
-//
-//procedure TestTHash_SHA3_512.TestClassByName;
-//begin
-//  DoTestClassByName('THash_SHA3_512', THash_SHA3_512);
-//end;
-//
-//procedure TestTHash_SHA3_512.TestDigestSize;
-//begin
-//  CheckEquals(64, FHash.DigestSize);
-//end;
-//
-//procedure TestTHash_SHA3_512.TestIdentity;
-//begin
-//  CheckEquals($17567DDA, FHash.Identity);
-//end;
-//
-//procedure TestTHash_SHA3_512.TestIsPasswordHash;
-//begin
-//  CheckNotEquals(true, FHash.IsPasswordHash);
-//end;
+{ TestTHash_SHA3_256 }
+
+procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_256(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_256(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
+procedure TestTHash_SHA3_256.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  // All specified data sources are for the non unicode expected outputs
+  inherited;
+  FHash := THash_SHA3_256.Create;
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-256_Msg0.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a';
+  lDataRow.ExpectedOutputUTFStrTest := 'a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a';
+  lDataRow.AddInputVector('');
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '79f38adec5c20307a98ef76e8324afbfd46cfd81b22e3973c65fa1bd9de31787';
+  lDataRow.ExpectedOutputUTFStrTest := '06ea5e186dab1b3f99bcf91918b53748367674c05baa627010fba06edb67f0ba';
+  lDataRow.AddInputVector(RawByteString(
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+end;
+
+procedure TestTHash_SHA3_256.TestBlockSize;
+begin
+  CheckEquals(136, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_256.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_256', THash_SHA3_256);
+end;
+
+procedure TestTHash_SHA3_256.TestDigestSize;
+begin
+  CheckEquals(32, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_256.TestIdentity;
+begin
+  CheckEquals($71186A42, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+{ TestTHash_SHA3_384 }
+
+procedure TestTHash_SHA3_384.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_384(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_384(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
+procedure TestTHash_SHA3_384.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_384.Create;
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-384_Msg0.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '0c63a75b845e4f7d01107d852e4c2485c51a50aaaa94fc61995e71bbee983a2ac3713831264adb47fb6bd1e058d5f004';
+  lDataRow.ExpectedOutputUTFStrTest := '0c63a75b845e4f7d01107d852e4c2485c51a50aaaa94fc61995e71bbee983a2ac3713831264adb47fb6bd1e058d5f004';
+  lDataRow.AddInputVector('');
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-384_1600.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '1881de2ca7e41ef95dc4732b8f5f002b189cc1e42b74168ed1732649ce1dbcdd76197a31fd55ee989f2d7050dd473e8f';
+  lDataRow.ExpectedOutputUTFStrTest := '50dd07a64dc6ff190db60e612d8511742baa8eb5a499a0a02e51cea3f4b922f8ecf72785dc0a2ef38230340378d3d104';
+  lDataRow.AddInputVector(RawByteString(
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+end;
+
+procedure TestTHash_SHA3_384.TestBlockSize;
+begin
+  CheckEquals(104, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_384.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_384', THash_SHA3_384);
+end;
+
+procedure TestTHash_SHA3_384.TestDigestSize;
+begin
+  CheckEquals(48, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_384.TestIdentity;
+begin
+  CheckEquals($2B7A1F14, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_384.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+{ TestTHash_SHA3_512 }
+
+procedure TestTHash_SHA3_512.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_SHA3_512(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
+  THash_SHA3_512(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+end;
+
+procedure TestTHash_SHA3_512.SetUp;
+var lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHA3_512.Create;
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-512_Msg0.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26';
+  lDataRow.ExpectedOutputUTFStrTest := 'a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26';
+  lDataRow.AddInputVector('');
+
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-512_1600.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'e76dfad22084a8b1467fcf2ffa58361bec7628edf5f3fdc0e4805dc48caeeca81b7c13c30adf52a3659584739a2df46be589c51ca1a4a8416df6545a1ce8ba00';
+  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0af2be3e9ad2cd7acb111757cb0c41b3564c0777847684435da78577781eef8e6a6652c9844a85882e0fa8b28';
+  lDataRow.AddInputVector(RawByteString(
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+end;
+
+procedure TestTHash_SHA3_512.TestBlockSize;
+begin
+  CheckEquals(72, FHash.BlockSize);
+end;
+
+procedure TestTHash_SHA3_512.TestClassByName;
+begin
+  DoTestClassByName('THash_SHA3_512', THash_SHA3_512);
+end;
+
+procedure TestTHash_SHA3_512.TestDigestSize;
+begin
+  CheckEquals(64, FHash.DigestSize);
+end;
+
+procedure TestTHash_SHA3_512.TestIdentity;
+begin
+  CheckEquals($17567DDA, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_512.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
 
 initialization
   // Register any test cases with the test runner
@@ -4283,9 +4407,9 @@ initialization
                             TestTHash_SHA384.Suite,
                             TestTHash_SHA512.Suite,
                             TestTHash_SHA3_224.Suite,
-//                            TestTHash_SHA3_256.Suite,
-//                            TestTHash_SHA3_384.Suite,
-//                            TestTHash_SHA3_512.Suite,
+                            TestTHash_SHA3_256.Suite,
+                            TestTHash_SHA3_384.Suite,
+                            TestTHash_SHA3_512.Suite,
                             TestTHash_Haval128.Suite,
                             TestTHash_Haval160.Suite,
                             TestTHash_Haval192.Suite,
