@@ -43,7 +43,8 @@ uses
   DECTypes in 'DECTypes.pas',
   DECUtil in 'DECUtil.pas',
   DECUtilRawByteStringHelper in 'DECUtilRawByteStringHelper.pas',
-  DECHashAuthentication in 'DECHashAuthentication.pas';
+  DECHashAuthentication in 'DECHashAuthentication.pas',
+  DECHashBitBase in 'DECHashBitBase.pas';
 
 begin
   try

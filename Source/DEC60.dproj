@@ -171,6 +171,7 @@
         <DCCReference Include="DECUtil.pas"/>
         <DCCReference Include="DECUtilRawByteStringHelper.pas"/>
         <DCCReference Include="DECHashAuthentication.pas"/>
+        <DCCReference Include="DECHashBitBase.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
         <None Include="BuildAll.cmd"/>

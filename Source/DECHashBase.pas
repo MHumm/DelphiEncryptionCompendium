@@ -714,7 +714,7 @@ begin
   if Length(Data) > 0 then
     Result := CalcBuffer(Data[0], Length(Data))
   else
-    Result := CalcBuffer(Data, Length(Data))
+    Result := CalcBuffer(Data, Length(Data));
 end;
 
 function TDECHash.CalcString(const Value: string; Format: TDECFormatClass): string;

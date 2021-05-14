@@ -513,7 +513,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="Data">
     ///   Data on which the hash value shall be calculated on
     /// </param>
-    /// <param name="DataSize">
+    /// <param name="DataSizeInBits">
     ///   Size of the data in bits
     /// </param>
     procedure CalcBits(const Data; DataSizeInBits: UInt32); override;
@@ -4723,29 +4723,27 @@ end;
 
 procedure THash_SHA3Base.CalcBits(const Data; DataSizeInBits: UInt32);
 var
-  DataPtr   : PByte;
-  RoundSize : UInt32;
+  DataPtr         : PByte;
   NearestByteSize : UInt32;
-const
-  // Maximum number of bytes one can process in one round
-  MaxRoundSize = MaxInt div 8;
 begin
   if (DataSizeInBits > 0) then
   begin
     DataPtr := PByte(@Data);
 
+    // Do we have enough data to operate on bytes?
     if (DataSizeInBits > 8) then
     begin
+      // Calculate the number of complete bytes contained in DataSizeInBits
       NearestByteSize := (DataSizeInBits div 8) * 8;
+      // Process those, move the pointer and calculate the remaining bits
       Calc(Data, NearestByteSize);
       Inc(DataPtr, NearestByteSize);
       Dec(DataSizeInBits, NearestByteSize shl 3);
     end;
 
-    while (DataSizeInBits > 0) do
-    begin
+    // if there are remaining bits process them
+    if (DataSizeInBits > 0) then
       Absorb(DataPtr, DataSizeInBits);
-    end;
   end
   else
     FinalStep;
