@@ -1,5 +1,5 @@
 DEC - Delphi Encryption Compendium
-Version 6.1
+Version 6.2
 
 Copyright (c) 2018 - 2020 Norman Gallery (ng931884 [at] gmx [dot] de)
 Copyright (c) 2016 - 2021 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
@@ -21,6 +21,7 @@ Kas Ob.
 jaclas
 mknox74
 EdAdvokat
+Michael II
 
 
                       *** Export/Import Controls ***

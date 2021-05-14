@@ -4683,19 +4683,28 @@ begin
 end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
+var
+  DataPtr   : Pointer;
+  RoundSize : UInt32;
+const
+  // Maximum number of bytes one can process in one round
+  MaxRoundSize = MaxInt div 8;
 begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
+    DataPtr := Pointer(@Data);
+
     while (UInt32(DataSize) >= BlockSize) do
     begin
-      Absorb(Pointer(@Data), BlockSize * 8);
-      Dec(DataSize, BlockSize);
-    end;
+      RoundSize := DataSize;
+      if (RoundSize > MaxRoundSize) then
+        RoundSize := MaxRoundSize;
 
-    // There's further data left
-    if (DataSize > 0) then
-      Absorb(Pointer(@Data), DataSize * 8);
+      Absorb(DataPtr, RoundSize * 8);
+      Dec(DataSize, RoundSize);
+      DataPtr := Pointer(NativeUInt(DataPtr) + RoundSize);
+    end;
   end
   else
     FinalStep;
