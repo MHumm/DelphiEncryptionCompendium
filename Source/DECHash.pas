@@ -31,7 +31,8 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication, DECTypes;
+  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication,
+  DECHashBitBase, DECTypes;
 
 type
   // Hash Classes
@@ -249,7 +250,7 @@ type
   /// <summary>
   ///   Base class for tall SHA3 implementations
   /// </summary>
-  THash_SHA3Base = class(TDECHashAuthentication)
+  THash_SHA3Base = class(TDECHashBit)
   public
     // Declarations for SHA3. Must be declared here to allow private methods
     // to use these types as well.
@@ -355,7 +356,7 @@ Or how to translate that into proper exception handling? }
     ///   Pointer to the data to work on
     /// </param>
     /// <param name="DatabitLen">
-    ///   Lengtho of the data passed via the pointer in bit
+    ///   Length of the data passed via the pointer in bit
     /// </param>
     function Absorb(Data: Pointer; DatabitLen: Int32): Int32;
 
@@ -506,6 +507,16 @@ Or how to translate that into proper exception handling? }
     ///   Size of the data in bytes
     /// </param>
     procedure Calc(const Data; DataSize: Integer); override;
+    /// <summary>
+    ///   Processes one chunk of data to be hashed.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data on which the hash value shall be calculated on
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the data in bits
+    /// </param>
+    procedure CalcBits(const Data; DataSizeInBits: UInt32); override;
     /// <summary>
     ///   Returns the calculated hash value
     /// </summary>
@@ -4684,7 +4695,7 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
-  DataPtr   : Pointer;
+  DataPtr   : PByte;
   RoundSize : UInt32;
 const
   // Maximum number of bytes one can process in one round
@@ -4693,9 +4704,9 @@ begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    DataPtr := Pointer(@Data);
+    DataPtr := PByte(@Data);
 
-    while (UInt32(DataSize) >= BlockSize) do
+    while (UInt32(DataSize) > 0) do
     begin
       RoundSize := DataSize;
       if (RoundSize > MaxRoundSize) then
@@ -4703,7 +4714,37 @@ begin
 
       Absorb(DataPtr, RoundSize * 8);
       Dec(DataSize, RoundSize);
-      DataPtr := Pointer(NativeUInt(DataPtr) + RoundSize);
+      Inc(DataPtr, RoundSize);
+    end;
+  end
+  else
+    FinalStep;
+end;
+
+procedure THash_SHA3Base.CalcBits(const Data; DataSizeInBits: UInt32);
+var
+  DataPtr   : PByte;
+  RoundSize : UInt32;
+  NearestByteSize : UInt32;
+const
+  // Maximum number of bytes one can process in one round
+  MaxRoundSize = MaxInt div 8;
+begin
+  if (DataSizeInBits > 0) then
+  begin
+    DataPtr := PByte(@Data);
+
+    if (DataSizeInBits > 8) then
+    begin
+      NearestByteSize := (DataSizeInBits div 8) * 8;
+      Calc(Data, NearestByteSize);
+      Inc(DataPtr, NearestByteSize);
+      Dec(DataSizeInBits, NearestByteSize shl 3);
+    end;
+
+    while (DataSizeInBits > 0) do
+    begin
+      Absorb(DataPtr, DataSizeInBits);
     end;
   end
   else

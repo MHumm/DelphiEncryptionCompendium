@@ -16,8 +16,10 @@
 *****************************************************************************}
 
 /// <summary>
-///   Base unit for all the hash algorithms. Contains implementation of the key
-///   deviation algorithms as well.
+///   Base unit for all the hash algorithms. The key deviation algorithms are
+///   in the DECHashAUthentication unit and hash algorithms which can process
+///   messages with a length specified in bits instead of whole bytes have
+///   to inherit from TDECHashBit
 /// </summary>
 unit DECHashBase;
 
@@ -39,11 +41,6 @@ type
   ///   registration mechanism
   /// </summary>
   TDECHashClass = class of TDECHash;
-
-  /// <summary>
-  ///   Type of the KDF variant
-  /// </summary>
-  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
 
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
