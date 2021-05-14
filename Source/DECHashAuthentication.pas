@@ -33,6 +33,11 @@ type
   TDECHashAuthenticationClass = class of TDECHashAuthentication;
 
   /// <summary>
+  ///   Type of the KDF variant
+  /// </summary>
+  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
+
+  /// <summary>
   ///   Class containing all the KDF, MGF, HMAC and PBKDF2 algorithms
   /// </summary>
   TDECHashAuthentication = class(TDECHash)
@@ -370,7 +375,8 @@ type
     ///   Size of the returned mask in bytes
     /// </param>
     /// <param name="Index">
-    ///
+    ///   Looks like this is a salt applied to each byte of output data?
+{ TODO : Clarify this parameter }
     /// </param>
     /// <returns>
     ///   Mask such that one cannot determine the data which had been given to

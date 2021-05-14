@@ -4014,7 +4014,10 @@ begin
 end;
 
 procedure TestTHash_SHA3_224.SetUp;
-var lDataRow:IHashTestDataRowSetup;
+var
+  lDataRow : IHashTestDataRowSetup;
+  i        : Integer;
+  s        : RawByteString;
 begin
   // All specified data sources are for the non unicode expected outputs
   inherited;
@@ -4068,18 +4071,14 @@ begin
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'f7fc914c8fe4827d866b02df2459840260f4adb0db4deb9fa661756c';
-  lDataRow.ExpectedOutputUTFStrTest := '0f1ad8cd5a85fe68319b67427e1f0b685498bc246a81a1f595c89e4e';
-  lDataRow.AddInputVector(RawByteString('e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823' +
-                                        'TurboMagic'));
+  lDataRow.ExpectedOutputUTFStrTest := 'e4d44bbda0b8fc8a73b421f6795c6380c0e21d50539a7b43c20a7529';
+
+   for i := 1 to 10 do
+      s := s + 'e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823';
+   s := s + 'TurboMagic';
+   s := s + s + s;
+
+  lDataRow.AddInputVector(s);
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 
