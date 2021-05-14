@@ -4058,6 +4058,14 @@ begin
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 
+  // "Source": https://emn178.github.io/online-tools/sha3_224.html
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '32eb6a4121daebe223db1987740814e1dd9d9ddbddfd466feff5c9b4';
+  lDataRow.ExpectedOutputUTFStrTest := '0f1ad8cd5a85fe68319b67427e1f0b685498bc246a81a1f595c89e4e';
+  lDataRow.AddInputVector(RawByteString('e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823'), 1, 10);
+  lDataRow.FinalBitLength := 0;
+  lDataRow.PaddingByte    := 0;
+
 //  // No support for bit sized messages yet
 //  lDataRow := FTestData.AddRow;
 //  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
