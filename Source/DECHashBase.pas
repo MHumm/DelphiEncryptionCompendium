@@ -98,7 +98,7 @@ type
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
-    FFinalBitLen : UInt16;
+    FFinalByteLength : UInt16;
     /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
     ///   to initialize the necessary data structures.
@@ -716,7 +716,7 @@ var
 begin
   Init;
 
-  if (FFinalBitLen = 0) or (BufferSize = 0) then
+  if (FFinalByteLength = 0) or (BufferSize = 0) then
     Calc(Buffer, BufferSize)
   else
     if (BufferSize > 0) then
@@ -812,7 +812,7 @@ begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
   // Last byte is incomplete so it mustn't be processed
-  if (FFinalBitLen > 0) then
+  if (FFinalByteLength > 0) then
     Dec(Size);
 
   Max := 0;
@@ -860,7 +860,7 @@ begin
     end;
 
     // Last byte is incomplete but algorithm may need its value for padding
-    if (FFinalBitLen > 0) then
+    if (FFinalByteLength > 0) then
       Stream.ReadBuffer(FFinalByte, 1);
 
     Done;

@@ -33,7 +33,7 @@ uses
   {$ENDIF}
   TestDECTestDataContainer,
   DECTypes, DECBaseClass, DECHash, DECHashBase, DECHashAuthentication, DECUtil,
-  DECFormatBase;
+  DECFormatBase, DECHashBitBase;
 
 type
   /// <summary>
@@ -3704,7 +3704,7 @@ begin
 
       // Last part of the test data are bits (relevant for SHA3)
       if FTestData[i].FinalBitLength > 0 then
-        Dec(BufLen);
+        Break;
 
       if length(Buf) > 0 then
       begin
@@ -3717,6 +3717,9 @@ begin
           HashClass.Calc(Buf, BufLen);
       end;
     end;
+
+    if FTestData[i].FinalBitLength > 0 then
+      Continue;
 
     HashClass.Done;
     HashResult := HashClass.DigestAsBytes;
@@ -4038,26 +4041,7 @@ begin
   lDataRow.ExpectedOutput           := '9376816aba503f72f96ce7eb65ac095deee3be4bf9bbc2a1cb7e11e0';
   lDataRow.ExpectedOutputUTFStrTest := '28a4a80fded04a676674687c8330422eedeb18c9dba976234a9e007a';
   lDataRow.AddInputVector(RawByteString(
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 
@@ -4082,12 +4066,16 @@ begin
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
   lDataRow.ExpectedOutputUTFStrTest := '3d0e88c1e4fe0f6577e921e50805155b0748b40a3ab368c96b63f686';
   lDataRow.AddInputVector(#$13);
   lDataRow.FinalBitLength := 5;
 
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
   lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed314ce743c5641cebe';
@@ -4151,26 +4139,7 @@ begin
   lDataRow.ExpectedOutput           := '79f38adec5c20307a98ef76e8324afbfd46cfd81b22e3973c65fa1bd9de31787';
   lDataRow.ExpectedOutputUTFStrTest := '06ea5e186dab1b3f99bcf91918b53748367674c05baa627010fba06edb67f0ba';
   lDataRow.AddInputVector(RawByteString(
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 end;
@@ -4230,26 +4199,7 @@ begin
   lDataRow.ExpectedOutput           := '1881de2ca7e41ef95dc4732b8f5f002b189cc1e42b74168ed1732649ce1dbcdd76197a31fd55ee989f2d7050dd473e8f';
   lDataRow.ExpectedOutputUTFStrTest := '50dd07a64dc6ff190db60e612d8511742baa8eb5a499a0a02e51cea3f4b922f8ecf72785dc0a2ef38230340378d3d104';
   lDataRow.AddInputVector(RawByteString(
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 end;
@@ -4309,26 +4259,7 @@ begin
   lDataRow.ExpectedOutput           := 'e76dfad22084a8b1467fcf2ffa58361bec7628edf5f3fdc0e4805dc48caeeca81b7c13c30adf52a3659584739a2df46be589c51ca1a4a8416df6545a1ce8ba00';
   lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0af2be3e9ad2cd7acb111757cb0c41b3564c0777847684435da78577781eef8e6a6652c9844a85882e0fa8b28';
   lDataRow.AddInputVector(RawByteString(
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 + // 200x $A3
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3));
+                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 end;
@@ -4382,9 +4313,9 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA512);
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_224);
-//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
-//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
-//  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
+  TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
   TDUnitX.RegisterTestFixture(TestTHash_Haval128);
   TDUnitX.RegisterTestFixture(TestTHash_Haval160);
   TDUnitX.RegisterTestFixture(TestTHash_Haval192);

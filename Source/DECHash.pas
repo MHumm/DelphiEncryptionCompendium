@@ -444,10 +444,6 @@ Or how to translate that into proper exception handling? }
     /// </param>
     function FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
                           var HashValue: TSHA3Digest): Integer;
-    /// <summary>
-    ///   Final processing step if length of data to be calculated is 0
-    /// </summary>
-    procedure FinalStep;
   strict protected
     /// <summary>
     ///   Contains the current state of the algorithms sponge part
@@ -4662,7 +4658,6 @@ procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
   DataPtr   : PByte;
   RoundSize : UInt32;
-  EndValue  : Byte;
 const
   // Maximum number of bytes one can process in one round
   MaxRoundSize = MaxInt div 8;
@@ -4671,15 +4666,6 @@ begin
   if (DataSize > 0) then
   begin
     DataPtr := PByte(@Data);
-
-//    // when the message to be processed is not a multiple of complete bytes
-//    // (e.g. length is 5 bit or 30 bit) we need to process the message except
-//    // for the last byte. The last byte has to be processed separately after
-//    // the loop in that case.
-//    if FFinalBitLen = 0 then
-//      EndValue := 0
-//    else
-//      EndValue := 1;
 
     while (UInt32(DataSize) > 0) do
     begin
@@ -4692,32 +4678,7 @@ begin
       Inc(DataPtr, RoundSize);
     end;
 
-//    // Treat last byte of messages not being an exact multiple of bytes
-//    if (EndValue = 1) then
-//      FinalBit_LSB(DataPtr^, FFinalBitLen, FDigest);
-  end
-//  else
-//    FinalStep;
-end;
-
-procedure THash_SHA3Base.FinalStep;
-var
-  err: integer;
-begin
-  err := 1;
-  if FSpongeState.error = 0 then
-  begin
-{ TODO : This should not be possible as FSpongeState is zeroed in InitSponge only
-  but InitSponge is only called in the DoInit methods of the real SHA3 classes and
-  these set FixedOutputLength to their hash bit size directly afterwards}
-    if FSpongeState.FixedOutputLength = 0 then
-      err := 2 //SHA3_ERR_WRONG_FINAL
-    else
-      err := FinalBit_LSB(0, 0, FDigest);
   end;
-  {Update error only with old error=0, i.e. do no reset a non-zero value}
-  if FSpongeState.error = 0 then
-    FSpongeState.error := err;
 end;
 
 function THash_SHA3Base.Digest: PByteArray;
@@ -4740,7 +4701,7 @@ CHeck what to do. The padding byte for SHA3 is the last byte
 of the message filled up by a special algorithm. We just might
 not have the last byte available here... }
     //err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
-    err := FinalBit_LSB(FFinalByte, FFinalBitLen, FDigest);
+    err := FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
   if FSpongeState.error = 0 then
