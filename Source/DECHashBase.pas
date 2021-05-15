@@ -90,6 +90,16 @@ type
     /// </summary>
     FPaddingByte : Byte;
     /// <summary>
+    ///   Last byte of the message to be hashed if the algorithm is capable of
+    ///   processing bit sized message lengths and FFinalBitLen > 0.
+    /// </summary>
+    FFinalByte   : UInt8;
+    /// <summary>
+    ///   Setting this to a number of bits allows to process messages which have
+    ///   a length which is not a exact multiple of bytes.
+    /// </summary>
+    FFinalBitLen : UInt16;
+    /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
     ///   to initialize the necessary data structures.
     /// </summary>
@@ -701,9 +711,26 @@ begin
 end;
 
 function TDECHash.CalcBuffer(const Buffer; BufferSize: Integer): TBytes;
+var
+  DataPtr: PByte;
 begin
   Init;
-  Calc(Buffer, BufferSize);
+
+  if (FFinalBitLen = 0) then
+    Calc(Buffer, BufferSize)
+  else
+    if (BufferSize > 0) then
+    begin
+      DataPtr := @Buffer;
+      Inc(DataPtr, BufferSize - 1);
+      FFinalByte := DataPtr^;
+
+      // Last byte is incomplete so do not process normally
+      Calc(Buffer, BufferSize-1);
+    end
+    else
+      Calc(Buffer, BufferSize);
+
   Done;
   Result := DigestAsBytes;
 end;

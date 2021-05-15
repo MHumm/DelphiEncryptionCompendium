@@ -4082,22 +4082,17 @@ begin
   lDataRow.FinalBitLength := 0;
   lDataRow.PaddingByte    := 0;
 
-//  // No support for bit sized messages yet
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-//  lDataRow.ExpectedOutputUTFStrTest := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
-//  lDataRow.AddInputVector(#$13);
-//  lDataRow.FinalBitLength := 5;
-//  lDataRow.PaddingByte    := $13;
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab';
+  lDataRow.ExpectedOutputUTFStrTest := '3d0e88c1e4fe0f6577e921e50805155b0748b40a3ab368c96b63f686';
+  lDataRow.AddInputVector(#$13);
+  lDataRow.FinalBitLength := 5;
 
-//{ TODO : This test still fails. Needs debugging comparison with W.E.'s code. }
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-//  lDataRow.ExpectedOutputUTFStrTest := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
-//  lDataRow.AddInputVector(#$53#$58#$7B#$19);
-//{ TODO : How to get this FinalBitLength <> 0 over to InputVector list? }
-//  lDataRow.FinalBitLength := 6;
-//  lDataRow.PaddingByte    := $19;
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
+  lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed314ce743c5641cebe';
+  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+  lDataRow.FinalBitLength := 6;
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
