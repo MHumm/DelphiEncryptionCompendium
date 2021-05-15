@@ -716,20 +716,20 @@ var
 begin
   Init;
 
-  if (FFinalBitLen = 0) then
+  if (FFinalBitLen = 0) or (BufferSize = 0) then
     Calc(Buffer, BufferSize)
   else
     if (BufferSize > 0) then
     begin
+      // Remember last byte as this might be required for padding for such
+      // algorithms which have some automatic padding logic
       DataPtr := @Buffer;
       Inc(DataPtr, BufferSize - 1);
       FFinalByte := DataPtr^;
 
       // Last byte is incomplete so do not process normally
       Calc(Buffer, BufferSize-1);
-    end
-    else
-      Calc(Buffer, BufferSize);
+    end;
 
   Done;
   Result := DigestAsBytes;
@@ -811,6 +811,10 @@ var
 begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
+  // Last byte is incomplete so it mustn't be processed
+  if (FFinalBitLen > 0) then
+    Dec(Size);
+
   Max := 0;
   SetLength(HashResult, 0);
   try
@@ -854,6 +858,10 @@ begin
       if Assigned(OnProgress) then
         OnProgress(Max, Pos, Processing);
     end;
+
+    // Last byte is incomplete but algorithm may need its value for padding
+    if (FFinalBitLen > 0) then
+      Stream.ReadBuffer(FFinalByte, 1);
 
     Done;
     HashResult := DigestAsBytes;
