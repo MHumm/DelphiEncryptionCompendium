@@ -339,17 +339,6 @@ Or how to translate that into proper exception handling? }
     FDigest      : TSHA3Digest;
 
     /// <summary>
-    ///   Setting this to a number of bits allows to process messages which have
-    ///   a length which is not a exact multiple of bytes.
-    /// </summary>
-    FFinalBitLen : Int16;
-    /// <summary>
-    ///   Byte used for padding in case of specifying a final bit length which
-    ///   is not an exact multiple of bytes.
-    /// </summary>
-    FPaddingByte : UInt8;
-
-    /// <summary>
     ///   Function to give input data for the sponge function to absorb
     /// </summary>
     /// <param name="Data">
@@ -453,7 +442,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="HashValue">
     ///   The hash value which shall be updated by this method
     /// </param>
-    function FinalBit_LSB(Bits: Byte; Bitlen: Int16;
+    function FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
                           var HashValue: TSHA3Digest): Integer;
     /// <summary>
     ///   Final processing step if length of data to be calculated is 0
@@ -508,36 +497,12 @@ Or how to translate that into proper exception handling? }
     /// </param>
     procedure Calc(const Data; DataSize: Integer); override;
     /// <summary>
-    ///   Processes one chunk of data to be hashed.
-    /// </summary>
-    /// <param name="Data">
-    ///   Data on which the hash value shall be calculated on
-    /// </param>
-    /// <param name="DataSizeInBits">
-    ///   Size of the data in bits
-    /// </param>
-    procedure CalcBits(const Data; DataSizeInBits: UInt32); override;
-    /// <summary>
     ///   Returns the calculated hash value
     /// </summary>
     /// <returns>
     ///   Hash value calculated
     /// </returns>
     function Digest: PByteArray; override;
-    /// <summary>
-    ///   Setting this to a number of bits allows to process messages which have
-    ///   a length which is not a exact multiple of bytes.
-    /// </summary>
-    property FinalBitLength : Int16
-      read   FFinalBitLen
-      write  FFinalBitLen;
-    /// <summary>
-    ///   Byte used for padding in case of of specifying a final bit length which
-    ///   is not an exact multiple of bytes.
-    /// </summary>
-    property PaddingByte : Byte
-      read   FPaddingByte
-      write  FPaddingByte;
   end;
 
   /// <summary>
@@ -4697,6 +4662,7 @@ procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
   DataPtr   : PByte;
   RoundSize : UInt32;
+  EndValue  : Byte;
 const
   // Maximum number of bytes one can process in one round
   MaxRoundSize = MaxInt div 8;
@@ -4705,6 +4671,15 @@ begin
   if (DataSize > 0) then
   begin
     DataPtr := PByte(@Data);
+
+//    // when the message to be processed is not a multiple of complete bytes
+//    // (e.g. length is 5 bit or 30 bit) we need to process the message except
+//    // for the last byte. The last byte has to be processed separately after
+//    // the loop in that case.
+//    if FFinalBitLen = 0 then
+//      EndValue := 0
+//    else
+//      EndValue := 1;
 
     while (UInt32(DataSize) > 0) do
     begin
@@ -4716,37 +4691,13 @@ begin
       Dec(DataSize, RoundSize);
       Inc(DataPtr, RoundSize);
     end;
+
+//    // Treat last byte of messages not being an exact multiple of bytes
+//    if (EndValue = 1) then
+//      FinalBit_LSB(DataPtr^, FFinalBitLen, FDigest);
   end
-  else
-    FinalStep;
-end;
-
-procedure THash_SHA3Base.CalcBits(const Data; DataSizeInBits: UInt32);
-var
-  DataPtr         : PByte;
-  NearestByteSize : UInt32;
-begin
-  if (DataSizeInBits > 0) then
-  begin
-    DataPtr := PByte(@Data);
-
-    // Do we have enough data to operate on bytes?
-    if (DataSizeInBits > 8) then
-    begin
-      // Calculate the number of complete bytes contained in DataSizeInBits
-      NearestByteSize := (DataSizeInBits div 8) * 8;
-      // Process those, move the pointer and calculate the remaining bits
-      Calc(Data, NearestByteSize);
-      Inc(DataPtr, NearestByteSize);
-      Dec(DataSizeInBits, NearestByteSize shl 3);
-    end;
-
-    // if there are remaining bits process them
-    if (DataSizeInBits > 0) then
-      FinalBit_LSB(DataPtr^, DataSizeInBits, FDigest);
-  end
-  else
-    FinalStep;
+//  else
+//    FinalStep;
 end;
 
 procedure THash_SHA3Base.FinalStep;
@@ -4769,7 +4720,6 @@ begin
     FSpongeState.error := err;
 end;
 
-
 function THash_SHA3Base.Digest: PByteArray;
 begin
   Result := @FDigest;
@@ -4785,7 +4735,12 @@ begin
 //    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
 //    else
 
-    err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
+{ TODO :
+CHeck what to do. The padding byte for SHA3 is the last byte
+of the message filled up by a special algorithm. We just might
+not have the last byte available here... }
+    //err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
+    err := FinalBit_LSB(FFinalByte, FFinalBitLen, FDigest);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
   if FSpongeState.error = 0 then
@@ -4862,7 +4817,7 @@ begin
    end;
 end;
 
-function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: Int16;
+function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
                                      var Hashvalue: TSHA3Digest): Integer;
 var
   ll : Int16;
