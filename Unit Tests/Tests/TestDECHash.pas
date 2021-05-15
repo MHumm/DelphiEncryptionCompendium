@@ -3703,7 +3703,7 @@ begin
       BufLen := Length(Buf);
 
       // Last part of the test data are bits (relevant for SHA3)
-      if FTestData[i].FinalBitLength > 0 then
+      if FTestData[i].FinalByteLength > 0 then
         Break;
 
       if length(Buf) > 0 then
@@ -3718,7 +3718,7 @@ begin
       end;
     end;
 
-    if FTestData[i].FinalBitLength > 0 then
+    if FTestData[i].FinalByteLength > 0 then
       Continue;
 
     HashClass.Done;
@@ -4012,8 +4012,8 @@ procedure TestTHash_SHA3_224.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_224(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-  THash_SHA3_224(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+  THash_SHA3_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_224(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_224.SetUp;
@@ -4033,17 +4033,14 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7';
   lDataRow.AddInputVector('');
   lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '9376816aba503f72f96ce7eb65ac095deee3be4bf9bbc2a1cb7e11e0';
   lDataRow.ExpectedOutputUTFStrTest := '28a4a80fded04a676674687c8330422eedeb18c9dba976234a9e007a';
-  lDataRow.AddInputVector(RawByteString(
-                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
 
   // "Source": https://emn178.github.io/online-tools/sha3_224.html
   lDataRow := FTestData.AddRow;
@@ -4051,7 +4048,6 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '0f1ad8cd5a85fe68319b67427e1f0b685498bc246a81a1f595c89e4e';
   lDataRow.AddInputVector(RawByteString('e21et2e2et1208e7t12e07812te08127et1028e7t1208e7gd81d872t178r02tr370823'), 1, 10);
   lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'f7fc914c8fe4827d866b02df2459840260f4adb0db4deb9fa661756c';
@@ -4064,7 +4060,6 @@ begin
 
   lDataRow.AddInputVector(s);
   lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
@@ -4075,11 +4070,67 @@ begin
   lDataRow.FinalBitLength := 5;
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
-  //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
+  //        and-Guidelines/documents/examples/SHA3-224_Msg30.pdf
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b';
   lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed314ce743c5641cebe';
   lDataRow.AddInputVector(#$53#$58#$7B#$19);
+  lDataRow.FinalBitLength := 6;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_Msg1605.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '22d2f7bb0b173fd8c19686f9173166e3ee62738047d7eadd69efb228';
+  lDataRow.ExpectedOutputUTFStrTest := 'a6871aef1c16c4c0fcaef97636711fb6216b158626d4e2b7e9e7e962';
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3));
+  lDataRow.FinalBitLength := 5;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_1630.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4e907bb1057861f200a599e9d4f85b02d88453bf5b8ace9ac589134c';
+  lDataRow.ExpectedOutputUTFStrTest := '30a15a07d7f0a34e5b36de3bec18c31eac2c94952b50820095c8807e';
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3));
   lDataRow.FinalBitLength := 6;
 end;
 
@@ -4115,8 +4166,8 @@ procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_256(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-  THash_SHA3_256(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+  THash_SHA3_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_256(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_256.SetUp;
@@ -4141,7 +4192,79 @@ begin
   lDataRow.AddInputVector(RawByteString(
                           #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
   lDataRow.FinalBitLength := 0;
-  lDataRow.PaddingByte    := 0;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-256_Msg5.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '7b0047cf5a456882363cbf0fb05322cf65f4b7059a46365e830132e3b5d957af';
+  lDataRow.ExpectedOutputUTFStrTest := 'f2771aed86eba40f0f20c80aed2efb2ccdcd2a4514a89642353dc4ab6f31a0a1';
+  lDataRow.AddInputVector(#$13);
+  lDataRow.FinalBitLength := 5;
+
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-256_Msg30.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'c8242fef409e5ae9d1f1c857ae4dc624b92b19809f62aa8c07411c54a078b1d0';
+  lDataRow.ExpectedOutputUTFStrTest := '0264f8f24160a1c2336453338772637b64864ce13c3c4207c40b34d28d68cd23';
+  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+  lDataRow.FinalBitLength := 6;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-256_Msg1605.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '81ee769bed0950862b1ddded2e84aaa6ab7bfdd3ceaa471be31163d40336363c';
+  lDataRow.ExpectedOutputUTFStrTest := '7a4185574238ca2e2550a9fa85a0c5a327811698c3a05531a70e0a7ec369e2e5';
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3));
+  lDataRow.FinalBitLength := 5;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-256_1630.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '52860aa301214c610d922a6b6cab981ccd06012e54ef689d744021e738b9ed20';
+  lDataRow.ExpectedOutputUTFStrTest := '8f0bb49b3327e5a03dd69bded05a86c9e7d72a7d719dd354a873cf2a70c30354';
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
+                                        #$A3#$A3#$A3#$A3));
+  lDataRow.FinalBitLength := 6;
 end;
 
 procedure TestTHash_SHA3_256.TestBlockSize;
@@ -4176,8 +4299,8 @@ procedure TestTHash_SHA3_384.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_384(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-  THash_SHA3_384(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+  THash_SHA3_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_384(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_384.SetUp;
@@ -4236,8 +4359,8 @@ procedure TestTHash_SHA3_512.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_512(FHash).FinalBitLength := FTestData[IdxTestData].FinalBitLength;
-  THash_SHA3_512(FHash).PaddingByte    := FTestData[IdxTestData].PaddingByte;
+  THash_SHA3_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_512(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_512.SetUp;

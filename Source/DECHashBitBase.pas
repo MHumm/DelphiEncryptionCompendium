@@ -53,7 +53,7 @@ type
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
-    property FinalBitLength : UInt16
+    property FinalByteLength : UInt16
       read   GetFinalByteLength
       write  SetFinalByteLength;
   end;
