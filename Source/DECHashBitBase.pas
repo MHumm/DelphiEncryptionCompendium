@@ -97,8 +97,8 @@ type
     /// <returns>
     ///   string with the calculated hash value
     /// </returns>
-    function CalcString(const Value: RawByteString; DataSizeInBits: UInt32;
-                        Format: TDECFormatClass): RawByteString; overload;
+    function CalcStringBits(const Value: RawByteString; DataSizeInBits: UInt32;
+                            Format: TDECFormatClass): RawByteString; overload;
 
     /// <summary>
     ///   Calculates the hash value over a given stream of bytes. Raises
@@ -211,7 +211,7 @@ in CalcBufferBits it is UInt32... }
   raise EProgrammerNotFound.Create('Implementation missing!');
 end;
 
-function TDECHashBit.CalcString(const Value: RawByteString;
+function TDECHashBit.CalcStringBits(const Value: RawByteString;
   DataSizeInBits: UInt32; Format: TDECFormatClass): RawByteString;
 var
   Buf : TBytes;

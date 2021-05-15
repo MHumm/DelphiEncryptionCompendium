@@ -50,9 +50,9 @@ type
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
   THash_SHA3_224    = class;
-//  THash_SHA3_256    = class;
-//  THash_SHA3_384    = class;
-//  THash_SHA3_512    = class;
+  THash_SHA3_256    = class;
+  THash_SHA3_384    = class;
+  THash_SHA3_512    = class;
   THash_Haval128    = class;
   THash_Haval160    = class;  // Haval 160, 3 Rounds
   THash_Haval192    = class;  // Haval 192, 4 Rounds
@@ -4743,7 +4743,7 @@ begin
 
     // if there are remaining bits process them
     if (DataSizeInBits > 0) then
-      Absorb(DataPtr, DataSizeInBits);
+      FinalBit_LSB(DataPtr^, DataSizeInBits, FDigest);
   end
   else
     FinalStep;
