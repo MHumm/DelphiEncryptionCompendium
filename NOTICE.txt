@@ -23,6 +23,9 @@ mknox74
 EdAdvokat
 Michael II
 
+Parts of the work loosely based on the works of Wolfgang Erhardt, who is
+unfortunately already dead.
+
 
                       *** Export/Import Controls ***
 
