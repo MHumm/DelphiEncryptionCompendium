@@ -34,9 +34,6 @@ var
   s    : RawByteString;
 
   W: THash_Whirlpool1;
-
-
-  WE: THash_SHA3_256;
 begin
   Hash := THash_RipeMD160.Create;
   try
@@ -57,38 +54,6 @@ begin
       WriteLn('RipeMD160 digest (hash value) of ' + s + ' is ' + sLineBreak +
               W.CalcString(s, TFormat_HEX));
       W.Free;
-      ReadLn;
-
-
-      WE:= THash_SHA3_256.Create;
-      s := '';
-      WriteLn('SHA3-224: ' + WE.CalcString(s, TFormat_HEX));
-
-      s := #$53#$58#$7B#$19;
-      s := #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
-                                        #$A3;
-      WE.FinalByteLength := 5;
-      WriteLn('SHA3-256: ' + WE.CalcString(s, TFormat_HEX));
-      WE.Free;
       ReadLn;
     except
       on E: Exception do
