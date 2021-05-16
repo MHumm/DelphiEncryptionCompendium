@@ -251,7 +251,7 @@ type
   ///   Base class for tall SHA3 implementations
   /// </summary>
   THash_SHA3Base = class(TDECHashBit)
-  public
+  strict private
     // Declarations for SHA3. Must be declared here to allow private methods
     // to use these types as well.
     const
@@ -332,11 +332,12 @@ Or how to translate that into proper exception handling? }
       ///   Type for the generated hash value
       /// </summary>
       TSHA3Digest = array[0..63] of UInt8;
-  strict private
-    /// <summary>
-    ///   The generated hash value is stored here
-    /// </summary>
-    FDigest      : TSHA3Digest;
+
+    var
+      /// <summary>
+      ///   The generated hash value is stored here
+      /// </summary>
+      FDigest      : TSHA3Digest;
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
