@@ -3121,9 +3121,9 @@ var
       X3 := X2 * X1;
       X4 := X3 * X1;
       Y2 := Init_State.Coef[I + 1][0] * X4 +
-            Init_State.Coef[I + 2][1] * X3 +
-            Init_State.Coef[I + 3][2] * X2 +
-            Init_State.Coef[I + 4][3] * X1 + 1;
+            Init_State.Coef[I + 1][1] * X3 +
+            Init_State.Coef[I + 1][2] * X2 +
+            Init_State.Coef[I + 1][3] * X1 + 1;
       Data[I2] := Y1 shl 16 or Y2 and $FFFF;
       NewX[I2] := Y1 and $FFFF0000 or Y2 shr 16;
       Inc(I2);
@@ -3154,7 +3154,7 @@ begin
   end;
   GP8(@T);
   I := T[3] and $7F;
-  P[I + 3] := P[I + 3] or 1;
+  P[I] := P[I] or 1;
   P := FAdditionalBuffer;
   P[0] := T[3] shr 24 and $FF;
   P[1] := T[3] shr 16 and $FF;

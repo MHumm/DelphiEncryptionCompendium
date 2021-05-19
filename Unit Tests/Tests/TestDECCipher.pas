@@ -1444,20 +1444,54 @@ procedure TestTCipher_SCOP.SetUp;
 begin
   FCipher_SCOP := TCipher_SCOP.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 4);
 
-  FTestData[0].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
+  // Standard test vector
+  FTestData[0].OutputData  := 'ca29853fb7eec7f958931ff185c0b415c944c22f13e34423aba1a84fb3101f19';
   FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
                                                     '\x96\xF5\xF6\x35\xA2\xEB' +
                                                     '\x3D\x1A\x5D\xD6\xCB\x1D' +
                                                     '\x09\x82\x2D\xBD\xF5\x60' +
                                                     '\xC2\xB8\x58\xA1\x91\xF9' +
                                                     '\x81\xB1');
-
   FTestData[0].Key        := 'TCipher_SCOP';
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
-  FTestData[0].Mode       := cmCTSx;
+  FTestData[0].Mode       := cmECBx;
+
+  // Standard test vector, key with 'odd' bit set
+  FTestData[1].OutputData  := '18be1fff893de279b5768b21307c5c52436835c83ed5c96ea589884b61c69dc4';
+  FTestData[1].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+  FTestData[1].Key        := 'TCipher_SCOPa';
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
+
+  // Full 48 bytes key length
+  FTestData[2].OutputData := '8dbc6579ac264ccfbb0f7aea';
+  FTestData[2].InputData  := '12bytesbytes';
+  FTestData[2].Key        := 'TCipher_SCOPTCipher_SCOPTCipher_SCOPTCipher_SCOP';
+  FTestData[2].InitVector := '';
+  FTestData[2].Filler     := $FF;
+  FTestData[2].Mode       := cmECBx;
+
+  FTestData[3].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
+  FTestData[3].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[3].Key        := 'TCipher_SCOP';
+  FTestData[3].InitVector := '';
+  FTestData[3].Filler     := $FF;
+  FTestData[3].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_SCOP.TearDown;
@@ -3269,7 +3303,7 @@ Daten synthetisieren. }
 
     TempResultHex := RawByteString(StringOf(Result));
 
-    CheckEquals(Data.InputData, TempResultHex);
+    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(TempResultHex));
   end;
 end;
 
