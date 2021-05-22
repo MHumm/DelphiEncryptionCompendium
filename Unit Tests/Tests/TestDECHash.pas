@@ -4149,6 +4149,101 @@ begin
                                         #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3 +
                                         #$A3#$A3#$A3#$A3));
   lDataRow.FinalBitLength := 6;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //        Validation-Program/documents/sha3/sha-3bittestvectors.zip,
+  //        SHA3_224ShortMsg.rsp, Len = 72
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '5e0c6a6c22222ef78a58e515bb7c5188b92f81f9' +
+                                       'aaea7bd3c335c109';
+  lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed3' +
+                                       '14ce743c5641cebe';
+  lDataRow.AddInputVector('3f2863fcc4667e6a7d');
+  lDataRow.FinalBitLength := 0;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //        Validation-Program/documents/sha3/sha-3bittestvectors.zip,
+  //        SHA3_224LongMsg.rsp, Len = 10376
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'c6c4a09e97734709a21d456534a4b3e28351d15f' +
+                                       '63ecf71c57ddfb4f';
+  lDataRow.ExpectedOutputUTFStrTest := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a' +
+                                       '1b078e3f5b5a6bc7';
+  lDataRow.AddInputVector('799a3d2eff0c184bda28f84e2d573479477bb86176756e9520ebf' +
+                          '6800f489d910d048d99b125417478063ceb1757fbd91065288d84' +
+                          '9b1070484957e73ba5ea7bd6103638049a985234c7140fad9449e' +
+                          '022b5a4d18721d52423d07f39e5c334b2fb46a0d4a172042f37f5' +
+                          'e781971608d8a5f396f7280da3fbd807d73eb7ab617ca52e33342' +
+                          'fb56f51a9171c0a7ce51e07c0a865c50e69643b8f77c5be59645b' +
+                          '22fc515822576bc001b1b61d72050a75b69c5b7904e13dff2d72a' +
+                          '6b28073f608eb27367564c19ddf8777595181d98cf32c61943a7b' +
+                          '4b8f5c19a61e074dac6a52214f65f4c31453b32b248820fea1738' +
+                          '2b336db10f4f269634756672aedacc7200a9b673b07f9932635e0' +
+                          'ccf2b304c7099143b963357ed2fcfea80785281c1559f034c3b4f' +
+                          '817671fecd2ab2f66ab916f0fb1b59b0898d30f88c4887ec6a45d' +
+                          'e7194101c55d17d6879a23af3fe03dd99e75a8582033e872842bd' +
+                          '3727f8eeba6b1ceebaad800a0e84485fa608be963a57d0b4f285a' +
+                          '7e15b94330fd4bef499af89f565a4554a75ba63ff580457949c5f' +
+                          'ff418cfafb2b3c8b034df699d36bf585b99fbb55aa11bef176034' +
+                          'dde672c70aeeebe650758e98a85e407f40efbcb8ced8870325712' +
+                          '7240544908938cbdf2cda7b4abbf90157f75ecb4d5aa9cae8fca4' +
+                          '7651b7d1134d894533b53bb97d2640dfacf9e0f2db769691ff44b' +
+                          '6cdb52452813ee05fe2c77d1456eeb8938a83b1cbbe8be19d648b' +
+                          '513dea030edcd438d8840d361a437f161f8be17d82d9d065e6952' +
+                          '220e839779952b610de9114e5db6a58f168e8aad18799b78de6fa' +
+                          '55b6ac2f65b172f7fe528ee0c8ad98b7a528274397d5dc33deffa' +
+                          '254600333074e61dff3051389f7321ef2623a663a67d9c6a3cb09' +
+                          '6099e12532efb84eeb6c930efc86993bf16dce1e024b42d5e5ca8' +
+                          '9f6e7d86a753ba7dbc892f72e48ec9785dbad298bd0f327660a27' +
+                          '23e761d2530445b24c89a40e0e0a0e46411c18aebec5fe9c51308' +
+                          'cc0bda53eb401b9a6d4dac20e50898e5f80d655417755eb84dae8' +
+                          '3abff385f036013a7501d26e206b9469aa99e917e36c3908a3a74' +
+                          'cbc0455181ece65d74e33985da3bd9da9f1847aba07a42da47cee' +
+                          '93e2acde8aeefdcd520f67683a723361787d02655860124d99edb' +
+                          'd9813a942199e23c8ed3084a0b04568cbf084ecbce29f085e547b' +
+                          '2059e391d5926e9421f0cb53a366b8e2372e14f4ca524f8c6d711' +
+                          'fd5a7c0744d104faf291b8e0ef6340f6b7c0b8d27e72f2e6129de' +
+                          '056b9a1cdb7ee1022fac18597b172b67b96181092663df0246228' +
+                          '99328feaa4ceb2df52181688dc0b3e4222265845d601c4d7fc9bd' +
+                          '1a453198910e8ba4553fbb0c7de7a5eb469f8a5404b594965f89a' +
+                          'fbebb369b5df8753f8b5cbf412bcdb2d37144b6d0a27ee0071bf5' +
+                          '17d7950e75fca794efa88c6539d5276be4da44ceca3d2168abc92' +
+                          'd7a18e00f9d9012eafbeaeee0bef217d5c9579b75a6c58178c04e' +
+                          'a124d30eb914a00fbc39e56a6d1e8caf2d70238711bd8c98387cf' +
+                          '6a95c4e0c07a6836b27c7e05a8c449fb5eb11b82b8e625faaf6be' +
+                          'ce16c4554441da934e18bdf5451a3d1c180f59204bf65d26403f4' +
+                          'd35b63a86458fd0a399d6719e4f004d373672c79adf44263cf745' +
+                          '8e06d33f30b54d7cbd81cf8820fcad396c3eb8ed133f10135a843' +
+                          '9ed09fe7193672f413c658e53b91a2d83426f9938751c01f59cd3' +
+                          '9b2b2fba44529a1f67373f681f98bf48a0ee7539d38a442640e39' +
+                          '367312f95f31430ced12251d3d03ef1517820ff5040b2c7b902ba' +
+                          '0b16abba569a37148d61dd72c7f886655e20844d47cf81789e');
+  lDataRow.FinalBitLength := 0;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //        Validation-Program/documents/sha3/sha-3bittestvectors.zip,
+  //        SHA3_224LongMsg.rsp, Len = 10376
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4722f09de2149d67ada91e661cb0d68bc5c1fd2c' +
+                                       '52388713358f98d3';
+  lDataRow.ExpectedOutputUTFStrTest := '6b4e03423667dbb73b6e15454f0eb1abd4597f9a' +
+                                       '1b078e3f5b5a6bc7';
+  lDataRow.AddInputVector('665e6049b6232ecab3f0bb82a9ed63ee759879a' +
+                          '5a25d8c8cd166e9495eb461fa406f4d26317acf' +
+                          'f3104b5a9a83fa7419e097ba284ec1256d27748' +
+                          'df3a1236bd9ae07e34720b602a611f7441182d5' +
+                          '590642f22862121e158c06287ff02ef48daf76c' +
+                          'e2b94cbfe4f4b7f9d81cdefa79a1f6351cc3c35' +
+                          '9ce250362ac9264d5050e4616e2cf6797b3f482' +
+                          '2e41ab81297c0cb0a5aac9e016216207e21737f' +
+                          '465f3be0378cee5374555906c27516b932ce527' +
+                          '101b8d271bc993866a7b683e26048d60bc0d37a' +
+                          '9502b325ed27f77db79873d87b0e11469baf68d' +
+                          '1897a900336e434a9cec3e8d7a26cbd2c661813' +
+                          '579c8dafda50fa0e0e0622f868f1bc58fa651a4' +
+                          'a3d8f0a760d64fa9df5d75f71ad4f57aae1588c' +
+                          '5634985c70850638b571564ab319b701');
+  lDataRow.FinalBitLength := 1;
 end;
 
 procedure TestTHash_SHA3_224.TestBlockSize;
