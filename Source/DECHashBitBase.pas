@@ -31,7 +31,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECHashAuthentication, DECHashInterface;
+  DECHashAuthentication, DECHashInterface, DECUtil;
 
 type
   /// <summary>
@@ -43,32 +43,46 @@ type
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of
     /// </summary>
-    function GetFinalByteLength: UInt16;
+    function GetFinalByteLength: UInt8;
     /// <summary>
     ///   Sets the number of bits the final byte of the message consists of
     /// </summary>
-    procedure SetFinalByteLength(const Value: UInt16);
+    procedure SetFinalByteLength(const Value: UInt8);
   public
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
-    property FinalByteLength : UInt16
+    property FinalByteLength : UInt8
       read   GetFinalByteLength
       write  SetFinalByteLength;
   end;
 
 implementation
 
+resourcestring
+  /// <summary>
+  ///   Exception message for the exception raised when a to long final byte
+  ///   length is specified.
+  /// </summary>
+  rFinalByteLengthTooBig = 'Final byte length too big (%0:d) must be 0..7';
+
 { TDECHashBit }
 
-function TDECHashBit.GetFinalByteLength: UInt16;
+function TDECHashBit.GetFinalByteLength: UInt8;
 begin
   Result := FFinalByteLength;
 end;
 
-procedure TDECHashBit.SetFinalByteLength(const Value: UInt16);
+procedure TDECHashBit.SetFinalByteLength(const Value: UInt8);
 begin
+  // if length of final byte is 8 this value shall be 0 as the normal specification
+  // of message length is good enough then.
+  Assert(Value < 8, 'Length of final byte too big, a byte has 8 bit maximum');
+
+  if (Value > 7) then
+    raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);
+
   FFinalByteLength := Value;
 end;
 

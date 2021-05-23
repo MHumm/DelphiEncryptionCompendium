@@ -98,7 +98,7 @@ type
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
-    FFinalByteLength : UInt16;
+    FFinalByteLength : UInt8;
     /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
     ///   to initialize the necessary data structures.
