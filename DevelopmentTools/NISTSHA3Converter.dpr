@@ -26,6 +26,32 @@ begin
   end;
 end;
 
+/// <summary>
+///   Split a too loong string into multiple lines
+/// </summary>
+/// <param name="Line">
+///   Input string which shall be split
+/// </param>
+/// <param name="WrapAt">
+///   Number of characters after which to wrap
+/// </param>
+/// <param name="WrapList">
+///   Assigned list where the wrapped lines shall be stored in. The list will
+///   initially get cleared.
+/// </param>
+procedure WrapLine(Line: string; WrapAt: Integer; WrapList: TStringList);
+begin
+  Assert(Assigned(WrapList), 'Unassigned list given');
+
+  WrapList.Clear;
+
+  while Line.Length > 0 do
+  begin
+    WrapList.Add(Copy(Line, 1, WrapAt));
+    Delete(Line, 1, WrapAt);
+  end;
+end;
+
 procedure ConvertFile(const FileName: string);
 var
   Contents    : TStringList;
@@ -55,21 +81,16 @@ begin
 
           s1 := s.Remove(0, 6);
           FinalBitLen := s1.trim.ToInteger;
-          FinalBitLen := FinalBitLen - ((FinalBitLen div 8) * 8);
+          FinalBitLen := s1.trim.ToInteger mod 8;
         end;
 
         if s.StartsWith('Msg') then
         begin
-          InputVector.Clear;
           s1 := s.Remove(0, 6);
 
-          s1 := ReverseHexStringbits(s1);
+//          s1 := ReverseHexStringbits(s1);
 
-          while s1.Length > 0 do
-          begin
-            InputVector.Add(Copy(s1, 1, 52));
-            Delete(s1, 1, 52);
-          end;
+          WrapLine(S1, 52, InputVector);
 
           s1 := InputVector[0];
           if (InputVector.Count > 0) then
@@ -77,7 +98,7 @@ begin
           else
             s1 := s1 + ');';
 
-          Output.Add('  lDataRow.AddInputVector(''' + s1);
+          Output.Add('  lDataRow.AddInputVector(TFormat_HexL.Decode(''' + s1);
           InputVector.Delete(0);
 
           while InputVector.Count > 0 do
@@ -87,7 +108,7 @@ begin
             if (InputVector.Count > 1) then
               s1 := '''' +  s1 + ''' +'
             else
-              s1 := '''' + s1 + ''');';
+              s1 := '''' + s1 + '''));';
 
             Output.Add('                          ' + s1);
             InputVector.Delete(0);
@@ -97,16 +118,11 @@ begin
         // Expected Output
         if s.StartsWith('MD') then
         begin
-          InputVector.Clear;
-          s1 := s.Remove(0, 6);
+          s1 := s.Remove(0, 5);
 
-          s1 := ReverseHexStringbits(s1);
+//          s1 := ReverseHexStringbits(s1);
 
-          while s1.Length > 0 do
-          begin
-            InputVector.Add(Copy(s1, 1, 40));
-            Delete(s1, 1, 40);
-          end;
+          WrapLine(s1, 40, InputVector);
 
           s1 := InputVector[0];
           if (InputVector.Count > 1) then
@@ -114,7 +130,7 @@ begin
           else
             s1 := s1 + '''' + ';';
 
-          Output.Add('  lDataRow.ExpectedOutput :=           ''' + s1);
+          Output.Add('  lDataRow.ExpectedOutput           := ''' + s1);
           InputVector.Delete(0);
 
           while InputVector.Count > 0 do
