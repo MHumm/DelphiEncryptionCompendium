@@ -6,7 +6,8 @@ program NISTSHA3Converter;
 {$R *.res}
 
 uses
-  System.SysUtils, System.IOUtils, System.Types, System.Classes, DECUtil;
+  System.SysUtils, System.IOUtils, System.Types, System.Classes, DECUtil,
+  DECHashBase, DECHash, DECFormat, DECHashBitBase;
 
 var
   Files: TStringDynArray;
@@ -38,28 +39,6 @@ begin
   end;
 end;
 
-/// <summary>
-///   A message with an incomplete final byte needs that final byte to be converted
-/// </summary>
-/// <param name="MessageStr">
-///   Input message which has an incomplete final byte
-/// </param>
-/// <param name="FinalByteLength">
-///   Number of bits the final byte contains. Should be 1-7
-/// </param>
-/// <returns>
-///   Message with converted final byte
-/// </returns>
-function ConvertFinalByte(MessageStr: string; FinalByteLength: UInt8):string;
-var
-  FinalByte : UInt8;
-begin
-  Result := Copy(MessageStr, 1, Length(MessageStr) - 2);
-  FinalByte := ('0x' + Copy(MessageStr, Length(MessageStr) - 1, 2)).ToInteger;
-  FinalByte := FinalByte shl (8 - FinalByteLength);
-  Result := Result + IntToHex(FinalByte, 2);
-end;
-
 procedure ConvertFile(const FileName: string);
 var
   Contents     : TStringList;
@@ -67,7 +46,11 @@ var
   Inputvector  : TStringList;
   FinalByteLen : Integer;
   s1           : string;
+  UTFHash      : string;
+  HashClass    : TDECHash;
 begin
+  HashClass := TDECHash.ClassByName('THash_' + FileName.Remove(14).Remove(0, 6)).Create;
+
   Contents := TStringList.Create;
   Output   := TStringList.Create;
   InputVector := TStringList.Create;
@@ -96,14 +79,10 @@ begin
         begin
           s1 := s.Remove(0, 6);
 
-if (s1 = '9d4306') then
-  sleep(10);          
-
-          // If message has incomplete last byte that one needs to be handled
-          // specially due to NIST's weird format...
-          if (FinalByteLen <> 0) then
-            s1 := ConvertFinalByte(s1, FinalByteLen);
-
+          TDECHashBit(HashClass).FinalByteLength := FinalByteLen;
+          UTFHash := BytesToRawString(TFormat_HEXL.Encode(
+                       System.SysUtils.BytesOf(HashClass.CalcString(TFormat_HexL.Decode(s1)))));
+          
           WrapLine(S1, 52, InputVector);
 
           s1 := InputVector[0];
@@ -134,8 +113,7 @@ if (s1 = '9d4306') then
         begin
           s1 := s.Remove(0, 5);
 
-//          s1 := ReverseHexStringbits(s1);
-
+          // Normal hash
           WrapLine(s1, 40, InputVector);
 
           s1 := InputVector[0];
@@ -156,21 +134,52 @@ if (s1 = '9d4306') then
             else
               s1 := '   '  + '''' + s1 + '''' + ';';
 
-            Output.Add('                          ' + s1);
+            Output.Add('                                    ' + s1);
             InputVector.Delete(0);
           end;
 
-          { TODO : Unicode Ergebnis umsetzen }
+          // UnicodeString hash
+          s1 := UTFHash;
+          WrapLine(s1, 40, InputVector);
+
+          s1 := InputVector[0];
+          if (InputVector.Count > 1) then
+            s1 := s1 + ''' +'
+          else
+            s1 := s1 + '''' + ';';
+
+          Output.Add('  lDataRow.ExpectedOutputUTFStrTest := ''' + s1);
+          InputVector.Delete(0);
+
+          while InputVector.Count > 0 do
+          begin
+            s1 := InputVector[0];
+
+            if (InputVector.Count > 1) then
+              s1 := '''' + s1 + ''' +'
+            else
+              s1 := '   '  + '''' + s1 + '''' + ';';
+
+            Output.Add('                                    ' + s1);
+            InputVector.Delete(0);
+          end;
+
 
           Output.Add('  lDataRow.FinalBitLength := ' + FinalByteLen.ToString + ';');
           Write('.');
         end;
 
-//  lDataRow.ExpectedOutput           := '5e0c6a6c22222ef78a58e515bb7c5188b92f81f9' +
-//                                       'aaea7bd3c335c109';
-//  lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed3' +
-//                                       '14ce743c5641cebe';
-//  lDataRow.FinalBitLength := 0;
+//      CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
+//                  BytesToRawString(
+//                    TFormat_HEXL.Encode(
+//                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
+//                  'Index: ' + IntToStr(i) + ' - expected: <' +
+//                  string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
+//                  string(BytesToRawString(
+//                    TFormat_HEXL.Encode(
+//                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
+
+
       end;
     end;
 
@@ -180,6 +189,7 @@ if (s1 = '9d4306') then
     Contents.Free;
     Output.Free;
     InputVector.Free;
+    HashClass.Free;
   end;
 end;
 
