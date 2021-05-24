@@ -137,6 +137,7 @@
         <DCCReference Include="Tests\TestDECTestDataContainer.pas"/>
         <DCCReference Include="Tests\TestDECCipherFormats.pas"/>
         <DCCReference Include="Tests\TestDECHashMAC.pas"/>
+        <DCCReference Include="Tests\TestDECHashSHA3.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
