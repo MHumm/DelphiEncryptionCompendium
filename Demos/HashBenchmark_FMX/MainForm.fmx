@@ -12,6 +12,7 @@ object FormMain: TFormMain
   object Rectangle1: TRectangle
     Anchors = [akLeft, akTop, akRight]
     Fill.Color = claCadetblue
+    HitTest = False
     Position.X = 8.000000000000000000
     Position.Y = 8.000000000000000000
     Size.Width = 625.000000000000000000
@@ -54,6 +55,16 @@ object FormMain: TFormMain
     object StringColumn3: TStringColumn
       Header = 'Time'
     end
+  end
+  object Button1: TButton
+    Position.X = 96.000000000000000000
+    Position.Y = 416.000000000000000000
+    Size.Width = 121.000000000000000000
+    Size.Height = 30.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Button1'
+    OnClick = b_StartClick
   end
   object TimerBenchmark: TTimer
     Enabled = False

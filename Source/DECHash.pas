@@ -323,7 +323,7 @@ Or how to translate that into proper exception handling? }
       /// <summary>
       ///   Buffer type
       /// </summary>
-      TBABytes = array[0..MaxLongint-1] of UInt8;
+      TBABytes = array[0..65535] of UInt8;
       /// <summary>
       ///   Pointer to a buffer
       /// </summary>

@@ -33,6 +33,7 @@ type
     StringColumn3: TStringColumn;
     Rectangle1: TRectangle;
     TimerBenchmark: TTimer;
+    Button1: TButton;
     procedure b_StartClick(Sender: TObject);
     procedure TimerBenchmarkTimer(Sender: TObject);
     procedure FormResize(Sender: TObject);
