@@ -167,7 +167,8 @@ begin
   RunBenchmark(sg_Results.Cells[0, FRowIndex], FRowIndex);
   Inc(FRowIndex);
 
-  (Sender as TTimer).Enabled := true;
+  if (FRowIndex < sg_Results.RowCount) then
+    (Sender as TTimer).Enabled := true;
 end;
 
 end.
