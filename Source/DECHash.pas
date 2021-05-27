@@ -4545,8 +4545,8 @@ procedure THash_SHA3Base.xorIntoState(var State: TState_L;
                                       Inp: Pointer;
                                       LaneCount: UInt16);
 var
-  t, x0, x1 : Int32;
-  pI, pS    : PLongint;
+  t, x0, x1 : UInt32;
+  pI, pS    : PUInt32;
   i         : Integer;
 const
   xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
@@ -4749,9 +4749,9 @@ end;
 procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
                                           LaneCount: UInt16);
 var
-  pI, pS    : PLongint;
+  pI, pS    : PUint32;
   i         : Integer;
-  t, x0, x1 : Longint;
+  t, x0, x1 : UInt32;
 const
   xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
 begin
