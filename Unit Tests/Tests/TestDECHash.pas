@@ -562,16 +562,51 @@ begin
 
   FHash := THash_MD2.Create;
 
+  // Source: all including 12345678901234567890123456789012345678901234567890123
+  // 456789012345678901234567890 are from: https://www.ietf.org/rfc/rfc1319.txt
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '8350e5a3e24c153df2275c9f80692773';
   lDataRow.ExpectedOutputUTFStrTest := '8350e5a3e24c153df2275c9f80692773';
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '32ec01ec4a6dac72c0ab96fb34c0b5d1';
+  lDataRow.ExpectedOutputUTFStrTest := 'a732378b5c5e0cb55543fbbcc9618d58';
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'da853b0d3f88d99b30283a69e6ded6bb';
+  lDataRow.ExpectedOutputUTFStrTest := '64bc320671ffdb9b433c36693b942852';
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ab4f496bfb2a530b219ff33031fe06b0';
+  lDataRow.ExpectedOutputUTFStrTest := 'ed4c934d78222a95c1a4de10bac74258';
+  lDataRow.AddInputVector('message digest');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4e8ddff3650292ab5a4108c3aa47940b';
+  lDataRow.ExpectedOutputUTFStrTest := 'f6456db6a2e5608a2c36cd9c0dc5169d';
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'da33def2a42df13975352846c30338cd';
+  lDataRow.ExpectedOutputUTFStrTest := 'c4c41d053cba1f7924ca33029724eddf';
+  lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd5976f79d83d3a0dc9806c3c66f3efd8';
+  lDataRow.ExpectedOutputUTFStrTest := 'a6dcaf889aaa5738141b713d8e4fc6c3';
+  lDataRow.AddInputVector('12345678901234567890123456789012345678901234567890123' +
+                          '456789012345678901234567890');
+
+  // Source: German MD2 Wikipedia article as of 30.05.2021
+  lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '8415570a6653a06314f09b023612a92d';
   lDataRow.ExpectedOutputUTFStrTest := '9d76631406e8be4ed7284613edf23fd5';
   lDataRow.AddInputVector('Franz jagt im komplett verwahrlosten Taxi quer durch Bayern');
 
+  // Source: German MD2 Wikipedia article as of 30.05.2021
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'b0e27e91b84246bc4c38bc3008f00374';
   lDataRow.ExpectedOutputUTFStrTest := 'b2ea09572c2fcfb278afd72155bc28e7';
@@ -610,6 +645,7 @@ begin
 
   FHash := THash_MD4.Create;
 
+  // Source for all until SourceEnd: https://datatracker.ietf.org/doc/html/rfc1320
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '31d6cfe0d16ae931b73c59d7e0c089c0';
   lDataRow.ExpectedOutputUTFStrTest := '31d6cfe0d16ae931b73c59d7e0c089c0';
@@ -649,16 +685,21 @@ begin
   lDataRow.ExpectedOutput           := 'e33b4ddc9c38f2199c3e7b164fcc0536';
   lDataRow.ExpectedOutputUTFStrTest := 'cf17b1ae2606afa964193690df7543b1';
   lDataRow.AddInputVector('1234567890', 1, 8);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '186767a4d851893b823e6824c6efda62';
   lDataRow.ExpectedOutputUTFStrTest := '720710bdf5588ff54a1541168c49ffbc';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized '+
+                          'block necessity decision error. This block has total '+
+                          'length 119 bytes');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'adba72c3baf834d091eb59f18d022549';
   lDataRow.ExpectedOutputUTFStrTest := '077ff2742a36a53d86774f01e4911f46';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized '+
+                          'block necessity decision error. This block has total '+
+                          'length 120 bytes.');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
@@ -669,7 +710,6 @@ begin
   lDataRow.ExpectedOutput           := 'bbce80cc6bb65e5c6745e30d4eeca9a4';
   lDataRow.ExpectedOutputUTFStrTest := '29830de36ff8d3c23c73535ed6d1c69f';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
 end;
 
 procedure TestTHash_MD4.TestBlockSize;

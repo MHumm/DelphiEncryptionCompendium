@@ -62,10 +62,11 @@ type
   THash_Panama      = class;
   {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool   = class;
-  THash_Whirlpool1  = class;
+  THash_Whirlpool1New = class;
   {$ENDIF}
 
   THash_Whirlpool0  = class;
+  THash_Whirlpool1  = class; // differs, depending on OLD_WHIRLPOOL_NAMES define
   THash_WhirlpoolT  = class;
 
   THash_Square      = class;
