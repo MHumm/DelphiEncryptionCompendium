@@ -744,6 +744,7 @@ begin
 
   FHash := THash_MD5.Create;
 
+  // Source for all until SourceEnd: https://datatracker.ietf.org/doc/html/rfc1321
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd41d8cd98f00b204e9800998ecf8427e';
   lDataRow.ExpectedOutputUTFStrTest := 'd41d8cd98f00b204e9800998ecf8427e';
@@ -783,16 +784,21 @@ begin
   lDataRow.ExpectedOutput           := '57edf4a22be3c955ac49da2e2107b67a';
   lDataRow.ExpectedOutputUTFStrTest := '903f43f5c1f384fc267110bf07caec04';
   lDataRow.AddInputVector('1234567890', 8);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'e6810238956987dec0d7bfcbcd4caab8';
   lDataRow.ExpectedOutputUTFStrTest := 'a36d511965e2c68794b5fbfe54d74b8c';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized '+
+                          'block necessity decision error. This block has total '+
+                          'length 119 bytes');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '637d2777ed733d5d33b5bfc140f118c5';
   lDataRow.ExpectedOutputUTFStrTest := '3995d2a93d5df46406ef04b34d06b177';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized '+
+                          'block necessity decision error. This block has total '+
+                          'length 120 bytes.');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '7707d6ae4e027c70eea2a935c2296f21';
@@ -803,7 +809,6 @@ begin
   lDataRow.ExpectedOutput           := '7707d6ae4e027c70eea2a935c2296f21';
   lDataRow.ExpectedOutputUTFStrTest := '168f7302c596180bb5372f5015098742';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
 end;
 
 procedure TestTHash_MD5.TestBlockSize;
@@ -836,6 +841,7 @@ var lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
 
+  // Source until SourceEnd: https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
   FHash := THash_RipeMD128.Create;
 
   lDataRow := FTestData.AddRow;
@@ -902,7 +908,7 @@ begin
   lDataRow.ExpectedOutput           := '4a7f5723f954eba1216c9d8f6320431f';
   lDataRow.ExpectedOutputUTFStrTest := 'c8c6d2c7e48fc3788ef778426d4382e0';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
+  // SourceEnd
 end;
 
 procedure TestTHash_RipeMD128.TestBlockSize;
@@ -937,8 +943,7 @@ begin
 
   FHash := THash_RipeMD160.Create;
 
-  // Test data given here is the same as on the original RipeMD160 website here:
-  // https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
+  // Source until SourceEnd: https://homes.esat.kuleuven.be/~bosselae/ripemd160.html
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
   lDataRow.ExpectedOutputUTFStrTest := '9c1185a5c5e9fc54612808977ee8f548b2258d31';
@@ -1003,7 +1008,7 @@ begin
   lDataRow.ExpectedOutput           := '52783243c1697bdbe16d37f97f68f08325dc1528';
   lDataRow.ExpectedOutputUTFStrTest := '98182142d06b9952b1c7568fd0d178100e61c098';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
+  // SourceEnd
 end;
 
 procedure TestTHash_RipeMD160.TestDigestSize;
@@ -1038,6 +1043,7 @@ begin
 
   FHash := THash_RipeMD256.Create;
 
+  // Source until SourceEnd: https://homes.esat.kuleuven.be/~bosselae/ripemd160.html#extensions
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '02ba4c4e5f8ecd1877fc52d64d30e37a2d9774fb1e5d026380ae0168e3c5522d';
   lDataRow.ExpectedOutputUTFStrTest := '02ba4c4e5f8ecd1877fc52d64d30e37a2d9774fb1e5d026380ae0168e3c5522d';
@@ -1102,7 +1108,7 @@ begin
   lDataRow.ExpectedOutput           := 'ac953744e10e31514c150d4d8d7b677342e33399788296e43ae4850ce4f97978';
   lDataRow.ExpectedOutputUTFStrTest := 'bcda054f27f32fedeb8374ee93d01fbc0783c30b9e71cc3e2a463265eac08f76';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
+  // SourceEnd
 end;
 
 procedure TestTHash_RipeMD256.TestDigestSize;
@@ -1137,6 +1143,7 @@ begin
 
   FHash := THash_RipeMD320.Create;
 
+  // Source until SourceEnd: https://homes.esat.kuleuven.be/~bosselae/ripemd160.html#extensions
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8';
   lDataRow.ExpectedOutputUTFStrTest := '22d65d5661536cdc75c1fdf5c6de7b41b9f27325ebc61e8557177d705a0ec880151c3a32a00899b8';
@@ -1201,7 +1208,7 @@ begin
   lDataRow.ExpectedOutput           := 'bdee37f4371e20646b8b0d862dda16292ae36f40965e8c8509e63d1dbddecc503e2b63eb9245bb66';
   lDataRow.ExpectedOutputUTFStrTest := '532260a4e62a359a9d1561a1e6cfd1f6988447a3ef4f810a252f69483e4ad5d7f95fc1609d29bb1a';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
+  // SourceEnd
 end;
 
 
