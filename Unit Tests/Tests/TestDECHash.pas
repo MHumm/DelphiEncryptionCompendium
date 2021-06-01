@@ -1338,6 +1338,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
   lDataRow.AddInputVector('');
 
+  // Source until SourceEnd: German Wikipedia
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '68ac906495480a3404beee4874ed853a037a7a8f';
   lDataRow.ExpectedOutputUTFStrTest := 'ca2bea5813b6914b6d75ee6975af2aa99b7f09ca';
@@ -1347,7 +1348,9 @@ begin
   lDataRow.ExpectedOutput           := '89fdde0b28373dc4f361cfb810b35342cc2c3232';
   lDataRow.ExpectedOutputUTFStrTest := '41e9761e0427676d8b5aead6631c5e7bc2946e81';
   lDataRow.AddInputVector('Granz jagt im komplett verwahrlosten Taxi quer durch Bayern');
+  // SourceEnd
 
+  // Source until SourceEnd: https://datatracker.ietf.org/doc/html/rfc4634
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'a9993e364706816aba3e25717850c26c9cd0d89d';
   lDataRow.ExpectedOutputUTFStrTest := '9f04f41a848514162050e3d68c1a7abb441dc2b5';
@@ -1362,6 +1365,41 @@ begin
   lDataRow.AddInputVector('jkljklmklmnlmnomnopnop');
   lDataRow.AddInputVector('q');
 
+  rs := '';
+  for i := 1 to 15625 do
+    rs := rs + 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '34aa973cd4c4daa4f61eeb2bdbad27316534016f';
+  lDataRow.ExpectedOutputUTFStrTest := 'c4609560a108a0c626aa7f2b38a65566739353c5';
+  lDataRow.AddInputVector(rs);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'dea356a2cddd90c7a7ecedc5ebb563934f460452';
+  lDataRow.ExpectedOutputUTFStrTest := '0600f3d950b5a289a1d9da127f6ad0b946f533d8';
+  lDataRow.AddInputVector('01234567012345670123456701234567', 10, 2);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '82abff6605dbe1c17def12a394fa22a82b544a35';
+  lDataRow.ExpectedOutputUTFStrTest := '0835aef8def1f766c534cc36694f6af813312529';
+  lDataRow.AddInputVector(TFormat_ESCAPE.Decode('\x9a\x7d\xfd\xf1\xec\xea\xd0\x6e\xd6\x46\xaa\x55\xfe\x75\x71\x46'));
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'cb0082c8f197d260991ba6a460e76e202bad27b3';
+  lDataRow.ExpectedOutputUTFStrTest := '5c64c33b3df55af4120314c10614a102e0feada9';
+  lDataRow.AddInputVector(TFormat_ESCAPE.Decode('\xf7\x8f\x92\x14\x1b\xcd\x17\x0a\xe8\x9b\x4f\xba\x15\xa1\xd5\x9f' +
+                                                '\x3f\xd8\x4d\x22\x3c\x92\x51\xbd\xac\xbb\xae\x61\xd0\x5e\xd1\x15' +
+                                                '\xa0\x6a\x7c\xe1\x17\xb7\xbe\xea\xd2\x44\x21\xde\xd9\xc3\x25\x92' +
+                                                '\xbd\x57\xed\xea\xe3\x9c\x39\xfa\x1f\xe8\x94\x6a\x84\xd0\xcf\x1f' +
+                                                '\x7b\xee\xad\x17\x13\xe2\xe0\x95\x98\x97\x34\x7f\x67\xc8\x0b\x04' +
+                                                '\x00\xc2\x09\x81\x5d\x6b\x10\xa6\x83\x83\x6f\xd5\x56\x2a\x56\xca' +
+                                                '\xb1\xa2\x8e\x81\xb6\x57\x66\x54\x63\x1c\xf1\x65\x66\xb8\x6e\x3b' +
+                                                '\x33\xa1\x08\xb0\x53\x07\xc0\x0a\xff\x14\xa7\x68\xed\x73\x50\x60' +
+                                                '\x6a\x0f\x85\xe6\xa9\x1d\x39\x6f\x5b\x5c\xbe\x57\x7f\x9b\x38\x80' +
+                                                '\x7c\x7d\x52\x3d\x6d\x79\x2f\x6e\xbc\x24\xa4\xec\xf2\xb3\xa4\x27' +
+                                                '\xcd\xbb\xfb'));
+  // SourceEnd
+
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c464f3b38d34f7bf49b29635e50c8957b3a87dc7';
   lDataRow.ExpectedOutputUTFStrTest := '65bbefb5a727dedc039540dc1dcfa18c6fa3aeec';
@@ -1371,15 +1409,6 @@ begin
   lDataRow.ExpectedOutput           := 'df2724a78d507fbfb4b85aa328cf8221e10f74a7';
   lDataRow.ExpectedOutputUTFStrTest := '634f2fd10ec73d75bd976990064edfc1e9d75cd5';
   lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
-
-  rs := '';
-  for i := 1 to 15625 do
-    rs := rs + 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := '34aa973cd4c4daa4f61eeb2bdbad27316534016f';
-  lDataRow.ExpectedOutputUTFStrTest := 'c4609560a108a0c626aa7f2b38a65566739353c5';
-  lDataRow.AddInputVector(rs);
 end;
 
 procedure TestTHash_SHA1.TestBlockSize;
