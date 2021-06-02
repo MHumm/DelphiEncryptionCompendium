@@ -1244,6 +1244,7 @@ begin
 
   FHash := THash_SHA0.Create;
 
+  // Source until SourceEnd: NIST.FIPS.180.pdf
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '0164b8a914cd2a5e74c4f7ff082c4d97f1edf880';
   lDataRow.ExpectedOutputUTFStrTest := 'e286e14cff397cd7e37f755e00af6a8e1b00bc55';
@@ -1255,16 +1256,6 @@ begin
   lDataRow.AddInputVector('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq');
 
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'f79e92290e9f519a62467812ea56920850354796';
-  lDataRow.ExpectedOutputUTFStrTest := '53f1df401054ccfa66250ace1454b34d55059e3c';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
-
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'e644dc674505c8260e58e32f6b8bcf565b2fafc4';
-  lDataRow.ExpectedOutputUTFStrTest := '29a30604bfbd1c23545fd02faf4c6bbce9947377';
-  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
-
-  lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '3232affa48628a26653b5aaa44541fd90d690603';
   lDataRow.ExpectedOutputUTFStrTest := '209d48020a6dff914d1503e2a760d4ef4ad4c8fe';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 15625, 1);
@@ -1273,7 +1264,17 @@ begin
   lDataRow.ExpectedOutput           := '3232affa48628a26653b5aaa44541fd90d690603';
   lDataRow.ExpectedOutputUTFStrTest := '209d48020a6dff914d1503e2a760d4ef4ad4c8fe';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+  // SourceEnd
 
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'f79e92290e9f519a62467812ea56920850354796';
+  lDataRow.ExpectedOutputUTFStrTest := '53f1df401054ccfa66250ace1454b34d55059e3c';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 119 bytes');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'e644dc674505c8260e58e32f6b8bcf565b2fafc4';
+  lDataRow.ExpectedOutputUTFStrTest := '29a30604bfbd1c23545fd02faf4c6bbce9947377';
+  lDataRow.AddInputVector('This test vector intended to detect last zeroized block necessity decision error. This block has total length 120 bytes.');
 end;
 
 procedure TestTHash_SHA0.TestDigestSize;
