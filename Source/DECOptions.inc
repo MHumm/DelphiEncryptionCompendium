@@ -76,12 +76,12 @@
       {.$DEFINE NO_ASM} (* default OFF *)
     {$ELSE
       {$DEFINE NO_ASM} (* default ON *)
-    {$IFEND}
-  {$IFEND}
+    {$ENDIF}
+  {$ENDIF}
 {$ELSE}
   // Turn ASM off for FPC as we do not know enough about ASM support on FPC
   {$DEFINE NO_ASM} (* default ON *)
-{$IFEND}
+{$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
 // DEC version 5.2. See TDECObject.Identity in DECBaseClass.pas for more details
@@ -101,8 +101,7 @@
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
   {$DEFINE FMXTranslateableExceptions}
-{$IFEND}
-
+{$IFEND} { TODO: convert to $ENDIF when raising minimum supported version to XE4+}
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
@@ -141,7 +140,7 @@
   {$UNDEF X86ASM}
   {$UNDEF X64ASM}
   {$DEFINE PUREPASCAL}
-{$IFEND}
+{$ENDIF}
 
 {$IFNDEF PUREPASCAL}
   // ignored by FPC (already in PurePascal mode as defined in FPC block above)
@@ -166,11 +165,11 @@
   {$IF CompilerVersion >= 20} // Delphi 2009 and newer
     {$IF CompilerVersion >= 21}   // Delphi 2010 and newer
       {$DEFINE DELPHI_2010_UP}
-    {$IFEND}
+    {$ENDIF}
   {$ELSE}
     Sorry, but Delphi 2007 and lower are no longer supported!
-  {$IFEND}
-{$IFEND}
+  {$ENDIF}
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 // Asm Core
@@ -200,4 +199,4 @@
   // {$DEFINE THash_Square_asm}
   // {$DEFINE THash_Snefru128_asm}
   // {$DEFINE THash_Snefru256_asm}
-{$IFEND}
+{$ENDIF}
