@@ -1907,6 +1907,8 @@ begin
 
   FHash := THash_Haval128.Create;
 
+  // Source until SourceEnd: https://web.archive.org/web/20120206072234/http://
+  // Rounds: 3               labs.calyptix.com/haval-1.1.tar.gz
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c68f39913f901f3ddf44c707357a7d70';
   lDataRow.ExpectedOutputUTFStrTest := 'c68f39913f901f3ddf44c707357a7d70';
@@ -1937,6 +1939,7 @@ begin
   lDataRow.PaddingByte              := 1;
   lDataRow.AddInputVector('abcdefghijklm');
   lDataRow.AddInputVector('nopqrstuvwxyz');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'de5eb3f7d9eb08fae7a07d68e3047ec6';
@@ -2017,7 +2020,6 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '85b87eb2cfdf9dc3e6bf25b654c28f5c';
   lDataRow.PaddingByte              := 128;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
 end;
 
 procedure TestTHash_Haval128.TestDigestSize;
@@ -2052,6 +2054,8 @@ begin
 
   FHash := THash_Haval160.Create;
 
+  // Source until SourceEnd: https://web.archive.org/web/20120206072234/http://
+  // Rounds: 3               labs.calyptix.com/haval-1.1.tar.gz
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd353c3ae22a25401d257643836d7231a9a95f953';
   lDataRow.ExpectedOutputUTFStrTest := 'd353c3ae22a25401d257643836d7231a9a95f953';
@@ -2087,6 +2091,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := 'e7052bbd65c7608cf0589f6471d85d7c0f02a6fd';
   lDataRow.PaddingByte              := 1;
   lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ba27e0d51b9ba140804252413c52b42dfe97214b';
@@ -2194,6 +2199,8 @@ begin
 
   FHash := THash_Haval192.Create;
 
+  // Source until SourceEnd: https://web.archive.org/web/20120206072234/http://
+  // Rounds: 4               labs.calyptix.com/haval-1.1.tar.gz
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '4a8372945afa55c7dead800311272523ca19d42ea47b72da';
   lDataRow.ExpectedOutputUTFStrTest := '4a8372945afa55c7dead800311272523ca19d42ea47b72da';
@@ -2229,6 +2236,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := 'd1458c150e3330016f0ebdb1f7003e0eba960739a6830923';
   lDataRow.PaddingByte              := 1;
   lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '8c80602a16fcca8332c08446ea61a2fbc74e05d3361f0e4d';
@@ -2301,8 +2309,6 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := 'ff7c15641ca292000ba31bb863b7f3b524943e2ed64c4b12';
   lDataRow.PaddingByte              := 128;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
-
 end;
 
 procedure TestTHash_Haval192.TestDigestSize;
@@ -2337,6 +2343,8 @@ begin
 
   FHash := THash_Haval224.Create;
 
+  // Source until SourceEnd: https://web.archive.org/web/20120206072234/http://
+  // Rounds: 4               labs.calyptix.com/haval-1.1.tar.gz
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '3e56243275b3b81561750550e36fcd676ad2f5dd9e15f2e89e6ed78e';
   lDataRow.ExpectedOutputUTFStrTest := '3e56243275b3b81561750550e36fcd676ad2f5dd9e15f2e89e6ed78e';
@@ -2372,6 +2380,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '09293b232655058426832f0ceb13ff041688f4fa43243b66a2c19677';
   lDataRow.PaddingByte              := 1;
   lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'adf788362468585753a4ebb59c44c8934d2995c6305beb9345ddf485';
@@ -2444,7 +2453,6 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := 'ece302f7e317c2bbab56f1e29ac123441a241297f5696465f8b7ed6d';
   lDataRow.PaddingByte              := 128;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
 end;
 
 procedure TestTHash_Haval224.TestDigestSize;
@@ -2479,6 +2487,15 @@ begin
 
   FHash := THash_Haval256.Create;
 
+{ TODO :
+We need to create a method to be able to specify the rounds used
+for a given test for these classes which support that.
+But: for the HAVAL algorithms this can only be set after calling DoInit/Init,
+as in DoInit the number of rounds is initialized depending on the output
+hash value length. }
+
+  // Source until SourceEnd: https://web.archive.org/web/20120206072234/http://
+  // Rounds: 5               labs.calyptix.com/haval-1.1.tar.gz
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'be417bb4dd5cfb76c7126f4f8eeb1553a449039307b1a3cd451dbfdc0fbbe330';
   lDataRow.ExpectedOutputUTFStrTest := 'be417bb4dd5cfb76c7126f4f8eeb1553a449039307b1a3cd451dbfdc0fbbe330';
@@ -2517,6 +2534,7 @@ begin
   lDataRow.AddInputVector('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg');
   lDataRow.AddInputVector('hijklmnopqrstuvwxyz012345678');
   lDataRow.AddInputVector('9');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '42bb773476b0e978e7fa7414b2e7ecf0dc0a2accb96ade5d815d0e4706969272';
