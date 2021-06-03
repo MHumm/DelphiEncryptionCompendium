@@ -4040,7 +4040,12 @@ begin
       begin
         Buf := BytesOf(FTestData[i].InputData);
         Stream.Clear;
+        {$IF CompilerVersion >= 25.0}
         Stream.Write(Buf, Length(Buf));
+        {$ELSE}
+        if Length(Buf) > 0 then
+          Stream.Write(Buf[0], Length(Buf));
+        {$IFEND}
         Stream.Position := 0;
 
         ConfigHashClass(HashClass, i);

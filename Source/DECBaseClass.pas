@@ -226,22 +226,22 @@ var
 begin
   {$IFDEF DEC52_IDENTITY}
   Signature := StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName);
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[Low(Signature)]));
     {$ELSE}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[1]));
-    {$ENDIF}
+    {$IFEND}
   {$ELSE !DEC52_IDENTITY}
   Signature := RawByteString(StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName));
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[Low(Signature)]));
     {$ELSE}
     Result := CRC32(IdentityBase, Signature[1],
                                   Length(Signature) * SizeOf(Signature[1]));
-    {$ENDIF}
+    {$IFEND}
   {$ENDIF !DEC52_IDENTITY}
 end;
 

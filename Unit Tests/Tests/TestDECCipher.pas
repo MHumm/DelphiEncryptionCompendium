@@ -3260,7 +3260,7 @@ var
 begin
   System.Assert(Length(Vector) mod 4 = 0, 'Char count of ' + Vector + ' is not integral');
 
-  SetLength(Result, Vector.Length div 4);
+  SetLength(Result, Length(Vector) div 4);
 
   if (Vector <> '') then
   begin

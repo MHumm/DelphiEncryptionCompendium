@@ -126,8 +126,8 @@
   {$IFDEF DARWIN}
     {$DEFINE MACOS}
     {$DEFINE ALIGN_STACK}
-  {$IFEND !DARWIN}
-{$IFEND FPC}
+  {$ENDIF}
+{$ENDIF FPC}
 
 //------------------------------------------------------------------------------
 // Architecture (x86ASM, x64ASM, PurePascal)
@@ -151,9 +151,9 @@
       {$DEFINE X64ASM}
     {$ELSE !CPUX64}
       {$DEFINE PUREPASCAL}
-    {$IFEND !CPUX64}
-  {$IFEND}
-{$IFEND !PUREPASCAL}
+    {$ENDIF !CPUX64}
+  {$ENDIF}
+{$ENDIF !PUREPASCAL}
 
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder
@@ -165,10 +165,10 @@
   {$IF CompilerVersion >= 20} // Delphi 2009 and newer
     {$IF CompilerVersion >= 21}   // Delphi 2010 and newer
       {$DEFINE DELPHI_2010_UP}
-    {$ENDIF}
+    {$IFEND}
   {$ELSE}
     Sorry, but Delphi 2007 and lower are no longer supported!
-  {$ENDIF}
+  {$IFEND}
 {$ENDIF}
 
 //------------------------------------------------------------------------------

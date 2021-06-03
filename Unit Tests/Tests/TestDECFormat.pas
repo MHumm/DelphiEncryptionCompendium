@@ -1742,13 +1742,13 @@ begin
     if i = $5C then
       Continue;
 
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))[low(RawByteString)], 1),
                 'Failure on ' + chr(i) + ' ');
     {$ELSE}
     CheckEquals(true, TFormat_ESCAPE.IsValid(RawByteString(chr(i))[1], 1),
                 'Failure on ' + chr(i) + ' ');
-    {$ENDIF}
+    {$IFEND}
   end;
 
   // check hex chars
@@ -1826,7 +1826,7 @@ begin
   begin
     if length(TestData[i].Input) > 0 then
     begin
-      {$IF CompilerVersion >= 17.0}
+      {$IF CompilerVersion >= 24.0}
       pdata := @TestData[i].Input[low(TestData[i].Input)];
 
       len := length(TestData[i].Input) * SizeOf(TestData[i].Input[low(TestData[i].Input)]);
@@ -1834,7 +1834,7 @@ begin
       pdata := @TestData[i].Input[1];
 
       len := length(TestData[i].Input) * SizeOf(TestData[i].Input[1]);
-      {$ENDIF}
+      {$IFEND}
     end
     else
     begin

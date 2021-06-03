@@ -44,7 +44,7 @@ type
   StrRec = packed record
   {$IF defined(CPU64BITS)}
     _Padding: Integer; // Make 16 byte align for payload..
-  {$ENDIF}
+  {$IFEND}
     codePage: Word;
     elemSize: Word;
     refCnt: Integer;
@@ -95,12 +95,12 @@ begin
       {$IFDEF FPC}
       if InterlockedDecrement(P.refCnt) = 0 then
       {$ELSE}
-        {$IF CompilerVersion >= 17.0}
+        {$IF CompilerVersion >= 24.0}
         if AtomicDecrement(P.refCnt) = 0 then
         {$ELSE}
         Dec(P.refCnt);
         if (P.refCnt = 0) then
-        {$ENDIF}
+        {$IFEND}
       {$ENDIF}
         FreeMem(P);
     end;

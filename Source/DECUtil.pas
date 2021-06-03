@@ -420,7 +420,7 @@ begin
             Source shl 8 and $00FF0000 or
             Source shr 8 and $0000FF00;
 end;
-{$ENDIF PUREPASCAL}
+{$IFEND PUREPASCAL}
 
 procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
 {$IFDEF X86ASM}
@@ -601,21 +601,21 @@ begin
   begin
     Stream.Position := Position;
     Size := SizeToProtect;
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     FillChar(Buffer[Low(Buffer)], BufferSize, WipeBytes[Count]);
     {$ELSE}
     FillChar(Buffer[1], BufferSize, WipeBytes[Count]);
-    {$ENDIF}
+    {$IFEND}
     while Size > 0 do
     begin
       Bytes := Size;
       if Bytes > BufferSize then
         Bytes := BufferSize;
-      {$IF CompilerVersion >= 17.0}
+      {$IF CompilerVersion >= 24.0}
       Stream.Write(Buffer[Low(Buffer)], Bytes);
       {$ELSE}
       Stream.Write(Buffer[1], Bytes);
-      {$ENDIF}
+      {$IFEND}
       Dec(Size, Bytes);
     end;
   end;
@@ -635,11 +635,11 @@ begin
   if Length(Source) > 0 then
   begin
     System.UniqueString(Source);
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$ENDIF}
+    {$IFEND}
     Source := '';
   end;
 end;
@@ -651,11 +651,11 @@ begin
     // UniqueString(Source); cannot be called with a RawByteString as there is
     // no overload for it, so we need to call our own one.
     DECUtilRawByteStringHelper.UniqueString(Source);
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$ENDIF}
+    {$IFEND}
     Source := '';
   end;
 end;
@@ -666,11 +666,11 @@ begin
   if Length(Source) > 0 then
   begin
     System.UniqueString(Source);
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$ENDIF}
+    {$IFEND}
     Source := '';
   end;
 end;
@@ -680,11 +680,11 @@ begin
   if Length(Source) > 0 then
   begin
     System.UniqueString(Source); // for OS <> Win, WideString is not RefCounted on Win
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$ENDIF}
+    {$IFEND}
     Source := '';
   end;
 end;
@@ -696,11 +696,11 @@ begin
   if Length(Source) > 0 then
   begin
     // determine lowest string index for handling of ZeroBasedStrings
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Move(Source[0], Result[Low(result)], Length(Source));
     {$ELSE}
     Move(Source[0], Result[1], Length(Source));
-    {$ENDIF}
+    {$IFEND}
   end;
 end;
 

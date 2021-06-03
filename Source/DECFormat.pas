@@ -381,7 +381,7 @@ begin
   result[45]:=$09;
   result[46]:=$0A;
   result[47]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class procedure TFormat_HEX.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -547,7 +547,7 @@ begin
   result[45]:=$09;
   result[46]:=$0A;
   result[47]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class function TFormat_DECMIME32.CharTableBinary: TBytes;
@@ -619,7 +619,7 @@ begin
   result[50]:=$09;
   result[51]:=$0A;
   result[52]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class procedure TFormat_DECMIME32.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -834,7 +834,7 @@ begin
   result[82]:=$09;
   result[83]:=$0A;
   result[84]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1251,7 +1251,7 @@ begin
   result[65]:=$09;
   result[66]:=$0A;
   result[67]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1494,7 +1494,7 @@ begin
   result[71]:=$09;
   result[72]:=$0A;
   result[73]:=$0D;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 var
