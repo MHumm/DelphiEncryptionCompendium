@@ -1622,12 +1622,14 @@ begin
 
   FHash := THash_SHA384.Create;
 
+  // Source until SourceEnd: https://datatracker.ietf.org/doc/html/rfc4634
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'cb00753f45a35e8bb5a03d699ac65007272c32ab0eded1631a8' +
                                        'b605a43ff5bed8086072ba1e7cc2358baeca134c825a7';
   lDataRow.ExpectedOutputUTFStrTest := '9b7ce7c7af46e400a37c8099cb4bbb5d0408061dd74cdb5dac7' +
                                        '661bed1e53724bd07f299e265f400802a48d2e0b2092c';
   lDataRow.AddInputVector('abc');
+
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '09330c33f71147e83d192fc782cd1b4753111b173b3b05d22fa' +
                                        '08086e3b0f712fcc7c71a557e2db966c3e9fa91746039';
@@ -1638,6 +1640,58 @@ begin
   lDataRow.AddInputVector('hijklmnoijklmnopjklmnopqklmnopqrlmnopqr');
   lDataRow.AddInputVector('smnopqrstnopqrst');
   lDataRow.AddInputVector('u');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '9d0e1809716474cb086e834e310a4a1ced149e9c00f24852' +
+                                       '7972cec5704c2a5b07b8b3dc38ecc4ebae97ddd87f3d8985';
+  lDataRow.ExpectedOutputUTFStrTest := '85056c62b9b2eba33a1ea69d06e32e71715188b25d3f7a2b' +
+                                       'c37be377890c4b0c08e7f55bc83550f0fe27a209088bc671';
+  lDataRow.AddInputVector('a', 1, 1000000);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '2fc64a4f500ddb6828f6a3430b8dd72a368eb7f3a8322a70' +
+                                       'bc84275b9c0b3ab00d27a5cc3c2d224aa6b61a0d79fb4596';
+  lDataRow.ExpectedOutputUTFStrTest := 'e6ccec32ee864cb67b27155d65d4eefee73f4d9b21683f58' +
+                                       'd066d44e3af4959016f31c107dbf3e8bc04bca3f35f3493f';
+  lDataRow.AddInputVector('01234567012345670123456701234567', 1, 20);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'c9a68443a005812256b8ec76b00516f0dbb74fab26d66591' +
+                                       '3f194b6ffb0e91ea9967566b58109cbc675cc208e4c823f7';
+  lDataRow.ExpectedOutputUTFStrTest := '9e1bc4e7cc69cd811ad22dcd6ea3666396571171c9585baa' +
+                                       '490aa25a87dc17af6e648e814a4056454ed93caa28a53a8e';
+  lDataRow.AddInputVector(TFormat_ESCAPE.Decode('\xa4\x1c\x49\x77\x79\xc0\x37\x5f\xf1\x0a' +
+                                                '\x7f\x4e\x08\x59\x17\x39'));
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4f440db1e6edd2899fa335f09515aa025ee177a79f4b4aaf' +
+                                       '38e42b5c4de660f5de8fb2a5b2fbd2a3cbffd20cff1288c0';
+  lDataRow.ExpectedOutputUTFStrTest := '5e2efe090daef2acb31259391d0002f312b001784f1a8888' +
+                                       '6fc133d97b14843fc564aa35b956ef37d967ad56a01b1c67';
+  lDataRow.AddInputVector(TFormat_ESCAPE.Decode('\x39\x96\x69\xe2\x8f\x6b\x9c\x6d\xbc\xbb' +
+                                                '\x69\x12\xec\x10\xff\xcf\x74\x79\x03\x49' +
+                                                '\xb7\xdc\x8f\xbe\x4a\x8e\x7b\x3b\x56\x21' +
+                                                '\xdb\x0f\x3e\x7d\xc8\x7f\x82\x32\x64\xbb' +
+                                                '\xe4\x0d\x18\x11\xc9\xea\x20\x61\xe1\xc8' +
+                                                '\x4a\xd1\x0a\x23\xfa\xc1\x72\x7e\x72\x02' +
+                                                '\xfc\x3f\x50\x42\xe6\xbf\x58\xcb\xa8\xa2' +
+                                                '\x74\x6e\x1f\x64\xf9\xb9\xea\x35\x2c\x71' +
+                                                '\x15\x07\x05\x3c\xf4\xe5\x33\x9d\x52\x86' +
+                                                '\x5f\x25\xcc\x22\xb5\xe8\x77\x84\xa1\x2f' +
+                                                '\xc9\x61\xd6\x6c\xb6\xe8\x95\x73\x19\x9a' +
+                                                '\x2c\xe6\x56\x5c\xbd\xf1\x3d\xca\x40\x38' +
+                                                '\x32\xcf\xcb\x0e\x8b\x72\x11\xe8\x3a\xf3' +
+                                                '\x2a\x11\xac\x17\x92\x9f\xf1\xc0\x73\xa5' +
+                                                '\x1c\xc0\x27\xaa\xed\xef\xf8\x5a\xad\x7c' +
+                                                '\x2b\x7c\x5a\x80\x3e\x24\x04\xd9\x6d\x2a' +
+                                                '\x77\x35\x7b\xda\x1a\x6d\xae\xed\x17\x15' +
+                                                '\x1c\xb9\xbc\x51\x25\xa4\x22\xe9\x41\xde' +
+                                                '\x0c\xa0\xfc\x50\x11\xc2\x3e\xcf\xfe\xfd' +
+                                                '\xd0\x96\x76\x71\x1c\xf3\xdb\x0a\x34\x40' +
+                                                '\x72\x0e\x16\x15\xc1\xf2\x2f\xbc\x3c\x72' +
+                                                '\x1d\xe5\x21\xe1\xb9\x9b\xa1\xbd\x55\x77' +
+                                                '\x40\x86\x42\x14\x7e\xd0\x96'));
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'cdbb41d1164ef06788b8b3f0fcb157de981311f0bc76752c952' +
