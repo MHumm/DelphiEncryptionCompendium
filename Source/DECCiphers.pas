@@ -86,6 +86,11 @@ type
   /// </summary>
   TCipher_SCOP          = class;
   /// <summary>
+  ///   Stream Cipher in Blockmode (on UInt32), very fast.
+  ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
+  /// </summary>
+  TCipher_SCOP_DEC52    = class;
+  /// <summary>
   ///   Stream Cipher, eq. design from German ENIGMA Machine
   /// </summary>
   TCipher_Sapphire      = class;
@@ -184,6 +189,11 @@ type
   ///   = TCipher_XTEA (kept for backward compatibility)
   /// </summary>
   TCipher_TEAN          = class;
+  /// <summary>
+  ///   Tiny Encryption Algorithm, 1st extended Version.
+  ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
+  /// </summary>
+  TCipher_XTEA_DEC52    = class;
 
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
@@ -394,6 +404,28 @@ type
   end;
 
   TCipher_SCOP = class(TDECFormattedCipher)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <remarks>
+  ///   Do only use if backwards compatibility with old code is necessary as
+  ///   this implementation is faulty!
+  /// </remarks>
+  TCipher_SCOP_DEC52 = class(TDECFormattedCipher)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -821,6 +853,24 @@ type
   end;
 
   TCipher_TEAN = class(TCipher_XTEA);
+
+  /// <summary>
+  ///   XTEA is an improved version of the TEA algorithm. This version is the
+  ///   old faulty one from DEC 5.2. Use only if necessary for compatibility
+  ///    reasons!
+  /// </summary>
+  /// <remarks>
+  ///   In DEC V5.2 at least and in former commits of DEC 6.0 development version
+  ///   this algorithm was broken due to differences in brackets and thus returned
+  ///   a different result. It is unclear why nobody reported this as bug yet
+  ///   but be aware that if you need the old variant for compatibility reasons
+  ///   you need a commit from before 3rd December 2020.
+  /// </remarks>
+  TCipher_XTEA_DEC52 = class(TCipher_TEA)
+  protected
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  end;
 
 implementation
 
@@ -3137,7 +3187,7 @@ var
 
 var
   I, J: Integer;
-  T: array[0..3] of Integer;
+  T: array[0..3] of UInt32;
   P: PUInt32Array;
 begin
   FillChar(Init_State, SizeOf(Init_State), 0);
@@ -3188,6 +3238,163 @@ begin
 end;
 
 procedure TCipher_SCOP.DoDecode(Source, Dest: Pointer; Size: Integer);
+var
+  I, J: Byte;
+  T1, T2, T3: UInt32;
+  P: PUInt32Array;
+  W: Integer;
+begin
+  P  := FAdditionalBuffer;
+  I  := P[0];
+  J  := P[1];
+  T3 := P[2];
+  for W := 0 to Size div 4 - 1 do
+  begin
+    T1 := P[J + 3 + 128]; Inc(J, T3);
+    T2 := P[J + 3 + 128];
+    PUInt32Array(Dest)[W] := PUInt32Array(Source)[W] - T1 - T2;
+    T3 := T2 + P[I + 3];
+    Inc(I);
+    P[J + 3 + 128] := T3;
+    Inc(J, T2);
+  end;
+  P[0] := I;
+  P[1] := J;
+  P[2] := T3;
+end;
+
+{ TCipher_SCOP_DEC52 }
+
+{ TODO : The old failure needs to be restored again }
+
+class function TCipher_SCOP_DEC52.Context: TCipherContext;
+begin
+  Result.KeySize                     := 48;
+  Result.BlockSize                   := 4;
+  Result.BufferSize                  := 32;
+  Result.AdditionalBufferSize        := 384 * 4 + 3 * SizeOf(UInt32);
+  Result.NeedsAdditionalBufferBackup := True;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
+end;
+
+procedure TCipher_SCOP_DEC52.DoInit(const Key; Size: Integer);
+var
+  Init_State: packed record
+    Coef: array[0..7, 0..3] of Byte;
+    X: array[0..3] of UInt32;
+  end;
+
+  procedure ExpandKey;
+  var
+    P: PByteArray;
+    I, C: Integer;
+  begin
+    C := 1;
+    P := @Init_State;
+    Move(Key, P^, Size);
+    for I := Size to 47 do
+      P[I] := P[I - Size] + P[I - Size + 1];
+    for I := 0 to 31 do
+      if P[I] = 0 then
+      begin
+        P[I] := C;
+        Inc(C);
+      end;
+  end;
+
+  procedure GP8(Data: PUInt32Array);
+  var
+    I, I2: Integer;
+    NewX: array[0..3] of UInt32;
+    X1, X2, X3, X4: UInt32;
+    Y1, Y2: UInt32;
+  begin
+    I := 0;
+    I2 := 0;
+    while I < 8 do
+    begin
+      X1 := Init_State.X[I2] shr 16;
+      X2 := X1 * X1;
+      X3 := X2 * X1;
+      X4 := X3 * X1;
+      Y1 := Init_State.Coef[I][0] * X4 +
+            Init_State.Coef[I][1] * X3 +
+            Init_State.Coef[I][2] * X2 +
+            Init_State.Coef[I][3] * X1 + 1;
+      X1 := Init_State.X[I2] and $FFFF;
+      X2 := X1 * X1;
+      X3 := X2 * X1;
+      X4 := X3 * X1;
+      Y2 := Init_State.Coef[I + 1][0] * X4 +
+            Init_State.Coef[I + 1][1] * X3 +
+            Init_State.Coef[I + 1][2] * X2 +
+            Init_State.Coef[I + 1][3] * X1 + 1;
+      Data[I2] := Y1 shl 16 or Y2 and $FFFF;
+      NewX[I2] := Y1 and $FFFF0000 or Y2 shr 16;
+      Inc(I2);
+      Inc(I, 2);
+    end;
+    Init_State.X[0] := NewX[0] shr 16 or NewX[3] shl 16;
+    Init_State.X[1] := NewX[0] shl 16 or NewX[1] shr 16;
+    Init_State.X[2] := NewX[1] shl 16 or NewX[2] shr 16;
+    Init_State.X[3] := NewX[2] shl 16 or NewX[3] shr 16;
+  end;
+
+var
+  I, J: Integer;
+  T: array[0..3] of Integer;
+  P: PUInt32Array;
+begin
+  FillChar(Init_State, SizeOf(Init_State), 0);
+  FillChar(T, SizeOf(T), 0);
+  P := Pointer(PByte(FAdditionalBuffer) + 12); // for Pointer Math
+  ExpandKey;
+  for I := 0 to 7 do
+    GP8(@T);
+  for I := 0 to 11 do
+  begin
+    for J := 0 to 7 do
+      GP8(@P[I * 32 + J * 4]);
+    GP8(@T);
+  end;
+  GP8(@T);
+  I := T[3] and $7F;
+  P[I] := P[I] or 1;
+  P := FAdditionalBuffer;
+  P[0] := T[3] shr 24 and $FF;
+  P[1] := T[3] shr 16 and $FF;
+  P[2] := T[3] shr  8 and $FF;
+  ProtectBuffer(Init_State, SizeOf(Init_State));
+end;
+
+procedure TCipher_SCOP_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
+var
+  I, J: Byte;
+  T2, T3, T1: UInt32;
+  P: PUInt32Array;
+  W: Integer;
+begin
+  P  := FAdditionalBuffer;
+  I  := P[0];
+  J  := P[1];
+  T3 := P[2];
+  for W := 0 to Size div 4 - 1 do
+  begin
+    T1 := P[J + 3 + 128]; Inc(J, T3);
+    T2 := P[J + 3 + 128];
+    PUInt32Array(Dest)[W] := PUInt32Array(Source)[W] + T1 + T2;
+    T3 := T2 + P[I + 3];  Inc(I);
+    P[J + 3 + 128] := T3;
+    Inc(J, T2);
+  end;
+  P[0] := I;
+  P[1] := J;
+  P[2] := T3;
+end;
+
+procedure TCipher_SCOP_DEC52.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   I, J: Byte;
   T1, T2, T3: UInt32;
@@ -5938,6 +6145,61 @@ begin
   PUInt32Array(Dest)[1] := Y;
 end;
 
+{ TCipher_XTEA_DEC52 }
+
+{ TODO : The old failure needs to be restored again }
+
+procedure TCipher_XTEA_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
+var
+  Sum,
+  I, X, Y: UInt32;
+  K: PUInt32Array;
+begin
+  Assert(Size = Context.BlockSize);
+
+  Sum := 0;
+
+  X := PUInt32Array(Source)[0];
+  Y := PUInt32Array(Source)[1];
+  K := FAdditionalBuffer;
+
+  for I := 0 to FRounds - 1 do
+  begin
+    Inc(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
+    Inc(Sum, TEA_Delta);
+    Inc(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
+  end;
+
+  PUInt32Array(Dest)[0] := X;
+  PUInt32Array(Dest)[1] := Y;
+end;
+
+procedure TCipher_XTEA_DEC52.DoDecode(Source, Dest: Pointer; Size: Integer);
+var
+  I: Integer;
+  Sum,
+  X, Y: UInt32;
+  K: PUInt32Array;
+begin
+  Assert(Size = Context.BlockSize);
+
+  Sum := TEA_Delta * UInt32(FRounds);
+
+  X := PUInt32Array(Source)[0];
+  Y := PUInt32Array(Source)[1];
+  K := FAdditionalBuffer;
+
+  for I := 0 to FRounds - 1 do
+  begin
+    Dec(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
+    Dec(Sum, TEA_Delta);
+    Dec(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
+  end;
+
+  PUInt32Array(Dest)[0] := X;
+  PUInt32Array(Dest)[1] := Y;
+end;
+
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
@@ -5982,6 +6244,11 @@ initialization
   TCipher_TEA.RegisterClass(TDECCipher.ClassList);
   TCipher_XTEA.RegisterClass(TDECCipher.ClassList);
   TCipher_TEAN.RegisterClass(TDECCipher.ClassList);
+
+    {$IFDEF OLD_REGISTER_FAULTY_CIPHERS}
+    TCipher_SCOP_DEC52.RegisterClass(TDECCipher.ClassList);
+    TCipher_XTEA_DEC52.RegisterClass(TDECCipher.ClassList);
+    {$ENDIF}
   {$ENDIF}
 
 finalization
