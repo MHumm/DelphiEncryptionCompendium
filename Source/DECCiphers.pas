@@ -3328,9 +3328,9 @@ var
       X3 := X2 * X1;
       X4 := X3 * X1;
       Y2 := Init_State.Coef[I + 1][0] * X4 +
-            Init_State.Coef[I + 1][1] * X3 +
-            Init_State.Coef[I + 1][2] * X2 +
-            Init_State.Coef[I + 1][3] * X1 + 1;
+            Init_State.Coef[I + 2][1] * X3 +
+            Init_State.Coef[I + 3][2] * X2 +
+            Init_State.Coef[I + 4][3] * X1 + 1;
       Data[I2] := Y1 shl 16 or Y2 and $FFFF;
       NewX[I2] := Y1 and $FFFF0000 or Y2 shr 16;
       Inc(I2);
@@ -3361,7 +3361,7 @@ begin
   end;
   GP8(@T);
   I := T[3] and $7F;
-  P[I] := P[I] or 1;
+  P[I + 3] := P[I + 3] or 1;
   P := FAdditionalBuffer;
   P[0] := T[3] shr 24 and $FF;
   P[1] := T[3] shr 16 and $FF;
@@ -6165,9 +6165,9 @@ begin
 
   for I := 0 to FRounds - 1 do
   begin
-    Inc(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
+    Inc(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
     Inc(Sum, TEA_Delta);
-    Inc(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
+    Inc(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
   end;
 
   PUInt32Array(Dest)[0] := X;
@@ -6191,9 +6191,9 @@ begin
 
   for I := 0 to FRounds - 1 do
   begin
-    Dec(Y, (((X shl 4) xor (X shr 5)) + X) xor (Sum + K[Sum shr 11 and 3]));
+    Dec(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
     Dec(Sum, TEA_Delta);
-    Dec(X, (((Y shl 4) xor (Y shr 5)) + Y) xor (Sum + K[Sum and 3]));
+    Dec(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
   end;
 
   PUInt32Array(Dest)[0] := X;
@@ -6246,6 +6246,8 @@ initialization
   TCipher_TEAN.RegisterClass(TDECCipher.ClassList);
 
     {$IFDEF OLD_REGISTER_FAULTY_CIPHERS}
+    // Those classes are only there for those who might have relied on the
+    // faulty implementation
     TCipher_SCOP_DEC52.RegisterClass(TDECCipher.ClassList);
     TCipher_XTEA_DEC52.RegisterClass(TDECCipher.ClassList);
     {$ENDIF}

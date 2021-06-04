@@ -335,6 +335,27 @@ type
     procedure TestClassByName;
   end;
 
+  // Testmethods for class TCipher_SCOP_DEC52
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_SCOP_DEC52 = class(TCipherBasis)
+  strict private
+    FCipher_SCOP_DEC52: TCipher_SCOP_DEC52;
+
+    procedure DoTestClassByName;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
   // Testmethods for class TCipher_Sapphire
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Sapphire = class(TCipherBasis)
@@ -722,6 +743,25 @@ type
   TestTCipher_XTEA = class(TCipherBasis)
   strict private
     FCipher_XTEA: TCipher_XTEA;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
+  // Testmethods for class TCipher_XTEA_DEC52
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_XTEA_DEC52 = class(TCipherBasis)
+  strict private
+    FCipher_XTEA_DEC52: TCipher_XTEA_DEC52;
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
@@ -1480,18 +1520,27 @@ begin
   FTestData[2].Filler     := $FF;
   FTestData[2].Mode       := cmECBx;
 
-  FTestData[3].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
-  FTestData[3].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
-                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
-                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
-                                                    '\x09\x82\x2D\xBD\xF5\x60' +
-                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
-                                                    '\x81\xB1');
-
-  FTestData[3].Key        := 'TCipher_SCOP';
+  // Attempt to generate test data from the C-program from the original specification
+  // but this still fails due to unknown reasons
+  FTestData[3].OutputData := '195f5dce419d3b3d35616cf06df6a3c38d790dbe5d0d20587b72a221af98b9a6deb04be07dbb3c8a';
+  FTestData[3].InputData  := '00000000000000000000000000000000000000000000000000000000000000000000000000000000';
+  FTestData[3].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
   FTestData[3].InitVector := '';
   FTestData[3].Filler     := $FF;
-  FTestData[3].Mode       := cmCTSx;
+  FTestData[3].Mode       := cmECBx;
+
+//  FTestData[3].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
+//  FTestData[3].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+//                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+//                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+//                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+//                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+//                                                    '\x81\xB1');
+//
+//  FTestData[3].Key        := 'TCipher_SCOP';
+//  FTestData[3].InitVector := '';
+//  FTestData[3].Filler     := $FF;
+//  FTestData[3].Mode       := cmCTSx;
 end;
 
 procedure TestTCipher_SCOP.TearDown;
@@ -1537,6 +1586,94 @@ end;
 procedure TestTCipher_SCOP.TestIdentity;
 begin
   CheckEquals($938C9891, FCipher_Scop.Identity);
+end;
+
+procedure TestTCipher_SCOP_DEC52.Done;
+begin
+  FCipher_SCOP_DEC52.Done;
+end;
+
+procedure TestTCipher_SCOP_DEC52.DoTestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_SCOP_DEC52.ClassByName('TCipher_SCOP_DEC52');
+  // This line should never be executed due to ClassByName rising an exception
+  // but it suppresses a ReturnValue is not being used compiler warning
+  CheckEquals(TCipher_Magma, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_SCOP_DEC52.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_SCOP_DEC52.Context.KeySize);
+
+  FCipher_SCOP_DEC52.Mode := TestData.Mode;
+  FCipher_SCOP_DEC52.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
+procedure TestTCipher_SCOP_DEC52.SetUp;
+begin
+  FCipher_SCOP_DEC52 := TCipher_SCOP_DEC52.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_SCOP';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
+end;
+
+procedure TestTCipher_SCOP_DEC52.TearDown;
+begin
+  FCipher_SCOP_DEC52.Free;
+  FCipher_SCOP_DEC52 := nil;
+end;
+
+procedure TestTCipher_SCOP_DEC52.TestClassByName;
+begin
+  // Class shall not be registered by default
+  CheckException(DoTestClassByName, EDECClassNotRegisteredException);
+end;
+
+procedure TestTCipher_SCOP_DEC52.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_SCOP_DEC52.Context;
+
+  CheckEquals(  48,  ReturnValue.KeySize);
+  CheckEquals(   4,  ReturnValue.BlockSize);
+  CheckEquals(  32,  ReturnValue.BufferSize);
+  CheckEquals(1548,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_SCOP_DEC52.TestDecode;
+begin
+  DoTestDecode(FCipher_SCOP_DEC52.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SCOP_DEC52.TestEncode;
+begin
+  DoTestEncode(FCipher_SCOP_DEC52.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_SCOP_DEC52.TestIdentity;
+begin
+  CheckEquals($398EE1E3, FCipher_SCOP_DEC52.Identity);
 end;
 
 procedure TestTCipher_Sapphire.Done;
@@ -3250,6 +3387,90 @@ begin
   CheckEquals($CDBB621D, FCipher_XTEA.Identity);
 end;
 
+procedure TestTCipher_XTEA_DEC52.Done;
+begin
+  FCipher_XTEA_DEC52.Done;
+end;
+
+procedure TestTCipher_XTEA_DEC52.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_XTEA_DEC52.Context.KeySize);
+
+  FCipher_XTEA_DEC52.Mode := TestData.Mode;
+  FCipher_XTEA_DEC52.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
+procedure TestTCipher_XTEA_DEC52.SetUp;
+begin
+  // Source of the test data used: Hagen's original test vectors
+  FCipher_XTEA_DEC52 := TCipher_XTEA_DEC52.Create;
+  FCipher_XTEA_DEC52.Rounds := 16;
+
+  SetLength(FTestData, 1);
+  FTestData[0].OutputData  := 'cd7ebba2921a4b3be29e62cff71da5df63339429e2367c663ff81af90278bfa1';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  // The key for this test vector is the old name of the class which was
+  // TCipher_TEAN as the vector already existed in DEC 5.2 but the class got
+  // renamed later on
+  FTestData[0].Key        := 'TCipher_TEAN';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
+end;
+
+procedure TestTCipher_XTEA_DEC52.TearDown;
+begin
+  FCipher_XTEA_DEC52.Free;
+  FCipher_XTEA_DEC52 := nil;
+end;
+
+procedure TestTCipher_XTEA_DEC52.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_XTEA_DEC52.ClassByName('TCipher_XTEA');
+  CheckEquals(TCipher_XTEA, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_XTEA_DEC52.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_XTEA_DEC52.Context;
+
+  CheckEquals(  16,  ReturnValue.KeySize);
+  CheckEquals(   8,  ReturnValue.BlockSize);
+  CheckEquals(   8,  ReturnValue.BufferSize);
+  CheckEquals(  32,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(  16,  ReturnValue.MinRounds);
+  CheckEquals( 256,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_XTEA_DEC52.TestDecode;
+begin
+  DoTestDecode(FCipher_XTEA_DEC52.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_XTEA_DEC52.TestEncode;
+begin
+  DoTestEncode(FCipher_XTEA_DEC52.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_XTEA_DEC52.TestIdentity;
+begin
+  CheckEquals($59A6BE1E, FCipher_XTEA_DEC52.Identity);
+end;
+
 { TCipherBasis }
 
 function TCipherBasis.ConvertHexVectorToBytes(Vector: string): TBytes;
@@ -3601,6 +3822,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_Rijndael);
   TDUnitX.RegisterTestFixture(TestTCipher_Square);
   TDUnitX.RegisterTestFixture(TestTCipher_SCOP);
+  TDUnitX.RegisterTestFixture(TestTCipher_SCOP_DEC52);
   TDUnitX.RegisterTestFixture(TestTCipher_Sapphire);
   TDUnitX.RegisterTestFixture(TestTCipher_1DES);
   TDUnitX.RegisterTestFixture(TestTCipher_2DES);
@@ -3622,6 +3844,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_Skipjack);
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
+  TDUnitX.RegisterTestFixture(TestTCipher_XTEA_DEC52);
   {$ELSE}
   RegisterTests('DECCipher', [TestTDECCipher.Suite,
                               TestTCipher_Null.Suite,
@@ -3636,6 +3859,7 @@ initialization
                               TestTCipher_Rijndael.Suite,
                               TestTCipher_Square.Suite,
                               TestTCipher_SCOP.Suite,
+                              TestTCipher_SCOP_DEC52.Suite,
                               TestTCipher_Sapphire.Suite,
                               TestTCipher_1DES.Suite,
                               TestTCipher_2DES.Suite,
@@ -3656,7 +3880,8 @@ initialization
                               TestTCipher_Shark.Suite,
                               TestTCipher_Skipjack.Suite,
                               TestTCipher_TEA.Suite,
-                              TestTCipher_XTEA.Suite]);
+                              TestTCipher_XTEA.Suite,
+                              TestTCipher_XTEA_DEC52.Suite]);
   {$ENDIF}
 end.
 
