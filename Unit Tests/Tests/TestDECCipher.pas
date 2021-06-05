@@ -1484,7 +1484,7 @@ procedure TestTCipher_SCOP.SetUp;
 begin
   FCipher_SCOP := TCipher_SCOP.Create;
 
-  SetLength(FTestData, 4);
+  SetLength(FTestData, 18);
 
   // Standard test vector
   FTestData[0].OutputData  := 'ca29853fb7eec7f958931ff185c0b415c944c22f13e34423aba1a84fb3101f19';
@@ -1520,7 +1520,8 @@ begin
   FTestData[2].Filler     := $FF;
   FTestData[2].Mode       := cmECBx;
 
-  // Test data as generated from the original SCOP test program written in C
+  // Source until SourceEnd: Test data as generated from the original SCOP test
+  //  program written in C
   FTestData[3].OutputData := 'ce5d5f193d3b9d41f06c6135c3a3f66dbe0d798d58200d5d21a2727ba6b998afe04bb0de8a3cbb7d';
   FTestData[3].InputData  := #$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0 +
                              #$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0;
@@ -1529,7 +1530,104 @@ begin
   FTestData[3].Filler     := $FF;
   FTestData[3].Mode       := cmECBx;
 
-  // Add tests for #1#1#1#1, #1#1#1#2, #1#1#2#2, #1#2#2#2 and #2#2#2#2
+  FTestData[4].OutputData := 'cf5e601a';
+  FTestData[4].InputData  := #$1#$1#$1#$1;
+  FTestData[4].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[4].InitVector := '';
+  FTestData[4].Filler     := $FF;
+  FTestData[4].Mode       := cmECBx;
+
+  FTestData[5].OutputData := 'cf5e601b';
+  FTestData[5].InputData  := #$1#$1#$1#$2;
+  FTestData[5].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[5].InitVector := '';
+  FTestData[5].Filler     := $FF;
+  FTestData[5].Mode       := cmECBx;
+
+  FTestData[6].OutputData := 'cf5e611b';
+  FTestData[6].InputData  := #$1#$1#$2#$2;
+  FTestData[6].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[6].InitVector := '';
+  FTestData[6].Filler     := $FF;
+  FTestData[6].Mode       := cmECBx;
+
+  FTestData[7].OutputData := 'cf5f611b';
+  FTestData[7].InputData  := #$1#$2#$2#$2;
+  FTestData[7].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[7].InitVector := '';
+  FTestData[7].Filler     := $FF;
+  FTestData[7].Mode       := cmECBx;
+
+  FTestData[8].OutputData := 'd05f611b';
+  FTestData[8].InputData  := #$2#$2#$2#$2;
+  FTestData[8].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[8].InitVector := '';
+  FTestData[8].Filler     := $FF;
+  FTestData[8].Mode       := cmECBx;
+
+  FTestData[9].OutputData := 'cf5e601a3e3c9e42';
+  FTestData[9].InputData  := #$1#$1#$1#$1#$1#$1#$1#$1;
+  FTestData[9].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[9].InitVector := '';
+  FTestData[9].Filler     := $FF;
+  FTestData[9].Mode       := cmECBx;
+
+  FTestData[10].OutputData := 'cf5e601a3e3c9e43';
+  FTestData[10].InputData  := #$1#$1#$1#$1#$1#$1#$1#$2;
+  FTestData[10].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[10].InitVector := '';
+  FTestData[10].Filler     := $FF;
+  FTestData[10].Mode       := cmECBx;
+
+  FTestData[11].OutputData := 'cf5e601a3e3c9f43';
+  FTestData[11].InputData  := #$1#$1#$1#$1#$1#$1#$2#$2;
+  FTestData[11].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[11].InitVector := '';
+  FTestData[11].Filler     := $FF;
+  FTestData[11].Mode       := cmECBx;
+
+  FTestData[12].OutputData := 'cf5e601a3e3d9f43';
+  FTestData[12].InputData  := #$1#$1#$1#$1#$1#$2#$2#$2;
+  FTestData[12].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[12].InitVector := '';
+  FTestData[12].Filler     := $FF;
+  FTestData[12].Mode       := cmECBx;
+
+  FTestData[13].OutputData := 'cf5e601a3f3d9f43';
+  FTestData[13].InputData  := #$1#$1#$1#$1#$2#$2#$2#$2;
+  FTestData[13].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[13].InitVector := '';
+  FTestData[13].Filler     := $FF;
+  FTestData[13].Mode       := cmECBx;
+
+  FTestData[14].OutputData := 'cf5e601b3f3d9f43';
+  FTestData[14].InputData  := #$1#$1#$1#$2#$2#$2#$2#$2;
+  FTestData[14].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[14].InitVector := '';
+  FTestData[14].Filler     := $FF;
+  FTestData[14].Mode       := cmECBx;
+
+  FTestData[15].OutputData := 'cf5e611b3f3d9f43';
+  FTestData[15].InputData  := #$1#$1#$2#$2#$2#$2#$2#$2;
+  FTestData[15].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[15].InitVector := '';
+  FTestData[15].Filler     := $FF;
+  FTestData[15].Mode       := cmECBx;
+
+  FTestData[16].OutputData := 'cf5f611b3f3d9f43';
+  FTestData[16].InputData  := #$1#$2#$2#$2#$2#$2#$2#$2;
+  FTestData[16].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[16].InitVector := '';
+  FTestData[16].Filler     := $FF;
+  FTestData[16].Mode       := cmECBx;
+
+  FTestData[17].OutputData := 'd05f611b3f3d9f43';
+  FTestData[17].InputData  := #$2#$2#$2#$2#$2#$2#$2#$2;
+  FTestData[17].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
+  FTestData[17].InitVector := '';
+  FTestData[17].Filler     := $FF;
+  FTestData[17].Mode       := cmECBx;
+  // SourceEnd
 end;
 
 procedure TestTCipher_SCOP.TearDown;
