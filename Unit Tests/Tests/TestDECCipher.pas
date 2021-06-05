@@ -1520,27 +1520,16 @@ begin
   FTestData[2].Filler     := $FF;
   FTestData[2].Mode       := cmECBx;
 
-  // Attempt to generate test data from the C-program from the original specification
-  // but this still fails due to unknown reasons
-  FTestData[3].OutputData := '195f5dce419d3b3d35616cf06df6a3c38d790dbe5d0d20587b72a221af98b9a6deb04be07dbb3c8a';
-  FTestData[3].InputData  := '00000000000000000000000000000000000000000000000000000000000000000000000000000000';
+  // Test data as generated from the original SCOP test program written in C
+  FTestData[3].OutputData := 'ce5d5f193d3b9d41f06c6135c3a3f66dbe0d798d58200d5d21a2727ba6b998afe04bb0de8a3cbb7d';
+  FTestData[3].InputData  := #$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0 +
+                             #$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0#$0;
   FTestData[3].Key        := #0#1#2#3#4#5#6#7#8#9#$A#$B#$C#$D#$E#$F;
   FTestData[3].InitVector := '';
   FTestData[3].Filler     := $FF;
   FTestData[3].Mode       := cmECBx;
 
-//  FTestData[3].OutputData  := 'b1a7ee707aab160af9b9c3ebc2db5ee814a28995d2c1f994c53ca159ee052632';
-//  FTestData[3].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
-//                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
-//                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
-//                                                    '\x09\x82\x2D\xBD\xF5\x60' +
-//                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
-//                                                    '\x81\xB1');
-//
-//  FTestData[3].Key        := 'TCipher_SCOP';
-//  FTestData[3].InitVector := '';
-//  FTestData[3].Filler     := $FF;
-//  FTestData[3].Mode       := cmCTSx;
+  // Add tests for #1#1#1#1, #1#1#1#2, #1#1#2#2, #1#2#2#2 and #2#2#2#2
 end;
 
 procedure TestTCipher_SCOP.TearDown;
