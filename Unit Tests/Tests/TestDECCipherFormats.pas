@@ -184,7 +184,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeRawByteStringToBytes ' + IntToStr(i));
+                'Failure in TestDecodeRawByteStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -207,7 +207,7 @@ begin
     ResStr := WideStringOf(result);
 
     ExpStr := string(FTestData[i].PlainTextData);
-    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeStringToBytes ' + IntToStr(i));
+    CheckEquals(ExpStr, ResStr, 'Failure in TestDecodeStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -267,7 +267,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 AnsiStringOf(result),
-                'Fehler in TestDecodeAnsiStringToBytes ' + IntToStr(i));
+                'Failure in TestDecodeAnsiStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -290,7 +290,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].PlainTextData),
                 result,
-                'Fehler in TestDecodeAnsiStringToString ' + IntToStr(i));
+                'Failure in TestDecodeAnsiStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}
@@ -309,7 +309,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeBytes ' + IntToStr(i));
+                'Failure in TestDecodeBytes ' + IntToStr(i));
   end;
 end;
 
@@ -332,7 +332,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 result,
-                'Fehler in TestDecodeRawByteStringToString ' + IntToStr(i));
+                'Failure in TestDecodeRawByteStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -375,7 +375,7 @@ begin
 
         CheckEquals(FTestData[i].PlainTextData,
                     RawByteString(StringOf(result)),
-                    'Fehler in TestDecodeStream ' + IntToStr(i));
+                    'Failure in TestDecodeStream ' + IntToStr(i));
       end;
 
     finally
@@ -406,7 +406,7 @@ begin
 
     CheckEquals(string(FTestData[i].PlainTextData),
                 result,
-                'Fehler in TestDecodeStringToString ' + IntToStr(i));
+                'Failure in TestDecodeStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -430,7 +430,7 @@ begin
     ResStr := WideStringOf(result);
 
     ExpStr := string(FTestData[i].PlainTextData);
-    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeWideStringToBytes ' + IntToStr(i));
+    CheckEquals(ExpStr, ResStr, 'Failure in TestDecodeWideStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -453,7 +453,7 @@ begin
 
     CheckEquals(string(FTestData[i].PlainTextData),
                 string(result),
-                'Fehler in TestDecodeWideStringToString ' + IntToStr(i));
+                'Failure in TestDecodeWideStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}
@@ -474,7 +474,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 AnsiStringOf(TFormat_HexL.Encode(result)),
-                'Fehler in TestEncodeAnsiStringToBytes ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToBytes ' + i.ToString);
   end;
 end;
 
@@ -493,7 +493,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].EncryptedTextData),
                 AnsiStringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeAnsiStringToString ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToString ' + i.ToString);
   end;
 end;
 {$ENDIF}
@@ -511,7 +511,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                'Fehler in TestEncodeBytes ' + IntToStr(i));
+                'Failure in TestEncodeBytes ' + IntToStr(i));
   end;
 end;
 
@@ -528,7 +528,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                'Fehler in TestEncodeRawByteStringToBytes ' + IntToStr(i));
+                'Failure in TestEncodeRawByteStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -547,7 +547,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 BytesToRawString(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeRawByteStringToString ' + IntToStr(i));
+                'Failure in TestEncodeRawByteStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -590,7 +590,7 @@ begin
 
         CheckEquals(FTestData[i].EncryptedTextData,
                     RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                    'Fehler in TestEncodeStream ' + IntToStr(i));
+                    'Failure in TestEncodeStream ' + IntToStr(i));
       end;
 
     finally
@@ -617,7 +617,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
-                'Fehler in TestEncodeStringToBytes ' + IntToStr(i));
+                'Failure in TestEncodeStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -636,7 +636,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 StringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeStringToString ' + IntToStr(i));
+                'Failure in TestEncodeStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -656,7 +656,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
-                'Fehler in TestEncodeWideStringToBytes ' + IntToStr(i));
+                'Failure in TestEncodeWideStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -675,7 +675,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 StringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeWideStringToString ' + IntToStr(i));
+                'Failure in TestEncodeWideStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}

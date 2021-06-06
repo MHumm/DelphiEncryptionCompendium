@@ -763,6 +763,8 @@ type
   strict private
     FCipher_XTEA_DEC52: TCipher_XTEA_DEC52;
 
+    procedure DoTestClassByName;
+
     procedure Init(TestData: TCipherTestData);
     procedure Done;
   public
@@ -1687,7 +1689,7 @@ begin
   ReturnValue := FCipher_SCOP_DEC52.ClassByName('TCipher_SCOP_DEC52');
   // This line should never be executed due to ClassByName rising an exception
   // but it suppresses a ReturnValue is not being used compiler warning
-  CheckEquals(TCipher_Magma, ReturnValue, 'Class is not registered');
+  CheckEquals(TCipher_SCOP_DEC52, ReturnValue, 'Class is not registered');
 end;
 
 procedure TestTCipher_SCOP_DEC52.Init(TestData: TCipherTestData);
@@ -3479,6 +3481,16 @@ begin
   FCipher_XTEA_DEC52.Done;
 end;
 
+procedure TestTCipher_XTEA_DEC52.DoTestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_XTEA_DEC52.ClassByName('TCipher_XTEA_DEC52');
+  // This line should never be executed due to ClassByName rising an exception
+  // but it suppresses a ReturnValue is not being used compiler warning
+  CheckEquals(TCipher_XTEA_DEC52, ReturnValue, 'Class is not registered');
+end;
+
 procedure TestTCipher_XTEA_DEC52.Init(TestData: TCipherTestData);
 begin
   LimitKeyLength(TestData.Key, FCipher_XTEA_DEC52.Context.KeySize);
@@ -3520,11 +3532,9 @@ begin
 end;
 
 procedure TestTCipher_XTEA_DEC52.TestClassByName;
-var
-  ReturnValue : TDECCipherClass;
 begin
-  ReturnValue := FCipher_XTEA_DEC52.ClassByName('TCipher_XTEA');
-  CheckEquals(TCipher_XTEA, ReturnValue, 'Class is not registered');
+  // Class shall not be registered by default
+  CheckException(DoTestClassByName, EDECClassNotRegisteredException);
 end;
 
 procedure TestTCipher_XTEA_DEC52.TestContext;

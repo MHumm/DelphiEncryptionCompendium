@@ -362,12 +362,14 @@ var
   p : PByte;
   i : Integer;
 begin
-//  SetLength(Buffer, length(cCallbackTestData[0]));
-
   p := @Buffer;
   for i := 0 to Count-1 do
   begin
-    p^ := Ord(FTestData[FTestDataIndex].Input[{$IF CompilerVersion >= 24.0}low(FTestData[FTestDataIndex].Input){$ELSE}1{$IFEND} + i]);
+    {$IF CompilerVersion >= 24.0}
+    p^ := Ord(FTestData[FTestDataIndex].Input[low(FTestData[FTestDataIndex].Input) + i]);
+    {$ELSE}
+    p^ := Ord(FTestData[FTestDataIndex].Input[1 + i]);
+    {$IFEND}
     inc(p);
   end;
 
