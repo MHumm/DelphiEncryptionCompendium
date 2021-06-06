@@ -3151,20 +3151,26 @@ procedure TestTCipher_Shark.SetUp;
 begin
   FCipher_Shark := TCipher_Shark.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 2);
 
-  FTestData[0].OutputData  := 'd96521aac0c384609dce1f8bfbab183fa121acf85349c06f273a8915d37ae90b';
-  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
-                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
-                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
-                                                    '\x09\x82\x2D\xBD\xF5\x60' +
-                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
-                                                    '\x81\xB1');
-
+  FTestData[0].OutputData := 'e97af38e7c8c56d0426597162c4e68ad867ac9540fe9a2cf7b2fd33e7df8919c';
+  FTestData[0].InputData  := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                   '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                   '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                   '\x09\x82\x2D\xBD\xF5\x60' +
+                                                   '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                   '\x81\xB1');
   FTestData[0].Key        := 'TCipher_Shark';
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
-  FTestData[0].Mode       := cmCTSx;
+  FTestData[0].Mode       := cmECBx;
+
+  FTestData[1].OutputData := '3968bf331e8ca5ed';
+  FTestData[1].InputData  := #0#0#0#0#0#0#0#0;
+  FTestData[1].Key        := 'TCipher_Shark';
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
 end;
 
 procedure TestTCipher_Shark.TearDown;

@@ -5575,7 +5575,8 @@ var
         J := J xor $01F5;
       ALog[I] := J;
     end;
-    for I := 1 to 254 do
+    Log[0] := 0;
+    for I := 0 to 254 do
       Log[ALog[I]] := I;
   end;
 
@@ -5669,14 +5670,14 @@ begin
   I := 0;
   for R := 0 to 6 do
   begin
-    Inc(I);
     A[R].L := K[I and $F];
     A[R].R := 0;
+    Inc(I);
     for J := 1 to 7 do
     begin
-      Inc(I);
       A[R].R := A[R].R shl 8 or A[R].L shr 24;
       A[R].L := A[R].L shl 8 or K[I and $F];
+      Inc(I);
     end;
   end;
   L.L := 0;
@@ -5695,8 +5696,6 @@ begin
   D[6] := E[0];
   for R := 1 to 5 do
     D[R] := Transform(E[6-R]);
-  ProtectBuffer(Log, SizeOf(Log));
-  ProtectBuffer(ALog, SizeOf(ALog));
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
