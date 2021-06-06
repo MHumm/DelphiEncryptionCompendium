@@ -2658,6 +2658,9 @@ begin
   FHash        := THash_Tiger.Create;
   THash_Tiger(FHash).Rounds := 3;
 
+  // Source until SourceEnd: http://www.cs.technion.ac.il/~biham/Reports/Tiger/
+  //                         test-vectors-nessie-format.dat
+  // Which is a subpage of the official Tiger website.
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '3293ac630c13f0245f92bbb1766e16167a4e58492dde73f3';
   lDataRow.ExpectedOutputUTFStrTest := '3293ac630c13f0245f92bbb1766e16167a4e58492dde73f3';
@@ -2665,11 +2668,66 @@ begin
   lDataRow.AddInputVector('');
 
   lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '77befbef2e7ef8ab2ec8f93bf587a7fc613e247f5f247809';
+  lDataRow.ExpectedOutputUTFStrTest := '5b548919bc71cca542473494052a8fab1b68c62be0f76985';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '2aab1484e8c158f2bfb8c5ff41b57a525129131c957b5f93';
   lDataRow.ExpectedOutputUTFStrTest := '70198191f5b6e901c884a5e61a8f16ea0ece41969289210e';
   lDataRow.PaddingByte              := 1;
   lDataRow.AddInputVector('ab');
   lDataRow.AddInputVector('c');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd981f8cb78201a950dcf3048751e441c517fca1aa55a29f6';
+  lDataRow.ExpectedOutputUTFStrTest := '5140a79cdf23f824ffb327896283d40e028987c3ae57aa56';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('message digest');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '1714a472eee57d30040412bfcc55032a0b11602ff37beee9';
+  lDataRow.ExpectedOutputUTFStrTest := '97fb5aed48239fd2487422f4289ca2774fcc39b1019b6c04';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '0f7bf9a19b9c58f2b7610df7e84f0ac3a71c631e7b53f78e';
+  lDataRow.ExpectedOutputUTFStrTest := '82b6b1126a60eaf0abdb326e31dc3a1559d86c4fe9747fe1';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq');
+
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '8dcea680a17583ee502ba38a3c368651890ffbccdc49a8cc';
+//  lDataRow.ExpectedOutputUTFStrTest := '82b6b1126a60eaf0abdb326e31dc3a1559d86c4fe9747fe1';
+//  lDataRow.PaddingByte              := 1;
+//  lDataRow.AddInputVector('A...Za...z0...9');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '1c14795529fd9f207a958f84c52f11e887fa0cabdfd91bfd';
+  lDataRow.ExpectedOutputUTFStrTest := 'e329bffcf56e3b751f3b143b31e91da68a9c2e89ef75532b';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('1234567890', 1, 8);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '6db0e2729cbead93d715c6a7d36302e9b3cee0d2bc314b41';
+  lDataRow.ExpectedOutputUTFStrTest := '0baf3bbd3bdf40a45b6ede3e4c3d644df75db942bc1f9570';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector('a', 1, 1000000);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '5d9ed00a030e638bdb753a6a24fb900e5a63b8e73e6c25b6';
+  lDataRow.ExpectedOutputUTFStrTest := 'aabbcca084acecd0511d1f6232a17bfaefa441b2982e5548';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector(#0);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'cdddcacfea7b70b485655ba3dc3f60dee4f6b8f861069e33';
+  lDataRow.ExpectedOutputUTFStrTest := '10dd94b66ba6ae0498c9c7754844662e5d8b62e27d2c4d26';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.AddInputVector(#0, 24, 1);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'dd00230799f5009fec6debc838bb6a27df2b9d6f110c7937';
