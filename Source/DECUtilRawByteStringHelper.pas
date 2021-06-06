@@ -42,9 +42,9 @@ type
   // Duplicate of the System.pas internal declaration. Needs to be kept in sync.
   PStrRec = ^StrRec;
   StrRec = packed record
-  {$IF defined(CPU64BITS)}
+  {$IFDEF CPU64BITS}
     _Padding: Integer; // Make 16 byte align for payload..
-  {$IFEND}
+  {$ENDIF}
     codePage: Word;
     elemSize: Word;
     refCnt: Integer;
