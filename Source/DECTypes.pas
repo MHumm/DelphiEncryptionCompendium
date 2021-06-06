@@ -43,6 +43,9 @@ type
   /// </summary>
   PUInt32 = ^UINT32;
 
+  PUInt64Array = ^TUInt64Array;
+  TUInt64Array = array[0..1023] of UInt64;
+
 implementation
 
 end.
