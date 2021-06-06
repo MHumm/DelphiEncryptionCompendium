@@ -1582,7 +1582,7 @@ begin
   end;
   Result := -(X + Y - 1);
 end;
-{$ENDIF}
+{$IFEND}
 
 procedure IDEACipher(Source, Dest: PUInt32Array; Key: PWordArray);
 var

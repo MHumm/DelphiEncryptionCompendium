@@ -906,19 +906,19 @@ begin
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
     {$ELSE}
-    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[1]),
-         IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[1]), IFiller)
-    {$ENDIF}
+    Init(Key[1], Length(Key) * SizeOf(Key[1]),
+         IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
+    {$IFEND}
   else
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
-    {$ENDIF}
+    {$IFEND}
 end;
 
 
@@ -929,19 +929,19 @@ begin
     raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[Low(IVector)], Length(IVector) * SizeOf(Low(IVector)), IFiller)
     {$ELSE}
-    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
+    Init(Key[1], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[IVector[1]], Length(IVector) * SizeOf(IVector[1]), IFiller)
-    {$ENDIF}
+    {$IFEND}
   else
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
-    {$ENDIF}
+    {$IFEND}
 end;
 {$ENDIF}
 
@@ -953,19 +953,19 @@ begin
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]),
          IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
-    {$ENDIF}
+    {$IFEND}
   else
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
-    {$ENDIF}
+    {$IFEND}
 end;
 {$ENDIF}
 
@@ -994,13 +994,13 @@ begin
   SetLength(b, 0);
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     SetLength(b, Length(Source) * SizeOf(Source[Low(Source)]));
     DoEncode(@Source[low(Source)], @b[0], Length(Source) * SizeOf(Source[low(Source)]));
     {$ELSE}
     SetLength(b, Length(Source) * SizeOf(Source[1]));
     DoEncode(@Source[1], @b[0], Length(Source) * SizeOf(Source[1]));
-    {$ENDIF}
+    {$IFEND}
     Result := BytesToRawString(ValidFormat(Format).Encode(b));
   end;
 end;
@@ -1035,11 +1035,11 @@ begin
     // This has been fixed in 10.3.0 Rio
     b := ValidFormat(Format).Decode(BytesOf(Source));
 
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));
     {$ELSE}
     DoDecode(@b[0], @Result[1], Length(Result) * SizeOf(Result[1]));
-    {$ENDIF}
+    {$IFEND}
   end;
 end;
 

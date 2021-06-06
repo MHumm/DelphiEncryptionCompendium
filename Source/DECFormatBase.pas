@@ -436,11 +436,11 @@ var
 begin
   if Length(Data) > 0 then
   begin
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     DoEncode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
     {$ELSE}
     DoEncode(Data[1], b, Length(Data) * SizeOf(Data[1]));
-    {$ENDIF}
+    {$IFEND}
     Result := BytesToRawString(b);
   end
   else
@@ -489,11 +489,11 @@ var
 begin
   if Length(Data) > 0 then
   begin
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     DoDecode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
     {$ELSE}
     DoDecode(Data[1], b, Length(Data) * SizeOf(Data[1]));
-    {$ENDIF}
+    {$IFEND}
     Result := BytesToRawString(b);
   end
   else
@@ -538,13 +538,13 @@ end;
 
 class function TDECFormat.IsValid(const Text: RawByteString): Boolean;
 begin
-  {$IF CompilerVersion >= 17.0}
+  {$IF CompilerVersion >= 24.0}
   Result := (Length(Text) = 0) or
     (DoIsValid(Text[Low(Text)], Length(Text) * SizeOf(Text[Low(Text)])));
   {$ELSE}
   Result := (Length(Text) = 0) or
     (DoIsValid(Text[1], Length(Text) * SizeOf(Text[1])));
-  {$ENDIF}
+  {$IFEND}
 end;
 
 class function TDECFormat.UpCaseBinary(b: Byte): Byte;

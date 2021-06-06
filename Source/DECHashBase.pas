@@ -622,7 +622,7 @@ begin
   if Carry then
     RaiseHashOverflowError;
 end;
-{$ENDIF PUREPASCAL}
+{$IFEND PUREPASCAL}
 
 procedure TDECHash.RaiseHashOverflowError;
 begin
@@ -752,13 +752,13 @@ begin
   Result := '';
   if Length(Value) > 0 then
   begin
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Size   := Length(Value) * SizeOf(Value[low(Value)]);
     Data   := CalcBuffer(Value[low(Value)], Size);
     {$ELSE}
     Size   := Length(Value) * SizeOf(Value[1]);
     Data   := CalcBuffer(Value[1], Size);
-    {$ENDIF}
+    {$IFEND}
     Result := StringOf(ValidFormat(Format).Encode(Data));
   end
   else
@@ -774,7 +774,7 @@ var
 begin
   Result := '';
   if Length(Value) > 0 then
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     result := BytesToRawString(
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[low(Value)],
@@ -784,7 +784,7 @@ begin
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[1],
                              Length(Value) * SizeOf(Value[1]))))
-    {$ENDIF}
+    {$IFEND}
   else
   begin
     SetLength(Buf, 0);

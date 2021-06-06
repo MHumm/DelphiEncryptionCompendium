@@ -486,7 +486,7 @@ type
   TArrHelper = class
     class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
   end;
-  {$ENDIF}
+  {$IFEND}
 
 implementation
 
@@ -847,7 +847,7 @@ begin
       Result := Result + T;                       // DK += F    , DK = DK || Ti
       {$ELSE}
       TArrHelper.AppendArrays<Byte>(Result, T);
-      {$ENDIF}
+      {$IFEND}
     end;
   finally
     Hash.Free;
@@ -874,6 +874,6 @@ begin
   for i := 0 to High(B) do
     A[L + i] := B[i];
 end;
-{$ENDIF}
+{$IFEND}
 
 end.
