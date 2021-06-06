@@ -156,6 +156,13 @@
   {$ENDIF}
 {$ENDIF !PUREPASCAL}
 
+{$IF SizeOf(Pointer) = 4}
+  {$DEFINE CPU32BITS}
+{$IFEND}
+{$IF SizeOf(Pointer) = 8}
+  {$DEFINE CPU64BITS}
+{$IFEND}
+
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder
 //------------------------------------------------------------------------------

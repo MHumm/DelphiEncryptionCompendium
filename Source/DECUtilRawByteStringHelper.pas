@@ -18,6 +18,8 @@ unit DECUtilRawByteStringHelper;
 
 interface
 
+{$INCLUDE DECOptions.inc}
+
 /// <summary>
 ///   System.pas does not contain a RawByteString compatible version of this
 ///   routine so we created our own, copying and adapting code from system.pas
