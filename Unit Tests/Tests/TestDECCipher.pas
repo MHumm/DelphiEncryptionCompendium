@@ -700,6 +700,27 @@ type
     procedure TestClassByName;
   end;
 
+  // Testmethods for class TCipher_Shark_DEC52
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_Shark_DEC52 = class(TCipherBasis)
+  strict private
+    FCipher_Shark_DEC52: TCipher_Shark_DEC52;
+
+    procedure DoTestClassByName;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
   // Testmethods for class TCipher_Skipjack
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Skipjack = class(TCipherBasis)
@@ -3151,20 +3172,26 @@ procedure TestTCipher_Shark.SetUp;
 begin
   FCipher_Shark := TCipher_Shark.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 2);
 
-  FTestData[0].OutputData  := 'd96521aac0c384609dce1f8bfbab183fa121acf85349c06f273a8915d37ae90b';
-  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
-                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
-                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
-                                                    '\x09\x82\x2D\xBD\xF5\x60' +
-                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
-                                                    '\x81\xB1');
-
+  FTestData[0].OutputData := 'e97af38e7c8c56d0426597162c4e68ad867ac9540fe9a2cf7b2fd33e7df8919c';
+  FTestData[0].InputData  := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                   '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                   '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                   '\x09\x82\x2D\xBD\xF5\x60' +
+                                                   '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                   '\x81\xB1');
   FTestData[0].Key        := 'TCipher_Shark';
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
-  FTestData[0].Mode       := cmCTSx;
+  FTestData[0].Mode       := cmECBx;
+
+  FTestData[1].OutputData := '3968bf331e8ca5ed';
+  FTestData[1].InputData  := #0#0#0#0#0#0#0#0;
+  FTestData[1].Key        := 'TCipher_Shark';
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
 end;
 
 procedure TestTCipher_Shark.TearDown;
@@ -3210,6 +3237,93 @@ end;
 procedure TestTCipher_Shark.TestIdentity;
 begin
   CheckEquals($8E616AD3, FCipher_Shark.Identity);
+end;
+
+procedure TestTCipher_Shark_DEC52.Done;
+begin
+  FCipher_Shark_DEC52.Done;
+end;
+
+procedure TestTCipher_Shark_DEC52.DoTestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Shark_DEC52.ClassByName('TCipher_Shark_DEC52');
+  // This line should never be executed due to ClassByName rising an exception
+  // but it suppresses a ReturnValue is not being used compiler warning
+  CheckEquals(TCipher_Shark_DEC52, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_Shark_DEC52.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_Shark_DEC52.Context.KeySize);
+
+  FCipher_Shark_DEC52.Mode := TestData.Mode;
+  FCipher_Shark_DEC52.Init(BytesOf(TestData.Key),
+                    BytesOf(TestData.InitVector),
+                    TestData.Filler);
+end;
+
+procedure TestTCipher_Shark_DEC52.SetUp;
+begin
+  FCipher_Shark_DEC52 := TCipher_Shark_DEC52.Create;
+
+  SetLength(FTestData, 1);
+
+  FTestData[0].OutputData := 'd96521aac0c384609dce1f8bfbab183fa121acf85349c06f273a8915d37ae90b';
+  FTestData[0].InputData  := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                   '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                   '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                   '\x09\x82\x2D\xBD\xF5\x60' +
+                                                   '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                   '\x81\xB1');
+  FTestData[0].Key        := 'TCipher_Shark';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
+end;
+
+procedure TestTCipher_Shark_DEC52.TearDown;
+begin
+  FCipher_Shark_DEC52.Free;
+  FCipher_Shark_DEC52 := nil;
+end;
+
+procedure TestTCipher_Shark_DEC52.TestClassByName;
+begin
+  // Class shall not be registered by default
+  CheckException(DoTestClassByName, EDECClassNotRegisteredException);
+end;
+
+procedure TestTCipher_Shark_DEC52.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_Shark_DEC52.Context;
+
+  CheckEquals(  16,  ReturnValue.KeySize);
+  CheckEquals(   8,  ReturnValue.BlockSize);
+  CheckEquals(   8,  ReturnValue.BufferSize);
+  CheckEquals( 112,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Shark_DEC52.TestDecode;
+begin
+  DoTestDecode(FCipher_Shark_DEC52.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Shark_DEC52.TestEncode;
+begin
+  DoTestEncode(FCipher_Shark_DEC52.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Shark_DEC52.TestIdentity;
+begin
+  CheckEquals($7901E07F, FCipher_Shark_DEC52.Identity);
 end;
 
 procedure TestTCipher_Skipjack.Done;
@@ -3938,6 +4052,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_RC5);
   TDUnitX.RegisterTestFixture(TestTCipher_SAFER);
   TDUnitX.RegisterTestFixture(TestTCipher_Shark);
+  TDUnitX.RegisterTestFixture(TestTCipher_Shark_DEC52);
   TDUnitX.RegisterTestFixture(TestTCipher_Skipjack);
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
@@ -3975,6 +4090,7 @@ initialization
                               TestTCipher_RC5.Suite,
                               TestTCipher_SAFER.Suite,
                               TestTCipher_Shark.Suite,
+                              TestTCipher_Shark_DEC52.Suite,
                               TestTCipher_Skipjack.Suite,
                               TestTCipher_TEA.Suite,
                               TestTCipher_XTEA.Suite,
