@@ -803,6 +803,14 @@ Or how to translate that into proper exception handling? }
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
+    ///   Returns the minimum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    ///   Returns the maximum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
@@ -3725,6 +3733,16 @@ procedure THashBaseSnefru.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   SetRounds(FRounds);
+end;
+
+class function THashBaseSnefru.GetMaxRounds: UInt8;
+begin
+  Result := 8;
+end;
+
+class function THashBaseSnefru.GetMinRounds: UInt8;
+begin
+  Result := 2;
 end;
 
 procedure THashBaseSnefru.DoDone;

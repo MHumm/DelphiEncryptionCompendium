@@ -531,6 +531,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMinRounds;
+    procedure TestGetMaxRounds;
   end;
 
   // Test methods for class THash_Snefru256
@@ -544,6 +546,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMinRounds;
+    procedure TestGetMaxRounds;
   end;
 
   // Test methods for class THash_Sapphire
@@ -3755,6 +3759,16 @@ begin
   CheckEquals(16, FHash.DigestSize);
 end;
 
+procedure TestTHash_Snefru128.TestGetMaxRounds;
+begin
+  CheckEquals(8, THash_Snefru128(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Snefru128.TestGetMinRounds;
+begin
+  CheckEquals(2, THash_Snefru128(FHash).GetMinRounds);
+end;
+
 procedure TestTHash_Snefru128.TestIdentity;
 begin
   CheckEquals($E3374275, FHash.Identity);
@@ -3858,6 +3872,16 @@ end;
 procedure TestTHash_Snefru256.TestDigestSize;
 begin
   CheckEquals(32, FHash.DigestSize);
+end;
+
+procedure TestTHash_Snefru256.TestGetMaxRounds;
+begin
+  CheckEquals(8, THash_Snefru256(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Snefru256.TestGetMinRounds;
+begin
+  CheckEquals(2, THash_Snefru256(FHash).GetMinRounds);
 end;
 
 procedure TestTHash_Snefru256.TestIdentity;
