@@ -565,11 +565,20 @@ Or how to translate that into proper exception handling? }
   public
     function Digest: PByteArray; override;
     class function BlockSize: UInt32; override;
+    ///   Returns the minimum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    /// <summary>
+    ///   Returns the maximum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
     ///   The range for this parameter is 3-5 rounds. If a value outside this
-    ///   range is assigned, the value used depends on the DigestSize. For 
+    ///   range is assigned, the value used depends on the DigestSize. For
     ///   DigestSizes <= 20 it will be set to 3, for values <= 28 to 4 and for
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
@@ -614,13 +623,33 @@ Or how to translate that into proper exception handling? }
   /// </summary>
   THash_Tiger = class(THashBaseMD4)
   private
-    FRounds: Integer;
-    procedure SetRounds(Value: Integer);
+    const
+      /// <summary>
+      ///   Minimum number of rounds for the Tigher hash function. Trying to set a
+      ///   lower one sets the rounds to this value.
+      /// </summary>
+      cTigerMinRounds = 3;
+      /// <summary>
+      ///   Maximum number of rounds for the Tigher hash function. Trying to set a
+      ///   higher one sets the rounds to this value.
+      /// </summary>
+      cTigerMaxRounds = 32;
+    var
+      FRounds: Integer;
+      procedure SetRounds(Value: Integer);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Returns the minimum possible number for the rounds parameter
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    /// <summary>
+    ///   Returns the maximum possible number for the rounds parameter
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
@@ -632,8 +661,8 @@ Or how to translate that into proper exception handling? }
   end;
 
   /// <summary>
-  ///   As there seem to exist 128 and 160 bit variants of Tiger which seem to
-  ///   be truncated variants of Tiger 192 but we want to keep compatibility
+  ///   As there seem to exist 128 and 160 bit variants of Tiger, which seem to
+  ///   be truncated variants of Tiger 192, but we want to keep compatibility
   ///   with old code we introduce an alias for the time being.
   ///   It is considered to be unsafe at least in the 192 Bit variant!
   /// </summary>
@@ -909,18 +938,6 @@ uses
   THash_SHA256    :       47.8 cycles/byte      31.35 Mb/sec       47.8 cycles/byte      31.39 Mb/sec    0%
   THash_Panama    :        8.9 cycles/byte     169.01 Mb/sec        7.3 cycles/byte     206.55 Mb/sec  -18%
 }
-
-const
-  /// <summary>
-  ///   Minimum number of rounds for the Tigher hash function. Trying to set a 
-  ///   lower one sets the rounds to this value.
-  /// </summary>
-  cTigerMinRounds = 3;
-  /// <summary>
-  ///   Maximum number of rounds for the Tigher hash function. Trying to set a 
-  ///   higher one sets the rounds to this value.
-  /// </summary>  
-  cTigerMaxRounds = 32;
 
 resourcestring
   /// <summary>
@@ -2479,6 +2496,24 @@ begin
   FTransform(Buffer);
 end;
 
+class function THashBaseHaval.GetMaxRounds: UInt8;
+begin
+  Result := 5;
+end;
+
+class function THashBaseHaval.GetMinRounds: UInt8;
+begin
+  if DigestSize <= 20 then
+    Result := 3
+  else
+  begin
+    if DigestSize <= 28 then
+      Result := 4
+    else
+      Result := 5;
+  end;
+end;
+
 {$IFNDEF THashBaseHaval_asm}
 procedure THashBaseHaval.DoTransform3(Buffer: PUInt32Array);
 var
@@ -2666,6 +2701,7 @@ begin
   Inc(FDigest[6], G);
   Inc(FDigest[7], H);
 end;
+
 {$ENDIF !THashBaseHaval_asm}
 
 procedure THashBaseHaval.DoDone;
@@ -3049,6 +3085,16 @@ begin
   PInt64Array(@FDigest)[0] := A xor PInt64Array(@FDigest)[0];
   PInt64Array(@FDigest)[1] := B  -  PInt64Array(@FDigest)[1];
   PInt64Array(@FDigest)[2] := C  +  PInt64Array(@FDigest)[2];
+end;
+
+class function THash_Tiger.GetMaxRounds: UInt8;
+begin
+  Result := cTigerMaxRounds;
+end;
+
+class function THash_Tiger.GetMinRounds: UInt8;
+begin
+  Result := cTigerMinRounds;
 end;
 
 class function THash_Tiger.DigestSize: UInt32;

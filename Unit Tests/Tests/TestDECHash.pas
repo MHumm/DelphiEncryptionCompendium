@@ -327,6 +327,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMaxRounds;
+    procedure TestGetMinRounds;
   end;
 
   // Test methods for class THash_Haval160
@@ -340,6 +342,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMaxRounds;
+    procedure TestGetMinRounds;
   end;
 
   // Test methods for class THash_Haval192
@@ -353,6 +357,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMaxRounds;
+    procedure TestGetMinRounds;
   end;
 
   // Test methods for class THash_Haval224
@@ -366,6 +372,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMaxRounds;
+    procedure TestGetMinRounds;
   end;
 
   // Test methods for class THash_Haval256
@@ -379,6 +387,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestGetMaxRounds;
+    procedure TestGetMinRounds;
   end;
 
   // Test methods for class THash_Tiger
@@ -390,6 +400,8 @@ type
     procedure TestSetRounds;
     procedure TestSetRoundsLowerLimit;
     procedure TestSetRoundsUpperLimit;
+    procedure TestGetMinRounds;
+    procedure TestGetMaxRounds;
 
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -2027,6 +2039,16 @@ begin
   CheckEquals(16, FHash.DigestSize);
 end;
 
+procedure TestTHash_Haval128.TestGetMaxRounds;
+begin
+  CheckEquals(5, THash_Haval128(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Haval128.TestGetMinRounds;
+begin
+  CheckEquals(3, THash_Haval128(FHash).GetMinRounds);
+end;
+
 procedure TestTHash_Haval128.TestIdentity;
 begin
   CheckEquals($B0837E88, FHash.Identity);
@@ -2170,6 +2192,16 @@ end;
 procedure TestTHash_Haval160.TestDigestSize;
 begin
   CheckEquals(20, FHash.DigestSize);
+end;
+
+procedure TestTHash_Haval160.TestGetMaxRounds;
+begin
+  CheckEquals(5, THash_Haval160(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Haval160.TestGetMinRounds;
+begin
+  CheckEquals(3, THash_Haval160(FHash).GetMinRounds);
 end;
 
 procedure TestTHash_Haval160.TestIdentity;
@@ -2316,6 +2348,16 @@ begin
   CheckEquals(24, FHash.DigestSize);
 end;
 
+procedure TestTHash_Haval192.TestGetMaxRounds;
+begin
+  CheckEquals(5, THash_Haval192(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Haval192.TestGetMinRounds;
+begin
+  CheckEquals(4, THash_Haval192(FHash).GetMinRounds);
+end;
+
 procedure TestTHash_Haval192.TestIdentity;
 begin
   CheckEquals($B3A24E5D, FHash.Identity);
@@ -2458,6 +2500,16 @@ end;
 procedure TestTHash_Haval224.TestDigestSize;
 begin
   CheckEquals(28, FHash.DigestSize);
+end;
+
+procedure TestTHash_Haval224.TestGetMaxRounds;
+begin
+  CheckEquals(5, THash_Haval224(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Haval224.TestGetMinRounds;
+begin
+  CheckEquals(4, THash_Haval224(FHash).GetMinRounds);
 end;
 
 procedure TestTHash_Haval224.TestIdentity;
@@ -2630,6 +2682,16 @@ begin
   CheckEquals(32, FHash.DigestSize);
 end;
 
+procedure TestTHash_Haval256.TestGetMaxRounds;
+begin
+  CheckEquals(5, THash_Haval256(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Haval256.TestGetMinRounds;
+begin
+  CheckEquals(5, THash_Haval256(FHash).GetMinRounds);
+end;
+
 procedure TestTHash_Haval256.TestIdentity;
 begin
   CheckEquals($1A3C7B11, FHash.Identity);
@@ -2779,6 +2841,16 @@ end;
 procedure TestTHash_Tiger_3Rounds.TestDigestSize;
 begin
   CheckEquals(24, FHash.DigestSize);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestGetMaxRounds;
+begin
+  CheckEquals(32, THash_Tiger(FHash).GetMaxRounds);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestGetMinRounds;
+begin
+  CheckEquals(3, THash_Tiger(FHash).GetMinRounds);
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestIdentity;
