@@ -36,14 +36,14 @@ object FormMain: TFormMain
     Position.X = 8.000000000000000000
     Position.Y = 56.000000000000000000
     Size.Width = 625.000000000000000000
-    Size.Height = 417.000000000000000000
+    Size.Height = 369.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'gridstyle'
     TabOrder = 0
     RowCount = 0
     Options = [ColumnResize, ColLines, RowLines, RowSelect, Tabs, Header, AutoDisplacement]
     Viewport.Width = 621.000000000000000000
-    Viewport.Height = 392.000000000000000000
+    Viewport.Height = 344.000000000000000000
     object StringColumn1: TStringColumn
       Header = 'Algorithm'
       ReadOnly = True
@@ -57,8 +57,8 @@ object FormMain: TFormMain
     end
   end
   object Button1: TButton
-    Position.X = 96.000000000000000000
-    Position.Y = 416.000000000000000000
+    Position.X = 104.000000000000000000
+    Position.Y = 112.000000000000000000
     Size.Width = 121.000000000000000000
     Size.Height = 30.000000000000000000
     Size.PlatformDefault = False
@@ -72,5 +72,16 @@ object FormMain: TFormMain
     OnTimer = TimerBenchmarkTimer
     Left = 408
     Top = 96
+  end
+  object b_CopyToClipboard: TButton
+    Anchors = [akLeft, akRight, akBottom]
+    Position.X = 8.000000000000000000
+    Position.Y = 432.000000000000000000
+    Size.Width = 625.000000000000000000
+    Size.Height = 41.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    Text = 'Copy to clipboard'
+    OnClick = b_CopyToClipboardClick
   end
 end

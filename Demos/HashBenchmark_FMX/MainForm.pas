@@ -20,7 +20,7 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Platform,
   FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti, FMX.Grid.Style,
   FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics;
 
@@ -34,9 +34,11 @@ type
     Rectangle1: TRectangle;
     TimerBenchmark: TTimer;
     Button1: TButton;
+    b_CopyToClipboard: TButton;
     procedure b_StartClick(Sender: TObject);
     procedure TimerBenchmarkTimer(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure b_CopyToClipboardClick(Sender: TObject);
   private
     /// <summary>
     ///   Data which is being hashed for the benchmark
@@ -62,6 +64,23 @@ type
     /// </param>
     procedure RunBenchmark(ClassName: string;
                            RowIndex: Integer);
+    /// <summary>
+    ///   Try to get access to the clipboard service
+    /// </summary>
+    /// <param name="ClipBoardInterface">
+    ///   Interface reference for accessing the clipboard if Result is true
+    /// </param>
+    /// <returns>
+    ///   True when access to the clipboard could be aquired
+    /// </returns>
+    function TryGetClipboardService(out ClipboardService: IFMXClipboardService): Boolean;
+    /// <summary>
+    ///   Put a string into the clipboard, if possible
+    /// </summary>
+    /// <param name="s">
+    ///   String to store into the clipboard
+    /// </param>
+    procedure StringToClipboard(const s: string);
   public
   end;
 
@@ -81,6 +100,39 @@ const
   cIterations = 10;
 
 {$R *.fmx}
+
+function TFormMain.TryGetClipboardService(out ClipboardService: IFMXClipboardService): Boolean;
+begin
+  Result := TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService);
+  if Result then
+    ClipboardService := IFMXClipboardService(TPlatformServices.Current.GetPlatformService(IFMXClipboardService));
+end;
+
+procedure TFormMain.StringToClipboard(const s: string);
+var
+  clp: IFMXClipboardService;
+begin
+  if TryGetClipboardService(clp) then
+    clp.SetClipboard(s);
+end;
+
+procedure TFormMain.b_CopyToClipboardClick(Sender: TObject);
+var
+  s : string;
+  row, col: Integer;
+begin
+  s := '';
+
+  for row := 0 to sg_Results.RowCount - 1 do
+  begin
+    for col := 0 to sg_Results.ColumnCount - 1 do
+      s := s + sg_Results.Cells[col, row] + FormatSettings.ListSeparator;
+
+    s := s + sLineBreak;
+  end;
+
+  StringToClipboard(s);
+end;
 
 procedure TFormMain.b_StartClick(Sender: TObject);
 var
