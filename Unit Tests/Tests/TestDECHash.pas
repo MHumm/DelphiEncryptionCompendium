@@ -3008,6 +3008,11 @@ begin
 
   FHash := THash_Panama.Create;
 
+  // An official source could not yet be found. A C implementation was found in
+  // some library which looked officially but it has not been tested yet.
+
+  // it was found out that this test vector for an empty string is the same as
+  // in HashLib4Pascal, but that's no real proof.
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'aa0cc954d757d7ac7779ca3342334ca471abd47d5952ac91ed837ecd5b16922b';
   lDataRow.ExpectedOutputUTFStrTest := 'aa0cc954d757d7ac7779ca3342334ca471abd47d5952ac91ed837ecd5b16922b';
@@ -3078,6 +3083,9 @@ begin
 
   FHash := THash_Whirlpool0.Create;
 
+  // Source until SourceEnd: https://web.archive.org/web/20060621195406/http://
+  //                           www.cosic.esat.kuleuven.ac.be/nessie/workshop/
+  //                           submissions/whirlpool.zip
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'b3e1ab6eaf640a34f784593f2074416accd3b8e62c620175fca' +
                                        '0997b1ba2347339aa0d79e754c308209ea36811dfa40c1c32f1' +
@@ -3105,6 +3113,7 @@ begin
                                        'b96594c1d84e7586ec68e20a92';
   lDataRow.AddInputVector(#$80);
   lDataRow.AddInputVector(#$00, 1, 63);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'f4b620445ae62431dbd6dbcec64d2a3031cd2f48df5e755f30b' +
