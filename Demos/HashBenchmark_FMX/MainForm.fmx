@@ -7,6 +7,7 @@ object FormMain: TFormMain
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
   OnResize = FormResize
   DesignerMasterStyle = 0
   object Rectangle1: TRectangle
@@ -53,18 +54,8 @@ object FormMain: TFormMain
       Header = 'Speed MB/s'
     end
     object StringColumn3: TStringColumn
-      Header = 'Time'
+      Header = 'Time (hh:mm:ss:ms)'
     end
-  end
-  object Button1: TButton
-    Position.X = 104.000000000000000000
-    Position.Y = 112.000000000000000000
-    Size.Width = 121.000000000000000000
-    Size.Height = 30.000000000000000000
-    Size.PlatformDefault = False
-    TabOrder = 3
-    Text = 'Button1'
-    OnClick = b_StartClick
   end
   object TimerBenchmark: TTimer
     Enabled = False
@@ -80,7 +71,7 @@ object FormMain: TFormMain
     Size.Width = 625.000000000000000000
     Size.Height = 41.000000000000000000
     Size.PlatformDefault = False
-    TabOrder = 6
+    TabOrder = 5
     Text = 'Copy to clipboard'
     OnClick = b_CopyToClipboardClick
   end

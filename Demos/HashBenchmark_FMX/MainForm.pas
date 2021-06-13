@@ -33,12 +33,12 @@ type
     StringColumn3: TStringColumn;
     Rectangle1: TRectangle;
     TimerBenchmark: TTimer;
-    Button1: TButton;
     b_CopyToClipboard: TButton;
     procedure b_StartClick(Sender: TObject);
     procedure TimerBenchmarkTimer(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure b_CopyToClipboardClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     /// <summary>
     ///   Data which is being hashed for the benchmark
@@ -123,6 +123,11 @@ var
 begin
   s := '';
 
+  for col := 0 to sg_Results.ColumnCount - 1 do
+    s := s + sg_Results.Columns[col].Header + FormatSettings.ListSeparator;
+
+  s := s + sLineBreak;
+
   for row := 0 to sg_Results.RowCount - 1 do
   begin
     for col := 0 to sg_Results.ColumnCount - 1 do
@@ -140,6 +145,7 @@ var
   ClassName  : string;
   i, n       : Integer;
 begin
+  b_CopyToClipboard.Enabled := false;
   sg_Results.RowCount := 0;
   // Create 1 MB Buffer
   SetLength(FBenchmarkBuffer, 1024*1024);
@@ -172,6 +178,11 @@ begin
   finally
     ClassNames.Free;
   end;
+end;
+
+procedure TFormMain.FormCreate(Sender: TObject);
+begin
+  b_CopyToClipboard.Enabled := false;
 end;
 
 procedure TFormMain.FormResize(Sender: TObject);
@@ -220,7 +231,9 @@ begin
   Inc(FRowIndex);
 
   if (FRowIndex < sg_Results.RowCount) then
-    (Sender as TTimer).Enabled := true;
+    (Sender as TTimer).Enabled := true
+  else
+    b_CopyToClipboard.Enabled := true;
 end;
 
 end.
