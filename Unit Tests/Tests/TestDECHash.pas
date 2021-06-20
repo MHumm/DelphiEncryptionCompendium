@@ -3008,8 +3008,25 @@ begin
 
   FHash := THash_Panama.Create;
 
-  // An official source could not yet be found. A C implementation was found in
-  // some library which looked officially but it has not been tested yet.
+  // An official source could not yet be found.
+
+//  // Source until SourceEnd: http://radiogatun.noekeon.org/panama/
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '45d935220168bdcde830f65a6e46f3e91bb0bbd63d37a576718f40320c65079f';
+//  lDataRow.ExpectedOutputUTFStrTest := 'aa0cc954d757d7ac7779ca3342334ca471abd47d5952ac91ed837ecd5b16922b';
+//  lDataRow.AddInputVector(TFormat_HEXL.Decode('002911b8f4046c0d18be467367847de24ae13b513d6c1b7e2cd6267d72ae641d'));
+//
+////  // jeweils mit dem benachbarten Byte getauscht: 11223344 -> 22114433
+////  lDataRow.AddInputVector(TFormat_HEXL.Decode('2900b81104f40d6cbe1873468467e27de14a513b6c3d7e1bd62c7d26ae721d64'));
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '45d935220168bdcde830f65a6e46f3e91bb0bbd63d37a576718f40320c65079f';
+//  lDataRow.ExpectedOutputUTFStrTest := 'aa0cc954d757d7ac7779ca3342334ca471abd47d5952ac91ed837ecd5b16922b';
+//  lDataRow.AddInputVector(TFormat_HEXL.Decode('69522bd85f903d8425558553c194e8051f7427d837edf3e4bc92253501eb3a6b'));
+//  // SourceEnd
+
+
+
 
   // it was found out that this test vector for an empty string is the same as
   // in HashLib4Pascal, but that's no real proof.
@@ -3680,6 +3697,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '8617f366566a011837f4fb4ba5bedea2';
   lDataRow.AddInputVector('');
 
+  // Source until SourceEnd: http://ftp.vim.org/security/coast/crypto/snefru/snefru.c
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd9fcb3171c097fbba8c8f12aa0906bad';
   lDataRow.ExpectedOutputUTFStrTest := 'ab3974fcd9f1caa6a2ae226c2974fb0c';
@@ -3729,6 +3747,7 @@ begin
   lDataRow.ExpectedOutput           := '6103721ccd8ad565d68e90b0f8906163';
   lDataRow.ExpectedOutputUTFStrTest := '1a624aa607071a337558911531a0dde6';
   lDataRow.AddInputVector('123456789'#$0A);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '553d0648928299a0f22a275a02c83b10';
@@ -3810,6 +3829,7 @@ begin
   lDataRow.ExpectedOutputUTFStrTest := '8617f366566a011837f4fb4ba5bedea2b892f3ed8b894023d16ae344b2be5881';
   lDataRow.AddInputVector('');
 
+  // Source until SourceEnd: http://ftp.vim.org/security/coast/crypto/snefru/snefru.c
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '2e02687f0d45d5b9b50cb68c3f33e6843d618a1aca2d06893d3eb4e3026b5732';
   lDataRow.ExpectedOutputUTFStrTest := 'ea81f0d664c9f14b5af04103212ea129001da9c3c421b6e340bdb9ece6c90244';
@@ -3859,6 +3879,7 @@ begin
   lDataRow.ExpectedOutput           := '4ca72639e40e9ab9c0c3f523c4449b3911632d374c124d7702192ec2e4e0b7a3';
   lDataRow.ExpectedOutputUTFStrTest := '7dde03a5c268df01f5cdc408dc1807a677954e6aaf9ad0d6235809b758ef7691';
   lDataRow.AddInputVector('123456789'#$0A);
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '7d033205647a2af3dc8339f6cb25643c33ebc622d32979c4b612b02c4903031b';
