@@ -3277,6 +3277,7 @@ begin
 
   FHash := THash_WhirlpoolT.Create;
 
+  // Source until SourceEnd: https://en.wikipedia.org/wiki/Whirlpool_(hash_function)
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '470f0409abaa446e49667d4ebe12a14387cedbd10dd17b8243c' +
                                        'ad550a089dc0feea7aa40f6c2aaab71c6ebd076e43c7cfca0ad' +
@@ -3285,6 +3286,16 @@ begin
                                        'ad550a089dc0feea7aa40f6c2aaab71c6ebd076e43c7cfca0ad' +
                                        '32567897dcb5969861049a0f5a';
   lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '3ccf8252d8bbb258460d9aa999c06ee38e67cb546cffcf48e91' +
+                                       'f700f6fc7c183ac8cc3d3096dd30a35b01f4620a1e3a20d79cd' +
+                                       '5168544d9e1b7cdf49970e87f1';
+  lDataRow.ExpectedOutputUTFStrTest := '9c7bb5e44e2721d1b442642719d7afffe2cad341a93ed823da0' +
+                                       'fe84a63140af67467cfed7b268d45a77de6510b6e077f1ea0cd' +
+                                       '69f19efdfd697c7089a3cc79dd';
+  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
+  // SourceEnd
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ebaa1df2e97113be187eb0303c660f6e643e2c090ef2cda9a2e' +
@@ -3385,16 +3396,6 @@ begin
                                        'b88decd218a951f6b17303bfc552db14cff4607b4155eae9514' +
                                        '51d19010a7c43802a0495ccd68';
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
-
-  // Test vector from EN Wikipedia article
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := '3ccf8252d8bbb258460d9aa999c06ee38e67cb546cffcf48e91' +
-                                       'f700f6fc7c183ac8cc3d3096dd30a35b01f4620a1e3a20d79cd' +
-                                       '5168544d9e1b7cdf49970e87f1';
-  lDataRow.ExpectedOutputUTFStrTest := '9c7bb5e44e2721d1b442642719d7afffe2cad341a93ed823da0' +
-                                       'fe84a63140af67467cfed7b268d45a77de6510b6e077f1ea0cd' +
-                                       '69f19efdfd697c7089a3cc79dd';
-  lDataRow.AddInputVector('The quick brown fox jumps over the lazy dog');
 end;
 
 procedure TestTHash_WhirlpoolT.TestBlockSize;
