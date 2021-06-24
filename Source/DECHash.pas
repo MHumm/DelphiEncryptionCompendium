@@ -276,31 +276,31 @@ type
       /// </summary>
       cKeccakNumberOfRounds        = 24;
     type
-      TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of Byte;
+      TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of UInt8;
       TState_L = packed array[0..(KeccakPermutationSizeInBytes) div 4 - 1] of Int32;
-      TKDQueue = packed array[0..KeccakMaximumRateInBytes-1] of Byte;
+      TKDQueue = packed array[0..KeccakMaximumRateInBytes-1] of UInt8;
 
       /// <summary>
       ///   Calculation status of the algorithm
       /// </summary>
       TSpongeState = packed record
-                       state                     : TState_B;
+                       State                     : TState_B;
                        /// <summary>
                        ///   Data of the queue to be processed
                        /// </summary>
-                       dataQueue                 : TKDQueue;
+                       DataQueue                 : TKDQueue;
                        /// <summary>
                        ///   Bitrate r of Keccak
                        /// </summary>
-                       rate                      : UInt16;
+                       Rate                      : UInt16;
                        /// <summary>
                        ///   Capacity c of Keccak
                        /// </summary>
-                       capacity                  : UInt16;
+                       Capacity                  : UInt16;
                        /// <summary>
                        ///   How many bits are in the queue
                        /// </summary>
-                       bitsInQueue               : UInt16;
+                       BitsInQueue               : UInt16;
                        /// <summary>
                        ///   Length of the hash value to generate in bit
                        /// </summary>
@@ -309,7 +309,11 @@ type
                        ///   Number of bits which can be squeezed
                        /// </summary>
                        bitsAvailableForSqueezing : UInt16;
-                       squeezing                 : UInt16;
+                       /// <summary>
+                       ///   Flag which is set to true when entering the
+                       ///   squeezing state. Suppresses further absorb calls.
+                       /// </summary>
+                       SqueezeActive             : Boolean;
                        /// <summary>
                        ///   If an operation fails it sets this error code
                        /// </summary>
@@ -393,7 +397,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="DataBitLen">
     ///   Length of the data in bits
     /// </param>
-    function DoUpdate(data: Pointer; DataBitLen: Int32): Integer;
+    function DoUpdate(Data: Pointer; DataBitLen: Int32): Integer;
 
     /// <summary>
     ///   Squeeze output data from the sponge function. If the sponge function
@@ -469,7 +473,7 @@ Or how to translate that into proper exception handling? }
     ///   xored with the message blocks and when extracting the resulting hash,
     ///   stays untouched.
     /// </param>
-    procedure InitSponge(rate, capacity: integer);
+    procedure InitSponge(Rate, Capacity: UInt16);
 
     /// <summary>
     ///   Init internal data
@@ -4080,19 +4084,19 @@ end;
 
 { THash_SHA3Base }
 
-procedure THash_SHA3Base.InitSponge(rate, capacity: Integer);
+procedure THash_SHA3Base.InitSponge(Rate, Capacity: UInt16);
 begin
   // This is the only place where state.error is reset to 0 = SUCCESS
   FillChar(FSpongeState, SizeOf(FSpongeState), 0);
 
-  if (rate + capacity <> 1600) or (rate <= 0) or (rate >= 1600) or
-     ((rate and 63) <> 0) then
+  if (Rate + Capacity <> 1600) or (Rate = 0) or (Rate >= 1600) or
+     ((Rate and 63) <> 0) then
     raise EDECHashException.CreateFmt(sHashInitFailure, ['SHA3',
-                                                         'rate: ' + IntToStr(rate) +
-                                                         ' capacity: ' + IntToStr(capacity)]);
+                                                         'rate: ' + IntToStr(Rate) +
+                                                         ' capacity: ' + IntToStr(Capacity)]);
 
-  FSpongeState.rate     := rate;
-  FSpongeState.capacity := capacity;
+  FSpongeState.Rate     := Rate;
+  FSpongeState.Capacity := Capacity;
 end;
 
 procedure THash_SHA3Base.KeccakAbsorb(var State: TState_B; Data: Pointer;
@@ -4186,7 +4190,8 @@ begin
   Asu1 := state[49];
 
   round := 0;
-  while round < cKeccakNumberOfRounds do begin
+  while round < cKeccakNumberOfRounds do
+  begin
     // prepareTheta
     BCa0 := Aba0 xor Aga0 xor Aka0 xor Ama0 xor Asa0;
     BCa1 := Aba1 xor Aga1 xor Aka1 xor Ama1 xor Asa1;
@@ -4535,32 +4540,32 @@ var
   i: integer;
 begin
   // Note: the bits are numbered from 0 = LSB to 7 = MSB
-  if (FSpongeState.bitsInQueue + 1 = FSpongeState.rate) then
+  if (FSpongeState.BitsInQueue + 1 = FSpongeState.Rate) then
   begin
-    i := FSpongeState.bitsInQueue div 8;
-    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                                 (1 shl (FSpongeState.bitsInQueue and 7));
+    i := FSpongeState.BitsInQueue div 8;
+    FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                                 (1 shl (FSpongeState.BitsInQueue and 7));
     AbsorbQueue;
-    FillChar(FSpongeState.dataQueue, FSpongeState.rate div 8, 0);
+    FillChar(FSpongeState.DataQueue, FSpongeState.Rate div 8, 0);
   end
   else
   begin
-    i := FSpongeState.bitsInQueue div 8;
-    FillChar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
-             FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8, 0);
-    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                                 (1 shl (FSpongeState.bitsInQueue and 7));
+    i := FSpongeState.BitsInQueue div 8;
+    FillChar(FSpongeState.DataQueue[(FSpongeState.BitsInQueue+7) div 8],
+             FSpongeState.Rate div 8 - (FSpongeState.BitsInQueue+7) div 8, 0);
+    FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                                 (1 shl (FSpongeState.BitsInQueue and 7));
   end;
 
-  i := (FSpongeState.rate-1) div 8;
-  FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                               (1 shl ((FSpongeState.rate-1) and 7));
+  i := (FSpongeState.Rate-1) div 8;
+  FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                               (1 shl ((FSpongeState.Rate-1) and 7));
   AbsorbQueue;
-  ExtractFromState(@FSpongeState.dataQueue,
-                   TState_L(FSpongeState.state),
-                   FSpongeState.rate div 64);
-  FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
-  FSpongeState.squeezing := 1;
+  ExtractFromState(@FSpongeState.DataQueue,
+                   TState_L(FSpongeState.State),
+                   FSpongeState.Rate div 64);
+  FSpongeState.bitsAvailableForSqueezing := FSpongeState.Rate;
+  FSpongeState.SqueezeActive := true;
 end;
 
 function THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
@@ -4572,12 +4577,12 @@ begin
   if FSpongeState.error <> 0 then
     exit; // No further action
 
-  if FSpongeState.squeezing = 0 then
+  if not FSpongeState.SqueezeActive then
     PadAndSwitchToSqueezingPhase;
 
   if outputLength and 7 <> 0 then
   begin
-    // Only multiple of 8 bits are allowed, truncation can be done at user level
+    // Only multiple of 8 bits are allowed, truncation must be done at user level
     FSpongeState.error := 1;
     exit;
   end;
@@ -4587,17 +4592,17 @@ begin
   begin
     if FSpongeState.bitsAvailableForSqueezing = 0 then
     begin
-      KeccakPermutation(TState_L(FSpongeState.state));
-      ExtractFromState(@FSpongeState.dataQueue, TState_L(FSpongeState.state),
-                       FSpongeState.rate div 64);
-      FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
+      KeccakPermutation(TState_L(FSpongeState.State));
+      ExtractFromState(@FSpongeState.DataQueue, TState_L(FSpongeState.State),
+                       FSpongeState.Rate div 64);
+      FSpongeState.bitsAvailableForSqueezing := FSpongeState.Rate;
     end;
 
     partialBlock := FSpongeState.bitsAvailableForSqueezing;
     if partialBlock > OutputLength - i then
       partialBlock := OutputLength - i;
 
-    move(FSpongeState.dataQueue[(FSpongeState.rate - FSpongeState.bitsAvailableForSqueezing) div 8],
+    move(FSpongeState.DataQueue[(FSpongeState.Rate - FSpongeState.bitsAvailableForSqueezing) div 8],
          output[i div 8], partialBlock div 8);
     dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
     inc(i, partialBlock);
@@ -4606,9 +4611,9 @@ begin
   Result := 0;
 end;
 
-procedure THash_SHA3Base.xorIntoState(var State: TState_L;
-                                      Inp: Pointer;
-                                      LaneCount: UInt16);
+procedure THash_SHA3Base.xorIntoState(var State : TState_L;
+                                      Inp       : Pointer;
+                                      LaneCount : UInt16);
 var
   t, x0, x1 : UInt32;
   pI, pS    : PUInt32;
@@ -4647,9 +4652,11 @@ end;
 
 function THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32): Int32;
 var
-  i, j, wholeBlocks, partialBlock: Longint;
-  partialByte: Integer;
-  curData: PByte;
+  i, j,
+  wholeBlocks,
+  partialBlock : Int32;
+  partialByte  : Integer;
+  curData      : PByte;
 begin
   Result := 1;
 
@@ -4657,10 +4664,10 @@ begin
 
   // if a number of bits which cannot be divided by 8 without reminder is in the
   // queue or squeezing is not 0 this is an error
-  if (FSpongeState.bitsInQueue and 7 <> 0) or (FSpongeState.squeezing <> 0) then
+  if (FSpongeState.BitsInQueue and 7 <> 0) or FSpongeState.SqueezeActive then
   begin
     // Only the last call may contain a partial byte
-    // and additional input if squeezing
+    // and additional input if squeezing is active
     FSpongeState.error := 1;
     exit;
   end;
@@ -4668,43 +4675,44 @@ begin
   i := 0;
   while i < DatabitLen do
   begin
-    if ((FSpongeState.bitsInQueue=0) and (DatabitLen >= FSpongeState.rate) and
-        (i <= (DatabitLen-FSpongeState.rate))) then
+    if ((FSpongeState.BitsInQueue = 0) and (DatabitLen >= FSpongeState.Rate) and
+        (i <= (DatabitLen - FSpongeState.Rate))) then
     begin
-      wholeBlocks := (DatabitLen-i) div FSpongeState.rate;
+      wholeBlocks := (DatabitLen-i) div FSpongeState.Rate;
       curData := @TPBABytes(data)^[i div 8];
       j := 0;
-      while j < wholeBlocks do begin
-        KeccakAbsorb(FSpongeState.state, curData, FSpongeState.rate div 64);
+      while j < wholeBlocks do
+      begin
+        KeccakAbsorb(FSpongeState.State, curData, FSpongeState.Rate div 64);
         inc(j);
-        inc(PByte(curData), FSpongeState.rate div 8);
+        inc(PByte(curData), FSpongeState.Rate div 8);
       end;
-      inc(i, wholeBlocks * FSpongeState.rate);
+      inc(i, wholeBlocks * FSpongeState.Rate);
     end
     else
     begin
       partialBlock := DatabitLen - i;
 
-      if partialBlock + FSpongeState.bitsInQueue > FSpongeState.rate then
-        partialBlock := FSpongeState.rate - FSpongeState.bitsInQueue;
+      if partialBlock + FSpongeState.BitsInQueue > FSpongeState.Rate then
+        partialBlock := FSpongeState.Rate - FSpongeState.BitsInQueue;
 
       partialByte := partialBlock and 7;
       dec(partialBlock, partialByte);
       move(TPBABytes(data)^[i div 8],
-           FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8],
+           FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8],
            partialBlock div 8);
-      inc(FSpongeState.bitsInQueue, partialBlock);
+      inc(FSpongeState.BitsInQueue, partialBlock);
       inc(i, partialBlock);
 
-      if FSpongeState.bitsInQueue = FSpongeState.rate then
+      if FSpongeState.BitsInQueue = FSpongeState.Rate then
         AbsorbQueue;
 
       if partialByte > 0 then
       begin
-        FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8] :=
+        FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8] :=
           TPBABytes(data)^[i div 8] and ((1 shl partialByte)-1);
 
-        inc(FSpongeState.bitsInQueue, partialByte);
+        inc(FSpongeState.BitsInQueue, partialByte);
         inc(i, partialByte);
       end;
     end;
@@ -4716,8 +4724,8 @@ end;
 procedure THash_SHA3Base.AbsorbQueue;
 begin
   // state.bitsInQueue is assumed to be equal to state.rat
-  KeccakAbsorb(FSpongeState.state, @FSpongeState.dataQueue, FSpongeState.rate div 64);
-  FSpongeState.bitsInQueue := 0;
+  KeccakAbsorb(FSpongeState.State, @FSpongeState.DataQueue, FSpongeState.Rate div 64);
+  FSpongeState.BitsInQueue := 0;
 end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
@@ -4759,14 +4767,6 @@ begin
   err := 1;
   if FSpongeState.error = 0 then
   begin
-//    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
-//    else
-
-{ TODO :
-CHeck what to do. The padding byte for SHA3 is the last byte
-of the message filled up by a special algorithm. We just might
-not have the last byte available here... }
-    //err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
     err := FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
   end;
   // Update error only with old error = 0, i.e. do no reset a non-zero value
@@ -4782,7 +4782,7 @@ begin
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
-function THash_SHA3Base.DoUpdate(data: Pointer; DataBitLen: Int32):Integer;
+function THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32):Integer;
 var
   LastByte: Byte;
 begin
@@ -4792,16 +4792,19 @@ begin
     exit;
   end;
 
+  // No partial byte
   if DataBitLen and 7 = 0 then
-    Result := Absorb(data, DataBitLen)
+    Result := Absorb(Data, DataBitLen)
   else
   begin
-    Result := Absorb(data, DataBitLen - (DataBitLen and 7));
+    // Data contains a partial byte. Calculate the whole bytes first then the
+    // partial one.
+    Result := Absorb(Data, DataBitLen - (DataBitLen and 7));
 
     if (Result = 0) then
     begin
       // Align the last partial byte to the least significant bits
-      LastByte := TPBABytes(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+      LastByte := TPBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
       Result   := Absorb(@LastByte, DataBitLen and 7);
     end
   end;
@@ -4847,10 +4850,10 @@ end;
 function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
                                      var Hashvalue: TSHA3Digest): Integer;
 var
-  ll : Int16;
+  WorkingBitLen : Int16;
   lw : UInt16;
 begin
-  // normalize bitlen and bits (zero high bits)
+  // normalize Bitlen and Bits (zero high bits)
   Bitlen := Bitlen and 7;
   if Bitlen = 0 then
     lw := 0
@@ -4861,21 +4864,21 @@ begin
   if (FSpongeState.FixedOutputLength = 0) then
   begin
     lw := lw or (word($F) shl Bitlen);
-    ll := Bitlen+4;
+    WorkingBitLen := Bitlen+4;
   end
   else
   begin
     // SHA3: append two bits 01
     lw := lw or (word($2) shl Bitlen);
-    ll := Bitlen+2;
+    WorkingBitLen := Bitlen+2;
   end;
 
   // update state with final bits
-  if ll < 9 then
+  if WorkingBitLen < 9 then
   begin
     // 0..8 bits, one call to update
-    lw := lw shl (8-ll);
-    Result := DoUpdate(@lw, ll);
+    lw := lw shl (8-WorkingBitLen);
+    Result := DoUpdate(@lw, WorkingBitLen);
     // squeeze the digits from the sponge
     if Result = 0 then
       Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
@@ -4887,14 +4890,18 @@ begin
     if Result = 0 then
     begin
       // Finally update remaining last bits
-      dec(ll,8);
-      lw := lw shr ll;
-      Result := DoUpdate(@lw, ll);
+      dec(WorkingBitLen,8);
+      lw := lw shr WorkingBitLen;
+      Result := DoUpdate(@lw, WorkingBitLen);
       if Result = 0 then
         Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
     end;
   end;
 
+{ TODO :
+Durch exception Handling ersetzen, das ganze error Zeugs scheint nämlich
+nur dazu da zu sein nachfolgend eine weitere Bearbeitung zu verhindern, falls
+irgendwo ein Fehler aufgetreten ist. Es scheint nichts zu steuern. }
   if FSpongeState.error = 0 then
     FSpongeState.error := Result;
 end;
