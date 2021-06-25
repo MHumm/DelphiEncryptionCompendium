@@ -153,8 +153,8 @@ type
     /// <summary>
     ///   Generic initialization of internal data structures. Additionally the
     ///   internal algorithm specific (because of being overridden by each
-    ///   hash algorithm) DoInit method. Needs to be called before each hash
-    ///   calculation.
+    ///   hash algorithm) DoInit method is called. Needs to be called before
+    ///   each hash calculation.
     /// </summary>
     procedure Init;
     /// <summary>
