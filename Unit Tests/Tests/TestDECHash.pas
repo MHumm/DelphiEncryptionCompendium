@@ -92,6 +92,10 @@ type
     procedure TestIncrement8;
   end;
 
+  /// <summary>
+  ///   Base class for all hash tests, provides generalized test methods so that
+  ///   concrete classes only need to provide the actual test data.
+  /// </summary>
   THash_TestBase = class(TTestCase)
   strict protected
     FTestData  : IHashTestDataContainer;
