@@ -317,12 +317,7 @@ type
                        /// <summary>
                        ///   If an operation fails it sets this error code
                        /// </summary>
-{ TODO :
-How to handle this? If Error <> 0 certain calls are skipped.
-Can the result still be a valid hash value?
-Or how to translate that into proper exception handling? }
-                       Error                     : Int16;
-    //                   Fill3: packed array[407..HASHCTXSIZE] of byte;
+    //                   Fill3: packed array[405..HASHCTXSIZE] of byte;
                      end;
 
       /// <summary>
@@ -353,7 +348,11 @@ Or how to translate that into proper exception handling? }
     /// <param name="DatabitLen">
     ///   Length of the data passed via the pointer in bit
     /// </param>
-    function Absorb(Data: Pointer; DatabitLen: Int32): Int32;
+    /// <remarks>
+    ///   Raises an EDECHashEception when DataBit len not divideable by 8 without
+    ///   reminder or when already in squeezin state.
+    /// </remarks>
+    procedure Absorb(Data: Pointer; DatabitLen: Int32);
 
     /// <summary>
     ///   Absorb remaining bits from queue
@@ -397,7 +396,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="DataBitLen">
     ///   Length of the data in bits
     /// </param>
-    function DoUpdate(Data: Pointer; DataBitLen: Int32): Integer;
+    procedure DoUpdate(Data: Pointer; DataBitLen: Int32);
 
     /// <summary>
     ///   Squeeze output data from the sponge function. If the sponge function
@@ -413,7 +412,7 @@ Or how to translate that into proper exception handling? }
     /// <returns>
     ///   0 if successful, 1 otherwise.
     /// </returns>
-    function Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
+    procedure Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
     /// <summary>
     ///   The algorithm starts in the absorb phase (one puts data into the sponge)
     ///   and ends with the squeze phase (one squeezes the sponge) and this method
@@ -448,8 +447,8 @@ Or how to translate that into proper exception handling? }
     /// <param name="HashValue">
     ///   The hash value which shall be updated by this method
     /// </param>
-    function FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
-                          var HashValue: TSHA3Digest): Integer;
+    procedure FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
+                            var HashValue: TSHA3Digest);
   strict protected
     /// <summary>
     ///   Contains the current state of the algorithms sponge part
@@ -955,7 +954,13 @@ resourcestring
   /// <summary>
   ///   Failure message when a hash algorithm is initialized with wrong parameters
   /// </summary>
-  sHashInitFailure = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  /// <summary>
+  ///   Failure message when absorb is callt with a bitlength not divideable by 8
+  ///   without reminder or when it is called while already in squeezing state
+  /// </summary>
+  aSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
+                       'Squeezing: %1:s';
 
 { THash_MD2 }
 
@@ -4568,27 +4573,22 @@ begin
   FSpongeState.SqueezeActive := true;
 end;
 
-function THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
+procedure THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
 var
   i            : Int32;
-  partialBlock : Int16;
+  PartialBlock : Int16;
 begin
-  Result := 1;
-  if FSpongeState.error <> 0 then
-    exit; // No further action
 
   if not FSpongeState.SqueezeActive then
     PadAndSwitchToSqueezingPhase;
 
-  if outputLength and 7 <> 0 then
-  begin
-    // Only multiple of 8 bits are allowed, truncation must be done at user level
-    FSpongeState.error := 1;
-    exit;
-  end;
+  // Only multiple of 8 bits are allowed, truncation must be done at user level
+  if OutputLength and 7 <> 0 then
+    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+                                 [OutputLength, 'true']);
 
   i := 0;
-  while i < outputLength do
+  while i < OutputLength do
   begin
     if FSpongeState.bitsAvailableForSqueezing = 0 then
     begin
@@ -4598,17 +4598,15 @@ begin
       FSpongeState.bitsAvailableForSqueezing := FSpongeState.Rate;
     end;
 
-    partialBlock := FSpongeState.bitsAvailableForSqueezing;
-    if partialBlock > OutputLength - i then
-      partialBlock := OutputLength - i;
+    PartialBlock := FSpongeState.bitsAvailableForSqueezing;
+    if PartialBlock > OutputLength - i then
+      PartialBlock := OutputLength - i;
 
     move(FSpongeState.DataQueue[(FSpongeState.Rate - FSpongeState.bitsAvailableForSqueezing) div 8],
-         output[i div 8], partialBlock div 8);
-    dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
-    inc(i, partialBlock);
+         output[i div 8], PartialBlock div 8);
+    dec(FSpongeState.bitsAvailableForSqueezing, PartialBlock);
+    inc(i, PartialBlock);
   end;
-
-  Result := 0;
 end;
 
 procedure THash_SHA3Base.xorIntoState(var State : TState_L;
@@ -4650,7 +4648,7 @@ begin
   end;
 end;
 
-function THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32): Int32;
+procedure THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32);
 var
   i, j,
   wholeBlocks,
@@ -4658,18 +4656,13 @@ var
   partialByte  : Integer;
   curData      : PByte;
 begin
-  Result := 1;
-
-  if FSpongeState.error <> 0 then exit;
-
   // if a number of bits which cannot be divided by 8 without reminder is in the
-  // queue or squeezing is not 0 this is an error
+  // queue or algorithm is already in squeezing state
   if (FSpongeState.BitsInQueue and 7 <> 0) or FSpongeState.SqueezeActive then
   begin
-    // Only the last call may contain a partial byte
-    // and additional input if squeezing is active
-    FSpongeState.error := 1;
-    exit;
+    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+                                     [FSpongeState.BitsInQueue,
+                                      BoolToStr(FSpongeState.SqueezeActive, true)]);
   end;
 
   i := 0;
@@ -4704,10 +4697,10 @@ begin
       inc(FSpongeState.BitsInQueue, partialBlock);
       inc(i, partialBlock);
 
-      if FSpongeState.BitsInQueue = FSpongeState.Rate then
+      if (FSpongeState.BitsInQueue = FSpongeState.Rate) then
         AbsorbQueue;
 
-      if partialByte > 0 then
+      if (partialByte > 0) then
       begin
         FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8] :=
           TPBABytes(data)^[i div 8] and ((1 shl partialByte)-1);
@@ -4717,8 +4710,6 @@ begin
       end;
     end;
   end;
-
-  Result := 0;
 end;
 
 procedure THash_SHA3Base.AbsorbQueue;
@@ -4761,18 +4752,8 @@ begin
 end;
 
 procedure THash_SHA3Base.DoDone;
-var
-  err: integer;
 begin
-  err := 1;
-  if FSpongeState.error = 0 then
-  begin
-    err := FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
-  end;
-  // Update error only with old error = 0, i.e. do no reset a non-zero value
-  if FSpongeState.error = 0 then
-    FSpongeState.error := err;
-//  SHA3_FinalHash := err;
+  FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
 end;
 
 procedure THash_SHA3Base.DoInit;
@@ -4782,36 +4763,23 @@ begin
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
-function THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32):Integer;
+procedure THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32);
 var
   LastByte: Byte;
 begin
-  if FSpongeState.error <> 0 then
-  begin
-    Result := FSpongeState.error;
-    exit;
-  end;
-
   // No partial byte
   if DataBitLen and 7 = 0 then
-    Result := Absorb(Data, DataBitLen)
+    Absorb(Data, DataBitLen)
   else
   begin
     // Data contains a partial byte. Calculate the whole bytes first then the
     // partial one.
-    Result := Absorb(Data, DataBitLen - (DataBitLen and 7));
+    Absorb(Data, DataBitLen - (DataBitLen and 7));
 
-    if (Result = 0) then
-    begin
-      // Align the last partial byte to the least significant bits
-      LastByte := TPBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
-      Result   := Absorb(@LastByte, DataBitLen and 7);
-    end
+    // Align the last partial byte to the least significant bits
+    LastByte := TPBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+    Absorb(@LastByte, DataBitLen and 7);
   end;
-
-  // Update error only when old error = 0, i.e. do not change a non-zero value
-  if (FSpongeState.error = 0) then
-    FSpongeState.error := Result;
 end;
 
 procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
@@ -4847,8 +4815,8 @@ begin
    end;
 end;
 
-function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
-                                     var Hashvalue: TSHA3Digest): Integer;
+procedure THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
+                                     var Hashvalue: TSHA3Digest);
 var
   WorkingBitLen : Int16;
   lw : UInt16;
@@ -4878,32 +4846,22 @@ begin
   begin
     // 0..8 bits, one call to update
     lw := lw shl (8-WorkingBitLen);
-    Result := DoUpdate(@lw, WorkingBitLen);
+    DoUpdate(@lw, WorkingBitLen);
     // squeeze the digits from the sponge
-    if Result = 0 then
-      Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
+    Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
   end
   else
   begin
     // More than 8 bits, first a regular update with low byte
-    Result := DoUpdate(@lw, 8);
-    if Result = 0 then
-    begin
-      // Finally update remaining last bits
-      dec(WorkingBitLen,8);
-      lw := lw shr WorkingBitLen;
-      Result := DoUpdate(@lw, WorkingBitLen);
-      if Result = 0 then
-        Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
-    end;
-  end;
+    DoUpdate(@lw, 8);
 
-{ TODO :
-Durch exception Handling ersetzen, das ganze error Zeugs scheint nämlich
-nur dazu da zu sein nachfolgend eine weitere Bearbeitung zu verhindern, falls
-irgendwo ein Fehler aufgetreten ist. Es scheint nichts zu steuern. }
-  if FSpongeState.error = 0 then
-    FSpongeState.error := Result;
+    // Finally update remaining last bits
+    dec(WorkingBitLen,8);
+    lw := lw shr WorkingBitLen;
+    DoUpdate(@lw, WorkingBitLen);
+
+    Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
+  end;
 end;
 
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
