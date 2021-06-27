@@ -104,11 +104,11 @@ type
     // kind of "low-level" test, close to the original test used in DEC5.2
     procedure DoTest52(HashClass:TDECHash);
 
-    procedure DoTestCalcBuffer(HashClass:TDECHash);
-    procedure DoTestCalcBytes(HashClass:TDECHash);
-    procedure DoTestCalcStream(HashClass:TDECHash);
-    procedure DoTestCalcUnicodeString(HashClass:TDECHash);
-    procedure DoTestCalcRawByteString(HashClass:TDECHash);
+    procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
+    procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
+    procedure DoTestCalcStream(HashClass:TDECHash); virtual;
+    procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
+    procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
 
     procedure DoTestClassByName(ExpectedClassName:String; ExpectedClass:TClass);
   protected
