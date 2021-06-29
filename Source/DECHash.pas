@@ -275,6 +275,24 @@ type
       ///   Number of times to run the algorithm on the data
       /// </summary>
       cKeccakNumberOfRounds        = 24;
+
+      /// <summary>
+      ///   Precalculated values for the 24 rounds of the algorithm
+      /// </summary>
+      cRoundConstants : array[0..23] of UInt64 = (
+        UInt64($0000000000000001), UInt64($0000000000008082),
+        UInt64($800000000000808A), UInt64($8000000080008000),
+        UInt64($000000000000808B), UInt64($0000000080000001),
+        UInt64($8000000080008081), UInt64($8000000000008009),
+        UInt64($000000000000008A), UInt64($0000000000000088),
+        UInt64($0000000080008009), UInt64($000000008000000A),
+        UInt64($000000008000808B), UInt64($800000000000008B),
+        UInt64($8000000000008089), UInt64($8000000000008003),
+        UInt64($8000000000008002), UInt64($8000000000000080),
+        UInt64($000000000000800A), UInt64($800000008000000A),
+        UInt64($8000000080008081), UInt64($8000000000008080),
+        UInt64($0000000080000001), UInt64($8000000080008008)
+      );
     type
       TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of UInt8;
       TState_L = packed array[0..(KeccakPermutationSizeInBytes) div 4 - 1] of Int32;
@@ -327,7 +345,7 @@ type
       /// <summary>
       ///   Pointer to a buffer
       /// </summary>
-      TPBABytes = ^TBABytes;
+      PBABytes = ^TBABytes;
       /// <summary>
       ///   Type for the generated hash value
       /// </summary>
@@ -352,12 +370,37 @@ type
     ///   Raises an EDECHashEception when DataBit len not divideable by 8 without
     ///   reminder or when already in squeezin state.
     /// </remarks>
-    procedure Absorb(Data: Pointer; DatabitLen: Int32);
+    procedure Absorb(Data: PBABytes; DatabitLen: Int32);
 
     /// <summary>
     ///   Absorb remaining bits from queue
     /// </summary>
     procedure AbsorbQueue;
+
+    /// <summary>
+    ///   Circular left shift
+    /// </summary>
+    /// <param name="x">
+    ///   Value to be shifted
+    /// </param>
+    /// <param name="c">
+    ///   Number of bits the value will be shifted
+    /// </param>
+    /// <returns>
+    ///   Shifted value
+    /// </returns>
+    function RotL(const x: UInt64; c: Integer): UInt64; inline;
+
+    /// <summary>
+    ///   Circular left shift by 1
+    /// </summary>
+    /// <param name="x">
+    ///   Value to be shifted
+    /// </param>
+    /// <returns>
+    ///   Shifted value
+    /// </returns>
+    function RotL1(var x: UInt64): UInt64; inline;
 
     /// <summary>
     ///   Carries out the XorIntoState and the permutation
@@ -371,7 +414,7 @@ type
     /// <param name="LaneCount">
     ///   Number of times the loop in this algorithm has tpo be carried out
     /// </param>
-    procedure KeccakAbsorb(var State: TState_B; Data: Pointer; LaneCount: UInt16);
+    procedure KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
     /// <summary>
     ///   Permutates the values in the passed state
     /// </summary>
@@ -383,7 +426,8 @@ type
     /// <summary>
     ///   Include input message data bits into the sponge state
     /// </summary>
-    procedure XorIntoState(var State: TState_L; Inp: Pointer; LaneCount: UInt16);
+    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
+
     /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
     ///   times, only the last DataBitLen may be a non-multiple of 8
@@ -432,7 +476,7 @@ type
     /// <param name="LaneCount">
     ///   Number of iterations
     /// </param>
-    procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: UInt16);
+    procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: Integer);
 
     /// <summary>
     ///   Update final bits in LSB format, pad them, and compute the hash value
@@ -4104,441 +4148,535 @@ begin
   FSpongeState.Capacity := Capacity;
 end;
 
-procedure THash_SHA3Base.KeccakAbsorb(var State: TState_B; Data: Pointer;
-                                      LaneCount: UInt16);
+procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 begin
-  xorIntoState(TState_L(State), Data, LaneCount);
-  KeccakPermutation(TState_L(State));
+   XORIntoState(TState_L(state), data, laneCount);
+   KeccakPermutation(TState_L(state));
+end;
+
+//procedure THash_SHA3Base.KeccakAbsorb(var State: TState_B; Data: Pointer;
+//                                      LaneCount: UInt16);
+//begin
+//  xorIntoState(TState_L(State), Data, LaneCount);
+//  KeccakPermutation(TState_L(State));
+//end;
+
+function THash_SHA3Base.RotL(const x: UInt64; c: Integer): UInt64;
+begin
+  Result := (x shl c) or (x shr (64-c));
+end;
+
+function THash_SHA3Base.RotL1(var x: UInt64): UInt64;
+begin
+  Result := (x shl 1) or (x shr (64-1));
 end;
 
 procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
 var
-  Aba0, Abe0, Abi0, Abo0, Abu0: Int32;
-  Aba1, Abe1, Abi1, Abo1, Abu1: Int32;
-  Aga0, Age0, Agi0, Ago0, Agu0: Int32;
-  Aga1, Age1, Agi1, Ago1, Agu1: Int32;
-  Aka0, Ake0, Aki0, Ako0, Aku0: Int32;
-  Aka1, Ake1, Aki1, Ako1, Aku1: Int32;
-  Ama0, Ame0, Ami0, Amo0, Amu0: Int32;
-  Ama1, Ame1, Ami1, Amo1, Amu1: Int32;
-  Asa0, Ase0, Asi0, Aso0, Asu0: Int32;
-  Asa1, Ase1, Asi1, Aso1, Asu1: Int32;
-  BCa0, BCe0, BCi0, BCo0, BCu0: Int32;
-  BCa1, BCe1, BCi1, BCo1, BCu1: Int32;
-  Da0,  De0,  Di0,  Do0,  Du0:  Int32;
-  Da1,  De1,  Di1,  Do1,  Du1:  Int32;
-  Eba0, Ebe0, Ebi0, Ebo0, Ebu0: Int32;
-  Eba1, Ebe1, Ebi1, Ebo1, Ebu1: Int32;
-  Ega0, Ege0, Egi0, Ego0, Egu0: Int32;
-  Ega1, Ege1, Egi1, Ego1, Egu1: Int32;
-  Eka0, Eke0, Eki0, Eko0, Eku0: Int32;
-  Eka1, Eke1, Eki1, Eko1, Eku1: Int32;
-  Ema0, Eme0, Emi0, Emo0, Emu0: Int32;
-  Ema1, Eme1, Emi1, Emo1, Emu1: Int32;
-  Esa0, Ese0, Esi0, Eso0, Esu0: Int32;
-  Esa1, Ese1, Esi1, Eso1, Esu1: Int32;
-
-var
-  round: integer;
-
+   A : PUInt64Array;
+   B : array[0..24] of UInt64;
+   C0, C1, C2, C3, C4, D0, D1, D2, D3, D4: UInt64;
+   i : Integer;
 begin
-  // copyFromState(A, state)
-  Aba0 := state[ 0];
-  Aba1 := state[ 1];
-  Abe0 := state[ 2];
-  Abe1 := state[ 3];
-  Abi0 := state[ 4];
-  Abi1 := state[ 5];
-  Abo0 := state[ 6];
-  Abo1 := state[ 7];
-  Abu0 := state[ 8];
-  Abu1 := state[ 9];
-  Aga0 := state[10];
-  Aga1 := state[11];
-  Age0 := state[12];
-  Age1 := state[13];
-  Agi0 := state[14];
-  Agi1 := state[15];
-  Ago0 := state[16];
-  Ago1 := state[17];
-  Agu0 := state[18];
-  Agu1 := state[19];
-  Aka0 := state[20];
-  Aka1 := state[21];
-  Ake0 := state[22];
-  Ake1 := state[23];
-  Aki0 := state[24];
-  Aki1 := state[25];
-  Ako0 := state[26];
-  Ako1 := state[27];
-  Aku0 := state[28];
-  Aku1 := state[29];
-  Ama0 := state[30];
-  Ama1 := state[31];
-  Ame0 := state[32];
-  Ame1 := state[33];
-  Ami0 := state[34];
-  Ami1 := state[35];
-  Amo0 := state[36];
-  Amo1 := state[37];
-  Amu0 := state[38];
-  Amu1 := state[39];
-  Asa0 := state[40];
-  Asa1 := state[41];
-  Ase0 := state[42];
-  Ase1 := state[43];
-  Asi0 := state[44];
-  Asi1 := state[45];
-  Aso0 := state[46];
-  Aso1 := state[47];
-  Asu0 := state[48];
-  Asu1 := state[49];
+   A := PUInt64Array(@state);
+   for i := 0 to 23 do begin
+      C0 := A[00] xor A[05] xor A[10] xor A[15] xor A[20];
+      C1 := A[01] xor A[06] xor A[11] xor A[16] xor A[21];
+      C2 := A[02] xor A[07] xor A[12] xor A[17] xor A[22];
+      C3 := A[03] xor A[08] xor A[13] xor A[18] xor A[23];
+      C4 := A[04] xor A[09] xor A[14] xor A[19] xor A[24];
 
-  round := 0;
-  while round < cKeccakNumberOfRounds do
-  begin
-    // prepareTheta
-    BCa0 := Aba0 xor Aga0 xor Aka0 xor Ama0 xor Asa0;
-    BCa1 := Aba1 xor Aga1 xor Aka1 xor Ama1 xor Asa1;
-    BCe0 := Abe0 xor Age0 xor Ake0 xor Ame0 xor Ase0;
-    BCe1 := Abe1 xor Age1 xor Ake1 xor Ame1 xor Ase1;
-    BCi0 := Abi0 xor Agi0 xor Aki0 xor Ami0 xor Asi0;
-    BCi1 := Abi1 xor Agi1 xor Aki1 xor Ami1 xor Asi1;
-    BCo0 := Abo0 xor Ago0 xor Ako0 xor Amo0 xor Aso0;
-    BCo1 := Abo1 xor Ago1 xor Ako1 xor Amo1 xor Aso1;
-    BCu0 := Abu0 xor Agu0 xor Aku0 xor Amu0 xor Asu0;
-    BCu1 := Abu1 xor Agu1 xor Aku1 xor Amu1 xor Asu1;
+      D0 := RotL1(C0) xor C3;
+      D1 := RotL1(C1) xor C4;
+      D2 := RotL1(C2) xor C0;
+      D3 := RotL1(C3) xor C1;
+      D4 := RotL1(C4) xor C2;
 
-    // thetaRhoPiChiIota(round, A, E)
-    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
-    Da1 := BCu1 xor BCe0;
-    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
-    De1 := BCa1 xor BCi0;
-    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
-    Di1 := BCe1 xor BCo0;
-    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
-    Do1 := BCi1 xor BCu0;
-    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
-    Du1 := BCo1 xor BCa0;
+      B[00] := A[00] xor D1;
+      B[01] := RotL(A[06] xor D2, 44);
+      B[02] := RotL(A[12] xor D3, 43);
+      B[03] := RotL(A[18] xor D4, 21);
+      B[04] := RotL(A[24] xor D0, 14);
+      B[05] := RotL(A[03] xor D4, 28);
+      B[06] := RotL(A[09] xor D0, 20);
+      B[07] := RotL(A[10] xor D1, 3);
+      B[08] := RotL(A[16] xor D2, 45);
+      B[09] := RotL(A[22] xor D3, 61);
+      B[10] := RotL(A[01] xor D2, 1);
+      B[11] := RotL(A[07] xor D3, 6);
+      B[12] := RotL(A[13] xor D4, 25);
+      B[13] := RotL(A[19] xor D0, 8);
+      B[14] := RotL(A[20] xor D1, 18);
+      B[15] := RotL(A[04] xor D0, 27);
+      B[16] := RotL(A[05] xor D1, 36);
+      B[17] := RotL(A[11] xor D2, 10);
+      B[18] := RotL(A[17] xor D3, 15);
+      B[19] := RotL(A[23] xor D4, 56);
+      B[20] := RotL(A[02] xor D3, 62);
+      B[21] := RotL(A[08] xor D4, 55);
+      B[22] := RotL(A[14] xor D0, 39);
+      B[23] := RotL(A[15] xor D1, 41);
+      B[24] := RotL(A[21] xor D2, 2);
 
-    Aba0 := Aba0 xor Da0;  BCa0 := Aba0;
-    Age0 := Age0 xor De0;  BCe0 := (Age0 shl 22) xor (Age0 shr (32-22));
-    Aki1 := Aki1 xor Di1;  BCi0 := (Aki1 shl 22) xor (Aki1 shr (32-22));
-    Amo1 := Amo1 xor Do1;  BCo0 := (Amo1 shl 11) xor (Amo1 shr (32-11));
-    Asu0 := Asu0 xor Du0;  BCu0 := (Asu0 shl  7) xor (Asu0 shr (32-7));
+      A[00] := B[00] xor ((not B[01]) and B[02]);
+      A[01] := B[01] xor ((not B[02]) and B[03]);
+      A[02] := B[02] xor ((not B[03]) and B[04]);
+      A[03] := B[03] xor ((not B[04]) and B[00]);
+      A[04] := B[04] xor ((not B[00]) and B[01]);
+      A[05] := B[05] xor ((not B[06]) and B[07]);
+      A[06] := B[06] xor ((not B[07]) and B[08]);
+      A[07] := B[07] xor ((not B[08]) and B[09]);
+      A[08] := B[08] xor ((not B[09]) and B[05]);
+      A[09] := B[09] xor ((not B[05]) and B[06]);
+      A[10] := B[10] xor ((not B[11]) and B[12]);
+      A[11] := B[11] xor ((not B[12]) and B[13]);
+      A[12] := B[12] xor ((not B[13]) and B[14]);
+      A[13] := B[13] xor ((not B[14]) and B[10]);
+      A[14] := B[14] xor ((not B[10]) and B[11]);
+      A[15] := B[15] xor ((not B[16]) and B[17]);
+      A[16] := B[16] xor ((not B[17]) and B[18]);
+      A[17] := B[17] xor ((not B[18]) and B[19]);
+      A[18] := B[18] xor ((not B[19]) and B[15]);
+      A[19] := B[19] xor ((not B[15]) and B[16]);
+      A[20] := B[20] xor ((not B[21]) and B[22]);
+      A[21] := B[21] xor ((not B[22]) and B[23]);
+      A[22] := B[22] xor ((not B[23]) and B[24]);
+      A[23] := B[23] xor ((not B[24]) and B[20]);
+      A[24] := B[24] xor ((not B[20]) and B[21]);
 
-    Eba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+0];
-    Ebe0 := BCe0 xor ((not BCi0) and BCo0);
-    Ebi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ebo0 := BCo0 xor ((not BCu0) and BCa0);
-    Ebu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Aba1 := Aba1 xor Da1;  BCa1 := Aba1;
-    Age1 := Age1 xor De1;  BCe1 := (Age1 shl 22) xor (Age1 shr (32-22));
-    Aki0 := Aki0 xor Di0;  BCi1 := (Aki0 shl 21) xor (Aki0 shr (32-21));
-    Amo0 := Amo0 xor Do0;  BCo1 := (Amo0 shl 10) xor (Amo0 shr (32-10));
-    Asu1 := Asu1 xor Du1;  BCu1 := (Asu1 shl  7) xor (Asu1 shr (32-7));
-
-    Eba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+1];
-    Ebe1 := BCe1 xor ((not BCi1) and BCo1);
-    Ebi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ebo1 := BCo1 xor ((not BCu1) and BCa1);
-    Ebu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abo0 := Abo0 xor Do0;  BCa0 := (Abo0 shl 14) xor (Abo0 shr (32-14));
-    Agu0 := Agu0 xor Du0;  BCe0 := (Agu0 shl 10) xor (Agu0 shr (32-10));
-    Aka1 := Aka1 xor Da1;  BCi0 := (Aka1 shl  2) xor (Aka1 shr (32-2));
-    Ame1 := Ame1 xor De1;  BCo0 := (Ame1 shl 23) xor (Ame1 shr (32-23));
-    Asi1 := Asi1 xor Di1;  BCu0 := (Asi1 shl 31) xor (Asi1 shr (32-31));
-
-    Ega0 := BCa0 xor ((not BCe0) and BCi0);
-    Ege0 := BCe0 xor ((not BCi0) and BCo0);
-    Egi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ego0 := BCo0 xor ((not BCu0) and BCa0);
-    Egu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abo1 := Abo1 xor Do1;  BCa1 := (Abo1 shl 14) xor (Abo1 shr (32-14));
-    Agu1 := Agu1 xor Du1;  BCe1 := (Agu1 shl 10) xor (Agu1 shr (32-10));
-    Aka0 := Aka0 xor Da0;  BCi1 := (Aka0 shl  1) xor (Aka0 shr (32-1));
-    Ame0 := Ame0 xor De0;  BCo1 := (Ame0 shl 22) xor (Ame0 shr (32-22));
-    Asi0 := Asi0 xor Di0;  BCu1 := (Asi0 shl 30) xor (Asi0 shr (32-30));
-
-    Ega1 := BCa1 xor ((not BCe1) and BCi1);
-    Ege1 := BCe1 xor ((not BCi1) and BCo1);
-    Egi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ego1 := BCo1 xor ((not BCu1) and BCa1);
-    Egu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abe1 := Abe1 xor De1;  BCa0 := (Abe1 shl  1) xor (Abe1 shr (32-1));
-    Agi0 := Agi0 xor Di0;  BCe0 := (Agi0 shl  3) xor (Agi0 shr (32-3));
-    Ako1 := Ako1 xor Do1;  BCi0 := (Ako1 shl 13) xor (Ako1 shr (32-13));
-    Amu0 := Amu0 xor Du0;  BCo0 := (Amu0 shl  4) xor (Amu0 shr (32-4));
-    Asa0 := Asa0 xor Da0;  BCu0 := (Asa0 shl  9) xor (Asa0 shr (32-9));
-
-    Eka0 := BCa0 xor ((not BCe0) and BCi0 );
-    Eke0 := BCe0 xor ((not BCi0) and BCo0 );
-    Eki0 := BCi0 xor ((not BCo0) and BCu0 );
-    Eko0 := BCo0 xor ((not BCu0) and BCa0 );
-    Eku0 := BCu0 xor ((not BCa0) and BCe0 );
-
-    Abe0 := Abe0 xor De0;  BCa1 := Abe0;
-    Agi1 := Agi1 xor Di1;  BCe1 := (Agi1 shl  3) xor (Agi1 shr (32-3));
-    Ako0 := Ako0 xor Do0;  BCi1 := (Ako0 shl 12) xor (Ako0 shr (32-12));
-    Amu1 := Amu1 xor Du1;  BCo1 := (Amu1 shl  4) xor (Amu1 shr (32-4));
-    Asa1 := Asa1 xor Da1;  BCu1 := (Asa1 shl  9) xor (Asa1 shr (32-9));
-
-    Eka1 := BCa1 xor ((not BCe1) and BCi1);
-    Eke1 := BCe1 xor ((not BCi1) and BCo1);
-    Eki1 := BCi1 xor ((not BCo1) and BCu1);
-    Eko1 := BCo1 xor ((not BCu1) and BCa1);
-    Eku1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abu1 := Abu1 xor Du1;  BCa0 := (Abu1 shl 14) xor (Abu1 shr (32-14));
-    Aga0 := Aga0 xor Da0;  BCe0 := (Aga0 shl 18) xor (Aga0 shr (32-18));
-    Ake0 := Ake0 xor De0;  BCi0 := (Ake0 shl  5) xor (Ake0 shr (32-5));
-    Ami1 := Ami1 xor Di1;  BCo0 := (Ami1 shl  8) xor (Ami1 shr (32-8));
-    Aso0 := Aso0 xor Do0;  BCu0 := (Aso0 shl 28) xor (Aso0 shr (32-28));
-
-    Ema0 := BCa0 xor ((not BCe0) and BCi0);
-    Eme0 := BCe0 xor ((not BCi0) and BCo0);
-    Emi0 := BCi0 xor ((not BCo0) and BCu0);
-    Emo0 := BCo0 xor ((not BCu0) and BCa0);
-    Emu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abu0 := Abu0 xor Du0;  BCa1 := (Abu0 shl 13) xor (Abu0 shr (32-13));
-    Aga1 := Aga1 xor Da1;  BCe1 := (Aga1 shl 18) xor (Aga1 shr (32-18));
-    Ake1 := Ake1 xor De1;  BCi1 := (Ake1 shl  5) xor (Ake1 shr (32-5));
-    Ami0 := Ami0 xor Di0;  BCo1 := (Ami0 shl  7) xor (Ami0 shr (32-7));
-    Aso1 := Aso1 xor Do1;  BCu1 := (Aso1 shl 28) xor (Aso1 shr (32-28));
-
-    Ema1 := BCa1 xor ((not BCe1) and BCi1);
-    Eme1 := BCe1 xor ((not BCi1) and BCo1);
-    Emi1 := BCi1 xor ((not BCo1) and BCu1);
-    Emo1 := BCo1 xor ((not BCu1) and BCa1);
-    Emu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abi0 := Abi0 xor Di0;  BCa0 := (Abi0 shl 31) xor (Abi0 shr (32-31));
-    Ago1 := Ago1 xor Do1;  BCe0 := (Ago1 shl 28) xor (Ago1 shr (32-28));
-    Aku1 := Aku1 xor Du1;  BCi0 := (Aku1 shl 20) xor (Aku1 shr (32-20));
-    Ama1 := Ama1 xor Da1;  BCo0 := (Ama1 shl 21) xor (Ama1 shr (32-21));
-    Ase0 := Ase0 xor De0;  BCu0 := (Ase0 shl  1) xor (Ase0 shr (32-1));
-
-    Esa0 := BCa0 xor ((not BCe0) and BCi0);
-    Ese0 := BCe0 xor ((not BCi0) and BCo0);
-    Esi0 := BCi0 xor ((not BCo0) and BCu0);
-    Eso0 := BCo0 xor ((not BCu0) and BCa0);
-    Esu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abi1 := Abi1 xor Di1;  BCa1 := (Abi1 shl 31) xor (Abi1 shr (32-31));
-    Ago0 := Ago0 xor Do0;  BCe1 := (Ago0 shl 27) xor (Ago0 shr (32-27));
-    Aku0 := Aku0 xor Du0;  BCi1 := (Aku0 shl 19) xor (Aku0 shr (32-19));
-    Ama0 := Ama0 xor Da0;  BCo1 := (Ama0 shl 20) xor (Ama0 shr (32-20));
-    Ase1 := Ase1 xor De1;  BCu1 := (Ase1 shl  1) xor (Ase1 shr (32-1));
-
-    Esa1 := BCa1 xor ((not BCe1) and BCi1);
-    Ese1 := BCe1 xor ((not BCi1) and BCo1);
-    Esi1 := BCi1 xor ((not BCo1) and BCu1);
-    Eso1 := BCo1 xor ((not BCu1) and BCa1);
-    Esu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    // prepareTheta
-    BCa0 := Eba0 xor Ega0 xor Eka0 xor Ema0 xor Esa0;
-    BCa1 := Eba1 xor Ega1 xor Eka1 xor Ema1 xor Esa1;
-    BCe0 := Ebe0 xor Ege0 xor Eke0 xor Eme0 xor Ese0;
-    BCe1 := Ebe1 xor Ege1 xor Eke1 xor Eme1 xor Ese1;
-    BCi0 := Ebi0 xor Egi0 xor Eki0 xor Emi0 xor Esi0;
-    BCi1 := Ebi1 xor Egi1 xor Eki1 xor Emi1 xor Esi1;
-    BCo0 := Ebo0 xor Ego0 xor Eko0 xor Emo0 xor Eso0;
-    BCo1 := Ebo1 xor Ego1 xor Eko1 xor Emo1 xor Eso1;
-    BCu0 := Ebu0 xor Egu0 xor Eku0 xor Emu0 xor Esu0;
-    BCu1 := Ebu1 xor Egu1 xor Eku1 xor Emu1 xor Esu1;
-
-    // thetaRhoPiChiIota(round+1, E, A)
-    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
-    Da1 := BCu1 xor BCe0;
-    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
-    De1 := BCa1 xor BCi0;
-    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
-    Di1 := BCe1 xor BCo0;
-    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
-    Do1 := BCi1 xor BCu0;
-    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
-    Du1 := BCo1 xor BCa0;
-
-    Eba0 := Eba0 xor Da0;  BCa0 := Eba0;
-    Ege0 := Ege0 xor De0;  BCe0 := (Ege0 shl 22) xor (Ege0 shr (32-22));
-    Eki1 := Eki1 xor Di1;  BCi0 := (Eki1 shl 22) xor (Eki1 shr (32-22));
-    Emo1 := Emo1 xor Do1;  BCo0 := (Emo1 shl 11) xor (Emo1 shr (32-11));
-    Esu0 := Esu0 xor Du0;  BCu0 := (Esu0 shl  7) xor (Esu0 shr (32-7));
-
-    Aba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+2];
-    Abe0 := BCe0 xor ((not BCi0) and BCo0);
-    Abi0 := BCi0 xor ((not BCo0) and BCu0);
-    Abo0 := BCo0 xor ((not BCu0) and BCa0);
-    Abu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Eba1 := Eba1 xor Da1;  BCa1 := Eba1;
-    Ege1 := Ege1 xor De1;  BCe1 := (Ege1 shl 22) xor (Ege1 shr (32-22));
-    Eki0 := Eki0 xor Di0;  BCi1 := (Eki0 shl 21) xor (Eki0 shr (32-21));
-    Emo0 := Emo0 xor Do0;  BCo1 := (Emo0 shl 10) xor (Emo0 shr (32-10));
-    Esu1 := Esu1 xor Du1;  BCu1 := (Esu1 shl  7) xor (Esu1 shr (32-7));
-
-    Aba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+3];
-    Abe1 := BCe1 xor ((not BCi1) and BCo1);
-    Abi1 := BCi1 xor ((not BCo1) and BCu1);
-    Abo1 := BCo1 xor ((not BCu1) and BCa1);
-    Abu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebo0 := Ebo0 xor Do0;  BCa0 := (Ebo0 shl 14) xor (Ebo0 shr (32-14));
-    Egu0 := Egu0 xor Du0;  BCe0 := (Egu0 shl 10) xor (Egu0 shr (32-10));
-    Eka1 := Eka1 xor Da1;  BCi0 := (Eka1 shl  2) xor (Eka1 shr (32-2));
-    Eme1 := Eme1 xor De1;  BCo0 := (Eme1 shl 23) xor (Eme1 shr (32-23));
-    Esi1 := Esi1 xor Di1;  BCu0 := (Esi1 shl 31) xor (Esi1 shr (32-31));
-
-    Aga0 := BCa0 xor ((not BCe0) and BCi0);
-    Age0 := BCe0 xor ((not BCi0) and BCo0);
-    Agi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ago0 := BCo0 xor ((not BCu0) and BCa0);
-    Agu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebo1 := Ebo1 xor Do1;  BCa1 := (Ebo1 shl 14) xor (Ebo1 shr (32-14));
-    Egu1 := Egu1 xor Du1;  BCe1 := (Egu1 shl 10) xor (Egu1 shr (32-10));
-    Eka0 := Eka0 xor Da0;  BCi1 := (Eka0 shl  1) xor (Eka0 shr (32-1));
-    Eme0 := Eme0 xor De0;  BCo1 := (Eme0 shl 22) xor (Eme0 shr (32-22));
-    Esi0 := Esi0 xor Di0;  BCu1 := (Esi0 shl 30) xor (Esi0 shr (32-30));
-
-    Aga1 := BCa1 xor ((not BCe1) and BCi1);
-    Age1 := BCe1 xor ((not BCi1) and BCo1);
-    Agi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ago1 := BCo1 xor ((not BCu1) and BCa1);
-    Agu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebe1 := Ebe1 xor De1;  BCa0 := (Ebe1 shl  1) xor (Ebe1 shr (32-1));
-    Egi0 := Egi0 xor Di0;  BCe0 := (Egi0 shl  3) xor (Egi0 shr (32-3));
-    Eko1 := Eko1 xor Do1;  BCi0 := (Eko1 shl 13) xor (Eko1 shr (32-13));
-    Emu0 := Emu0 xor Du0;  BCo0 := (Emu0 shl  4) xor (Emu0 shr (32-4));
-    Esa0 := Esa0 xor Da0;  BCu0 := (Esa0 shl  9) xor (Esa0 shr (32-9));
-
-    Aka0 := BCa0 xor ((not BCe0) and BCi0);
-    Ake0 := BCe0 xor ((not BCi0) and BCo0);
-    Aki0 := BCi0 xor ((not BCo0) and BCu0);
-    Ako0 := BCo0 xor ((not BCu0) and BCa0);
-    Aku0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebe0 := Ebe0 xor De0;  BCa1 := Ebe0;
-    Egi1 := Egi1 xor Di1;  BCe1 := (Egi1 shl  3) xor (Egi1 shr (32-3));
-    Eko0 := Eko0 xor Do0;  BCi1 := (Eko0 shl 12) xor (Eko0 shr (32-12));
-    Emu1 := Emu1 xor Du1;  BCo1 := (Emu1 shl  4) xor (Emu1 shr (32-4));
-    Esa1 := Esa1 xor Da1;  BCu1 := (Esa1 shl  9) xor (Esa1 shr (32-9));
-
-    Aka1 := BCa1 xor ((not BCe1) and BCi1);
-    Ake1 := BCe1 xor ((not BCi1) and BCo1);
-    Aki1 := BCi1 xor ((not BCo1) and BCu1);
-    Ako1 := BCo1 xor ((not BCu1) and BCa1);
-    Aku1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebu1 := Ebu1 xor Du1;  BCa0 := (Ebu1 shl 14) xor (Ebu1 shr (32-14));
-    Ega0 := Ega0 xor Da0;  BCe0 := (Ega0 shl 18) xor (Ega0 shr (32-18));
-    Eke0 := Eke0 xor De0;  BCi0 := (Eke0 shl  5) xor (Eke0 shr (32-5));
-    Emi1 := Emi1 xor Di1;  BCo0 := (Emi1 shl  8) xor (Emi1 shr (32-8));
-    Eso0 := Eso0 xor Do0;  BCu0 := (Eso0 shl 28) xor (Eso0 shr (32-28));
-
-    Ama0 := BCa0 xor ((not BCe0) and BCi0);
-    Ame0 := BCe0 xor ((not BCi0) and BCo0);
-    Ami0 := BCi0 xor ((not BCo0) and BCu0);
-    Amo0 := BCo0 xor ((not BCu0) and BCa0);
-    Amu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebu0 := Ebu0 xor Du0;  BCa1 := (Ebu0 shl 13) xor (Ebu0 shr (32-13));
-    Ega1 := Ega1 xor Da1;  BCe1 := (Ega1 shl 18) xor (Ega1 shr (32-18));
-    Eke1 := Eke1 xor De1;  BCi1 := (Eke1 shl  5) xor (Eke1 shr (32-5));
-    Emi0 := Emi0 xor Di0;  BCo1 := (Emi0 shl  7) xor (Emi0 shr (32-7));
-    Eso1 := Eso1 xor Do1;  BCu1 := (Eso1 shl 28) xor (Eso1 shr (32-28));
-
-    Ama1 := BCa1 xor ((not BCe1) and BCi1);
-    Ame1 := BCe1 xor ((not BCi1) and BCo1);
-    Ami1 := BCi1 xor ((not BCo1) and BCu1);
-    Amo1 := BCo1 xor ((not BCu1) and BCa1);
-    Amu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebi0 := Ebi0 xor Di0;  BCa0 := (Ebi0 shl 31) xor (Ebi0 shr (32-31));
-    Ego1 := Ego1 xor Do1;  BCe0 := (Ego1 shl 28) xor (Ego1 shr (32-28));
-    Eku1 := Eku1 xor Du1;  BCi0 := (Eku1 shl 20) xor (Eku1 shr (32-20));
-    Ema1 := Ema1 xor Da1;  BCo0 := (Ema1 shl 21) xor (Ema1 shr (32-21));
-    Ese0 := Ese0 xor De0;  BCu0 := (Ese0 shl  1) xor (Ese0 shr (32-1));
-
-    Asa0 := BCa0 xor ((not BCe0) and BCi0);
-    Ase0 := BCe0 xor ((not BCi0) and BCo0);
-    Asi0 := BCi0 xor ((not BCo0) and BCu0);
-    Aso0 := BCo0 xor ((not BCu0) and BCa0);
-    Asu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebi1 := Ebi1 xor Di1;  BCa1 := (Ebi1 shl 31) xor (Ebi1 shr (32-31));
-    Ego0 := Ego0 xor Do0;  BCe1 := (Ego0 shl 27) xor (Ego0 shr (32-27));
-    Eku0 := Eku0 xor Du0;  BCi1 := (Eku0 shl 19) xor (Eku0 shr (32-19));
-    Ema0 := Ema0 xor Da0;  BCo1 := (Ema0 shl 20) xor (Ema0 shr (32-20));
-    Ese1 := Ese1 xor De1;  BCu1 := (Ese1 shl  1) xor (Ese1 shr (32-1));
-
-    Asa1 := BCa1 xor ((not BCe1) and BCi1);
-    Ase1 := BCe1 xor ((not BCi1) and BCo1);
-    Asi1 := BCi1 xor ((not BCo1) and BCu1);
-    Aso1 := BCo1 xor ((not BCu1) and BCa1);
-    Asu1 := BCu1 xor ((not BCa1) and BCe1);
-    inc(round,2);
-  end;
-
-  // copyToState(state, A)
-  state[ 0] := Aba0;
-  state[ 1] := Aba1;
-  state[ 2] := Abe0;
-  state[ 3] := Abe1;
-  state[ 4] := Abi0;
-  state[ 5] := Abi1;
-  state[ 6] := Abo0;
-  state[ 7] := Abo1;
-  state[ 8] := Abu0;
-  state[ 9] := Abu1;
-  state[10] := Aga0;
-  state[11] := Aga1;
-  state[12] := Age0;
-  state[13] := Age1;
-  state[14] := Agi0;
-  state[15] := Agi1;
-  state[16] := Ago0;
-  state[17] := Ago1;
-  state[18] := Agu0;
-  state[19] := Agu1;
-  state[20] := Aka0;
-  state[21] := Aka1;
-  state[22] := Ake0;
-  state[23] := Ake1;
-  state[24] := Aki0;
-  state[25] := Aki1;
-  state[26] := Ako0;
-  state[27] := Ako1;
-  state[28] := Aku0;
-  state[29] := Aku1;
-  state[30] := Ama0;
-  state[31] := Ama1;
-  state[32] := Ame0;
-  state[33] := Ame1;
-  state[34] := Ami0;
-  state[35] := Ami1;
-  state[36] := Amo0;
-  state[37] := Amo1;
-  state[38] := Amu0;
-  state[39] := Amu1;
-  state[40] := Asa0;
-  state[41] := Asa1;
-  state[42] := Ase0;
-  state[43] := Ase1;
-  state[44] := Asi0;
-  state[45] := Asi1;
-  state[46] := Aso0;
-  state[47] := Aso1;
-  state[48] := Asu0;
-  state[49] := Asu1;
+      A[00] := A[00] xor cRoundConstants[i];
+   end;
 end;
+
+
+//procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
+//var
+//  Aba0, Abe0, Abi0, Abo0, Abu0: Int32;
+//  Aba1, Abe1, Abi1, Abo1, Abu1: Int32;
+//  Aga0, Age0, Agi0, Ago0, Agu0: Int32;
+//  Aga1, Age1, Agi1, Ago1, Agu1: Int32;
+//  Aka0, Ake0, Aki0, Ako0, Aku0: Int32;
+//  Aka1, Ake1, Aki1, Ako1, Aku1: Int32;
+//  Ama0, Ame0, Ami0, Amo0, Amu0: Int32;
+//  Ama1, Ame1, Ami1, Amo1, Amu1: Int32;
+//  Asa0, Ase0, Asi0, Aso0, Asu0: Int32;
+//  Asa1, Ase1, Asi1, Aso1, Asu1: Int32;
+//  BCa0, BCe0, BCi0, BCo0, BCu0: Int32;
+//  BCa1, BCe1, BCi1, BCo1, BCu1: Int32;
+//  Da0,  De0,  Di0,  Do0,  Du0:  Int32;
+//  Da1,  De1,  Di1,  Do1,  Du1:  Int32;
+//  Eba0, Ebe0, Ebi0, Ebo0, Ebu0: Int32;
+//  Eba1, Ebe1, Ebi1, Ebo1, Ebu1: Int32;
+//  Ega0, Ege0, Egi0, Ego0, Egu0: Int32;
+//  Ega1, Ege1, Egi1, Ego1, Egu1: Int32;
+//  Eka0, Eke0, Eki0, Eko0, Eku0: Int32;
+//  Eka1, Eke1, Eki1, Eko1, Eku1: Int32;
+//  Ema0, Eme0, Emi0, Emo0, Emu0: Int32;
+//  Ema1, Eme1, Emi1, Emo1, Emu1: Int32;
+//  Esa0, Ese0, Esi0, Eso0, Esu0: Int32;
+//  Esa1, Ese1, Esi1, Eso1, Esu1: Int32;
+//
+//var
+//  round: integer;
+//
+//begin
+//  // copyFromState(A, state)
+//  Aba0 := state[ 0];
+//  Aba1 := state[ 1];
+//  Abe0 := state[ 2];
+//  Abe1 := state[ 3];
+//  Abi0 := state[ 4];
+//  Abi1 := state[ 5];
+//  Abo0 := state[ 6];
+//  Abo1 := state[ 7];
+//  Abu0 := state[ 8];
+//  Abu1 := state[ 9];
+//  Aga0 := state[10];
+//  Aga1 := state[11];
+//  Age0 := state[12];
+//  Age1 := state[13];
+//  Agi0 := state[14];
+//  Agi1 := state[15];
+//  Ago0 := state[16];
+//  Ago1 := state[17];
+//  Agu0 := state[18];
+//  Agu1 := state[19];
+//  Aka0 := state[20];
+//  Aka1 := state[21];
+//  Ake0 := state[22];
+//  Ake1 := state[23];
+//  Aki0 := state[24];
+//  Aki1 := state[25];
+//  Ako0 := state[26];
+//  Ako1 := state[27];
+//  Aku0 := state[28];
+//  Aku1 := state[29];
+//  Ama0 := state[30];
+//  Ama1 := state[31];
+//  Ame0 := state[32];
+//  Ame1 := state[33];
+//  Ami0 := state[34];
+//  Ami1 := state[35];
+//  Amo0 := state[36];
+//  Amo1 := state[37];
+//  Amu0 := state[38];
+//  Amu1 := state[39];
+//  Asa0 := state[40];
+//  Asa1 := state[41];
+//  Ase0 := state[42];
+//  Ase1 := state[43];
+//  Asi0 := state[44];
+//  Asi1 := state[45];
+//  Aso0 := state[46];
+//  Aso1 := state[47];
+//  Asu0 := state[48];
+//  Asu1 := state[49];
+//
+//  round := 0;
+//  while round < cKeccakNumberOfRounds do
+//  begin
+//    // prepareTheta
+//    BCa0 := Aba0 xor Aga0 xor Aka0 xor Ama0 xor Asa0;
+//    BCa1 := Aba1 xor Aga1 xor Aka1 xor Ama1 xor Asa1;
+//    BCe0 := Abe0 xor Age0 xor Ake0 xor Ame0 xor Ase0;
+//    BCe1 := Abe1 xor Age1 xor Ake1 xor Ame1 xor Ase1;
+//    BCi0 := Abi0 xor Agi0 xor Aki0 xor Ami0 xor Asi0;
+//    BCi1 := Abi1 xor Agi1 xor Aki1 xor Ami1 xor Asi1;
+//    BCo0 := Abo0 xor Ago0 xor Ako0 xor Amo0 xor Aso0;
+//    BCo1 := Abo1 xor Ago1 xor Ako1 xor Amo1 xor Aso1;
+//    BCu0 := Abu0 xor Agu0 xor Aku0 xor Amu0 xor Asu0;
+//    BCu1 := Abu1 xor Agu1 xor Aku1 xor Amu1 xor Asu1;
+//
+//    // thetaRhoPiChiIota(round, A, E)
+//    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
+//    Da1 := BCu1 xor BCe0;
+//    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
+//    De1 := BCa1 xor BCi0;
+//    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
+//    Di1 := BCe1 xor BCo0;
+//    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
+//    Do1 := BCi1 xor BCu0;
+//    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
+//    Du1 := BCo1 xor BCa0;
+//
+//    Aba0 := Aba0 xor Da0;  BCa0 := Aba0;
+//    Age0 := Age0 xor De0;  BCe0 := (Age0 shl 22) xor (Age0 shr (32-22));
+//    Aki1 := Aki1 xor Di1;  BCi0 := (Aki1 shl 22) xor (Aki1 shr (32-22));
+//    Amo1 := Amo1 xor Do1;  BCo0 := (Amo1 shl 11) xor (Amo1 shr (32-11));
+//    Asu0 := Asu0 xor Du0;  BCu0 := (Asu0 shl  7) xor (Asu0 shr (32-7));
+//
+//    Eba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+0];
+//    Ebe0 := BCe0 xor ((not BCi0) and BCo0);
+//    Ebi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Ebo0 := BCo0 xor ((not BCu0) and BCa0);
+//    Ebu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Aba1 := Aba1 xor Da1;  BCa1 := Aba1;
+//    Age1 := Age1 xor De1;  BCe1 := (Age1 shl 22) xor (Age1 shr (32-22));
+//    Aki0 := Aki0 xor Di0;  BCi1 := (Aki0 shl 21) xor (Aki0 shr (32-21));
+//    Amo0 := Amo0 xor Do0;  BCo1 := (Amo0 shl 10) xor (Amo0 shr (32-10));
+//    Asu1 := Asu1 xor Du1;  BCu1 := (Asu1 shl  7) xor (Asu1 shr (32-7));
+//
+//    Eba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+1];
+//    Ebe1 := BCe1 xor ((not BCi1) and BCo1);
+//    Ebi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Ebo1 := BCo1 xor ((not BCu1) and BCa1);
+//    Ebu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Abo0 := Abo0 xor Do0;  BCa0 := (Abo0 shl 14) xor (Abo0 shr (32-14));
+//    Agu0 := Agu0 xor Du0;  BCe0 := (Agu0 shl 10) xor (Agu0 shr (32-10));
+//    Aka1 := Aka1 xor Da1;  BCi0 := (Aka1 shl  2) xor (Aka1 shr (32-2));
+//    Ame1 := Ame1 xor De1;  BCo0 := (Ame1 shl 23) xor (Ame1 shr (32-23));
+//    Asi1 := Asi1 xor Di1;  BCu0 := (Asi1 shl 31) xor (Asi1 shr (32-31));
+//
+//    Ega0 := BCa0 xor ((not BCe0) and BCi0);
+//    Ege0 := BCe0 xor ((not BCi0) and BCo0);
+//    Egi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Ego0 := BCo0 xor ((not BCu0) and BCa0);
+//    Egu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Abo1 := Abo1 xor Do1;  BCa1 := (Abo1 shl 14) xor (Abo1 shr (32-14));
+//    Agu1 := Agu1 xor Du1;  BCe1 := (Agu1 shl 10) xor (Agu1 shr (32-10));
+//    Aka0 := Aka0 xor Da0;  BCi1 := (Aka0 shl  1) xor (Aka0 shr (32-1));
+//    Ame0 := Ame0 xor De0;  BCo1 := (Ame0 shl 22) xor (Ame0 shr (32-22));
+//    Asi0 := Asi0 xor Di0;  BCu1 := (Asi0 shl 30) xor (Asi0 shr (32-30));
+//
+//    Ega1 := BCa1 xor ((not BCe1) and BCi1);
+//    Ege1 := BCe1 xor ((not BCi1) and BCo1);
+//    Egi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Ego1 := BCo1 xor ((not BCu1) and BCa1);
+//    Egu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Abe1 := Abe1 xor De1;  BCa0 := (Abe1 shl  1) xor (Abe1 shr (32-1));
+//    Agi0 := Agi0 xor Di0;  BCe0 := (Agi0 shl  3) xor (Agi0 shr (32-3));
+//    Ako1 := Ako1 xor Do1;  BCi0 := (Ako1 shl 13) xor (Ako1 shr (32-13));
+//    Amu0 := Amu0 xor Du0;  BCo0 := (Amu0 shl  4) xor (Amu0 shr (32-4));
+//    Asa0 := Asa0 xor Da0;  BCu0 := (Asa0 shl  9) xor (Asa0 shr (32-9));
+//
+//    Eka0 := BCa0 xor ((not BCe0) and BCi0 );
+//    Eke0 := BCe0 xor ((not BCi0) and BCo0 );
+//    Eki0 := BCi0 xor ((not BCo0) and BCu0 );
+//    Eko0 := BCo0 xor ((not BCu0) and BCa0 );
+//    Eku0 := BCu0 xor ((not BCa0) and BCe0 );
+//
+//    Abe0 := Abe0 xor De0;  BCa1 := Abe0;
+//    Agi1 := Agi1 xor Di1;  BCe1 := (Agi1 shl  3) xor (Agi1 shr (32-3));
+//    Ako0 := Ako0 xor Do0;  BCi1 := (Ako0 shl 12) xor (Ako0 shr (32-12));
+//    Amu1 := Amu1 xor Du1;  BCo1 := (Amu1 shl  4) xor (Amu1 shr (32-4));
+//    Asa1 := Asa1 xor Da1;  BCu1 := (Asa1 shl  9) xor (Asa1 shr (32-9));
+//
+//    Eka1 := BCa1 xor ((not BCe1) and BCi1);
+//    Eke1 := BCe1 xor ((not BCi1) and BCo1);
+//    Eki1 := BCi1 xor ((not BCo1) and BCu1);
+//    Eko1 := BCo1 xor ((not BCu1) and BCa1);
+//    Eku1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Abu1 := Abu1 xor Du1;  BCa0 := (Abu1 shl 14) xor (Abu1 shr (32-14));
+//    Aga0 := Aga0 xor Da0;  BCe0 := (Aga0 shl 18) xor (Aga0 shr (32-18));
+//    Ake0 := Ake0 xor De0;  BCi0 := (Ake0 shl  5) xor (Ake0 shr (32-5));
+//    Ami1 := Ami1 xor Di1;  BCo0 := (Ami1 shl  8) xor (Ami1 shr (32-8));
+//    Aso0 := Aso0 xor Do0;  BCu0 := (Aso0 shl 28) xor (Aso0 shr (32-28));
+//
+//    Ema0 := BCa0 xor ((not BCe0) and BCi0);
+//    Eme0 := BCe0 xor ((not BCi0) and BCo0);
+//    Emi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Emo0 := BCo0 xor ((not BCu0) and BCa0);
+//    Emu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Abu0 := Abu0 xor Du0;  BCa1 := (Abu0 shl 13) xor (Abu0 shr (32-13));
+//    Aga1 := Aga1 xor Da1;  BCe1 := (Aga1 shl 18) xor (Aga1 shr (32-18));
+//    Ake1 := Ake1 xor De1;  BCi1 := (Ake1 shl  5) xor (Ake1 shr (32-5));
+//    Ami0 := Ami0 xor Di0;  BCo1 := (Ami0 shl  7) xor (Ami0 shr (32-7));
+//    Aso1 := Aso1 xor Do1;  BCu1 := (Aso1 shl 28) xor (Aso1 shr (32-28));
+//
+//    Ema1 := BCa1 xor ((not BCe1) and BCi1);
+//    Eme1 := BCe1 xor ((not BCi1) and BCo1);
+//    Emi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Emo1 := BCo1 xor ((not BCu1) and BCa1);
+//    Emu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Abi0 := Abi0 xor Di0;  BCa0 := (Abi0 shl 31) xor (Abi0 shr (32-31));
+//    Ago1 := Ago1 xor Do1;  BCe0 := (Ago1 shl 28) xor (Ago1 shr (32-28));
+//    Aku1 := Aku1 xor Du1;  BCi0 := (Aku1 shl 20) xor (Aku1 shr (32-20));
+//    Ama1 := Ama1 xor Da1;  BCo0 := (Ama1 shl 21) xor (Ama1 shr (32-21));
+//    Ase0 := Ase0 xor De0;  BCu0 := (Ase0 shl  1) xor (Ase0 shr (32-1));
+//
+//    Esa0 := BCa0 xor ((not BCe0) and BCi0);
+//    Ese0 := BCe0 xor ((not BCi0) and BCo0);
+//    Esi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Eso0 := BCo0 xor ((not BCu0) and BCa0);
+//    Esu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Abi1 := Abi1 xor Di1;  BCa1 := (Abi1 shl 31) xor (Abi1 shr (32-31));
+//    Ago0 := Ago0 xor Do0;  BCe1 := (Ago0 shl 27) xor (Ago0 shr (32-27));
+//    Aku0 := Aku0 xor Du0;  BCi1 := (Aku0 shl 19) xor (Aku0 shr (32-19));
+//    Ama0 := Ama0 xor Da0;  BCo1 := (Ama0 shl 20) xor (Ama0 shr (32-20));
+//    Ase1 := Ase1 xor De1;  BCu1 := (Ase1 shl  1) xor (Ase1 shr (32-1));
+//
+//    Esa1 := BCa1 xor ((not BCe1) and BCi1);
+//    Ese1 := BCe1 xor ((not BCi1) and BCo1);
+//    Esi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Eso1 := BCo1 xor ((not BCu1) and BCa1);
+//    Esu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    // prepareTheta
+//    BCa0 := Eba0 xor Ega0 xor Eka0 xor Ema0 xor Esa0;
+//    BCa1 := Eba1 xor Ega1 xor Eka1 xor Ema1 xor Esa1;
+//    BCe0 := Ebe0 xor Ege0 xor Eke0 xor Eme0 xor Ese0;
+//    BCe1 := Ebe1 xor Ege1 xor Eke1 xor Eme1 xor Ese1;
+//    BCi0 := Ebi0 xor Egi0 xor Eki0 xor Emi0 xor Esi0;
+//    BCi1 := Ebi1 xor Egi1 xor Eki1 xor Emi1 xor Esi1;
+//    BCo0 := Ebo0 xor Ego0 xor Eko0 xor Emo0 xor Eso0;
+//    BCo1 := Ebo1 xor Ego1 xor Eko1 xor Emo1 xor Eso1;
+//    BCu0 := Ebu0 xor Egu0 xor Eku0 xor Emu0 xor Esu0;
+//    BCu1 := Ebu1 xor Egu1 xor Eku1 xor Emu1 xor Esu1;
+//
+//    // thetaRhoPiChiIota(round+1, E, A)
+//    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
+//    Da1 := BCu1 xor BCe0;
+//    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
+//    De1 := BCa1 xor BCi0;
+//    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
+//    Di1 := BCe1 xor BCo0;
+//    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
+//    Do1 := BCi1 xor BCu0;
+//    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
+//    Du1 := BCo1 xor BCa0;
+//
+//    Eba0 := Eba0 xor Da0;  BCa0 := Eba0;
+//    Ege0 := Ege0 xor De0;  BCe0 := (Ege0 shl 22) xor (Ege0 shr (32-22));
+//    Eki1 := Eki1 xor Di1;  BCi0 := (Eki1 shl 22) xor (Eki1 shr (32-22));
+//    Emo1 := Emo1 xor Do1;  BCo0 := (Emo1 shl 11) xor (Emo1 shr (32-11));
+//    Esu0 := Esu0 xor Du0;  BCu0 := (Esu0 shl  7) xor (Esu0 shr (32-7));
+//
+//    Aba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+2];
+//    Abe0 := BCe0 xor ((not BCi0) and BCo0);
+//    Abi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Abo0 := BCo0 xor ((not BCu0) and BCa0);
+//    Abu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Eba1 := Eba1 xor Da1;  BCa1 := Eba1;
+//    Ege1 := Ege1 xor De1;  BCe1 := (Ege1 shl 22) xor (Ege1 shr (32-22));
+//    Eki0 := Eki0 xor Di0;  BCi1 := (Eki0 shl 21) xor (Eki0 shr (32-21));
+//    Emo0 := Emo0 xor Do0;  BCo1 := (Emo0 shl 10) xor (Emo0 shr (32-10));
+//    Esu1 := Esu1 xor Du1;  BCu1 := (Esu1 shl  7) xor (Esu1 shr (32-7));
+//
+//    Aba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+3];
+//    Abe1 := BCe1 xor ((not BCi1) and BCo1);
+//    Abi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Abo1 := BCo1 xor ((not BCu1) and BCa1);
+//    Abu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Ebo0 := Ebo0 xor Do0;  BCa0 := (Ebo0 shl 14) xor (Ebo0 shr (32-14));
+//    Egu0 := Egu0 xor Du0;  BCe0 := (Egu0 shl 10) xor (Egu0 shr (32-10));
+//    Eka1 := Eka1 xor Da1;  BCi0 := (Eka1 shl  2) xor (Eka1 shr (32-2));
+//    Eme1 := Eme1 xor De1;  BCo0 := (Eme1 shl 23) xor (Eme1 shr (32-23));
+//    Esi1 := Esi1 xor Di1;  BCu0 := (Esi1 shl 31) xor (Esi1 shr (32-31));
+//
+//    Aga0 := BCa0 xor ((not BCe0) and BCi0);
+//    Age0 := BCe0 xor ((not BCi0) and BCo0);
+//    Agi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Ago0 := BCo0 xor ((not BCu0) and BCa0);
+//    Agu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Ebo1 := Ebo1 xor Do1;  BCa1 := (Ebo1 shl 14) xor (Ebo1 shr (32-14));
+//    Egu1 := Egu1 xor Du1;  BCe1 := (Egu1 shl 10) xor (Egu1 shr (32-10));
+//    Eka0 := Eka0 xor Da0;  BCi1 := (Eka0 shl  1) xor (Eka0 shr (32-1));
+//    Eme0 := Eme0 xor De0;  BCo1 := (Eme0 shl 22) xor (Eme0 shr (32-22));
+//    Esi0 := Esi0 xor Di0;  BCu1 := (Esi0 shl 30) xor (Esi0 shr (32-30));
+//
+//    Aga1 := BCa1 xor ((not BCe1) and BCi1);
+//    Age1 := BCe1 xor ((not BCi1) and BCo1);
+//    Agi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Ago1 := BCo1 xor ((not BCu1) and BCa1);
+//    Agu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Ebe1 := Ebe1 xor De1;  BCa0 := (Ebe1 shl  1) xor (Ebe1 shr (32-1));
+//    Egi0 := Egi0 xor Di0;  BCe0 := (Egi0 shl  3) xor (Egi0 shr (32-3));
+//    Eko1 := Eko1 xor Do1;  BCi0 := (Eko1 shl 13) xor (Eko1 shr (32-13));
+//    Emu0 := Emu0 xor Du0;  BCo0 := (Emu0 shl  4) xor (Emu0 shr (32-4));
+//    Esa0 := Esa0 xor Da0;  BCu0 := (Esa0 shl  9) xor (Esa0 shr (32-9));
+//
+//    Aka0 := BCa0 xor ((not BCe0) and BCi0);
+//    Ake0 := BCe0 xor ((not BCi0) and BCo0);
+//    Aki0 := BCi0 xor ((not BCo0) and BCu0);
+//    Ako0 := BCo0 xor ((not BCu0) and BCa0);
+//    Aku0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Ebe0 := Ebe0 xor De0;  BCa1 := Ebe0;
+//    Egi1 := Egi1 xor Di1;  BCe1 := (Egi1 shl  3) xor (Egi1 shr (32-3));
+//    Eko0 := Eko0 xor Do0;  BCi1 := (Eko0 shl 12) xor (Eko0 shr (32-12));
+//    Emu1 := Emu1 xor Du1;  BCo1 := (Emu1 shl  4) xor (Emu1 shr (32-4));
+//    Esa1 := Esa1 xor Da1;  BCu1 := (Esa1 shl  9) xor (Esa1 shr (32-9));
+//
+//    Aka1 := BCa1 xor ((not BCe1) and BCi1);
+//    Ake1 := BCe1 xor ((not BCi1) and BCo1);
+//    Aki1 := BCi1 xor ((not BCo1) and BCu1);
+//    Ako1 := BCo1 xor ((not BCu1) and BCa1);
+//    Aku1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Ebu1 := Ebu1 xor Du1;  BCa0 := (Ebu1 shl 14) xor (Ebu1 shr (32-14));
+//    Ega0 := Ega0 xor Da0;  BCe0 := (Ega0 shl 18) xor (Ega0 shr (32-18));
+//    Eke0 := Eke0 xor De0;  BCi0 := (Eke0 shl  5) xor (Eke0 shr (32-5));
+//    Emi1 := Emi1 xor Di1;  BCo0 := (Emi1 shl  8) xor (Emi1 shr (32-8));
+//    Eso0 := Eso0 xor Do0;  BCu0 := (Eso0 shl 28) xor (Eso0 shr (32-28));
+//
+//    Ama0 := BCa0 xor ((not BCe0) and BCi0);
+//    Ame0 := BCe0 xor ((not BCi0) and BCo0);
+//    Ami0 := BCi0 xor ((not BCo0) and BCu0);
+//    Amo0 := BCo0 xor ((not BCu0) and BCa0);
+//    Amu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Ebu0 := Ebu0 xor Du0;  BCa1 := (Ebu0 shl 13) xor (Ebu0 shr (32-13));
+//    Ega1 := Ega1 xor Da1;  BCe1 := (Ega1 shl 18) xor (Ega1 shr (32-18));
+//    Eke1 := Eke1 xor De1;  BCi1 := (Eke1 shl  5) xor (Eke1 shr (32-5));
+//    Emi0 := Emi0 xor Di0;  BCo1 := (Emi0 shl  7) xor (Emi0 shr (32-7));
+//    Eso1 := Eso1 xor Do1;  BCu1 := (Eso1 shl 28) xor (Eso1 shr (32-28));
+//
+//    Ama1 := BCa1 xor ((not BCe1) and BCi1);
+//    Ame1 := BCe1 xor ((not BCi1) and BCo1);
+//    Ami1 := BCi1 xor ((not BCo1) and BCu1);
+//    Amo1 := BCo1 xor ((not BCu1) and BCa1);
+//    Amu1 := BCu1 xor ((not BCa1) and BCe1);
+//
+//    Ebi0 := Ebi0 xor Di0;  BCa0 := (Ebi0 shl 31) xor (Ebi0 shr (32-31));
+//    Ego1 := Ego1 xor Do1;  BCe0 := (Ego1 shl 28) xor (Ego1 shr (32-28));
+//    Eku1 := Eku1 xor Du1;  BCi0 := (Eku1 shl 20) xor (Eku1 shr (32-20));
+//    Ema1 := Ema1 xor Da1;  BCo0 := (Ema1 shl 21) xor (Ema1 shr (32-21));
+//    Ese0 := Ese0 xor De0;  BCu0 := (Ese0 shl  1) xor (Ese0 shr (32-1));
+//
+//    Asa0 := BCa0 xor ((not BCe0) and BCi0);
+//    Ase0 := BCe0 xor ((not BCi0) and BCo0);
+//    Asi0 := BCi0 xor ((not BCo0) and BCu0);
+//    Aso0 := BCo0 xor ((not BCu0) and BCa0);
+//    Asu0 := BCu0 xor ((not BCa0) and BCe0);
+//
+//    Ebi1 := Ebi1 xor Di1;  BCa1 := (Ebi1 shl 31) xor (Ebi1 shr (32-31));
+//    Ego0 := Ego0 xor Do0;  BCe1 := (Ego0 shl 27) xor (Ego0 shr (32-27));
+//    Eku0 := Eku0 xor Du0;  BCi1 := (Eku0 shl 19) xor (Eku0 shr (32-19));
+//    Ema0 := Ema0 xor Da0;  BCo1 := (Ema0 shl 20) xor (Ema0 shr (32-20));
+//    Ese1 := Ese1 xor De1;  BCu1 := (Ese1 shl  1) xor (Ese1 shr (32-1));
+//
+//    Asa1 := BCa1 xor ((not BCe1) and BCi1);
+//    Ase1 := BCe1 xor ((not BCi1) and BCo1);
+//    Asi1 := BCi1 xor ((not BCo1) and BCu1);
+//    Aso1 := BCo1 xor ((not BCu1) and BCa1);
+//    Asu1 := BCu1 xor ((not BCa1) and BCe1);
+//    inc(round,2);
+//  end;
+//
+//  // copyToState(state, A)
+//  state[ 0] := Aba0;
+//  state[ 1] := Aba1;
+//  state[ 2] := Abe0;
+//  state[ 3] := Abe1;
+//  state[ 4] := Abi0;
+//  state[ 5] := Abi1;
+//  state[ 6] := Abo0;
+//  state[ 7] := Abo1;
+//  state[ 8] := Abu0;
+//  state[ 9] := Abu1;
+//  state[10] := Aga0;
+//  state[11] := Aga1;
+//  state[12] := Age0;
+//  state[13] := Age1;
+//  state[14] := Agi0;
+//  state[15] := Agi1;
+//  state[16] := Ago0;
+//  state[17] := Ago1;
+//  state[18] := Agu0;
+//  state[19] := Agu1;
+//  state[20] := Aka0;
+//  state[21] := Aka1;
+//  state[22] := Ake0;
+//  state[23] := Ake1;
+//  state[24] := Aki0;
+//  state[25] := Aki1;
+//  state[26] := Ako0;
+//  state[27] := Ako1;
+//  state[28] := Aku0;
+//  state[29] := Aku1;
+//  state[30] := Ama0;
+//  state[31] := Ama1;
+//  state[32] := Ame0;
+//  state[33] := Ame1;
+//  state[34] := Ami0;
+//  state[35] := Ami1;
+//  state[36] := Amo0;
+//  state[37] := Amo1;
+//  state[38] := Amu0;
+//  state[39] := Amu1;
+//  state[40] := Asa0;
+//  state[41] := Asa1;
+//  state[42] := Ase0;
+//  state[43] := Ase1;
+//  state[44] := Asi0;
+//  state[45] := Asi1;
+//  state[46] := Aso0;
+//  state[47] := Aso1;
+//  state[48] := Asu0;
+//  state[49] := Asu1;
+//end;
 
 procedure THash_SHA3Base.PadAndSwitchToSqueezingPhase;
 var
@@ -4578,7 +4716,6 @@ var
   i            : Int32;
   PartialBlock : Int16;
 begin
-
   if not FSpongeState.SqueezeActive then
     PadAndSwitchToSqueezingPhase;
 
@@ -4609,52 +4746,25 @@ begin
   end;
 end;
 
-procedure THash_SHA3Base.xorIntoState(var State : TState_L;
-                                      Inp       : Pointer;
-                                      LaneCount : UInt16);
+procedure THash_SHA3Base.XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
 var
-  t, x0, x1 : UInt32;
-  pI, pS    : PUInt32;
-  i         : Integer;
-const
-  xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
+   pS: PUInt64;
+   i: Integer;
 begin
-  // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
-  pI := Inp;
-  pS := @State[0];
-  for i := LaneCount-1 downto 0 do
-  begin
-    x0 := pI^;
-    inc(PByte(pI), sizeof(pI^));
-
-    t := (x0 xor (x0 shr 1)) and $22222222;  x0 := x0 xor t xor (t shl 1);
-    t := (x0 xor (x0 shr 2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl 2);
-    t := (x0 xor (x0 shr 4)) and $00F000F0;  x0 := x0 xor t xor (t shl 4);
-    t := (x0 xor (x0 shr 8)) and $0000FF00;  x0 := x0 xor t xor (t shl 8);
-
-    x1 := pI^;
-    inc(PByte(pI), sizeof(pI^));
-
-    t := (x1 xor (x1 shr 1)) and $22222222;  x1 := x1 xor t xor (t shl 1);
-    t := (x1 xor (x1 shr 2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl 2);
-    t := (x1 xor (x1 shr 4)) and $00F000F0;  x1 := x1 xor t xor (t shl 4);
-    t := (x1 xor (x1 shr 8)) and $0000FF00;  x1 := x1 xor t xor (t shl 8);
-
-    pS^ := pS^ xor ((x0 and $0000FFFF) or (x1 shl 16));
-    inc(PByte(pS),sizeof(pS^));
-
-    pS^ := pS^ xor ((x0 shr 16) or (x1 and xFFFF0000));
-    inc(PByte(pS),sizeof(pS^));
-  end;
+   pS := @state[0];
+   for i:=laneCount-1 downto 0 do begin
+      pS^ := pS^ xor pI^;
+      Inc(pI);
+      Inc(pS);
+   end;
 end;
 
-procedure THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32);
+
+procedure THash_SHA3Base.Absorb(Data: PBABytes; DatabitLen: Int32);
 var
-  i, j,
-  wholeBlocks,
-  partialBlock : Int32;
-  partialByte  : Integer;
-  curData      : PByte;
+  i, j, wholeBlocks, partialBlock: Integer;
+  partialByte: Integer;
+  curData: PUInt64;
 begin
   // if a number of bits which cannot be divided by 8 without reminder is in the
   // queue or algorithm is already in squeezing state
@@ -4666,49 +4776,46 @@ begin
   end;
 
   i := 0;
-  while i < DatabitLen do
+
+  while i < databitlen do
   begin
-    if ((FSpongeState.BitsInQueue = 0) and (DatabitLen >= FSpongeState.Rate) and
-        (i <= (DatabitLen - FSpongeState.Rate))) then
-    begin
-      wholeBlocks := (DatabitLen-i) div FSpongeState.Rate;
-      curData := @TPBABytes(data)^[i div 8];
-      j := 0;
-      while j < wholeBlocks do
-      begin
-        KeccakAbsorb(FSpongeState.State, curData, FSpongeState.Rate div 64);
-        inc(j);
-        inc(PByte(curData), FSpongeState.Rate div 8);
-      end;
-      inc(i, wholeBlocks * FSpongeState.Rate);
-    end
-    else
-    begin
-      partialBlock := DatabitLen - i;
+     if ((FSpongeState.BitsInQueue = 0) and (databitlen >= FSpongeState.Rate) and
+        (i <= (databitlen - FSpongeState.Rate))) then
+     begin
+       wholeBlocks := (databitlen-i) div FSpongeState.Rate;
+       curData := @data^[i div 8];
+       j := 0;
+       while j < wholeBlocks do
+       begin
+         KeccakAbsorb(FSpongeState.State, curData, FSpongeState.Rate div 64);
+         Inc(j);
+         Inc(PByte(curData), FSpongeState.Rate div 8);
+       end;
+       Inc(i, wholeBlocks * FSpongeState.Rate);
+     end
+     else
+     begin
+       partialBlock := databitlen - i;
+       if partialBlock + FSpongeState.BitsInQueue > FSpongeState.Rate then
+         partialBlock := FSpongeState.Rate - FSpongeState.BitsInQueue;
 
-      if partialBlock + FSpongeState.BitsInQueue > FSpongeState.Rate then
-        partialBlock := FSpongeState.Rate - FSpongeState.BitsInQueue;
+       partialByte := partialBlock and 7;
+       Dec(partialBlock, partialByte);
+       Move(data^[i div 8], FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8], partialBlock div 8);
+       Inc(FSpongeState.BitsInQueue, partialBlock);
+       Inc(i, partialBlock);
+       if FSpongeState.BitsInQueue=FSpongeState.Rate then
+          AbsorbQueue;
 
-      partialByte := partialBlock and 7;
-      dec(partialBlock, partialByte);
-      move(TPBABytes(data)^[i div 8],
-           FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8],
-           partialBlock div 8);
-      inc(FSpongeState.BitsInQueue, partialBlock);
-      inc(i, partialBlock);
+       if partialByte > 0 then
+       begin
+         FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8] :=
+           data^[i div 8] and ((1 shl partialByte)-1);
 
-      if (FSpongeState.BitsInQueue = FSpongeState.Rate) then
-        AbsorbQueue;
-
-      if (partialByte > 0) then
-      begin
-        FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8] :=
-          TPBABytes(data)^[i div 8] and ((1 shl partialByte)-1);
-
-        inc(FSpongeState.BitsInQueue, partialByte);
-        inc(i, partialByte);
-      end;
-    end;
+         Inc(FSpongeState.BitsInQueue, partialByte);
+         Inc(i, partialByte);
+       end;
+     end;
   end;
 end;
 
@@ -4721,7 +4828,7 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
-  DataPtr   : PByte;
+  DataPtr   : PBABytes;
   RoundSize : UInt32;
 const
   // Maximum number of bytes one can process in one round
@@ -4730,7 +4837,7 @@ begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    DataPtr := PByte(@Data);
+    DataPtr := PBABytes(@Data);
 
     while (UInt32(DataSize) > 0) do
     begin
@@ -4777,41 +4884,23 @@ begin
     Absorb(Data, DataBitLen - (DataBitLen and 7));
 
     // Align the last partial byte to the least significant bits
-    LastByte := TPBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+    LastByte := PBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
     Absorb(@LastByte, DataBitLen and 7);
   end;
 end;
 
-procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
-                                          LaneCount: UInt16);
+procedure THash_SHA3Base.ExtractFromState(outp: Pointer; const state: TState_L; laneCount: Integer);
 var
-  pI, pS    : PUint32;
-  i         : Integer;
-  t, x0, x1 : UInt32;
-const
-  xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
+   pI, pS: PUInt64;
+   i: Integer;
 begin
-   // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
    pI := outp;
    pS := @state[0];
-
-   for i := LaneCount-1 downto 0 do
+   for i := laneCount - 1 downto 0 do
    begin
-     x0 := pS^; inc(PByte(pS),sizeof(pS^));
-     x1 := pS^; inc(PByte(pS),sizeof(pS^));
-     t  := (x0 and $0000FFFF) or (x1 shl 16);
-     x1 := (x0 shr 16) or (x1 and xFFFF0000);
-     x0 := t;
-     t  := (x0 xor (x0 shr  8)) and $0000FF00;  x0 := x0 xor t xor (t shl  8);
-     t  := (x0 xor (x0 shr  4)) and $00F000F0;  x0 := x0 xor t xor (t shl  4);
-     t  := (x0 xor (x0 shr  2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl  2);
-     t  := (x0 xor (x0 shr  1)) and $22222222;  x0 := x0 xor t xor (t shl  1);
-     t  := (x1 xor (x1 shr  8)) and $0000FF00;  x1 := x1 xor t xor (t shl  8);
-     t  := (x1 xor (x1 shr  4)) and $00F000F0;  x1 := x1 xor t xor (t shl  4);
-     t  := (x1 xor (x1 shr  2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl  2);
-     t  := (x1 xor (x1 shr  1)) and $22222222;  x1 := x1 xor t xor (t shl  1);
-     pI^:= x0; inc(PByte(pI),sizeof(pI^));
-     pI^:= x1; inc(PByte(pI),sizeof(pI^));
+      pI^ := pS^;
+      Inc(pI);
+      Inc(pS);
    end;
 end;
 
