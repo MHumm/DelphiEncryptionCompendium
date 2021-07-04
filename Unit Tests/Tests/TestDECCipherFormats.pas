@@ -474,7 +474,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 AnsiStringOf(TFormat_HexL.Encode(result)),
-                'Failure in TestEncodeAnsiStringToBytes ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToBytes ' + IntToString(i));
   end;
 end;
 
@@ -493,7 +493,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].EncryptedTextData),
                 AnsiStringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Failure in TestEncodeAnsiStringToString ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToString ' + IntToString(i));
   end;
 end;
 {$ENDIF}

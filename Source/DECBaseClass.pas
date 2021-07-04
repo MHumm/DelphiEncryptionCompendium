@@ -286,6 +286,7 @@ class function TDECObject.GetShortClassNameFromName(const ClassName: string): st
 var
   i: Integer;
 begin
+{ TODO : Problem when class name has 2x _ in its name like THash_SHA3_224... }
   Result := ClassName;
   i := Pos('_', Result);
   if i > 0 then

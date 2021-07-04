@@ -6,7 +6,7 @@
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">GUI</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <TargetedPlatforms>32785</TargetedPlatforms>
+        <TargetedPlatforms>32787</TargetedPlatforms>
         <AppType>Console</AppType>
         <FrameworkType>None</FrameworkType>
     </PropertyGroup>
@@ -191,6 +191,7 @@
         <DCCReference Include="Tests\TestDECHashKDF.pas"/>
         <DCCReference Include="Tests\TestDECRandom.pas"/>
         <DCCReference Include="Tests\TestDECHashMAC.pas"/>
+        <DCCReference Include="Tests\TestDECHashSHA3.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -226,7 +227,7 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_Debug\DECDUnitXTestSuite.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_GUI\DECDUnitXTestSuite.exe" Configuration="GUI" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DECDUnitXTestSuite.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -274,7 +275,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_GUI\DECDUnitXTestSuite.exe" Configuration="GUI" Class="ProjectOutput">
+                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_Debug\DECDUnitXTestSuite.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DECDUnitXTestSuite.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -586,10 +587,6 @@
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
-                    <Platform Name="OSXARM64">
-                        <Operation>1</Operation>
-                        <Extensions>.framework</Extensions>
-                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
@@ -600,10 +597,6 @@
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSXARM64">
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -633,10 +626,6 @@
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
-                    <Platform Name="OSXARM64">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
@@ -662,9 +651,6 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX64">
-                        <Operation>0</Operation>
-                    </Platform>
-                    <Platform Name="OSXARM64">
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -1220,10 +1206,6 @@
                         <RemoteDir>Contents\Resources</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
-                    <Platform Name="OSXARM64">
-                        <RemoteDir>Contents\Resources</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
                 </DeployClass>
                 <DeployClass Required="true" Name="ProjectOutput">
                     <Platform Name="Android">
@@ -1250,9 +1232,6 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
-                        <Operation>1</Operation>
-                    </Platform>
-                    <Platform Name="OSXARM64">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -1309,7 +1288,7 @@
                 <Platform value="Android">True</Platform>
                 <Platform value="Android64">True</Platform>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

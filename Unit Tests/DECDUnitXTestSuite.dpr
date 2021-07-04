@@ -19,13 +19,7 @@ uses
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,
-  TestInsight.DUnitX,
-  {$ENDIF}
-//  {$IFDEF GUI}
-//  DUnitX.Loggers.GUIX,
-//  {$ENDIF }
-//  {$IFDEF MobileGUI}
-//  {$ENDIF }
+  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -41,7 +35,8 @@ uses
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   TestDECHashKDF in 'Tests\TestDECHashKDF.pas',
   TestDECRandom in 'Tests\TestDECRandom.pas',
-  TestDECHashMAC in 'Tests\TestDECHashMAC.pas';
+  TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
+  TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas';
 
 function IsTestInsightRunning: Boolean;
 {$IFDEF TESTINSIGHT}
