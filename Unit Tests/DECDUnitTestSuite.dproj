@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{4117BDAD-9849-4F6E-8968-BB6B92C8AE7B}</ProjectGuid>
-        <ProjectVersion>19.</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <MainSource>DECDUnitTestSuite.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
