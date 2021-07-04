@@ -6,7 +6,7 @@ The following versions are currently supported with security fixes:
 
 | Version  | Supported          |
 | -------- | ------------------ |
-| 6.1      | :white_check_mark: | 
+| 6.2      | :white_check_mark: | 
 
 ## Reporting a Vulnerability
 
@@ -19,6 +19,6 @@ For instace add these details:
 * description of the issue
 * circumstances under which the issue occurs
 * steps to reproduce the issue
-* Delphi version used
+* Delphi or FPC version used
 * if possible supply a small demo application showing the issue
 * if you have any idea about how to fix it feel free to suggest it
