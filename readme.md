@@ -12,7 +12,7 @@ It contains algorithms for these categories:
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The current version 6.1 is compatible with Delphi 2009 - Delphi 10.4.1 Sydney. 
+The current version 6.2 is compatible with Delphi 2009 - Delphi 10.4.2 Sydney. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
@@ -29,7 +29,7 @@ A list of changes is available in the docs folder.
 V6.0 was released shortly before Christmas 2020. Since then work continued
 by some users supplying code, reporting bugs (regressions) along with fixes
 and by adding SHA2-224 which was still missing.
-Details about the changes and additions in V6.1 can be found in the 
+Details about the changes and additions in V6.2 can be found in the 
 VersionHistory.pdf file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
@@ -37,7 +37,7 @@ The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.1 you will find further files with information about 
+In the root folder of DEC V6.2 you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 Also take the time to read DEC61.pdf in the *Docs* folder or look at the demos 
 provided in the *Demos* subfolder.
@@ -56,6 +56,10 @@ need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
 We're talking at block chaining mode tests for the ciphers specifically.
 
+In DEC 6.2 the unit tests for the hash classes were looked at and where not already 
+used original test data vectors (as far as we could find them - for most we could) 
+have been added to improve test coverage.
+
 ## Contained hash algorithms
 * MD2        
 * MD4        
@@ -70,6 +74,10 @@ We're talking at block chaining mode tests for the ciphers specifically.
 * SHA256     
 * SHA384     
 * SHA512     
+* SHA3_224
+* SHA3_256
+* SHA3_384
+* SHA3_512
 * Haval128   
 * Haval160   
 * Haval192   
