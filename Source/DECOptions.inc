@@ -28,6 +28,7 @@
 
 {$UNDEF OLD_SHA_NAME}
 {$UNDEF OLD_WHIRLPOOL_NAMES}
+{$UNDEF OLD_REGISTER_FAULTY_CIPHERS}
 {$UNDEF AUTO_PRNG}
 {$UNDEF DEC52_IDENTITY}
 {$UNDEF DEC3_CMCTS}
@@ -76,12 +77,12 @@
       {.$DEFINE NO_ASM} (* default OFF *)
     {$ELSE
       {$DEFINE NO_ASM} (* default ON *)
-    {$IFEND}
-  {$IFEND}
+    {$ENDIF}
+  {$ENDIF}
 {$ELSE}
   // Turn ASM off for FPC as we do not know enough about ASM support on FPC
   {$DEFINE NO_ASM} (* default ON *)
-{$IFEND}
+{$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
 // DEC version 5.2. See TDECObject.Identity in DECBaseClass.pas for more details
@@ -101,8 +102,7 @@
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
   {$DEFINE FMXTranslateableExceptions}
-{$IFEND}
-
+{$IFEND} { TODO: convert to $ENDIF when raising minimum supported version to XE4+}
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
@@ -127,8 +127,8 @@
   {$IFDEF DARWIN}
     {$DEFINE MACOS}
     {$DEFINE ALIGN_STACK}
-  {$IFEND !DARWIN}
-{$IFEND FPC}
+  {$ENDIF}
+{$ENDIF FPC}
 
 //------------------------------------------------------------------------------
 // Architecture (x86ASM, x64ASM, PurePascal)
@@ -141,7 +141,7 @@
   {$UNDEF X86ASM}
   {$UNDEF X64ASM}
   {$DEFINE PUREPASCAL}
-{$IFEND}
+{$ENDIF}
 
 {$IFNDEF PUREPASCAL}
   // ignored by FPC (already in PurePascal mode as defined in FPC block above)
@@ -152,9 +152,16 @@
       {$DEFINE X64ASM}
     {$ELSE !CPUX64}
       {$DEFINE PUREPASCAL}
-    {$IFEND !CPUX64}
-  {$IFEND}
-{$IFEND !PUREPASCAL}
+    {$ENDIF !CPUX64}
+  {$ENDIF}
+{$ENDIF !PUREPASCAL}
+
+{$IF SizeOf(Pointer) = 4}
+  {$DEFINE CPU32BITS}
+{$IFEND}
+{$IF SizeOf(Pointer) = 8}
+  {$DEFINE CPU64BITS}
+{$IFEND}
 
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder
@@ -170,7 +177,7 @@
   {$ELSE}
     Sorry, but Delphi 2007 and lower are no longer supported!
   {$IFEND}
-{$IFEND}
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 // Asm Core
@@ -200,4 +207,4 @@
   // {$DEFINE THash_Square_asm}
   // {$DEFINE THash_Snefru128_asm}
   // {$DEFINE THash_Snefru256_asm}
-{$IFEND}
+{$ENDIF}

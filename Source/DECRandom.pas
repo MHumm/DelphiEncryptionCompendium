@@ -207,7 +207,7 @@ var
   SysTime: TSystemTime;
   {$ELSE}
   Hour, Minute, Second, Milliseconds: Word;
-  {$ENDIF}
+  {$IFEND}
   Counter: TInt64Rec;
   Time: Cardinal;
 begin
@@ -225,7 +225,7 @@ begin
       Int64(Counter) := LclIntf.GetTickCount * 10000 {TicksPerMillisecond}; // uses LclIntf
       {$ENDIF}
     {$ENDIF}
-  {$ENDIF}
+  {$IFEND}
 
   Result := Time + Counter.Hi;
   Inc(Result, Ord(Result < Time)); // add "carry flag"
@@ -286,11 +286,11 @@ end;
 function RandomRawByteString(Size: Integer): RawByteString;
 begin
   SetLength(Result, Size);
-  {$IF CompilerVersion >= 17.0}
+  {$IF CompilerVersion >= 24.0}
   RandomBuffer(Result[Low(Result)], Size);
   {$ELSE}
   RandomBuffer(Result[1], Size);
-  {$ENDIF}
+  {$IFEND}
 end;
 
 function RandomLong: UInt32;

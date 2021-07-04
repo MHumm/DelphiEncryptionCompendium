@@ -31,7 +31,8 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication, DECTypes;
+  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication,
+  DECHashBitBase, DECTypes;
 
 type
   // Hash Classes
@@ -49,9 +50,9 @@ type
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
   THash_SHA3_224    = class;
-//  THash_SHA3_256    = class;
-//  THash_SHA3_384    = class;
-//  THash_SHA3_512    = class;
+  THash_SHA3_256    = class;
+  THash_SHA3_384    = class;
+  THash_SHA3_512    = class;
   THash_Haval128    = class;
   THash_Haval160    = class;  // Haval 160, 3 Rounds
   THash_Haval192    = class;  // Haval 192, 4 Rounds
@@ -61,10 +62,11 @@ type
   THash_Panama      = class;
   {$IFDEF OLD_WHIRLPOOL_NAMES}
   THash_Whirlpool   = class;
-  THash_Whirlpool1  = class;
+  THash_Whirlpool1New = class;
   {$ENDIF}
 
   THash_Whirlpool0  = class;
+  THash_Whirlpool1  = class; // differs, depending on OLD_WHIRLPOOL_NAMES define
   THash_WhirlpoolT  = class;
 
   THash_Square      = class;
@@ -249,8 +251,8 @@ type
   /// <summary>
   ///   Base class for tall SHA3 implementations
   /// </summary>
-  THash_SHA3Base = class(TDECHashAuthentication)
-  public
+  THash_SHA3Base = class(TDECHashBit)
+  strict private
     // Declarations for SHA3. Must be declared here to allow private methods
     // to use these types as well.
     const
@@ -273,32 +275,50 @@ type
       ///   Number of times to run the algorithm on the data
       /// </summary>
       cKeccakNumberOfRounds        = 24;
+
+      /// <summary>
+      ///   Precalculated values for the 24 rounds of the algorithm
+      /// </summary>
+      cRoundConstants : array[0..23] of UInt64 = (
+        UInt64($0000000000000001), UInt64($0000000000008082),
+        UInt64($800000000000808A), UInt64($8000000080008000),
+        UInt64($000000000000808B), UInt64($0000000080000001),
+        UInt64($8000000080008081), UInt64($8000000000008009),
+        UInt64($000000000000008A), UInt64($0000000000000088),
+        UInt64($0000000080008009), UInt64($000000008000000A),
+        UInt64($000000008000808B), UInt64($800000000000008B),
+        UInt64($8000000000008089), UInt64($8000000000008003),
+        UInt64($8000000000008002), UInt64($8000000000000080),
+        UInt64($000000000000800A), UInt64($800000008000000A),
+        UInt64($8000000080008081), UInt64($8000000000008080),
+        UInt64($0000000080000001), UInt64($8000000080008008)
+      );
     type
-      TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of Byte;
+      TState_B = packed array[0..KeccakPermutationSizeInBytes-1] of UInt8;
       TState_L = packed array[0..(KeccakPermutationSizeInBytes) div 4 - 1] of Int32;
-      TKDQueue = packed array[0..KeccakMaximumRateInBytes-1] of Byte;
+      TKDQueue = packed array[0..KeccakMaximumRateInBytes-1] of UInt8;
 
       /// <summary>
       ///   Calculation status of the algorithm
       /// </summary>
       TSpongeState = packed record
-                       state                     : TState_B;
+                       State                     : TState_B;
                        /// <summary>
                        ///   Data of the queue to be processed
                        /// </summary>
-                       dataQueue                 : TKDQueue;
+                       DataQueue                 : TKDQueue;
                        /// <summary>
                        ///   Bitrate r of Keccak
                        /// </summary>
-                       rate                      : UInt16;
+                       Rate                      : UInt16;
                        /// <summary>
                        ///   Capacity c of Keccak
                        /// </summary>
-                       capacity                  : UInt16;
+                       Capacity                  : UInt16;
                        /// <summary>
                        ///   How many bits are in the queue
                        /// </summary>
-                       bitsInQueue               : UInt16;
+                       BitsInQueue               : UInt16;
                        /// <summary>
                        ///   Length of the hash value to generate in bit
                        /// </summary>
@@ -307,46 +327,35 @@ type
                        ///   Number of bits which can be squeezed
                        /// </summary>
                        bitsAvailableForSqueezing : UInt16;
-                       squeezing                 : UInt16;
+                       /// <summary>
+                       ///   Flag which is set to true when entering the
+                       ///   squeezing state. Suppresses further absorb calls.
+                       /// </summary>
+                       SqueezeActive             : Boolean;
                        /// <summary>
                        ///   If an operation fails it sets this error code
                        /// </summary>
-{ TODO :
-How to handle this? If Error <> 0 certain calls are skipped.
-Can the result still be a valid hash value?
-Or how to translate that into proper exception handling? }
-                       Error                     : Int16;
-    //                   Fill3: packed array[407..HASHCTXSIZE] of byte;
+    //                   Fill3: packed array[405..HASHCTXSIZE] of byte;
                      end;
 
       /// <summary>
       ///   Buffer type
       /// </summary>
-      TBABytes = array[0..MaxLongint-1] of UInt8;
+      TBABytes = array[0..65535] of UInt8;
       /// <summary>
       ///   Pointer to a buffer
       /// </summary>
-      TPBABytes = ^TBABytes;
+      PBABytes = ^TBABytes;
       /// <summary>
       ///   Type for the generated hash value
       /// </summary>
       TSHA3Digest = array[0..63] of UInt8;
-  strict private
-    /// <summary>
-    ///   The generated hash value is stored here
-    /// </summary>
-    FDigest      : TSHA3Digest;
 
-    /// <summary>
-    ///   Setting this to a number of bits allows to process messages which have
-    ///   a length which is not a exact multiple of bytes.
-    /// </summary>
-    FFinalBitLen : Int16;
-    /// <summary>
-    ///   Byte used for padding in case of specifying a final bit length which
-    ///   is not an exact multiple of bytes.
-    /// </summary>
-    FPaddingByte : UInt8;
+    var
+      /// <summary>
+      ///   The generated hash value is stored here
+      /// </summary>
+      FDigest      : TSHA3Digest;
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
@@ -355,14 +364,52 @@ Or how to translate that into proper exception handling? }
     ///   Pointer to the data to work on
     /// </param>
     /// <param name="DatabitLen">
-    ///   Lengtho of the data passed via the pointer in bit
+    ///   Length of the data passed via the pointer in bit
     /// </param>
-    function Absorb(Data: Pointer; DatabitLen: Int32): Int32;
+    /// <remarks>
+    ///   Raises an EDECHashEception when DataBit len not divideable by 8 without
+    ///   reminder or when already in squeezin state.
+    /// </remarks>
+    procedure Absorb(Data: PBABytes; DatabitLen: Int32);
 
     /// <summary>
     ///   Absorb remaining bits from queue
     /// </summary>
     procedure AbsorbQueue;
+
+    {$IFDEF PUREPASCAL}
+    /// <summary>
+    ///   Circular left shift
+    /// </summary>
+    /// <param name="x">
+    ///   Value to be shifted
+    /// </param>
+    /// <param name="c">
+    ///   Number of bits the value will be shifted
+    /// </param>
+    /// <returns>
+    ///   Shifted value
+    /// </returns>
+    function RotL(const x: UInt64; c: Integer): UInt64; inline;
+
+    /// <summary>
+    ///   Circular left shift by 1
+    /// </summary>
+    /// <param name="x">
+    ///   Value to be shifted
+    /// </param>
+    /// <returns>
+    ///   Shifted value
+    /// </returns>
+    function RotL1(var x: UInt64): UInt64; inline;
+    {$ENDIF}
+    /// <summary>
+    ///   Permutates the values in the passed state
+    /// </summary>
+    /// <param name="State">
+    ///   State to permutate
+    /// </param>
+    procedure KeccakPermutation(var State: TState_L);
 
     /// <summary>
     ///   Carries out the XorIntoState and the permutation
@@ -376,19 +423,13 @@ Or how to translate that into proper exception handling? }
     /// <param name="LaneCount">
     ///   Number of times the loop in this algorithm has tpo be carried out
     /// </param>
-    procedure KeccakAbsorb(var State: TState_B; Data: Pointer; LaneCount: UInt16);
-    /// <summary>
-    ///   Permutates the values in the passed state
-    /// </summary>
-    /// <param name="State">
-    ///   State to permutate
-    /// </param>
-    procedure KeccakPermutation(var State: TState_L);
+    procedure KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 
     /// <summary>
     ///   Include input message data bits into the sponge state
     /// </summary>
-    procedure XorIntoState(var State: TState_L; Inp: Pointer; LaneCount: UInt16);
+    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
+
     /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
     ///   times, only the last DataBitLen may be a non-multiple of 8
@@ -401,7 +442,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="DataBitLen">
     ///   Length of the data in bits
     /// </param>
-    function DoUpdate(data: Pointer; DataBitLen: Int32): Integer;
+    procedure DoUpdate(Data: Pointer; DataBitLen: Int32);
 
     /// <summary>
     ///   Squeeze output data from the sponge function. If the sponge function
@@ -417,7 +458,7 @@ Or how to translate that into proper exception handling? }
     /// <returns>
     ///   0 if successful, 1 otherwise.
     /// </returns>
-    function Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
+    procedure Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
     /// <summary>
     ///   The algorithm starts in the absorb phase (one puts data into the sponge)
     ///   and ends with the squeze phase (one squeezes the sponge) and this method
@@ -437,7 +478,7 @@ Or how to translate that into proper exception handling? }
     /// <param name="LaneCount">
     ///   Number of iterations
     /// </param>
-    procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: UInt16);
+    procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: Integer);
 
     /// <summary>
     ///   Update final bits in LSB format, pad them, and compute the hash value
@@ -452,12 +493,8 @@ Or how to translate that into proper exception handling? }
     /// <param name="HashValue">
     ///   The hash value which shall be updated by this method
     /// </param>
-    function FinalBit_LSB(Bits: Byte; Bitlen: Int16;
-                          var HashValue: TSHA3Digest): Integer;
-    /// <summary>
-    ///   Final processing step if length of data to be calculated is 0
-    /// </summary>
-    procedure FinalStep;
+    procedure FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
+                            var HashValue: TSHA3Digest);
   strict protected
     /// <summary>
     ///   Contains the current state of the algorithms sponge part
@@ -481,7 +518,7 @@ Or how to translate that into proper exception handling? }
     ///   xored with the message blocks and when extracting the resulting hash,
     ///   stays untouched.
     /// </param>
-    procedure InitSponge(rate, capacity: integer);
+    procedure InitSponge(Rate, Capacity: UInt16);
 
     /// <summary>
     ///   Init internal data
@@ -513,20 +550,6 @@ Or how to translate that into proper exception handling? }
     ///   Hash value calculated
     /// </returns>
     function Digest: PByteArray; override;
-    /// <summary>
-    ///   Setting this to a number of bits allows to process messages which have
-    ///   a length which is not a exact multiple of bytes.
-    /// </summary>
-    property FinalBitLength : Int16
-      read   FFinalBitLen
-      write  FFinalBitLen;
-    /// <summary>
-    ///   Byte used for padding in case of of specifying a final bit length which
-    ///   is not an exact multiple of bytes.
-    /// </summary>
-    property PaddingByte : Byte
-      read   FPaddingByte
-      write  FPaddingByte;
   end;
 
   /// <summary>
@@ -591,11 +614,20 @@ Or how to translate that into proper exception handling? }
   public
     function Digest: PByteArray; override;
     class function BlockSize: UInt32; override;
+    ///   Returns the minimum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    /// <summary>
+    ///   Returns the maximum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
     ///   The range for this parameter is 3-5 rounds. If a value outside this
-    ///   range is assigned, the value used depends on the DigestSize. For 
+    ///   range is assigned, the value used depends on the DigestSize. For
     ///   DigestSizes <= 20 it will be set to 3, for values <= 28 to 4 and for
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
@@ -640,13 +672,33 @@ Or how to translate that into proper exception handling? }
   /// </summary>
   THash_Tiger = class(THashBaseMD4)
   private
-    FRounds: Integer;
-    procedure SetRounds(Value: Integer);
+    const
+      /// <summary>
+      ///   Minimum number of rounds for the Tigher hash function. Trying to set a
+      ///   lower one sets the rounds to this value.
+      /// </summary>
+      cTigerMinRounds = 3;
+      /// <summary>
+      ///   Maximum number of rounds for the Tigher hash function. Trying to set a
+      ///   higher one sets the rounds to this value.
+      /// </summary>
+      cTigerMaxRounds = 32;
+    var
+      FRounds: Integer;
+      procedure SetRounds(Value: Integer);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
     class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Returns the minimum possible number for the rounds parameter
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    /// <summary>
+    ///   Returns the maximum possible number for the rounds parameter
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
@@ -658,8 +710,8 @@ Or how to translate that into proper exception handling? }
   end;
 
   /// <summary>
-  ///   As there seem to exist 128 and 160 bit variants of Tiger which seem to
-  ///   be truncated variants of Tiger 192 but we want to keep compatibility
+  ///   As there seem to exist 128 and 160 bit variants of Tiger, which seem to
+  ///   be truncated variants of Tiger 192, but we want to keep compatibility
   ///   with old code we introduce an alias for the time being.
   ///   It is considered to be unsafe at least in the 192 Bit variant!
   /// </summary>
@@ -800,6 +852,14 @@ Or how to translate that into proper exception handling? }
     procedure DoDone; override;
   public
     function Digest: PByteArray; override;
+    ///   Returns the minimum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMinRounds: UInt8;
+    ///   Returns the maximum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    class function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
@@ -936,23 +996,17 @@ uses
   THash_Panama    :        8.9 cycles/byte     169.01 Mb/sec        7.3 cycles/byte     206.55 Mb/sec  -18%
 }
 
-const
-  /// <summary>
-  ///   Minimum number of rounds for the Tigher hash function. Trying to set a 
-  ///   lower one sets the rounds to this value.
-  /// </summary>
-  cTigerMinRounds = 3;
-  /// <summary>
-  ///   Maximum number of rounds for the Tigher hash function. Trying to set a 
-  ///   higher one sets the rounds to this value.
-  /// </summary>  
-  cTigerMaxRounds = 32;
-
 resourcestring
   /// <summary>
   ///   Failure message when a hash algorithm is initialized with wrong parameters
   /// </summary>
-  sHashInitFailure = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  /// <summary>
+  ///   Failure message when absorb is callt with a bitlength not divideable by 8
+  ///   without reminder or when it is called while already in squeezing state
+  /// </summary>
+  aSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
+                       'Squeezing: %1:s';
 
 { THash_MD2 }
 
@@ -2505,6 +2559,24 @@ begin
   FTransform(Buffer);
 end;
 
+class function THashBaseHaval.GetMaxRounds: UInt8;
+begin
+  Result := 5;
+end;
+
+class function THashBaseHaval.GetMinRounds: UInt8;
+begin
+  if DigestSize <= 20 then
+    Result := 3
+  else
+  begin
+    if DigestSize <= 28 then
+      Result := 4
+    else
+      Result := 5;
+  end;
+end;
+
 {$IFNDEF THashBaseHaval_asm}
 procedure THashBaseHaval.DoTransform3(Buffer: PUInt32Array);
 var
@@ -2692,6 +2764,7 @@ begin
   Inc(FDigest[6], G);
   Inc(FDigest[7], H);
 end;
+
 {$ENDIF !THashBaseHaval_asm}
 
 procedure THashBaseHaval.DoDone;
@@ -3075,6 +3148,16 @@ begin
   PInt64Array(@FDigest)[0] := A xor PInt64Array(@FDigest)[0];
   PInt64Array(@FDigest)[1] := B  -  PInt64Array(@FDigest)[1];
   PInt64Array(@FDigest)[2] := C  +  PInt64Array(@FDigest)[2];
+end;
+
+class function THash_Tiger.GetMaxRounds: UInt8;
+begin
+  Result := cTigerMaxRounds;
+end;
+
+class function THash_Tiger.GetMinRounds: UInt8;
+begin
+  Result := cTigerMinRounds;
 end;
 
 class function THash_Tiger.DigestSize: UInt32;
@@ -3707,6 +3790,16 @@ begin
   SetRounds(FRounds);
 end;
 
+class function THashBaseSnefru.GetMaxRounds: UInt8;
+begin
+  Result := 8;
+end;
+
+class function THashBaseSnefru.GetMinRounds: UInt8;
+begin
+  Result := 2;
+end;
+
 procedure THashBaseSnefru.DoDone;
 begin
   if FBufferIndex > 0 then
@@ -4042,649 +4135,308 @@ end;
 
 { THash_SHA3Base }
 
-procedure THash_SHA3Base.InitSponge(rate, capacity: Integer);
+procedure THash_SHA3Base.InitSponge(Rate, Capacity: UInt16);
 begin
   // This is the only place where state.error is reset to 0 = SUCCESS
   FillChar(FSpongeState, SizeOf(FSpongeState), 0);
 
-  if (rate + capacity <> 1600) or (rate <= 0) or (rate >= 1600) or
-     ((rate and 63) <> 0) then
+  if (Rate + Capacity <> 1600) or (Rate = 0) or (Rate >= 1600) or
+     ((Rate and 63) <> 0) then
     raise EDECHashException.CreateFmt(sHashInitFailure, ['SHA3',
-                                                         'rate: ' + IntToStr(rate) +
-                                                         ' capacity: ' + IntToStr(capacity)]);
+                                                         'rate: ' + IntToStr(Rate) +
+                                                         ' capacity: ' + IntToStr(Capacity)]);
 
-  FSpongeState.rate     := rate;
-  FSpongeState.capacity := capacity;
+  FSpongeState.Rate     := Rate;
+  FSpongeState.Capacity := Capacity;
 end;
 
-procedure THash_SHA3Base.KeccakAbsorb(var State: TState_B; Data: Pointer;
-                                      LaneCount: UInt16);
+procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 begin
-  xorIntoState(TState_L(State), Data, LaneCount);
-  KeccakPermutation(TState_L(State));
+   XORIntoState(TState_L(state), data, laneCount);
+   KeccakPermutation(TState_L(state));
+end;
+
+{$IFDEF PUREPASCAL}
+function THash_SHA3Base.RotL(const x: UInt64; c: Integer): UInt64;
+begin
+  Result := (x shl c) or (x shr (64-c));
+end;
+
+function THash_SHA3Base.RotL1(var x: UInt64): UInt64;
+begin
+  Result := (x shl 1) or (x shr (64-1));
 end;
 
 procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
 var
-  Aba0, Abe0, Abi0, Abo0, Abu0: Int32;
-  Aba1, Abe1, Abi1, Abo1, Abu1: Int32;
-  Aga0, Age0, Agi0, Ago0, Agu0: Int32;
-  Aga1, Age1, Agi1, Ago1, Agu1: Int32;
-  Aka0, Ake0, Aki0, Ako0, Aku0: Int32;
-  Aka1, Ake1, Aki1, Ako1, Aku1: Int32;
-  Ama0, Ame0, Ami0, Amo0, Amu0: Int32;
-  Ama1, Ame1, Ami1, Amo1, Amu1: Int32;
-  Asa0, Ase0, Asi0, Aso0, Asu0: Int32;
-  Asa1, Ase1, Asi1, Aso1, Asu1: Int32;
-  BCa0, BCe0, BCi0, BCo0, BCu0: Int32;
-  BCa1, BCe1, BCi1, BCo1, BCu1: Int32;
-  Da0,  De0,  Di0,  Do0,  Du0:  Int32;
-  Da1,  De1,  Di1,  Do1,  Du1:  Int32;
-  Eba0, Ebe0, Ebi0, Ebo0, Ebu0: Int32;
-  Eba1, Ebe1, Ebi1, Ebo1, Ebu1: Int32;
-  Ega0, Ege0, Egi0, Ego0, Egu0: Int32;
-  Ega1, Ege1, Egi1, Ego1, Egu1: Int32;
-  Eka0, Eke0, Eki0, Eko0, Eku0: Int32;
-  Eka1, Eke1, Eki1, Eko1, Eku1: Int32;
-  Ema0, Eme0, Emi0, Emo0, Emu0: Int32;
-  Ema1, Eme1, Emi1, Emo1, Emu1: Int32;
-  Esa0, Ese0, Esi0, Eso0, Esu0: Int32;
-  Esa1, Ese1, Esi1, Eso1, Esu1: Int32;
-
-var
-  round: integer;
+   A : PUInt64Array;
+   B : array[0..24] of UInt64;
+   C0, C1, C2, C3, C4, D0, D1, D2, D3, D4: UInt64;
+   i : Integer;
 
 begin
-  // copyFromState(A, state)
-  Aba0 := state[ 0];
-  Aba1 := state[ 1];
-  Abe0 := state[ 2];
-  Abe1 := state[ 3];
-  Abi0 := state[ 4];
-  Abi1 := state[ 5];
-  Abo0 := state[ 6];
-  Abo1 := state[ 7];
-  Abu0 := state[ 8];
-  Abu1 := state[ 9];
-  Aga0 := state[10];
-  Aga1 := state[11];
-  Age0 := state[12];
-  Age1 := state[13];
-  Agi0 := state[14];
-  Agi1 := state[15];
-  Ago0 := state[16];
-  Ago1 := state[17];
-  Agu0 := state[18];
-  Agu1 := state[19];
-  Aka0 := state[20];
-  Aka1 := state[21];
-  Ake0 := state[22];
-  Ake1 := state[23];
-  Aki0 := state[24];
-  Aki1 := state[25];
-  Ako0 := state[26];
-  Ako1 := state[27];
-  Aku0 := state[28];
-  Aku1 := state[29];
-  Ama0 := state[30];
-  Ama1 := state[31];
-  Ame0 := state[32];
-  Ame1 := state[33];
-  Ami0 := state[34];
-  Ami1 := state[35];
-  Amo0 := state[36];
-  Amo1 := state[37];
-  Amu0 := state[38];
-  Amu1 := state[39];
-  Asa0 := state[40];
-  Asa1 := state[41];
-  Ase0 := state[42];
-  Ase1 := state[43];
-  Asi0 := state[44];
-  Asi1 := state[45];
-  Aso0 := state[46];
-  Aso1 := state[47];
-  Asu0 := state[48];
-  Asu1 := state[49];
+   A := PUInt64Array(@state);
+   for i := 0 to 23 do begin
+      C0 := A[00] xor A[05] xor A[10] xor A[15] xor A[20];
+      C1 := A[01] xor A[06] xor A[11] xor A[16] xor A[21];
+      C2 := A[02] xor A[07] xor A[12] xor A[17] xor A[22];
+      C3 := A[03] xor A[08] xor A[13] xor A[18] xor A[23];
+      C4 := A[04] xor A[09] xor A[14] xor A[19] xor A[24];
 
-  round := 0;
-  while round < cKeccakNumberOfRounds do begin
-    // prepareTheta
-    BCa0 := Aba0 xor Aga0 xor Aka0 xor Ama0 xor Asa0;
-    BCa1 := Aba1 xor Aga1 xor Aka1 xor Ama1 xor Asa1;
-    BCe0 := Abe0 xor Age0 xor Ake0 xor Ame0 xor Ase0;
-    BCe1 := Abe1 xor Age1 xor Ake1 xor Ame1 xor Ase1;
-    BCi0 := Abi0 xor Agi0 xor Aki0 xor Ami0 xor Asi0;
-    BCi1 := Abi1 xor Agi1 xor Aki1 xor Ami1 xor Asi1;
-    BCo0 := Abo0 xor Ago0 xor Ako0 xor Amo0 xor Aso0;
-    BCo1 := Abo1 xor Ago1 xor Ako1 xor Amo1 xor Aso1;
-    BCu0 := Abu0 xor Agu0 xor Aku0 xor Amu0 xor Asu0;
-    BCu1 := Abu1 xor Agu1 xor Aku1 xor Amu1 xor Asu1;
+      D0 := RotL1(C0) xor C3;
+      D1 := RotL1(C1) xor C4;
+      D2 := RotL1(C2) xor C0;
+      D3 := RotL1(C3) xor C1;
+      D4 := RotL1(C4) xor C2;
 
-    // thetaRhoPiChiIota(round, A, E)
-    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
-    Da1 := BCu1 xor BCe0;
-    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
-    De1 := BCa1 xor BCi0;
-    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
-    Di1 := BCe1 xor BCo0;
-    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
-    Do1 := BCi1 xor BCu0;
-    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
-    Du1 := BCo1 xor BCa0;
+      B[00] := A[00] xor D1;
+      B[01] := RotL(A[06] xor D2, 44);
+      B[02] := RotL(A[12] xor D3, 43);
+      B[03] := RotL(A[18] xor D4, 21);
+      B[04] := RotL(A[24] xor D0, 14);
+      B[05] := RotL(A[03] xor D4, 28);
+      B[06] := RotL(A[09] xor D0, 20);
+      B[07] := RotL(A[10] xor D1, 3);
+      B[08] := RotL(A[16] xor D2, 45);
+      B[09] := RotL(A[22] xor D3, 61);
+      B[10] := RotL(A[01] xor D2, 1);
+      B[11] := RotL(A[07] xor D3, 6);
+      B[12] := RotL(A[13] xor D4, 25);
+      B[13] := RotL(A[19] xor D0, 8);
+      B[14] := RotL(A[20] xor D1, 18);
+      B[15] := RotL(A[04] xor D0, 27);
+      B[16] := RotL(A[05] xor D1, 36);
+      B[17] := RotL(A[11] xor D2, 10);
+      B[18] := RotL(A[17] xor D3, 15);
+      B[19] := RotL(A[23] xor D4, 56);
+      B[20] := RotL(A[02] xor D3, 62);
+      B[21] := RotL(A[08] xor D4, 55);
+      B[22] := RotL(A[14] xor D0, 39);
+      B[23] := RotL(A[15] xor D1, 41);
+      B[24] := RotL(A[21] xor D2, 2);
 
-    Aba0 := Aba0 xor Da0;  BCa0 := Aba0;
-    Age0 := Age0 xor De0;  BCe0 := (Age0 shl 22) xor (Age0 shr (32-22));
-    Aki1 := Aki1 xor Di1;  BCi0 := (Aki1 shl 22) xor (Aki1 shr (32-22));
-    Amo1 := Amo1 xor Do1;  BCo0 := (Amo1 shl 11) xor (Amo1 shr (32-11));
-    Asu0 := Asu0 xor Du0;  BCu0 := (Asu0 shl  7) xor (Asu0 shr (32-7));
+      A[00] := B[00] xor ((not B[01]) and B[02]);
+      A[01] := B[01] xor ((not B[02]) and B[03]);
+      A[02] := B[02] xor ((not B[03]) and B[04]);
+      A[03] := B[03] xor ((not B[04]) and B[00]);
+      A[04] := B[04] xor ((not B[00]) and B[01]);
+      A[05] := B[05] xor ((not B[06]) and B[07]);
+      A[06] := B[06] xor ((not B[07]) and B[08]);
+      A[07] := B[07] xor ((not B[08]) and B[09]);
+      A[08] := B[08] xor ((not B[09]) and B[05]);
+      A[09] := B[09] xor ((not B[05]) and B[06]);
+      A[10] := B[10] xor ((not B[11]) and B[12]);
+      A[11] := B[11] xor ((not B[12]) and B[13]);
+      A[12] := B[12] xor ((not B[13]) and B[14]);
+      A[13] := B[13] xor ((not B[14]) and B[10]);
+      A[14] := B[14] xor ((not B[10]) and B[11]);
+      A[15] := B[15] xor ((not B[16]) and B[17]);
+      A[16] := B[16] xor ((not B[17]) and B[18]);
+      A[17] := B[17] xor ((not B[18]) and B[19]);
+      A[18] := B[18] xor ((not B[19]) and B[15]);
+      A[19] := B[19] xor ((not B[15]) and B[16]);
+      A[20] := B[20] xor ((not B[21]) and B[22]);
+      A[21] := B[21] xor ((not B[22]) and B[23]);
+      A[22] := B[22] xor ((not B[23]) and B[24]);
+      A[23] := B[23] xor ((not B[24]) and B[20]);
+      A[24] := B[24] xor ((not B[20]) and B[21]);
 
-    Eba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+0];
-    Ebe0 := BCe0 xor ((not BCi0) and BCo0);
-    Ebi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ebo0 := BCo0 xor ((not BCu0) and BCa0);
-    Ebu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Aba1 := Aba1 xor Da1;  BCa1 := Aba1;
-    Age1 := Age1 xor De1;  BCe1 := (Age1 shl 22) xor (Age1 shr (32-22));
-    Aki0 := Aki0 xor Di0;  BCi1 := (Aki0 shl 21) xor (Aki0 shr (32-21));
-    Amo0 := Amo0 xor Do0;  BCo1 := (Amo0 shl 10) xor (Amo0 shr (32-10));
-    Asu1 := Asu1 xor Du1;  BCu1 := (Asu1 shl  7) xor (Asu1 shr (32-7));
-
-    Eba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+1];
-    Ebe1 := BCe1 xor ((not BCi1) and BCo1);
-    Ebi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ebo1 := BCo1 xor ((not BCu1) and BCa1);
-    Ebu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abo0 := Abo0 xor Do0;  BCa0 := (Abo0 shl 14) xor (Abo0 shr (32-14));
-    Agu0 := Agu0 xor Du0;  BCe0 := (Agu0 shl 10) xor (Agu0 shr (32-10));
-    Aka1 := Aka1 xor Da1;  BCi0 := (Aka1 shl  2) xor (Aka1 shr (32-2));
-    Ame1 := Ame1 xor De1;  BCo0 := (Ame1 shl 23) xor (Ame1 shr (32-23));
-    Asi1 := Asi1 xor Di1;  BCu0 := (Asi1 shl 31) xor (Asi1 shr (32-31));
-
-    Ega0 := BCa0 xor ((not BCe0) and BCi0);
-    Ege0 := BCe0 xor ((not BCi0) and BCo0);
-    Egi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ego0 := BCo0 xor ((not BCu0) and BCa0);
-    Egu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abo1 := Abo1 xor Do1;  BCa1 := (Abo1 shl 14) xor (Abo1 shr (32-14));
-    Agu1 := Agu1 xor Du1;  BCe1 := (Agu1 shl 10) xor (Agu1 shr (32-10));
-    Aka0 := Aka0 xor Da0;  BCi1 := (Aka0 shl  1) xor (Aka0 shr (32-1));
-    Ame0 := Ame0 xor De0;  BCo1 := (Ame0 shl 22) xor (Ame0 shr (32-22));
-    Asi0 := Asi0 xor Di0;  BCu1 := (Asi0 shl 30) xor (Asi0 shr (32-30));
-
-    Ega1 := BCa1 xor ((not BCe1) and BCi1);
-    Ege1 := BCe1 xor ((not BCi1) and BCo1);
-    Egi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ego1 := BCo1 xor ((not BCu1) and BCa1);
-    Egu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abe1 := Abe1 xor De1;  BCa0 := (Abe1 shl  1) xor (Abe1 shr (32-1));
-    Agi0 := Agi0 xor Di0;  BCe0 := (Agi0 shl  3) xor (Agi0 shr (32-3));
-    Ako1 := Ako1 xor Do1;  BCi0 := (Ako1 shl 13) xor (Ako1 shr (32-13));
-    Amu0 := Amu0 xor Du0;  BCo0 := (Amu0 shl  4) xor (Amu0 shr (32-4));
-    Asa0 := Asa0 xor Da0;  BCu0 := (Asa0 shl  9) xor (Asa0 shr (32-9));
-
-    Eka0 := BCa0 xor ((not BCe0) and BCi0 );
-    Eke0 := BCe0 xor ((not BCi0) and BCo0 );
-    Eki0 := BCi0 xor ((not BCo0) and BCu0 );
-    Eko0 := BCo0 xor ((not BCu0) and BCa0 );
-    Eku0 := BCu0 xor ((not BCa0) and BCe0 );
-
-    Abe0 := Abe0 xor De0;  BCa1 := Abe0;
-    Agi1 := Agi1 xor Di1;  BCe1 := (Agi1 shl  3) xor (Agi1 shr (32-3));
-    Ako0 := Ako0 xor Do0;  BCi1 := (Ako0 shl 12) xor (Ako0 shr (32-12));
-    Amu1 := Amu1 xor Du1;  BCo1 := (Amu1 shl  4) xor (Amu1 shr (32-4));
-    Asa1 := Asa1 xor Da1;  BCu1 := (Asa1 shl  9) xor (Asa1 shr (32-9));
-
-    Eka1 := BCa1 xor ((not BCe1) and BCi1);
-    Eke1 := BCe1 xor ((not BCi1) and BCo1);
-    Eki1 := BCi1 xor ((not BCo1) and BCu1);
-    Eko1 := BCo1 xor ((not BCu1) and BCa1);
-    Eku1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abu1 := Abu1 xor Du1;  BCa0 := (Abu1 shl 14) xor (Abu1 shr (32-14));
-    Aga0 := Aga0 xor Da0;  BCe0 := (Aga0 shl 18) xor (Aga0 shr (32-18));
-    Ake0 := Ake0 xor De0;  BCi0 := (Ake0 shl  5) xor (Ake0 shr (32-5));
-    Ami1 := Ami1 xor Di1;  BCo0 := (Ami1 shl  8) xor (Ami1 shr (32-8));
-    Aso0 := Aso0 xor Do0;  BCu0 := (Aso0 shl 28) xor (Aso0 shr (32-28));
-
-    Ema0 := BCa0 xor ((not BCe0) and BCi0);
-    Eme0 := BCe0 xor ((not BCi0) and BCo0);
-    Emi0 := BCi0 xor ((not BCo0) and BCu0);
-    Emo0 := BCo0 xor ((not BCu0) and BCa0);
-    Emu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abu0 := Abu0 xor Du0;  BCa1 := (Abu0 shl 13) xor (Abu0 shr (32-13));
-    Aga1 := Aga1 xor Da1;  BCe1 := (Aga1 shl 18) xor (Aga1 shr (32-18));
-    Ake1 := Ake1 xor De1;  BCi1 := (Ake1 shl  5) xor (Ake1 shr (32-5));
-    Ami0 := Ami0 xor Di0;  BCo1 := (Ami0 shl  7) xor (Ami0 shr (32-7));
-    Aso1 := Aso1 xor Do1;  BCu1 := (Aso1 shl 28) xor (Aso1 shr (32-28));
-
-    Ema1 := BCa1 xor ((not BCe1) and BCi1);
-    Eme1 := BCe1 xor ((not BCi1) and BCo1);
-    Emi1 := BCi1 xor ((not BCo1) and BCu1);
-    Emo1 := BCo1 xor ((not BCu1) and BCa1);
-    Emu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Abi0 := Abi0 xor Di0;  BCa0 := (Abi0 shl 31) xor (Abi0 shr (32-31));
-    Ago1 := Ago1 xor Do1;  BCe0 := (Ago1 shl 28) xor (Ago1 shr (32-28));
-    Aku1 := Aku1 xor Du1;  BCi0 := (Aku1 shl 20) xor (Aku1 shr (32-20));
-    Ama1 := Ama1 xor Da1;  BCo0 := (Ama1 shl 21) xor (Ama1 shr (32-21));
-    Ase0 := Ase0 xor De0;  BCu0 := (Ase0 shl  1) xor (Ase0 shr (32-1));
-
-    Esa0 := BCa0 xor ((not BCe0) and BCi0);
-    Ese0 := BCe0 xor ((not BCi0) and BCo0);
-    Esi0 := BCi0 xor ((not BCo0) and BCu0);
-    Eso0 := BCo0 xor ((not BCu0) and BCa0);
-    Esu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Abi1 := Abi1 xor Di1;  BCa1 := (Abi1 shl 31) xor (Abi1 shr (32-31));
-    Ago0 := Ago0 xor Do0;  BCe1 := (Ago0 shl 27) xor (Ago0 shr (32-27));
-    Aku0 := Aku0 xor Du0;  BCi1 := (Aku0 shl 19) xor (Aku0 shr (32-19));
-    Ama0 := Ama0 xor Da0;  BCo1 := (Ama0 shl 20) xor (Ama0 shr (32-20));
-    Ase1 := Ase1 xor De1;  BCu1 := (Ase1 shl  1) xor (Ase1 shr (32-1));
-
-    Esa1 := BCa1 xor ((not BCe1) and BCi1);
-    Ese1 := BCe1 xor ((not BCi1) and BCo1);
-    Esi1 := BCi1 xor ((not BCo1) and BCu1);
-    Eso1 := BCo1 xor ((not BCu1) and BCa1);
-    Esu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    // prepareTheta
-    BCa0 := Eba0 xor Ega0 xor Eka0 xor Ema0 xor Esa0;
-    BCa1 := Eba1 xor Ega1 xor Eka1 xor Ema1 xor Esa1;
-    BCe0 := Ebe0 xor Ege0 xor Eke0 xor Eme0 xor Ese0;
-    BCe1 := Ebe1 xor Ege1 xor Eke1 xor Eme1 xor Ese1;
-    BCi0 := Ebi0 xor Egi0 xor Eki0 xor Emi0 xor Esi0;
-    BCi1 := Ebi1 xor Egi1 xor Eki1 xor Emi1 xor Esi1;
-    BCo0 := Ebo0 xor Ego0 xor Eko0 xor Emo0 xor Eso0;
-    BCo1 := Ebo1 xor Ego1 xor Eko1 xor Emo1 xor Eso1;
-    BCu0 := Ebu0 xor Egu0 xor Eku0 xor Emu0 xor Esu0;
-    BCu1 := Ebu1 xor Egu1 xor Eku1 xor Emu1 xor Esu1;
-
-    // thetaRhoPiChiIota(round+1, E, A)
-    Da0 := BCu0 xor (BCe1 shl 1) xor (BCe1 shr (32-1));
-    Da1 := BCu1 xor BCe0;
-    De0 := BCa0 xor (BCi1 shl 1) xor (BCi1 shr (32-1));
-    De1 := BCa1 xor BCi0;
-    Di0 := BCe0 xor (BCo1 shl 1) xor (BCo1 shr (32-1));
-    Di1 := BCe1 xor BCo0;
-    Do0 := BCi0 xor (BCu1 shl 1) xor (BCu1 shr (32-1));
-    Do1 := BCi1 xor BCu0;
-    Du0 := BCo0 xor (BCa1 shl 1) xor (BCa1 shr (32-1));
-    Du1 := BCo1 xor BCa0;
-
-    Eba0 := Eba0 xor Da0;  BCa0 := Eba0;
-    Ege0 := Ege0 xor De0;  BCe0 := (Ege0 shl 22) xor (Ege0 shr (32-22));
-    Eki1 := Eki1 xor Di1;  BCi0 := (Eki1 shl 22) xor (Eki1 shr (32-22));
-    Emo1 := Emo1 xor Do1;  BCo0 := (Emo1 shl 11) xor (Emo1 shr (32-11));
-    Esu0 := Esu0 xor Du0;  BCu0 := (Esu0 shl  7) xor (Esu0 shr (32-7));
-
-    Aba0 := BCa0 xor ((not BCe0) and BCi0) xor KeccakF1600RoundConstants_int2[round*2+2];
-    Abe0 := BCe0 xor ((not BCi0) and BCo0);
-    Abi0 := BCi0 xor ((not BCo0) and BCu0);
-    Abo0 := BCo0 xor ((not BCu0) and BCa0);
-    Abu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Eba1 := Eba1 xor Da1;  BCa1 := Eba1;
-    Ege1 := Ege1 xor De1;  BCe1 := (Ege1 shl 22) xor (Ege1 shr (32-22));
-    Eki0 := Eki0 xor Di0;  BCi1 := (Eki0 shl 21) xor (Eki0 shr (32-21));
-    Emo0 := Emo0 xor Do0;  BCo1 := (Emo0 shl 10) xor (Emo0 shr (32-10));
-    Esu1 := Esu1 xor Du1;  BCu1 := (Esu1 shl  7) xor (Esu1 shr (32-7));
-
-    Aba1 := BCa1 xor ((not BCe1) and BCi1) xor KeccakF1600RoundConstants_int2[round*2+3];
-    Abe1 := BCe1 xor ((not BCi1) and BCo1);
-    Abi1 := BCi1 xor ((not BCo1) and BCu1);
-    Abo1 := BCo1 xor ((not BCu1) and BCa1);
-    Abu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebo0 := Ebo0 xor Do0;  BCa0 := (Ebo0 shl 14) xor (Ebo0 shr (32-14));
-    Egu0 := Egu0 xor Du0;  BCe0 := (Egu0 shl 10) xor (Egu0 shr (32-10));
-    Eka1 := Eka1 xor Da1;  BCi0 := (Eka1 shl  2) xor (Eka1 shr (32-2));
-    Eme1 := Eme1 xor De1;  BCo0 := (Eme1 shl 23) xor (Eme1 shr (32-23));
-    Esi1 := Esi1 xor Di1;  BCu0 := (Esi1 shl 31) xor (Esi1 shr (32-31));
-
-    Aga0 := BCa0 xor ((not BCe0) and BCi0);
-    Age0 := BCe0 xor ((not BCi0) and BCo0);
-    Agi0 := BCi0 xor ((not BCo0) and BCu0);
-    Ago0 := BCo0 xor ((not BCu0) and BCa0);
-    Agu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebo1 := Ebo1 xor Do1;  BCa1 := (Ebo1 shl 14) xor (Ebo1 shr (32-14));
-    Egu1 := Egu1 xor Du1;  BCe1 := (Egu1 shl 10) xor (Egu1 shr (32-10));
-    Eka0 := Eka0 xor Da0;  BCi1 := (Eka0 shl  1) xor (Eka0 shr (32-1));
-    Eme0 := Eme0 xor De0;  BCo1 := (Eme0 shl 22) xor (Eme0 shr (32-22));
-    Esi0 := Esi0 xor Di0;  BCu1 := (Esi0 shl 30) xor (Esi0 shr (32-30));
-
-    Aga1 := BCa1 xor ((not BCe1) and BCi1);
-    Age1 := BCe1 xor ((not BCi1) and BCo1);
-    Agi1 := BCi1 xor ((not BCo1) and BCu1);
-    Ago1 := BCo1 xor ((not BCu1) and BCa1);
-    Agu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebe1 := Ebe1 xor De1;  BCa0 := (Ebe1 shl  1) xor (Ebe1 shr (32-1));
-    Egi0 := Egi0 xor Di0;  BCe0 := (Egi0 shl  3) xor (Egi0 shr (32-3));
-    Eko1 := Eko1 xor Do1;  BCi0 := (Eko1 shl 13) xor (Eko1 shr (32-13));
-    Emu0 := Emu0 xor Du0;  BCo0 := (Emu0 shl  4) xor (Emu0 shr (32-4));
-    Esa0 := Esa0 xor Da0;  BCu0 := (Esa0 shl  9) xor (Esa0 shr (32-9));
-
-    Aka0 := BCa0 xor ((not BCe0) and BCi0);
-    Ake0 := BCe0 xor ((not BCi0) and BCo0);
-    Aki0 := BCi0 xor ((not BCo0) and BCu0);
-    Ako0 := BCo0 xor ((not BCu0) and BCa0);
-    Aku0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebe0 := Ebe0 xor De0;  BCa1 := Ebe0;
-    Egi1 := Egi1 xor Di1;  BCe1 := (Egi1 shl  3) xor (Egi1 shr (32-3));
-    Eko0 := Eko0 xor Do0;  BCi1 := (Eko0 shl 12) xor (Eko0 shr (32-12));
-    Emu1 := Emu1 xor Du1;  BCo1 := (Emu1 shl  4) xor (Emu1 shr (32-4));
-    Esa1 := Esa1 xor Da1;  BCu1 := (Esa1 shl  9) xor (Esa1 shr (32-9));
-
-    Aka1 := BCa1 xor ((not BCe1) and BCi1);
-    Ake1 := BCe1 xor ((not BCi1) and BCo1);
-    Aki1 := BCi1 xor ((not BCo1) and BCu1);
-    Ako1 := BCo1 xor ((not BCu1) and BCa1);
-    Aku1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebu1 := Ebu1 xor Du1;  BCa0 := (Ebu1 shl 14) xor (Ebu1 shr (32-14));
-    Ega0 := Ega0 xor Da0;  BCe0 := (Ega0 shl 18) xor (Ega0 shr (32-18));
-    Eke0 := Eke0 xor De0;  BCi0 := (Eke0 shl  5) xor (Eke0 shr (32-5));
-    Emi1 := Emi1 xor Di1;  BCo0 := (Emi1 shl  8) xor (Emi1 shr (32-8));
-    Eso0 := Eso0 xor Do0;  BCu0 := (Eso0 shl 28) xor (Eso0 shr (32-28));
-
-    Ama0 := BCa0 xor ((not BCe0) and BCi0);
-    Ame0 := BCe0 xor ((not BCi0) and BCo0);
-    Ami0 := BCi0 xor ((not BCo0) and BCu0);
-    Amo0 := BCo0 xor ((not BCu0) and BCa0);
-    Amu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebu0 := Ebu0 xor Du0;  BCa1 := (Ebu0 shl 13) xor (Ebu0 shr (32-13));
-    Ega1 := Ega1 xor Da1;  BCe1 := (Ega1 shl 18) xor (Ega1 shr (32-18));
-    Eke1 := Eke1 xor De1;  BCi1 := (Eke1 shl  5) xor (Eke1 shr (32-5));
-    Emi0 := Emi0 xor Di0;  BCo1 := (Emi0 shl  7) xor (Emi0 shr (32-7));
-    Eso1 := Eso1 xor Do1;  BCu1 := (Eso1 shl 28) xor (Eso1 shr (32-28));
-
-    Ama1 := BCa1 xor ((not BCe1) and BCi1);
-    Ame1 := BCe1 xor ((not BCi1) and BCo1);
-    Ami1 := BCi1 xor ((not BCo1) and BCu1);
-    Amo1 := BCo1 xor ((not BCu1) and BCa1);
-    Amu1 := BCu1 xor ((not BCa1) and BCe1);
-
-    Ebi0 := Ebi0 xor Di0;  BCa0 := (Ebi0 shl 31) xor (Ebi0 shr (32-31));
-    Ego1 := Ego1 xor Do1;  BCe0 := (Ego1 shl 28) xor (Ego1 shr (32-28));
-    Eku1 := Eku1 xor Du1;  BCi0 := (Eku1 shl 20) xor (Eku1 shr (32-20));
-    Ema1 := Ema1 xor Da1;  BCo0 := (Ema1 shl 21) xor (Ema1 shr (32-21));
-    Ese0 := Ese0 xor De0;  BCu0 := (Ese0 shl  1) xor (Ese0 shr (32-1));
-
-    Asa0 := BCa0 xor ((not BCe0) and BCi0);
-    Ase0 := BCe0 xor ((not BCi0) and BCo0);
-    Asi0 := BCi0 xor ((not BCo0) and BCu0);
-    Aso0 := BCo0 xor ((not BCu0) and BCa0);
-    Asu0 := BCu0 xor ((not BCa0) and BCe0);
-
-    Ebi1 := Ebi1 xor Di1;  BCa1 := (Ebi1 shl 31) xor (Ebi1 shr (32-31));
-    Ego0 := Ego0 xor Do0;  BCe1 := (Ego0 shl 27) xor (Ego0 shr (32-27));
-    Eku0 := Eku0 xor Du0;  BCi1 := (Eku0 shl 19) xor (Eku0 shr (32-19));
-    Ema0 := Ema0 xor Da0;  BCo1 := (Ema0 shl 20) xor (Ema0 shr (32-20));
-    Ese1 := Ese1 xor De1;  BCu1 := (Ese1 shl  1) xor (Ese1 shr (32-1));
-
-    Asa1 := BCa1 xor ((not BCe1) and BCi1);
-    Ase1 := BCe1 xor ((not BCi1) and BCo1);
-    Asi1 := BCi1 xor ((not BCo1) and BCu1);
-    Aso1 := BCo1 xor ((not BCu1) and BCa1);
-    Asu1 := BCu1 xor ((not BCa1) and BCe1);
-    inc(round,2);
-  end;
-
-  // copyToState(state, A)
-  state[ 0] := Aba0;
-  state[ 1] := Aba1;
-  state[ 2] := Abe0;
-  state[ 3] := Abe1;
-  state[ 4] := Abi0;
-  state[ 5] := Abi1;
-  state[ 6] := Abo0;
-  state[ 7] := Abo1;
-  state[ 8] := Abu0;
-  state[ 9] := Abu1;
-  state[10] := Aga0;
-  state[11] := Aga1;
-  state[12] := Age0;
-  state[13] := Age1;
-  state[14] := Agi0;
-  state[15] := Agi1;
-  state[16] := Ago0;
-  state[17] := Ago1;
-  state[18] := Agu0;
-  state[19] := Agu1;
-  state[20] := Aka0;
-  state[21] := Aka1;
-  state[22] := Ake0;
-  state[23] := Ake1;
-  state[24] := Aki0;
-  state[25] := Aki1;
-  state[26] := Ako0;
-  state[27] := Ako1;
-  state[28] := Aku0;
-  state[29] := Aku1;
-  state[30] := Ama0;
-  state[31] := Ama1;
-  state[32] := Ame0;
-  state[33] := Ame1;
-  state[34] := Ami0;
-  state[35] := Ami1;
-  state[36] := Amo0;
-  state[37] := Amo1;
-  state[38] := Amu0;
-  state[39] := Amu1;
-  state[40] := Asa0;
-  state[41] := Asa1;
-  state[42] := Ase0;
-  state[43] := Ase1;
-  state[44] := Asi0;
-  state[45] := Asi1;
-  state[46] := Aso0;
-  state[47] := Aso1;
-  state[48] := Asu0;
-  state[49] := Asu1;
+      A[00] := A[00] xor cRoundConstants[i];
+   end;
 end;
+{$ELSE}
+// Must be procedural as otherwise the parameters get passed in different
+// CPU registers and the complete ASM code would have needed to be rewritten.
+procedure KeccakPermutationKernel(B, A, C : Pointer);
+asm
+  {$IFDEF X86ASM}
+    {$INCLUDE DECHash.sha3_mmx.inc}
+  {$ELSE}
+    {$INCLUDE DECHash.sha3_x64.inc}
+  {$ENDIF}
+end;
+
+procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
+var
+   A : PUInt64Array;
+   B : array [0..24] of UInt64;
+   C : array [0..4] of UInt64;
+   i : Integer;
+
+  {$IFDEF X86ASM}
+  procedure EMMS;
+  asm
+    // This operation marks the x87 FPU data registers (which are aliased to the
+    // MMX technology registers) as available for use by x87 FPU floating-point
+    // instructions.
+    emms
+  end;
+  {$ENDIF}
+
+begin
+   A := PUInt64Array(@state);
+   for i:=0 to 23 do begin
+      KeccakPermutationKernel(@B, A, @C);
+      A[00] := A[00] xor cRoundConstants[i];
+   end;
+
+   {$IFDEF X86ASM}
+   EMMS;
+   {$ENDIF}
+end;
+{$ENDIF}
 
 procedure THash_SHA3Base.PadAndSwitchToSqueezingPhase;
 var
   i: integer;
 begin
   // Note: the bits are numbered from 0 = LSB to 7 = MSB
-  if (FSpongeState.bitsInQueue + 1 = FSpongeState.rate) then
+  if (FSpongeState.BitsInQueue + 1 = FSpongeState.Rate) then
   begin
-    i := FSpongeState.bitsInQueue div 8;
-    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                                 (1 shl (FSpongeState.bitsInQueue and 7));
+    i := FSpongeState.BitsInQueue div 8;
+    FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                                 (1 shl (FSpongeState.BitsInQueue and 7));
     AbsorbQueue;
-    FillChar(FSpongeState.dataQueue, FSpongeState.rate div 8, 0);
+    FillChar(FSpongeState.DataQueue, FSpongeState.Rate div 8, 0);
   end
   else
   begin
-    i := FSpongeState.bitsInQueue div 8;
-    FillChar(FSpongeState.dataQueue[(FSpongeState.bitsInQueue+7) div 8],
-             FSpongeState.rate div 8 - (FSpongeState.bitsInQueue+7) div 8, 0);
-    FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                                 (1 shl (FSpongeState.bitsInQueue and 7));
+    i := FSpongeState.BitsInQueue div 8;
+    FillChar(FSpongeState.DataQueue[(FSpongeState.BitsInQueue+7) div 8],
+             FSpongeState.Rate div 8 - (FSpongeState.BitsInQueue+7) div 8, 0);
+    FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                                 (1 shl (FSpongeState.BitsInQueue and 7));
   end;
 
-  i := (FSpongeState.rate-1) div 8;
-  FSpongeState.dataQueue[i] := FSpongeState.dataQueue[i] or
-                               (1 shl ((FSpongeState.rate-1) and 7));
+  i := (FSpongeState.Rate-1) div 8;
+  FSpongeState.DataQueue[i] := FSpongeState.DataQueue[i] or
+                               (1 shl ((FSpongeState.Rate-1) and 7));
   AbsorbQueue;
-  ExtractFromState(@FSpongeState.dataQueue,
-                   TState_L(FSpongeState.state),
-                   FSpongeState.rate div 64);
-  FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
-  FSpongeState.squeezing := 1;
+  ExtractFromState(@FSpongeState.DataQueue,
+                   TState_L(FSpongeState.State),
+                   FSpongeState.Rate div 64);
+  FSpongeState.bitsAvailableForSqueezing := FSpongeState.Rate;
+  FSpongeState.SqueezeActive := true;
 end;
 
-function THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32): Integer;
+procedure THash_SHA3Base.Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
 var
   i            : Int32;
-  partialBlock : Int16;
+  PartialBlock : Int16;
 begin
-  Result := 1;
-  if FSpongeState.error <> 0 then
-    exit; // No further action
-
-  if FSpongeState.squeezing = 0 then
+  if not FSpongeState.SqueezeActive then
     PadAndSwitchToSqueezingPhase;
 
-  if outputLength and 7 <> 0 then
-  begin
-    // Only multiple of 8 bits are allowed, truncation can be done at user level
-    FSpongeState.error := 1;
-    exit;
-  end;
+  // Only multiple of 8 bits are allowed, truncation must be done at user level
+  if OutputLength and 7 <> 0 then
+    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+                                 [OutputLength, 'true']);
 
   i := 0;
-  while i < outputLength do
+  while i < OutputLength do
   begin
     if FSpongeState.bitsAvailableForSqueezing = 0 then
     begin
-      KeccakPermutation(TState_L(FSpongeState.state));
-      ExtractFromState(@FSpongeState.dataQueue, TState_L(FSpongeState.state),
-                       FSpongeState.rate div 64);
-      FSpongeState.bitsAvailableForSqueezing := FSpongeState.rate;
+      KeccakPermutation(TState_L(FSpongeState.State));
+      ExtractFromState(@FSpongeState.DataQueue, TState_L(FSpongeState.State),
+                       FSpongeState.Rate div 64);
+      FSpongeState.bitsAvailableForSqueezing := FSpongeState.Rate;
     end;
 
-    partialBlock := FSpongeState.bitsAvailableForSqueezing;
-    if partialBlock > OutputLength - i then
-      partialBlock := OutputLength - i;
+    PartialBlock := FSpongeState.bitsAvailableForSqueezing;
+    if PartialBlock > OutputLength - i then
+      PartialBlock := OutputLength - i;
 
-    move(FSpongeState.dataQueue[(FSpongeState.rate - FSpongeState.bitsAvailableForSqueezing) div 8],
-         output[i div 8], partialBlock div 8);
-    dec(FSpongeState.bitsAvailableForSqueezing, partialBlock);
-    inc(i, partialBlock);
+    move(FSpongeState.DataQueue[(FSpongeState.Rate - FSpongeState.bitsAvailableForSqueezing) div 8],
+         output[i div 8], PartialBlock div 8);
+    dec(FSpongeState.bitsAvailableForSqueezing, PartialBlock);
+    inc(i, PartialBlock);
   end;
-
-  Result := 0;
 end;
 
-procedure THash_SHA3Base.xorIntoState(var State: TState_L;
-                                      Inp: Pointer;
-                                      LaneCount: UInt16);
+procedure THash_SHA3Base.XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
 var
-  t, x0, x1 : Int32;
-  pI, pS    : PLongint;
-  i         : Integer;
-const
-  xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
+   pS: PUInt64;
+   i: Integer;
 begin
-  // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
-  pI := Inp;
-  pS := @State[0];
-  for i := LaneCount-1 downto 0 do
-  begin
-    x0 := pI^;
-    inc(PByte(pI), sizeof(pI^));
-
-    t := (x0 xor (x0 shr 1)) and $22222222;  x0 := x0 xor t xor (t shl 1);
-    t := (x0 xor (x0 shr 2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl 2);
-    t := (x0 xor (x0 shr 4)) and $00F000F0;  x0 := x0 xor t xor (t shl 4);
-    t := (x0 xor (x0 shr 8)) and $0000FF00;  x0 := x0 xor t xor (t shl 8);
-
-    x1 := pI^;
-    inc(PByte(pI), sizeof(pI^));
-
-    t := (x1 xor (x1 shr 1)) and $22222222;  x1 := x1 xor t xor (t shl 1);
-    t := (x1 xor (x1 shr 2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl 2);
-    t := (x1 xor (x1 shr 4)) and $00F000F0;  x1 := x1 xor t xor (t shl 4);
-    t := (x1 xor (x1 shr 8)) and $0000FF00;  x1 := x1 xor t xor (t shl 8);
-
-    pS^ := pS^ xor ((x0 and $0000FFFF) or (x1 shl 16));
-    inc(PByte(pS),sizeof(pS^));
-
-    pS^ := pS^ xor ((x0 shr 16) or (x1 and xFFFF0000));
-    inc(PByte(pS),sizeof(pS^));
-  end;
+   pS := @state[0];
+   for i:=laneCount-1 downto 0 do begin
+      pS^ := pS^ xor pI^;
+      Inc(pI);
+      Inc(pS);
+   end;
 end;
 
-function THash_SHA3Base.Absorb(Data: Pointer; DatabitLen: Int32): Int32;
+
+procedure THash_SHA3Base.Absorb(Data: PBABytes; DatabitLen: Int32);
 var
-  i, j, wholeBlocks, partialBlock: Longint;
+  i, j, wholeBlocks, partialBlock: Integer;
   partialByte: Integer;
-  curData: PByte;
+  curData: PUInt64;
 begin
-  Result := 1;
-
-  if FSpongeState.error <> 0 then exit;
-
   // if a number of bits which cannot be divided by 8 without reminder is in the
-  // queue or squeezing is not 0 this is an error
-  if (FSpongeState.bitsInQueue and 7 <> 0) or (FSpongeState.squeezing <> 0) then
+  // queue or algorithm is already in squeezing state
+  if (FSpongeState.BitsInQueue and 7 <> 0) or FSpongeState.SqueezeActive then
   begin
-    // Only the last call may contain a partial byte
-    // and additional input if squeezing
-    FSpongeState.error := 1;
-    exit;
+    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+                                     [FSpongeState.BitsInQueue,
+                                      BoolToStr(FSpongeState.SqueezeActive, true)]);
   end;
 
   i := 0;
-  while i < DatabitLen do
+
+  while i < databitlen do
   begin
-    if ((FSpongeState.bitsInQueue=0) and (DatabitLen >= FSpongeState.rate) and
-        (i <= (DatabitLen-FSpongeState.rate))) then
-    begin
-      wholeBlocks := (DatabitLen-i) div FSpongeState.rate;
-      curData := @TPBABytes(data)^[i div 8];
-      j := 0;
-      while j < wholeBlocks do begin
-        KeccakAbsorb(FSpongeState.state, curData, FSpongeState.rate div 64);
-        inc(j);
-        inc(PByte(curData), FSpongeState.rate div 8);
-      end;
-      inc(i, wholeBlocks * FSpongeState.rate);
-    end
-    else
-    begin
-      partialBlock := DatabitLen - i;
+     if ((FSpongeState.BitsInQueue = 0) and (databitlen >= FSpongeState.Rate) and
+        (i <= (databitlen - FSpongeState.Rate))) then
+     begin
+       wholeBlocks := (databitlen-i) div FSpongeState.Rate;
+       curData := @data^[i div 8];
+       j := 0;
+       while j < wholeBlocks do
+       begin
+         KeccakAbsorb(FSpongeState.State, curData, FSpongeState.Rate div 64);
+         Inc(j);
+         Inc(PByte(curData), FSpongeState.Rate div 8);
+       end;
+       Inc(i, wholeBlocks * FSpongeState.Rate);
+     end
+     else
+     begin
+       partialBlock := databitlen - i;
+       if partialBlock + FSpongeState.BitsInQueue > FSpongeState.Rate then
+         partialBlock := FSpongeState.Rate - FSpongeState.BitsInQueue;
 
-      if partialBlock + FSpongeState.bitsInQueue > FSpongeState.rate then
-        partialBlock := FSpongeState.rate - FSpongeState.bitsInQueue;
+       partialByte := partialBlock and 7;
+       Dec(partialBlock, partialByte);
+       Move(data^[i div 8], FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8], partialBlock div 8);
+       Inc(FSpongeState.BitsInQueue, partialBlock);
+       Inc(i, partialBlock);
+       if FSpongeState.BitsInQueue=FSpongeState.Rate then
+          AbsorbQueue;
 
-      partialByte := partialBlock and 7;
-      dec(partialBlock, partialByte);
-      move(TPBABytes(data)^[i div 8],
-           FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8],
-           partialBlock div 8);
-      inc(FSpongeState.bitsInQueue, partialBlock);
-      inc(i, partialBlock);
+       if partialByte > 0 then
+       begin
+         FSpongeState.DataQueue[FSpongeState.BitsInQueue div 8] :=
+           data^[i div 8] and ((1 shl partialByte)-1);
 
-      if FSpongeState.bitsInQueue = FSpongeState.rate then
-        AbsorbQueue;
-
-      if partialByte > 0 then
-      begin
-        FSpongeState.dataQueue[FSpongeState.bitsInQueue div 8] :=
-          TPBABytes(data)^[i div 8] and ((1 shl partialByte)-1);
-
-        inc(FSpongeState.bitsInQueue, partialByte);
-        inc(i, partialByte);
-      end;
-    end;
+         Inc(FSpongeState.BitsInQueue, partialByte);
+         Inc(i, partialByte);
+       end;
+     end;
   end;
-
-  Result := 0;
 end;
 
 procedure THash_SHA3Base.AbsorbQueue;
 begin
   // state.bitsInQueue is assumed to be equal to state.rat
-  KeccakAbsorb(FSpongeState.state, @FSpongeState.dataQueue, FSpongeState.rate div 64);
-  FSpongeState.bitsInQueue := 0;
+  KeccakAbsorb(FSpongeState.State, @FSpongeState.DataQueue, FSpongeState.Rate div 64);
+  FSpongeState.BitsInQueue := 0;
 end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
-  DataPtr   : Pointer;
+  DataPtr   : PBABytes;
   RoundSize : UInt32;
 const
   // Maximum number of bytes one can process in one round
@@ -4693,9 +4445,9 @@ begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    DataPtr := Pointer(@Data);
+    DataPtr := PBABytes(@Data);
 
-    while (UInt32(DataSize) >= BlockSize) do
+    while (UInt32(DataSize) > 0) do
     begin
       RoundSize := DataSize;
       if (RoundSize > MaxRoundSize) then
@@ -4703,33 +4455,11 @@ begin
 
       Absorb(DataPtr, RoundSize * 8);
       Dec(DataSize, RoundSize);
-      DataPtr := Pointer(NativeUInt(DataPtr) + RoundSize);
+      Inc(DataPtr, RoundSize);
     end;
-  end
-  else
-    FinalStep;
-end;
 
-procedure THash_SHA3Base.FinalStep;
-var
-  err: integer;
-begin
-  err := 1;
-  if FSpongeState.error = 0 then
-  begin
-{ TODO : This should not be possible as FSpongeState is zeroed in InitSponge only
-  but InitSponge is only called in the DoInit methods of the real SHA3 classes and
-  these set FixedOutputLength to their hash bit size directly afterwards}
-    if FSpongeState.FixedOutputLength = 0 then
-      err := 2 //SHA3_ERR_WRONG_FINAL
-    else
-      err := FinalBit_LSB(0, 0, FDigest);
   end;
-  {Update error only with old error=0, i.e. do no reset a non-zero value}
-  if FSpongeState.error = 0 then
-    FSpongeState.error := err;
 end;
-
 
 function THash_SHA3Base.Digest: PByteArray;
 begin
@@ -4737,21 +4467,8 @@ begin
 end;
 
 procedure THash_SHA3Base.DoDone;
-var
-  err: integer;
 begin
-  err := 1;
-  if FSpongeState.error = 0 then
-  begin
-//    if FSpongeState.fixedOutputLength=0 then err := SHA3_ERR_WRONG_FINAL
-//    else
-
-    err := FinalBit_LSB(FPaddingByte, FFinalBitLen, FDigest);
-  end;
-  // Update error only with old error = 0, i.e. do no reset a non-zero value
-  if FSpongeState.error = 0 then
-    FSpongeState.error := err;
-//  SHA3_FinalHash := err;
+  FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
 end;
 
 procedure THash_SHA3Base.DoInit;
@@ -4761,75 +4478,47 @@ begin
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
-function THash_SHA3Base.DoUpdate(data: Pointer; DataBitLen: Int32):Integer;
+procedure THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32);
 var
   LastByte: Byte;
 begin
-  if FSpongeState.error <> 0 then
-  begin
-    Result := FSpongeState.error;
-    exit;
-  end;
-
+  // No partial byte
   if DataBitLen and 7 = 0 then
-    Result := Absorb(data, DataBitLen)
+    Absorb(Data, DataBitLen)
   else
   begin
-    Result := Absorb(data, DataBitLen - (DataBitLen and 7));
+    // Data contains a partial byte. Calculate the whole bytes first then the
+    // partial one.
+    Absorb(Data, DataBitLen - (DataBitLen and 7));
 
-    if (Result = 0) then
-    begin
-      // Align the last partial byte to the least significant bits
-      LastByte := TPBABytes(data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
-      Result   := Absorb(@LastByte, DataBitLen and 7);
-    end
+    // Align the last partial byte to the least significant bits
+    LastByte := PBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+    Absorb(@LastByte, DataBitLen and 7);
   end;
-
-  // Update error only when old error = 0, i.e. do not change a non-zero value
-  if (FSpongeState.error = 0) then
-    FSpongeState.error := Result;
 end;
 
-procedure THash_SHA3Base.ExtractFromState(Outp: Pointer; const State: TState_L;
-                                          LaneCount: UInt16);
+procedure THash_SHA3Base.ExtractFromState(outp: Pointer; const state: TState_L; laneCount: Integer);
 var
-  pI, pS    : PLongint;
-  i         : Integer;
-  t, x0, x1 : Longint;
-const
-  xFFFF0000 = longint($FFFF0000);   // Keep D9+ happy
+   pI, pS: PUInt64;
+   i: Integer;
 begin
-   // Credit: Henry S. Warren, Hacker's Delight, Addison-Wesley, 2002
    pI := outp;
    pS := @state[0];
-
-   for i := LaneCount-1 downto 0 do
+   for i := laneCount - 1 downto 0 do
    begin
-     x0 := pS^; inc(PByte(pS),sizeof(pS^));
-     x1 := pS^; inc(PByte(pS),sizeof(pS^));
-     t  := (x0 and $0000FFFF) or (x1 shl 16);
-     x1 := (x0 shr 16) or (x1 and xFFFF0000);
-     x0 := t;
-     t  := (x0 xor (x0 shr  8)) and $0000FF00;  x0 := x0 xor t xor (t shl  8);
-     t  := (x0 xor (x0 shr  4)) and $00F000F0;  x0 := x0 xor t xor (t shl  4);
-     t  := (x0 xor (x0 shr  2)) and $0C0C0C0C;  x0 := x0 xor t xor (t shl  2);
-     t  := (x0 xor (x0 shr  1)) and $22222222;  x0 := x0 xor t xor (t shl  1);
-     t  := (x1 xor (x1 shr  8)) and $0000FF00;  x1 := x1 xor t xor (t shl  8);
-     t  := (x1 xor (x1 shr  4)) and $00F000F0;  x1 := x1 xor t xor (t shl  4);
-     t  := (x1 xor (x1 shr  2)) and $0C0C0C0C;  x1 := x1 xor t xor (t shl  2);
-     t  := (x1 xor (x1 shr  1)) and $22222222;  x1 := x1 xor t xor (t shl  1);
-     pI^:= x0; inc(PByte(pI),sizeof(pI^));
-     pI^:= x1; inc(PByte(pI),sizeof(pI^));
+      pI^ := pS^;
+      Inc(pI);
+      Inc(pS);
    end;
 end;
 
-function THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: Int16;
-                                     var Hashvalue: TSHA3Digest): Integer;
+procedure THash_SHA3Base.FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
+                                     var Hashvalue: TSHA3Digest);
 var
-  ll : Int16;
+  WorkingBitLen : Int16;
   lw : UInt16;
 begin
-  // normalize bitlen and bits (zero high bits)
+  // normalize Bitlen and Bits (zero high bits)
   Bitlen := Bitlen and 7;
   if Bitlen = 0 then
     lw := 0
@@ -4840,42 +4529,36 @@ begin
   if (FSpongeState.FixedOutputLength = 0) then
   begin
     lw := lw or (word($F) shl Bitlen);
-    ll := Bitlen+4;
+    WorkingBitLen := Bitlen+4;
   end
   else
   begin
     // SHA3: append two bits 01
     lw := lw or (word($2) shl Bitlen);
-    ll := Bitlen+2;
+    WorkingBitLen := Bitlen+2;
   end;
 
   // update state with final bits
-  if ll < 9 then
+  if WorkingBitLen < 9 then
   begin
     // 0..8 bits, one call to update
-    lw := lw shl (8-ll);
-    Result := DoUpdate(@lw, ll);
+    lw := lw shl (8-WorkingBitLen);
+    DoUpdate(@lw, WorkingBitLen);
     // squeeze the digits from the sponge
-    if Result = 0 then
-      Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
+    Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
   end
   else
   begin
     // More than 8 bits, first a regular update with low byte
-    Result := DoUpdate(@lw, 8);
-    if Result = 0 then
-    begin
-      // Finally update remaining last bits
-      dec(ll,8);
-      lw := lw shr ll;
-      Result := DoUpdate(@lw, ll);
-      if Result = 0 then
-        Result := Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
-    end;
-  end;
+    DoUpdate(@lw, 8);
 
-  if FSpongeState.error = 0 then
-    FSpongeState.error := Result;
+    // Finally update remaining last bits
+    dec(WorkingBitLen,8);
+    lw := lw shr WorkingBitLen;
+    DoUpdate(@lw, WorkingBitLen);
+
+    Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
+  end;
 end;
 
 procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);

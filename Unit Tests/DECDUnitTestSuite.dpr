@@ -20,8 +20,7 @@ uses
   TestFramework,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,
-  TestInsight.DUnit,
-  {$ENDIF}
+  {$ENDIF }
   GUITestRunner,
   TextTestRunner,
   TestDECUtil in 'Tests\TestDECUtil.pas',
@@ -36,7 +35,8 @@ uses
   TestDECBaseClass in 'Tests\TestDECBaseClass.pas',
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
-  TestDECHashMAC in 'Tests\TestDECHashMAC.pas';
+  TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
+  TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas';
 
 {$R *.RES}
 

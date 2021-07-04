@@ -1,63 +1,107 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECCipherFormats.pas',0,1,701,1,732,0,0,,
-File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\21.0\SOURCE\RTL\SYS\System.pas',0,1,36785,1,36805,0,0,,
-File_2=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECCipherModes.pas',0,1,257,1,277,0,0,,
-File_3=TSourceModule,'c:\program files (x86)\embarcadero\studio\21.0\source\DUnit\src\TestFramework.pas',0,1,3082,1,3102,0,0,,
-File_4=TSourceModule,'c:\program files (x86)\embarcadero\studio\21.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,34294,1,34314,0,0,,
-File_5=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECFormat.pas',0,1,1113,44,1190,0,0,,
-File_6=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECFormatBase.pas',0,1,42,1,62,0,0,,
-File_7=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECHashBase.pas',0,1,808,3,827,0,0,,
-File_8=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECHash.pas',0,1,1926,13,1952,0,0,,
-File_9=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECRandom.pas',0,1,163,1,181,0,0,,
-File_10=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECCipherInterface.pas',0,1,1,1,1,0,0,,
-File_11=TSourceModule,'D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas',0,1,3764,37,3790,0,0,,
-File_12=TSourceModule,'D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECFormat.pas',0,1,598,1,620,0,0,,
-File_13=TSourceModule,'D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECFormatBase.pas',0,1,409,98,417,0,0,,
-File_14=TSourceModule,'D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipherModes.pas',0,1,470,1,486,0,0,,
+File_0=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvLinkLabelTextHandler.pas',0,1,37,16,63,0,0,,
+File_1=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvDBRadioPanel.pas',0,1,23,3,44,0,0,,
+File_2=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvErrorIndicator.pas',0,1,28,3,49,0,0,,
+File_3=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvThread.pas',0,1,1,3,38,0,0,,
+File_4=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvPropertyStoreEditor.pas',0,1,1,1,35,0,0,,
+File_5=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvMRUManager.pas',0,1,21,3,42,0,0,,
+File_6=TSourceModule,'D:\Projekte\jcl\jcl\source\common\JclUnicode.pas',0,1,407,16,444,0,0,,
+File_7=TSourceModule,'D:\Projekte\jvcl\jvcl\run\JvDriveCtrls.pas',0,1,1661,7,1700,0,0,,
+File_8=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECCipherFormats.pas',0,1,702,1,721,0,0,,
+File_9=TSourceModule,'c:\program files (x86)\embarcadero\studio\20.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,34030,1,34048,0,0,,
+File_10=TSourceModule,'c:\program files (x86)\embarcadero\studio\20.0\Source\DUnit\src\TestFramework.pas',0,1,3082,1,3100,0,0,,
+File_11=TSourceModule,'c:\program files (x86)\embarcadero\studio\20.0\SOURCE\RTL\SYS\System.pas',0,1,36154,1,36173,0,0,,
+File_12=TSourceModule,'D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECFormat.pas',0,1,739,22,757,0,0,,
+File_13=TSourceModule,'D:\Projekte\DECGitMaster\Source\DECCipherBase.pas',0,1,719,1,739,0,0,,
+File_14=TSourceModule,'C:\Program Files\Embarcadero\Studio\18.0\Extras\jvcl\jvcl\run\JvMemoryDataset.pas',0,1,809,11,834,0,0,,{1
 
 [Modules]
-Module0=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dproj
-Module1=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
-Module2=D:\Projekte\DECGitMaster\Source\DECCiphers.pas
-Module3=D:\Projekte\DECGitMaster\Source\DECCipherBase.pas
-Module4=D:\Projekte\DECGitMaster\Source\DECBaseClass.pas
-Module5=D:\Projekte\DECGitMaster\Source\DECOptions.inc
-Module6=D:\Projekte\DECGitMaster\Source\DECUtil.pas
-Module7=D:\Projekte\DECGitMaster\Unit Tests\Tests\defines.inc
-Module8=default.htm
-Count=9
+Module0=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas
+Module1=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dproj
+Module2=D:\Projekte\DECGitMaster\Demos\Format_Console\Format_Console.dproj
+Module3=D:\Projekte\DECGitMaster\Demos\Hash_Console\Hash_Console.dproj
+Module4=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHashSHA3.pas
+Module5=D:\Projekte\DECGitMaster\Demos\Progress_VCL\MainForm.pas
+Module6=D:\Projekte\DECGitMaster\Source\DECCiphers.pas
+Module7=D:\Projekte\DECGitMaster\Source\DECHash.pas
+Module8=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECUtil.pas
+Module9=D:\Projekte\DECGitMaster\Source\DECUtil.pas
+Module10=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
+Module11=D:\Projekte\DECGitMaster\Source\DECFormat.pas
+Module12=D:\Projekte\DECGitMaster\Source\DECFormatBase.pas
+Module13=D:\Projekte\DECGitMaster\Source\DECBaseClass.pas
+Module14=D:\Projekte\DECGitMaster\Source\DECData.pas
+Module15=D:\Projekte\DECGitMaster\Source\DECHashBase.pas
+Module16=D:\Projekte\DECGitMaster\Demos\Cipher_FMX\MainForm.pas
+Module17=D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas
+Module18=D:\Projekte\DECGitMaster\Source\DECOptions.inc
+Module19=default.htm
+Count=20
 EditWindowCount=1
+
+[D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas]
+ModuleType=TSourceModule
 
 [D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dproj]
 ModuleType=TBaseProject
 
-[D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas]
+[D:\Projekte\DECGitMaster\Demos\Format_Console\Format_Console.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGitMaster\Demos\Hash_Console\Hash_Console.dproj]
+ModuleType=TBaseProject
+
+[D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHashSHA3.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Demos\Progress_VCL\MainForm.pas]
 ModuleType=TSourceModule
 
 [D:\Projekte\DECGitMaster\Source\DECCiphers.pas]
 ModuleType=TSourceModule
 
-[D:\Projekte\DECGitMaster\Source\DECCipherBase.pas]
+[D:\Projekte\DECGitMaster\Source\DECHash.pas]
 ModuleType=TSourceModule
 
-[D:\Projekte\DECGitMaster\Source\DECBaseClass.pas]
-ModuleType=TSourceModule
-
-[D:\Projekte\DECGitMaster\Source\DECOptions.inc]
+[D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECUtil.pas]
 ModuleType=TSourceModule
 
 [D:\Projekte\DECGitMaster\Source\DECUtil.pas]
 ModuleType=TSourceModule
 
-[D:\Projekte\DECGitMaster\Unit Tests\Tests\defines.inc]
+[D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECFormat.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECFormatBase.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECBaseClass.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECData.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECHashBase.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Demos\Cipher_FMX\MainForm.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas]
+ModuleType=TSourceModule
+
+[D:\Projekte\DECGitMaster\Source\DECOptions.inc]
 ModuleType=TSourceModule
 
 [default.htm]
 ModuleType=TURLModule
 
 [EditWindow0]
-ViewCount=9
-CurrentEditView=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr
+ViewCount=20
+CurrentEditView=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas
 View0=0
 View1=1
 View2=2
@@ -67,6 +111,17 @@ View5=5
 View6=6
 View7=7
 View8=8
+View9=9
+View10=10
+View11=11
+View12=12
+View13=13
+View14=14
+View15=15
+View16=16
+View17=17
+View18=18
+View19=19
 PercentageSizes=1
 Create=1
 Visible=1
@@ -102,99 +157,218 @@ WelcomePageURL=bds:/default.htm
 
 [View1]
 CustomEditViewType=TEditView
-Module=D:\Projekte\DECGitMaster\Source\DECCipherBase.pas
-CursorX=1
-CursorY=908
-TopLine=884
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=D:\Projekte\DECGitMaster\Source\DECCipherBase.pas
-
-[View2]
-CustomEditViewType=TEditView
-Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
-CursorX=28
-CursorY=3102
-TopLine=3076
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
-
-[View3]
-CustomEditViewType=TEditView
-Module=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr
-CursorX=3
-CursorY=57
-TopLine=37
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr
-
-[View4]
-CustomEditViewType=TEditView
 Module=D:\Projekte\DECGitMaster\Source\DECCiphers.pas
-CursorX=1
-CursorY=5842
-TopLine=5791
+CursorX=13
+CursorY=5956
+TopLine=5936
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=D:\Projekte\DECGitMaster\Source\DECCiphers.pas
 
+[View2]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Demos\Progress_VCL\MainForm.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View3]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas
+CursorX=1
+CursorY=135
+TopLine=135
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas
+
+[View4]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Demos\Format_Console\Format_Console.dpr
+CursorX=31
+CursorY=51
+TopLine=51
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Demos\Format_Console\Format_Console.dpr
+
 [View5]
 CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Demos\Hash_Console\Hash_Console.dpr
+CursorX=25
+CursorY=65
+TopLine=65
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Demos\Hash_Console\Hash_Console.dpr
+
+[View6]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr
+CursorX=49
+CursorY=96
+TopLine=96
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr
+
+[View7]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECUtil.pas
+CursorX=44
+CursorY=34
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECUtil.pas
+
+[View8]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Demos\Cipher_FMX\MainForm.pas
+CursorX=50
+CursorY=119
+TopLine=313
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Demos\Cipher_FMX\MainForm.pas
+
+[View9]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECFormatBase.pas
+CursorX=85
+CursorY=508
+TopLine=486
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECFormatBase.pas
+
+[View10]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECHashBase.pas
+CursorX=35
+CursorY=202
+TopLine=194
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECHashBase.pas
+
+[View11]
+CustomEditViewType=TEditView
 Module=D:\Projekte\DECGitMaster\Source\DECBaseClass.pas
-CursorX=1
-CursorY=336
-TopLine=323
+CursorX=57
+CursorY=25
+TopLine=1
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=D:\Projekte\DECGitMaster\Source\DECBaseClass.pas
 
-[View6]
-CustomEditViewType=TEditView
-Module=D:\Projekte\DECGitMaster\Source\DECUtil.pas
-CursorX=3
-CursorY=299
-TopLine=280
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=D:\Projekte\DECGitMaster\Source\DECUtil.pas
-
-[View7]
-CustomEditViewType=TEditView
-Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\defines.inc
-CursorX=3
-CursorY=5
-TopLine=1
-LeftCol=1
-Elisions=
-Bookmarks=
-EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\defines.inc
-
-[View8]
+[View12]
 CustomEditViewType=TEditView
 Module=D:\Projekte\DECGitMaster\Source\DECOptions.inc
-CursorX=9
-CursorY=77
-TopLine=61
+CursorX=6
+CursorY=97
+TopLine=73
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=D:\Projekte\DECGitMaster\Source\DECOptions.inc
 
+[View13]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECHash.pas
+CursorX=81
+CursorY=69
+TopLine=37
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECHash.pas
+
+[View14]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas
+CursorX=84
+CursorY=1509
+TopLine=1494
+LeftCol=1
+Elisions=
+Bookmarks={1,1382,1}
+EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHash.pas
+
+[View15]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHashSHA3.pas
+CursorX=69
+CursorY=266
+TopLine=256
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECHashSHA3.pas
+
+[View16]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECData.pas
+CursorX=1
+CursorY=167
+TopLine=167
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECData.pas
+
+[View17]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
+CursorX=1
+CursorY=1735
+TopLine=1715
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Unit Tests\Tests\TestDECCipher.pas
+
+[View18]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECFormat.pas
+CursorX=14
+CursorY=367
+TopLine=359
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECFormat.pas
+
+[View19]
+CustomEditViewType=TEditView
+Module=D:\Projekte\DECGitMaster\Source\DECUtil.pas
+CursorX=1
+CursorY=641
+TopLine=610
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Projekte\DECGitMaster\Source\DECUtil.pas
+
 [Watches]
-Count=5
-Watch0='@Source^',4,16,18,1,0,'Überwachte Ausdrücke',1
-Watch1='@Dest^',4,16,18,1,0,'Überwachte Ausdrücke',1
-Watch2='K^',256,0,18,1,0,'Überwachte Ausdrücke',1
-Watch3='X',64,0,18,1,0,'Überwachte Ausdrücke',1
-Watch4='result',64,0,18,1,0,'Überwachte Ausdrücke',1
+Count=3
+Watch0='StringOf(Result)',256,0,18,1,1,'Überwachte Ausdrücke',1
+Watch1='Data.InputData[1]',4,32,18,1,1,'Überwachte Ausdrücke',1
+Watch2='Result',64,0,18,1,1,'Überwachte Ausdrücke',1
 
 [WatchWindow]
 WatchColumnWidth=120
@@ -218,19 +392,18 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=1
-Breakpoint0='D:\Projekte\DECGitMaster\Demos\Cipher_Console\Cipher_Console.dpr',74,'',0,1,'',1,0,0,'',1,'','','',0,''
-
-[EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
 
-[EmbarcaderoWin64Debugger_AddressBreakpoints]
+[EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
 
 [EmbarcaderoAndroid32Debugger_AddressBreakpoints]
 Count=0
 
 [EmbarcaderoAndroid64Debugger_AddressBreakpoints]
+Count=0
+
+[EmbarcaderoWin64Debugger_AddressBreakpoints]
 Count=0
 
 [Main Window]
@@ -339,11 +512,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=5760
+Height=6029
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=5760
+ClientHeight=6029
 TBDockHeight=5962
 LRDockWidth=2510
 Dockable=1
@@ -525,11 +698,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=5760
+Height=6029
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=5760
+ClientHeight=6029
 TBDockHeight=4885
 LRDockWidth=7151
 Dockable=1
@@ -561,7 +734,7 @@ Visible=0
 Docked=1
 State=0
 Left=-44
-Top=-271
+Top=-243
 Width=1849
 Height=3144
 MaxLeft=-1
@@ -656,45 +829,6 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 
-[ParnassusBookmarksForm]
-PercentageSizes=1
-Create=1
-Visible=0
-Docked=0
-State=0
-Left=0
-Top=0
-Width=2969
-Height=3163
-MaxLeft=-5
-MaxTop=-10
-ClientWidth=2885
-ClientHeight=2788
-TBDockHeight=3163
-LRDockWidth=2969
-Dockable=1
-StayOnTop=0
-
-[TestInsightForm]
-PercentageSizes=1
-Create=1
-Visible=0
-Docked=0
-State=0
-Left=0
-Top=0
-Width=2969
-Height=3154
-MaxLeft=-5
-MaxTop=-10
-ClientWidth=2885
-ClientHeight=2779
-TBDockHeight=3154
-LRDockWidth=2969
-Dockable=1
-StayOnTop=0
-TabIndex=0
-
 [ModelViewTool]
 PercentageSizes=1
 Create=1
@@ -704,11 +838,11 @@ State=0
 Left=0
 Top=0
 Width=2000
-Height=5760
+Height=6029
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2000
-ClientHeight=5760
+ClientHeight=6029
 TBDockHeight=4885
 LRDockWidth=5307
 Dockable=1
@@ -857,5 +991,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=3
+ActiveProject=2
 

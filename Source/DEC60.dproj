@@ -171,9 +171,12 @@
         <DCCReference Include="DECUtil.pas"/>
         <DCCReference Include="DECUtilRawByteStringHelper.pas"/>
         <DCCReference Include="DECHashAuthentication.pas"/>
+        <DCCReference Include="DECHashBitBase.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
         <None Include="BuildAll.cmd"/>
+        <None Include="DECHash.sha3_mmx.inc"/>
+        <None Include="DECHash.sha3_x64.inc"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -196,7 +199,7 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\Compiled\BIN_IDE21.0_Win32_Debug\DEC60.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\Compiled\BIN_IDE22.0_Win32_Debug\DEC60.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DEC60.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -204,6 +207,18 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="DECHash.sha3_mmx.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="DECHash.sha3_x64..inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -34,7 +34,6 @@ var
   s    : RawByteString;
 
   W: THash_Whirlpool1;
-
 begin
   Hash := THash_RipeMD160.Create;
   try

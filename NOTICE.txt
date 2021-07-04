@@ -23,6 +23,12 @@ mknox74
 EdAdvokat
 Michael II
 
+Parts of the work loosely based on the works of Wolfgang Erhardt, who is
+unfortunately dead already.
+
+The SHA3 permutation kernel used is original copyright by Eric Grange and used 
+with his permission.
+
 
                       *** Export/Import Controls ***
 

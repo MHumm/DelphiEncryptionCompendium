@@ -86,6 +86,11 @@ type
   /// </summary>
   TCipher_SCOP          = class;
   /// <summary>
+  ///   Stream Cipher in Blockmode (on UInt32), very fast.
+  ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
+  /// </summary>
+  TCipher_SCOP_DEC52    = class;
+  /// <summary>
   ///   Stream Cipher, eq. design from German ENIGMA Machine
   /// </summary>
   TCipher_Sapphire      = class;
@@ -168,6 +173,12 @@ type
   /// </summary>
   TCipher_Shark         = class;
   /// <summary>
+  ///   A 1996 published block cipher with a key size of 128 bits. It was
+  ///   identified as one of the predecessors of Rijndael
+  ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
+  /// </summary>
+  TCipher_Shark_DEC52   = class;
+  /// <summary>
   ///   A NSA developed and 1998 published block cipher with a key length of
   ///   80 bit. Soon after publication various weaknesses have been identified.
   /// </summary>
@@ -184,6 +195,11 @@ type
   ///   = TCipher_XTEA (kept for backward compatibility)
   /// </summary>
   TCipher_TEAN          = class;
+  /// <summary>
+  ///   Tiny Encryption Algorithm, 1st extended Version.
+  ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
+  /// </summary>
+  TCipher_XTEA_DEC52    = class;
 
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
@@ -394,6 +410,28 @@ type
   end;
 
   TCipher_SCOP = class(TDECFormattedCipher)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <remarks>
+  ///   Do only use if backwards compatibility with old code is necessary as
+  ///   this implementation is faulty!
+  /// </remarks>
+  TCipher_SCOP_DEC52 = class(TDECFormattedCipher)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -737,7 +775,32 @@ type
     property Version: TSAFERVersion read FVersion write SetVersion;
   end;
 
-  TCipher_Shark = class(TDECFormattedCipher)
+  {$IFNDEF CPU64BITS}
+  PLong64 = ^TLong64;
+  TLong64  = packed record
+    L, R: UInt32;
+  end;
+
+  PLong64Array = ^TLong64Array;
+  TLong64Array = array[0..1023] of TLong64;
+  {$ENDIF}
+
+  TLogArray = array[0..255] of Byte;
+
+  /// <summary>
+  ///   Base class for both Shark implementations
+  /// </summary>
+  TCipher_SharkBase = class(TDECFormattedCipher)
+  strict protected
+    {$IFNDEF CPU64BITS}
+    function Transform(A: TLong64; Log, ALog: TLogArray): TLong64;
+    function Shark(D: TLong64; K: PLong64): TLong64;
+    {$ELSE}
+    function Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
+    {$ENDIF}
+  end;
+
+  TCipher_Shark = class(TCipher_SharkBase)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -753,6 +816,24 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
+  end;
+
+  /// <remarks>
+  ///   Do only use if backwards compatibility with old code is necessary as
+  ///   this implementation is faulty!
+  /// </remarks>
+  TCipher_Shark_DEC52 = class(TCipher_Shark)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
   end;
 
   TCipher_Skipjack = class(TDECFormattedCipher)
@@ -821,6 +902,24 @@ type
   end;
 
   TCipher_TEAN = class(TCipher_XTEA);
+
+  /// <summary>
+  ///   XTEA is an improved version of the TEA algorithm. This version is the
+  ///   old faulty one from DEC 5.2. Use only if necessary for compatibility
+  ///    reasons!
+  /// </summary>
+  /// <remarks>
+  ///   In DEC V5.2 at least and in former commits of DEC 6.0 development version
+  ///   this algorithm was broken due to differences in brackets and thus returned
+  ///   a different result. It is unclear why nobody reported this as bug yet
+  ///   but be aware that if you need the old variant for compatibility reasons
+  ///   you need a commit from before 3rd December 2020.
+  /// </remarks>
+  TCipher_XTEA_DEC52 = class(TCipher_TEA)
+  protected
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  end;
 
 implementation
 
@@ -1532,7 +1631,7 @@ begin
   end;
   Result := -(X + Y - 1);
 end;
-{$ENDIF}
+{$IFEND}
 
 procedure IDEACipher(Source, Dest: PUInt32Array; Key: PWordArray);
 var
@@ -3121,6 +3220,163 @@ var
       X3 := X2 * X1;
       X4 := X3 * X1;
       Y2 := Init_State.Coef[I + 1][0] * X4 +
+            Init_State.Coef[I + 1][1] * X3 +
+            Init_State.Coef[I + 1][2] * X2 +
+            Init_State.Coef[I + 1][3] * X1 + 1;
+      Data[I2] := Y1 shl 16 or Y2 and $FFFF;
+      NewX[I2] := Y1 and $FFFF0000 or Y2 shr 16;
+      Inc(I2);
+      Inc(I, 2);
+    end;
+    Init_State.X[0] := NewX[0] shr 16 or NewX[3] shl 16;
+    Init_State.X[1] := NewX[0] shl 16 or NewX[1] shr 16;
+    Init_State.X[2] := NewX[1] shl 16 or NewX[2] shr 16;
+    Init_State.X[3] := NewX[2] shl 16 or NewX[3] shr 16;
+  end;
+
+var
+  I, J: Integer;
+  T: array[0..3] of UInt32;
+  P: PUInt32Array;
+begin
+  FillChar(Init_State, SizeOf(Init_State), 0);
+  FillChar(T, SizeOf(T), 0);
+  P := Pointer(PByte(FAdditionalBuffer) + 12); // for Pointer Math
+  ExpandKey;
+  for I := 0 to 7 do
+    GP8(@T);
+  for I := 0 to 11 do
+  begin
+    for J := 0 to 7 do
+      GP8(@P[I * 32 + J * 4]);
+    GP8(@T);
+  end;
+  GP8(@T);
+  I := T[3] and $7F;
+  P[I] := P[I] or 1;
+  P := FAdditionalBuffer;
+  P[0] := T[3] shr 24 and $FF;
+  P[1] := T[3] shr 16 and $FF;
+  P[2] := T[3] shr  8 and $FF;
+  ProtectBuffer(Init_State, SizeOf(Init_State));
+end;
+
+procedure TCipher_SCOP.DoEncode(Source, Dest: Pointer; Size: Integer);
+var
+  I, J: Byte;
+  T2, T3, T1: UInt32;
+  P: PUInt32Array;
+  W: Integer;
+begin
+  P  := FAdditionalBuffer;
+  I  := P[0];
+  J  := P[1];
+  T3 := P[2];
+  for W := 0 to Size div 4 - 1 do
+  begin
+    T1 := P[J + 3 + 128]; Inc(J, T3);
+    T2 := P[J + 3 + 128];
+    PUInt32Array(Dest)[W] := PUInt32Array(Source)[W] + T1 + T2;
+    T3 := T2 + P[I + 3];  Inc(I);
+    P[J + 3 + 128] := T3;
+    Inc(J, T2);
+  end;
+  P[0] := I;
+  P[1] := J;
+  P[2] := T3;
+end;
+
+procedure TCipher_SCOP.DoDecode(Source, Dest: Pointer; Size: Integer);
+var
+  I, J: Byte;
+  T1, T2, T3: UInt32;
+  P: PUInt32Array;
+  W: Integer;
+begin
+  P  := FAdditionalBuffer;
+  I  := P[0];
+  J  := P[1];
+  T3 := P[2];
+  for W := 0 to Size div 4 - 1 do
+  begin
+    T1 := P[J + 3 + 128]; Inc(J, T3);
+    T2 := P[J + 3 + 128];
+    PUInt32Array(Dest)[W] := PUInt32Array(Source)[W] - T1 - T2;
+    T3 := T2 + P[I + 3];
+    Inc(I);
+    P[J + 3 + 128] := T3;
+    Inc(J, T2);
+  end;
+  P[0] := I;
+  P[1] := J;
+  P[2] := T3;
+end;
+
+{ TCipher_SCOP_DEC52 }
+
+{ TODO : The old failure needs to be restored again }
+
+class function TCipher_SCOP_DEC52.Context: TCipherContext;
+begin
+  Result.KeySize                     := 48;
+  Result.BlockSize                   := 4;
+  Result.BufferSize                  := 32;
+  Result.AdditionalBufferSize        := 384 * 4 + 3 * SizeOf(UInt32);
+  Result.NeedsAdditionalBufferBackup := True;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
+end;
+
+procedure TCipher_SCOP_DEC52.DoInit(const Key; Size: Integer);
+var
+  Init_State: packed record
+    Coef: array[0..7, 0..3] of Byte;
+    X: array[0..3] of UInt32;
+  end;
+
+  procedure ExpandKey;
+  var
+    P: PByteArray;
+    I, C: Integer;
+  begin
+    C := 1;
+    P := @Init_State;
+    Move(Key, P^, Size);
+    for I := Size to 47 do
+      P[I] := P[I - Size] + P[I - Size + 1];
+    for I := 0 to 31 do
+      if P[I] = 0 then
+      begin
+        P[I] := C;
+        Inc(C);
+      end;
+  end;
+
+  procedure GP8(Data: PUInt32Array);
+  var
+    I, I2: Integer;
+    NewX: array[0..3] of UInt32;
+    X1, X2, X3, X4: UInt32;
+    Y1, Y2: UInt32;
+  begin
+    I := 0;
+    I2 := 0;
+    while I < 8 do
+    begin
+      X1 := Init_State.X[I2] shr 16;
+      X2 := X1 * X1;
+      X3 := X2 * X1;
+      X4 := X3 * X1;
+      Y1 := Init_State.Coef[I][0] * X4 +
+            Init_State.Coef[I][1] * X3 +
+            Init_State.Coef[I][2] * X2 +
+            Init_State.Coef[I][3] * X1 + 1;
+      X1 := Init_State.X[I2] and $FFFF;
+      X2 := X1 * X1;
+      X3 := X2 * X1;
+      X4 := X3 * X1;
+      Y2 := Init_State.Coef[I + 1][0] * X4 +
             Init_State.Coef[I + 2][1] * X3 +
             Init_State.Coef[I + 3][2] * X2 +
             Init_State.Coef[I + 4][3] * X1 + 1;
@@ -3162,7 +3418,7 @@ begin
   ProtectBuffer(Init_State, SizeOf(Init_State));
 end;
 
-procedure TCipher_SCOP.DoEncode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SCOP_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   I, J: Byte;
   T2, T3, T1: UInt32;
@@ -3187,7 +3443,7 @@ begin
   P[2] := T3;
 end;
 
-procedure TCipher_SCOP.DoDecode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SCOP_DEC52.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   I, J: Byte;
   T1, T2, T3: UInt32;
@@ -5329,16 +5585,106 @@ begin
   PByteArray(Dest)[7] := H;
 end;
 
-{ TCipher_Shark }
+{ TCipher_SharkBase }
 
-type
-  PLong64 = ^TLong64;
-  TLong64  = packed record
-    L, R: UInt32;
+{$IFNDEF CPU64BITS}
+function TCipher_SharkBase.Shark(D: TLong64; K: PLong64): TLong64;
+var
+  R, T: Integer;
+begin
+  for R := 0 to 4 do
+  begin
+    D.L := D.L xor K.L;
+    D.R := D.R xor K.R;
+    Inc(K);
+    T   := Shark_CE[0, D.R shr 23 and $1FE] xor
+           Shark_CE[1, D.R shr 15 and $1FE] xor
+           Shark_CE[2, D.R shr  7 and $1FE] xor
+           Shark_CE[3, D.R shl  1 and $1FE] xor
+           Shark_CE[4, D.L shr 23 and $1FE] xor
+           Shark_CE[5, D.L shr 15 and $1FE] xor
+           Shark_CE[6, D.L shr  7 and $1FE] xor
+           Shark_CE[7, D.L shl  1 and $1FE];
+
+    D.R := Shark_CE[0, D.R shr 23 and $1FE or 1] xor
+           Shark_CE[1, D.R shr 15 and $1FE or 1] xor
+           Shark_CE[2, D.R shr  7 and $1FE or 1] xor
+           Shark_CE[3, D.R shl  1 and $1FE or 1] xor
+           Shark_CE[4, D.L shr 23 and $1FE or 1] xor
+           Shark_CE[5, D.L shr 15 and $1FE or 1] xor
+           Shark_CE[6, D.L shr  7 and $1FE or 1] xor
+           Shark_CE[7, D.L shl  1 and $1FE or 1];
+    D.L := T;
+  end;
+  D.L := D.L xor K.L;
+  D.R := D.R xor K.R;
+  Inc(K);
+  D.L := UInt32(Shark_SE[D.L shr 24 and $FF]) shl 24 xor
+         UInt32(Shark_SE[D.L shr 16 and $FF]) shl 16 xor
+         UInt32(Shark_SE[D.L shr  8 and $FF]) shl  8 xor
+         UInt32(Shark_SE[D.L        and $FF]);
+  D.R := UInt32(Shark_SE[D.R shr 24 and $FF]) shl 24 xor
+         UInt32(Shark_SE[D.R shr 16 and $FF]) shl 16 xor
+         UInt32(Shark_SE[D.R shr  8 and $FF]) shl  8 xor
+         UInt32(Shark_SE[D.R        and $FF]);
+  Result.L := D.L xor K.L;
+  Result.R := D.R xor K.R;
+end;
+
+function TCipher_SharkBase.Transform(A: TLong64; Log, ALog: TLogArray): TLong64;
+  function Mul(A, B: Integer): Byte;
+  begin
+    Result := ALog[(Log[A] + Log[B]) mod 255];
   end;
 
-  PLong64Array = ^TLong64Array;
-  TLong64Array = array[0..1023] of TLong64;
+var
+  I, J: Byte;
+  K, T: array[0..7] of Byte;
+begin
+  Move(A.R, K[0], 4);
+  Move(A.L, K[4], 4);
+  SwapUInt32Buffer(K, K, 2);
+  for I := 0 to 7 do
+  begin
+    T[I] := Mul(Shark_I[I, 0], K[0]);
+    for J := 1 to 7 do
+      T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
+  end;
+  Result.L := T[0];
+  Result.R := 0;
+  for I := 1 to 7 do
+  begin
+    Result.R := Result.R shl 8 or Result.L shr 24;
+    Result.L := Result.L shl 8 xor T[I];
+  end;
+end;
+{$ELSE CPU64BITS}
+function TCipher_SharkBase.Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
+var
+  I, J: Integer;
+  K, T: array[0..7] of Byte;
+
+  function Mul(A, B: Byte): Byte;
+  begin
+    // GF(256) multiplication via logarithm tables
+    Result := ALog[(Log[A] + Log[B]) mod 255];
+  end;
+begin
+  for I := 0 to 7 do
+    K[I] := A shr (56 - 8 * i);
+  for I := 0 to 7 do
+  begin
+    T[I] := Mul(Shark_I[I, 0], K[0]);
+    for J := 1 to 7 do
+      T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
+  end;
+  Result := T[0];
+  for I := 1 to 7 do
+    Result := (Result shl 8) xor T[I];
+end;
+{$ENDIF}
+
+{ TCipher_Shark }
 
 class function TCipher_Shark.Context: TCipherContext;
 begin
@@ -5352,9 +5698,10 @@ begin
   Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
+{$IFNDEF CPU64BITS}
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
 var
-  Log, ALog: array[0..255] of Byte;
+  Log, ALog: TLogArray;
 
   procedure InitLog;
   var
@@ -5368,80 +5715,9 @@ var
         J := J xor $01F5;
       ALog[I] := J;
     end;
-    for I := 1 to 254 do
+    Log[0] := 0;
+    for I := 0 to 254 do
       Log[ALog[I]] := I;
-  end;
-
-  function Transform(A: TLong64): TLong64;
-
-    function Mul(A, B: Integer): Byte;
-    begin
-      Result := ALog[(Log[A] + Log[B]) mod 255];
-    end;
-
-  var
-    I, J: Byte;
-    K, T: array[0..7] of Byte;
-  begin
-    Move(A.R, K[0], 4);
-    Move(A.L, K[4], 4);
-    SwapUInt32Buffer(K, K, 2);
-    for I := 0 to 7 do
-    begin
-      T[I] := Mul(Shark_I[I, 0], K[0]);
-      for J := 1 to 7 do
-        T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
-    end;
-    Result.L := T[0];
-    Result.R := 0;
-    for I := 1 to 7 do
-    begin
-      Result.R := Result.R shl 8 or Result.L shr 24;
-      Result.L := Result.L shl 8 xor T[I];
-    end;
-  end;
-
-  function Shark(D: TLong64; K: PLong64): TLong64;
-  var
-    R, T: Integer;
-  begin
-    for R := 0 to 4 do
-    begin
-      D.L := D.L xor K.L;
-      D.R := D.R xor K.R;
-      Inc(K);
-      T   := Shark_CE[0, D.R shr 23 and $1FE] xor
-             Shark_CE[1, D.R shr 15 and $1FE] xor
-             Shark_CE[2, D.R shr  7 and $1FE] xor
-             Shark_CE[3, D.R shl  1 and $1FE] xor
-             Shark_CE[4, D.L shr 23 and $1FE] xor
-             Shark_CE[5, D.L shr 15 and $1FE] xor
-             Shark_CE[6, D.L shr  7 and $1FE] xor
-             Shark_CE[7, D.L shl  1 and $1FE];
-
-      D.R := Shark_CE[0, D.R shr 23 and $1FE or 1] xor
-             Shark_CE[1, D.R shr 15 and $1FE or 1] xor
-             Shark_CE[2, D.R shr  7 and $1FE or 1] xor
-             Shark_CE[3, D.R shl  1 and $1FE or 1] xor
-             Shark_CE[4, D.L shr 23 and $1FE or 1] xor
-             Shark_CE[5, D.L shr 15 and $1FE or 1] xor
-             Shark_CE[6, D.L shr  7 and $1FE or 1] xor
-             Shark_CE[7, D.L shl  1 and $1FE or 1];
-      D.L := T;
-    end;
-    D.L := D.L xor K.L;
-    D.R := D.R xor K.R;
-    Inc(K);
-    D.L := UInt32(Shark_SE[D.L shr 24 and $FF]) shl 24 xor
-           UInt32(Shark_SE[D.L shr 16 and $FF]) shl 16 xor
-           UInt32(Shark_SE[D.L shr  8 and $FF]) shl  8 xor
-           UInt32(Shark_SE[D.L        and $FF]);
-    D.R := UInt32(Shark_SE[D.R shr 24 and $FF]) shl 24 xor
-           UInt32(Shark_SE[D.R shr 16 and $FF]) shl 16 xor
-           UInt32(Shark_SE[D.R shr  8 and $FF]) shl  8 xor
-           UInt32(Shark_SE[D.R        and $FF]);
-    Result.L := D.L xor K.L;
-    Result.R := D.R xor K.R;
   end;
 
 var
@@ -5458,18 +5734,18 @@ begin
   E := FAdditionalBuffer;
   D := @E[7];
   Move(Shark_CE[0], T, SizeOf(T));
-  T[6] := Transform(T[6]);
+  T[6] := Transform(T[6], Log, ALog);
   I := 0;
   for R := 0 to 6 do
   begin
-    Inc(I);
     A[R].L := K[I and $F];
     A[R].R := 0;
+    Inc(I);
     for J := 1 to 7 do
     begin
-      Inc(I);
       A[R].R := A[R].R shl 8 or A[R].L shr 24;
       A[R].L := A[R].L shl 8 or K[I and $F];
+      Inc(I);
     end;
   end;
   L.L := 0;
@@ -5483,13 +5759,11 @@ begin
     E[R].L := A[R].L xor L.L;
     E[R].R := A[R].R xor L.R;
   end;
-  E[6] := Transform(E[6]);
+  E[6] := Transform(E[6], Log, ALog);
   D[0] := E[6];
   D[6] := E[0];
   for R := 1 to 5 do
-    D[R] := Transform(E[6-R]);
-  ProtectBuffer(Log, SizeOf(Log));
-  ProtectBuffer(ALog, SizeOf(ALog));
+    D[R] := Transform(E[6-R], Log, ALog);
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
@@ -5588,6 +5862,292 @@ begin
   PLong64(Dest).L := L xor K[12];
   PLong64(Dest).R := R xor K[13];
 end;
+
+{$ELSE CPU64BITS}
+
+const
+  SHARK_ROUNDS = 6;
+  SHARK_ROUNDKEYS = SHARK_ROUNDS + 1;
+  SHARK_ROOT = $1F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
+
+function SharkEncode(D: UInt64; K: PUInt64): UInt64;
+var
+  R: Integer;
+begin
+  for R := 1 to SHARK_ROUNDS - 1 do
+  begin
+    D := D xor K^;
+    Inc(K);
+    D := Shark_CE[0, D shr 56 and $FF] xor
+         Shark_CE[1, D shr 48 and $FF] xor
+         Shark_CE[2, D shr 40 and $FF] xor
+         Shark_CE[3, D shr 32 and $FF] xor
+         Shark_CE[4, D shr 24 and $FF] xor
+         Shark_CE[5, D shr 16 and $FF] xor
+         Shark_CE[6, D shr 8  and $FF] xor
+         Shark_CE[7, D        and $FF];
+  end;
+  D := D xor K^;
+  Inc(K);
+  D := UInt64(Shark_SE[D shr 56 and $FF]) shl 56 xor
+       UInt64(Shark_SE[D shr 48 and $FF]) shl 48 xor
+       UInt64(Shark_SE[D shr 40 and $FF]) shl 40 xor
+       UInt64(Shark_SE[D shr 32 and $FF]) shl 32 xor
+       UInt64(Shark_SE[D shr 24 and $FF]) shl 24 xor
+       UInt64(Shark_SE[D shr 16 and $FF]) shl 16 xor
+       UInt64(Shark_SE[D shr  8 and $FF]) shl  8 xor
+       UInt64(Shark_SE[D        and $FF]);
+  Result := D xor K^;
+end;
+
+procedure TCipher_Shark.DoInit(const Key; Size: Integer);
+var
+  Log, ALog: TLogArray;
+
+  procedure InitLog;
+  var
+    I, J: Word;
+  begin
+    // Generate GF(256) anti-logarithm and logarithm tables
+    ALog[0] := 1;
+    for I := 1 to 255 do
+    begin
+      J := ALog[I - 1] shl 1;
+      if J and $100 <> 0 then
+        J := J xor SHARK_ROOT;
+      ALog[I] := J;
+    end;
+    Log[0] := 0;
+    for I := 0 to 254 do
+      Log[ALog[I]] := I;
+  end;
+
+var
+  T: array[0..SHARK_ROUNDS] of UInt64;
+  A: array[0..SHARK_ROUNDKEYS-1] of UInt64;
+  K: array[0..15] of Byte;
+  I, J, R: Integer;
+  E, D: PUInt64Array;
+begin
+  FillChar(K, SizeOf(K), 0);
+  Move(Key, K, Size);
+  InitLog;
+  E := FAdditionalBuffer; // encryption round key
+  D := @E[SHARK_ROUNDS + 1]; // decryption round key
+
+  Move(Shark_CE[0], T, SizeOf(T));
+  T[SHARK_ROUNDS] := Transform(T[SHARK_ROUNDS], Log, ALog);
+
+  I := 0;
+  for R := 0 to High(A) do
+  begin
+    A[R] := K[I and $F];
+    Inc(I);
+    for J := 1 to 7 do
+    begin
+      A[R] := A[R] shl 8 or K[I and $F];
+      Inc(I);
+    end;
+  end;
+
+  E[0] := A[0] xor SharkEncode(0, @T);
+  for R := 1 to High(A) do
+    E[R] := A[R] xor SharkEncode(E[R - 1], @T);
+
+  E[SHARK_ROUNDS] := Transform(E[SHARK_ROUNDS], Log, ALog);
+  D[0] := E[SHARK_ROUNDS];
+  D[SHARK_ROUNDS] := E[0];
+  for R := 1 to SHARK_ROUNDS - 1 do
+    D[R] := Transform(E[SHARK_ROUNDS - R], Log, ALog);
+
+  ProtectBuffer(T, SizeOf(T));
+  ProtectBuffer(A, SizeOf(A));
+  ProtectBuffer(K, SizeOf(K));
+end;
+
+procedure TCipher_Shark.DoEncode(Source, Dest: Pointer; Size: Integer);
+begin
+  Assert(Size = Context.BufferSize);
+
+  PUInt64(Dest)^ := SharkEncode(PUInt64(Source)^, FAdditionalBuffer);
+end;
+
+procedure TCipher_Shark.DoDecode(Source, Dest: Pointer; Size: Integer);
+var
+  R: Integer;
+  D: UInt64;
+  K: PUInt64;
+begin
+  Assert(Size = Context.BufferSize);
+
+  D := PUInt64(Source)^;
+  K := @PUInt64Array(FAdditionalBuffer)[SHARK_ROUNDS + 1]; // decryption round key
+  for R := 1 to SHARK_ROUNDS - 1 do
+  begin
+    D := D xor K^;
+    Inc(K);
+    D := Shark_CD[0, D shr 56 and $FF] xor
+         Shark_CD[1, D shr 48 and $FF] xor
+         Shark_CD[2, D shr 40 and $FF] xor
+         Shark_CD[3, D shr 32 and $FF] xor
+         Shark_CD[4, D shr 24 and $FF] xor
+         Shark_CD[5, D shr 16 and $FF] xor
+         Shark_CD[6, D shr 8  and $FF] xor
+         Shark_CD[7, D        and $FF];
+  end;
+  D := D xor K^;
+  Inc(K);
+  D := UInt64(Shark_SD[D shr 56 and $FF]) shl 56 xor
+       UInt64(Shark_SD[D shr 48 and $FF]) shl 48 xor
+       UInt64(Shark_SD[D shr 40 and $FF]) shl 40 xor
+       UInt64(Shark_SD[D shr 32 and $FF]) shl 32 xor
+       UInt64(Shark_SD[D shr 24 and $FF]) shl 24 xor
+       UInt64(Shark_SD[D shr 16 and $FF]) shl 16 xor
+       UInt64(Shark_SD[D shr  8 and $FF]) shl  8 xor
+       UInt64(Shark_SD[D        and $FF]);
+
+  PUInt64(Dest)^ := D xor K^;
+end;
+{$ENDIF CPU64BITS}
+
+{ TCipher_Shark_DEC52 }
+
+{$IFNDEF CPU64BITS}
+procedure TCipher_Shark_DEC52.DoInit(const Key; Size: Integer);
+var
+  Log, ALog: TLogArray;
+
+  procedure InitLog;
+  var
+    I, J: Word;
+  begin
+    ALog[0] := 1;
+    for I := 1 to 255 do
+    begin
+      J := ALog[I - 1] shl 1;
+      if J and $100 <> 0 then
+        J := J xor $01F5;
+      ALog[I] := J;
+    end;
+    for I := 1 to 254 do
+      Log[ALog[I]] := I;
+  end;
+
+var
+  T: array[0..6] of TLong64;
+  A: array[0..6] of TLong64;
+  K: array[0..15] of Byte;
+  I, J, R: Byte;
+  E, D: PLong64Array;
+  L: TLong64;
+begin
+  FillChar(K, SizeOf(K), 0);
+  Move(Key, K, Size);
+  InitLog;
+  E := FAdditionalBuffer;
+  D := @E[7];
+  Move(Shark_CE[0], T, SizeOf(T));
+  T[6] := Transform(T[6], Log, ALog);
+  I := 0;
+  for R := 0 to 6 do
+  begin
+    Inc(I);
+    A[R].L := K[I and $F];
+    A[R].R := 0;
+    for J := 1 to 7 do
+    begin
+      Inc(I);
+      A[R].R := A[R].R shl 8 or A[R].L shr 24;
+      A[R].L := A[R].L shl 8 or K[I and $F];
+    end;
+  end;
+  L.L := 0;
+  L.R := 0;
+  L := Shark(L, @T);
+  E[0].L := A[0].L xor L.L;
+  E[0].R := A[0].R xor L.R;
+  for R := 1 to 6 do
+  begin
+    L := Shark(E[R - 1], @T);
+    E[R].L := A[R].L xor L.L;
+    E[R].R := A[R].R xor L.R;
+  end;
+  E[6] := Transform(E[6], Log, ALog);
+  D[0] := E[6];
+  D[6] := E[0];
+  for R := 1 to 5 do
+    D[R] := Transform(E[6-R], Log, ALog);
+  ProtectBuffer(T, SizeOf(T));
+  ProtectBuffer(A, SizeOf(A));
+  ProtectBuffer(K, SizeOf(K));
+end;
+
+{$ELSE CPU64BITS}
+
+procedure TCipher_Shark_DEC52.DoInit(const Key; Size: Integer);
+var
+  Log, ALog: TLogArray;
+
+  procedure InitLog;
+  var
+    I, J: Word;
+  begin
+    // Generate GF(256) anti-logarithm and logarithm tables
+    ALog[0] := 1;
+    for I := 1 to 255 do
+    begin
+      J := ALog[I - 1] shl 1;
+      if J and $100 <> 0 then
+        J := J xor SHARK_ROOT;
+      ALog[I] := J;
+    end;
+    for I := 1 to 254 do
+      Log[ALog[I]] := I;
+  end;
+
+var
+  T: array[0..SHARK_ROUNDS] of UInt64;
+  A: array[0..SHARK_ROUNDKEYS-1] of UInt64;
+  K: array[0..15] of Byte;
+  I, J, R: Integer;
+  E, D: PUInt64Array;
+begin
+  FillChar(K, SizeOf(K), 0);
+  Move(Key, K, Size);
+  InitLog;
+  E := FAdditionalBuffer; // encryption round key
+  D := @E[SHARK_ROUNDS + 1]; // decryption round key
+
+  Move(Shark_CE[0], T, SizeOf(T));
+  T[SHARK_ROUNDS] := Transform(T[SHARK_ROUNDS], Log, ALog);
+
+  I := 0;
+  for R := 0 to High(A) do
+  begin
+    Inc(I);
+    A[R] := K[I and $F];
+    for J := 1 to 7 do
+    begin
+      Inc(I);
+      A[R] := A[R] shl 8 or K[I and $F];
+    end;
+  end;
+
+  E[0] := A[0] xor SharkEncode(0, @T);
+  for R := 1 to High(A) do
+    E[R] := A[R] xor SharkEncode(E[R - 1], @T);
+
+  E[SHARK_ROUNDS] := Transform(E[SHARK_ROUNDS], Log, ALog);
+  D[0] := E[SHARK_ROUNDS];
+  D[SHARK_ROUNDS] := E[0];
+  for R := 1 to SHARK_ROUNDS - 1 do
+    D[R] := Transform(E[SHARK_ROUNDS - R], Log, ALog);
+
+  ProtectBuffer(T, SizeOf(T));
+  ProtectBuffer(A, SizeOf(A));
+  ProtectBuffer(K, SizeOf(K));
+end;
+{$ENDIF}
 
 { TCipher_Skipjack }
 
@@ -5938,6 +6498,61 @@ begin
   PUInt32Array(Dest)[1] := Y;
 end;
 
+{ TCipher_XTEA_DEC52 }
+
+{ TODO : The old failure needs to be restored again }
+
+procedure TCipher_XTEA_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
+var
+  Sum,
+  I, X, Y: UInt32;
+  K: PUInt32Array;
+begin
+  Assert(Size = Context.BlockSize);
+
+  Sum := 0;
+
+  X := PUInt32Array(Source)[0];
+  Y := PUInt32Array(Source)[1];
+  K := FAdditionalBuffer;
+
+  for I := 0 to FRounds - 1 do
+  begin
+    Inc(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+    Inc(Sum, TEA_Delta);
+    Inc(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+  end;
+
+  PUInt32Array(Dest)[0] := X;
+  PUInt32Array(Dest)[1] := Y;
+end;
+
+procedure TCipher_XTEA_DEC52.DoDecode(Source, Dest: Pointer; Size: Integer);
+var
+  I: Integer;
+  Sum,
+  X, Y: UInt32;
+  K: PUInt32Array;
+begin
+  Assert(Size = Context.BlockSize);
+
+  Sum := TEA_Delta * UInt32(FRounds);
+
+  X := PUInt32Array(Source)[0];
+  Y := PUInt32Array(Source)[1];
+  K := FAdditionalBuffer;
+
+  for I := 0 to FRounds - 1 do
+  begin
+    Dec(Y, (X shl 4 xor X shr 5) + (X xor Sum) + K[Sum shr 11 and 3]);
+    Dec(Sum, TEA_Delta);
+    Dec(X, (Y shl 4 xor Y shr 5) + (Y xor Sum) + K[Sum and 3]);
+  end;
+
+  PUInt32Array(Dest)[0] := X;
+  PUInt32Array(Dest)[1] := Y;
+end;
+
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
@@ -5982,6 +6597,14 @@ initialization
   TCipher_TEA.RegisterClass(TDECCipher.ClassList);
   TCipher_XTEA.RegisterClass(TDECCipher.ClassList);
   TCipher_TEAN.RegisterClass(TDECCipher.ClassList);
+
+    {$IFDEF OLD_REGISTER_FAULTY_CIPHERS}
+    // Those classes are only there for those who might have relied on the
+    // faulty implementation
+    TCipher_SCOP_DEC52.RegisterClass(TDECCipher.ClassList);
+    TCipher_Shark_DEC52.RegisterClass(TDECCipher.ClassList);
+    TCipher_XTEA_DEC52.RegisterClass(TDECCipher.ClassList);
+    {$ENDIF}
   {$ENDIF}
 
 finalization

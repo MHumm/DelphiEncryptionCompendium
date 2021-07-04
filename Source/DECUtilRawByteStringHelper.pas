@@ -18,6 +18,8 @@ unit DECUtilRawByteStringHelper;
 
 interface
 
+{$INCLUDE DECOptions.inc}
+
 /// <summary>
 ///   System.pas does not contain a RawByteString compatible version of this
 ///   routine so we created our own, copying and adapting code from system.pas
@@ -42,7 +44,7 @@ type
   // Duplicate of the System.pas internal declaration. Needs to be kept in sync.
   PStrRec = ^StrRec;
   StrRec = packed record
-  {$IF defined(CPU64BITS)}
+  {$IFDEF CPU64BITS}
     _Padding: Integer; // Make 16 byte align for payload..
   {$ENDIF}
     codePage: Word;
@@ -95,12 +97,12 @@ begin
       {$IFDEF FPC}
       if InterlockedDecrement(P.refCnt) = 0 then
       {$ELSE}
-        {$IF CompilerVersion >= 17.0}
+        {$IF CompilerVersion >= 24.0}
         if AtomicDecrement(P.refCnt) = 0 then
         {$ELSE}
         Dec(P.refCnt);
         if (P.refCnt = 0) then
-        {$ENDIF}
+        {$IFEND}
       {$ENDIF}
         FreeMem(P);
     end;

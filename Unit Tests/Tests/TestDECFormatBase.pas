@@ -258,7 +258,7 @@ var
   i : Integer;
   b, exp, res : Byte;
 begin
-  {$IF CompilerVersion >= 17.0}
+  {$IF CompilerVersion >= 24.0}
   for i := Low(InputChars) to High(InputChars) do
   begin
     b   := ord(InputChars[i]);
@@ -277,7 +277,7 @@ begin
 
     CheckEquals(exp, res);
   end;
-  {$ENDIF}
+  {$IFEND}
 end;
 
 procedure TestTFormat.TestValidFormat;

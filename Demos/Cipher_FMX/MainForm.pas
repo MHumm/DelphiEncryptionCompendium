@@ -285,12 +285,7 @@ end;
 procedure TFormMain.EditPlainTextChangeTracking(Sender: TObject);
 begin
   if CheckBoxLiveCalc.IsChecked then
-  begin
-//    if ActiveControl = ButtonEncrypt then
-      ButtonEncryptClick(self)
-//    else
-//      ButtonDecryptClick(self);
-  end;
+    ButtonEncryptClick(self)
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);

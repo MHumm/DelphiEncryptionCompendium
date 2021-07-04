@@ -68,6 +68,14 @@ type
     ///   Text to show as error message
     /// </param>
     procedure ShowErrorMessage(ErrorMsg: string);
+    /// <summary>
+    ///   Returns the full class name of the selected hash class.
+    /// </summary>
+    /// <returns>
+    ///   Full class name instead of the displayed algorithm name. It does not
+    ///   guard agains having nothing selected.
+    /// </returns>
+    function  GetSelectedHashClassName: string;
   public
   end;
 
@@ -124,8 +132,7 @@ begin
   if ComboBoxHashFunction.ItemIndex >= 0 then
   begin
     // Find the class type of the selected hash class and create an instance of it
-    Hash := TDECHash.ClassByName(
-      ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).Create;
+    Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
 
     try
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
@@ -160,8 +167,7 @@ end;
 procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
 begin
   CheckBoxIsPasswordHash.IsChecked :=
-    TDECHash.ClassByName(
-      ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex]).IsPasswordHash;
+    TDECHash.ClassByName(GetSelectedHashClassName).IsPasswordHash;
 end;
 
 procedure TFormMain.EditInputChangeTracking(Sender: TObject);
@@ -250,6 +256,11 @@ procedure TFormMain.FormResize(Sender: TObject);
 begin
   LayoutTop.Width    := VertScrollBox1.Width;
   LayoutBottom.Width := VertScrollBox1.Width;
+end;
+
+function TFormMain.GetSelectedHashClassName: string;
+begin
+  Result := 'THash_' + ComboBoxHashFunction.Items[ComboBoxHashFunction.ItemIndex];
 end;
 
 end.

@@ -160,11 +160,11 @@ begin
   if Assigned(Bytes) then
   begin
     SetLength(Result, length(Bytes));
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Move(Bytes[0], Result[low(Result)], length(Bytes));
     {$ELSE}
     Move(Bytes[0], Result[1], length(Bytes));
-    {$ENDIF}
+    {$IFEND}
   end
   else
     Result := '';
@@ -184,7 +184,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeRawByteStringToBytes ' + IntToStr(i));
+                'Failure in TestDecodeRawByteStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -207,7 +207,7 @@ begin
     ResStr := WideStringOf(result);
 
     ExpStr := string(FTestData[i].PlainTextData);
-    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeStringToBytes ' + IntToStr(i));
+    CheckEquals(ExpStr, ResStr, 'Failure in TestDecodeStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -267,7 +267,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 AnsiStringOf(result),
-                'Fehler in TestDecodeAnsiStringToBytes ' + IntToStr(i));
+                'Failure in TestDecodeAnsiStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -290,7 +290,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].PlainTextData),
                 result,
-                'Fehler in TestDecodeAnsiStringToString ' + IntToStr(i));
+                'Failure in TestDecodeAnsiStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}
@@ -309,7 +309,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 RawByteString(StringOf(result)),
-                'Fehler in TestDecodeBytes ' + IntToStr(i));
+                'Failure in TestDecodeBytes ' + IntToStr(i));
   end;
 end;
 
@@ -332,7 +332,7 @@ begin
 
     CheckEquals(FTestData[i].PlainTextData,
                 result,
-                'Fehler in TestDecodeRawByteStringToString ' + IntToStr(i));
+                'Failure in TestDecodeRawByteStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -356,18 +356,26 @@ begin
         SrcBuf := BytesOf(TFormat_HexL.Decode(FTestData[i].EncryptedTextData));
 
         Src.Clear;
+        {$IF CompilerVersion >= 25.0}
         Src.WriteData(SrcBuf, length(SrcBuf));
+        {$ELSE}
+        Src.Write(SrcBuf[0], Length(SrcBuf));
+        {$IFEND}
         Src.Seek(0, TSeekOrigin.soBeginning);
 
         FCipherTwoFish.DecodeStream(Src, Dest, Src.Size, nil);
 
         Dest.Seek(0, TSeekOrigin.soBeginning);
         SetLength(result, Dest.Size);
+        {$IF CompilerVersion >= 25.0}
         Dest.Read(result, 0, Dest.Size);
+        {$ELSE}
+        Dest.Read(Result[0], Dest.Size);
+        {$IFEND}
 
         CheckEquals(FTestData[i].PlainTextData,
                     RawByteString(StringOf(result)),
-                    'Fehler in TestDecodeStream ' + IntToStr(i));
+                    'Failure in TestDecodeStream ' + IntToStr(i));
       end;
 
     finally
@@ -398,7 +406,7 @@ begin
 
     CheckEquals(string(FTestData[i].PlainTextData),
                 result,
-                'Fehler in TestDecodeStringToString ' + i.ToString);
+                'Failure in TestDecodeStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -422,7 +430,7 @@ begin
     ResStr := WideStringOf(result);
 
     ExpStr := string(FTestData[i].PlainTextData);
-    CheckEquals(ExpStr, ResStr, 'Fehler in TestDecodeWideStringToBytes ' + i.ToString);
+    CheckEquals(ExpStr, ResStr, 'Failure in TestDecodeWideStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -445,7 +453,7 @@ begin
 
     CheckEquals(string(FTestData[i].PlainTextData),
                 string(result),
-                'Fehler in TestDecodeWideStringToString ' + i.ToString);
+                'Failure in TestDecodeWideStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}
@@ -466,7 +474,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 AnsiStringOf(TFormat_HexL.Encode(result)),
-                'Fehler in TestEncodeAnsiStringToBytes ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToBytes ' + IntToString(i));
   end;
 end;
 
@@ -485,7 +493,7 @@ begin
 
     CheckEquals(AnsiString(FTestData[i].EncryptedTextData),
                 AnsiStringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeAnsiStringToString ' + i.ToString);
+                'Failure in TestEncodeAnsiStringToString ' + IntToString(i));
   end;
 end;
 {$ENDIF}
@@ -503,7 +511,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                'Fehler in TestEncodeBytes ' + i.ToString);
+                'Failure in TestEncodeBytes ' + IntToStr(i));
   end;
 end;
 
@@ -520,7 +528,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                'Fehler in TestEncodeRawByteStringToBytes ' + i.ToString);
+                'Failure in TestEncodeRawByteStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -539,7 +547,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedTextData,
                 BytesToRawString(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeRawByteStringToString ' + i.ToString);
+                'Failure in TestEncodeRawByteStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -563,18 +571,26 @@ begin
         SrcBuf := BytesOf(FTestData[i].PlainTextData);
 
         Src.Clear;
+        {$IF CompilerVersion >= 25.0}
         Src.WriteData(SrcBuf, length(SrcBuf));
+        {$ELSE}
+        Src.Write(SrcBuf[0], Length(SrcBuf));
+        {$IFEND}
         Src.Seek(0, TSeekOrigin.soBeginning);
 
         FCipherTwoFish.EncodeStream(Src, Dest, Src.Size, nil);
 
         Dest.Seek(0, TSeekOrigin.soBeginning);
         SetLength(result, Dest.Size);
+        {$IF CompilerVersion >= 25.0}
         Dest.Read(result, 0, Dest.Size);
+        {$ELSE}
+        Dest.Read(Result[0], Dest.Size);
+        {$IFEND}
 
         CheckEquals(FTestData[i].EncryptedTextData,
                     RawByteString(StringOf(TFormat_HexL.Encode(result))),
-                    'Fehler in TestEncodeStream ' + i.ToString);
+                    'Failure in TestEncodeStream ' + IntToStr(i));
       end;
 
     finally
@@ -601,7 +617,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
-                'Fehler in TestEncodeStringToBytes ' + i.ToString);
+                'Failure in TestEncodeStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -620,7 +636,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 StringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeStringToString ' + i.ToString);
+                'Failure in TestEncodeStringToString ' + IntToStr(i));
   end;
 end;
 
@@ -640,7 +656,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 string(RawByteString(StringOf(TFormat_HexL.Encode(result)))),
-                'Fehler in TestEncodeWideStringToBytes ' + i.ToString);
+                'Failure in TestEncodeWideStringToBytes ' + IntToStr(i));
   end;
 end;
 
@@ -659,7 +675,7 @@ begin
 
     CheckEquals(FTestData[i].EncryptedUTF16TextData,
                 StringOf(TFormat_HexL.Encode(BytesOf(result))),
-                'Fehler in TestEncodeWideStringToString ' + i.ToString);
+                'Failure in TestEncodeWideStringToString ' + IntToStr(i));
   end;
 end;
 {$ENDIF}

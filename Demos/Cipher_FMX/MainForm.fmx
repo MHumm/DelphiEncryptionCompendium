@@ -297,7 +297,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2020 by Team DEC V%0:s'
+        Text = #169' 2018-2021 by Team DEC V%0:s'
       end
     end
   end

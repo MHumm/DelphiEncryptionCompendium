@@ -261,6 +261,29 @@ type
     property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
+  /// <summary>
+  ///   Interface for all hash classes which are able to operate on bit sized
+  ///   message lengths instead of byte sized ones only.
+  /// </summary>
+  IDECHashBitsized = Interface(IDECHash)
+    /// <summary>
+    ///   Returns the number of bits the final byte of the message consists of
+    /// </summary>
+    function GetFinalByteLength: UInt8;
+    /// <summary>
+    ///   Sets the number of bits the final byte of the message consists of
+    /// </summary>
+    procedure SetFinalByteLength(const Value: UInt8);
+
+    /// <summary>
+    ///   Setting this to a number of bits allows to process messages which have
+    ///   a length which is not a exact multiple of bytes.
+    /// </summary>
+    property FinalBitLength : UInt8
+      read   GetFinalByteLength
+      write  SetFinalByteLength;
+  end;
+
 implementation
 
 end.

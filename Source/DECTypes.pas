@@ -31,7 +31,7 @@ type
     // In D2009 NativeInt was not properly treated by the compiler under certain
     // conditions. See: http://qc.embarcadero.com/wc/qcmain.aspx?d=71292
     NativeInt = Integer;
-    {$ENDIF}
+    {$IFEND}
   {$ENDIF}
 
   PUInt32Array = ^TUInt32Array;
@@ -42,6 +42,9 @@ type
   ///   32 to 64 bit
   /// </summary>
   PUInt32 = ^UINT32;
+
+  PUInt64Array = ^TUInt64Array;
+  TUInt64Array = array[0..1023] of UInt64;
 
 implementation
 

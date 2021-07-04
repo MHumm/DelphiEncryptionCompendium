@@ -35,7 +35,8 @@ uses
 type
   TTestBitTwiddling = class(TTestCase)
   published
-    procedure ReverseBits;
+    procedure ReverseBits32;
+    procedure ReverseBits8;
     procedure SwapBytes;
     procedure SwapLong;
     procedure SwapLongBuffer;
@@ -67,6 +68,11 @@ type
 implementation
 
 type
+  TestRecUInt8 = record
+    Input  : UInt8;
+    Result : UInt8;
+  end;
+
   TestRecCardinal = record
     Input: Cardinal;
     Result: Cardinal;
@@ -77,7 +83,7 @@ type
     Result: Int64;
   end;
 
-procedure TTestBitTwiddling.ReverseBits;
+procedure TTestBitTwiddling.ReverseBits32;
 const
   ReverseBitArray: array[0..4] of TestRecCardinal = (
     (Input: 0;           Result: 0),
@@ -85,6 +91,24 @@ const
     (Input: 1024;        Result: 2097152),
     (Input: 65536;       Result: 32768),
     (Input: 4294967295;  Result: 4294967295)
+  );
+var
+  i: Integer;
+begin
+  for i := 0 to Length(ReverseBitArray) - 1 do
+  begin
+    CheckEquals(ReverseBitArray[i].Result, DECUtil.ReverseBits(ReverseBitArray[i].Input));
+  end;
+end;
+
+procedure TTestBitTwiddling.ReverseBits8;
+const
+  ReverseBitArray: array[0..4] of TestRecUInt8 = (
+    (Input: 0;           Result: 0),
+    (Input: 1;           Result: 128),
+    (Input: 255;         Result: 255),
+    (Input: 10;          Result: $50),
+    (Input: 11;          Result: $D0)
   );
 var
   i: Integer;
@@ -104,18 +128,18 @@ var
   c: Cardinal;
 begin
   s := Input;
-  {$IF CompilerVersion >= 17.0}
+  {$IF CompilerVersion >= 24.0}
   DECUtil.SwapBytes(s[Low(s)], Length(s));
   {$ELSE}
   DECUtil.SwapBytes(s[1], Length(s));
-  {$ENDIF}
+  {$IFEND}
   CheckEquals(Output, s);
 
-  {$IF CompilerVersion >= 17.0}
+  {$IF CompilerVersion >= 24.0}
   DECUtil.SwapBytes(s[Low(s)], Length(s));
   {$ELSE}
   DECUtil.SwapBytes(s[1], Length(s));
-  {$ENDIF}
+  {$IFEND}
   CheckEquals(Input, s);
 
   c := 123456789;

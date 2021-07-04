@@ -33,6 +33,11 @@ type
   TDECHashAuthenticationClass = class of TDECHashAuthentication;
 
   /// <summary>
+  ///   Type of the KDF variant
+  /// </summary>
+  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
+
+  /// <summary>
   ///   Class containing all the KDF, MGF, HMAC and PBKDF2 algorithms
   /// </summary>
   TDECHashAuthentication = class(TDECHash)
@@ -370,7 +375,8 @@ type
     ///   Size of the returned mask in bytes
     /// </param>
     /// <param name="Index">
-    ///
+    ///   Looks like this is a salt applied to each byte of output data?
+{ TODO : Clarify this parameter }
     /// </param>
     /// <returns>
     ///   Mask such that one cannot determine the data which had been given to
@@ -480,7 +486,7 @@ type
   TArrHelper = class
     class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
   end;
-  {$ENDIF}
+  {$IFEND}
 
 implementation
 
@@ -841,7 +847,7 @@ begin
       Result := Result + T;                       // DK += F    , DK = DK || Ti
       {$ELSE}
       TArrHelper.AppendArrays<Byte>(Result, T);
-      {$ENDIF}
+      {$IFEND}
     end;
   finally
     Hash.Free;
@@ -868,6 +874,6 @@ begin
   for i := 0 to High(B) do
     A[L + i] := B[i];
 end;
-{$ENDIF}
+{$IFEND}
 
 end.

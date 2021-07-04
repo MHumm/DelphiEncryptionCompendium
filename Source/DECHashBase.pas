@@ -16,8 +16,10 @@
 *****************************************************************************}
 
 /// <summary>
-///   Base unit for all the hash algorithms. Contains implementation of the key
-///   deviation algorithms as well.
+///   Base unit for all the hash algorithms. The key deviation algorithms are
+///   in the DECHashAUthentication unit and hash algorithms which can process
+///   messages with a length specified in bits instead of whole bytes have
+///   to inherit from TDECHashBit
 /// </summary>
 unit DECHashBase;
 
@@ -39,11 +41,6 @@ type
   ///   registration mechanism
   /// </summary>
   TDECHashClass = class of TDECHash;
-
-  /// <summary>
-  ///   Type of the KDF variant
-  /// </summary>
-  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
 
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
@@ -92,6 +89,16 @@ type
     ///   Value used to fill up data
     /// </summary>
     FPaddingByte : Byte;
+    /// <summary>
+    ///   Last byte of the message to be hashed if the algorithm is capable of
+    ///   processing bit sized message lengths and FFinalBitLen > 0.
+    /// </summary>
+    FFinalByte   : UInt8;
+    /// <summary>
+    ///   Setting this to a number of bits allows to process messages which have
+    ///   a length which is not a exact multiple of bytes.
+    /// </summary>
+    FFinalByteLength : UInt8;
     /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
     ///   to initialize the necessary data structures.
@@ -146,8 +153,8 @@ type
     /// <summary>
     ///   Generic initialization of internal data structures. Additionally the
     ///   internal algorithm specific (because of being overridden by each
-    ///   hash algorithm) DoInit method. Needs to be called before each hash
-    ///   calculation.
+    ///   hash algorithm) DoInit method is called. Needs to be called before
+    ///   each hash calculation.
     /// </summary>
     procedure Init;
     /// <summary>
@@ -615,7 +622,7 @@ begin
   if Carry then
     RaiseHashOverflowError;
 end;
-{$ENDIF PUREPASCAL}
+{$IFEND PUREPASCAL}
 
 procedure TDECHash.RaiseHashOverflowError;
 begin
@@ -704,9 +711,26 @@ begin
 end;
 
 function TDECHash.CalcBuffer(const Buffer; BufferSize: Integer): TBytes;
+var
+  DataPtr: PByte;
 begin
   Init;
-  Calc(Buffer, BufferSize);
+
+  if (FFinalByteLength = 0) or (BufferSize = 0) then
+    Calc(Buffer, BufferSize)
+  else
+    if (BufferSize > 0) then
+    begin
+      // Remember last byte as this might be required for padding for such
+      // algorithms which have some automatic padding logic
+      DataPtr := @Buffer;
+      Inc(DataPtr, BufferSize - 1);
+      FFinalByte := DataPtr^;
+
+      // Last byte is incomplete so do not process normally
+      Calc(Buffer, BufferSize-1);
+    end;
+
   Done;
   Result := DigestAsBytes;
 end;
@@ -717,7 +741,7 @@ begin
   if Length(Data) > 0 then
     Result := CalcBuffer(Data[0], Length(Data))
   else
-    Result := CalcBuffer(Data, Length(Data))
+    Result := CalcBuffer(Data, Length(Data));
 end;
 
 function TDECHash.CalcString(const Value: string; Format: TDECFormatClass): string;
@@ -728,13 +752,13 @@ begin
   Result := '';
   if Length(Value) > 0 then
   begin
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     Size   := Length(Value) * SizeOf(Value[low(Value)]);
     Data   := CalcBuffer(Value[low(Value)], Size);
     {$ELSE}
     Size   := Length(Value) * SizeOf(Value[1]);
     Data   := CalcBuffer(Value[1], Size);
-    {$ENDIF}
+    {$IFEND}
     Result := StringOf(ValidFormat(Format).Encode(Data));
   end
   else
@@ -750,7 +774,7 @@ var
 begin
   Result := '';
   if Length(Value) > 0 then
-    {$IF CompilerVersion >= 17.0}
+    {$IF CompilerVersion >= 24.0}
     result := BytesToRawString(
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[low(Value)],
@@ -760,7 +784,7 @@ begin
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[1],
                              Length(Value) * SizeOf(Value[1]))))
-    {$ENDIF}
+    {$IFEND}
   else
   begin
     SetLength(Buf, 0);
@@ -786,6 +810,10 @@ var
   Max, Pos: Int64;
 begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+
+  // Last byte is incomplete so it mustn't be processed
+  if (FFinalByteLength > 0) then
+    Dec(Size);
 
   Max := 0;
   SetLength(HashResult, 0);
@@ -830,6 +858,10 @@ begin
       if Assigned(OnProgress) then
         OnProgress(Max, Pos, Processing);
     end;
+
+    // Last byte is incomplete but algorithm may need its value for padding
+    if (FFinalByteLength > 0) then
+      Stream.ReadBuffer(FFinalByte, 1);
 
     Done;
     HashResult := DigestAsBytes;

@@ -362,12 +362,14 @@ var
   p : PByte;
   i : Integer;
 begin
-//  SetLength(Buffer, length(cCallbackTestData[0]));
-
   p := @Buffer;
   for i := 0 to Count-1 do
   begin
+    {$IF CompilerVersion >= 24.0}
     p^ := Ord(FTestData[FTestDataIndex].Input[low(FTestData[FTestDataIndex].Input) + i]);
+    {$ELSE}
+    p^ := Ord(FTestData[FTestDataIndex].Input[1 + i]);
+    {$IFEND}
     inc(p);
   end;
 
@@ -579,7 +581,7 @@ begin
   begin
     if FTestData[i].Input <> '' then
     begin
-      {$IF CompilerVersion >= 17.0}
+      {$IF CompilerVersion >= 24.0}
       CRC := CRC16(0,
                    FTestData[i].Input[low(FTestData[i].Input)],
                    length(FTestData[i].Input));
@@ -587,7 +589,7 @@ begin
       CRC := CRC16(0,
                    FTestData[i].Input[1],
                    length(FTestData[i].Input));
-      {$ENDIF}
+      {$IFEND}
 
       CheckEquals(FTestData[i].CRC, CRC,
                   'Wrong CRC16Standalone reult for iteration ' + IntToStr(i));
@@ -711,7 +713,7 @@ begin
   begin
     if FTestData[i].Input <> '' then
     begin
-      {$IF CompilerVersion >= 17.0}
+      {$IF CompilerVersion >= 24.0}
       CRC := CRC32(0,
                    FTestData[i].Input[low(FTestData[i].Input)],
                    length(FTestData[i].Input));
@@ -719,7 +721,7 @@ begin
       CRC := CRC32(0,
                    FTestData[i].Input[1],
                    length(FTestData[i].Input));
-      {$ENDIF}
+      {$IFEND}
 
       CheckEquals(FTestData[i].CRC, CRC,
                   'Wrong CRC32Standalone reult for iteration ' + IntToStr(i));

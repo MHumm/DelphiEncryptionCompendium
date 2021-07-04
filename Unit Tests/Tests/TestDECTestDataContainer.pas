@@ -217,7 +217,7 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    property FinalBitLength     : Int16
+    property FinalByteLength     : Int16
       read   GetFinalBitLength;
   end;
 
