@@ -96,12 +96,12 @@ for %%P in (Win32) do (
 echo. >> "%~dpn0.log" 
 call :do_compile "Demos\Cipher_Console\Cipher_Console.dproj"
 call :do_compile "Demos\Cipher_FMX\Cipher_FMX.dproj"
-call :do_compile "Demos\CryptoWorkbench_VCL\CryptoWorkbench_VCL.dproj"
 call :do_compile "Demos\Format_Console\Format_Console.dproj"
 call :do_compile "Demos\Hash_Console\Hash_Console.dproj"
 call :do_compile "Demos\Hash_FMX\Hash_FMX.dproj"
 call :do_compile "Demos\Progress_VCL\Progress_VCL.dproj"
 call :do_compile "Demos\Random_Console\Random_Console.dproj"
+call :do_compile "Demos\HashBenchmark_FMX\HashBenchmark.dproj"
 
 echo. >> "%~dpn0.log" 
 title RUN Tests
