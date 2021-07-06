@@ -4131,7 +4131,7 @@ begin
       BufLen := Length(Buf);
 
       // Last part of the test data are bits (relevant for SHA3)
-      if FTestData[i].FinalByteLength > 0 then
+      if FTestData[i].FinalByteBitLength > 0 then
         Break;
 
       if length(Buf) > 0 then
@@ -4146,7 +4146,7 @@ begin
       end;
     end;
 
-    if FTestData[i].FinalByteLength > 0 then
+    if FTestData[i].FinalByteBitLength > 0 then
       Continue;
 
     HashClass.Done;

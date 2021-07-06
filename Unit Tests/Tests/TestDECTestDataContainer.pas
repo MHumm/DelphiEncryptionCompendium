@@ -127,7 +127,16 @@ type
     /// <param name="aValue">
     ///   Number of bits of the last byte within the test data to process
     /// </param>
-    procedure SetFinalBitLength(const aValue: Int16);
+    procedure SetFinalByteBitLength(const aValue: UInt16);
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Length of the hash calculated in byte
+    /// </param>
+    procedure SetHashResultByteLength(const aValue: UInt16);
 
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
@@ -153,8 +162,15 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    property FinalBitLength     : Int16
-      write  SetFinalBitLength;
+    property FinalBitLength     : UInt16
+      write  SetFinalByteBitLength;
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    property HashResultByteLength     : UInt16
+      write  SetHashResultByteLength;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
@@ -188,7 +204,14 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    function GetFinalBitLength:Int16;
+    function GetFinalByteBitLength:UInt16;
+
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    function GetHashResultByteLength:UInt16;
 
     /// <summary>
     ///   Gets the length in bytes of the hash value generated for those
@@ -217,8 +240,15 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    property FinalByteLength     : Int16
-      read   GetFinalBitLength;
+    property FinalByteBitLength     : UInt16
+      read   GetFinalByteBitLength;
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    property HashResultByteLength     : UInt16
+      read   GetHashResultByteLength;
   end;
 
   IHashTestDataContainer = interface(ITestDataContainer)
@@ -317,7 +347,16 @@ type
     FOutputUTFStrTest:RawByteString;
     FReqDigSize:UInt32;
     FPaddingByte:Byte;
-    FFinalBitLength: Int16;
+    /// <summary>
+    ///   Number of bits of the last byte of the message considered when
+    ///   calculating the hash. Only used for some hash algorithms.
+    /// </summary>
+    FFinalByteBitLength   : UInt16;
+    /// <summary>
+    ///   Length of the hash value calculated. Used for extensible hash
+    ///   functions only
+    /// </summary>
+    FHashResultByteLength : UInt16;
   protected // ITestDataRow
     function GetInputData:RawByteString;
     function GetInputVectors:ITestDataInputVectorList;
@@ -326,8 +365,8 @@ type
   protected // ITestDataRowSetup
     procedure SetExpectedOutput(const aValue:RawByteString);
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
-    procedure AddInputVector(const aData:RawByteString; const aRunCount:UInt32=1;
-                             const aConcatCount:UInt32=1);
+    procedure AddInputVector(const aData:RawByteString; const aRunCount:UInt32 = 1;
+                             const aConcatCount:UInt32 = 1);
   protected // IHashTestDataRow
     /// <summary>
     ///   Gets the length of the hash value generated for those hash classes
@@ -351,7 +390,17 @@ type
     ///   used.
     /// </returns>
     function GetPaddingByte:Byte;
-    function GetFinalBitLength:Int16;
+    /// <summary>
+    ///   Returns how many bits of the last byte of the message to be hashed
+    ///   shall be considered for hashing.
+    /// </summary>
+    function GetFinalByteBitLength:UInt16;
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    function GetHashResultByteLength:UInt16;
   protected // IHashTestDataRowSetup
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
@@ -385,7 +434,17 @@ type
     /// <param name="aValue">
     ///   Number of bits of the last byte within the test data to process
     /// </param>
-    procedure SetFinalBitLength(const aValue: Int16);
+    procedure SetFinalByteBitLength(const aValue: UInt16);
+    /// <summary>
+    ///   Required parameter for extensible output hash functions like Shake128/256.
+    ///   For those the length of the Hash generated from the data can be specified
+    ///   in byte with this parameter.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Length of the hash calculated in byte
+    /// </param>
+    procedure SetHashResultByteLength(const aValue: UInt16);
+
   public
     constructor Create;
     destructor Destroy; override;
@@ -485,9 +544,14 @@ begin
   inherited;
 end;
 
-function THashTestDataRow.GetFinalBitLength: Int16;
+function THashTestDataRow.GetFinalByteBitLength: UInt16;
 begin
-  result := FFinalBitLength;
+  result := FFinalByteBitLength;
+end;
+
+function THashTestDataRow.GetHashResultByteLength: UInt16;
+begin
+  result := FHashResultByteLength;
 end;
 
 function THashTestDataRow.GetInputData: RawByteString;
@@ -530,9 +594,14 @@ begin
   FOutputUTFStrTest := aValue;
 end;
 
-procedure THashTestDataRow.SetFinalBitLength(const aValue: Int16);
+procedure THashTestDataRow.SetFinalByteBitLength(const aValue: UInt16);
 begin
-  FFinalBitLength := aValue;
+  FFinalByteBitLength := aValue;
+end;
+
+procedure THashTestDataRow.SetHashResultByteLength(const aValue: UInt16);
+begin
+  FHashResultByteLength := aValue;
 end;
 
 procedure THashTestDataRow.SetPaddingByte(const aValue: Byte);

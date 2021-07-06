@@ -357,7 +357,7 @@ procedure TestTHash_SHA3_224.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
   THash_SHA3_224(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
@@ -524,7 +524,7 @@ procedure TestTHash_SHA3_256.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
   THash_SHA3_256(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
@@ -676,7 +676,7 @@ procedure TestTHash_SHA3_384.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
   THash_SHA3_384(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
@@ -838,7 +838,7 @@ procedure TestTHash_SHA3_512.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_SHA3_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_SHA3_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
   THash_SHA3_512(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
@@ -999,8 +999,9 @@ procedure TestTHash_Shake128.ConfigHashClass(HashClass: TDECHash;
 begin
   inherited;
 
-  THash_Shake128(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_Shake128(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
   THash_Shake128(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
+  THash_Shake128(FHash).HashSize        := FTestData[IdxTestData].HashResultByteLength;
 end;
 
 procedure TestTHash_Shake128.SetUp;
@@ -1016,20 +1017,41 @@ begin
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
 //  // SourceEnd
 
-//  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
-//  //         and-Guidelines/documents/examples/SHA3-512_1600.pdf
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := 'e76dfad22084a8b1467fcf2ffa58361bec7628ed' +
-//                                       'f5f3fdc0e4805dc48caeeca81b7c13c30adf52a3' +
-//                                       '659584739a2df46be589c51ca1a4a8416df6545a' +
-//                                       '1ce8ba00';
-//  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0' +
-//                                       'af2be3e9ad2cd7acb111757cb0c41b3564c07778' +
-//                                       '47684435da78577781eef8e6a6652c9844a85882' +
-//                                       'e0fa8b28';
-//  lDataRow.AddInputVector(RawByteString(
-//                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
-//  lDataRow.FinalBitLength := 0;
+  // Source:
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '7f9c2ba4e88f827d616045507605853ed73b8093' + // 20
+                                       'f6efbc88eb1a6eacfa66ef263cb1eea988004b93' +
+                                       '103cfb0aeefd2a686e01fa4a58e8a3639ca8a1e3' +
+                                       'f9ae57e235b8cc873c23dc62b8d260169afa2f75' +
+                                       'ab916a58d974918835d25e6a435085b2badfd6df' +
+                                       'aac359a5efbb7bcc4b59d538df9a04302e10c8bc' +
+                                       '1cbf1a0b3a5120ea17cda7cfad765f5623474d36' +
+                                       '8ccca8af0007cd9f5e4c849f167a580b14aabdef' +
+                                       'aee7eef47cb0fca9767be1fda69419dfb927e9df' +
+                                       '07348b196691abaeb580b32def58538b8d23f877' + // 200
+                                       '32ea63b02b4fa0f4873360e2841928cd60dd4cee' +
+                                       '8cc0d4c922a96188d032675c8ac850933c7aff15' +
+                                       '33b94c834adbb69c6115bad4692d8619f90b0cdf' +
+                                       '8a7b9c264029ac185b70b83f2801f2f4b3f70c59' +
+                                       '3ea3aeeb613a7f1b1de33fd75081f592305f2e45' +
+                                       '26edc09631b10958f464d889f31ba010250fda7f' +
+                                       '1368ec2967fc84ef2ae9aff268e0b1700affc682' +
+                                       '0b523a3d917135f2dff2ee06bfe72b3124721d4a' +
+                                       '26c04e53a75e30e73a7a9c4a95d91c55d495e9f5' +
+                                       '1dd0b5e9d83c6d5e8ce803aa62b8d654db53d09b' + // 400
+                                       '8dcff273cdfeb573fad8bcd45578bec2e770d01e' +
+                                       'fde86e721a3f7c6cce275dabe6e2143f1af18da7' +
+                                       'efddc4c7b70b5e345db93cc936bea323491ccb38' +
+                                       'a388f546a9ff00dd4e1300b9b2153d2041d205b4' +
+                                       '43e41b45a653f2a5c4492c1add544512dda25298' + // 500
+                                       '33462b71a41a45be97290b6f';                  // 512
+  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0' +
+                                       'af2be3e9ad2cd7acb111757cb0c41b3564c07778' +
+                                       '47684435da78577781eef8e6a6652c9844a85882' +
+                                       'e0fa8b28';
+  lDataRow.HashResultByteLength     := 512;
+  lDataRow.AddInputVector('');
+  lDataRow.FinalBitLength := 0;
 end;
 
 procedure TestTHash_Shake128.TestBlockSize;

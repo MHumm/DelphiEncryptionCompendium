@@ -4660,13 +4660,14 @@ end;
 
 function THash_ShakeBase.GetHashSize: UInt16;
 begin
-  Result := FSpongeState.FixedOutputLength;
+  // divided by 8 since this field is in bits
+  Result := FSpongeState.FixedOutputLength div 8; //shr 3;
 end;
 
 procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
 begin
   // multiplied with 8 since this field is in bits
-  FSpongeState.FixedOutputLength := Value shr 3;
+  FSpongeState.FixedOutputLength := Value * 8;
 end;
 
 initialization
