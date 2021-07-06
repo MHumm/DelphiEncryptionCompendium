@@ -596,6 +596,28 @@ type
     class function DigestSize: UInt32; override;
   end;
 
+  /// <summary>
+  ///   Shake128 veriant of SHA3
+  /// </summary>
+  THash_Shake128 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   Shake128 veriant of SHA3
+  /// </summary>
+  THash_Shake256 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
   THavalBaseTransformMethod = procedure(Buffer: PUInt32Array) of object;
 
   THashBaseHaval = class(TDECHashAuthentication)
@@ -4090,7 +4112,7 @@ begin
   inherited;
 
   InitSponge(1088,  512);
-  FSpongeState.fixedOutputLength := 256;
+  FSpongeState.FixedOutputLength := 256;
 end;
 
 { THash_SHA3_384 }
@@ -4110,7 +4132,7 @@ begin
   inherited;
 
   InitSponge(832,  768);
-  FSpongeState.fixedOutputLength := 384;
+  FSpongeState.FixedOutputLength := 384;
 end;
 
 { THash_SHA3_512 }
@@ -4130,7 +4152,49 @@ begin
   inherited;
 
   InitSponge(576, 1024);
-  FSpongeState.fixedOutputLength := 512;
+  FSpongeState.FixedOutputLength := 512;
+end;
+
+{ THash_Shake128 }
+
+class function THash_Shake128.BlockSize: UInt32;
+begin
+  Result := 168;
+end;
+
+class function THash_Shake128.DigestSize: UInt32;
+begin
+{ TODO :
+Lösung einfallen lassen, oder 0 zurückliefern falls keine gefunden wird.
+Vermutlich letzteres. }
+end;
+
+procedure THash_Shake128.DoInit;
+begin
+  inherited;
+
+  InitSponge(1344, 256);
+  FSpongeState.FixedOutputLength := 0;
+end;
+
+{ THash_Shake256 }
+
+class function THash_Shake256.BlockSize: UInt32;
+begin
+  Result := 136;
+end;
+
+class function THash_Shake256.DigestSize: UInt32;
+begin
+
+end;
+
+procedure THash_Shake256.DoInit;
+begin
+  inherited;
+
+  InitSponge(1088, 512);
+  FSpongeState.FixedOutputLength := 0;
 end;
 
 { THash_SHA3Base }
@@ -4545,6 +4609,12 @@ begin
     lw := lw shl (8-WorkingBitLen);
     DoUpdate(@lw, WorkingBitLen);
     // squeeze the digits from the sponge
+{ TODO :
+Bei SHAKE128/256 darf hier nicht FixedOutputLength benutzt werden,
+da man bei diesen ja irgendwie die Länge des erzeugten Hashwertes
+selber bestimmen können muss. Dafür muss noch ein Mechanismus
+geschaffen werden, bzw. diese FixedOutputLength muss von außen
+zugänglich werden. }
     Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
   end
   else
@@ -4589,6 +4659,8 @@ initialization
   THash_SHA3_256.RegisterClass(TDECHash.ClassList);
   THash_SHA3_384.RegisterClass(TDECHash.ClassList);
   THash_SHA3_512.RegisterClass(TDECHash.ClassList);
+  THash_Shake128.RegisterClass(TDECHash.ClassList);
+  THash_Shake256.RegisterClass(TDECHash.ClassList);
   THash_Haval128.RegisterClass(TDECHash.ClassList);
   THash_Haval160.RegisterClass(TDECHash.ClassList);
   THash_Haval192.RegisterClass(TDECHash.ClassList);
