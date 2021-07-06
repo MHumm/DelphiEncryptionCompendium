@@ -197,6 +197,24 @@ type
     procedure TestIdentity;
   end;
 
+  TestTHash_Shake128 = class(TestTHash_SHA3_Base)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters as well as hash output length as Shake128 is an extendable
+    ///   output length algorithm
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 implementation
 
 uses
@@ -974,6 +992,71 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+{ TestTHash_Shake128 }
+
+procedure TestTHash_Shake128.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_Shake128(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteLength;
+  THash_Shake128(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
+end;
+
+procedure TestTHash_Shake128.SetUp;
+var
+  lDataRow : IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_SHake128.Create;
+
+//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
+//  // SourceEnd
+
+//  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+//  //         and-Guidelines/documents/examples/SHA3-512_1600.pdf
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'e76dfad22084a8b1467fcf2ffa58361bec7628ed' +
+//                                       'f5f3fdc0e4805dc48caeeca81b7c13c30adf52a3' +
+//                                       '659584739a2df46be589c51ca1a4a8416df6545a' +
+//                                       '1ce8ba00';
+//  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0' +
+//                                       'af2be3e9ad2cd7acb111757cb0c41b3564c07778' +
+//                                       '47684435da78577781eef8e6a6652c9844a85882' +
+//                                       'e0fa8b28';
+//  lDataRow.AddInputVector(RawByteString(
+//                          #$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
+//  lDataRow.FinalBitLength := 0;
+end;
+
+procedure TestTHash_Shake128.TestBlockSize;
+begin
+  CheckEquals(168, FHash.BlockSize);
+end;
+
+procedure TestTHash_Shake128.TestClassByName;
+begin
+  DoTestClassByName('THash_Shake128', THash_Shake128);
+end;
+
+procedure TestTHash_Shake128.TestDigestSize;
+begin
+  CheckEquals(0, FHash.DigestSize);
+end;
+
+procedure TestTHash_Shake128.TestIdentity;
+begin
+  CheckEquals($2DA1732E, FHash.Identity);
+end;
+
+procedure TestTHash_Shake128.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -981,11 +1064,13 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_256);
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
+  TDUnitX.RegisterTestFixture(TestTHash_Shake128);
   {$ELSE}
   RegisterTests('DECHash', [TestTHash_SHA3_224.Suite,
                             TestTHash_SHA3_256.Suite,
                             TestTHash_SHA3_384.Suite,
-                            TestTHash_SHA3_512.Suite]);
+                            TestTHash_SHA3_512.Suite,
+                            TestTHash_Shake128.Suite]);
   {$ENDIF}
 
 {$ELSE}

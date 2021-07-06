@@ -53,6 +53,8 @@ type
   THash_SHA3_256    = class;
   THash_SHA3_384    = class;
   THash_SHA3_512    = class;
+  THash_Shake128    = class;
+  THash_Shake256    = class;
   THash_Haval128    = class;
   THash_Haval160    = class;  // Haval 160, 3 Rounds
   THash_Haval192    = class;  // Haval 192, 4 Rounds
@@ -597,9 +599,26 @@ type
   end;
 
   /// <summary>
+  ///   Base class for the Shake implementations
+  /// </summary>
+  THash_ShakeBase = class(THash_SHA3Base)
+  private
+    function GetHashSize: UInt16;
+    procedure SetHashSize(const Value: UInt16);
+  public
+    /// <summary>
+    ///   Define the lenght of the resulting hash value in byte as these functions
+    ///   are extendable output functions
+    /// </summary>
+    property HashSize : UInt16
+      read   GetHashSize
+      write  SetHashSize;
+  end;
+
+  /// <summary>
   ///   Shake128 veriant of SHA3
   /// </summary>
-  THash_Shake128 = class(THash_SHA3Base)
+  THash_Shake128 = class(THash_ShakeBase)
   protected
     procedure DoInit; override;
   public
@@ -610,7 +629,7 @@ type
   /// <summary>
   ///   Shake128 veriant of SHA3
   /// </summary>
-  THash_Shake256 = class(THash_SHA3Base)
+  THash_Shake256 = class(THash_ShakeBase)
   protected
     procedure DoInit; override;
   public
@@ -4164,9 +4183,8 @@ end;
 
 class function THash_Shake128.DigestSize: UInt32;
 begin
-{ TODO :
-Lösung einfallen lassen, oder 0 zurückliefern falls keine gefunden wird.
-Vermutlich letzteres. }
+  // 0 because the hash output length is defined via HashSize property at runtime
+  Result := 0;
 end;
 
 procedure THash_Shake128.DoInit;
@@ -4186,7 +4204,8 @@ end;
 
 class function THash_Shake256.DigestSize: UInt32;
 begin
-
+  // 0 because the hash output length is defined via HashSize property at runtime
+  Result := 0;
 end;
 
 procedure THash_Shake256.DoInit;
@@ -4635,6 +4654,19 @@ procedure THash_SHA3Base.DoTransform(Buffer: PUInt32Array);
 begin
 // Empty on purpose as calculation is implemented differently for SHA3. Needed
 // to suppress the compiler warning that a class with an abstract method is created
+end;
+
+{ THash_ShakeBase }
+
+function THash_ShakeBase.GetHashSize: UInt16;
+begin
+  Result := FSpongeState.FixedOutputLength;
+end;
+
+procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
+begin
+  // multiplied with 8 since this field is in bits
+  FSpongeState.FixedOutputLength := Value shr 3;
 end;
 
 initialization
