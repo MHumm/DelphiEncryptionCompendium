@@ -351,13 +351,7 @@ type
       /// <summary>
       ///   Type for the generated hash value
       /// </summary>
-      TSHA3Digest = array[0..63] of UInt8;
-
-    var
-      /// <summary>
-      ///   The generated hash value is stored here
-      /// </summary>
-      FDigest      : TSHA3Digest;
+      TSHA3Digest = array of UInt8;
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
@@ -502,6 +496,13 @@ type
     ///   Contains the current state of the algorithms sponge part
     /// </summary>
     FSpongeState : TSpongeState;
+
+    /// <summary>
+    ///   The generated hash value is stored here. Needs to be variable length
+    ///   due to the Shake algorithms with their variable output length which
+    ///   inherit from here.
+    /// </summary>
+    FDigest      : TSHA3Digest;
 
     /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
@@ -4558,7 +4559,8 @@ procedure THash_SHA3Base.DoInit;
 begin
   inherited;
 
-  FillChar(FDIgest[0], Length(FDigest), 0);
+  SetLength(FDigest, 64);
+  FillChar(FDigest[0], Length(FDigest), 0);
 end;
 
 procedure THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32);
@@ -4606,19 +4608,19 @@ begin
   if Bitlen = 0 then
     lw := 0
   else
-    lw := Bits and pred(word(1) shl Bitlen);
+    lw := Bits and pred(Word(1) shl Bitlen);
 
   // 'append' (in LSB language) the domain separation bits
-  if (FSpongeState.FixedOutputLength = 0) then
+  if (ClassParent = THash_ShakeBase) then
   begin
-    lw := lw or (word($F) shl Bitlen);
-    WorkingBitLen := Bitlen+4;
+    lw := lw or (Word($F) shl Bitlen);
+    WorkingBitLen := Bitlen + 4;
   end
   else
   begin
     // SHA3: append two bits 01
-    lw := lw or (word($2) shl Bitlen);
-    WorkingBitLen := Bitlen+2;
+    lw := lw or (Word($2) shl Bitlen);
+    WorkingBitLen := Bitlen + 2;
   end;
 
   // update state with final bits
@@ -4668,6 +4670,9 @@ procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
 begin
   // multiplied with 8 since this field is in bits
   FSpongeState.FixedOutputLength := Value * 8;
+
+  SetLength(FDigest, Value);
+  FillChar(FDigest[0], Length(FDigest), #0);
 end;
 
 initialization
