@@ -608,6 +608,12 @@ type
     procedure SetHashSize(const Value: UInt16);
   public
     /// <summary>
+    ///   Returns the calculated hash value as byte array. Needs to be overriden
+    ///   here as the length of the output needs to be determined differently due
+    ///   to Shake being extensible output length.
+    /// </summary>
+    function DigestAsBytes: TBytes; override;
+    /// <summary>
     ///   Define the lenght of the resulting hash value in byte as these functions
     ///   are extendable output functions
     /// </summary>
@@ -4673,6 +4679,13 @@ begin
 
   SetLength(FDigest, Value);
   FillChar(FDigest[0], Length(FDigest), #0);
+end;
+
+function THash_ShakeBase.DigestAsBytes: TBytes;
+begin
+  SetLength(Result, FSpongeState.FixedOutputLength shr 3);
+  if FSpongeState.FixedOutputLength > 0 then
+    Move(Digest^, Result[0], FSpongeState.FixedOutputLength);
 end;
 
 initialization
