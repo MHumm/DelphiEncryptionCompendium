@@ -6,7 +6,7 @@ It contains algorithms for these categories:
 
 * Ciphers: encryption/decryption of data
 * Hashes: "cryptographic checksums"
-* Key deviation algorithms like Kdf1-Kdf3 and pbkdf2
+* Key derivation algorithms like Kdf1-Kdf3 and pbkdf2
 * HMAC message authentication
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
@@ -141,7 +141,7 @@ Modes ending on x have been invented by the original developer of DEC
 * CFS8
 * CFSx
 
-## Contained key deviation algorithms:
+## Contained key derivation algorithms:
 * KDF1
 * KDF2
 * KDF3
