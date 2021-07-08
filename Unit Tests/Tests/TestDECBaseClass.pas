@@ -37,7 +37,8 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECClassList = class(TTestCase)
   strict private
-    FDECClassList: TDECClassList;
+    FDECFormatClassList : TDECClassList;
+    FDECHashClassList   : TDECClassList;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -63,62 +64,87 @@ type
     procedure TestGetShortClassNameFromName2;
     procedure TestGetShortClassName;
     procedure TestGetShortClassName2;
+    procedure TestGetShortClassNameDoubleUnderscore;
   end;
 
 implementation
 
 uses
-  DECFormat, DECCiphers;
+  DECFormat,
+  DECHash;
 
 procedure TestTDECClassList.SetUp;
 begin
-  FDECClassList := TDECClassList.Create;
+  FDECFormatClassList := TDECClassList.Create;
 
-  FDECClassList.Add(TFormat_HEX.Identity, TFormat_HEX);
-  FDECClassList.Add(TFormat_HEXL.Identity, TFormat_HEXL);
-  FDECClassList.Add(TFormat_DECMIME32.Identity, TFormat_DECMIME32);
-  FDECClassList.Add(TFormat_Base64.Identity, TFormat_Base64);
-  FDECClassList.Add(TFormat_UU.Identity, TFormat_UU);
-  FDECClassList.Add(TFormat_XX.Identity, TFormat_XX);
-  FDECClassList.Add(TFormat_ESCAPE.Identity, TFormat_ESCAPE);
+  FDECFormatClassList.Add(TFormat_HEX.Identity, TFormat_HEX);
+  FDECFormatClassList.Add(TFormat_HEXL.Identity, TFormat_HEXL);
+  FDECFormatClassList.Add(TFormat_DECMIME32.Identity, TFormat_DECMIME32);
+  FDECFormatClassList.Add(TFormat_Base64.Identity, TFormat_Base64);
+  FDECFormatClassList.Add(TFormat_UU.Identity, TFormat_UU);
+  FDECFormatClassList.Add(TFormat_XX.Identity, TFormat_XX);
+  FDECFormatClassList.Add(TFormat_ESCAPE.Identity, TFormat_ESCAPE);
+
+  FDECHashClassList := TDECClassList.Create;
+  FDECHashClassList.Add(THash_MD5.Identity, THash_MD5);
+  FDECHashClassList.Add(THash_SHA256.Identity, THash_SHA256);
+  FDECHashClassList.Add(THash_SHA3_256.Identity, THash_SHA3_256);
 end;
 
 procedure TestTDECClassList.TearDown;
 begin
-  FDECClassList.Free;
-  FDECClassList := nil;
+  FDECFormatClassList.Free;
+  FDECHashClassList.Free;
 end;
 
 procedure TestTDECClassList.TestClassByIdentity;
 var
   ReturnValue: TDECClass;
 begin
-  ReturnValue := FDECClassList.ClassByIdentity(TFormat_HEX.Identity);
+  ReturnValue := FDECFormatClassList.ClassByIdentity(TFormat_HEX.Identity);
   CheckEquals(ReturnValue, TFormat_HEX);
   CheckNotEquals(ReturnValue = TFormat_HEXL, true);
 
-  ReturnValue := FDECClassList.ClassByIdentity(TFormat_Base64.Identity);
+  ReturnValue := FDECFormatClassList.ClassByIdentity(TFormat_Base64.Identity);
   CheckEquals(ReturnValue, TFormat_Base64);
 
-  ReturnValue := FDECClassList.ClassByIdentity(TFormat_ESCAPE.Identity);
+  ReturnValue := FDECFormatClassList.ClassByIdentity(TFormat_ESCAPE.Identity);
   CheckEquals(ReturnValue, TFormat_ESCAPE);
+
+  ReturnValue := FDECHashClassList.ClassByIdentity(THash_MD5.Identity);
+  CheckEquals(ReturnValue, THash_MD5);
+
+  ReturnValue := FDECHashClassList.ClassByIdentity(THash_SHA256.Identity);
+  CheckEquals(ReturnValue, THash_SHA256);
+
+  ReturnValue := FDECHashClassList.ClassByIdentity(THash_SHA3_256.Identity);
+  CheckEquals(ReturnValue, THash_SHA3_256);
 end;
 
 procedure TestTDECClassList.TestClassByName;
 var
   ReturnValue: TDECClass;
 begin
-  ReturnValue := FDECClassList.ClassByName('TFormat_HEX');
+  ReturnValue := FDECFormatClassList.ClassByName('TFormat_HEX');
   CheckEquals(ReturnValue, TFormat_HEX);
 
-  ReturnValue := FDECClassList.ClassByName('TFormat_hex');
+  ReturnValue := FDECFormatClassList.ClassByName('TFormat_hex');
   CheckEquals(ReturnValue, TFormat_HEX);
 
-  ReturnValue := FDECClassList.ClassByName('TFormat_HEXL');
+  ReturnValue := FDECFormatClassList.ClassByName('TFormat_HEXL');
   CheckEquals(ReturnValue, TFormat_HEXL);
 
-  ReturnValue := FDECClassList.ClassByName('TFormat_ESCAPE');
+  ReturnValue := FDECFormatClassList.ClassByName('TFormat_ESCAPE');
   CheckEquals(ReturnValue, TFormat_ESCAPE);
+
+  ReturnValue := FDECHashClassList.ClassByName('THash_MD5');
+  CheckEquals(ReturnValue, THash_MD5);
+
+  ReturnValue := FDECHashClassList.ClassByName('THash_SHA256');
+  CheckEquals(ReturnValue, THash_SHA256);
+
+  ReturnValue := FDECHashClassList.ClassByName('THash_SHA3_256');
+  CheckEquals(ReturnValue, THash_SHA3_256);
 end;
 
 procedure TestTDECClassList.TestGetClassList;
@@ -127,7 +153,7 @@ var
 begin
   sl := TStringList.Create;
   try
-    FDECClassList.GetClassList(sl);
+    FDECFormatClassList.GetClassList(sl);
 
     CheckEquals(sl.Count, 7, 'Wrong number of registered classes');
     CheckEquals(sl.IndexOf('TFormat_HEX')       >= 0, true);
@@ -150,8 +176,17 @@ end;
 
 procedure TestTDECObject.TestGetShortClassName2;
 begin
-  CheckEquals(TCipher_Skipjack.GetShortClassName,
-              'Skipjack');
+  CheckEquals(THash_MD5.GetShortClassName,
+              'MD5');
+end;
+
+procedure TestTDECObject.TestGetShortClassNameDoubleUnderscore;
+begin
+  CheckEquals(THash_SHA256.GetShortClassName,
+              'SHA256');
+
+  CheckEquals(THash_SHA3_256.GetShortClassName,
+              'SHA3_256');
 end;
 
 procedure TestTDECObject.TestGetShortClassNameFromName;
