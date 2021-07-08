@@ -21,8 +21,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Platform,
-  FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti, FMX.Grid.Style,
-  FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics;
+  FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti,
+  FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics, FMX.Grid.Style;
 
 type
   TFormMain = class(TForm)
@@ -183,6 +183,11 @@ end;
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
   b_CopyToClipboard.Enabled := false;
+
+  // This property is only supported from 10.4 onwards, so we set it in code
+  {$IF CompilerVersion >= 34.0}
+  StringColumn2.HorzAlign := TTextAlign.Trailing;
+  {$ENDIF}
 end;
 
 procedure TFormMain.FormResize(Sender: TObject);
