@@ -49,7 +49,7 @@ object FormMain: TFormMain
       Header = 'Algorithm'
       ReadOnly = True
     end
-    object StringColumn2: TStringColumn      
+    object StringColumn2: TStringColumn
       Header = 'Speed MB/s'
     end
     object StringColumn3: TStringColumn

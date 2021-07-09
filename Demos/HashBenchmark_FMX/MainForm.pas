@@ -22,7 +22,11 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Platform,
   FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti,
-  FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics, FMX.Grid.Style;
+  {$IF RTLVersion < 34}
+  {$ELSE}
+  FMX.Grid.Style,
+  {$ENDIF}
+  FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics;
 
 type
   TFormMain = class(TForm)
