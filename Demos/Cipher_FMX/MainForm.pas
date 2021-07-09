@@ -23,7 +23,11 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
+  {$IF RTLVersion < 34}
+  {$ELSE}
+  FMX.Grid.Style,
+  {$ENDIF}
+  FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
 
 type
   /// <summary>
