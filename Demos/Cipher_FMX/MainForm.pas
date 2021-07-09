@@ -23,7 +23,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  {$IF RTLVersion < 34}
+  {$IF RTLVersion < 31}
   {$ELSE}
   FMX.Grid.Style,
   {$ENDIF}
