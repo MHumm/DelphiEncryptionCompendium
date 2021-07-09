@@ -189,7 +189,7 @@ begin
   b_CopyToClipboard.Enabled := false;
 
   // This property is only supported from 10.4 onwards, so we set it in code
-  {$IF CompilerVersion >= 34.0}
+  {$IF RTLVersion >= 34}
   StringColumn2.HorzAlign := TTextAlign.Trailing;
   {$ENDIF}
 end;
