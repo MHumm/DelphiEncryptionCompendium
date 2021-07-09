@@ -226,7 +226,7 @@ begin
 
     sg_Results.Cells[1, RowIndex] :=
       Format('%0:f', [cIterations / (FStopwatch.ElapsedMilliseconds/1000)]);
-    sg_Results.Cells[2, RowIndex] := FStopwatch.Elapsed.ToString;
+    sg_Results.Cells[2, RowIndex] := FStopwatch.Elapsed;
   finally
     Hash.Free;
   end;
