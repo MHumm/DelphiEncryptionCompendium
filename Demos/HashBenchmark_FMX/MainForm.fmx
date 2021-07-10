@@ -42,7 +42,7 @@ object FormMain: TFormMain
     StyleLookup = 'gridstyle'
     TabOrder = 0
     RowCount = 0
-    Options = [ColumnResize, ColLines, RowLines, RowSelect, Tabs, Header, AutoDisplacement]
+    Options = [ColumnResize, ColLines, RowLines, RowSelect, Tabs, Header]
     Viewport.Width = 621.000000000000000000
     Viewport.Height = 344.000000000000000000
     object StringColumn1: TStringColumn
@@ -50,7 +50,6 @@ object FormMain: TFormMain
       ReadOnly = True
     end
     object StringColumn2: TStringColumn
-      HorzAlign = Trailing
       Header = 'Speed MB/s'
     end
     object StringColumn3: TStringColumn

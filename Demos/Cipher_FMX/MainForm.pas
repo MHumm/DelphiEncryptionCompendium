@@ -23,7 +23,11 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  FMX.Grid.Style, FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
+  {$IF RTLVersion < 31}
+  {$ELSE}
+  FMX.Grid.Style,
+  {$ENDIF}
+  FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
 
 type
   /// <summary>
@@ -237,9 +241,12 @@ begin
 end;
 
 procedure TFormMain.ShowErrorMessage(ErrorMsg: string);
+{$IF RTLVersion > 30}
 var
   AsyncDlg : IFMXDialogServiceASync;
+{$ENDIF}
 begin
+  {$IF RTLVersion > 30}
   if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
                                                        IInterface(AsyncDlg)) then
     AsyncDlg.MessageDialogAsync(Translate(ErrorMsg),
@@ -247,6 +254,10 @@ begin
     procedure (const AResult: TModalResult)
     begin
     end);
+  {$ELSE}
+  MessageDlg(Translate(ErrorMsg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
+  {$ENDIF}
 end;
 
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);

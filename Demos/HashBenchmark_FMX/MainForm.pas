@@ -21,7 +21,11 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Platform,
-  FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti, FMX.Grid.Style,
+  FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti,
+  {$IF RTLVersion < 31}
+  {$ELSE}
+  FMX.Grid.Style,
+  {$ENDIF}
   FMX.Grid, FMX.ScrollBox, FMX.Objects, System.Diagnostics;
 
 type
@@ -183,6 +187,11 @@ end;
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
   b_CopyToClipboard.Enabled := false;
+
+  // This property is only supported from 10.4 onwards, so we set it in code
+  {$IF RTLVersion >= 34}
+  StringColumn2.HorzAlign := TTextAlign.Trailing;
+  {$ENDIF}
 end;
 
 procedure TFormMain.FormResize(Sender: TObject);
@@ -217,7 +226,7 @@ begin
 
     sg_Results.Cells[1, RowIndex] :=
       Format('%0:f', [cIterations / (FStopwatch.ElapsedMilliseconds/1000)]);
-    sg_Results.Cells[2, RowIndex] := FStopwatch.Elapsed.ToString;
+    sg_Results.Cells[2, RowIndex] := FStopwatch.Elapsed;
   finally
     Hash.Free;
   end;
