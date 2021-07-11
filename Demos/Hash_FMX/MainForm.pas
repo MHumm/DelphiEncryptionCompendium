@@ -152,9 +152,12 @@ begin
 end;
 
 procedure TFormMain.ShowErrorMessage(ErrorMsg: string);
+{$IF RTLVersion > 30}
 var
   AsyncDlg : IFMXDialogServiceASync;
+{$ENDIF}
 begin
+  {$IF RTLVersion > 30}
   if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
                                                        IInterface(AsyncDlg)) then
     AsyncDlg.MessageDialogAsync(Translate(ErrorMsg),
@@ -162,6 +165,10 @@ begin
     procedure (const AResult: TModalResult)
     begin
     end);
+  {$ELSE}
+  MessageDlg(Translate(ErrorMsg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
+  {$ENDIF}
 end;
 
 procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
