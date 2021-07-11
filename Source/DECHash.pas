@@ -422,11 +422,6 @@ type
     procedure KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 
     /// <summary>
-    ///   Include input message data bits into the sponge state
-    /// </summary>
-    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
-
-    /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
     ///   times, only the last DataBitLen may be a non-multiple of 8
     ///   (the corresponding byte) must be MSB aligned, i.e. in the
@@ -522,6 +517,11 @@ type
     ///   stays untouched.
     /// </param>
     procedure InitSponge(Rate, Capacity: UInt16);
+
+    /// <summary>
+    ///   Include input message data bits into the sponge state
+    /// </summary>
+    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer); virtual;
 
     /// <summary>
     ///   Init internal data
@@ -4242,8 +4242,8 @@ end;
 
 procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 begin
-   XORIntoState(TState_L(state), data, laneCount);
-   KeccakPermutation(TState_L(state));
+  XORIntoState(TState_L(state), data, laneCount);
+  KeccakPermutation(TState_L(state));
 end;
 
 {$IFDEF PUREPASCAL}
@@ -4348,31 +4348,31 @@ end;
 
 procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
 var
-   A : PUInt64Array;
-   B : array [0..24] of UInt64;
-   C : array [0..4] of UInt64;
-   i : Integer;
+  A : PUInt64Array;
+  B : array [0..24] of UInt64;
+  C : array [0..4] of UInt64;
+  i : Integer;
 
-  {$IFDEF X86ASM}
-  procedure EMMS;
-  asm
-    // This operation marks the x87 FPU data registers (which are aliased to the
-    // MMX technology registers) as available for use by x87 FPU floating-point
-    // instructions.
-    emms
-  end;
-  {$ENDIF}
+ {$IFDEF X86ASM}
+ procedure EMMS;
+ asm
+   // This operation marks the x87 FPU data registers (which are aliased to the
+   // MMX technology registers) as available for use by x87 FPU floating-point
+   // instructions.
+   emms
+ end;
+ {$ENDIF}
 
 begin
-   A := PUInt64Array(@state);
-   for i:=0 to 23 do begin
-      KeccakPermutationKernel(@B, A, @C);
-      A[00] := A[00] xor cRoundConstants[i];
-   end;
+  A := PUInt64Array(@state);
+  for i:=0 to 23 do begin
+     KeccakPermutationKernel(@B, A, @C);
+     A[00] := A[00] xor cRoundConstants[i];
+  end;
 
-   {$IFDEF X86ASM}
-   EMMS;
-   {$ENDIF}
+  {$IFDEF X86ASM}
+  EMMS;
+  {$ENDIF}
 end;
 {$ENDIF}
 
@@ -4427,6 +4427,9 @@ begin
   begin
     if FSpongeState.bitsAvailableForSqueezing = 0 then
     begin
+{ TODO :
+Warum ist hier FSpongeState.State = FSpongeState.DataQueue?
+Bei WE ist da was total anderes drin! }
       KeccakPermutation(TState_L(FSpongeState.State));
       ExtractFromState(@FSpongeState.DataQueue, TState_L(FSpongeState.State),
                        FSpongeState.Rate div 64);
@@ -4446,17 +4449,16 @@ end;
 
 procedure THash_SHA3Base.XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
 var
-   pS: PUInt64;
-   i: Integer;
+  pS: PUInt64;
+  i: Integer;
 begin
-   pS := @state[0];
-   for i:=laneCount-1 downto 0 do begin
-      pS^ := pS^ xor pI^;
-      Inc(pI);
-      Inc(pS);
-   end;
+  pS := @state[0];
+  for i:=laneCount-1 downto 0 do begin
+     pS^ := pS^ xor pI^;
+     Inc(pI);
+     Inc(pS);
+  end;
 end;
-
 
 procedure THash_SHA3Base.Absorb(Data: PBABytes; DatabitLen: Int32);
 var
