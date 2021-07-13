@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -127,7 +127,7 @@ type
   end;
 
   /// <summary>
-  ///   Do not confuse with the original RipeMD algorithm which ís being
+  ///   Do not confuse with the original RipeMD algorithm which Ã­s being
   ///   considered to be unsafe anyway. Considered to be broken due to the only
   ///   128 Bit long message digest result.
   /// </summary>
@@ -348,10 +348,19 @@ type
       ///   Pointer to a buffer
       /// </summary>
       PBABytes = ^TBABytes;
+{ TODO : Remove }
+//      /// <summary>
+//      ///   Type for the generated hash value
+//      /// </summary>
+//      TSHA3Digest = array[0..63] of UInt8;
+
       /// <summary>
       ///   Type for the generated hash value
       /// </summary>
       TSHA3Digest = array of UInt8;
+
+//    var
+
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
@@ -420,6 +429,11 @@ type
     ///   Number of times the loop in this algorithm has tpo be carried out
     /// </param>
     procedure KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
+
+    /// <summary>
+    ///   Include input message data bits into the sponge state
+    /// </summary>
+    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
 
     /// <summary>
     ///   Update state with DataBitLen bits from data. May be called multiple
@@ -493,9 +507,7 @@ type
     FSpongeState : TSpongeState;
 
     /// <summary>
-    ///   The generated hash value is stored here. Needs to be variable length
-    ///   due to the Shake algorithms with their variable output length which
-    ///   inherit from here.
+    ///   The generated hash value is stored here
     /// </summary>
     FDigest      : TSHA3Digest;
 
@@ -517,11 +529,6 @@ type
     ///   stays untouched.
     /// </param>
     procedure InitSponge(Rate, Capacity: UInt16);
-
-    /// <summary>
-    ///   Include input message data bits into the sponge state
-    /// </summary>
-    procedure XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer); virtual;
 
     /// <summary>
     ///   Init internal data
@@ -4138,7 +4145,7 @@ begin
   inherited;
 
   InitSponge(1088,  512);
-  FSpongeState.FixedOutputLength := 256;
+  FSpongeState.fixedOutputLength := 256;
 end;
 
 { THash_SHA3_384 }
@@ -4158,7 +4165,7 @@ begin
   inherited;
 
   InitSponge(832,  768);
-  FSpongeState.FixedOutputLength := 384;
+  FSpongeState.fixedOutputLength := 384;
 end;
 
 { THash_SHA3_512 }
@@ -4178,7 +4185,7 @@ begin
   inherited;
 
   InitSponge(576, 1024);
-  FSpongeState.FixedOutputLength := 512;
+  FSpongeState.fixedOutputLength := 512;
 end;
 
 { THash_Shake128 }
@@ -4242,8 +4249,8 @@ end;
 
 procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
 begin
-  XORIntoState(TState_L(state), data, laneCount);
-  KeccakPermutation(TState_L(state));
+   XORIntoState(TState_L(state), data, laneCount);
+   KeccakPermutation(TState_L(state));
 end;
 
 {$IFDEF PUREPASCAL}
@@ -4348,31 +4355,31 @@ end;
 
 procedure THash_SHA3Base.KeccakPermutation(var state: TState_L);
 var
-  A : PUInt64Array;
-  B : array [0..24] of UInt64;
-  C : array [0..4] of UInt64;
-  i : Integer;
-
- {$IFDEF X86ASM}
- procedure EMMS;
- asm
-   // This operation marks the x87 FPU data registers (which are aliased to the
-   // MMX technology registers) as available for use by x87 FPU floating-point
-   // instructions.
-   emms
- end;
- {$ENDIF}
-
-begin
-  A := PUInt64Array(@state);
-  for i:=0 to 23 do begin
-     KeccakPermutationKernel(@B, A, @C);
-     A[00] := A[00] xor cRoundConstants[i];
-  end;
+   A : PUInt64Array;
+   B : array [0..24] of UInt64;
+   C : array [0..4] of UInt64;
+   i : Integer;
 
   {$IFDEF X86ASM}
-  EMMS;
+  procedure EMMS;
+  asm
+    // This operation marks the x87 FPU data registers (which are aliased to the
+    // MMX technology registers) as available for use by x87 FPU floating-point
+    // instructions.
+    emms
+  end;
   {$ENDIF}
+
+begin
+   A := PUInt64Array(@state);
+   for i:=0 to 23 do begin
+      KeccakPermutationKernel(@B, A, @C);
+      A[00] := A[00] xor cRoundConstants[i];
+   end;
+
+   {$IFDEF X86ASM}
+   EMMS;
+   {$ENDIF}
 end;
 {$ENDIF}
 
@@ -4427,9 +4434,6 @@ begin
   begin
     if FSpongeState.bitsAvailableForSqueezing = 0 then
     begin
-{ TODO :
-Warum ist hier FSpongeState.State = FSpongeState.DataQueue?
-Bei WE ist da was total anderes drin! }
       KeccakPermutation(TState_L(FSpongeState.State));
       ExtractFromState(@FSpongeState.DataQueue, TState_L(FSpongeState.State),
                        FSpongeState.Rate div 64);
@@ -4449,16 +4453,17 @@ end;
 
 procedure THash_SHA3Base.XORIntoState(var state: TState_L; pI: PUInt64; laneCount: Integer);
 var
-  pS: PUInt64;
-  i: Integer;
+   pS: PUInt64;
+   i: Integer;
 begin
-  pS := @state[0];
-  for i:=laneCount-1 downto 0 do begin
-     pS^ := pS^ xor pI^;
-     Inc(pI);
-     Inc(pS);
-  end;
+   pS := @state[0];
+   for i:=laneCount-1 downto 0 do begin
+      pS^ := pS^ xor pI^;
+      Inc(pI);
+      Inc(pS);
+   end;
 end;
+
 
 procedure THash_SHA3Base.Absorb(Data: PBABytes; DatabitLen: Int32);
 var
@@ -4568,7 +4573,7 @@ begin
   inherited;
 
   SetLength(FDigest, 64);
-  FillChar(FDigest[0], Length(FDigest), 0);
+  FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
 procedure THash_SHA3Base.DoUpdate(Data: Pointer; DataBitLen: Int32);
@@ -4616,19 +4621,19 @@ begin
   if Bitlen = 0 then
     lw := 0
   else
-    lw := Bits and pred(Word(1) shl Bitlen);
+    lw := Bits and pred(word(1) shl Bitlen);
 
   // 'append' (in LSB language) the domain separation bits
-  if (ClassParent = THash_ShakeBase) then
+  if (FSpongeState.FixedOutputLength = 0) then
   begin
-    lw := lw or (Word($F) shl Bitlen);
-    WorkingBitLen := Bitlen + 4;
+    lw := lw or (word($F) shl Bitlen);
+    WorkingBitLen := Bitlen+4;
   end
   else
   begin
     // SHA3: append two bits 01
-    lw := lw or (Word($2) shl Bitlen);
-    WorkingBitLen := Bitlen + 2;
+    lw := lw or (word($2) shl Bitlen);
+    WorkingBitLen := Bitlen+2;
   end;
 
   // update state with final bits
@@ -4638,12 +4643,6 @@ begin
     lw := lw shl (8-WorkingBitLen);
     DoUpdate(@lw, WorkingBitLen);
     // squeeze the digits from the sponge
-{ TODO :
-Bei SHAKE128/256 darf hier nicht FixedOutputLength benutzt werden,
-da man bei diesen ja irgendwie die Länge des erzeugten Hashwertes
-selber bestimmen können muss. Dafür muss noch ein Mechanismus
-geschaffen werden, bzw. diese FixedOutputLength muss von außen
-zugänglich werden. }
     Squeeze(Hashvalue, FSpongeState.FixedOutputLength);
   end
   else
@@ -4679,7 +4678,8 @@ begin
   // multiplied with 8 since this field is in bits
   FSpongeState.FixedOutputLength := Value * 8;
 
-  SetLength(FDigest, Value);
+  SetLength(FDigest, Value * 8);
+//  SetLength(FDigest, 64);
   FillChar(FDigest[0], Length(FDigest), #0);
 end;
 
@@ -4749,3 +4749,4 @@ finalization
   // in finalization of DECBaseClass unit
 
 end.
+
