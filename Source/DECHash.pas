@@ -348,7 +348,7 @@ type
       ///   Pointer to a buffer
       /// </summary>
       PBABytes = ^TBABytes;
-{ TODO : Remove }
+//{ TODO : Remove }
 //      /// <summary>
 //      ///   Type for the generated hash value
 //      /// </summary>
@@ -512,6 +512,13 @@ type
     FDigest      : TSHA3Digest;
 
     /// <summary>
+    ///   When true, the output length has been set (applicable for the expandable
+    ///   output length algorithm variants named Shake) and needs to be preserved
+    ///   in InitSponge
+    /// </summary>
+    FOutpLengSet : Boolean;
+
+    /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
     ///   the absorbing phase by this. If invalid parameter values are specified
     ///   a EDECHashException will be raised
@@ -542,7 +549,19 @@ type
     ///   Final step of the calculation
     /// </summary>
     procedure DoDone; override;
+
+    /// <summary>
+    ///   Returns the calculated hash value
+    /// </summary>
+    /// <returns>
+    ///   Hash value calculated
+    /// </returns>
+    function Digest: PByteArray; override;
   public
+    /// <summary>
+    ///   Dimension hash result buffer
+    /// </summary>
+    constructor Create; override;
     /// <summary>
     ///   Processes one chunk of data to be hashed.
     /// </summary>
@@ -553,13 +572,6 @@ type
     ///   Size of the data in bytes
     /// </param>
     procedure Calc(const Data; DataSize: Integer); override;
-    /// <summary>
-    ///   Returns the calculated hash value
-    /// </summary>
-    /// <returns>
-    ///   Hash value calculated
-    /// </returns>
-    function Digest: PByteArray; override;
   end;
 
   /// <summary>
@@ -2970,10 +2982,10 @@ procedure THash_Tiger.SetRounds(Value: Integer);
 begin
   if (Value < cTigerMinRounds) then
     Value := cTigerMinRounds;
-    
+
   if (Value > cTigerMaxRounds) then
     Value := cTigerMaxRounds;
-    
+
   FRounds := Value;
 end;
 
@@ -4206,7 +4218,6 @@ begin
   inherited;
 
   InitSponge(1344, 256);
-  FSpongeState.FixedOutputLength := 0;
 end;
 
 { THash_Shake256 }
@@ -4227,14 +4238,20 @@ begin
   inherited;
 
   InitSponge(1088, 512);
-  FSpongeState.FixedOutputLength := 0;
 end;
 
 { THash_SHA3Base }
 
 procedure THash_SHA3Base.InitSponge(Rate, Capacity: UInt16);
+var
+  OutputLengthBackup : UInt16;
 begin
-  // This is the only place where state.error is reset to 0 = SUCCESS
+  if FOutpLengSet then
+    OutputLengthBackup := FSpongeState.FixedOutputLength
+  else
+    // Suppress compiler warning about potentially uninitialized variable
+    OutputLengthBackup := 0;
+
   FillChar(FSpongeState, SizeOf(FSpongeState), 0);
 
   if (Rate + Capacity <> 1600) or (Rate = 0) or (Rate >= 1600) or
@@ -4245,6 +4262,9 @@ begin
 
   FSpongeState.Rate     := Rate;
   FSpongeState.Capacity := Capacity;
+
+  if FOutpLengSet then
+    FSpongeState.FixedOutputLength := OutputLengthBackup;
 end;
 
 procedure THash_SHA3Base.KeccakAbsorb(var state: TState_B; data: PUInt64; laneCount: Integer);
@@ -4558,9 +4578,18 @@ begin
   end;
 end;
 
+constructor THash_SHA3Base.Create;
+begin
+  inherited;
+
+  FOutpLengSet := false;
+  SetLength(FDigest, 64);
+end;
+
 function THash_SHA3Base.Digest: PByteArray;
 begin
-  Result := @FDigest;
+{ TODO : Frage: wann ist Länge von FDigest = 0?}
+  Result := @FDigest[0];
 end;
 
 procedure THash_SHA3Base.DoDone;
@@ -4572,7 +4601,8 @@ procedure THash_SHA3Base.DoInit;
 begin
   inherited;
 
-  SetLength(FDigest, 64);
+{ TODO : Remove }
+//  SetLength(FDigest, 64);
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
@@ -4590,7 +4620,7 @@ begin
     Absorb(Data, DataBitLen - (DataBitLen and 7));
 
     // Align the last partial byte to the least significant bits
-    LastByte := PBABytes(Data)^[DataBitLen div 8] shr (8 - (DataBitLen and 7));
+    LastByte := PBABytes(Data)^[DatabitLen div 8] shr (8 - (DataBitLen and 7));
     Absorb(@LastByte, DataBitLen and 7);
   end;
 end;
@@ -4624,7 +4654,8 @@ begin
     lw := Bits and pred(word(1) shl Bitlen);
 
   // 'append' (in LSB language) the domain separation bits
-  if (FSpongeState.FixedOutputLength = 0) then
+  //if (FSpongeState.FixedOutputLength = 0) then
+  if self.ClassParent = THash_ShakeBase then
   begin
     lw := lw or (word($F) shl Bitlen);
     WorkingBitLen := Bitlen+4;
@@ -4677,8 +4708,10 @@ procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
 begin
   // multiplied with 8 since this field is in bits
   FSpongeState.FixedOutputLength := Value * 8;
+  FOutpLengSet := true;
 
-  SetLength(FDigest, Value * 8);
+{ TODO : Investigate/Fix }
+  SetLength(FDigest, Value);
 //  SetLength(FDigest, 64);
   FillChar(FDigest[0], Length(FDigest), #0);
 end;
@@ -4749,4 +4782,3 @@ finalization
   // in finalization of DECBaseClass unit
 
 end.
-
