@@ -31,8 +31,8 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAUthentication,
-  DECHashBitBase, DECTypes;
+  DECBaseClass, DECFormatBase, DECUtil, DECHashBase, DECHashAuthentication,
+  DECHashBitBase, DECHashInterface, DECTypes;
 
 type
   // Hash Classes
@@ -348,19 +348,11 @@ type
       ///   Pointer to a buffer
       /// </summary>
       PBABytes = ^TBABytes;
-//{ TODO : Remove }
-//      /// <summary>
-//      ///   Type for the generated hash value
-//      /// </summary>
-//      TSHA3Digest = array[0..63] of UInt8;
 
       /// <summary>
       ///   Type for the generated hash value
       /// </summary>
       TSHA3Digest = array of UInt8;
-
-//    var
-
 
     /// <summary>
     ///   Function to give input data for the sponge function to absorb
@@ -621,9 +613,19 @@ type
   /// <summary>
   ///   Base class for the Shake implementations
   /// </summary>
-  THash_ShakeBase = class(THash_SHA3Base)
+  THash_ShakeBase = class(THash_SHA3Base, IDECHashExtensibleOutput)
   private
-    function GetHashSize: UInt16;
+    /// <summary>
+    ///   Returns the length of the calculated hash value in byte
+    /// </summary>
+    function  GetHashSize: UInt16;
+    /// <summary>
+    ///   Defines the length of the calculated hash value
+    /// </summary>
+    /// <param name="Value">
+    ///   Length of the hash value to be returned in byte
+    /// </param>
+{ TODO : Check what happens when 0 is set }
     procedure SetHashSize(const Value: UInt16);
   public
     /// <summary>
@@ -4699,7 +4701,7 @@ end;
 function THash_ShakeBase.GetHashSize: UInt16;
 begin
   // divided by 8 since this field is in bits
-  Result := FSpongeState.FixedOutputLength div 8; //shr 3;
+  Result := FSpongeState.FixedOutputLength shr 3;
 end;
 
 procedure THash_ShakeBase.SetHashSize(const Value: UInt16);

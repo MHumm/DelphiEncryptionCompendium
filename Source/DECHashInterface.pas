@@ -33,6 +33,7 @@ type
   ///   in interface declarations
   /// </summary>
   IDECHash = Interface
+  ['{4AF2CD8C-5438-4E8C-B4EA-D6DAD09642C5}']
     /// <summary>
     ///   Generic initialization of internal data structures. Additionally the
     ///   internal algorithm specific (because of being overridden by each
@@ -266,6 +267,7 @@ type
   ///   message lengths instead of byte sized ones only.
   /// </summary>
   IDECHashBitsized = Interface(IDECHash)
+  ['{7F2232CB-C3A7-4A14-858B-D98AB61E04E4}']
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of
     /// </summary>
@@ -282,6 +284,32 @@ type
     property FinalBitLength : UInt8
       read   GetFinalByteLength
       write  SetFinalByteLength;
+  end;
+
+  /// <summary>
+  ///   Interface for all hash classes which provide a variable output length for
+  ///   the calculated hash value
+  /// </summary>
+  IDECHashExtensibleOutput = Interface(IDECHashBitsized)
+  ['{C832E9AB-961C-4888-A607-9EC0780B3F8C}']
+    /// <summary>
+    ///   Returns the length of the calculated hash value in byte
+    /// </summary>
+    function  GetHashSize: UInt16;
+    /// <summary>
+    ///   Defines the length of the calculated hash value
+    /// </summary>
+    /// <param name="Value">
+    ///   Length of the hash value to be returned in byte
+    /// </param>
+    procedure SetHashSize(const Value: UInt16);
+    /// <summary>
+    ///   Define the lenght of the resulting hash value in byte as these functions
+    ///   are extendable output functions
+    /// </summary>
+    property HashSize : UInt16
+      read   GetHashSize
+      write  SetHashSize;
   end;
 
 implementation

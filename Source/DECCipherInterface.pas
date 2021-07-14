@@ -32,6 +32,7 @@ type
   ///   methods/properties though!
   /// </summary>
   IDECCipher = Interface
+  ['{73D70F28-95C0-4715-8C27-1AE6FBEE9698}']
     /// <summary>
     ///   Encrypts the contents of a given byte array
     /// </summary>
