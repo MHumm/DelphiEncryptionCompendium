@@ -262,7 +262,7 @@ procedure TestTHash_SHA3_Base.LoadTestFiles;
 var
   FileName : string;
 begin
-  for FIleName in FTestFIleNames do
+  for FileName in FTestFileNames do
     LoadTestDataFile(FileName, FTestData, FHash);
 end;
 
@@ -339,6 +339,7 @@ begin
         if (Len > 0) then
         begin
           lDataRow.AddInputVector(TFormat_HexL.Decode(RawByteString(s1)));
+{ TODO : Check what needs to be done for Shake128/256 as this one is a method in SHA3_base class }
           lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(s1, HashInst);
         end
         else
@@ -350,11 +351,21 @@ begin
         Continue;
       end;
 
-      if (Pos('md', FileRowTrim) = 1) then
+      if (Pos('md', FileRowTrim) = 1) or (Pos('squeezed ', FileRowTrim) = 1) then
       begin
         s1 := FileRowTrim;
         Delete(s1, 1, 5);
-        lDataRow.ExpectedOutput := RawByteString(s1);
+
+        // squeezed is from the Shake128/256 files
+        if (Pos('squeezed ', FileRowTrim) = 1) then
+        begin
+          Delete(s1, 1, 6);
+          lDataRow.ExpectedOutput := RawByteString(s1);
+          lDataRow.HashResultByteLength := Length(RawByteString(s1)) div 2;
+        end
+        else
+          // md from the SHA3 ones
+          lDataRow.ExpectedOutput := RawByteString(s1);
 
         Continue;
       end;
@@ -1035,7 +1046,7 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\ShortMsgKAT_SHAKE128.txt');
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
 //  // SourceEnd
 
@@ -1097,7 +1108,7 @@ begin
   lDataRow.AddInputVector('');
   lDataRow.FinalBitLength := 0;
 
-  // Source:
+  // Source until SourceEnd: ShortMSGKAT_SHake128.txt
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'f7b1c8f5fd6136aeb4d8bfa0740787a6d2e7af48' +
                                        '8e96cbc3a5e0929a5989c0af49794aa6c64a5842' +
@@ -1156,6 +1167,7 @@ begin
   lDataRow.AddInputVector(TFormat_HEXL.Decode('0372cd1ce0b74ce05e717fc4b9a82ce1a' +
                                               '888f4ef7b0027a5d6dc5f8d13936e01'));
   lDataRow.FinalBitLength := 2;
+  // SourceEnd
 end;
 
 procedure TestTHash_Shake128.TestBlockSize;
