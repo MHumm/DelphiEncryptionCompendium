@@ -197,7 +197,29 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class THash_Shake128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Shake128 = class(TestTHash_SHA3_Base)
+  strict protected
+    /// <summary>
+    ///   Some tests need to set the SHA3 specific padding byte and final bit length
+    ///   parameters as well as hash output length as Shake128 is an extendable
+    ///   output length algorithm
+    /// </summary>
+    procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+  // Test methods for class THash_Shake128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_Shake256 = class(TestTHash_SHA3_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -1017,70 +1039,123 @@ begin
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
 //  // SourceEnd
 
-//  // Source:
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := '7f9c2ba4e88f827d616045507605853ed73b8093' + // 20
-//                                       'f6efbc88eb1a6eacfa66ef263cb1eea988004b93' +
-//                                       '103cfb0aeefd2a686e01fa4a58e8a3639ca8a1e3' +
-//                                       'f9ae57e235b8cc873c23dc62b8d260169afa2f75' +
-//                                       'ab916a58d974918835d25e6a435085b2badfd6df' +
-//                                       'aac359a5efbb7bcc4b59d538df9a04302e10c8bc' +
-//                                       '1cbf1a0b3a5120ea17cda7cfad765f5623474d36' +
-//                                       '8ccca8af0007cd9f5e4c849f167a580b14aabdef' +
-//                                       'aee7eef47cb0fca9767be1fda69419dfb927e9df' +
-//                                       '07348b196691abaeb580b32def58538b8d23f877' + // 200
-//                                       '32ea63b02b4fa0f4873360e2841928cd60dd4cee' +
-//                                       '8cc0d4c922a96188d032675c8ac850933c7aff15' +
-//                                       '33b94c834adbb69c6115bad4692d8619f90b0cdf' +
-//                                       '8a7b9c264029ac185b70b83f2801f2f4b3f70c59' +
-//                                       '3ea3aeeb613a7f1b1de33fd75081f592305f2e45' +
-//                                       '26edc09631b10958f464d889f31ba010250fda7f' +
-//                                       '1368ec2967fc84ef2ae9aff268e0b1700affc682' +
-//                                       '0b523a3d917135f2dff2ee06bfe72b3124721d4a' +
-//                                       '26c04e53a75e30e73a7a9c4a95d91c55d495e9f5' +
-//                                       '1dd0b5e9d83c6d5e8ce803aa62b8d654db53d09b' + // 400
-//                                       '8dcff273cdfeb573fad8bcd45578bec2e770d01e' +
-//                                       'fde86e721a3f7c6cce275dabe6e2143f1af18da7' +
-//                                       'efddc4c7b70b5e345db93cc936bea323491ccb38' +
-//                                       'a388f546a9ff00dd4e1300b9b2153d2041d205b4' +
-//                                       '43e41b45a653f2a5c4492c1add544512dda25298' + // 500
-//                                       '33462b71a41a45be97290b6f';                  // 512
-//  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0' +
-//                                       'af2be3e9ad2cd7acb111757cb0c41b3564c07778' +
-//                                       '47684435da78577781eef8e6a6652c9844a85882' +
-//                                       'e0fa8b28';
-//  lDataRow.HashResultByteLength     := 512;
-//  lDataRow.AddInputVector('');
-//  lDataRow.FinalBitLength := 0;
+  // Source:
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '7f9c2ba4e88f827d616045507605853ed73b8093' + // 20
+                                       'f6efbc88eb1a6eacfa66ef263cb1eea988004b93' +
+                                       '103cfb0aeefd2a686e01fa4a58e8a3639ca8a1e3' +
+                                       'f9ae57e235b8cc873c23dc62b8d260169afa2f75' +
+                                       'ab916a58d974918835d25e6a435085b2badfd6df' +
+                                       'aac359a5efbb7bcc4b59d538df9a04302e10c8bc' +
+                                       '1cbf1a0b3a5120ea17cda7cfad765f5623474d36' +
+                                       '8ccca8af0007cd9f5e4c849f167a580b14aabdef' +
+                                       'aee7eef47cb0fca9767be1fda69419dfb927e9df' +
+                                       '07348b196691abaeb580b32def58538b8d23f877' + // 200
+                                       '32ea63b02b4fa0f4873360e2841928cd60dd4cee' +
+                                       '8cc0d4c922a96188d032675c8ac850933c7aff15' +
+                                       '33b94c834adbb69c6115bad4692d8619f90b0cdf' +
+                                       '8a7b9c264029ac185b70b83f2801f2f4b3f70c59' +
+                                       '3ea3aeeb613a7f1b1de33fd75081f592305f2e45' +
+                                       '26edc09631b10958f464d889f31ba010250fda7f' +
+                                       '1368ec2967fc84ef2ae9aff268e0b1700affc682' +
+                                       '0b523a3d917135f2dff2ee06bfe72b3124721d4a' +
+                                       '26c04e53a75e30e73a7a9c4a95d91c55d495e9f5' +
+                                       '1dd0b5e9d83c6d5e8ce803aa62b8d654db53d09b' + // 400
+                                       '8dcff273cdfeb573fad8bcd45578bec2e770d01e' +
+                                       'fde86e721a3f7c6cce275dabe6e2143f1af18da7' +
+                                       'efddc4c7b70b5e345db93cc936bea323491ccb38' +
+                                       'a388f546a9ff00dd4e1300b9b2153d2041d205b4' +
+                                       '43e41b45a653f2a5c4492c1add544512dda25298' + // 500
+                                       '33462b71a41a45be97290b6f';                  // 512
+  lDataRow.ExpectedOutputUTFStrTest := '7f9c2ba4e88f827d616045507605853ed73b8093' + // 20
+                                       'f6efbc88eb1a6eacfa66ef263cb1eea988004b93' +
+                                       '103cfb0aeefd2a686e01fa4a58e8a3639ca8a1e3' +
+                                       'f9ae57e235b8cc873c23dc62b8d260169afa2f75' +
+                                       'ab916a58d974918835d25e6a435085b2badfd6df' +
+                                       'aac359a5efbb7bcc4b59d538df9a04302e10c8bc' +
+                                       '1cbf1a0b3a5120ea17cda7cfad765f5623474d36' +
+                                       '8ccca8af0007cd9f5e4c849f167a580b14aabdef' +
+                                       'aee7eef47cb0fca9767be1fda69419dfb927e9df' +
+                                       '07348b196691abaeb580b32def58538b8d23f877' + // 200
+                                       '32ea63b02b4fa0f4873360e2841928cd60dd4cee' +
+                                       '8cc0d4c922a96188d032675c8ac850933c7aff15' +
+                                       '33b94c834adbb69c6115bad4692d8619f90b0cdf' +
+                                       '8a7b9c264029ac185b70b83f2801f2f4b3f70c59' +
+                                       '3ea3aeeb613a7f1b1de33fd75081f592305f2e45' +
+                                       '26edc09631b10958f464d889f31ba010250fda7f' +
+                                       '1368ec2967fc84ef2ae9aff268e0b1700affc682' +
+                                       '0b523a3d917135f2dff2ee06bfe72b3124721d4a' +
+                                       '26c04e53a75e30e73a7a9c4a95d91c55d495e9f5' +
+                                       '1dd0b5e9d83c6d5e8ce803aa62b8d654db53d09b' + // 400
+                                       '8dcff273cdfeb573fad8bcd45578bec2e770d01e' +
+                                       'fde86e721a3f7c6cce275dabe6e2143f1af18da7' +
+                                       'efddc4c7b70b5e345db93cc936bea323491ccb38' +
+                                       'a388f546a9ff00dd4e1300b9b2153d2041d205b4' +
+                                       '43e41b45a653f2a5c4492c1add544512dda25298' + // 500
+                                       '33462b71a41a45be97290b6f';                  // 512
+  lDataRow.HashResultByteLength     := 512;
+  lDataRow.AddInputVector('');
+  lDataRow.FinalBitLength := 0;
 
   // Source:
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'f7b1c8f5fd6136aeb4d8bfa0740787a6d2e7af488e96cbc3a5e0929a5989' +
-                                       'c0af49794aa6c64a5842b9c081238dfc4d5c2f175843026f72ec10c46436' +
-                                       '71372fd083809f51e2a7456e55e1a07deb95aeea62bb39adfadc4b42aa6b' +
-                                       '289aafebe2c056f862007b7f891716573bc54bd65657fd5dd112c87663cd' +
-                                       '4584c92247baa3d228415a98e0dbe5bb128e4365492c322ca720120bf34d' +
-                                       'b0b97a6dc032d5dfe068dc96173ceeaa9baf48f21e4ccbba134faf84b025' +
-                                       '08d9e1fc9486aeb673b27ba86124cd285b4c1b1760124c4ad6c503ad35f6' +
-                                       '91f62853e979ceedf70627a0b93a42738388752c8f4154c3e9abb1b53638' +
-                                       '081d8259545f801b5f15764dda74490a3397518f8f78c73ec68e5178e843' +
-                                       '4f31381b1fe50e034b2eb7839f134e5753de6106a0214f7f4d8ff53c063a' +
-                                       'eb1f4a74e66d3e2c925fc2f55be83a9e8d23061cdf014dfab5976ca0da87' +
-                                       'ab6dfe263512782eade5ab9b95f11447a8f0900c4aa6e31665957ec3acb1' +
-                                       '7a3654d683e03ed22ed330c2894f7a2097ba004c612b7c86cd7438215197' +
-                                       '557385d12bd86d9a0a7d8efe64d0b6254aa04f87c4807ada5f276fccf016' +
-                                       '8f058c1b15bdf96f369dc5ed5585b8d5fe0fe009db407d0b168c78703d8f' +
-                                       '7d57ab254176c246420461becdafafdfd4dff6429f4f2592806c7e7aa6d2' +
-                                       '3984df1b6c548fb0174e8daf725f04051aa995e3dfab45b411979ca49dde8622'; // 512
-  lDataRow.ExpectedOutputUTFStrTest := '54ab223a7cee7603f2b89596b54f8d838845e0a0' +
-                                       'af2be3e9ad2cd7acb111757cb0c41b3564c07778' +
-                                       '47684435da78577781eef8e6a6652c9844a85882' +
-                                       'e0fa8b28';
+  lDataRow.ExpectedOutput           := 'f7b1c8f5fd6136aeb4d8bfa0740787a6d2e7af48' +
+                                       '8e96cbc3a5e0929a5989c0af49794aa6c64a5842' +
+                                       'b9c081238dfc4d5c2f175843026f72ec10c46436' +
+                                       '71372fd083809f51e2a7456e55e1a07deb95aeea' +
+                                       '62bb39adfadc4b42aa6b289aafebe2c056f86200' +
+                                       '7b7f891716573bc54bd65657fd5dd112c87663cd' +
+                                       '4584c92247baa3d228415a98e0dbe5bb128e4365' +
+                                       '492c322ca720120bf34db0b97a6dc032d5dfe068' +
+                                       'dc96173ceeaa9baf48f21e4ccbba134faf84b025' +
+                                       '08d9e1fc9486aeb673b27ba86124cd285b4c1b17' +
+                                       '60124c4ad6c503ad35f691f62853e979ceedf706' +
+                                       '27a0b93a42738388752c8f4154c3e9abb1b53638' +
+                                       '081d8259545f801b5f15764dda74490a3397518f' +
+                                       '8f78c73ec68e5178e8434f31381b1fe50e034b2e' +
+                                       'b7839f134e5753de6106a0214f7f4d8ff53c063a' +
+                                       'eb1f4a74e66d3e2c925fc2f55be83a9e8d23061c' +
+                                       'df014dfab5976ca0da87ab6dfe263512782eade5' +
+                                       'ab9b95f11447a8f0900c4aa6e31665957ec3acb1' +
+                                       '7a3654d683e03ed22ed330c2894f7a2097ba004c' +
+                                       '612b7c86cd7438215197557385d12bd86d9a0a7d' +
+                                       '8efe64d0b6254aa04f87c4807ada5f276fccf016' +
+                                       '8f058c1b15bdf96f369dc5ed5585b8d5fe0fe009' +
+                                       'db407d0b168c78703d8f7d57ab254176c2464204' +
+                                       '61becdafafdfd4dff6429f4f2592806c7e7aa6d2' +
+                                       '3984df1b6c548fb0174e8daf725f04051aa995e3' +
+                                       'dfab45b411979ca49dde8622';
+  lDataRow.ExpectedOutputUTFStrTest := 'bf95de572093ec60363d6053886cb78ff78b7f' +
+                                       '08c28bfd70d50f1a53b7c41aa3cdfb2d2d8987' +
+                                       '86a6f8da4116b19ffa00f97179667bb582a6ed' +
+                                       'f9597af69bf28a159f5a8b787b564240ca44bd' +
+                                       '144e515b563c39ea53ab399ab290544ae54d48' +
+                                       '29fa940c5943c8178b4efe0e2399b258322228' +
+                                       'c011df8c49fff3d813802e7e10814a9862caa0' +
+                                       '4f9ee33ac29de1bdb067e21cf98361b77d349d' +
+                                       '5b3a591939ad3be7de57cd2c5bc054af941bca' +
+                                       '6185f2c7d4ae0499c718c988c5d60885ca4478' +
+                                       'c11752f9be846dece8ad0d8a24baad9256fe0e' +
+                                       '993fbe5b8e4f43b7ed2ee5cdf304e34f439698' +
+                                       '269011492b63475f1a769c7e0290cedfef5e11' +
+                                       'c1bef1547d1e508f86063d0aa5a5bb57c13c7a' +
+                                       'e5d65dda0c0c49c2f4913780c4e9c42dc55aed' +
+                                       '3bf77e1f2523fc89718fc97ff6e9c5dc7b6338' +
+                                       '7784b0cdabb12694917308c3c2326b2235757f' +
+                                       '6cdd5f3664a4b66314ab6e59f1699fe4ebce11' +
+                                       'a1dd16847ddf1704d5fb9c4cd69f32f579e1ef' +
+                                       'a317bc7d6d226322d1011d0cb989d0bb0202be' +
+                                       '841ea4e0551339f3af0fed065cbfc869925861' +
+                                       'a51d6a8e6e5d46dcb4f83ab3ddf5bd8a13bd7f' +
+                                       '93e5ad39d451e6ad1bb3f2a571978b85b74e01' +
+                                       '95293d2febcd8c96b4c7c815801136a48ee84c' +
+                                       '5ba94984fd29aa0b3e2e3b6ac46fc0dfe57536' +
+                                       '642a6d3bf53542475f8a68ed0b51dfc75d85ca' +
+                                       'e89622dd24c4dc4556f9685b31220280c546';
   lDataRow.HashResultByteLength     := 512;
-  lDataRow.AddInputVector(TFormat_HEXL.Decode('0372cd1ce0b74ce05e717fc4b9a82ce1a888f4ef7b0027a5d6dc5f8d13936e01'));
+  lDataRow.AddInputVector(TFormat_HEXL.Decode('0372cd1ce0b74ce05e717fc4b9a82ce1a' +
+                                              '888f4ef7b0027a5d6dc5f8d13936e01'));
   lDataRow.FinalBitLength := 2;
-
-
 end;
 
 procedure TestTHash_Shake128.TestBlockSize;
@@ -1108,6 +1183,175 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+{ TestTHash_Shake256 }
+
+procedure TestTHash_Shake256.ConfigHashClass(HashClass: TDECHash;
+  IdxTestData: Integer);
+begin
+  inherited;
+
+  THash_Shake256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
+  THash_Shake256(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
+  THash_Shake256(FHash).HashSize        := FTestData[IdxTestData].HashResultByteLength;
+end;
+
+procedure TestTHash_Shake256.SetUp;
+var
+  lDataRow : IHashTestDataRowSetup;
+begin
+  inherited;
+  FHash := THash_Shake256.Create;
+
+//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
+//  // SourceEnd
+
+  // Source:
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' + // 20
+                                       'f200cb05019d67b592f6fc821c49479ab48640' +
+                                       '292eacb3b7c4be141e96616fb13957692cc7ed' +
+                                       'd0b45ae3dc07223c8e92937bef84bc0eab8628' +
+                                       '53349ec75546f58fb7c2775c38462c5010d846' +
+                                       'c185c15111e595522a6bcd16cf86f3d122109e' +
+                                       '3b1fdd943b6aec468a2d621a7c06c6a957c62b' +
+                                       '54dafc3be87567d677231395f6147293b68cea' +
+                                       'b7a9e0c58d864e8efde4e1b9a46cbe85471367' +
+                                       '2f5caaae314ed9083dab4b099f8e300f01b865' + // 200
+                                       '0f1f4b1d8fcf3f3cb53fb8e9eb2ea203bdc970' +
+                                       'f50ae55428a91f7f53ac266b28419c3778a15f' +
+                                       'd248d339ede785fb7f5a1aaa96d313eacc8909' +
+                                       '36c173cdcd0fab882c45755feb3aed96d477ff' +
+                                       '96390bf9a66d1368b208e21f7c10d04a3dbd4e' +
+                                       '360633e5db4b602601c14cea737db3dcf72263' +
+                                       '2cc77851cbdde2aaf0a33a07b373445df490cc' +
+                                       '8fc1e4160ff118378f11f0477de055a81a9eda' +
+                                       '57a4a2cfb0c83929d310912f729ec6cfa36c6a' +
+                                       'c6a75837143045d791cc85eff5b21932f23861' + // 400
+                                       'bcf23a52b5da67eaf7baae0f5fb1369db78f3a' +
+                                       'c45f8c4ac5671d85735cdddb09d2b1e34a1fc0' +
+                                       '66ff4a162cb263d6541274ae2fcc865f618abe' +
+                                       '27c124cd8b074ccd516301b91875824d09958f' +
+                                       '341ef274bdab0bae316339894304e35877b0c2' + // 500
+                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';    // 512
+  lDataRow.ExpectedOutputUTFStrTest := 'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' + // 20
+                                       'f200cb05019d67b592f6fc821c49479ab48640' +
+                                       '292eacb3b7c4be141e96616fb13957692cc7ed' +
+                                       'd0b45ae3dc07223c8e92937bef84bc0eab8628' +
+                                       '53349ec75546f58fb7c2775c38462c5010d846' +
+                                       'c185c15111e595522a6bcd16cf86f3d122109e' +
+                                       '3b1fdd943b6aec468a2d621a7c06c6a957c62b' +
+                                       '54dafc3be87567d677231395f6147293b68cea' +
+                                       'b7a9e0c58d864e8efde4e1b9a46cbe85471367' +
+                                       '2f5caaae314ed9083dab4b099f8e300f01b865' + // 200
+                                       '0f1f4b1d8fcf3f3cb53fb8e9eb2ea203bdc970' +
+                                       'f50ae55428a91f7f53ac266b28419c3778a15f' +
+                                       'd248d339ede785fb7f5a1aaa96d313eacc8909' +
+                                       '36c173cdcd0fab882c45755feb3aed96d477ff' +
+                                       '96390bf9a66d1368b208e21f7c10d04a3dbd4e' +
+                                       '360633e5db4b602601c14cea737db3dcf72263' +
+                                       '2cc77851cbdde2aaf0a33a07b373445df490cc' +
+                                       '8fc1e4160ff118378f11f0477de055a81a9eda' +
+                                       '57a4a2cfb0c83929d310912f729ec6cfa36c6a' +
+                                       'c6a75837143045d791cc85eff5b21932f23861' + // 400
+                                       'bcf23a52b5da67eaf7baae0f5fb1369db78f3a' +
+                                       'c45f8c4ac5671d85735cdddb09d2b1e34a1fc0' +
+                                       '66ff4a162cb263d6541274ae2fcc865f618abe' +
+                                       '27c124cd8b074ccd516301b91875824d09958f' +
+                                       '341ef274bdab0bae316339894304e35877b0c2' + // 500
+                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';    // 512
+  lDataRow.HashResultByteLength     := 512;
+  lDataRow.AddInputVector('');
+  lDataRow.FinalBitLength := 0;
+
+  // Source:
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'f7b1c8f5fd6136aeb4d8bfa0740787a6d2e7af48' +
+                                       '8e96cbc3a5e0929a5989c0af49794aa6c64a5842' +
+                                       'b9c081238dfc4d5c2f175843026f72ec10c46436' +
+                                       '71372fd083809f51e2a7456e55e1a07deb95aeea' +
+                                       '62bb39adfadc4b42aa6b289aafebe2c056f86200' +
+                                       '7b7f891716573bc54bd65657fd5dd112c87663cd' +
+                                       '4584c92247baa3d228415a98e0dbe5bb128e4365' +
+                                       '492c322ca720120bf34db0b97a6dc032d5dfe068' +
+                                       'dc96173ceeaa9baf48f21e4ccbba134faf84b025' +
+                                       '08d9e1fc9486aeb673b27ba86124cd285b4c1b17' +
+                                       '60124c4ad6c503ad35f691f62853e979ceedf706' +
+                                       '27a0b93a42738388752c8f4154c3e9abb1b53638' +
+                                       '081d8259545f801b5f15764dda74490a3397518f' +
+                                       '8f78c73ec68e5178e8434f31381b1fe50e034b2e' +
+                                       'b7839f134e5753de6106a0214f7f4d8ff53c063a' +
+                                       'eb1f4a74e66d3e2c925fc2f55be83a9e8d23061c' +
+                                       'df014dfab5976ca0da87ab6dfe263512782eade5' +
+                                       'ab9b95f11447a8f0900c4aa6e31665957ec3acb1' +
+                                       '7a3654d683e03ed22ed330c2894f7a2097ba004c' +
+                                       '612b7c86cd7438215197557385d12bd86d9a0a7d' +
+                                       '8efe64d0b6254aa04f87c4807ada5f276fccf016' +
+                                       '8f058c1b15bdf96f369dc5ed5585b8d5fe0fe009' +
+                                       'db407d0b168c78703d8f7d57ab254176c2464204' +
+                                       '61becdafafdfd4dff6429f4f2592806c7e7aa6d2' +
+                                       '3984df1b6c548fb0174e8daf725f04051aa995e3' +
+                                       'dfab45b411979ca49dde8622';
+  lDataRow.ExpectedOutputUTFStrTest := 'bf95de572093ec60363d6053886cb78ff78b7f' +
+                                       '08c28bfd70d50f1a53b7c41aa3cdfb2d2d8987' +
+                                       '86a6f8da4116b19ffa00f97179667bb582a6ed' +
+                                       'f9597af69bf28a159f5a8b787b564240ca44bd' +
+                                       '144e515b563c39ea53ab399ab290544ae54d48' +
+                                       '29fa940c5943c8178b4efe0e2399b258322228' +
+                                       'c011df8c49fff3d813802e7e10814a9862caa0' +
+                                       '4f9ee33ac29de1bdb067e21cf98361b77d349d' +
+                                       '5b3a591939ad3be7de57cd2c5bc054af941bca' +
+                                       '6185f2c7d4ae0499c718c988c5d60885ca4478' +
+                                       'c11752f9be846dece8ad0d8a24baad9256fe0e' +
+                                       '993fbe5b8e4f43b7ed2ee5cdf304e34f439698' +
+                                       '269011492b63475f1a769c7e0290cedfef5e11' +
+                                       'c1bef1547d1e508f86063d0aa5a5bb57c13c7a' +
+                                       'e5d65dda0c0c49c2f4913780c4e9c42dc55aed' +
+                                       '3bf77e1f2523fc89718fc97ff6e9c5dc7b6338' +
+                                       '7784b0cdabb12694917308c3c2326b2235757f' +
+                                       '6cdd5f3664a4b66314ab6e59f1699fe4ebce11' +
+                                       'a1dd16847ddf1704d5fb9c4cd69f32f579e1ef' +
+                                       'a317bc7d6d226322d1011d0cb989d0bb0202be' +
+                                       '841ea4e0551339f3af0fed065cbfc869925861' +
+                                       'a51d6a8e6e5d46dcb4f83ab3ddf5bd8a13bd7f' +
+                                       '93e5ad39d451e6ad1bb3f2a571978b85b74e01' +
+                                       '95293d2febcd8c96b4c7c815801136a48ee84c' +
+                                       '5ba94984fd29aa0b3e2e3b6ac46fc0dfe57536' +
+                                       '642a6d3bf53542475f8a68ed0b51dfc75d85ca' +
+                                       'e89622dd24c4dc4556f9685b31220280c546';
+  lDataRow.HashResultByteLength     := 512;
+  lDataRow.AddInputVector(TFormat_HEXL.Decode('0372cd1ce0b74ce05e717fc4b9a82ce1a' +
+                                              '888f4ef7b0027a5d6dc5f8d13936e01'));
+  lDataRow.FinalBitLength := 2;
+end;
+
+procedure TestTHash_Shake256.TestBlockSize;
+begin
+  CheckEquals(136, FHash.BlockSize);
+end;
+
+procedure TestTHash_Shake256.TestClassByName;
+begin
+  DoTestClassByName('THash_Shake256', THash_Shake256);
+end;
+
+procedure TestTHash_Shake256.TestDigestSize;
+begin
+  CheckEquals(0, FHash.DigestSize);
+end;
+
+procedure TestTHash_Shake256.TestIdentity;
+begin
+  CheckEquals($871E76B7, FHash.Identity);
+end;
+
+procedure TestTHash_Shake256.TestIsPasswordHash;
+begin
+  CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -1116,12 +1360,14 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_384);
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
   TDUnitX.RegisterTestFixture(TestTHash_Shake128);
+  TDUnitX.RegisterTestFixture(TestTHash_Shake256);
   {$ELSE}
   RegisterTests('DECHash', [TestTHash_SHA3_224.Suite,
                             TestTHash_SHA3_256.Suite,
                             TestTHash_SHA3_384.Suite,
                             TestTHash_SHA3_512.Suite,
-                            TestTHash_Shake128.Suite]);
+                            TestTHash_Shake128.Suite,
+                            TestTHash_Shake256.Suite]);
   {$ENDIF}
 
 {$ELSE}

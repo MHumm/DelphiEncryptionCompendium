@@ -4601,8 +4601,6 @@ procedure THash_SHA3Base.DoInit;
 begin
   inherited;
 
-{ TODO : Remove }
-//  SetLength(FDigest, 64);
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
@@ -4708,11 +4706,11 @@ procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
 begin
   // multiplied with 8 since this field is in bits
   FSpongeState.FixedOutputLength := Value * 8;
+  // This flag tells the initialization of the algorithm that
+  // FixedOutputLength needs to be preserved
   FOutpLengSet := true;
 
-{ TODO : Investigate/Fix }
   SetLength(FDigest, Value);
-//  SetLength(FDigest, 64);
   FillChar(FDigest[0], Length(FDigest), #0);
 end;
 
@@ -4720,7 +4718,7 @@ function THash_ShakeBase.DigestAsBytes: TBytes;
 begin
   SetLength(Result, FSpongeState.FixedOutputLength shr 3);
   if FSpongeState.FixedOutputLength > 0 then
-    Move(Digest^, Result[0], FSpongeState.FixedOutputLength);
+    Move(Digest^, Result[0], Length(Result));
 end;
 
 initialization

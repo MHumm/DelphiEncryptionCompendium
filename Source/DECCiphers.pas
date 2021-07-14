@@ -6500,8 +6500,6 @@ end;
 
 { TCipher_XTEA_DEC52 }
 
-{ TODO : The old failure needs to be restored again }
-
 procedure TCipher_XTEA_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   Sum,
