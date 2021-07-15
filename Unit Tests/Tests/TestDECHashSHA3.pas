@@ -309,7 +309,7 @@ var
   Contents     : TStringList;
   FileRow,
   FileRowTrim,
-  s1           : string;
+  s1, msg      : string;
   Len          : Int32;
   FinalByteLen : Int16;
   HashLength   : Int16;
@@ -340,15 +340,15 @@ begin
 
       if (Pos('msg', FileRowTrim) = 1) then
       begin
-        s1 := FileRowTrim;
-        Delete(s1, 1, 6);
+        msg := FileRowTrim;
+        Delete(msg, 1, 6);
 
         if (Len > 0) then
         begin
-          lDataRow.AddInputVector(TFormat_HexL.Decode(RawByteString(s1)));
+          lDataRow.AddInputVector(TFormat_HexL.Decode(RawByteString(msg)));
           // For Shake variants this will be overwritten once we know the output
           // hash length
-          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(s1, HashInst);
+          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(msg, HashInst);
         end
         else
         begin
@@ -374,7 +374,11 @@ begin
 
           // Shake can caculate unicode test data only after hash length is known
           THash_ShakeBase(HashInst).HashSize := HashLength;
-          lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(s1, HashInst);
+
+          if (Len > 0) then
+            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(msg, HashInst)
+          else
+            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash('', HashInst);
         end
         else
           // md from the SHA3 ones
