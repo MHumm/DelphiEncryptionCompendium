@@ -1216,13 +1216,14 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\ShortMsgKAT_SHAKE256.txt');
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
 //  // SourceEnd
 
   // Source:
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' + // 20
+  lDataRow.ExpectedOutput           := '46b9dd2b0ba88d13233b3feb743eeb243fcd52' +
+                                       'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' +
                                        'f200cb05019d67b592f6fc821c49479ab48640' +
                                        '292eacb3b7c4be141e96616fb13957692cc7ed' +
                                        'd0b45ae3dc07223c8e92937bef84bc0eab8628' +
@@ -1231,7 +1232,7 @@ begin
                                        '3b1fdd943b6aec468a2d621a7c06c6a957c62b' +
                                        '54dafc3be87567d677231395f6147293b68cea' +
                                        'b7a9e0c58d864e8efde4e1b9a46cbe85471367' +
-                                       '2f5caaae314ed9083dab4b099f8e300f01b865' + // 200
+                                       '2f5caaae314ed9083dab4b099f8e300f01b865' +
                                        '0f1f4b1d8fcf3f3cb53fb8e9eb2ea203bdc970' +
                                        'f50ae55428a91f7f53ac266b28419c3778a15f' +
                                        'd248d339ede785fb7f5a1aaa96d313eacc8909' +
@@ -1241,14 +1242,16 @@ begin
                                        '2cc77851cbdde2aaf0a33a07b373445df490cc' +
                                        '8fc1e4160ff118378f11f0477de055a81a9eda' +
                                        '57a4a2cfb0c83929d310912f729ec6cfa36c6a' +
-                                       'c6a75837143045d791cc85eff5b21932f23861' + // 400
+                                       'c6a75837143045d791cc85eff5b21932f23861' +
                                        'bcf23a52b5da67eaf7baae0f5fb1369db78f3a' +
                                        'c45f8c4ac5671d85735cdddb09d2b1e34a1fc0' +
                                        '66ff4a162cb263d6541274ae2fcc865f618abe' +
                                        '27c124cd8b074ccd516301b91875824d09958f' +
-                                       '341ef274bdab0bae316339894304e35877b0c2' + // 500
-                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';    // 512
-  lDataRow.ExpectedOutputUTFStrTest := 'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' + // 20
+                                       '341ef274bdab0bae316339894304e35877b0c2' +
+                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';
+
+  lDataRow.ExpectedOutputUTFStrTest := '46b9dd2b0ba88d13233b3feb743eeb243fcd52' +
+                                       'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' +
                                        'f200cb05019d67b592f6fc821c49479ab48640' +
                                        '292eacb3b7c4be141e96616fb13957692cc7ed' +
                                        'd0b45ae3dc07223c8e92937bef84bc0eab8628' +
@@ -1257,7 +1260,7 @@ begin
                                        '3b1fdd943b6aec468a2d621a7c06c6a957c62b' +
                                        '54dafc3be87567d677231395f6147293b68cea' +
                                        'b7a9e0c58d864e8efde4e1b9a46cbe85471367' +
-                                       '2f5caaae314ed9083dab4b099f8e300f01b865' + // 200
+                                       '2f5caaae314ed9083dab4b099f8e300f01b865' +
                                        '0f1f4b1d8fcf3f3cb53fb8e9eb2ea203bdc970' +
                                        'f50ae55428a91f7f53ac266b28419c3778a15f' +
                                        'd248d339ede785fb7f5a1aaa96d313eacc8909' +
@@ -1267,72 +1270,74 @@ begin
                                        '2cc77851cbdde2aaf0a33a07b373445df490cc' +
                                        '8fc1e4160ff118378f11f0477de055a81a9eda' +
                                        '57a4a2cfb0c83929d310912f729ec6cfa36c6a' +
-                                       'c6a75837143045d791cc85eff5b21932f23861' + // 400
+                                       'c6a75837143045d791cc85eff5b21932f23861' +
                                        'bcf23a52b5da67eaf7baae0f5fb1369db78f3a' +
                                        'c45f8c4ac5671d85735cdddb09d2b1e34a1fc0' +
                                        '66ff4a162cb263d6541274ae2fcc865f618abe' +
                                        '27c124cd8b074ccd516301b91875824d09958f' +
-                                       '341ef274bdab0bae316339894304e35877b0c2' + // 500
-                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';    // 512
+                                       '341ef274bdab0bae316339894304e35877b0c2' +
+                                       '8a9b1fd166c796b9cc258a064a8f57e27f2a';
   lDataRow.HashResultByteLength     := 512;
   lDataRow.AddInputVector('');
   lDataRow.FinalBitLength := 0;
 
   // Source:
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'f7b1c8f5fd6136aeb4d8bfa0740787a6d2e7af48' +
-                                       '8e96cbc3a5e0929a5989c0af49794aa6c64a5842' +
-                                       'b9c081238dfc4d5c2f175843026f72ec10c46436' +
-                                       '71372fd083809f51e2a7456e55e1a07deb95aeea' +
-                                       '62bb39adfadc4b42aa6b289aafebe2c056f86200' +
-                                       '7b7f891716573bc54bd65657fd5dd112c87663cd' +
-                                       '4584c92247baa3d228415a98e0dbe5bb128e4365' +
-                                       '492c322ca720120bf34db0b97a6dc032d5dfe068' +
-                                       'dc96173ceeaa9baf48f21e4ccbba134faf84b025' +
-                                       '08d9e1fc9486aeb673b27ba86124cd285b4c1b17' +
-                                       '60124c4ad6c503ad35f691f62853e979ceedf706' +
-                                       '27a0b93a42738388752c8f4154c3e9abb1b53638' +
-                                       '081d8259545f801b5f15764dda74490a3397518f' +
-                                       '8f78c73ec68e5178e8434f31381b1fe50e034b2e' +
-                                       'b7839f134e5753de6106a0214f7f4d8ff53c063a' +
-                                       'eb1f4a74e66d3e2c925fc2f55be83a9e8d23061c' +
-                                       'df014dfab5976ca0da87ab6dfe263512782eade5' +
-                                       'ab9b95f11447a8f0900c4aa6e31665957ec3acb1' +
-                                       '7a3654d683e03ed22ed330c2894f7a2097ba004c' +
-                                       '612b7c86cd7438215197557385d12bd86d9a0a7d' +
-                                       '8efe64d0b6254aa04f87c4807ada5f276fccf016' +
-                                       '8f058c1b15bdf96f369dc5ed5585b8d5fe0fe009' +
-                                       'db407d0b168c78703d8f7d57ab254176c2464204' +
-                                       '61becdafafdfd4dff6429f4f2592806c7e7aa6d2' +
-                                       '3984df1b6c548fb0174e8daf725f04051aa995e3' +
-                                       'dfab45b411979ca49dde8622';
-  lDataRow.ExpectedOutputUTFStrTest := 'bf95de572093ec60363d6053886cb78ff78b7f' +
-                                       '08c28bfd70d50f1a53b7c41aa3cdfb2d2d8987' +
-                                       '86a6f8da4116b19ffa00f97179667bb582a6ed' +
-                                       'f9597af69bf28a159f5a8b787b564240ca44bd' +
-                                       '144e515b563c39ea53ab399ab290544ae54d48' +
-                                       '29fa940c5943c8178b4efe0e2399b258322228' +
-                                       'c011df8c49fff3d813802e7e10814a9862caa0' +
-                                       '4f9ee33ac29de1bdb067e21cf98361b77d349d' +
-                                       '5b3a591939ad3be7de57cd2c5bc054af941bca' +
-                                       '6185f2c7d4ae0499c718c988c5d60885ca4478' +
-                                       'c11752f9be846dece8ad0d8a24baad9256fe0e' +
-                                       '993fbe5b8e4f43b7ed2ee5cdf304e34f439698' +
-                                       '269011492b63475f1a769c7e0290cedfef5e11' +
-                                       'c1bef1547d1e508f86063d0aa5a5bb57c13c7a' +
-                                       'e5d65dda0c0c49c2f4913780c4e9c42dc55aed' +
-                                       '3bf77e1f2523fc89718fc97ff6e9c5dc7b6338' +
-                                       '7784b0cdabb12694917308c3c2326b2235757f' +
-                                       '6cdd5f3664a4b66314ab6e59f1699fe4ebce11' +
-                                       'a1dd16847ddf1704d5fb9c4cd69f32f579e1ef' +
-                                       'a317bc7d6d226322d1011d0cb989d0bb0202be' +
-                                       '841ea4e0551339f3af0fed065cbfc869925861' +
-                                       'a51d6a8e6e5d46dcb4f83ab3ddf5bd8a13bd7f' +
-                                       '93e5ad39d451e6ad1bb3f2a571978b85b74e01' +
-                                       '95293d2febcd8c96b4c7c815801136a48ee84c' +
-                                       '5ba94984fd29aa0b3e2e3b6ac46fc0dfe57536' +
-                                       '642a6d3bf53542475f8a68ed0b51dfc75d85ca' +
-                                       'e89622dd24c4dc4556f9685b31220280c546';
+  lDataRow.ExpectedOutput           := '807b2445e62e7e5c2a1a701b065a4c05b500b9' +
+                                       'e34b1b26bc3a014f9c7d03935ea9e3b06631df' +
+                                       'c57e33b60b31c8a0c886e1c4665faf272a12cd' +
+                                       '9cf0bd1a3bc69703fbf9e1816c618cb8e917b3' +
+                                       'fb59aa93937c892eed9082076aefc8ad23d04a' +
+                                       '1bed882fa743cbefc517aa20040eb71e209ad5' +
+                                       'e7db5a78d8bd2786f7b3a04190ca39cf3f8660' +
+                                       'be6346eb7bf77fd2524b10405e92e37a10b67f' +
+                                       '80cb4222be9e0019d33094057306e7ba6539a7' +
+                                       '13948e97618a5ca6ff014aa79250b517bc8556' +
+                                       '7f4451de22e6cfe3d98d52391349ffe68c6e8f' +
+                                       'dc958295aff3ff2f0a8aeff2e3d46ac2baf871' +
+                                       '1cda4df06c245df4da8c2b0d722c1363a94c38' +
+                                       'f24b63021126505241ca85a03c5731c0b70149' +
+                                       'c10545a1a7b5d9ca7dd1c18158884d4c37a40e' +
+                                       '0ab2b97180274a02db7025d232cee6a8d9d4a2' +
+                                       'c652d33383fe05ba439659b80309b69faa71f7' +
+                                       '00d550a0d1d0a0efe3f67ada02e2d9ba8a7f2e' +
+                                       '416e89a3e3cb37de73838dd753aa93647cabfb' +
+                                       'b2a99c9fea2d9d0e02b0829294c6f4367b4d09' +
+                                       'e213cf2e11dddf0c4c00d6167e81738518e0b4' +
+                                       'abfbd34d2655a3553fba1756f6094743c406e5' +
+                                       'ad5de5fdda11242306c52faa87540816df9314' +
+                                       '4f77c1d8ea958c73f8d47bc4cacec1105452c4' +
+                                       '47fe940c8a9e949842c3d7c2ef5e27fd1a2087' +
+                                       'dd4e008fc23dd654e46951b7e782d987f8d1f1' +
+                                       '29b13e98b3def7072ef5f6c1887a8ddbaa33';
+  lDataRow.ExpectedOutputUTFStrTest := 'f55ac9e264ca9a6f6da7a38673cd565e012963' +
+                                       'b8f76714a8e29b7a9c260380dfd1609cdcf265' +
+                                       '8e8aff9a9e67d41f8a859600fdc28b7b8120d3' +
+                                       '1fb43574ccc24faec89376d7696b6b2e998730' +
+                                       '70159287b8e70a6fbf9ba9e181ce294e70d9c8' +
+                                       '61951bf5ce40e91a71bbf78f00c4726c59aa5e' +
+                                       'b38ef10ddf9f23767a68f4afbac8caba04494d' +
+                                       '9bb4c6a6a8dfaf12e4eb65dbc697f665e1e630' +
+                                       '774d777696ddc79ec0ef528a493cc82adfbb91' +
+                                       'a218f4d0d5cbdf072f6e95b88f1778679066a3' +
+                                       'ff4ec286a4b2cc0fa3f3729c42fb70d3563cd9' +
+                                       '43144018199bf2f43c76ba19e3ef824dba6996' +
+                                       '0786a8fff7398fc33519b4032cccce970172c7' +
+                                       '354ac3e0826bdd34cb4fcd238ba80076586a7a' +
+                                       '7767cf2408f1936d058787027c09630325d37e' +
+                                       '7156c2a2a3f200e67b77802488a5558d276444' +
+                                       '3a0727a4fbee7245ef21d1def66c8baa89294d' +
+                                       'f3e8c31cce30b5bd86c9da303ea5ec806cf015' +
+                                       'f82203426e6d2cece44b974b7378acaadee472' +
+                                       '1710cb05f640d93a421bc8be93a551a4a8767d' +
+                                       '888a497a9cde8c00f84b62bdaa07db0e1d817c' +
+                                       'c23be18711422ef0cc86336755effca31073fc' +
+                                       '289ee7b43bace5c29d14ad5a9c092aa2ac13af' +
+                                       'e6eade2b167448dc8ee1c2d3babb7f5017bb4f' +
+                                       '854f4ce68c3ccf97215dc4059e7d7da56f1465' +
+                                       '373abb45a714a7b896dfdb9c5b886c2926192b' +
+                                       '29e181a3de25c9180729e6c357d0a6edc858';
+
   lDataRow.HashResultByteLength     := 512;
   lDataRow.AddInputVector(TFormat_HEXL.Decode('0372cd1ce0b74ce05e717fc4b9a82ce1a' +
                                               '888f4ef7b0027a5d6dc5f8d13936e01'));
