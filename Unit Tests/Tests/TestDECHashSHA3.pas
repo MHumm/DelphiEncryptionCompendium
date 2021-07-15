@@ -200,6 +200,8 @@ type
   // Test methods for class THash_Shake128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Shake128 = class(TestTHash_SHA3_Base)
+  strict private
+    procedure SetLength0Test;
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -215,11 +217,14 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestLength0;
   end;
 
   // Test methods for class THash_Shake128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_Shake256 = class(TestTHash_SHA3_Base)
+  strict private
+    procedure SetLength0Test;
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -235,6 +240,7 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestLength0;
   end;
 
 implementation
@@ -306,6 +312,7 @@ var
   s1           : string;
   Len          : Int32;
   FinalByteLen : Int16;
+  HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
 begin
   Len      := 0;
@@ -339,7 +346,8 @@ begin
         if (Len > 0) then
         begin
           lDataRow.AddInputVector(TFormat_HexL.Decode(RawByteString(s1)));
-{ TODO : Check what needs to be done for Shake128/256 as this one is a method in SHA3_base class }
+          // For Shake variants this will be overwritten once we know the output
+          // hash length
           lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(s1, HashInst);
         end
         else
@@ -360,8 +368,13 @@ begin
         if (Pos('squeezed ', FileRowTrim) = 1) then
         begin
           Delete(s1, 1, 6);
-          lDataRow.ExpectedOutput := RawByteString(s1);
-          lDataRow.HashResultByteLength := Length(RawByteString(s1)) div 2;
+          lDataRow.ExpectedOutput            := RawByteString(s1);
+          HashLength                         := Length(RawByteString(s1)) div 2;
+          lDataRow.HashResultByteLength      := HashLength;
+
+          // Shake can caculate unicode test data only after hash length is known
+          THash_ShakeBase(HashInst).HashSize := HashLength;
+          lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(s1, HashInst);
         end
         else
           // md from the SHA3 ones
@@ -1044,13 +1057,10 @@ begin
   inherited;
   FHash := THash_SHake128.Create;
 
-//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
-//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+  // Source https://github.com/XKCP/XKCP/tree/4017707cade3c1fd42f3c6fa984609db87606700/tests/TestVectors
   FTestFileNames.Add('..\..\Unit Tests\Data\ShortMsgKAT_SHAKE128.txt');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
-//  // SourceEnd
+  // SourceEnd
 
-  // Source:
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '7f9c2ba4e88f827d616045507605853ed73b8093' + // 20
                                        'f6efbc88eb1a6eacfa66ef263cb1eea988004b93' +
@@ -1195,6 +1205,23 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_Shake128.SetLength0Test;
+var
+  Shake: THash_Shake128;
+begin
+  Shake := THash_Shake128.Create;
+  try
+    Shake.HashSize := 0;
+  finally
+    Shake.Free;
+  end;
+end;
+
+procedure TestTHash_Shake128.TestLength0;
+begin
+  CheckException(SetLength0Test, EDECHashException);
+end;
+
 { TestTHash_Shake256 }
 
 procedure TestTHash_Shake256.ConfigHashClass(HashClass: TDECHash;
@@ -1214,13 +1241,10 @@ begin
   inherited;
   FHash := THash_Shake256.Create;
 
-//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
-//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+  // Source https://github.com/XKCP/XKCP/tree/4017707cade3c1fd42f3c6fa984609db87606700/tests/TestVectors
   FTestFileNames.Add('..\..\Unit Tests\Data\ShortMsgKAT_SHAKE256.txt');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
-//  // SourceEnd
+  // SourceEnd
 
-  // Source:
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '46b9dd2b0ba88d13233b3feb743eeb243fcd52' +
                                        'ea62b81b82b50c27646ed5762fd75dc4ddd8c0' +
@@ -1281,7 +1305,6 @@ begin
   lDataRow.AddInputVector('');
   lDataRow.FinalBitLength := 0;
 
-  // Source:
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '807b2445e62e7e5c2a1a701b065a4c05b500b9' +
                                        'e34b1b26bc3a014f9c7d03935ea9e3b06631df' +
@@ -1367,6 +1390,23 @@ end;
 procedure TestTHash_Shake256.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Shake256.SetLength0Test;
+var
+  Shake: THash_Shake256;
+begin
+  Shake := THash_Shake256.Create;
+  try
+    Shake.HashSize := 0;
+  finally
+    Shake.Free;
+  end;
+end;
+
+procedure TestTHash_Shake256.TestLength0;
+begin
+  CheckException(SetLength0Test, EDECHashException);
 end;
 
 initialization

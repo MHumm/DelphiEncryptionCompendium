@@ -1074,8 +1074,12 @@ resourcestring
   ///   Failure message when absorb is callt with a bitlength not divideable by 8
   ///   without reminder or when it is called while already in squeezing state
   /// </summary>
-  aSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
+  sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
                        'Squeezing: %1:s';
+  /// <summary>
+  ///   Part of the failure message shown when setting HashSize of Shake algorithms to 0
+  /// </summary>
+  sHashOutputLength0 = 'HashSize must not be 0';
 
 { THash_MD2 }
 
@@ -4448,7 +4452,7 @@ begin
 
   // Only multiple of 8 bits are allowed, truncation must be done at user level
   if OutputLength and 7 <> 0 then
-    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+    raise EDECHashException.CreateFmt(sSHA3AbsorbFailure,
                                  [OutputLength, 'true']);
 
   i := 0;
@@ -4497,7 +4501,7 @@ begin
   // queue or algorithm is already in squeezing state
   if (FSpongeState.BitsInQueue and 7 <> 0) or FSpongeState.SqueezeActive then
   begin
-    raise EDECHashException.CreateFmt(aSHA3AbsorbFailure,
+    raise EDECHashException.CreateFmt(sSHA3AbsorbFailure,
                                      [FSpongeState.BitsInQueue,
                                       BoolToStr(FSpongeState.SqueezeActive, true)]);
   end;
@@ -4590,7 +4594,6 @@ end;
 
 function THash_SHA3Base.Digest: PByteArray;
 begin
-{ TODO : Frage: wann ist Länge von FDigest = 0?}
   Result := @FDigest[0];
 end;
 
@@ -4706,6 +4709,10 @@ end;
 
 procedure THash_ShakeBase.SetHashSize(const Value: UInt16);
 begin
+  if (Value = 0) then
+    raise EDECHashException.CreateResFmt(@sHashInitFailure,
+                                         [GetShortClassName, sHashOutputLength0]);
+
   // multiplied with 8 since this field is in bits
   FSpongeState.FixedOutputLength := Value * 8;
   // This flag tells the initialization of the algorithm that
