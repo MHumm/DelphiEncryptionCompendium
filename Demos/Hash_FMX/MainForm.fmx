@@ -4,24 +4,24 @@ object FormMain: TFormMain
   BorderStyle = Single
   Caption = 'DEC hash demo'
   ClientHeight = 697
-  ClientWidth = 427
+  ClientWidth = 452
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
   OnResize = FormResize
-  DesignerMasterStyle = 3
+  DesignerMasterStyle = 0
   object VertScrollBox1: TVertScrollBox
     Align = Client
-    Size.Width = 427.000000000000000000
+    Size.Width = 452.000000000000000000
     Size.Height = 697.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 427.000000000000000000
+    Viewport.Width = 436.000000000000000000
     Viewport.Height = 697.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 304.000000000000000000
-      Size.Width = 427.000000000000000000
+      Position.Y = 376.000000000000000000
+      Size.Width = 425.000000000000000000
       Size.Height = 393.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
@@ -29,8 +29,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 42.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 28.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -40,8 +40,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 150.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -51,7 +51,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 15.000000000000000000
         Position.Y = 144.000000000000000000
-        Size.Width = 402.000000000000000000
+        Size.Width = 400.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 7
@@ -65,7 +65,7 @@ object FormMain: TFormMain
         TabOrder = 3
         Position.X = 16.000000000000000000
         Position.Y = 44.000000000000000000
-        Size.Width = 401.000000000000000000
+        Size.Width = 399.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         OnChangeTracking = EditInputChangeTracking
@@ -78,7 +78,7 @@ object FormMain: TFormMain
         TabOrder = 5
         Position.X = 16.000000000000000000
         Position.Y = 108.000000000000000000
-        Size.Width = 401.000000000000000000
+        Size.Width = 399.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
@@ -86,8 +86,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 192.000000000000000000
-        Size.Width = 272.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 178.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -95,8 +95,9 @@ object FormMain: TFormMain
       end
     end
     object LayoutTop: TLayout
+      Margins.Right = 10.000000000000000000
       Size.Width = 425.000000000000000000
-      Size.Height = 305.000000000000000000
+      Size.Height = 376.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object ComboBoxHashFunction: TComboBox
@@ -134,8 +135,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 16.000000000000000000
-        Size.Width = 114.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 74.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -145,8 +146,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 88.000000000000000000
-        Size.Width = 139.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 91.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -156,8 +157,8 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 178.000000000000000000
-        Size.Height = 22.000000000000000000
+        Size.Width = 119.000000000000000000
+        Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
@@ -183,8 +184,46 @@ object FormMain: TFormMain
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 4
+        TabOrder = 5
         Text = 'Is password hash algorithm'
+      end
+      object CheckBoxIsExtensibleOutputHash: TCheckBox
+        Anchors = [akLeft, akTop, akRight]
+        Enabled = False
+        Position.X = 16.000000000000000000
+        Position.Y = 299.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'checkboxstyle'
+        TabOrder = 4
+        Text = 'Is extensible output hash algorithm'
+      end
+      object LabelHashLength: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 326.000000000000000000
+        Size.Width = 241.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Generated hash length (byte)'
+        TabOrder = 6
+      end
+      object EditHashLength: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 7
+        MaxLength = 4
+        FilterChar = '0123456789'
+        Text = '64'
+        TextSettings.HorzAlign = Trailing
+        Position.X = 319.000000000000000000
+        Position.Y = 322.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = EditHashLengthChangeTracking
       end
     end
   end

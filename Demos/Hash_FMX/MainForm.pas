@@ -44,6 +44,9 @@ type
     CheckBoxLiveCalc: TCheckBox;
     LabelVersion: TLabel;
     CheckBoxIsPasswordHash: TCheckBox;
+    CheckBoxIsExtensibleOutputHash: TCheckBox;
+    LabelHashLength: TLabel;
+    EditHashLength: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
@@ -51,6 +54,7 @@ type
     procedure EditInputChangeTracking(Sender: TObject);
     procedure EditInputKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
+    procedure EditHashLengthChangeTracking(Sender: TObject);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -85,8 +89,8 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECHashAUthentication, DECFormatBase,
-  DECFormat, DECUtil,
+  DECBaseClass, DECHashBase, DECHash, DECHashAUthentication, DECHashInterface,
+  DECFormatBase,  DECFormat, DECUtil,
   Generics.Collections, FMX.Platform
   {$IFDEF Android}
   ,
@@ -104,6 +108,7 @@ var
   OutputFormatting : TDECFormatClass;
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
+  ExtensibleInterf : IDECHashExtensibleOutput;
 begin
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
@@ -132,7 +137,15 @@ begin
   if ComboBoxHashFunction.ItemIndex >= 0 then
   begin
     // Find the class type of the selected hash class and create an instance of it
-    Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
+   Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
+
+    if Supports(Hash.ClassType, IDECHashExtensibleOutput) then
+    begin
+      ExtensibleInterf := (Hash as IDECHashExtensibleOutput);
+      ExtensibleInterf.HashSize := EditHashLength.Text.ToInteger;
+    end
+    else
+      ExtensibleInterf := nil;
 
     try
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
@@ -146,7 +159,10 @@ begin
       else
         ShowErrorMessage('Input has wrong format');
     finally
-      Hash.Free;
+      // We must free the hash instance only, if we didn't use the interface
+      // for extensible hash algorithms to set the output hash length.
+      if not Assigned(ExtensibleInterf) then
+        Hash.Free;
     end;
   end;
 end;
@@ -175,6 +191,25 @@ procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
 begin
   CheckBoxIsPasswordHash.IsChecked :=
     TDECHash.ClassByName(GetSelectedHashClassName).IsPasswordHash;
+
+  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashExtensibleOutput) then
+  begin
+    CheckBoxIsExtensibleOutputHash.IsChecked := true;
+    EditHashLength.Enabled                   := true;
+    LabelHashLength.Enabled                  := true;
+  end
+  else
+  begin
+    CheckBoxIsExtensibleOutputHash.IsChecked := false;
+    EditHashLength.Enabled                   := false;
+    LabelHashLength.Enabled                  := false;
+  end;
+end;
+
+procedure TFormMain.EditHashLengthChangeTracking(Sender: TObject);
+begin
+  if ((Sender as TEdit).Text.Length > 0) and ((Sender as TEdit).Text <> '0') then
+    ButtonCalcClick(self);
 end;
 
 procedure TFormMain.EditInputChangeTracking(Sender: TObject);
@@ -261,8 +296,8 @@ end;
 
 procedure TFormMain.FormResize(Sender: TObject);
 begin
-  LayoutTop.Width    := VertScrollBox1.Width;
-  LayoutBottom.Width := VertScrollBox1.Width;
+  LayoutTop.Width    := VertScrollBox1.ClientWidth;
+  LayoutBottom.Width := VertScrollBox1.ClientWidth;
 end;
 
 function TFormMain.GetSelectedHashClassName: string;
