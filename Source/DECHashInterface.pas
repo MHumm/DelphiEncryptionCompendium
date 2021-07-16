@@ -290,7 +290,7 @@ type
   ///   Interface for all hash classes which provide a variable output length for
   ///   the calculated hash value
   /// </summary>
-  IDECHashExtensibleOutput = Interface(IDECHashBitsized)
+  IDECHashExtensibleOutput = Interface(IDECHash)
   ['{C832E9AB-961C-4888-A607-9EC0780B3F8C}']
     /// <summary>
     ///   Returns the length of the calculated hash value in byte

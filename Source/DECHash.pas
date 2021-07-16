@@ -613,7 +613,7 @@ type
   /// <summary>
   ///   Base class for the Shake implementations
   /// </summary>
-  THash_ShakeBase = class(THash_SHA3Base, IDECHashExtensibleOutput)
+  THash_ShakeBase = class(THash_SHA3Base, IDECHashExtensibleOutput, IDECHashBitsized)
   private
     /// <summary>
     ///   Returns the length of the calculated hash value in byte
@@ -625,7 +625,6 @@ type
     /// <param name="Value">
     ///   Length of the hash value to be returned in byte
     /// </param>
-{ TODO : Check what happens when 0 is set }
     procedure SetHashSize(const Value: UInt16);
   public
     /// <summary>
