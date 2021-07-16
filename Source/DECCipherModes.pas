@@ -120,6 +120,10 @@ type
     ///   inputstream into Feedback register.
     /// </summary>
     procedure EncodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    /// <summary>
+    ///   Galois Counter Mode
+    /// </summary>
+    procedure EncodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -203,6 +207,10 @@ type
     ///   inputstream into feedback register.
     /// </summary>
     procedure DecodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    /// <summary>
+    ///   Galois Counter Mode
+    /// </summary>
+    procedure DecodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC
@@ -285,6 +293,7 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
+    cmGCM :   EncodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -321,6 +330,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+begin
+
 end;
 
 procedure TDECCipherModes.EncodeOFB8(Source, Dest: PByteArray; Size: Integer);
@@ -586,6 +600,7 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
+    cmGCM :   DecodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -622,6 +637,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
+begin
+
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);

@@ -178,7 +178,8 @@ type
     cmOFBx,   // OFB on Blocksize bytes
     cmCFS8,   // 8Bit CFS, double CFB
     cmCFSx,   // CFS on Blocksize bytes
-    cmECBx    // Electronic Code Book
+    cmECBx,   // Electronic Code Book
+    cmGCM     // Galois Counter Mode
     {$IFDEF DEC3_CMCTS}
     ,cmCTS3   // double CBC, with less secure padding of truncated final block
               // for DEC 3.0 compatibility only (see DECOptions.inc)
