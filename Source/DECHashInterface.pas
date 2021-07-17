@@ -312,6 +312,25 @@ type
       write  SetHashSize;
   end;
 
+  IDECHashRounds = Interface(IDECHash)
+  ['{22864693-0DC6-41AF-8188-192B770B4717}']
+     /// <summary>
+    ///   Sets the number of rounds for the looping over the data
+    /// </summary>
+    procedure SetRounds(Value: UInt8);
+    /// <summary>
+    ///   Returns the number of rounds the calculation will perform
+    /// </summary>
+    function  GetRounds: UInt8;
+
+    /// <summary>
+    ///   Define the number of rounds for the calculation.
+    /// </summary>
+    property Rounds: UInt8
+      read   GetRounds
+      write  SetRounds;
+  end;
+
 implementation
 
 end.

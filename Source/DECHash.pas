@@ -666,12 +666,20 @@ type
 
   THavalBaseTransformMethod = procedure(Buffer: PUInt32Array) of object;
 
-  THashBaseHaval = class(TDECHashAuthentication)
+  /// <summary>
+  ///   Base class for all Haval implementations
+  /// </summary>
+  THashBaseHaval = class(TDECHashAuthentication, IDECHashRounds)
   private
     FDigest: array[0..7] of UInt32;
-    FRounds: UInt32;
+    FRounds: UInt8;
     FTransform: THavalBaseTransformMethod;
-    procedure SetRounds(Value: UInt32);
+    /// <summary>
+    ///   Defines the number of calculation rounds and if a value outside the
+    ///   allowed range is given it sets rounds to a value based on digest size.
+    /// </summary>
+    procedure SetRounds(Value: UInt8);
+    function  GetRounds: UInt8;
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -700,7 +708,7 @@ type
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
     /// </summary>
-    property Rounds: UInt32 read FRounds write SetRounds default 3;
+    property Rounds: UInt8 read GetRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -738,7 +746,7 @@ type
   ///   to the rounds property. It is considered to be unsafe at least in the
   ///   192 Bit variant!
   /// </summary>
-  THash_Tiger = class(THashBaseMD4)
+  THash_Tiger = class(THashBaseMD4, IDECHashRounds)
   private
     const
       /// <summary>
@@ -752,8 +760,9 @@ type
       /// </summary>
       cTigerMaxRounds = 32;
     var
-      FRounds: Integer;
-      procedure SetRounds(Value: Integer);
+      FRounds: UInt8;
+      function  GetRounds: UInt8;
+      procedure SetRounds(Value: UInt8);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -774,7 +783,7 @@ type
     ///   outside this range will lead to a rounds value of 3 or 32 to be used,
     ///   depending on whether a lower or higher value has been given.
     /// </summary>
-    property Rounds: Integer read FRounds write SetRounds default 3;
+    property Rounds: UInt8 read GetRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -904,17 +913,18 @@ type
   ///   This 1990 developed hash function was named after the Egyptian Pharaoh
   ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
-  THashBaseSnefru = class(TDECHashAuthentication)
+  THashBaseSnefru = class(TDECHashAuthentication, IDECHashRounds)
   private
     FDigest: array[0..23] of UInt32;
     /// <summary>
     ///   Number of rounds the loop will do on the data
     /// </summary>
-    FRounds: Integer;
+    FRounds: UInt8;
     /// <summary>
     ///   Sets the number of rounds for the looping over the data
     /// </summary>
-    procedure SetRounds(Value: Integer);
+    procedure SetRounds(Value: UInt8);
+    function  GetRounds: UInt8;
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -935,8 +945,8 @@ type
     ///   as safe as of spring 2016, with less rounds this algorithm is considered
     ///   to be unsafe and even with 8 rounds it is not really strong.
     /// </summary>
-    property Rounds: Integer
-      read   FRounds
+    property Rounds: UInt8
+      read   GetRounds
       write  SetRounds;
   end;
 
@@ -2591,7 +2601,7 @@ end;
 
 { THashBaseHaval }
 
-procedure THashBaseHaval.SetRounds(Value: UInt32);
+procedure THashBaseHaval.SetRounds(Value: UInt8);
 begin
   if (Value < 3) or (Value > 5) then
   begin
@@ -2647,6 +2657,11 @@ begin
     else
       Result := 5;
   end;
+end;
+
+function THashBaseHaval.GetRounds: UInt8;
+begin
+  Result := FRounds;
 end;
 
 {$IFNDEF THashBaseHaval_asm}
@@ -2869,7 +2884,7 @@ begin
     FBufferIndex := 0;
   end;
   FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex - 10, 0);
-  T := DigestSize shl 9 or FRounds shl 3 or 1;
+  T := (DigestSize shl 9) or (UInt32(FRounds) shl 3) or 1;
   Move(T, FBuffer[FBufferSize - 10], SizeOf(T));
   Move(FCount, FBuffer[FBufferSize - 8], 8);
   DoTransform(Pointer(FBuffer));
@@ -2983,7 +2998,7 @@ end;
 
 { THash_Tiger }
 
-procedure THash_Tiger.SetRounds(Value: Integer);
+procedure THash_Tiger.SetRounds(Value: UInt8);
 begin
   if (Value < cTigerMinRounds) then
     Value := cTigerMinRounds;
@@ -3230,6 +3245,11 @@ end;
 class function THash_Tiger.GetMinRounds: UInt8;
 begin
   Result := cTigerMinRounds;
+end;
+
+function THash_Tiger.GetRounds: UInt8;
+begin
+  Result := FRounds;
 end;
 
 class function THash_Tiger.DigestSize: UInt32;
@@ -3849,7 +3869,7 @@ end;
 
 { THashBaseSnefru }
 
-procedure THashBaseSnefru.SetRounds(Value: Integer);
+procedure THashBaseSnefru.SetRounds(Value: UInt8);
 begin
   if (Value < 2) or (Value > 8) then
     Value := 8;
@@ -3870,6 +3890,11 @@ end;
 class function THashBaseSnefru.GetMinRounds: UInt8;
 begin
   Result := 2;
+end;
+
+function THashBaseSnefru.GetRounds: UInt8;
+begin
+  Result := FRounds;
 end;
 
 procedure THashBaseSnefru.DoDone;
