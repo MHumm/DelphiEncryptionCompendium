@@ -613,7 +613,7 @@ type
   /// <summary>
   ///   Base class for the Shake implementations
   /// </summary>
-  THash_ShakeBase = class(THash_SHA3Base, IDECHashExtensibleOutput, IDECHashBitsized)
+  THash_ShakeBase = class(THash_SHA3Base, IDECHashExtensibleOutput)
   private
     /// <summary>
     ///   Returns the length of the calculated hash value in byte
