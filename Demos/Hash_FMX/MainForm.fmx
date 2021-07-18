@@ -223,7 +223,7 @@ object FormMain: TFormMain
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        OnChangeTracking = EditHashLengthChangeTracking
+        OnChange = EditHashLengthChange
       end
       object LabelRounds: TLabel
         AutoSize = True
@@ -249,7 +249,7 @@ object FormMain: TFormMain
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        OnChangeTracking = EditHashLengthChangeTracking
+        OnChange = EditRoundsChange
       end
       object CheckBoxHasRounds: TCheckBox
         Anchors = [akLeft, akTop, akRight]
@@ -291,7 +291,7 @@ object FormMain: TFormMain
         StyleLookup = 'editstyle'
         TabOrder = 9
         MaxLength = 4
-        FilterChar = '0123456789'
+        FilterChar = '012345678'
         Text = '8'
         TextSettings.HorzAlign = Trailing
         Position.X = 317.000000000000000000
@@ -299,7 +299,6 @@ object FormMain: TFormMain
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        OnChangeTracking = EditHashLengthChangeTracking
       end
     end
   end
