@@ -23,7 +23,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Layouts, FMX.ListBox,
-  FMX.Edit;
+  FMX.Edit, DECHashInterface;
 
 type
   TFormMain = class(TForm)
@@ -60,7 +60,8 @@ type
     procedure EditInputChangeTracking(Sender: TObject);
     procedure EditInputKeyUp(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
-    procedure EditHashLengthChangeTracking(Sender: TObject);
+    procedure EditHashLengthChange(Sender: TObject);
+    procedure EditRoundsChange(Sender: TObject);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -95,7 +96,7 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECHashAUthentication, DECHashInterface,
+  DECBaseClass, DECHashBase, DECHash, DECHashAuthentication,
   DECFormatBase,  DECFormat, DECUtil,
   Generics.Collections, FMX.Platform
   {$IFDEF Android}
@@ -117,6 +118,7 @@ var
   ExtensibleInterf     : IDECHashExtensibleOutput;
   LastByteLengthInterf : IDECHashBitsized;
   RoundsInterf         : IDECHashRounds;
+  Rounds               : UInt8;
 begin
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
@@ -166,7 +168,18 @@ begin
     if Supports(Hash.ClassType, IDECHashRounds) then
     begin
       RoundsInterf := (Hash as IDECHashRounds);
-      RoundsInterf.Rounds := EditRounds.Text.ToInteger;
+      Rounds := EditRounds.Text.ToInteger;
+
+      // If value is not in range we don't dis´play any error message here
+      // because we already displayed one in OnChange of the edit, means when
+      // the edit lost focus. This if here is only to prevent that after closing
+      // the error message the user clicks the calc button again. In that case we
+      // simply skip calculation completely.
+      if (Rounds >= RoundsInterf.GetMinRounds) and
+         (Rounds <= RoundsInterf.GetMaxRounds) then
+        RoundsInterf.Rounds := EditRounds.Text.ToInteger
+      else
+        Exit;
     end
     else
       RoundsInterf := nil;
@@ -258,7 +271,7 @@ begin
   end;
 end;
 
-procedure TFormMain.EditHashLengthChangeTracking(Sender: TObject);
+procedure TFormMain.EditHashLengthChange(Sender: TObject);
 begin
   if ((Sender as TEdit).Text.Length > 0) and ((Sender as TEdit).Text <> '0') then
     ButtonCalcClick(self);
@@ -275,6 +288,27 @@ procedure TFormMain.EditInputKeyUp(Sender: TObject; var Key: Word;
 begin
   if (Key = vkReturn) then
     ButtonCalcClick(self);
+end;
+
+procedure TFormMain.EditRoundsChange(Sender: TObject);
+var
+  Hash         : TDECHash;
+  RoundsInterf : IDECHashRounds;
+begin
+  Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
+
+  if Supports(Hash, IDECHashRounds, RoundsInterf) then
+  begin
+    if ((Sender as TEdit).Text.Length > 0) and ((Sender as TEdit).Text <> '0') and
+       ((Sender as TEdit).Text.ToInteger >= RoundsInterf.GetMinRounds) and
+       ((Sender as TEdit).Text.ToInteger <= RoundsInterf.GetMaxRounds) then
+        ButtonCalcClick(self)
+    else
+      ShowErrorMessage(Format('Invalid input. Rounds must be between %0:d and %1:d',
+                              [RoundsInterf.GetMinRounds, RoundsInterf.GetMaxRounds]));
+  end
+  else
+    Hash.Free;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
