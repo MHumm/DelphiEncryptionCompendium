@@ -690,15 +690,16 @@ type
   public
     function Digest: PByteArray; override;
     class function BlockSize: UInt32; override;
+    /// <summary>
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    class function GetMinRounds: UInt8;
+    function GetMinRounds: UInt8;
     /// <summary>
     ///   Returns the maximum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    class function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
@@ -771,11 +772,11 @@ type
     /// <summary>
     ///   Returns the minimum possible number for the rounds parameter
     /// </summary>
-    class function GetMinRounds: UInt8;
+    function GetMinRounds: UInt8;
     /// <summary>
     ///   Returns the maximum possible number for the rounds parameter
     /// </summary>
-    class function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
@@ -933,11 +934,11 @@ type
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    class function GetMinRounds: UInt8;
+    function GetMinRounds: UInt8;
     ///   Returns the maximum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    class function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt8;
 
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
@@ -2641,12 +2642,12 @@ begin
   FTransform(Buffer);
 end;
 
-class function THashBaseHaval.GetMaxRounds: UInt8;
+function THashBaseHaval.GetMaxRounds: UInt8;
 begin
   Result := 5;
 end;
 
-class function THashBaseHaval.GetMinRounds: UInt8;
+function THashBaseHaval.GetMinRounds: UInt8;
 begin
   if DigestSize <= 20 then
     Result := 3
@@ -3237,12 +3238,12 @@ begin
   PInt64Array(@FDigest)[2] := C  +  PInt64Array(@FDigest)[2];
 end;
 
-class function THash_Tiger.GetMaxRounds: UInt8;
+function THash_Tiger.GetMaxRounds: UInt8;
 begin
   Result := cTigerMaxRounds;
 end;
 
-class function THash_Tiger.GetMinRounds: UInt8;
+function THash_Tiger.GetMinRounds: UInt8;
 begin
   Result := cTigerMinRounds;
 end;
@@ -3882,12 +3883,12 @@ begin
   SetRounds(FRounds);
 end;
 
-class function THashBaseSnefru.GetMaxRounds: UInt8;
+function THashBaseSnefru.GetMaxRounds: UInt8;
 begin
   Result := 8;
 end;
 
-class function THashBaseSnefru.GetMinRounds: UInt8;
+function THashBaseSnefru.GetMinRounds: UInt8;
 begin
   Result := 2;
 end;

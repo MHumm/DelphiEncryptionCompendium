@@ -314,6 +314,17 @@ type
 
   IDECHashRounds = Interface(IDECHash)
   ['{22864693-0DC6-41AF-8188-192B770B4717}']
+    /// <summary>
+    ///   Returns the minimum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    function GetMinRounds: UInt8;
+    /// <summary>
+    ///   Returns the maximum possible number for the rounds parameter.
+    ///   Value depends on Digest size which depends on concrete implementation
+    /// </summary>
+    function GetMaxRounds: UInt8;
+
      /// <summary>
     ///   Sets the number of rounds for the looping over the data
     /// </summary>
