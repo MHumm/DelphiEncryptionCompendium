@@ -47,6 +47,12 @@ type
     CheckBoxIsExtensibleOutputHash: TCheckBox;
     LabelHashLength: TLabel;
     EditHashLength: TEdit;
+    CheckBoxHasRounds: TCheckBox;
+    LabelRounds: TLabel;
+    EditRounds: TEdit;
+    CheckBoxLastByteBitSize: TCheckBox;
+    LabelLastByteBits: TLabel;
+    EditLastByteBits: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
@@ -103,12 +109,14 @@ uses
 
 procedure TFormMain.ButtonCalcClick(Sender: TObject);
 var
-  Hash             : TDECHash;
-  InputFormatting  : TDECFormatClass;
-  OutputFormatting : TDECFormatClass;
-  InputBuffer      : TBytes;
-  OutputBuffer     : TBytes;
-  ExtensibleInterf : IDECHashExtensibleOutput;
+  Hash                 : TDECHash;
+  InputFormatting      : TDECFormatClass;
+  OutputFormatting     : TDECFormatClass;
+  InputBuffer          : TBytes;
+  OutputBuffer         : TBytes;
+  ExtensibleInterf     : IDECHashExtensibleOutput;
+  LastByteLengthInterf : IDECHashBitsized;
+  RoundsInterf         : IDECHashRounds;
 begin
   if ComboBoxInputFormatting.ItemIndex >= 0 then
   begin
@@ -147,6 +155,22 @@ begin
     else
       ExtensibleInterf := nil;
 
+    if Supports(Hash.ClassType, IDECHashExtensibleOutput) then
+    begin
+      LastByteLengthInterf := (Hash as IDECHashBitsized);
+      LastByteLengthInterf.FinalBitLength := EditLastByteBits.Text.ToInteger;
+    end
+    else
+      LastByteLengthInterf := nil;
+
+    if Supports(Hash.ClassType, IDECHashRounds) then
+    begin
+      RoundsInterf := (Hash as IDECHashRounds);
+      RoundsInterf.Rounds := EditRounds.Text.ToInteger;
+    end
+    else
+      RoundsInterf := nil;
+
     try
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
 
@@ -161,7 +185,9 @@ begin
     finally
       // We must free the hash instance only, if we didn't use the interface
       // for extensible hash algorithms to set the output hash length.
-      if not Assigned(ExtensibleInterf) then
+      if (not Assigned(ExtensibleInterf)) and
+         (not Assigned(LastByteLengthInterf)) and
+         (not Assigned(RoundsInterf)) then
         Hash.Free;
     end;
   end;
@@ -203,6 +229,32 @@ begin
     CheckBoxIsExtensibleOutputHash.IsChecked := false;
     EditHashLength.Enabled                   := false;
     LabelHashLength.Enabled                  := false;
+  end;
+
+  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashRounds) then
+  begin
+    CheckBoxHasRounds.IsChecked := true;
+    LabelRounds.Enabled         := true;
+    EditRounds.Enabled          := true;
+  end
+  else
+  begin
+    CheckBoxHasRounds.IsChecked := false;
+    LabelRounds.Enabled         := false;
+    EditRounds.Enabled          := false;
+  end;
+
+  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashBitsized) then
+  begin
+    CheckBoxLastByteBitSize.IsChecked := true;
+    LabelLastByteBits.Enabled         := true;
+    EditLastByteBits.Enabled          := true;
+  end
+  else
+  begin
+    CheckBoxLastByteBitSize.IsChecked := false;
+    LabelLastByteBits.Enabled         := false;
+    EditLastByteBits.Enabled          := false;
   end;
 end;
 

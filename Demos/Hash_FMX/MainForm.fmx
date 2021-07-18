@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Top = 0
   BorderStyle = Single
   Caption = 'DEC hash demo'
-  ClientHeight = 697
+  ClientHeight = 790
   ClientWidth = 452
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,13 +14,13 @@ object FormMain: TFormMain
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 452.000000000000000000
-    Size.Height = 697.000000000000000000
+    Size.Height = 790.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
     Viewport.Width = 436.000000000000000000
-    Viewport.Height = 697.000000000000000000
+    Viewport.Height = 790.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 376.000000000000000000
+      Position.Y = 492.000000000000000000
       Size.Width = 425.000000000000000000
       Size.Height = 393.000000000000000000
       Size.PlatformDefault = False
@@ -40,7 +40,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 97.000000000000000000
+        Size.Width = 96.666664123535160000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -97,7 +97,7 @@ object FormMain: TFormMain
     object LayoutTop: TLayout
       Margins.Right = 10.000000000000000000
       Size.Width = 425.000000000000000000
-      Size.Height = 376.000000000000000000
+      Size.Height = 492.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object ComboBoxHashFunction: TComboBox
@@ -146,7 +146,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 88.000000000000000000
-        Size.Width = 91.000000000000000000
+        Size.Width = 91.333335876464840000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -157,7 +157,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 119.000000000000000000
+        Size.Width = 118.666656494140600000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -184,14 +184,14 @@ object FormMain: TFormMain
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
-        TabOrder = 5
+        TabOrder = 7
         Text = 'Is password hash algorithm'
       end
       object CheckBoxIsExtensibleOutputHash: TCheckBox
         Anchors = [akLeft, akTop, akRight]
         Enabled = False
         Position.X = 16.000000000000000000
-        Position.Y = 299.000000000000000000
+        Position.Y = 433.000000000000000000
         Size.Width = 401.000000000000000000
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
@@ -202,24 +202,100 @@ object FormMain: TFormMain
       object LabelHashLength: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 326.000000000000000000
-        Size.Width = 241.000000000000000000
+        Position.Y = 460.000000000000000000
+        Size.Width = 241.333312988281300000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         Text = 'Generated hash length (byte)'
-        TabOrder = 6
+        TabOrder = 12
       end
       object EditHashLength: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 7
+        TabOrder = 13
         MaxLength = 4
         FilterChar = '0123456789'
         Text = '64'
         TextSettings.HorzAlign = Trailing
-        Position.X = 319.000000000000000000
-        Position.Y = 322.000000000000000000
+        Position.X = 317.000000000000000000
+        Position.Y = 444.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = EditHashLengthChangeTracking
+      end
+      object LabelRounds: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 332.000000000000000000
+        Size.Width = 241.333312988281300000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Number of rounds'
+        TabOrder = 10
+      end
+      object EditRounds: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 11
+        MaxLength = 4
+        FilterChar = '0123456789'
+        Text = '3'
+        TextSettings.HorzAlign = Trailing
+        Position.X = 317.000000000000000000
+        Position.Y = 323.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = EditHashLengthChangeTracking
+      end
+      object CheckBoxHasRounds: TCheckBox
+        Anchors = [akLeft, akTop, akRight]
+        Enabled = False
+        Position.X = 16.000000000000000000
+        Position.Y = 296.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'checkboxstyle'
+        TabOrder = 6
+        Text = 'Has rounds property'
+      end
+      object CheckBoxLastByteBitSize: TCheckBox
+        Anchors = [akLeft, akTop, akRight]
+        Enabled = False
+        Position.X = 16.000000000000000000
+        Position.Y = 363.000000000000000000
+        Size.Width = 401.000000000000000000
+        Size.Height = 19.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'checkboxstyle'
+        TabOrder = 5
+        Text = 'Supports incomplete last byte'
+      end
+      object LabelLastByteBits: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 390.000000000000000000
+        Size.Width = 241.333312988281300000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Number of used bits of last byte'
+        TabOrder = 8
+      end
+      object EditLastByteBits: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 9
+        MaxLength = 4
+        FilterChar = '0123456789'
+        Text = '8'
+        TextSettings.HorzAlign = Trailing
+        Position.X = 317.000000000000000000
+        Position.Y = 381.000000000000000000
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
