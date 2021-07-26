@@ -28191,7 +28191,7 @@ begin
                 lea     edi, [eax].THash_Snefru128.FDigest
                 push    ebp
                 lea     esi, Snefru_Data
-                mov     ecx, [eax].THash_Snefru128.FSecurityLevel
+                mov     ecx, [eax].THash_Snefru128.FRounds
 
                 mov     ebp, esp
                 add     esp, 0FFFFFF94h
@@ -28809,7 +28809,7 @@ begin
                 lea     edi, [eax].THash_Snefru256.FDigest
                 push    ebp
                 lea     esi, Snefru_Data
-                mov     ecx, [eax].THash_Snefru256.FSecurityLevel
+                mov     ecx, [eax].THash_Snefru256.FRounds
                 mov     ebp, esp
                 add     esp, 0FFFFFF94h
                 and     esp, 0FFFFFFE0h

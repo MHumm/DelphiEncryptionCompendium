@@ -672,14 +672,17 @@ type
   THashBaseHaval = class(TDECHashAuthentication, IDECHashRounds)
   private
     FDigest: array[0..7] of UInt32;
-    FRounds: UInt8;
+      /// <summary>
+      ///   UInt32 for compatibility with 32 bit ASM implementation
+      /// </summary>
+    FRounds: UInt32;
     FTransform: THavalBaseTransformMethod;
     /// <summary>
     ///   Defines the number of calculation rounds and if a value outside the
     ///   allowed range is given it sets rounds to a value based on digest size.
     /// </summary>
-    procedure SetRounds(Value: UInt8);
-    function  GetRounds: UInt8;
+    procedure SetRounds(Value: UInt32);
+    function  GetRounds: UInt32;
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -694,12 +697,12 @@ type
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMinRounds: UInt8;
+    function GetMinRounds: UInt32;
     /// <summary>
     ///   Returns the maximum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt32;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm performs on the input data.
@@ -709,7 +712,7 @@ type
     ///   bigger values to 5. For 3 rounds the algorithm is considered unsafe,
     ///   as in 2003 collisions could be found with a setting of 3 rounds only.
     /// </summary>
-    property Rounds: UInt8 read GetRounds write SetRounds default 3;
+    property Rounds: UInt32 read GetRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -761,9 +764,12 @@ type
       /// </summary>
       cTigerMaxRounds = 32;
     var
-      FRounds: UInt8;
-      function  GetRounds: UInt8;
-      procedure SetRounds(Value: UInt8);
+      /// <summary>
+      ///   UInt32 for compatibility with 32 bit ASM implementation
+      /// </summary>
+      FRounds: UInt32;
+      function  GetRounds: UInt32;
+      procedure SetRounds(Value: UInt32);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -772,11 +778,11 @@ type
     /// <summary>
     ///   Returns the minimum possible number for the rounds parameter
     /// </summary>
-    function GetMinRounds: UInt8;
+    function GetMinRounds: UInt32;
     /// <summary>
     ///   Returns the maximum possible number for the rounds parameter
     /// </summary>
-    function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt32;
 
     /// <summary>
     ///   Defines the number of rounds the algorithm will perform on the data
@@ -784,7 +790,7 @@ type
     ///   outside this range will lead to a rounds value of 3 or 32 to be used,
     ///   depending on whether a lower or higher value has been given.
     /// </summary>
-    property Rounds: UInt8 read GetRounds write SetRounds default 3;
+    property Rounds: UInt32 read GetRounds write SetRounds default 3;
   end;
 
   /// <summary>
@@ -918,14 +924,15 @@ type
   private
     FDigest: array[0..23] of UInt32;
     /// <summary>
-    ///   Number of rounds the loop will do on the data
+    ///   Number of rounds the loop will do on the data.
+    ///   UInt32 for compatibility with 32 bit ASM implementation
     /// </summary>
-    FRounds: UInt8;
+    FRounds: UInt32;
     /// <summary>
     ///   Sets the number of rounds for the looping over the data
     /// </summary>
-    procedure SetRounds(Value: UInt8);
-    function  GetRounds: UInt8;
+    procedure SetRounds(Value: UInt32);
+    function  GetRounds: UInt32;
   protected
     procedure DoInit; override;
     procedure DoDone; override;
@@ -934,11 +941,11 @@ type
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMinRounds: UInt8;
+    function GetMinRounds: UInt32;
     ///   Returns the maximum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt32;
 
     /// <summary>
     ///   Can be set from 2 to 8, default is 8. This is the number of rounds the
@@ -946,7 +953,7 @@ type
     ///   as safe as of spring 2016, with less rounds this algorithm is considered
     ///   to be unsafe and even with 8 rounds it is not really strong.
     /// </summary>
-    property Rounds: UInt8
+    property Rounds: UInt32
       read   GetRounds
       write  SetRounds;
   end;
@@ -2602,7 +2609,7 @@ end;
 
 { THashBaseHaval }
 
-procedure THashBaseHaval.SetRounds(Value: UInt8);
+procedure THashBaseHaval.SetRounds(Value: UInt32);
 begin
   if (Value < 3) or (Value > 5) then
   begin
@@ -2642,12 +2649,12 @@ begin
   FTransform(Buffer);
 end;
 
-function THashBaseHaval.GetMaxRounds: UInt8;
+function THashBaseHaval.GetMaxRounds: UInt32;
 begin
   Result := 5;
 end;
 
-function THashBaseHaval.GetMinRounds: UInt8;
+function THashBaseHaval.GetMinRounds: UInt32;
 begin
   if DigestSize <= 20 then
     Result := 3
@@ -2660,7 +2667,7 @@ begin
   end;
 end;
 
-function THashBaseHaval.GetRounds: UInt8;
+function THashBaseHaval.GetRounds: UInt32;
 begin
   Result := FRounds;
 end;
@@ -2999,7 +3006,7 @@ end;
 
 { THash_Tiger }
 
-procedure THash_Tiger.SetRounds(Value: UInt8);
+procedure THash_Tiger.SetRounds(Value: UInt32);
 begin
   if (Value < cTigerMinRounds) then
     Value := cTigerMinRounds;
@@ -3023,6 +3030,7 @@ begin
   FDigest[5] := $F096A5B4;
 end;
 
+{$IFNDEF THash_Tiger_asm}
 procedure THash_Tiger.DoTransform(Buffer: PUInt32Array);
 type
   PTiger_Data = ^TTiger_Data;
@@ -3237,18 +3245,19 @@ begin
   PInt64Array(@FDigest)[1] := B  -  PInt64Array(@FDigest)[1];
   PInt64Array(@FDigest)[2] := C  +  PInt64Array(@FDigest)[2];
 end;
+{$ENDIF}
 
-function THash_Tiger.GetMaxRounds: UInt8;
+function THash_Tiger.GetMaxRounds: UInt32;
 begin
   Result := cTigerMaxRounds;
 end;
 
-function THash_Tiger.GetMinRounds: UInt8;
+function THash_Tiger.GetMinRounds: UInt32;
 begin
   Result := cTigerMinRounds;
 end;
 
-function THash_Tiger.GetRounds: UInt8;
+function THash_Tiger.GetRounds: UInt32;
 begin
   Result := FRounds;
 end;
@@ -3870,7 +3879,7 @@ end;
 
 { THashBaseSnefru }
 
-procedure THashBaseSnefru.SetRounds(Value: UInt8);
+procedure THashBaseSnefru.SetRounds(Value: UInt32);
 begin
   if (Value < 2) or (Value > 8) then
     Value := 8;
@@ -3883,17 +3892,17 @@ begin
   SetRounds(FRounds);
 end;
 
-function THashBaseSnefru.GetMaxRounds: UInt8;
+function THashBaseSnefru.GetMaxRounds: UInt32;
 begin
   Result := 8;
 end;
 
-function THashBaseSnefru.GetMinRounds: UInt8;
+function THashBaseSnefru.GetMinRounds: UInt32;
 begin
   Result := 2;
 end;
 
-function THashBaseSnefru.GetRounds: UInt8;
+function THashBaseSnefru.GetRounds: UInt32;
 begin
   Result := FRounds;
 end;

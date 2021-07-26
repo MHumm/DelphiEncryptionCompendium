@@ -318,26 +318,26 @@ type
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMinRounds: UInt8;
+    function GetMinRounds: UInt32;
     /// <summary>
     ///   Returns the maximum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
-    function GetMaxRounds: UInt8;
+    function GetMaxRounds: UInt32;
 
      /// <summary>
     ///   Sets the number of rounds for the looping over the data
     /// </summary>
-    procedure SetRounds(Value: UInt8);
+    procedure SetRounds(Value: UInt32);
     /// <summary>
     ///   Returns the number of rounds the calculation will perform
     /// </summary>
-    function  GetRounds: UInt8;
+    function  GetRounds: UInt32;
 
     /// <summary>
     ///   Define the number of rounds for the calculation.
     /// </summary>
-    property Rounds: UInt8
+    property Rounds: UInt32
       read   GetRounds
       write  SetRounds;
   end;
