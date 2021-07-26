@@ -202,10 +202,15 @@
   // Builder versions. Due to the fact that BCB detection is not implemented
   // in newer Delphi versions anymore, we leave them out for now:
 
-  // {$DEFINE THash_MD2_asm}
-  // {$DEFINE THash_SHA384_asm}
-  // {$DEFINE THash_Tiger_asm}
-  // {$DEFINE THash_Square_asm}
-  // {$DEFINE THash_Snefru128_asm}
-  // {$DEFINE THash_Snefru256_asm}
+// MD2, SHA384 and Square still seem to run unaltered (Unit Tests run properly)
+//   {$DEFINE THash_MD2_asm}
+//   {$DEFINE THash_SHA384_asm}
+{ToDo: Tiger disabled, because FRounds was changed from 32 to 8 bit and thus the
+ASM mov is no longer compatible. Either change it back to 32 bit or adapt the ASM}
+//   {$DEFINE THash_Tiger_asm}
+//   {$DEFINE THash_Square_asm}
+{ToDo: Snefru disabled, because FSecurityLevel param has been renamed. Need to remember new name first.
+  Maybe FRounds?}
+//   {$DEFINE THash_Snefru128_asm}
+//   {$DEFINE THash_Snefru256_asm}
 {$ENDIF}
