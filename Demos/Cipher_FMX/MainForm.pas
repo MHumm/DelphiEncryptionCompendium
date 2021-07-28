@@ -119,9 +119,9 @@ begin
 
       if InputFormatting.IsValid(InputBuffer) then
       begin
-        OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(InputFormatting.Decode(InputBuffer));
+        OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
 
-        EditPlainText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
+        EditPlainText.Text := string(DECUtil.BytesToRawString(InputFormatting.Encode(OutputBuffer)));
       end
       else
         ShowErrorMessage('Input has wrong format');
