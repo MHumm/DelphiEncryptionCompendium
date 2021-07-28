@@ -23,7 +23,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Layouts, FMX.ListBox,
-  FMX.Edit, DECHashInterface;
+  FMX.Edit;
 
 type
   TFormMain = class(TForm)
@@ -96,7 +96,7 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECHashAuthentication,
+  DECBaseClass, DECHashBase, DECHash, DECHashAuthentication, DECHashInterface,
   DECFormatBase,  DECFormat, DECUtil,
   Generics.Collections, FMX.Platform
   {$IFDEF Android}
