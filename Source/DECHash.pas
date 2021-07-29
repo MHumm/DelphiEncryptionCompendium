@@ -4768,7 +4768,7 @@ initialization
   // Define the has returned by ValidHash if passing nil as parameter
   SetDefaultHashClass(THash_SHA256);
 
-  {$IFNDEF ManualRegisterClasses}
+  {$IFNDEF ManualRegisterHashClasses}
   THash_MD2.RegisterClass(TDECHash.ClassList);
   THash_MD4.RegisterClass(TDECHash.ClassList);
   THash_MD5.RegisterClass(TDECHash.ClassList);
@@ -4796,13 +4796,13 @@ initialization
   THash_Tiger.RegisterClass(TDECHash.ClassList);
   THash_Panama.RegisterClass(TDECHash.ClassList);
 
-  {$IFDEF OLD_WHIRLPOOL_NAMES}
-  THash_Whirlpool.RegisterClass(TDECHash.ClassList);
-  THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
-  THash_Whirlpool1New.RegisterClass(TDECHash.ClassList);
-  {$ELSE}
-  THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
-  {$ENDIF}
+    {$IFDEF OLD_WHIRLPOOL_NAMES}
+    THash_Whirlpool.RegisterClass(TDECHash.ClassList);
+    THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+    THash_Whirlpool1New.RegisterClass(TDECHash.ClassList);
+    {$ELSE}
+    THash_Whirlpool1.RegisterClass(TDECHash.ClassList);
+    {$ENDIF}
 
   THash_Whirlpool0.RegisterClass(TDECHash.ClassList);
   THash_WhirlpoolT.RegisterClass(TDECHash.ClassList);
@@ -4812,9 +4812,9 @@ initialization
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
   THash_Sapphire.RegisterClass(TDECHash.ClassList);
 
-  {$IFDEF OLD_SHA_NAME}
-  THash_SHA.RegisterClass(TDECHash.ClassList);
-  {$ENDIF}
+    {$IFDEF OLD_SHA_NAME}
+    THash_SHA.RegisterClass(TDECHash.ClassList);
+    {$ENDIF}
 
   {$ENDIF}
 

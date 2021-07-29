@@ -1868,7 +1868,7 @@ initialization
   ESCAPE_CodesU[5] := $46;
   ESCAPE_CodesU[6] := $52;
 
-  {$IFNDEF ManualRegisterClasses}
+  {$IFNDEF ManualRegisterFormatClasses}
   TFormat_HEX.RegisterClass(TDECFormat.ClassList);
   TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
   TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);

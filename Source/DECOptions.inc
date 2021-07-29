@@ -36,6 +36,10 @@
 {$UNDEF RESTORE_RANGECHECKS}
 {$UNDEF RESTORE_OVERFLOWCHECKS}
 
+{$UNDEF ManualRegisterFormatClasses}
+{$UNDEF ManualRegisterCipherClasses}
+{$UNDEF ManualRegisterHashClasses}
+
 //------------------------------------------------------------------------------
 // User Configuration (feel free to edit)
 //------------------------------------------------------------------------------
@@ -65,6 +69,13 @@
 
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)
+
+// Automatically register all formatting classes
+{.$DEFINE ManualRegisterFormatClasses}
+// Automatically register all cipher classes
+{.$DEFINE ManualRegisterCipherClasses}
+// Automatically register all hash classes
+{$DEFINE ManualRegisterHashClasses}
 
 // if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM

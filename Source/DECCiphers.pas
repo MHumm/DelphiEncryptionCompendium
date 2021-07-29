@@ -6557,7 +6557,7 @@ end;
 initialization
   SetDefaultCipherClass(TCipher_Null);
 
-  {$IFNDEF ManualRegisterClasses}
+  {$IFNDEF ManualRegisterCipherClasses}
   TCipher_Null.RegisterClass(TDECCipher.ClassList);
   TCipher_Blowfish.RegisterClass(TDECCipher.ClassList);
   TCipher_Twofish.RegisterClass(TDECCipher.ClassList);
