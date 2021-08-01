@@ -136,13 +136,24 @@ type
     ///   Length of the hash calculated in byte
     /// </param>
     procedure SetHashResultByteLength(const aValue: UInt16);
+    /// <summary>
+    ///   Some hash algorithms have a round parameter which defines how often
+    ///   the algorithm loops over the data
+    /// </summary>
+    /// <param name="aValue">
+    ///   Number of rounds to set. Such hash algorithms having rounds normally
+    ///   have specification limits for those rounds, so one should not specify
+    ///   values outside the range given by GetMinRounds/GetMaxRounds methods of
+    ///   these algorithms.
+    /// </param>
+    procedure SetRounds(const aValue: UInt32);
 
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
     ///   which support configurable output lengths. The length is specified in
     ///   byte.
     /// </summary>
-    property RequiredDigestSize : UInt32
+    property RequiredDigestSize   : UInt32
       Write  SetRequiredDigestSize;
 
     /// <summary>
@@ -152,7 +163,7 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    property PaddingByte        : Byte
+    property PaddingByte          : Byte
       Write  SetPaddingByte;
     /// <summary>
     ///   Required parameter for SHA3 tests: SHA3 allows to specify the number of
@@ -161,15 +172,21 @@ type
     ///   completely. This property specifies how many bits of the last byte shall
     ///   be processed.
     /// </summary>
-    property FinalBitLength     : UInt16
+    property FinalBitLength       : UInt16
       write  SetFinalByteBitLength;
     /// <summary>
     ///   Required parameter for extensible output hash functions like Shake128/256.
     ///   For those the length of the Hash generated from the data can be specified
     ///   in byte with this parameter.
     /// </summary>
-    property HashResultByteLength     : UInt16
+    property HashResultByteLength : UInt16
       write  SetHashResultByteLength;
+    /// <summary>
+    ///   Some hash algorithms have a round parameter which defines how often
+    ///   the algorithm loops over the data
+    /// </summary>
+    property Rounds               : UInt32
+      write  SetRounds;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
