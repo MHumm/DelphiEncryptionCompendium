@@ -2611,7 +2611,7 @@ end;
 
 procedure THashBaseHaval.SetRounds(Value: UInt32);
 begin
-  if (Value < 3) or (Value > 5) then
+  if (Value < GetMinRounds) or (Value > 5) then
   begin
     if DigestSize <= 20 then
       Value := 3

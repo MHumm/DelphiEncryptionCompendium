@@ -41,13 +41,17 @@ type
   ///   All known testvectors use the same filler byte and the same cmCTSx mode
   /// </summary>
   TCipherTestData = record
-    InputData  : RawByteString;
-    OutputData : RawByteString;
+    InputData         : RawByteString;
+    OutputData        : RawByteString;
 
-    Key        : RawByteString;
-    InitVector : RawByteString;
-    Filler     : Byte;
-    Mode       : TCipherMode;
+    Key               : RawByteString;
+    InitVector        : RawByteString;
+    Filler            : Byte;
+    Mode              : TCipherMode;
+
+    // Preparation for planned GCM implementation, format is HEXL
+    AuthenticatedData : RawByteString;
+    AuthenticationTag : RawByteString;
   end;
 
   /// <summary>

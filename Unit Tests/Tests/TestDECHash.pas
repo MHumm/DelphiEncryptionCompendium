@@ -333,6 +333,8 @@ type
     procedure TestIdentity;
     procedure TestGetMaxRounds;
     procedure TestGetMinRounds;
+    procedure TestSetRoundsMax;
+    procedure TestSetRoundsMin;
   end;
 
   // Test methods for class THash_Haval160
@@ -348,6 +350,8 @@ type
     procedure TestIdentity;
     procedure TestGetMaxRounds;
     procedure TestGetMinRounds;
+    procedure TestSetRoundsMax;
+    procedure TestSetRoundsMin;
   end;
 
   // Test methods for class THash_Haval192
@@ -363,6 +367,8 @@ type
     procedure TestIdentity;
     procedure TestGetMaxRounds;
     procedure TestGetMinRounds;
+    procedure TestSetRoundsMax;
+    procedure TestSetRoundsMin;
   end;
 
   // Test methods for class THash_Haval224
@@ -378,6 +384,8 @@ type
     procedure TestIdentity;
     procedure TestGetMaxRounds;
     procedure TestGetMinRounds;
+    procedure TestSetRoundsMax;
+    procedure TestSetRoundsMin;
   end;
 
   // Test methods for class THash_Haval256
@@ -393,6 +401,8 @@ type
     procedure TestIdentity;
     procedure TestGetMaxRounds;
     procedure TestGetMinRounds;
+    procedure TestSetRoundsMax;
+    procedure TestSetRoundsMin;
   end;
 
   // Test methods for class THash_Tiger
@@ -406,6 +416,8 @@ type
     procedure TestSetRoundsUpperLimit;
     procedure TestGetMinRounds;
     procedure TestGetMaxRounds;
+    procedure TestSetRoundsMin;
+    procedure TestSetRoundsMax;
 
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -537,6 +549,8 @@ type
     procedure TestIdentity;
     procedure TestGetMinRounds;
     procedure TestGetMaxRounds;
+    procedure TestSetRoundsMin;
+    procedure TestSetRoundsMax;
   end;
 
   // Test methods for class THash_Snefru256
@@ -552,6 +566,8 @@ type
     procedure TestIdentity;
     procedure TestGetMinRounds;
     procedure TestGetMaxRounds;
+    procedure TestSetRoundsMin;
+    procedure TestSetRoundsMax;
   end;
 
   // Test methods for class THash_Sapphire
@@ -1920,6 +1936,33 @@ begin
   DoTestClassByName('THash_SHA512', THash_SHA512);
 end;
 
+{ TestTHash_HavalBase }
+
+procedure TestTHash_Haval128.TestSetRoundsMax;
+var
+  Hash : THash_Haval128;
+begin
+  Hash := FHash as THash_Haval128;
+
+  Hash.Rounds := Hash.GetMinRounds;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(3, Hash.Rounds);
+end;
+
+procedure TestTHash_Haval128.TestSetRoundsMin;
+begin
+
+end;
+
+{ TestTHash_Haval128 }
+
 procedure TestTHash_Haval128.SetUp;
 var lDataRow:IHashTestDataRowSetup;
 begin
@@ -2222,6 +2265,29 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_Haval160.TestSetRoundsMax;
+var
+  Hash : THash_Haval160;
+begin
+  Hash := FHash as THash_Haval160;
+
+  Hash.Rounds := Hash.GetMinRounds;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(3, Hash.Rounds);
+end;
+
+procedure TestTHash_Haval160.TestSetRoundsMin;
+begin
+
+end;
+
 procedure TestTHash_Haval160.TestBlockSize;
 begin
   CheckEquals(128, FHash.BlockSize);
@@ -2376,6 +2442,29 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_Haval192.TestSetRoundsMax;
+var
+  Hash : THash_Haval192;
+begin
+  Hash := FHash as THash_Haval192;
+
+  Hash.Rounds := Hash.GetMinRounds;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(4, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(4, Hash.Rounds);
+end;
+
+procedure TestTHash_Haval192.TestSetRoundsMin;
+begin
+
+end;
+
 procedure TestTHash_Haval192.TestBlockSize;
 begin
   CheckEquals(128, FHash.BlockSize);
@@ -2528,6 +2617,43 @@ end;
 procedure TestTHash_Haval224.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Haval224.TestSetRoundsMax;
+var
+  Hash : THash_Haval224;
+begin
+  Hash := FHash as THash_Haval224;
+
+  Hash.Rounds := Hash.GetMinRounds;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := 4;
+  CheckEquals(4, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(4, Hash.Rounds);
+end;
+
+procedure TestTHash_Haval224.TestSetRoundsMin;
+var
+  Hash : THash_Haval224;
+begin
+  Hash := FHash as THash_Haval224;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(4, Hash.Rounds);
+
+  Hash.Rounds := 5;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds - 1;
+  CheckEquals(4, Hash.Rounds);
 end;
 
 procedure TestTHash_Haval224.TestBlockSize;
@@ -2710,6 +2836,34 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_Haval256.TestSetRoundsMax;
+var
+  Hash : THash_Haval256;
+begin
+  Hash := FHash as THash_Haval256;
+
+  Hash.Rounds := Hash.GetMinRounds;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(5, Hash.Rounds);
+end;
+
+procedure TestTHash_Haval256.TestSetRoundsMin;
+var
+  Hash : THash_Haval256;
+begin
+  Hash := FHash as THash_Haval256;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(5, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds - 1;
+  CheckEquals(5, Hash.Rounds);
+end;
+
 procedure TestTHash_Haval256.TestBlockSize;
 begin
   CheckEquals(128, FHash.BlockSize);
@@ -2875,6 +3029,32 @@ procedure TestTHash_Tiger_3Rounds.TestSetRoundsLowerLimit;
 begin
   THash_Tiger(FHash).Rounds := 2;
   CheckEquals(3, THash_Tiger(FHash).Rounds);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestSetRoundsMax;
+var
+  Hash : THash_Tiger;
+begin
+  Hash := FHash as THash_Tiger;
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(32, Hash.Rounds);
+end;
+
+procedure TestTHash_Tiger_3Rounds.TestSetRoundsMin;
+var
+  Hash : THash_Tiger;
+begin
+  Hash := FHash as THash_Tiger;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(32, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds - 1;
+  CheckEquals(3, Hash.Rounds);
 end;
 
 procedure TestTHash_Tiger_3Rounds.TestSetRoundsUpperLimit;
@@ -3812,6 +3992,44 @@ begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_Snefru128.TestSetRoundsMax;
+var
+  Hash : THash_Snefru128;
+begin
+  Hash := FHash as THash_Snefru128;
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(2, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(8, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(8, Hash.Rounds);
+end;
+
+procedure TestTHash_Snefru128.TestSetRoundsMin;
+var
+  Hash : THash_Snefru128;
+begin
+  Hash := FHash as THash_Snefru128;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(8, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(2, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds - 1;
+  CheckEquals(8, Hash.Rounds);
+end;
+
 procedure TestTHash_Snefru128.TestBlockSize;
 begin
   CheckEquals(48, FHash.BlockSize);
@@ -3927,6 +4145,44 @@ end;
 procedure TestTHash_Snefru256.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Snefru256.TestSetRoundsMax;
+var
+  Hash : THash_Snefru256;
+begin
+  Hash := FHash as THash_Snefru256;
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(2, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(8, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMaxRounds + 1;
+  CheckEquals(8, Hash.Rounds);
+end;
+
+procedure TestTHash_Snefru256.TestSetRoundsMin;
+var
+  Hash : THash_Snefru256;
+begin
+  Hash := FHash as THash_Snefru256;
+
+  Hash.Rounds := Hash.GetMaxRounds;
+  CheckEquals(8, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds;
+  CheckEquals(2, Hash.Rounds);
+
+  Hash.Rounds := 3;
+  CheckEquals(3, Hash.Rounds);
+
+  Hash.Rounds := Hash.GetMinRounds - 1;
+  CheckEquals(8, Hash.Rounds);
 end;
 
 procedure TestTHash_Snefru256.TestBlockSize;

@@ -63,19 +63,15 @@
 // names where possible
 {.$DEFINE OLD_WHIRLPOOL_NAMES} (* default off *)
 
-// when enabling this define, the automatic registration of all those cipher and
-// hash classes in initialization sections is not being done.
-{.$DEFINE ManualRegisterClasses} (* default off *}
-
 // Automatically use DEC's Pseudo Random Number Generator
 {$DEFINE AUTO_PRNG} (* default ON *)
 
 // Automatically register all formatting classes
-{.$DEFINE ManualRegisterFormatClasses}
+{.$DEFINE ManualRegisterFormatClasses} (* default off *)
 // Automatically register all cipher classes
-{.$DEFINE ManualRegisterCipherClasses}
+{.$DEFINE ManualRegisterCipherClasses} (* default off *)
 // Automatically register all hash classes
-{$DEFINE ManualRegisterHashClasses}
+{.$DEFINE ManualRegisterHashClasses} (* default off *)
 
 // if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM
