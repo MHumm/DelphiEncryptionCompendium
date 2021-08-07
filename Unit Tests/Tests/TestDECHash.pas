@@ -2131,6 +2131,35 @@ begin
   lDataRow.PaddingByte              := 128;
   lDataRow.Rounds                   := 3;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+
+  // Self generated variants with different rounds
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ee6bbf4d6a46a679b3a856c88538bb98';
+  lDataRow.ExpectedOutputUTFStrTest := 'ee6bbf4d6a46a679b3a856c88538bb98';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 4;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '5cd07f03330c3b5020b29ba75911e17d';
+  lDataRow.ExpectedOutputUTFStrTest := '972ebb528aa1d753cd2e9cbcbb4b1bc5';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 4;
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '184b8482a0c050dca54b59c7f05bf5dd';
+  lDataRow.ExpectedOutputUTFStrTest := '184b8482a0c050dca54b59c7f05bf5dd';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'f23fbe704be8494bfa7a7fb4f8ab09e5';
+  lDataRow.ExpectedOutputUTFStrTest := 'cb0c4214d3cf2739e60db8c453df8aca';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('a');
 end;
 
 procedure TestTHash_Haval128.TestDigestSize;
@@ -2306,6 +2335,34 @@ begin
   lDataRow.Rounds                   := 3;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
 
+  // Self generated variants with different rows
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '1d33aae1be4146dbaaca0b6e70d7a11f10801525';
+  lDataRow.ExpectedOutputUTFStrTest := '1d33aae1be4146dbaaca0b6e70d7a11f10801525';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 4;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'e0a5be29627332034d4dd8a910a1a0e6fe04084d';
+  lDataRow.ExpectedOutputUTFStrTest := '441d327d5d29815bacf33565a73430843ed4a87e';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 4;
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '255158cfc1eed1a7be7c55ddd64d9790415b933b';
+  lDataRow.ExpectedOutputUTFStrTest := '255158cfc1eed1a7be7c55ddd64d9790415b933b';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'f5147df7abc5e3c81b031268927c2b5761b5a2b5';
+  lDataRow.ExpectedOutputUTFStrTest := '00eb3b4c72b8d6ac5f99332c40208de1af44760b';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('a');
 end;
 
 procedure TestTHash_Haval160.TestDigestSize;
@@ -2511,6 +2568,21 @@ begin
   lDataRow.PaddingByte              := 128;
   lDataRow.Rounds                   := 4;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+
+  // Self generated variants with different rows
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4839d0626f95935e17ee2fc4509387bbe2cc46cb382ffe85';
+  lDataRow.ExpectedOutputUTFStrTest := '4839d0626f95935e17ee2fc4509387bbe2cc46cb382ffe85';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '5ffa3b3548a6e2cfc06b7908ceb5263595df67cf9c4b9341';
+  lDataRow.ExpectedOutputUTFStrTest := 'f7a1cd5310024e2f8aa48e1240011cd0c60961e9b7286039';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('a');
 end;
 
 procedure TestTHash_Haval192.TestDigestSize;
@@ -2716,6 +2788,21 @@ begin
   lDataRow.PaddingByte              := 128;
   lDataRow.Rounds                   := 4;
   lDataRow.AddInputVector('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 1, 15625);
+
+  // Self generated variants with different rows
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4a0513c032754f5582a758d35917ac9adf3854219b39e3ac77d1837e';
+  lDataRow.ExpectedOutputUTFStrTest := '4a0513c032754f5582a758d35917ac9adf3854219b39e3ac77d1837e';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '67b3cb8d4068e3641fa4f156e03b52978b421947328bfb9168c7655d';
+  lDataRow.ExpectedOutputUTFStrTest := '388826fda119989238a74d9c4a146d699a16f774c0f2c3d503114e6f';
+  lDataRow.PaddingByte              := 1;
+  lDataRow.Rounds                   := 5;
+  lDataRow.AddInputVector('a');
 end;
 
 procedure TestTHash_Haval224.TestDigestSize;
