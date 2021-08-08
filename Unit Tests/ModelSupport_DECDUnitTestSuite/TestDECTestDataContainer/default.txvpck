@@ -4,5 +4,242 @@
     <property name="$defaultDiagram" value="true" />
     <property name="$metaclass" value="Package Diagram" />
     <property name="$name" value="default" />
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="30,250,232,143" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.GetCount()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.GetVector(System.Integer)" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.Count" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.Vectors[System.Integer]" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.AddInputVector(System.RawByteString,System.Cardinal,System.Cardinal)" />
+      <reference referencedUin="delphi:l_ast:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVectorList.Vectors[System.Integer]">
+        <property name="sourceAnchor" value="109,250" />
+        <property name="targetAnchor" value="109,158" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataContainer">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="830,350,126,113" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataContainer.GetCount()" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataContainer.Count" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataContainer.Clear()" />
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="670,730,261,143" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup.SetExpectedOutput(System.RawByteString)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup.SetExpectedOutputUTFStrTest(System.RawByteString)" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup.ExpectedOutput" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup.ExpectedOutputUTFStrTest" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRowSetup.AddInputVector(System.RawByteString,System.Cardinal,System.Cardinal)" />
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="730,510,216,113" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer.GetRows(System.Integer)" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer.Rows[System.Integer]" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer.AddRow()" />
+      <reference referencedUin="delphi:l_gnt:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer:TestDECTestDataContainer.ITestDataContainer">
+        <property name="sourceAnchor" value="888,510" />
+        <property name="targetAnchor" value="888,463" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_ast:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataContainer.Rows[System.Integer]">
+        <property name="sourceAnchor" value="730,596" />
+        <property name="targetAnchor" value="583,596" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="230,30,147,160" />
+      <property name="hideOperation" value="False" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector.FData" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector.FRunCount" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector.GetRunCount()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector.GetData()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector.Create(System.RawByteString,System.Cardinal)" />
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVector:TestDECTestDataContainer.ITestDataInputVector">
+        <property name="sourceAnchor" value="230,94" />
+        <property name="targetAnchor" value="188,94" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="20,440,245,505" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FInputData" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FInputVectors" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FOutputData" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FOutputUTFStrTest" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FReqDigSize" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FPaddingByte" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FFinalByteBitLength" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FHashResultByteLength" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FRounds" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetInputData()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetInputVectors()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetOutputData()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetOutputUTFStrTest()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetExpectedOutput(System.RawByteString)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetExpectedOutputUTFStrTest(System.RawByteString)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.AddInputVector(System.RawByteString,System.Cardinal,System.Cardinal)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetRequiredDigestSize()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetPaddingByte()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetFinalByteBitLength()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetHashResultByteLength()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.GetRounds()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetRequiredDigestSize(System.Cardinal)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetPaddingByte(System.Byte)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetFinalByteBitLength(System.Word)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetHashResultByteLength(System.Word)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.SetRounds(System.Cardinal)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.Create()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.Destroy()" />
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow:TestDECTestDataContainer.ITestDataRow">
+        <property name="sourceAnchor" value="265,489" />
+        <property name="targetAnchor" value="350,489" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow:TestDECTestDataContainer.ITestDataRowSetup">
+        <property name="sourceAnchor" value="265,801" />
+        <property name="targetAnchor" value="670,801" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow:TestDECTestDataContainer.IHashTestDataRow">
+        <property name="sourceAnchor" value="265,679" />
+        <property name="targetAnchor" value="370,679" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow:TestDECTestDataContainer.IHashTestDataRowSetup">
+        <property name="sourceAnchor" value="265,877" />
+        <property name="targetAnchor" value="410,877" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_ast:src:DECDUnitTestSuite:TestDECTestDataContainer.THashTestDataRow.FInputVectors">
+        <property name="sourceAnchor" value="146,440" />
+        <property name="targetAnchor" value="146,393" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="350,350,261,188" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.GetInputData()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.GetInputVectors()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.GetOutputData()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.GetOutputUTFStrTest()" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.InputData" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.InputDataVectors" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.ExpectedOutput" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.ExpectedOutputUTFStrTest" />
+      <reference referencedUin="delphi:l_ast:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataRow.InputDataVectors">
+        <property name="sourceAnchor" value="350,371" />
+        <property name="targetAnchor" value="262,371" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVector">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="30,30,158,128" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVector.GetRunCount()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVector.GetData()" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVector.RepeatCount" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.ITestDataInputVector.Data" />
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="410,810,189,218" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.SetRequiredDigestSize(System.Cardinal)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.SetPaddingByte(System.Byte)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.SetFinalByteBitLength(System.Word)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.SetHashResultByteLength(System.Word)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.SetRounds(System.Cardinal)" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.RequiredDigestSize" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.PaddingByte" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.FinalBitLength" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.HashResultByteLength" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup.Rounds" />
+      <reference referencedUin="delphi:l_gnt:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRowSetup:TestDECTestDataContainer.ITestDataRowSetup">
+        <property name="sourceAnchor" value="599,841" />
+        <property name="targetAnchor" value="670,841" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="370,570,213,218" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.GetRequiredDigestSize()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.GetPaddingByte()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.GetFinalByteBitLength()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.GetHashResultByteLength()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.GetRounds()" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.RequiredDigestSize" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.PaddingByte" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.FinalByteBitLength" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.HashResultByteLength" />
+      <reference referencedUin="delphi:e_property:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow.Rounds" />
+      <reference referencedUin="delphi:l_gnt:src:DECDUnitTestSuite:TestDECTestDataContainer.IHashTestDataRow:TestDECTestDataContainer.ITestDataRow">
+        <property name="sourceAnchor" value="476,570" />
+        <property name="targetAnchor" value="476,538" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="410,110,221,175" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.FVectors" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.GetCount()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.GetVector(System.Integer)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.AddInputVector(System.RawByteString,System.Cardinal,System.Cardinal)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.Create()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList.Destroy()" />
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataInputVectorList:TestDECTestDataContainer.ITestDataInputVectorList">
+        <property name="sourceAnchor" value="410,267" />
+        <property name="targetAnchor" value="262,267" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList">
+      <property name="$shortcutReference" value="true" />
+      <property name="bounds" value="670,90,247,235" />
+      <property name="location_set_by_user" value="True" />
+      <reference referencedUin="delphi:e_field:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.FDataRows" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.GetCount()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.GetRows(System.Integer)" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.Clear()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.HASH_AddRow()" />
+      <reference referencedUin="delphi::src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.IHashTestDataContainer.AddRow" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.HASH_GetRows(System.Integer)" />
+      <reference referencedUin="delphi::src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.IHashTestDataContainer.GetRows" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.Create()" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList.Destroy()" />
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList:TestDECTestDataContainer.ITestDataContainer">
+        <property name="sourceAnchor" value="873,325" />
+        <property name="targetAnchor" value="873,350" />
+        <property name="bendpoints" value="" />
+      </reference>
+      <reference referencedUin="delphi:l_impl:src:DECDUnitTestSuite:TestDECTestDataContainer.TTestDataList:TestDECTestDataContainer.IHashTestDataContainer">
+        <property name="sourceAnchor" value="823,325" />
+        <property name="targetAnchor" value="823,510" />
+        <property name="bendpoints" value="" />
+      </reference>
+    </reference>
+    <reference referencedUin="delphi:e_class:src:DECDUnitTestSuite:TestDECTestDataContainer.@unitclass">
+      <property name="$shortcutReference" value="true" />
+      <reference referencedUin="delphi:e_method:src:DECDUnitTestSuite:TestDECTestDataContainer.@unitclass.CreateTestDataContainer()" />
+    </reference>
   </view>
 </nodeSet>
