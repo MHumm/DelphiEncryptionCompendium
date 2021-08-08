@@ -914,7 +914,7 @@ begin
     for i := TDECHash.ClassList.Count - 1 downto 0 do
     begin
       if NativeInt(FindClassHInstance(TClass(TDECHash.ClassList[i]))) = Instance then
-        TDECHash.ClassList.Remove(TDECFormat.ClassList[i].Identity);
+        TDECHash.ClassList.Remove(TDECHash.ClassList[i].Identity);
     end;
   end;
 end;

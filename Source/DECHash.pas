@@ -4820,6 +4820,6 @@ initialization
 
 finalization
   // No need to unregister the hash classes, as the list is being freed
-  // in finalization of DECBaseClass unit
+  // in finalization of DECHashBase unit
 
 end.

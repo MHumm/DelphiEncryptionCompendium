@@ -30,7 +30,7 @@ uses
   TestFramework,
   {$ENDIF}
   System.SysUtils, System.Classes,
-  DECUtil, DECBaseClass, DECFormatBase;
+  DECUtil, DECTypes, DECBaseClass, DECFormatBase;
 
 type
   // Test methods for class TFormat_Copy

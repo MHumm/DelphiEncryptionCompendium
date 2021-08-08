@@ -24,7 +24,8 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECCipherBase, DECCipherModes, DECUtil, DECFormatBase, DECCipherInterface;
+  DECCipherBase, DECCipherModes,
+  DECUtil, DECTypes, DECFormatBase, DECCipherInterface;
 
 type
   /// <summary>

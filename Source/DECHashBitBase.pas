@@ -31,7 +31,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECHashAuthentication, DECHashInterface, DECUtil;
+  DECHashAuthentication, DECHashInterface, DECTypes;
 
 type
   /// <summary>

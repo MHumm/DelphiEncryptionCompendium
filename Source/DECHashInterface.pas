@@ -24,7 +24,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECFormat, DECUtil;
+  DECFormat, DECTypes;
 
 type
   /// <summary>

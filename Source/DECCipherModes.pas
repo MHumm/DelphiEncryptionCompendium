@@ -263,7 +263,7 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECUtil;
+  DECTypes, DECUtil;
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';

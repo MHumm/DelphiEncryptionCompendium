@@ -300,8 +300,8 @@ begin
   if Supports(Hash, IDECHashRounds, RoundsInterf) then
   begin
     if ((Sender as TEdit).Text.Length > 0) and ((Sender as TEdit).Text <> '0') and
-       ((Sender as TEdit).Text.ToInteger >= RoundsInterf.GetMinRounds) and
-       ((Sender as TEdit).Text.ToInteger <= RoundsInterf.GetMaxRounds) then
+       ((Sender as TEdit).Text.ToInteger >= Integer(RoundsInterf.GetMinRounds)) and
+       ((Sender as TEdit).Text.ToInteger <= Integer(RoundsInterf.GetMaxRounds)) then
         ButtonCalcClick(self)
     else
       ShowErrorMessage(Format('Invalid input. Rounds must be between %0:d and %1:d',

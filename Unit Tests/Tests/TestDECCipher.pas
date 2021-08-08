@@ -30,7 +30,7 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  DECBaseClass, DECCipherBase, DECCiphers, DECUtil, DECFormatBase, DECFormat;
+  DECBaseClass, DECCipherBase, DECCiphers, DECTypes, DECFormatBase, DECFormat;
 
 type
   // A function with these parameters has to be passed to DoTestEncode/Decode to

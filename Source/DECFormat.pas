@@ -314,7 +314,7 @@ type
 implementation
 
 uses
-  DECCRC; // needed by TFormat_Radix64
+  DECTypes, DECCRC; // needed by TFormat_Radix64
 
 resourcestring
   sInvalidStringFormat  = 'Input is not an valid %s format';
@@ -1868,18 +1868,20 @@ initialization
   ESCAPE_CodesU[5] := $46;
   ESCAPE_CodesU[6] := $52;
 
-  {$IFNDEF ManualRegisterFormatClasses}
-  TFormat_HEX.RegisterClass(TDECFormat.ClassList);
-  TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
-  TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
-  TFormat_Base64.RegisterClass(TDECFormat.ClassList);
-  TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
-  TFormat_UU.RegisterClass(TDECFormat.ClassList);
-  TFormat_XX.RegisterClass(TDECFormat.ClassList);
-  TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
-  TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
-  TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
-  TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
+  {$IFNDEF BCB}
+    {$IFNDEF ManualRegisterFormatClasses}
+    TFormat_HEX.RegisterClass(TDECFormat.ClassList);
+    TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
+    TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
+    TFormat_Base64.RegisterClass(TDECFormat.ClassList);
+    TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
+    TFormat_UU.RegisterClass(TDECFormat.ClassList);
+    TFormat_XX.RegisterClass(TDECFormat.ClassList);
+    TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
+    TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
+    TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
+    TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
+    {$ENDIF}
   {$ENDIF}
 
   // Init the number of chars per line as per RFC 4880 to 76 chars

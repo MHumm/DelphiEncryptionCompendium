@@ -209,7 +209,7 @@ var
 implementation
 
 uses
-  DECUtil, DECCRC;
+  DECTypes, DECCRC;
 
 resourcestring
   sClassNotRegistered = 'Class %s is not registered';

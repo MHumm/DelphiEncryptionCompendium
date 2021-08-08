@@ -727,7 +727,7 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECUtil;
+  DECTypes, DECUtil;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}

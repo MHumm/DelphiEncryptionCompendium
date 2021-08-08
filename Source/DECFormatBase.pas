@@ -384,6 +384,9 @@ function FormatByIdentity(Identity: Int64): TDECFormatClass;
 
 implementation
 
+uses
+  DECTypes;
+
 function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 begin
   if FormatClass <> nil then
@@ -616,22 +619,29 @@ end;
 
 initialization
 
-// Code for packages and dynamic extension of the class registration list
-{$IFDEF DELPHIORBCB}
-  AddModuleUnloadProc(ModuleUnload);
-{$ENDIF DELPHIORBCB}
-TDECFormat.ClassList := TDECClassList.Create;
+{$IFNDEF BCB} // no automatic registering and unregistering of classes for C++ Builder
+              // due to
+  // Code for packages and dynamic extension of the class registration list
+  {$IFDEF DELPHIORBCB}
+    AddModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+  TDECFormat.ClassList := TDECClassList.Create;
 
-TFormat_Copy.RegisterClass(TDECFormat.ClassList);
+  TFormat_Copy.RegisterClass(TDECFormat.ClassList);
+{$ELSE}
+  TDECFormat.ClassList := TDECClassList.Create;
+{$ENDIF}
 
 finalization
 
-// Ensure no further instances of classes registered in the registration list
-// are possible through the list after this unit has been unloaded by unloding
-// the package this unit is in
-{$IFDEF DELPHIORBCB}
-  RemoveModuleUnloadProc(ModuleUnload);
-{$ENDIF DELPHIORBCB}
-TDECFormat.ClassList.Free;
+{$IFNDEF BCB}
+  // Ensure no further instances of classes registered in the registration list
+  // are possible through the list after this unit has been unloaded by unloding
+  // the package this unit is in
+  {$IFDEF DELPHIORBCB}
+    RemoveModuleUnloadProc(ModuleUnload);
+  {$ENDIF DELPHIORBCB}
+{$ENDIF}
 
+  TDECFormat.ClassList.Free;
 end.
