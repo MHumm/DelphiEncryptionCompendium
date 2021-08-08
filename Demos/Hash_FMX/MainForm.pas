@@ -54,7 +54,6 @@ type
     LabelLastByteBits: TLabel;
     EditLastByteBits: TEdit;
     procedure FormCreate(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
     procedure ComboBoxHashFunctionChange(Sender: TObject);
     procedure EditInputChangeTracking(Sender: TObject);
@@ -62,6 +61,8 @@ type
       Shift: TShiftState);
     procedure EditHashLengthChange(Sender: TObject);
     procedure EditRoundsChange(Sender: TObject);
+    procedure VertScrollBox1CalcContentBounds(Sender: TObject;
+      var ContentBounds: TRectF);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -226,6 +227,13 @@ begin
   {$ENDIF}
 end;
 
+procedure TFormMain.VertScrollBox1CalcContentBounds(Sender: TObject;
+  var ContentBounds: TRectF);
+begin
+  LayoutTop.Width    := VertScrollBox1.ClientWidth;
+  LayoutBottom.Width := VertScrollBox1.ClientWidth;
+end;
+
 procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
 begin
   CheckBoxIsPasswordHash.IsChecked :=
@@ -378,12 +386,6 @@ begin
   finally
     Hashes.Free;
   end;
-end;
-
-procedure TFormMain.FormResize(Sender: TObject);
-begin
-  LayoutTop.Width    := VertScrollBox1.ClientWidth;
-  LayoutBottom.Width := VertScrollBox1.ClientWidth;
 end;
 
 function TFormMain.GetSelectedHashClassName: string;

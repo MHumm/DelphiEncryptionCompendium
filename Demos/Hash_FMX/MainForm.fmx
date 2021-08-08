@@ -9,14 +9,15 @@ object FormMain: TFormMain
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
   OnCreate = FormCreate
-  OnResize = FormResize
   DesignerMasterStyle = 0
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 452.000000000000000000
     Size.Height = 790.000000000000000000
     Size.PlatformDefault = False
+    StyleLookup = 'scrollboxstyle'
     TabOrder = 0
+    OnCalcContentBounds = VertScrollBox1CalcContentBounds
     Viewport.Width = 436.000000000000000000
     Viewport.Height = 790.000000000000000000
     object LayoutBottom: TLayout
@@ -40,7 +41,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 80.000000000000000000
-        Size.Width = 96.666664123535160000
+        Size.Width = 97.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -146,7 +147,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 88.000000000000000000
-        Size.Width = 91.333335876464840000
+        Size.Width = 91.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -157,7 +158,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 160.000000000000000000
-        Size.Width = 118.666656494140600000
+        Size.Width = 119.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -203,7 +204,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 460.000000000000000000
-        Size.Width = 241.333312988281300000
+        Size.Width = 242.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -229,7 +230,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 332.000000000000000000
-        Size.Width = 241.333312988281300000
+        Size.Width = 242.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
@@ -279,7 +280,7 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 390.000000000000000000
-        Size.Width = 241.333312988281300000
+        Size.Width = 242.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'

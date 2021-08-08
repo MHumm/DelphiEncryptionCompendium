@@ -206,14 +206,19 @@
   {$DEFINE THash_Sapphire_asm}
 
   // The following asm optimized Hashes were incompatible with newer C++
-  // Builder versions. Due to the fact that BCB detection is not implemented
-  // in newer Delphi versions anymore, we leave them out for now:
+  // Builder versions.
+  // This statement of the former developers of the library has not been
+  // verified yet, but just to make sure we disable them for C++ Builder until
+  // we could verify them. Disabling for C++ Builder requires either that
+  // C++ Builder users compile DEC from IDE or with the -DBCB parameter when
+  // compiling from command line
 
-// MD2, SHA384 and Square still seem to run unaltered (Unit Tests run properly)
-//   {$DEFINE THash_MD2_asm}
-//   {$DEFINE THash_SHA384_asm}
-//   {$DEFINE THash_Tiger_asm}
-//   {$DEFINE THash_Square_asm}
-//   {$DEFINE THash_Snefru128_asm}
-//   {$DEFINE THash_Snefru256_asm}
+  {$IFNDEF BCB}
+   {$DEFINE THash_MD2_asm}
+   {$DEFINE THash_SHA384_asm}
+   {$DEFINE THash_Tiger_asm}
+   {$DEFINE THash_Square_asm}
+   {$DEFINE THash_Snefru128_asm}
+   {$DEFINE THash_Snefru256_asm}
+  {$ENDIF}
 {$ENDIF}

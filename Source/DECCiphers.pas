@@ -6347,8 +6347,7 @@ begin
 //    {$IFDEF DELPHIORBCB}
 //    if ATab < AMin then
 //    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde, außerdem sollte
-diese interne procedure eher zu einer strict private methode werden}
+{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde}
   if PByte(ATab) < AMin then
 //    {$ENDIF !DELPHIORBCB}
     ATab := AMax;
