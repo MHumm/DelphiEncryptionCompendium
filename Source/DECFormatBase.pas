@@ -28,7 +28,7 @@ uses
 {$IFDEF FPC}
   SysUtils, Classes,
 {$ELSE}
-  System.SysUtils, System.Classes,
+  System.SysUtils, System.Classes, Generics.Collections,
 {$ENDIF}
   DECBaseClass, DECUtil;
 
@@ -600,18 +600,21 @@ begin
 end;
 
 {$IFDEF DELPHIORBCB}
-
 procedure ModuleUnload(Instance: NativeInt);
-var
+var // automaticaly deregistration/releasing
   i: Integer;
+  Items: TArray<TPair<Int64, TDECCLass>>;
 begin
-  if TDECFormat.ClassList <> nil then
+  // C++Builder calls this function for our own module, but we destroy the ClassList
+  // in that case in the finalization section anyway.
+  if (Instance <> HInstance) and
+     (TDECFormat.ClassList <> nil) and (TDECFormat.ClassList.Count > 0) then
   begin
-    for i := TDECFormat.ClassList.Count - 1 downto 0 do
+    Items := TDECFormat.ClassList.ToArray;
+    for i := Length(Items) - 1 downto 0 do
     begin
-      if NativeInt(FindClassHInstance(TClass(TDECFormat.ClassList[i]))) = Instance
-      then
-        TDECFormat.ClassList.Remove(TDECFormat.ClassList[i].Identity);
+      if FindClassHInstance(Items[i].Value) = HINST(HInstance) then
+        TDECFormat.ClassList.Remove(Items[i].Key);
     end;
   end;
 end;
@@ -619,8 +622,6 @@ end;
 
 initialization
 
-{$IFNDEF BCB} // no automatic registering and unregistering of classes for C++ Builder
-              // due to
   // Code for packages and dynamic extension of the class registration list
   {$IFDEF DELPHIORBCB}
     AddModuleUnloadProc(ModuleUnload);
@@ -628,9 +629,6 @@ initialization
   TDECFormat.ClassList := TDECClassList.Create;
 
   TFormat_Copy.RegisterClass(TDECFormat.ClassList);
-{$ELSE}
-  TDECFormat.ClassList := TDECClassList.Create;
-{$ENDIF}
 
 finalization
 

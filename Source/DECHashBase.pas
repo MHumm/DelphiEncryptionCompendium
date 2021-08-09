@@ -31,7 +31,7 @@ uses
   {$IFDEF FPC}
   SysUtils, Classes,
   {$ELSE}
-  System.SysUtils, System.Classes,
+  System.SysUtils, System.Classes, Generics.Collections,
   {$ENDIF}
   DECBaseClass, DECFormatBase, DECUtil, DECTypes, DECHashInterface;
 
@@ -908,13 +908,18 @@ end;
 procedure ModuleUnload(Instance: NativeInt);
 var // automaticaly deregistration/releasing
   i: Integer;
+  Items: TArray<TPair<Int64, TDECCLass>>;
 begin
-  if TDECHash.ClassList <> nil then
+  // C++Builder calls this function for our own module, but we destroy the ClassList
+  // in that case in the finalization section anyway.
+  if (Instance <> HInstance) and
+     (TDECHash.ClassList <> nil) and (TDECHash.ClassList.Count > 0) then
   begin
-    for i := TDECHash.ClassList.Count - 1 downto 0 do
+    Items := TDECHash.ClassList.ToArray;
+    for i := Length(Items) - 1 downto 0 do
     begin
-      if NativeInt(FindClassHInstance(TClass(TDECHash.ClassList[i]))) = Instance then
-        TDECHash.ClassList.Remove(TDECHash.ClassList[i].Identity);
+      if FindClassHInstance(Items[i].Value) = HINST(HInstance) then
+        TDECHash.ClassList.Remove(Items[i].Key);
     end;
   end;
 end;
