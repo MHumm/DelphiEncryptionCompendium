@@ -18,6 +18,8 @@ unit DECCipherFormats;
 
 interface
 
+{$INCLUDE DECOptions.inc}
+
 uses
   {$IFDEF FPC}
   SysUtils, Classes,

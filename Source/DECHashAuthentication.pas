@@ -25,6 +25,8 @@ interface
 uses
   System.SysUtils, DECHashBase;
 
+{$INCLUDE DECOptions.inc}
+
 type
   /// <summary>
   ///   Meta class for all the hashing classes in order to support the

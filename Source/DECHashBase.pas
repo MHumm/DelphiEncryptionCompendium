@@ -905,7 +905,7 @@ begin
 end;
 
 {$IFDEF DELPHIORBCB}
-procedure ModuleUnload(Instance: NativeInt);
+procedure ModuleUnload(Instance: NativeUInt);
 var // automaticaly deregistration/releasing
   i: Integer;
   Items: TArray<TPair<Int64, TDECCLass>>;
