@@ -26,7 +26,7 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECCipherBase;
+  DECCipherBase, DECCipherModesGCM;
 
 type
   /// <summary>
@@ -40,8 +40,13 @@ type
   TDECCipherModes = class(TDECCipher)
   strict protected
     /// <summary>
-    ///   Raises an EDECCipherException exception and provides the correct values
-    ///   for message lenght and block size
+    ///   Implementation of the Galois counter mode. Only created when gmGCM is
+    ///   set as mode.
+    /// </summary>
+    FGCM : TGCM;
+    /// <summary>
+    ///   Raises an EDECCipherException exception and provides the correct value
+    ///   for block size in that message
     /// </summary>
     procedure ReportInvalidMessageLength(Cipher: TDECCipher);
     /// <summary>
@@ -119,7 +124,7 @@ type
     /// </summary>
     procedure EncodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   Galois Counter Mode
+    ///   Galois Counter Mode, details are implemented in DECCipherModesGCM
     /// </summary>
     procedure EncodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
@@ -206,7 +211,7 @@ type
     /// </summary>
     procedure DecodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
     /// <summary>
-    ///   Galois Counter Mode
+    ///   Galois Counter Mode, details are implemented in DECCipherModesGCM
     /// </summary>
     procedure DecodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
@@ -224,7 +229,16 @@ type
     /// </remarks>
     procedure DecodeCTS3(Source, Dest: PByteArray; Size: Integer); virtual;
     {$ENDIF}
+    /// <summary>
+    ///   When setting mode to GCM the GCM implementing class instance needs to
+    ///   be created
+    /// </summary>
+    procedure InitMode; override;
   public
+    /// <summary>
+    ///   Frees, if necessary, internal objects
+    /// </summary>
+    destructor Destroy; override;
     /// <summary>
     ///   Encrypts a given block of data
     /// </summary>
@@ -332,7 +346,7 @@ end;
 
 procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
 begin
-
+  FGCM.DecodeGCM(Source, Dest, Size, DoEncode);
 end;
 
 procedure TDECCipherModes.EncodeOFB8(Source, Dest: PByteArray; Size: Integer);
@@ -464,6 +478,15 @@ begin
     XORBuffers(Source[I], FFeedback[0], Size, Dest[I]);
     FBufferIndex := Size;
   end;
+end;
+
+procedure TDECCipherModes.InitMode;
+begin
+  if FMode = TCipherMode.cmGCM then
+    FGCM := TGCM.Create
+  else
+    if Assigned(FGCM) then
+      FreeAndNil(FGCM);
 end;
 
 procedure TDECCipherModes.EncodeCFSx(Source, Dest: PByteArray; Size: Integer);
@@ -639,7 +662,7 @@ end;
 
 procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
 begin
-
+  FGCM.DecodeGCM(Source, Dest, Size, DoDecode);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);
@@ -783,6 +806,13 @@ begin
     XORBuffers(Source[I], FFeedback[0], Size, Dest[I]);
     FBufferIndex := Size;
   end;
+end;
+
+destructor TDECCipherModes.Destroy;
+begin
+  FGCM.Free;
+
+  inherited;
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);

@@ -38,12 +38,42 @@ type
   P128 = ^T128;
 
   /// <summary>
+  ///   A methopd of this type needs to be supplied for encrypting or decrypting
+  ///   a block via this GCM algorithm. The method is implemented as a parameter,
+  ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
+  ///   be used for composition instead of inheritance.
+  /// </summary>
+  /// <param name="Source">
+  ///   Data to be encrypted
+  /// </param>
+  /// <param name="Dest">
+  ///   In this memory the encrypted result will be written
+  /// </param>
+  /// <param name="Size">
+  ///   Size of source in byte
+  /// </param>
+  TEncodeDecodeMethod = procedure(Source, Dest: Pointer; Size: Integer) of Object;
+
+  /// <summary>
   ///   Galois Counter Mode specific methods
   /// </summary>
   TGCM = class(TObject)
   private
      nullbytes : T128;
      M         : array[0..15,0..255] of T128;
+
+    /// <summary>
+    ///   The data which shall be authenticated in parallel to the encryption
+    /// </summary>
+    FAuthenticated_data : TBytes;
+    /// <summary>
+    ///   Length of the authentication tag to generate in byte
+    /// </summary>
+    Flen_auth_tag       : Integer;
+    /// <summary>
+    ///   Generated authentication tag
+    /// </summary>
+    FAuthenticaton_tag  : TBytes;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -94,9 +124,52 @@ type
 
     function poly_mult_H(const hx : T128) : T128; inline;
     procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;
+
     procedure Table_M_8Bit(const H : T128); inline;
+    /// <summary>
+    ///   Performs a right shift of all bytes in an 128 bit variable
+    /// </summary>
+    /// <param name="rx">
+    ///   Variable on which the right shift is being performed
+    /// </param>
     procedure rightshift(var rx : T128); inline;
+
+    procedure INCR(var Y : T128);
+    procedure SetLen_auth_tag(const Value: Integer);
   public
+    /// <summary>
+    ///   Encodes a block of data using the supplied cipher
+    /// </summary>
+    procedure EncodeGCM(Source,
+                        Dest   : PByteArray;
+                        Size   : Integer;
+                        Method : TEncodeDecodeMethod);
+    /// <summary>
+    ///   Decodes a block of data using the supplied cipher
+    /// </summary>
+    procedure DecodeGCM(Source,
+                        Dest   : PByteArray;
+                        Size   : Integer;
+                        Method : TEncodeDecodeMethod);
+
+    /// <summary>
+    ///   The data which shall be authenticated in parallel to the encryption
+    /// </summary>
+    property Authenticated_data : TBytes
+      read   FAuthenticated_data
+      write  FAuthenticated_data;
+    /// <summary>
+    ///   Length of the authentication tag to generate in byte
+    /// </summary>
+    property len_auth_tag       : Integer
+      read   Flen_auth_tag
+      write  SetLen_auth_tag;
+    /// <summary>
+    ///   Generated authentication tag
+    /// </summary>
+    property Authenticaton_tag  : TBytes
+      read   FAuthenticaton_tag
+      write  FAuthenticaton_tag;
   end;
 
 implementation
@@ -183,7 +256,9 @@ begin
     begin
       M[hbyte,mask] := HP;
 
-      if (bHP[15] and 1 = 0) then rightshift(HP) else
+      if (bHP[15] and 1 = 0) then
+        rightshift(HP)
+      else
       begin
         rightshift(HP);
         bHP[0] := bHP[0] xor $e1;
@@ -217,6 +292,211 @@ begin
 
   x[0] := x[0] shr 1;
 end;
+
+procedure TGCM.SetLen_auth_tag(const Value: Integer);
+begin
+  Flen_auth_tag := Value shr 3;
+end;
+
+procedure TGCM.INCR(var Y : T128);
+var
+  { TODO : change to a pointer to Y[0], to get rid of the absolute? }
+  bY : array[0..15] of byte absolute Y[0];
+begin
+  {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
+  {$Q-}
+  inc(bY[15]);
+  if bY[15]=0 then
+  begin
+    inc(bY[14]);
+
+    if bY[14] = 0 then
+    begin
+      inc(bY[13]);
+
+      if bY[13] = 0 then
+        inc(bY[12]);
+    end;
+  end;
+  {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
+end;
+
+procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer; Method: TEncodeDecodeMethod);
+begin
+
+end;
+
+procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer; Method : TEncodeDecodeMethod);
+begin
+
+end;
+
+
+//function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;
+//var aclen : T128;
+//    x : T128;
+//    n : Uint64;
+//
+//    procedure encode( data : TBytes );
+//    var i, mod_d, div_d, len_d : Uint64;
+//        hdata : T128;
+//    begin
+//        len_d := length( data );
+//        if ( len_d > 0 ) then
+//        begin
+//          n := 0;
+//          div_d := len_d div 16;
+//          if div_d > 0 then
+//          for i := 0 to div_d -1 do
+//          begin
+//            x := poly_mult_H( XOR_128_n( @data[n], x ) );
+//            inc( n, 16 );
+//          end;
+//
+//          mod_d := len_d mod 16;
+//          if mod_d > 0 then
+//          begin
+//            hdata := nullbytes;
+//            Move( data[n], hdata[0], mod_d );
+//            x := poly_mult_H( XOR_128( hdata, x ) );
+//          end;
+//        end;
+//    end;
+//
+//begin
+//  x := nullbytes;
+//  encode( authenticated_data );
+//  encode( ciphertext );
+//  set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);
+//
+//  Result := poly_mult_H( XOR_128( aclen, x ) );
+//end;
+//
+//
+//function E_Cipher( val : T128) : T128;
+//var hval: TBytes;
+//begin
+//  haes_DEC.Encode( val, Result[0], 16 );
+//end;
+//
+//
+//procedure E_Init( key : TBytes );
+// var hkey : RawByteString;
+//begin
+//    setlength(hkey,length(key));
+//    Move(key[0], hkey[1], length(key));
+//    haes_DEC.Init( hkey );
+//end;
+//
+//
+//procedure encrypt( const key, IV : TBytes; const plaintext, authenticated_data : TBytes;
+//out ciphertext : TBytes; len_auth_tag : integer; out authenticaton_tag : TBytes );
+//var
+//    i, j, div_len_plain, len_plain : Uint64;
+//    a_tag, E_K_Y0, Y, H : T128;
+//    bY : array[0..15] of byte absolute Y[0];
+//
+//begin
+//    // len_auth_tag := len_auth_tag shr 3; wird schon im Setter gemacht
+//
+//    E_Init( key );
+//    H := E_Cipher( nullbytes );
+//    Table_M_8Bit(H);
+//
+//    len_plain := length( plaintext );
+//    SetLength( ciphertext, len_plain );
+//
+//    if length(IV) = 12 then
+//    begin
+//       Y[1] := 0;
+//       Move( IV[0], Y[0], 12 );
+//       bY[15] := 1;
+//    end
+//    else
+//       Y := GHASH( H, nil, IV );
+//
+//    E_K_Y0 := E_Cipher( y );
+//
+//    i := 0;
+//    div_len_plain := len_plain div 16;
+//    for j := 1 to div_len_plain do
+//    begin
+//      INCR( Y );
+//      P128(@ciphertext[i])^ := XOR_128_n( @plaintext[i], E_cipher( Y ) );
+//      inc(i,16);
+//    end;
+//
+//    if i < len_plain then
+//    begin
+//      INCR( Y );
+//      XOR_128_n_l( plaintext, i, len_plain-i, E_cipher( Y ), ciphertext );
+//    end;
+//
+//    a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );
+//    Setlength( authenticaton_tag, len_auth_tag );
+//    Move( a_tag[0], authenticaton_tag[0], len_auth_tag );
+//end;
+//
+//
+//function decrypt( const key, IV : TBytes; out plaintext : TBytes; const authenticated_data,
+//ciphertext : TBytes; len_auth_tag : integer; const authenticaton_tag : TBytes ) : boolean;
+//var
+//    i, j, div_len_ciph, len_ciph : Uint64;
+//    a_tag, E_K_Y0, Y, H : T128;
+//    bY : array[0..15] of byte absolute Y[0];
+//    ba_Tag : TBytes;
+//
+//    function equal( const a, b : TBytes ):boolean;
+//    begin
+//      if length(a) <> length(b) then Result := false
+//      else
+//      Result := CompareMem( @a[0], @b[0], length(a) );
+//    end;
+//
+//begin
+//    len_auth_tag := len_auth_tag shr 3;
+//
+//    E_Init( key );
+//    H := E_Cipher( nullbytes );
+//    Table_M_8Bit(H);
+//
+//    len_ciph := length( ciphertext );
+//    SetLength( plaintext, len_ciph );
+//
+//    if length(IV) = 12 then
+//    begin
+//       Y[1] := 0;
+//       Move( IV[0], Y[0], 12 );
+//       bY[15] := 1;
+//    end
+//    else
+//       Y := GHASH( H, nil, IV );
+//
+//    E_K_Y0 := E_Cipher( y );
+//
+//    i := 0;
+//    div_len_ciph := len_ciph div 16;
+//    for j := 1 to div_len_ciph do
+//    begin
+//      INCR( Y );
+//      P128(@plaintext[i])^ := XOR_128_n( @ciphertext[i], E_cipher( Y ) );
+//      inc(i,16);
+//    end;
+//
+//    if i < len_ciph then
+//    begin
+//      INCR( Y );
+//      XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );
+//    end;
+//
+//    a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );
+//
+//    Setlength( ba_tag, len_auth_tag );
+//    Move( a_tag[0], ba_tag[0], len_auth_tag );
+//
+//    Result := equal( authenticaton_tag, ba_tag );
+//    if not Result then SetLength( plaintext, 0 ); // NIST FAIL => pt=''
+//end;
 
 
 end.
