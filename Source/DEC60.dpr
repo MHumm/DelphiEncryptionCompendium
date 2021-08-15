@@ -44,7 +44,8 @@ uses
   DECUtil in 'DECUtil.pas',
   DECUtilRawByteStringHelper in 'DECUtilRawByteStringHelper.pas',
   DECHashAuthentication in 'DECHashAuthentication.pas',
-  DECHashBitBase in 'DECHashBitBase.pas';
+  DECHashBitBase in 'DECHashBitBase.pas',
+  DECCipherModesGCM in 'DECCipherModesGCM.pas';
 
 begin
   try
