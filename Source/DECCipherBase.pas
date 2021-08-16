@@ -361,6 +361,11 @@ type
     ///   predecessor to avoid certain attacks
     /// </summary>
     procedure SetMode(Value: TCipherMode);
+    /// <summary>
+    ///   When setting a mode it might need to be initialized and that can
+    ///   usually only be done in a child class.
+    /// </summary>
+    procedure InitMode; virtual; abstract;
   public
     /// <summary>
     ///   List of registered DEC classes. Key is the Identity of the class.
@@ -827,6 +832,7 @@ begin
       Done;
 
     FMode := Value;
+    InitMode;
   end;
 end;
 

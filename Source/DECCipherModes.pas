@@ -279,6 +279,7 @@ uses
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
+  sInvalidBlockSize     = 'Block size must be %0:i bit for the selected mode %1:s';
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
@@ -483,7 +484,15 @@ end;
 procedure TDECCipherModes.InitMode;
 begin
   if FMode = TCipherMode.cmGCM then
-    FGCM := TGCM.Create
+  begin
+    if Context.BlockSize = 16 then
+      FGCM := TGCM.Create
+    else
+      // GCM requires a cipher with 128 bit block size
+      raise EDECCipherException.CreateResFmt(@sInvalidBlockSize,
+                                             [128, System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
+                                             Integer(FMode))]);
+  end
   else
     if Assigned(FGCM) then
       FreeAndNil(FGCM);
