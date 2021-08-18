@@ -69,7 +69,7 @@ type
     /// <summary>
     ///   Length of the authentication tag to generate in byte
     /// </summary>
-    Flen_auth_tag       : Integer;
+    Flen_auth_tag       : UInt32;
     /// <summary>
     ///   Generated authentication tag
     /// </summary>
@@ -135,7 +135,18 @@ type
     procedure rightshift(var rx : T128); inline;
 
     procedure INCR(var Y : T128);
-    procedure SetLen_auth_tag(const Value: Integer);
+
+    /// <summary>
+    ///   Defines the length of the resulting authenticated data in bit.
+    /// </summary>
+    /// <param name="Value">
+    ///   Sets the length of Authenticaton_tag in bit, values as per specification
+    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
+    ///   may be 64 or 32 as well, but the use of these two tag lengths
+    ///   constrains the length of the input data and the lifetime of the key.
+    /// </param>
+    procedure SetAuthenticationTagLength(const Value: UInt32);
+    function GetAuthenticationTagBitLength: UInt32;
   public
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
@@ -159,11 +170,14 @@ type
       read   FAuthenticated_data
       write  FAuthenticated_data;
     /// <summary>
-    ///   Length of the authentication tag to generate in byte
+    ///   Sets the length of Authenticaton_tag in bit, values as per specification
+    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
+    ///   may be 64 or 32 as well, but the use of these two tag lengths
+    ///   constrains the length of the input data and the lifetime of the key.
     /// </summary>
-    property len_auth_tag       : Integer
-      read   Flen_auth_tag
-      write  SetLen_auth_tag;
+    property AuthenticationTagBitLength       : UInt32
+      read   GetAuthenticationTagBitLength
+      write  SetAuthenticationTagLength;
     /// <summary>
     ///   Generated authentication tag
     /// </summary>
@@ -293,7 +307,7 @@ begin
   x[0] := x[0] shr 1;
 end;
 
-procedure TGCM.SetLen_auth_tag(const Value: Integer);
+procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
   Flen_auth_tag := Value shr 3;
 end;
@@ -331,6 +345,10 @@ begin
 
 end;
 
+function TGCM.GetAuthenticationTagBitLength: UInt32;
+begin
+  Result := Flen_auth_tag shl 3;
+end;
 
 //function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;
 //var aclen : T128;

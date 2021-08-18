@@ -38,6 +38,12 @@ type
   ///   algorithms for linking blocks.
   /// </summary>
   TDECCipherModes = class(TDECCipher)
+  strict private
+    function GetAuthenticatedData: TBytes;
+    function GetAuthenticationValueBitLength: Integer;
+    function GetAuthenticatonValue: TBytes;
+    procedure SetAuthenticatedData(const Value: TBytes);
+    procedure SetAuthenticationValueBitLength(const Value: Integer);
   strict protected
     /// <summary>
     ///   Implementation of the Galois counter mode. Only created when gmGCM is
@@ -265,6 +271,33 @@ type
     ///   Size of the data the Source parameter points to in byte
     /// </param>
     procedure Decode(const Source; var Dest; DataSize: Integer);
+
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it. This property contains the data which
+    ///   shall be authenticated in parallel to the encryption.
+    /// </summary>
+    property AuthenticatedData : TBytes
+      read   GetAuthenticatedData
+      write  SetAuthenticatedData;
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it.
+    ///   Represents the length of AuthenticatonValue in bit, values as per
+    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain applications,
+    ///   they may be 64 or 32 as well, but the use of these two tag lengths
+    ///   constrains the length of the input data and the lifetime of the key.
+    /// </summary>
+    property AuthenticationValueBitLength : Integer
+      read   GetAuthenticationValueBitLength
+      write  SetAuthenticationValueBitLength;
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it. This property contains the generated
+    ///   authentication tag
+    /// </summary>
+    property AuthenticatonValue  : TBytes
+      read   GetAuthenticatonValue;
   end;
 
 implementation
@@ -280,6 +313,7 @@ uses
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
   sInvalidBlockSize     = 'Block size must be %0:i bit for the selected mode %1:s';
+  sInvalidModeForMethod = 'Invalid mode for this method. Mode must be %0:s';
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
@@ -287,6 +321,19 @@ begin
                                          [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
                                          Integer(Cipher.Mode)),
                                          Cipher.Context.BlockSize]);
+end;
+
+procedure TDECCipherModes.SetAuthenticatedData(const Value: TBytes);
+begin
+  if (FMode = cmGCM) then
+    FGCM.Authenticated_data := Value;
+end;
+
+procedure TDECCipherModes.SetAuthenticationValueBitLength(
+  const Value: Integer);
+begin
+  if (FMode = cmGCM) then
+    FGCM.AuthenticationTagBitLength := Value;
 end;
 
 procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);
@@ -479,6 +526,27 @@ begin
     XORBuffers(Source[I], FFeedback[0], Size, Dest[I]);
     FBufferIndex := Size;
   end;
+end;
+
+function TDECCipherModes.GetAuthenticatedData: TBytes;
+begin
+  if (FMode = cmGCM) then
+    Result := FGCM.Authenticaton_tag
+  else
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
+end;
+
+function TDECCipherModes.GetAuthenticationValueBitLength: Integer;
+begin
+  if (FMode = cmGCM) then
+    Result := FGCM.AuthenticationTagBitLength
+  else
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
+end;
+
+function TDECCipherModes.GetAuthenticatonValue: TBytes;
+begin
+
 end;
 
 procedure TDECCipherModes.InitMode;
