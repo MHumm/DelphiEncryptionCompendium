@@ -200,25 +200,27 @@
   {$DEFINE THash_RipeMD320_asm}
   {$DEFINE THash_SHA_asm}
   {$DEFINE THash_SHA256_asm}
+  {$DEFINE THash_SHA384_asm}
   {$DEFINE THashBaseHaval_asm}
   {$DEFINE THash_Panama_asm}
   {$DEFINE THashBaseWhirlpool_asm}
   {$DEFINE THash_Sapphire_asm}
 
+  {$DEFINE THash_Snefru128_asm}
+  {$DEFINE THash_Snefru256_asm}
+
   // The following asm optimized Hashes were incompatible with newer C++
   // Builder versions.
-  // This statement of the former developers of the library has not been
-  // verified yet, but just to make sure we disable them for C++ Builder until
-  // we could verify them. Disabling for C++ Builder requires either that
-  // C++ Builder users compile DEC from IDE or with the -DBCB parameter when
-  // compiling from command line
+  // This statement of the former developers of the library has now been
+  // tested with a short console test program. It looks like some of these
+  // except two can run without crashing now. The MD2 crashes and Square
+  // and Tiger deliver different results.
+  // Disabling for C++ Builder requires either that C++ Builder users compile
+  // DEC from IDE or with the -DBCB parameter when compiling from command line
 
   {$IFNDEF BCB}
    {$DEFINE THash_MD2_asm}
-   {$DEFINE THash_SHA384_asm}
-   {$DEFINE THash_Tiger_asm}
    {$DEFINE THash_Square_asm}
-   {$DEFINE THash_Snefru128_asm}
-   {$DEFINE THash_Snefru256_asm}
+   {$DEFINE THash_Tiger_asm}
   {$ENDIF}
 {$ENDIF}
