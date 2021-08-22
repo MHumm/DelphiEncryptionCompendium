@@ -181,10 +181,6 @@ type
     ///   inputstream into Feedback register.
     /// </summary>
     procedure EncodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
-    /// <summary>
-    ///   Galois Counter Mode, details are implemented in DECCipherModesGCM
-    /// </summary>
-    procedure EncodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -409,7 +405,7 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   EncodeGCM(@Source, @Dest, DataSize);
+    cmGCM :   FGCM.EncodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -446,11 +442,6 @@ begin
       end;
     end;
   end;
-end;
-
-procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
-begin
-  FGCM.DecodeGCM(Source, Dest, Size, DoEncode);
 end;
 
 procedure TDECCipherModes.EncodeOFB8(Source, Dest: PByteArray; Size: Integer);
@@ -952,12 +943,18 @@ begin
 end;
 
 procedure TDECCipherModes.DoInit(const Key; Size: Integer);
+var
+  InitVector : TBytes;
 begin
   inherited;
 
   if (FMode = cmGCM) then
+  begin
 { TODO : Check which encode method is meant. GCM128.pas uses Encode, which woudl be the one internally casing about FMode... }
-    FGCM.Init(self.DoEncode);
+    SetLength(InitVector, FInitVectorSize);
+    Move(FInitializationVector^[0], InitVector[0], FInitVectorSize);
+    FGCM.Init(self.DoEncode, InitVector);
+  end;
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);

@@ -265,6 +265,12 @@ type
     FInitializationVector: PByteArray;
 
     /// <summary>
+    ///   Size of the initialization vector in byte. Required for algorithms
+    ///   like GCM.
+    /// </summary>
+    FInitVectorSize: Integer;
+
+    /// <summary>
     ///   Cipher modes are used to derive a stream cipher from block cipher
     ///   algorithms. For this something from the last entrypted block (or for
     ///   the first block from the vector) is used in the encryption of the next
@@ -823,6 +829,7 @@ begin
   // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
   FData                 := ReallocMemory(FData, FDataSize);
   FInitializationVector := @FData[0];
+  FInitVectorSize       := 0;
   FFeedback             := @FInitializationVector[FBufferSize];
   FBuffer               := @FFeedback[FBufferSize];
   FAdditionalBuffer     := @FBuffer[FBufferSize];
@@ -919,6 +926,8 @@ begin
   end
   else
     Move(IVector, FInitializationVector^, IVectorSize);
+
+  FInitVectorSize := IVectorSize;
 
   Move(FInitializationVector^, FFeedback^, FBufferSize);
 

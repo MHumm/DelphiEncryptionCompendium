@@ -66,6 +66,10 @@ type
      ///   Required for creating the table and encryption at least
      /// </summary>
      FH        : T128;
+     /// <summary>
+     ///   Calculated in initialization
+     /// </summary>
+     FY        : T128;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -79,6 +83,11 @@ type
     ///   Generated authentication tag
     /// </summary>
     FAuthenticaton_tag  : TBytes;
+
+    /// <summary>
+    ///   Reference to the encode method of the acual cipher used
+    /// </summary>
+    FEncryptionMethod: TEncodeDecodeMethod;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -152,6 +161,7 @@ type
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32);
     function GetAuthenticationTagBitLength: UInt32;
+    function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -160,17 +170,38 @@ type
     /// <param name="Method">
     ///   Encryption method of the cypher used
     /// </param>
-    procedure Init(EncryptionMethod: TEncodeDecodeMethod);
+    /// <param name="InitVector">
+    ///   Initialization vector
+    /// </param>
+    procedure Init(EncryptionMethod : TEncodeDecodeMethod;
+                   InitVector       : TBytes);
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
     /// </summary>
+    /// <param name="Source">
+    ///   Plain text to encrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Ciphertext after encryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to encrypt
+    /// </param>
     procedure EncodeGCM(Source,
                         Dest   : PByteArray;
-                        Size   : Integer;
-                        Method : TEncodeDecodeMethod);
+                        Size   : Integer);
     /// <summary>
     ///   Decodes a block of data using the supplied cipher
     /// </summary>
+    /// <param name="Source">
+    ///   Encrypted ciphertext to decrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Plaintext after decryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to decrypt
+    /// </param>
     procedure DecodeGCM(Source,
                         Dest   : PByteArray;
                         Size   : Integer;
@@ -348,13 +379,73 @@ begin
   {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 end;
 
-procedure TGCM.Init(EncryptionMethod: TEncodeDecodeMethod);
+procedure TGCM.Init(EncryptionMethod: TEncodeDecodeMethod; InitVector:TBytes);
+var
+  b : ^Byte;
+//  bY : array[0..15] of byte absolute FY[0]; doesn't compile as FY is not seen as variable
 begin
+  Assert(Assigned(EncryptionMethod), 'No encryption method specified');
+
+  FEncryptionMethod := EncryptionMethod;
+
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
 
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
   Table_M_8Bit(FH);
+
+  if length(InitVector) = 12 then
+  begin
+     FY[1] := 0;
+     Move(InitVector[0], FY[0], 12);
+     b := @FY[0];
+     inc(b, 15);
+     b^ := 1;
+  end
+  else
+     FY := GHASH(FH, nil, InitVector);
+end;
+
+function TGCM.GHASH(Hash : T128; authenticated_data, ciphertext : TBytes) : T128;
+var
+  aclen : T128;
+  x : T128;
+  n : Uint64;
+
+  procedure encode(data : TBytes);
+  var
+    i, mod_d, div_d, len_d : UInt64;
+    hdata : T128;
+  begin
+      len_d := length( data );
+      if ( len_d > 0 ) then
+      begin
+        n := 0;
+        div_d := len_d div 16;
+        if div_d > 0 then
+        for i := 0 to div_d -1 do
+        begin
+          x := poly_mult_H( XOR_128_n( @data[n], x ) );
+          inc( n, 16 );
+        end;
+
+        mod_d := len_d mod 16;
+        if mod_d > 0 then
+        begin
+          hdata := nullbytes;
+          Move( data[n], hdata[0], mod_d );
+          x := poly_mult_H( XOR_128( hdata, x ) );
+        end;
+      end;
+  end;
+
+begin
+  x := nullbytes;
+  encode( authenticated_data );
+  encode( ciphertext );
+  set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);
+
+  Result := poly_mult_H( XOR_128( aclen, x ) );
 end;
 
 procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer; Method: TEncodeDecodeMethod);
@@ -362,9 +453,11 @@ begin
 
 end;
 
-procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer; Method : TEncodeDecodeMethod);
+procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+var
+  E_K_Y0 : T128;
 begin
-
+  FEncryptionMethod(@FY[0], @E_K_Y0[0], 16);
 end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;
@@ -446,16 +539,16 @@ end;
 //    len_plain := length( plaintext );
 //    SetLength( ciphertext, len_plain );
 //
-//    if length(IV) = 12 then
-//    begin
-//       Y[1] := 0;
-//       Move( IV[0], Y[0], 12 );
-//       bY[15] := 1;
-//    end
-//    else
-//       Y := GHASH( H, nil, IV );
+//    //if length(IV) = 12 then
+//    //begin
+//    //   Y[1] := 0;
+//    //   Move( IV[0], Y[0], 12 );
+//    //   bY[15] := 1;
+//    //end
+//    //else
+//    //   Y := GHASH( H, nil, IV );
 //
-//    E_K_Y0 := E_Cipher( y );
+//    //E_K_Y0 := E_Cipher( y );
 //
 //    i := 0;
 //    div_len_plain := len_plain div 16;
