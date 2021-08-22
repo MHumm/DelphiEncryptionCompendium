@@ -98,6 +98,16 @@ type
     /// </summary>
     procedure ReportInvalidMessageLength(Cipher: TDECCipher);
     /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+    /// <summary>
     ///   Electronic Code Book
     ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize
     ///   and should be used only in 1-byte Streamciphers.
@@ -939,6 +949,15 @@ begin
   FGCM.Free;
 
   inherited;
+end;
+
+procedure TDECCipherModes.DoInit(const Key; Size: Integer);
+begin
+  inherited;
+
+  if (FMode = cmGCM) then
+{ TODO : Check which encode method is meant. GCM128.pas uses Encode, which woudl be the one internally casing about FMode... }
+    FGCM.Init(self.DoEncode);
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);

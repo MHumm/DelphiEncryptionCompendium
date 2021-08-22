@@ -382,12 +382,16 @@ end;
 procedure TFormMain.InitCipherModes;
 var
   Mode : TCipherMode;
+  Name : string;
 begin
   for Mode := low(TCipherMode) to high(TCipherMode) do
   begin
-    ComboBoxChainingMethod.Items.Add(System.TypInfo.GetEnumName(
-                                       TypeInfo(TCipherMode),
-                                       Integer(Mode)));
+    Name := System.TypInfo.GetEnumName(TypeInfo(TCipherMode), Integer(Mode));
+
+    if IsAuthenticatedBlockMode(Mode) then
+      name := name + ' (authenticated)';
+
+    ComboBoxChainingMethod.Items.Add(Name);
   end;
 
   if ComboBoxChainingMethod.Items.Count > 0 then

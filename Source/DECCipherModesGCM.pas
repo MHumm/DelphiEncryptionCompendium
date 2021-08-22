@@ -62,6 +62,11 @@ type
      nullbytes : T128;
      M         : array[0..15,0..255] of T128;
 
+     /// <summary>
+     ///   Required for creating the table and encryption at least
+     /// </summary>
+     FH        : T128;
+
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
@@ -148,6 +153,14 @@ type
     procedure SetAuthenticationTagLength(const Value: UInt32);
     function GetAuthenticationTagBitLength: UInt32;
   public
+    /// <summary>
+    ///   Should be called when starting encryption/decryption in order to
+    ///   initialize internal tables etc.
+    /// </summary>
+    /// <param name="Method">
+    ///   Encryption method of the cypher used
+    /// </param>
+    procedure Init(EncryptionMethod: TEncodeDecodeMethod);
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
     /// </summary>
@@ -335,6 +348,15 @@ begin
   {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 end;
 
+procedure TGCM.Init(EncryptionMethod: TEncodeDecodeMethod);
+begin
+  Nullbytes[0] := 0;
+  Nullbytes[1] := 0;
+
+  EncryptionMethod(@Nullbytes[0], @FH[0], 16);
+  Table_M_8Bit(FH);
+end;
+
 procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer; Method: TEncodeDecodeMethod);
 begin
 
@@ -417,9 +439,9 @@ end;
 //begin
 //    // len_auth_tag := len_auth_tag shr 3; wird schon im Setter gemacht
 //
-//    E_Init( key );
-//    H := E_Cipher( nullbytes );
-//    Table_M_8Bit(H);
+//    //E_Init( key ); wurde vorher schon in der Basisklasse gemacht oder so
+//    //H := E_Cipher( nullbytes ); ist eingebaut
+//    //Table_M_8Bit(H);            ist eingebaut
 //
 //    len_plain := length( plaintext );
 //    SetLength( ciphertext, len_plain );

@@ -30,7 +30,8 @@ uses
 
 type
   /// <summary>
-  ///   Possible kindes of cipher algorithms
+  ///   Possible kindes of cipher algorithms independent of any block
+  ///   concatenation mode etc.
   ///   <para>
   ///     ctNull = special "do nothing cipher"
   ///    </para>
@@ -400,6 +401,17 @@ type
     class function ClassByIdentity(Identity: Int64): TDECCipherClass;
 
     /// <summary>
+    ///   Provides meta data about the cipher algorithm used like key size.
+    ///   To be overidden in the concrete cipher classes.
+    /// </summary>
+    /// <remarks>
+    ///   C++ does not support virtual static functions thus the base cannot be
+    ///   marked 'abstract'. Calling this version of the method will lead to an
+    ///   EDECAbstractError
+    /// </remarks>
+    class function Context: TCipherContext; virtual;
+
+    /// <summary>
     ///   Initializes the instance. Relies in parts on information given by the
     ///   Context class function.
     /// </summary>
@@ -411,15 +423,14 @@ type
     destructor Destroy; override;
 
     /// <summary>
-    ///   Provides meta data about the cipher algorithm used like key size.
-    ///   To be overidden in the concrete cipher classes.
+    ///   Provides information whether the selected block concatenation mode
+    ///   provides authentication functionality or not.
     /// </summary>
-    /// <remarks>
-    ///   C++ does not support virtual static functions thus the base cannot be
-    ///   marked 'abstract'. Calling this version of the method will lead to an
-    ///   EDECAbstractError
-    /// </remarks>
-    class function Context: TCipherContext; virtual;
+    /// <returns>
+    ///   true if the selected block mode is one providing authentication features
+    ///   as well
+    /// </returns>
+    function IsAuthenticated: Boolean;
 
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key
@@ -724,6 +735,19 @@ function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
 /// </param>
 procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 
+/// <summary>
+///   Provides information whether a certain block concatenation mode
+///   provides authentication functionality or not.
+/// </summary>
+/// <param name="BlockMNode">
+///   Block mode to check fo authentication features
+/// </param>
+/// <returns>
+///   true if the selected block mode is one providing authentication features
+///   as well
+/// </returns>
+function IsAuthenticatedBlockMode(BlockMode: TCipherMode): Boolean;
+
 implementation
 
 uses
@@ -768,6 +792,11 @@ begin
   Assert(Assigned(CipherClass), 'Do not set a nil default cipher class!');
 
   FDefaultCipherClass := CipherClass;
+end;
+
+function IsAuthenticatedBlockMode(BlockMode: TCipherMode): Boolean;
+begin
+  Result := BlockMode = cmGCM;
 end;
 
 { TDECCipher }
@@ -975,6 +1004,11 @@ begin
     {$IFEND}
 end;
 {$ENDIF}
+
+function TDECCipher.IsAuthenticated: Boolean;
+begin
+  Result := IsAuthenticatedBlockMode(FMode);
+end;
 
 procedure TDECCipher.Done;
 begin
