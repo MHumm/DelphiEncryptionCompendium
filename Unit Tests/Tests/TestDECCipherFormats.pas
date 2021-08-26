@@ -143,7 +143,7 @@ type
 implementation
 
 uses
-  DECBaseClass, DECFormat, DECUtil;
+  DECBaseClass, DECFormat, DECTypes, DECUtil;
 
 { TestTDECCipherFormats }
 
@@ -225,7 +225,7 @@ procedure TestTDECCipherFormats.SetUp;
 begin
   FCipherTwoFish := TCipher_Twofish.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 2);
 
   FTestData[0].EncryptedTextData := 'e81674f9bc69442188c949bb52e1e47874171177e99' +
                                     'dbbe9880875094f8dfe21';
@@ -246,6 +246,18 @@ begin
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
   FTestData[0].Mode       := cmCTSx;
+
+  FTestData[1].EncryptedTextData := '';
+  FTestData[1].PlainTextData     := '';
+  // In this first test case simply the RawByteString based test data filled up
+  // with a 0 in each char to form a UTF16 char
+  FTestData[1].EncryptedUTF16TextData := '';
+
+  FTestData[1].Key        := 'TCipher_Twofish';
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmCTSx;
+
 end;
 
 procedure TestTDECCipherFormats.TearDown;
@@ -356,6 +368,7 @@ begin
         SrcBuf := BytesOf(TFormat_HexL.Decode(FTestData[i].EncryptedTextData));
 
         Src.Clear;
+        Dest.Clear;
         {$IF CompilerVersion >= 25.0}
         Src.WriteData(SrcBuf, length(SrcBuf));
         {$ELSE}
@@ -553,10 +566,13 @@ end;
 
 procedure TestTDECCipherFormats.TestEncodeStream;
 var
-  Src, Dest : TMemoryStream;
-  SrcBuf    : TBytes;
-  i         : Integer;
-  result    : TBytes;
+  Src, Dest         : TMemoryStream;
+  SrcBuf            : TBytes;
+  i                 : Integer;
+  result            : TBytes;
+
+  ProgressCalled    : Boolean; // Was progress event called?
+  ProgressExcpected : Boolean; // Was progress event expected to be called?
 begin
   Src := TMemoryStream.Create;
   try
@@ -571,6 +587,7 @@ begin
         SrcBuf := BytesOf(FTestData[i].PlainTextData);
 
         Src.Clear;
+        Dest.Clear;
         {$IF CompilerVersion >= 25.0}
         Src.WriteData(SrcBuf, length(SrcBuf));
         {$ELSE}
@@ -578,7 +595,13 @@ begin
         {$IFEND}
         Src.Seek(0, TSeekOrigin.soBeginning);
 
-        FCipherTwoFish.EncodeStream(Src, Dest, Src.Size, nil);
+        // Progress event has not yet been called
+        ProgressCalled := false;
+        FCipherTwoFish.EncodeStream(Src, Dest, Src.Size,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
 
         Dest.Seek(0, TSeekOrigin.soBeginning);
         SetLength(result, Dest.Size);
@@ -591,6 +614,9 @@ begin
         CheckEquals(FTestData[i].EncryptedTextData,
                     RawByteString(StringOf(TFormat_HexL.Encode(result))),
                     'Failure in TestEncodeStream ' + IntToStr(i));
+
+        ProgressExcpected := FTestData[i].EncryptedTextData <> '';
+        CheckEquals(ProgressExcpected, ProgressCalled, 'Progress event has not been called. i = ' + i.ToString);
       end;
 
     finally

@@ -149,6 +149,8 @@ type
     procedure TestCalcStream;
     procedure TestCalcRawByteString;
     procedure TestCalcUnicodeString;
+    procedure TestIsPasswordHash;
+    procedure TestGetPaddingByte;
   end;
 
   // Test methods for base class for all hash classes
@@ -5413,6 +5415,16 @@ end;
 procedure THash_TestBase.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash);
+end;
+
+procedure THash_TestBase.TestGetPaddingByte;
+begin
+  CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
+end;
+
+procedure THash_TestBase.TestIsPasswordHash;
+begin
+  CheckEquals(false, FHash.IsPasswordHash);
 end;
 
 procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);

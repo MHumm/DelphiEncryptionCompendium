@@ -290,6 +290,8 @@ begin
     Cipher := Data[i].TestClass.Create;
     Cipher.Mode := Data[i].Mode;
 
+    CheckEquals(true, Data[i].Mode = Cipher.Mode, 'Cipher mode not properly set');
+
     try
       Cipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
 

@@ -574,7 +574,6 @@ type
   TCipher_Cast128 = class(TDECFormattedCipher)
   private
     FRounds: Integer;
-    procedure SetRounds(Value: Integer);
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -590,12 +589,6 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
-
-    /// <summary>
-    ///   Sets the number of rounds/times the algorithm is being applied to the
-    ///   data. Default value is 16 rounds.
-    /// </summary>
-    property Rounds: Integer read FRounds write SetRounds;
   end;
 
   TCipher_Gost = class(TDECFormattedCipher)
@@ -4230,21 +4223,9 @@ begin
   Result.BufferSize                  := 8;
   Result.AdditionalBufferSize        := 128;
   Result.NeedsAdditionalBufferBackup := false;
-  Result.MinRounds                   := 1;
-  Result.MaxRounds                   := 256;
+  Result.MinRounds                   := 12;
+  Result.MaxRounds                   := 16;
   Result.CipherType                  := [ctSymmetric, ctBlock];
-end;
-
-procedure TCipher_Cast128.SetRounds(Value: Integer);
-begin
-  if Value <> FRounds then
-  begin
-    if not (FState in [csNew, csInitialized, csDone]) then
-      Done;
-    if (FState <> csNew) and (Value <= 0) then
-      Value := 16;
-    FRounds := Value;
-  end;
 end;
 
 procedure TCipher_Cast128.DoInit(const Key; Size: Integer);
@@ -4253,13 +4234,13 @@ var
   K: PUInt32Array;
   I: UInt32;
 begin
-  if FRounds <= 0 then
-  begin
-    if Size <= 10 then
-      FRounds := 12
-    else
-      FRounds := 16;
-  end;
+  // as per rfc2144 the number of rounds is 12 for key sizes <= 80 bit,
+  // otherwise 16
+  if Size <= 10 then
+    FRounds := 12
+  else
+    FRounds := 16;
+
   K := FAdditionalBuffer;
   FillChar(X, SizeOf(X), 0);
   Move(Key, X, Size);

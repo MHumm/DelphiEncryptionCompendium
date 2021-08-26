@@ -39,6 +39,7 @@ type
   strict private
     FDECFormatClassList : TDECClassList;
     FDECHashClassList   : TDECClassList;
+    FDECCipherClassList : TDECClassList;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -71,12 +72,12 @@ implementation
 
 uses
   DECFormat,
-  DECHash;
+  DECHash,
+  DECCiphers;
 
 procedure TestTDECClassList.SetUp;
 begin
   FDECFormatClassList := TDECClassList.Create;
-
   FDECFormatClassList.Add(TFormat_HEX.Identity, TFormat_HEX);
   FDECFormatClassList.Add(TFormat_HEXL.Identity, TFormat_HEXL);
   FDECFormatClassList.Add(TFormat_DECMIME32.Identity, TFormat_DECMIME32);
@@ -89,12 +90,18 @@ begin
   FDECHashClassList.Add(THash_MD5.Identity, THash_MD5);
   FDECHashClassList.Add(THash_SHA256.Identity, THash_SHA256);
   FDECHashClassList.Add(THash_SHA3_256.Identity, THash_SHA3_256);
+
+  FDECCipherClassList := TDECClassList.Create;
+  FDECCipherClassList.Add(TCipher_Twofish.Identity, TCipher_TwoFish);
+  FDECCipherClassList.Add(TCipher_AES.Identity, TCipher_AES);
+  FDECCipherClassList.Add(TCipher_RC6.Identity, TCipher_RC6);
 end;
 
 procedure TestTDECClassList.TearDown;
 begin
   FDECFormatClassList.Free;
   FDECHashClassList.Free;
+  FDECCipherClassList.Free;
 end;
 
 procedure TestTDECClassList.TestClassByIdentity;
@@ -119,12 +126,21 @@ begin
 
   ReturnValue := FDECHashClassList.ClassByIdentity(THash_SHA3_256.Identity);
   CheckEquals(ReturnValue, THash_SHA3_256);
+
+  ReturnValue := FDECCipherClassList.ClassByIdentity(TCipher_Twofish.Identity);
+  CheckEquals(ReturnValue, TCipher_Twofish);
+
+  ReturnValue := FDECCipherClassList.ClassByIdentity(TCipher_RC6.Identity);
+  CheckEquals(ReturnValue, TCipher_RC6);
 end;
 
 procedure TestTDECClassList.TestClassByName;
 var
   ReturnValue: TDECClass;
 begin
+  ReturnValue := FDECFormatClassList.ClassByName('HEX');
+  CheckEquals(ReturnValue, TFormat_HEX);
+
   ReturnValue := FDECFormatClassList.ClassByName('TFormat_HEX');
   CheckEquals(ReturnValue, TFormat_HEX);
 
@@ -137,6 +153,9 @@ begin
   ReturnValue := FDECFormatClassList.ClassByName('TFormat_ESCAPE');
   CheckEquals(ReturnValue, TFormat_ESCAPE);
 
+  ReturnValue := FDECHashClassList.ClassByName('MD5');
+  CheckEquals(ReturnValue, THash_MD5);
+
   ReturnValue := FDECHashClassList.ClassByName('THash_MD5');
   CheckEquals(ReturnValue, THash_MD5);
 
@@ -145,6 +164,18 @@ begin
 
   ReturnValue := FDECHashClassList.ClassByName('THash_SHA3_256');
   CheckEquals(ReturnValue, THash_SHA3_256);
+
+  ReturnValue := FDECCipherClassList.ClassByName('TCipher_RC6');
+  CheckEquals(ReturnValue, TCipher_RC6);
+
+  ReturnValue := FDECCipherClassList.ClassByName('TCipher_AES');
+  CheckEquals(ReturnValue, TCipher_AES);
+
+  ReturnValue := FDECCipherClassList.ClassByName('AES');
+  CheckEquals(ReturnValue, TCipher_AES);
+
+  ReturnValue := FDECCipherClassList.ClassByName('TwoFish');
+  CheckEquals(ReturnValue, TCipher_TwoFish);
 end;
 
 procedure TestTDECClassList.TestGetClassList;

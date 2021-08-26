@@ -110,6 +110,7 @@ type
   published
     procedure TestIsClassListCreated;
     procedure TestValidCipherSetDefaultCipherClass;
+    procedure TestIsAuthenticatedBlockMode;
   end;
 
   // Testmethoden for Klasse TCipher_Null
@@ -258,6 +259,9 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestMinRounds;
+    procedure TestMaxRounds;
+    procedure TestRounds;
   end;
 
   // Testmethods for class TCipher_AES
@@ -1412,6 +1416,33 @@ begin
   CheckEquals($9DADBE76, FCipher_RC6.Identity);
 end;
 
+procedure TestTCipher_RC6.TestMaxRounds;
+begin
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MaxRounds;
+  CheckEquals(FCipher_RC6.Context.MaxRounds, FCipher_RC6.Rounds);
+
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MaxRounds + 1;
+  CheckEquals(FCipher_RC6.Context.MaxRounds, FCipher_RC6.Rounds);
+end;
+
+procedure TestTCipher_RC6.TestMinRounds;
+begin
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MinRounds;
+  CheckEquals(FCipher_RC6.Context.MinRounds, FCipher_RC6.Rounds);
+
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MinRounds - 1;
+  CheckEquals(FCipher_RC6.Context.MinRounds, FCipher_RC6.Rounds);
+end;
+
+procedure TestTCipher_RC6.TestRounds;
+begin
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MinRounds + 1;
+  CheckEquals(FCipher_RC6.Context.MinRounds + 1, FCipher_RC6.Rounds);
+
+  FCipher_RC6.Rounds := FCipher_RC6.Context.MaxRounds - 1;
+  CheckEquals(FCipher_RC6.Context.MaxRounds - 1, FCipher_RC6.Rounds);
+end;
+
 procedure TestTCipher_Square.Done;
 begin
   FCipher_Square.Done;
@@ -2489,8 +2520,8 @@ begin
   CheckEquals(   8,  ReturnValue.BlockSize);
   CheckEquals(   8,  ReturnValue.BufferSize);
   CheckEquals( 128,  ReturnValue.AdditionalBufferSize);
-  CheckEquals(   1,  ReturnValue.MinRounds);
-  CheckEquals( 256,  ReturnValue.MaxRounds);
+  CheckEquals(  12,  ReturnValue.MinRounds);
+  CheckEquals(  16,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
   CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
 end;
@@ -3783,6 +3814,20 @@ end;
 procedure TestTDECCipher.TearDown;
 begin
   inherited;
+end;
+
+procedure TestTDECCipher.TestIsAuthenticatedBlockMode;
+begin
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCTSx));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCBCx));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCFB8));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCFBx));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmOFB8));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmOFBx));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCFS8));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmCFSx));
+  CheckEquals(false, IsAuthenticatedBlockMode(cmECBx));
+  CheckEquals(true, IsAuthenticatedBlockMode(cmGCM));
 end;
 
 procedure TestTDECCipher.TestIsClassListCreated;
