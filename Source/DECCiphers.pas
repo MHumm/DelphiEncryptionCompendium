@@ -722,7 +722,8 @@ type
 
     /// <summary>
     ///   Sets the number of rounds/times the algorithm is being applied to the
-    ///   data. Range should be 8-16 and default is 12 rounds.
+    ///   data. Allowed range is 0-255, if you can choose we recommend a
+    ///   value > 16.
     /// </summary>
     property Rounds: Integer read FRounds write SetRounds;
   end;
@@ -5183,7 +5184,7 @@ begin
   Result.BufferSize                  := 8;
   Result.AdditionalBufferSize        := 136;
   Result.NeedsAdditionalBufferBackup := false;
-  Result.MinRounds                   := 1;
+  Result.MinRounds                   := 0;
   Result.MaxRounds                   := 256;
   Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
@@ -5194,8 +5195,13 @@ begin
   begin
     if not (FState in [csNew, csInitialized, csDone]) then
       Done;
-    if Value <= 0 then
+
+    if Value < 0 then
       Value := 12;
+
+    if (Value > Context.MaxRounds) then
+      Value := Context.MaxRounds;
+
     FRounds := Value;
   end;
 end;
@@ -6355,11 +6361,11 @@ procedure TCipher_TEA.SetRounds(Value: Integer);
 begin
   if not (FState in [csNew, csInitialized, csDone]) then
     Done;
-  if Value < 16 then
-    Value := 16
+  if Value < Context.MinRounds then
+    Value := Context.MinRounds
   else
-  if Value > 256 then
-    Value := 256;
+  if Value > Context.MaxRounds then
+    Value := Context.MaxRounds;
   FRounds := Value;
 end;
 
