@@ -130,6 +130,7 @@ type
     ///   parameters
     /// </summary>
     procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); override;
+    procedure TestFinalByteLengthOverflowHelper;
   public
     procedure SetUp; override;
   published
@@ -138,6 +139,8 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestFinalByteLength;
+    procedure TestFinalByteLengthOverflow;
   end;
 
   // Test methods for class THash_SHA3_256
@@ -560,6 +563,41 @@ end;
 procedure TestTHash_SHA3_224.TestIdentity;
 begin
   CheckEquals($D0579DA9, FHash.Identity);
+end;
+
+procedure TestTHash_SHA3_224.TestFinalByteLength;
+var
+  Hash_SHA3_224 : THash_SHA3_224;
+  i             : Integer;
+begin
+  Hash_SHA3_224 := THash_SHA3_224.Create;
+  try
+    for i := 0 to 7 do
+    begin
+      Hash_SHA3_224.FinalByteLength := i;
+      CheckEquals(i, Hash_SHA3_224.FinalByteLength);
+    end;
+  finally
+    Hash_SHA3_224.Free;
+  end;
+end;
+
+procedure TestTHash_SHA3_224.TestFinalByteLengthOverflow;
+begin
+  CheckException(TestFinalByteLengthOverflowHelper, EDECHashException);
+end;
+
+procedure TestTHash_SHA3_224.TestFinalByteLengthOverflowHelper;
+var
+  Hash_SHA3_224 : THash_SHA3_224;
+begin
+  Hash_SHA3_224 := THash_SHA3_224.Create;
+  try
+    Hash_SHA3_224.FinalByteLength := 8;
+    CheckEquals(8, Hash_SHA3_224.FinalByteLength);
+  finally
+    Hash_SHA3_224.Free;
+  end;
 end;
 
 procedure TestTHash_SHA3_224.TestIsPasswordHash;

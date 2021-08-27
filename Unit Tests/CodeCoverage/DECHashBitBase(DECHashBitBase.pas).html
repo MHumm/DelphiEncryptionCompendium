@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECHashBitBase (D:\Projekte\DECGitMaster\Source\DECHashBitBase.pas)</strong>.</p>
-<p> Generated at 26.08.2021 17:35:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 27.08.2021 16:57:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECHashBitBase.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>5</td></tr><tr><td>Number of lines with code gen</td><td>9</td></tr><tr><td>Line coverage</td><td>55%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>8</td></tr><tr><td>Number of lines with code gen</td><td>8</td></tr><tr><td>Line coverage</td><td>100%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -109,23 +109,26 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>70</td><td><pre style="display:inline;">{ TDECHashBit }</pre></td></tr>
 <tr class="nocodegen"><td>71</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>72</td><td><pre style="display:inline;">function TDECHashBit.GetFinalByteLength: UInt8;</pre></td></tr>
-<tr class="notcovered"><td>73</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>74</td><td><pre style="display:inline;"> &nbsp;Result := FFinalByteLength;</pre></td></tr>
-<tr class="notcovered"><td>75</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>73</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>74</td><td><pre style="display:inline;"> &nbsp;Result := FFinalByteLength;</pre></td></tr>
+<tr class="covered"><td>75</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>76</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>77</td><td><pre style="display:inline;">procedure TDECHashBit.SetFinalByteLength(const Value: UInt8);</pre></td></tr>
 <tr class="covered"><td>78</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="nocodegen"><td>79</td><td><pre style="display:inline;"> &nbsp;// if length of final byte is 8 this value shall be 0 as the normal specification</pre></td></tr>
 <tr class="nocodegen"><td>80</td><td><pre style="display:inline;"> &nbsp;// of message length is good enough then.</pre></td></tr>
-<tr class="covered"><td>81</td><td><pre style="display:inline;"> &nbsp;Assert(Value &lt; 8, &apos;Length of final byte too big, a byte has 8 bit maximum&apos;);</pre></td></tr>
-<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>83</td><td><pre style="display:inline;"> &nbsp;if (Value &gt; 7) then</pre></td></tr>
-<tr class="notcovered"><td>84</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);</pre></td></tr>
+<tr class="nocodegen"><td>81</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"> &nbsp;// commented out as otherwise the unit test for the exception won&apos;t properly work</pre></td></tr>
+<tr class="nocodegen"><td>83</td><td><pre style="display:inline;"> &nbsp;// and we cannot situatively turn on/off assertion generation</pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"> &nbsp;// &nbsp;Assert(Value &lt; 8, &apos;Length of final byte too big, a byte has 8 bit maximum&apos;);</pre></td></tr>
 <tr class="nocodegen"><td>85</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>86</td><td><pre style="display:inline;"> &nbsp;FFinalByteLength := Value;</pre></td></tr>
-<tr class="covered"><td>87</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>86</td><td><pre style="display:inline;"> &nbsp;if (Value &gt; 7) then</pre></td></tr>
+<tr class="covered"><td>87</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);</pre></td></tr>
 <tr class="nocodegen"><td>88</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>89</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="covered"><td>89</td><td><pre style="display:inline;"> &nbsp;FFinalByteLength := Value;</pre></td></tr>
+<tr class="covered"><td>90</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>

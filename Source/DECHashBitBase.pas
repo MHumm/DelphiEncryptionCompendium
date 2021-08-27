@@ -78,7 +78,10 @@ procedure TDECHashBit.SetFinalByteLength(const Value: UInt8);
 begin
   // if length of final byte is 8 this value shall be 0 as the normal specification
   // of message length is good enough then.
-  Assert(Value < 8, 'Length of final byte too big, a byte has 8 bit maximum');
+
+  // commented out as otherwise the unit test for the exception won't properly work
+  // and we cannot situatively turn on/off assertion generation
+  //  Assert(Value < 8, 'Length of final byte too big, a byte has 8 bit maximum');
 
   if (Value > 7) then
     raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);

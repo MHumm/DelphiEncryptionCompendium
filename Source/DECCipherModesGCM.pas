@@ -85,7 +85,7 @@ type
     FAuthenticaton_tag  : TBytes;
 
     /// <summary>
-    ///   Reference to the encode method of the acual cipher used
+    ///   Reference to the encode method of the actual cipher used
     /// </summary>
     FEncryptionMethod: TEncodeDecodeMethod;
 
@@ -455,9 +455,16 @@ end;
 
 procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
 var
-  E_K_Y0 : T128;
+  E_K_Y0 : T128; // most likely to be moved to the class itsself
+  Temp   : T128;
 begin
   FEncryptionMethod(@FY[0], @E_K_Y0[0], 16);
+
+  INCR(FY);
+
+  FEncryptionMethod(@FY[0], @Temp[0], 16);
+
+  P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);
 end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;

@@ -192,6 +192,11 @@ begin
   result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'), BytesOf('salt'), 1000000, 32)));
   CheckEquals('505112A590BE61AC9D3A235BF0A8EECEA40E54652EC0E3C257C227C9AA5E664C',
               result, 'SHA256 password salt 1000000 32');
+
+  // test with a password longer than block length
+  result := StringOf(ValidFormat(TFormat_HEX).Encode(
+    THash_SHA1.PBKDF2(BytesOf('passwordabcdefghijklmnopqrstuvwxyzpasswordabcdefghijklmnopqrstuvwxyz'), BytesOf('salt'), 1, 20)));
+  CheckEquals('2945F3DD721E717BA7676B7D7447423B158DD3A4', result, 'SHA1 password salt 1 20');
 end;
 
 procedure TestTHash_PBKDF2.TestRawByteString;

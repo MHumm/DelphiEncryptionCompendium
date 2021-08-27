@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECHashAuthentication (D:\Projekte\DECGitMaster\Source\DECHashAuthentication.pas)</strong>.</p>
-<p> Generated at 26.08.2021 17:35:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 27.08.2021 16:57:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECHashAuthentication.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>174</td></tr><tr><td>Number of lines with code gen</td><td>179</td></tr><tr><td>Line coverage</td><td>97%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>177</td></tr><tr><td>Number of lines with code gen</td><td>179</td></tr><tr><td>Line coverage</td><td>98%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -644,7 +644,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>605</td><td><pre style="display:inline;">class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes;</pre></td></tr>
 <tr class="covered"><td>606</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="covered"><td>607</td><td><pre style="display:inline;"> &nbsp;if (length(Seed) &gt; 0) then</pre></td></tr>
-<tr class="notcovered"><td>608</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)</pre></td></tr>
+<tr class="covered"><td>608</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)</pre></td></tr>
 <tr class="nocodegen"><td>609</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
 <tr class="covered"><td>610</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF3);</pre></td></tr>
 <tr class="covered"><td>611</td><td><pre style="display:inline;">end;</pre></td></tr>
@@ -826,8 +826,8 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>787</td><td><pre style="display:inline;"> &nbsp; &nbsp;I := 0;</pre></td></tr>
 <tr class="covered"><td>788</td><td><pre style="display:inline;"> &nbsp; &nbsp;if PassLength &gt; BlockSize then</pre></td></tr>
 <tr class="nocodegen"><td>789</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>790</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;TrimmedKey := Hash.CalcBytes(Password);</pre></td></tr>
-<tr class="notcovered"><td>791</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;PassLength := DigestLength;</pre></td></tr>
+<tr class="covered"><td>790</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;TrimmedKey := Hash.CalcBytes(Password);</pre></td></tr>
+<tr class="covered"><td>791</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;PassLength := DigestLength;</pre></td></tr>
 <tr class="nocodegen"><td>792</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
 <tr class="nocodegen"><td>793</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
 <tr class="covered"><td>794</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;TrimmedKey := Password;</pre></td></tr>

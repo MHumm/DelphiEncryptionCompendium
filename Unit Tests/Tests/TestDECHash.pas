@@ -151,6 +151,7 @@ type
     procedure TestCalcUnicodeString;
     procedure TestIsPasswordHash;
     procedure TestGetPaddingByte;
+    procedure TestIsPasswordHashBase;
   end;
 
   // Test methods for base class for all hash classes
@@ -5200,16 +5201,18 @@ end;
 
 procedure THash_TestBase.DoTest52(HashClass: TDECHash);
 var
-  i                : Integer;
-  Buf              : TBytes;
-  BufLen           : Integer; // Buffer length in whole bytes, may differ from
-                              // input vector legtht at least for SHA3 test
-  InputDataVectors : ITestDataInputVectorList;
-  IdxVector        : Integer;
-  IdxCount         : Integer;
-  HashResult       : TBytes;
-  ResultExpected   : string;
-  ResultCalculated : string;
+  i                   : Integer;
+  Buf                 : TBytes;
+  BufLen              : Integer; // Buffer length in whole bytes, may differ from
+                                 // input vector legtht at least for SHA3 test
+  InputDataVectors    : ITestDataInputVectorList;
+  IdxVector           : Integer;
+  IdxCount            : Integer;
+  HashResult          : TBytes;
+  HashResultRawString : RawByteString;
+  HashResultString    : string;
+  ResultExpected      : string;
+  ResultCalculated    : string;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
@@ -5243,7 +5246,9 @@ begin
       Continue;
 
     HashClass.Done;
-    HashResult := HashClass.DigestAsBytes;
+    HashResult          := HashClass.DigestAsBytes;
+    HashResultRawString := HashClass.DigestAsRawByteString;
+    HashResultString    := HashClass.DigestAsString;
 
     ResultCalculated := string(BytesToRawString(TFormat_HEXL.Encode(HashResult)));
     ResultExpected   := string(FTestData[i].ExpectedOutput);
@@ -5251,6 +5256,14 @@ begin
     CheckEquals(ResultExpected,
                 ResultCalculated,
                 HashClass.ClassName + ' Index: '+IntToStr(i));
+
+    CheckEquals(ResultExpected,
+                string(TFormat_HEXL.Encode(HashResultRawString)),
+                'RawByteString: ' + HashClass.ClassName + ' Index: '+IntToStr(i));
+
+    CheckEquals(StringOf(TFormat_HEXL.Decode(BytesOf(ResultExpected))),
+                HashResultString,
+                'String: ' + HashClass.ClassName + ' Index: '+IntToStr(i));
   end;
 end;
 
@@ -5425,6 +5438,11 @@ end;
 procedure THash_TestBase.TestIsPasswordHash;
 begin
   CheckEquals(false, FHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestIsPasswordHashBase;
+begin
+  CheckEquals(false, TDECHash.IsPasswordHash);
 end;
 
 procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
@@ -5626,3 +5644,4 @@ initialization
                            ]);
   {$ENDIF}
 end.
+

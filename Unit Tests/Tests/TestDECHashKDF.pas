@@ -322,7 +322,9 @@ begin
         Result := TestData.HashClass.KDFx(Data, Seed, TestData.MaskSize, TestData.Index);
 
       CheckEquals(DECUtil.BytesToRawString(ExpResult),
-                  DECUtil.BytesToRawString(Result));
+                  DECUtil.BytesToRawString(Result),
+                  'Expected: ' + string(TFormat_HEX.Encode(DECUtil.BytesToRawString(ExpResult))) +
+                  ' but was: ' + string(TFormat_HEX.Encode(DECUtil.BytesToRawString(Result))));
     end;
   end;
 end;
@@ -483,6 +485,13 @@ begin
                                     '619e6f14782af946e169c2870ec6ca3a' +
                                     '68377d2ad42196987278f93674c7d861'),
                 128, THash_SHA256, ktKDFx, 2);
+
+  // Our own test vector, since Wolfgang Erhard didn't provide one with a seed
+  FTestData.Add(TFormat_HexL.Decode('deadbeeffeebdaed'),
+                '01020304',
+                TFormat_Hex.Decode('77E068E835F5D50DAA489722AC147906' +
+                                   'D684A74831E8A237103892B89B009042'),
+                32, THash_SHA1, ktKDF3);
 end;
 
 procedure TestTHash_KDF.TearDown;

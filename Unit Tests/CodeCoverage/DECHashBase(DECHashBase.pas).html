@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECHashBase (D:\Projekte\DECGitMaster\Source\DECHashBase.pas)</strong>.</p>
-<p> Generated at 26.08.2021 17:35:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 27.08.2021 16:57:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECHashBase.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>162</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>75%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>171</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>79%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -555,10 +555,10 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>516</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>517</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>518</td><td><pre style="display:inline;">class function TDECHash.IsPasswordHash: Boolean;</pre></td></tr>
-<tr class="notcovered"><td>519</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>519</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="nocodegen"><td>520</td><td><pre style="display:inline;"> &nbsp;// has to be overwritten by the base class for password hash algorithms</pre></td></tr>
-<tr class="notcovered"><td>521</td><td><pre style="display:inline;"> &nbsp;result := false;</pre></td></tr>
-<tr class="notcovered"><td>522</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>521</td><td><pre style="display:inline;"> &nbsp;result := false;</pre></td></tr>
+<tr class="covered"><td>522</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>523</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>524</td><td><pre style="display:inline;">procedure TDECHash.Done;</pre></td></tr>
 <tr class="covered"><td>525</td><td><pre style="display:inline;">begin</pre></td></tr>
@@ -726,14 +726,14 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>687</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>688</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>689</td><td><pre style="display:inline;">function TDECHash.DigestAsRawByteString(Format: TDECFormatClass): RawByteString;</pre></td></tr>
-<tr class="notcovered"><td>690</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>691</td><td><pre style="display:inline;"> &nbsp;Result := BytesToRawString(ValidFormat(Format).Encode(DigestAsBytes));</pre></td></tr>
-<tr class="notcovered"><td>692</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>690</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>691</td><td><pre style="display:inline;"> &nbsp;Result := BytesToRawString(ValidFormat(Format).Encode(DigestAsBytes));</pre></td></tr>
+<tr class="covered"><td>692</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>693</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>694</td><td><pre style="display:inline;">function TDECHash.DigestAsString(Format: TDECFormatClass): string;</pre></td></tr>
-<tr class="notcovered"><td>695</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>696</td><td><pre style="display:inline;"> &nbsp;Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));</pre></td></tr>
-<tr class="notcovered"><td>697</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>695</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>696</td><td><pre style="display:inline;"> &nbsp;Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));</pre></td></tr>
+<tr class="covered"><td>697</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>698</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>699</td><td><pre style="display:inline;">class function TDECHash.DigestSize: UInt32;</pre></td></tr>
 <tr class="notcovered"><td>700</td><td><pre style="display:inline;">begin</pre></td></tr>

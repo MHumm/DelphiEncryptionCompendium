@@ -45,7 +45,7 @@ uses
 ///   containing $00 all over or something like this.
 /// </remarks>
 /// <returns>
-///   Created hash value
+///   Created seed value
 /// </returns>
 function RandomSystemTime: Int64;
 
@@ -123,6 +123,31 @@ procedure RandomSeed(const Buffer; Size: Integer); overload;
 /// </summary>
 procedure RandomSeed; overload;
 
+type
+  /// <summary>
+  ///   Type for the random buffer generation
+  /// </summary>
+  /// <param name="Buffer">
+  ///   Buffer in which the random bytes shall be written. The buffer needs to
+  ///   exist and must be of at least Size bytes length.
+  /// </param>
+  /// <param name="Size">
+  ///   Length of the buffer to be filled in Byte.
+  /// </param>
+  TRandomBufferProc = procedure(out Buffer; Size: Integer) register;
+
+  /// <summary>
+  ///   Type for an initialization procedure for a seed
+  /// </summary>
+  /// <param name="Buffer">
+  ///   Buffer from which the random bytes shall be taken. The buffer needs to
+  ///   exist and must be of at least Size bytes length.
+  /// </param>
+  /// <param name="Size">
+  ///   Length of the buffer in Byte.
+  /// </param>
+  TRandomSeedProc = procedure(const Buffer; Size: Integer); register;
+
 var
   // secure PRNG initialized by this unit
 
@@ -138,13 +163,13 @@ var
   /// <param name="Size">
   ///   Length of the buffer to be filled in Byte.
   /// </param>
-  DoRandomBuffer: procedure(out Buffer; Size: Integer); register = nil;
+  DoRandomBuffer: TRandomBufferProc = nil;
 
   /// <summary>
   ///   This variable allows overriding the seed value generation procedure.
   ///   By default it is initialized with the DECRandom internal procedure DoSeed.
   /// </summary>
-  DoRandomSeed: procedure(const Buffer; Size: Integer); register = nil;
+  DoRandomSeed: TRandomSeedProc = nil;
   /// <summary>
   ///   Defines the hash-algorithm used for generatin seed values or hashed buffers
   /// </summary>
