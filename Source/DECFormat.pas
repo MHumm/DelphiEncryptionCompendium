@@ -1088,8 +1088,6 @@ end;
 
 class procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
 begin
-  Assert(Value > 0, 'Invalid number of chars per line: ' + IntToStr(Value));
-
   if (Value > 0) then
     FCharsPerLine := Value
   else

@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECFormat (D:\Projekte\DECGitMaster\Source\DECFormat.pas)</strong>.</p>
-<p> Generated at 27.08.2021 16:57:32 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 29.08.2021 11:32:12 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECFormat.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>578</td></tr><tr><td>Number of lines with code gen</td><td>593</td></tr><tr><td>Line coverage</td><td>97%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>578</td></tr><tr><td>Number of lines with code gen</td><td>592</td></tr><tr><td>Line coverage</td><td>97%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -1127,808 +1127,806 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>1088</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>1089</td><td><pre style="display:inline;">class procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);</pre></td></tr>
 <tr class="covered"><td>1090</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1091</td><td><pre style="display:inline;"> &nbsp;Assert(Value &gt; 0, &apos;Invalid number of chars per line: &apos; + IntToStr(Value));</pre></td></tr>
-<tr class="nocodegen"><td>1092</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1093</td><td><pre style="display:inline;"> &nbsp;if (Value &gt; 0) then</pre></td></tr>
-<tr class="covered"><td>1094</td><td><pre style="display:inline;"> &nbsp; &nbsp;FCharsPerLine := Value</pre></td></tr>
-<tr class="nocodegen"><td>1095</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="notcovered"><td>1096</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EArgumentOutOfRangeException.Create(&apos;Invalid number of chars per line: &apos; +</pre></td></tr>
-<tr class="nocodegen"><td>1097</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;IntToStr(Value));</pre></td></tr>
-<tr class="covered"><td>1098</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1099</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1100</td><td><pre style="display:inline;">class procedure TFormat_Radix64.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1101</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1102</td><td><pre style="display:inline;"> &nbsp;TempData : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1103</td><td><pre style="display:inline;"> &nbsp;CRC &nbsp; &nbsp; &nbsp;: UInt32;</pre></td></tr>
-<tr class="nocodegen"><td>1104</td><td><pre style="display:inline;"> &nbsp;CRCData &nbsp;: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1105</td><td><pre style="display:inline;"> &nbsp;Position : Integer;</pre></td></tr>
-<tr class="covered"><td>1106</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1107</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
-<tr class="covered"><td>1108</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1109</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1110</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1111</td><td><pre style="display:inline;"> &nbsp;// use Base64</pre></td></tr>
-<tr class="covered"><td>1112</td><td><pre style="display:inline;"> &nbsp;inherited DoEncode(Source, TempData, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1113</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1114</td><td><pre style="display:inline;"> &nbsp;// split lines</pre></td></tr>
-<tr class="covered"><td>1115</td><td><pre style="display:inline;"> &nbsp;InsertCRLF(TempData, Dest, FCharsPerLine);</pre></td></tr>
-<tr class="covered"><td>1116</td><td><pre style="display:inline;"> &nbsp;SetLength(TempData, 0);</pre></td></tr>
-<tr class="nocodegen"><td>1117</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1118</td><td><pre style="display:inline;"> &nbsp;CRC := CRCCalc(CRC_24, Source, Size); // calculate 24-bit Checksum</pre></td></tr>
-<tr class="covered"><td>1119</td><td><pre style="display:inline;"> &nbsp;SwapBytes(CRC, 3); // PGP use Big Endian</pre></td></tr>
-<tr class="nocodegen"><td>1120</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1121</td><td><pre style="display:inline;"> &nbsp;// check and insert LF if needed</pre></td></tr>
-<tr class="covered"><td>1122</td><td><pre style="display:inline;"> &nbsp;Position := Length(Dest) - 1; // last char</pre></td></tr>
-<tr class="covered"><td>1123</td><td><pre style="display:inline;"> &nbsp;if Dest[Position] &lt;&gt; $0A then</pre></td></tr>
-<tr class="nocodegen"><td>1124</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>1125</td><td><pre style="display:inline;"> &nbsp; &nbsp;// insert CR needed, CRC must be in the next line</pre></td></tr>
-<tr class="covered"><td>1126</td><td><pre style="display:inline;"> &nbsp; &nbsp;Position := Length(Dest);</pre></td></tr>
-<tr class="covered"><td>1127</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Dest, Position + 2);</pre></td></tr>
-<tr class="covered"><td>1128</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dest[Position] &nbsp; := $0D; // append CR</pre></td></tr>
-<tr class="covered"><td>1129</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dest[Position+1] := $0A; // append LF</pre></td></tr>
-<tr class="nocodegen"><td>1130</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1131</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1132</td><td><pre style="display:inline;"> &nbsp;// encode CRC with Base64 too</pre></td></tr>
-<tr class="covered"><td>1133</td><td><pre style="display:inline;"> &nbsp;inherited DoEncode(CRC, CRCData, 3);</pre></td></tr>
-<tr class="nocodegen"><td>1134</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1135</td><td><pre style="display:inline;"> &nbsp;// if CRC is too long insert CRLF. -1 to compensate the later added = char</pre></td></tr>
-<tr class="covered"><td>1136</td><td><pre style="display:inline;"> &nbsp;InsertCRLF(CRCData, TempData, FCharsPerLine - 1);</pre></td></tr>
-<tr class="covered"><td>1137</td><td><pre style="display:inline;"> &nbsp;CRCData := TempData;</pre></td></tr>
-<tr class="nocodegen"><td>1138</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1139</td><td><pre style="display:inline;"> &nbsp;// append encoded CRC</pre></td></tr>
-<tr class="covered"><td>1140</td><td><pre style="display:inline;"> &nbsp;Position := Length(Dest);</pre></td></tr>
-<tr class="covered"><td>1141</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Position + 1 + Length(CRCData));</pre></td></tr>
-<tr class="covered"><td>1142</td><td><pre style="display:inline;"> &nbsp;Dest[Position] := Ord(&apos;=&apos;);</pre></td></tr>
-<tr class="covered"><td>1143</td><td><pre style="display:inline;"> &nbsp;Move(CRCData[0], Dest[Position + 1], Length(CRCData));</pre></td></tr>
-<tr class="covered"><td>1144</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1145</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1146</td><td><pre style="display:inline;">class procedure TFormat_Radix64.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1147</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1148</td><td><pre style="display:inline;"> &nbsp;CRC: UInt32;</pre></td></tr>
-<tr class="covered"><td>1149</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1150</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
-<tr class="covered"><td>1151</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1152</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1153</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1154</td><td><pre style="display:inline;"> &nbsp;CRC := DoExtractCRC(Source, Size);</pre></td></tr>
-<tr class="covered"><td>1155</td><td><pre style="display:inline;"> &nbsp;inherited DoDecode(Source, Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1156</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1157</td><td><pre style="display:inline;"> &nbsp;if CRC &lt;&gt; $FFFFFFFF then // check CRC if found</pre></td></tr>
-<tr class="nocodegen"><td>1158</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1159</td><td><pre style="display:inline;"> &nbsp; &nbsp;SwapBytes(CRC, 3);</pre></td></tr>
-<tr class="covered"><td>1160</td><td><pre style="display:inline;"> &nbsp; &nbsp;if CRC &lt;&gt; CRCCalc(CRC_24, Dest[0], Length(Dest)) then</pre></td></tr>
-<tr class="notcovered"><td>1161</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
-<tr class="nocodegen"><td>1162</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1163</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1164</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1165</td><td><pre style="display:inline;">class function TFormat_UU.CharTableBinary: TBytes;</pre></td></tr>
-<tr class="covered"><td>1166</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>1167</td><td><pre style="display:inline;"> &nbsp;// &apos;`!&quot;#$%&amp;&apos;&apos;()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_&apos; +</pre></td></tr>
-<tr class="nocodegen"><td>1168</td><td><pre style="display:inline;"> &nbsp;// &apos; &apos;+CHR(9)+CHR(10)+CHR(13);</pre></td></tr>
-<tr class="nocodegen"><td>1169</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1170</td><td><pre style="display:inline;"> &nbsp;SetLength(result, 68);</pre></td></tr>
-<tr class="nocodegen"><td>1171</td><td><pre style="display:inline;"> &nbsp;{$IF CompilerVersion &gt;= 28.0}</pre></td></tr>
-<tr class="covered"><td>1172</td><td><pre style="display:inline;"> &nbsp;result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,</pre></td></tr>
-<tr class="nocodegen"><td>1173</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,</pre></td></tr>
-<tr class="nocodegen"><td>1174</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,</pre></td></tr>
-<tr class="nocodegen"><td>1175</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $47, $48, $49, $4A, $4B, $4C, $4D, $4E, $4F, $50, $51, $52, $53,</pre></td></tr>
-<tr class="nocodegen"><td>1176</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $54, $55, $56, $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $20,</pre></td></tr>
-<tr class="covered"><td>1177</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $09, $0A, $0D];</pre></td></tr>
-<tr class="nocodegen"><td>1178</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>1179</td><td><pre style="display:inline;"> &nbsp;// Remove this initialisation variant as soon as XE7+ is the new minimum</pre></td></tr>
-<tr class="nocodegen"><td>1180</td><td><pre style="display:inline;"> &nbsp;// supported Delphi version</pre></td></tr>
-<tr class="nocodegen"><td>1181</td><td><pre style="display:inline;"> &nbsp;result[ 0]:=$60;</pre></td></tr>
-<tr class="nocodegen"><td>1182</td><td><pre style="display:inline;"> &nbsp;result[ 1]:=$21;</pre></td></tr>
-<tr class="nocodegen"><td>1183</td><td><pre style="display:inline;"> &nbsp;result[ 2]:=$22;</pre></td></tr>
-<tr class="nocodegen"><td>1184</td><td><pre style="display:inline;"> &nbsp;result[ 3]:=$23;</pre></td></tr>
-<tr class="nocodegen"><td>1185</td><td><pre style="display:inline;"> &nbsp;result[ 4]:=$24;</pre></td></tr>
-<tr class="nocodegen"><td>1186</td><td><pre style="display:inline;"> &nbsp;result[ 5]:=$25;</pre></td></tr>
-<tr class="nocodegen"><td>1187</td><td><pre style="display:inline;"> &nbsp;result[ 6]:=$26;</pre></td></tr>
-<tr class="nocodegen"><td>1188</td><td><pre style="display:inline;"> &nbsp;result[ 7]:=$27;</pre></td></tr>
-<tr class="nocodegen"><td>1189</td><td><pre style="display:inline;"> &nbsp;result[ 8]:=$28;</pre></td></tr>
-<tr class="nocodegen"><td>1190</td><td><pre style="display:inline;"> &nbsp;result[ 9]:=$29;</pre></td></tr>
-<tr class="nocodegen"><td>1191</td><td><pre style="display:inline;"> &nbsp;result[10]:=$2A;</pre></td></tr>
-<tr class="nocodegen"><td>1192</td><td><pre style="display:inline;"> &nbsp;result[11]:=$2B;</pre></td></tr>
-<tr class="nocodegen"><td>1193</td><td><pre style="display:inline;"> &nbsp;result[12]:=$2C;</pre></td></tr>
-<tr class="nocodegen"><td>1194</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1195</td><td><pre style="display:inline;"> &nbsp;result[13]:=$2D;</pre></td></tr>
-<tr class="nocodegen"><td>1196</td><td><pre style="display:inline;"> &nbsp;result[14]:=$2E;</pre></td></tr>
-<tr class="nocodegen"><td>1197</td><td><pre style="display:inline;"> &nbsp;result[15]:=$2F;</pre></td></tr>
-<tr class="nocodegen"><td>1198</td><td><pre style="display:inline;"> &nbsp;result[16]:=$30;</pre></td></tr>
-<tr class="nocodegen"><td>1199</td><td><pre style="display:inline;"> &nbsp;result[17]:=$31;</pre></td></tr>
-<tr class="nocodegen"><td>1200</td><td><pre style="display:inline;"> &nbsp;result[18]:=$32;</pre></td></tr>
-<tr class="nocodegen"><td>1201</td><td><pre style="display:inline;"> &nbsp;result[19]:=$33;</pre></td></tr>
-<tr class="nocodegen"><td>1202</td><td><pre style="display:inline;"> &nbsp;result[20]:=$34;</pre></td></tr>
-<tr class="nocodegen"><td>1203</td><td><pre style="display:inline;"> &nbsp;result[21]:=$35;</pre></td></tr>
-<tr class="nocodegen"><td>1204</td><td><pre style="display:inline;"> &nbsp;result[22]:=$36;</pre></td></tr>
-<tr class="nocodegen"><td>1205</td><td><pre style="display:inline;"> &nbsp;result[23]:=$37;</pre></td></tr>
-<tr class="nocodegen"><td>1206</td><td><pre style="display:inline;"> &nbsp;result[24]:=$38;</pre></td></tr>
-<tr class="nocodegen"><td>1207</td><td><pre style="display:inline;"> &nbsp;result[25]:=$39;</pre></td></tr>
-<tr class="nocodegen"><td>1208</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1209</td><td><pre style="display:inline;"> &nbsp;result[26]:=$3A;</pre></td></tr>
-<tr class="nocodegen"><td>1210</td><td><pre style="display:inline;"> &nbsp;result[27]:=$3B;</pre></td></tr>
-<tr class="nocodegen"><td>1211</td><td><pre style="display:inline;"> &nbsp;result[28]:=$3C;</pre></td></tr>
-<tr class="nocodegen"><td>1212</td><td><pre style="display:inline;"> &nbsp;result[29]:=$3D;</pre></td></tr>
-<tr class="nocodegen"><td>1213</td><td><pre style="display:inline;"> &nbsp;result[30]:=$3E;</pre></td></tr>
-<tr class="nocodegen"><td>1214</td><td><pre style="display:inline;"> &nbsp;result[31]:=$3F;</pre></td></tr>
-<tr class="nocodegen"><td>1215</td><td><pre style="display:inline;"> &nbsp;result[32]:=$40;</pre></td></tr>
-<tr class="nocodegen"><td>1216</td><td><pre style="display:inline;"> &nbsp;result[33]:=$41;</pre></td></tr>
-<tr class="nocodegen"><td>1217</td><td><pre style="display:inline;"> &nbsp;result[34]:=$42;</pre></td></tr>
-<tr class="nocodegen"><td>1218</td><td><pre style="display:inline;"> &nbsp;result[35]:=$43;</pre></td></tr>
-<tr class="nocodegen"><td>1219</td><td><pre style="display:inline;"> &nbsp;result[36]:=$44;</pre></td></tr>
-<tr class="nocodegen"><td>1220</td><td><pre style="display:inline;"> &nbsp;result[37]:=$45;</pre></td></tr>
-<tr class="nocodegen"><td>1221</td><td><pre style="display:inline;"> &nbsp;result[38]:=$46;</pre></td></tr>
-<tr class="nocodegen"><td>1222</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1223</td><td><pre style="display:inline;"> &nbsp;result[39]:=$47;</pre></td></tr>
-<tr class="nocodegen"><td>1224</td><td><pre style="display:inline;"> &nbsp;result[40]:=$48;</pre></td></tr>
-<tr class="nocodegen"><td>1225</td><td><pre style="display:inline;"> &nbsp;result[41]:=$49;</pre></td></tr>
-<tr class="nocodegen"><td>1226</td><td><pre style="display:inline;"> &nbsp;result[42]:=$4A;</pre></td></tr>
-<tr class="nocodegen"><td>1227</td><td><pre style="display:inline;"> &nbsp;result[43]:=$4B;</pre></td></tr>
-<tr class="nocodegen"><td>1228</td><td><pre style="display:inline;"> &nbsp;result[44]:=$4C;</pre></td></tr>
-<tr class="nocodegen"><td>1229</td><td><pre style="display:inline;"> &nbsp;result[45]:=$4D;</pre></td></tr>
-<tr class="nocodegen"><td>1230</td><td><pre style="display:inline;"> &nbsp;result[46]:=$4E;</pre></td></tr>
-<tr class="nocodegen"><td>1231</td><td><pre style="display:inline;"> &nbsp;result[47]:=$4F;</pre></td></tr>
-<tr class="nocodegen"><td>1232</td><td><pre style="display:inline;"> &nbsp;result[48]:=$50;</pre></td></tr>
-<tr class="nocodegen"><td>1233</td><td><pre style="display:inline;"> &nbsp;result[49]:=$51;</pre></td></tr>
-<tr class="nocodegen"><td>1234</td><td><pre style="display:inline;"> &nbsp;result[50]:=$52;</pre></td></tr>
-<tr class="nocodegen"><td>1235</td><td><pre style="display:inline;"> &nbsp;result[51]:=$53;</pre></td></tr>
-<tr class="nocodegen"><td>1236</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1237</td><td><pre style="display:inline;"> &nbsp;result[52]:=$54;</pre></td></tr>
-<tr class="nocodegen"><td>1238</td><td><pre style="display:inline;"> &nbsp;result[53]:=$55;</pre></td></tr>
-<tr class="nocodegen"><td>1239</td><td><pre style="display:inline;"> &nbsp;result[54]:=$56;</pre></td></tr>
-<tr class="nocodegen"><td>1240</td><td><pre style="display:inline;"> &nbsp;result[55]:=$57;</pre></td></tr>
-<tr class="nocodegen"><td>1241</td><td><pre style="display:inline;"> &nbsp;result[56]:=$58;</pre></td></tr>
-<tr class="nocodegen"><td>1242</td><td><pre style="display:inline;"> &nbsp;result[57]:=$59;</pre></td></tr>
-<tr class="nocodegen"><td>1243</td><td><pre style="display:inline;"> &nbsp;result[58]:=$5A;</pre></td></tr>
-<tr class="nocodegen"><td>1244</td><td><pre style="display:inline;"> &nbsp;result[59]:=$5B;</pre></td></tr>
-<tr class="nocodegen"><td>1245</td><td><pre style="display:inline;"> &nbsp;result[60]:=$5C;</pre></td></tr>
-<tr class="nocodegen"><td>1246</td><td><pre style="display:inline;"> &nbsp;result[61]:=$5D;</pre></td></tr>
-<tr class="nocodegen"><td>1247</td><td><pre style="display:inline;"> &nbsp;result[62]:=$5E;</pre></td></tr>
-<tr class="nocodegen"><td>1248</td><td><pre style="display:inline;"> &nbsp;result[63]:=$5F;</pre></td></tr>
-<tr class="nocodegen"><td>1249</td><td><pre style="display:inline;"> &nbsp;result[64]:=$20;</pre></td></tr>
-<tr class="nocodegen"><td>1250</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1251</td><td><pre style="display:inline;"> &nbsp;result[65]:=$09;</pre></td></tr>
-<tr class="nocodegen"><td>1252</td><td><pre style="display:inline;"> &nbsp;result[66]:=$0A;</pre></td></tr>
-<tr class="nocodegen"><td>1253</td><td><pre style="display:inline;"> &nbsp;result[67]:=$0D;</pre></td></tr>
-<tr class="nocodegen"><td>1254</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
-<tr class="covered"><td>1255</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1256</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1257</td><td><pre style="display:inline;">class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1258</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1259</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1260</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
-<tr class="nocodegen"><td>1261</td><td><pre style="display:inline;"> &nbsp;D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
-<tr class="nocodegen"><td>1262</td><td><pre style="display:inline;"> &nbsp;L, i: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>1263</td><td><pre style="display:inline;"> &nbsp;B: Cardinal;</pre></td></tr>
-<tr class="covered"><td>1264</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1265</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
-<tr class="covered"><td>1266</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1267</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1091</td><td><pre style="display:inline;"> &nbsp;if (Value &gt; 0) then</pre></td></tr>
+<tr class="covered"><td>1092</td><td><pre style="display:inline;"> &nbsp; &nbsp;FCharsPerLine := Value</pre></td></tr>
+<tr class="nocodegen"><td>1093</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1094</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EArgumentOutOfRangeException.Create(&apos;Invalid number of chars per line: &apos; +</pre></td></tr>
+<tr class="nocodegen"><td>1095</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;IntToStr(Value));</pre></td></tr>
+<tr class="covered"><td>1096</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1097</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1098</td><td><pre style="display:inline;">class procedure TFormat_Radix64.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1099</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1100</td><td><pre style="display:inline;"> &nbsp;TempData : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1101</td><td><pre style="display:inline;"> &nbsp;CRC &nbsp; &nbsp; &nbsp;: UInt32;</pre></td></tr>
+<tr class="nocodegen"><td>1102</td><td><pre style="display:inline;"> &nbsp;CRCData &nbsp;: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1103</td><td><pre style="display:inline;"> &nbsp;Position : Integer;</pre></td></tr>
+<tr class="covered"><td>1104</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1105</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
+<tr class="covered"><td>1106</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1107</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1108</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1109</td><td><pre style="display:inline;"> &nbsp;// use Base64</pre></td></tr>
+<tr class="covered"><td>1110</td><td><pre style="display:inline;"> &nbsp;inherited DoEncode(Source, TempData, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1111</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1112</td><td><pre style="display:inline;"> &nbsp;// split lines</pre></td></tr>
+<tr class="covered"><td>1113</td><td><pre style="display:inline;"> &nbsp;InsertCRLF(TempData, Dest, FCharsPerLine);</pre></td></tr>
+<tr class="covered"><td>1114</td><td><pre style="display:inline;"> &nbsp;SetLength(TempData, 0);</pre></td></tr>
+<tr class="nocodegen"><td>1115</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1116</td><td><pre style="display:inline;"> &nbsp;CRC := CRCCalc(CRC_24, Source, Size); // calculate 24-bit Checksum</pre></td></tr>
+<tr class="covered"><td>1117</td><td><pre style="display:inline;"> &nbsp;SwapBytes(CRC, 3); // PGP use Big Endian</pre></td></tr>
+<tr class="nocodegen"><td>1118</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1119</td><td><pre style="display:inline;"> &nbsp;// check and insert LF if needed</pre></td></tr>
+<tr class="covered"><td>1120</td><td><pre style="display:inline;"> &nbsp;Position := Length(Dest) - 1; // last char</pre></td></tr>
+<tr class="covered"><td>1121</td><td><pre style="display:inline;"> &nbsp;if Dest[Position] &lt;&gt; $0A then</pre></td></tr>
+<tr class="nocodegen"><td>1122</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>1123</td><td><pre style="display:inline;"> &nbsp; &nbsp;// insert CR needed, CRC must be in the next line</pre></td></tr>
+<tr class="covered"><td>1124</td><td><pre style="display:inline;"> &nbsp; &nbsp;Position := Length(Dest);</pre></td></tr>
+<tr class="covered"><td>1125</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Dest, Position + 2);</pre></td></tr>
+<tr class="covered"><td>1126</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dest[Position] &nbsp; := $0D; // append CR</pre></td></tr>
+<tr class="covered"><td>1127</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dest[Position+1] := $0A; // append LF</pre></td></tr>
+<tr class="nocodegen"><td>1128</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1129</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1130</td><td><pre style="display:inline;"> &nbsp;// encode CRC with Base64 too</pre></td></tr>
+<tr class="covered"><td>1131</td><td><pre style="display:inline;"> &nbsp;inherited DoEncode(CRC, CRCData, 3);</pre></td></tr>
+<tr class="nocodegen"><td>1132</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1133</td><td><pre style="display:inline;"> &nbsp;// if CRC is too long insert CRLF. -1 to compensate the later added = char</pre></td></tr>
+<tr class="covered"><td>1134</td><td><pre style="display:inline;"> &nbsp;InsertCRLF(CRCData, TempData, FCharsPerLine - 1);</pre></td></tr>
+<tr class="covered"><td>1135</td><td><pre style="display:inline;"> &nbsp;CRCData := TempData;</pre></td></tr>
+<tr class="nocodegen"><td>1136</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1137</td><td><pre style="display:inline;"> &nbsp;// append encoded CRC</pre></td></tr>
+<tr class="covered"><td>1138</td><td><pre style="display:inline;"> &nbsp;Position := Length(Dest);</pre></td></tr>
+<tr class="covered"><td>1139</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Position + 1 + Length(CRCData));</pre></td></tr>
+<tr class="covered"><td>1140</td><td><pre style="display:inline;"> &nbsp;Dest[Position] := Ord(&apos;=&apos;);</pre></td></tr>
+<tr class="covered"><td>1141</td><td><pre style="display:inline;"> &nbsp;Move(CRCData[0], Dest[Position + 1], Length(CRCData));</pre></td></tr>
+<tr class="covered"><td>1142</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1143</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1144</td><td><pre style="display:inline;">class procedure TFormat_Radix64.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1145</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1146</td><td><pre style="display:inline;"> &nbsp;CRC: UInt32;</pre></td></tr>
+<tr class="covered"><td>1147</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1148</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
+<tr class="covered"><td>1149</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1150</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1151</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1152</td><td><pre style="display:inline;"> &nbsp;CRC := DoExtractCRC(Source, Size);</pre></td></tr>
+<tr class="covered"><td>1153</td><td><pre style="display:inline;"> &nbsp;inherited DoDecode(Source, Dest, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1154</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1155</td><td><pre style="display:inline;"> &nbsp;if CRC &lt;&gt; $FFFFFFFF then // check CRC if found</pre></td></tr>
+<tr class="nocodegen"><td>1156</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1157</td><td><pre style="display:inline;"> &nbsp; &nbsp;SwapBytes(CRC, 3);</pre></td></tr>
+<tr class="covered"><td>1158</td><td><pre style="display:inline;"> &nbsp; &nbsp;if CRC &lt;&gt; CRCCalc(CRC_24, Dest[0], Length(Dest)) then</pre></td></tr>
+<tr class="notcovered"><td>1159</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
+<tr class="nocodegen"><td>1160</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1161</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1162</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1163</td><td><pre style="display:inline;">class function TFormat_UU.CharTableBinary: TBytes;</pre></td></tr>
+<tr class="covered"><td>1164</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>1165</td><td><pre style="display:inline;"> &nbsp;// &apos;`!&quot;#$%&amp;&apos;&apos;()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_&apos; +</pre></td></tr>
+<tr class="nocodegen"><td>1166</td><td><pre style="display:inline;"> &nbsp;// &apos; &apos;+CHR(9)+CHR(10)+CHR(13);</pre></td></tr>
+<tr class="nocodegen"><td>1167</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1168</td><td><pre style="display:inline;"> &nbsp;SetLength(result, 68);</pre></td></tr>
+<tr class="nocodegen"><td>1169</td><td><pre style="display:inline;"> &nbsp;{$IF CompilerVersion &gt;= 28.0}</pre></td></tr>
+<tr class="covered"><td>1170</td><td><pre style="display:inline;"> &nbsp;result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,</pre></td></tr>
+<tr class="nocodegen"><td>1171</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,</pre></td></tr>
+<tr class="nocodegen"><td>1172</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,</pre></td></tr>
+<tr class="nocodegen"><td>1173</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $47, $48, $49, $4A, $4B, $4C, $4D, $4E, $4F, $50, $51, $52, $53,</pre></td></tr>
+<tr class="nocodegen"><td>1174</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $54, $55, $56, $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $20,</pre></td></tr>
+<tr class="covered"><td>1175</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $09, $0A, $0D];</pre></td></tr>
+<tr class="nocodegen"><td>1176</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>1177</td><td><pre style="display:inline;"> &nbsp;// Remove this initialisation variant as soon as XE7+ is the new minimum</pre></td></tr>
+<tr class="nocodegen"><td>1178</td><td><pre style="display:inline;"> &nbsp;// supported Delphi version</pre></td></tr>
+<tr class="nocodegen"><td>1179</td><td><pre style="display:inline;"> &nbsp;result[ 0]:=$60;</pre></td></tr>
+<tr class="nocodegen"><td>1180</td><td><pre style="display:inline;"> &nbsp;result[ 1]:=$21;</pre></td></tr>
+<tr class="nocodegen"><td>1181</td><td><pre style="display:inline;"> &nbsp;result[ 2]:=$22;</pre></td></tr>
+<tr class="nocodegen"><td>1182</td><td><pre style="display:inline;"> &nbsp;result[ 3]:=$23;</pre></td></tr>
+<tr class="nocodegen"><td>1183</td><td><pre style="display:inline;"> &nbsp;result[ 4]:=$24;</pre></td></tr>
+<tr class="nocodegen"><td>1184</td><td><pre style="display:inline;"> &nbsp;result[ 5]:=$25;</pre></td></tr>
+<tr class="nocodegen"><td>1185</td><td><pre style="display:inline;"> &nbsp;result[ 6]:=$26;</pre></td></tr>
+<tr class="nocodegen"><td>1186</td><td><pre style="display:inline;"> &nbsp;result[ 7]:=$27;</pre></td></tr>
+<tr class="nocodegen"><td>1187</td><td><pre style="display:inline;"> &nbsp;result[ 8]:=$28;</pre></td></tr>
+<tr class="nocodegen"><td>1188</td><td><pre style="display:inline;"> &nbsp;result[ 9]:=$29;</pre></td></tr>
+<tr class="nocodegen"><td>1189</td><td><pre style="display:inline;"> &nbsp;result[10]:=$2A;</pre></td></tr>
+<tr class="nocodegen"><td>1190</td><td><pre style="display:inline;"> &nbsp;result[11]:=$2B;</pre></td></tr>
+<tr class="nocodegen"><td>1191</td><td><pre style="display:inline;"> &nbsp;result[12]:=$2C;</pre></td></tr>
+<tr class="nocodegen"><td>1192</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1193</td><td><pre style="display:inline;"> &nbsp;result[13]:=$2D;</pre></td></tr>
+<tr class="nocodegen"><td>1194</td><td><pre style="display:inline;"> &nbsp;result[14]:=$2E;</pre></td></tr>
+<tr class="nocodegen"><td>1195</td><td><pre style="display:inline;"> &nbsp;result[15]:=$2F;</pre></td></tr>
+<tr class="nocodegen"><td>1196</td><td><pre style="display:inline;"> &nbsp;result[16]:=$30;</pre></td></tr>
+<tr class="nocodegen"><td>1197</td><td><pre style="display:inline;"> &nbsp;result[17]:=$31;</pre></td></tr>
+<tr class="nocodegen"><td>1198</td><td><pre style="display:inline;"> &nbsp;result[18]:=$32;</pre></td></tr>
+<tr class="nocodegen"><td>1199</td><td><pre style="display:inline;"> &nbsp;result[19]:=$33;</pre></td></tr>
+<tr class="nocodegen"><td>1200</td><td><pre style="display:inline;"> &nbsp;result[20]:=$34;</pre></td></tr>
+<tr class="nocodegen"><td>1201</td><td><pre style="display:inline;"> &nbsp;result[21]:=$35;</pre></td></tr>
+<tr class="nocodegen"><td>1202</td><td><pre style="display:inline;"> &nbsp;result[22]:=$36;</pre></td></tr>
+<tr class="nocodegen"><td>1203</td><td><pre style="display:inline;"> &nbsp;result[23]:=$37;</pre></td></tr>
+<tr class="nocodegen"><td>1204</td><td><pre style="display:inline;"> &nbsp;result[24]:=$38;</pre></td></tr>
+<tr class="nocodegen"><td>1205</td><td><pre style="display:inline;"> &nbsp;result[25]:=$39;</pre></td></tr>
+<tr class="nocodegen"><td>1206</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1207</td><td><pre style="display:inline;"> &nbsp;result[26]:=$3A;</pre></td></tr>
+<tr class="nocodegen"><td>1208</td><td><pre style="display:inline;"> &nbsp;result[27]:=$3B;</pre></td></tr>
+<tr class="nocodegen"><td>1209</td><td><pre style="display:inline;"> &nbsp;result[28]:=$3C;</pre></td></tr>
+<tr class="nocodegen"><td>1210</td><td><pre style="display:inline;"> &nbsp;result[29]:=$3D;</pre></td></tr>
+<tr class="nocodegen"><td>1211</td><td><pre style="display:inline;"> &nbsp;result[30]:=$3E;</pre></td></tr>
+<tr class="nocodegen"><td>1212</td><td><pre style="display:inline;"> &nbsp;result[31]:=$3F;</pre></td></tr>
+<tr class="nocodegen"><td>1213</td><td><pre style="display:inline;"> &nbsp;result[32]:=$40;</pre></td></tr>
+<tr class="nocodegen"><td>1214</td><td><pre style="display:inline;"> &nbsp;result[33]:=$41;</pre></td></tr>
+<tr class="nocodegen"><td>1215</td><td><pre style="display:inline;"> &nbsp;result[34]:=$42;</pre></td></tr>
+<tr class="nocodegen"><td>1216</td><td><pre style="display:inline;"> &nbsp;result[35]:=$43;</pre></td></tr>
+<tr class="nocodegen"><td>1217</td><td><pre style="display:inline;"> &nbsp;result[36]:=$44;</pre></td></tr>
+<tr class="nocodegen"><td>1218</td><td><pre style="display:inline;"> &nbsp;result[37]:=$45;</pre></td></tr>
+<tr class="nocodegen"><td>1219</td><td><pre style="display:inline;"> &nbsp;result[38]:=$46;</pre></td></tr>
+<tr class="nocodegen"><td>1220</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1221</td><td><pre style="display:inline;"> &nbsp;result[39]:=$47;</pre></td></tr>
+<tr class="nocodegen"><td>1222</td><td><pre style="display:inline;"> &nbsp;result[40]:=$48;</pre></td></tr>
+<tr class="nocodegen"><td>1223</td><td><pre style="display:inline;"> &nbsp;result[41]:=$49;</pre></td></tr>
+<tr class="nocodegen"><td>1224</td><td><pre style="display:inline;"> &nbsp;result[42]:=$4A;</pre></td></tr>
+<tr class="nocodegen"><td>1225</td><td><pre style="display:inline;"> &nbsp;result[43]:=$4B;</pre></td></tr>
+<tr class="nocodegen"><td>1226</td><td><pre style="display:inline;"> &nbsp;result[44]:=$4C;</pre></td></tr>
+<tr class="nocodegen"><td>1227</td><td><pre style="display:inline;"> &nbsp;result[45]:=$4D;</pre></td></tr>
+<tr class="nocodegen"><td>1228</td><td><pre style="display:inline;"> &nbsp;result[46]:=$4E;</pre></td></tr>
+<tr class="nocodegen"><td>1229</td><td><pre style="display:inline;"> &nbsp;result[47]:=$4F;</pre></td></tr>
+<tr class="nocodegen"><td>1230</td><td><pre style="display:inline;"> &nbsp;result[48]:=$50;</pre></td></tr>
+<tr class="nocodegen"><td>1231</td><td><pre style="display:inline;"> &nbsp;result[49]:=$51;</pre></td></tr>
+<tr class="nocodegen"><td>1232</td><td><pre style="display:inline;"> &nbsp;result[50]:=$52;</pre></td></tr>
+<tr class="nocodegen"><td>1233</td><td><pre style="display:inline;"> &nbsp;result[51]:=$53;</pre></td></tr>
+<tr class="nocodegen"><td>1234</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1235</td><td><pre style="display:inline;"> &nbsp;result[52]:=$54;</pre></td></tr>
+<tr class="nocodegen"><td>1236</td><td><pre style="display:inline;"> &nbsp;result[53]:=$55;</pre></td></tr>
+<tr class="nocodegen"><td>1237</td><td><pre style="display:inline;"> &nbsp;result[54]:=$56;</pre></td></tr>
+<tr class="nocodegen"><td>1238</td><td><pre style="display:inline;"> &nbsp;result[55]:=$57;</pre></td></tr>
+<tr class="nocodegen"><td>1239</td><td><pre style="display:inline;"> &nbsp;result[56]:=$58;</pre></td></tr>
+<tr class="nocodegen"><td>1240</td><td><pre style="display:inline;"> &nbsp;result[57]:=$59;</pre></td></tr>
+<tr class="nocodegen"><td>1241</td><td><pre style="display:inline;"> &nbsp;result[58]:=$5A;</pre></td></tr>
+<tr class="nocodegen"><td>1242</td><td><pre style="display:inline;"> &nbsp;result[59]:=$5B;</pre></td></tr>
+<tr class="nocodegen"><td>1243</td><td><pre style="display:inline;"> &nbsp;result[60]:=$5C;</pre></td></tr>
+<tr class="nocodegen"><td>1244</td><td><pre style="display:inline;"> &nbsp;result[61]:=$5D;</pre></td></tr>
+<tr class="nocodegen"><td>1245</td><td><pre style="display:inline;"> &nbsp;result[62]:=$5E;</pre></td></tr>
+<tr class="nocodegen"><td>1246</td><td><pre style="display:inline;"> &nbsp;result[63]:=$5F;</pre></td></tr>
+<tr class="nocodegen"><td>1247</td><td><pre style="display:inline;"> &nbsp;result[64]:=$20;</pre></td></tr>
+<tr class="nocodegen"><td>1248</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1249</td><td><pre style="display:inline;"> &nbsp;result[65]:=$09;</pre></td></tr>
+<tr class="nocodegen"><td>1250</td><td><pre style="display:inline;"> &nbsp;result[66]:=$0A;</pre></td></tr>
+<tr class="nocodegen"><td>1251</td><td><pre style="display:inline;"> &nbsp;result[67]:=$0D;</pre></td></tr>
+<tr class="nocodegen"><td>1252</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
+<tr class="covered"><td>1253</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1254</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1255</td><td><pre style="display:inline;">class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1256</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1257</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1258</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
+<tr class="nocodegen"><td>1259</td><td><pre style="display:inline;"> &nbsp;D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
+<tr class="nocodegen"><td>1260</td><td><pre style="display:inline;"> &nbsp;L, i: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1261</td><td><pre style="display:inline;"> &nbsp;B: Cardinal;</pre></td></tr>
+<tr class="covered"><td>1262</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1263</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
+<tr class="covered"><td>1264</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1265</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1266</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1267</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size * 4 div 3 + Size div 45 + 10);</pre></td></tr>
 <tr class="nocodegen"><td>1268</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1269</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size * 4 div 3 + Size div 45 + 10);</pre></td></tr>
-<tr class="nocodegen"><td>1270</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1271</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1272</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
-<tr class="covered"><td>1273</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
-<tr class="nocodegen"><td>1274</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1275</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1276</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1277</td><td><pre style="display:inline;"> &nbsp; &nbsp;L := Size;</pre></td></tr>
-<tr class="covered"><td>1278</td><td><pre style="display:inline;"> &nbsp; &nbsp;if L &gt; 45 then</pre></td></tr>
-<tr class="notcovered"><td>1279</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;L := 45;</pre></td></tr>
-<tr class="covered"><td>1280</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size, L);</pre></td></tr>
-<tr class="covered"><td>1281</td><td><pre style="display:inline;"> &nbsp; &nbsp;D^ := T[L];</pre></td></tr>
-<tr class="covered"><td>1282</td><td><pre style="display:inline;"> &nbsp; &nbsp;while L &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1283</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1284</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;B := 0;</pre></td></tr>
-<tr class="covered"><td>1285</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for i := 0 to 2 do</pre></td></tr>
-<tr class="nocodegen"><td>1286</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1287</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B := B shl 8;</pre></td></tr>
-<tr class="covered"><td>1288</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if L &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1289</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1290</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;B := B or S^;</pre></td></tr>
-<tr class="covered"><td>1291</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1292</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1293</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(L);</pre></td></tr>
-<tr class="covered"><td>1294</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1295</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for i := 4 downto 1 do</pre></td></tr>
-<tr class="nocodegen"><td>1296</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1297</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D[i] := T[B and $3F];</pre></td></tr>
-<tr class="covered"><td>1298</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B := B shr 6;</pre></td></tr>
-<tr class="covered"><td>1299</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1300</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(D, 4);</pre></td></tr>
-<tr class="nocodegen"><td>1301</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1302</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="nocodegen"><td>1303</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1304</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1305</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
-<tr class="covered"><td>1306</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1307</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1308</td><td><pre style="display:inline;">class procedure TFormat_UU.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1309</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1310</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1311</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
-<tr class="nocodegen"><td>1312</td><td><pre style="display:inline;"> &nbsp;D, L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
-<tr class="nocodegen"><td>1313</td><td><pre style="display:inline;"> &nbsp;i, E: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>1314</td><td><pre style="display:inline;"> &nbsp;B: UInt32;</pre></td></tr>
-<tr class="covered"><td>1315</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1316</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
-<tr class="covered"><td>1317</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1318</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1269</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1270</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
+<tr class="covered"><td>1271</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="nocodegen"><td>1272</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1273</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1274</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1275</td><td><pre style="display:inline;"> &nbsp; &nbsp;L := Size;</pre></td></tr>
+<tr class="covered"><td>1276</td><td><pre style="display:inline;"> &nbsp; &nbsp;if L &gt; 45 then</pre></td></tr>
+<tr class="notcovered"><td>1277</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;L := 45;</pre></td></tr>
+<tr class="covered"><td>1278</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size, L);</pre></td></tr>
+<tr class="covered"><td>1279</td><td><pre style="display:inline;"> &nbsp; &nbsp;D^ := T[L];</pre></td></tr>
+<tr class="covered"><td>1280</td><td><pre style="display:inline;"> &nbsp; &nbsp;while L &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1281</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1282</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;B := 0;</pre></td></tr>
+<tr class="covered"><td>1283</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for i := 0 to 2 do</pre></td></tr>
+<tr class="nocodegen"><td>1284</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1285</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B := B shl 8;</pre></td></tr>
+<tr class="covered"><td>1286</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if L &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1287</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1288</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;B := B or S^;</pre></td></tr>
+<tr class="covered"><td>1289</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1290</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1291</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(L);</pre></td></tr>
+<tr class="covered"><td>1292</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1293</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for i := 4 downto 1 do</pre></td></tr>
+<tr class="nocodegen"><td>1294</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1295</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D[i] := T[B and $3F];</pre></td></tr>
+<tr class="covered"><td>1296</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B := B shr 6;</pre></td></tr>
+<tr class="covered"><td>1297</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1298</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(D, 4);</pre></td></tr>
+<tr class="nocodegen"><td>1299</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1300</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="nocodegen"><td>1301</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1302</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1303</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
+<tr class="covered"><td>1304</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1305</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1306</td><td><pre style="display:inline;">class procedure TFormat_UU.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1307</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1308</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1309</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
+<tr class="nocodegen"><td>1310</td><td><pre style="display:inline;"> &nbsp;D, L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
+<tr class="nocodegen"><td>1311</td><td><pre style="display:inline;"> &nbsp;i, E: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1312</td><td><pre style="display:inline;"> &nbsp;B: UInt32;</pre></td></tr>
+<tr class="covered"><td>1313</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1314</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
+<tr class="covered"><td>1315</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1316</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1317</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1318</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
 <tr class="nocodegen"><td>1319</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1320</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1321</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1322</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1323</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
-<tr class="covered"><td>1324</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="covered"><td>1320</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1321</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
+<tr class="covered"><td>1322</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="nocodegen"><td>1323</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1324</td><td><pre style="display:inline;"> &nbsp;L := PByte(S) + Size;</pre></td></tr>
 <tr class="nocodegen"><td>1325</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1326</td><td><pre style="display:inline;"> &nbsp;L := PByte(S) + Size;</pre></td></tr>
-<tr class="nocodegen"><td>1327</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1328</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
-<tr class="covered"><td>1329</td><td><pre style="display:inline;"> &nbsp; &nbsp;Size := TableFindBinary(S^, T, 64);</pre></td></tr>
-<tr class="covered"><td>1330</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (Size &lt; 0) or (Size &gt; 45) then</pre></td></tr>
-<tr class="notcovered"><td>1331</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
-<tr class="covered"><td>1332</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1333</td><td><pre style="display:inline;"> &nbsp; &nbsp;while Size &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1334</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;B := 0;</pre></td></tr>
-<tr class="covered"><td>1336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := 4;</pre></td></tr>
-<tr class="covered"><td>1337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while (i &gt; 0) and (S &lt;= L) do</pre></td></tr>
-<tr class="nocodegen"><td>1338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1339</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;E := TableFindBinary(S^, T, 64);</pre></td></tr>
-<tr class="covered"><td>1340</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if E &gt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1341</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1342</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;B := B shl 6 or Byte(E);</pre></td></tr>
-<tr class="covered"><td>1343</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
-<tr class="nocodegen"><td>1344</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1345</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1346</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1347</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := 2;</pre></td></tr>
-<tr class="nocodegen"><td>1348</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;repeat</pre></td></tr>
-<tr class="covered"><td>1349</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D[i] := Byte(B);</pre></td></tr>
-<tr class="covered"><td>1350</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B &nbsp; &nbsp;:= B shr 8;</pre></td></tr>
-<tr class="covered"><td>1351</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
-<tr class="covered"><td>1352</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;until i &lt; 0;</pre></td></tr>
-<tr class="covered"><td>1353</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Size &gt; 3 then</pre></td></tr>
-<tr class="covered"><td>1354</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D, 3)</pre></td></tr>
-<tr class="nocodegen"><td>1355</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1356</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D, Size);</pre></td></tr>
-<tr class="covered"><td>1357</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size, 3);</pre></td></tr>
-<tr class="nocodegen"><td>1358</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1359</td><td><pre style="display:inline;"> &nbsp;until S &gt;= L;</pre></td></tr>
-<tr class="nocodegen"><td>1360</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1361</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
-<tr class="covered"><td>1362</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1363</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1364</td><td><pre style="display:inline;">class function TFormat_UU.DoIsValid(const Data; Size: Integer): Boolean;</pre></td></tr>
-<tr class="nocodegen"><td>1365</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1366</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1367</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
-<tr class="nocodegen"><td>1368</td><td><pre style="display:inline;"> &nbsp;Len, P, i: Integer;</pre></td></tr>
-<tr class="covered"><td>1369</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1370</td><td><pre style="display:inline;"> &nbsp;Result := False;</pre></td></tr>
-<tr class="covered"><td>1371</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1372</td><td><pre style="display:inline;"> &nbsp;Len := Length(T);</pre></td></tr>
-<tr class="covered"><td>1373</td><td><pre style="display:inline;"> &nbsp;S := @Data;</pre></td></tr>
-<tr class="covered"><td>1374</td><td><pre style="display:inline;"> &nbsp;P := 0;</pre></td></tr>
-<tr class="nocodegen"><td>1375</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1376</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1377</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1378</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := TableFindBinary(S^, T, Len);</pre></td></tr>
-<tr class="covered"><td>1379</td><td><pre style="display:inline;"> &nbsp; &nbsp;if i &gt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1380</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1381</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="covered"><td>1382</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1383</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if P = 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1384</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1385</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &gt; 45 then</pre></td></tr>
-<tr class="nocodegen"><td>1386</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="covered"><td>1387</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;P := (i * 4 + 2) div 3;</pre></td></tr>
-<tr class="nocodegen"><td>1388</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1389</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1390</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 64 then</pre></td></tr>
-<tr class="covered"><td>1391</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dec(P);</pre></td></tr>
-<tr class="nocodegen"><td>1392</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1393</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1394</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1395</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1396</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1397</td><td><pre style="display:inline;"> &nbsp;if P &lt;&gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1398</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1399</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1400</td><td><pre style="display:inline;"> &nbsp;Result := True;</pre></td></tr>
-<tr class="covered"><td>1401</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1402</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1403</td><td><pre style="display:inline;">class function TFormat_XX.CharTableBinary: TBytes;</pre></td></tr>
-<tr class="covered"><td>1404</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>1405</td><td><pre style="display:inline;"> &nbsp;// &apos;+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&apos; +</pre></td></tr>
-<tr class="nocodegen"><td>1406</td><td><pre style="display:inline;"> &nbsp;// &apos; &quot;()[]&apos;&apos;&apos;+CHR(9)+CHR(10)+CHR(13);</pre></td></tr>
-<tr class="covered"><td>1407</td><td><pre style="display:inline;"> &nbsp;SetLength(result, 74);</pre></td></tr>
-<tr class="nocodegen"><td>1408</td><td><pre style="display:inline;"> &nbsp;{$IF CompilerVersion &gt;= 28.0}</pre></td></tr>
-<tr class="covered"><td>1409</td><td><pre style="display:inline;"> &nbsp;result := [$2B, $2D, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41,</pre></td></tr>
-<tr class="nocodegen"><td>1410</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E,</pre></td></tr>
-<tr class="nocodegen"><td>1411</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A, $61,</pre></td></tr>
-<tr class="nocodegen"><td>1412</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D, $6E,</pre></td></tr>
-<tr class="nocodegen"><td>1413</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A, $20,</pre></td></tr>
-<tr class="covered"><td>1414</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $22, $28, $29, $5B, $5D, $27, $09, $0A, $0D];</pre></td></tr>
-<tr class="nocodegen"><td>1415</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>1416</td><td><pre style="display:inline;"> &nbsp;// Remove this initialisation variant as soon as XE7+ is the new minimum</pre></td></tr>
-<tr class="nocodegen"><td>1417</td><td><pre style="display:inline;"> &nbsp;// supported Delphi version</pre></td></tr>
-<tr class="nocodegen"><td>1418</td><td><pre style="display:inline;"> &nbsp;result[ 0]:=$2B;</pre></td></tr>
-<tr class="nocodegen"><td>1419</td><td><pre style="display:inline;"> &nbsp;result[ 1]:=$2D;</pre></td></tr>
-<tr class="nocodegen"><td>1420</td><td><pre style="display:inline;"> &nbsp;result[ 2]:=$30;</pre></td></tr>
-<tr class="nocodegen"><td>1421</td><td><pre style="display:inline;"> &nbsp;result[ 3]:=$31;</pre></td></tr>
-<tr class="nocodegen"><td>1422</td><td><pre style="display:inline;"> &nbsp;result[ 4]:=$32;</pre></td></tr>
-<tr class="nocodegen"><td>1423</td><td><pre style="display:inline;"> &nbsp;result[ 5]:=$33;</pre></td></tr>
-<tr class="nocodegen"><td>1424</td><td><pre style="display:inline;"> &nbsp;result[ 6]:=$34;</pre></td></tr>
-<tr class="nocodegen"><td>1425</td><td><pre style="display:inline;"> &nbsp;result[ 7]:=$35;</pre></td></tr>
-<tr class="nocodegen"><td>1426</td><td><pre style="display:inline;"> &nbsp;result[ 8]:=$36;</pre></td></tr>
-<tr class="nocodegen"><td>1427</td><td><pre style="display:inline;"> &nbsp;result[ 9]:=$37;</pre></td></tr>
-<tr class="nocodegen"><td>1428</td><td><pre style="display:inline;"> &nbsp;result[10]:=$38;</pre></td></tr>
-<tr class="nocodegen"><td>1429</td><td><pre style="display:inline;"> &nbsp;result[11]:=$39;</pre></td></tr>
-<tr class="nocodegen"><td>1430</td><td><pre style="display:inline;"> &nbsp;result[12]:=$41;</pre></td></tr>
-<tr class="nocodegen"><td>1431</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1432</td><td><pre style="display:inline;"> &nbsp;result[13]:=$42;</pre></td></tr>
-<tr class="nocodegen"><td>1433</td><td><pre style="display:inline;"> &nbsp;result[14]:=$43;</pre></td></tr>
-<tr class="nocodegen"><td>1434</td><td><pre style="display:inline;"> &nbsp;result[15]:=$44;</pre></td></tr>
-<tr class="nocodegen"><td>1435</td><td><pre style="display:inline;"> &nbsp;result[16]:=$45;</pre></td></tr>
-<tr class="nocodegen"><td>1436</td><td><pre style="display:inline;"> &nbsp;result[17]:=$46;</pre></td></tr>
-<tr class="nocodegen"><td>1437</td><td><pre style="display:inline;"> &nbsp;result[18]:=$47;</pre></td></tr>
-<tr class="nocodegen"><td>1438</td><td><pre style="display:inline;"> &nbsp;result[19]:=$48;</pre></td></tr>
-<tr class="nocodegen"><td>1439</td><td><pre style="display:inline;"> &nbsp;result[20]:=$49;</pre></td></tr>
-<tr class="nocodegen"><td>1440</td><td><pre style="display:inline;"> &nbsp;result[21]:=$4A;</pre></td></tr>
-<tr class="nocodegen"><td>1441</td><td><pre style="display:inline;"> &nbsp;result[22]:=$4B;</pre></td></tr>
-<tr class="nocodegen"><td>1442</td><td><pre style="display:inline;"> &nbsp;result[23]:=$4C;</pre></td></tr>
-<tr class="nocodegen"><td>1443</td><td><pre style="display:inline;"> &nbsp;result[24]:=$4D;</pre></td></tr>
-<tr class="nocodegen"><td>1444</td><td><pre style="display:inline;"> &nbsp;result[25]:=$4E;</pre></td></tr>
-<tr class="nocodegen"><td>1445</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1446</td><td><pre style="display:inline;"> &nbsp;result[26]:=$4F;</pre></td></tr>
-<tr class="nocodegen"><td>1447</td><td><pre style="display:inline;"> &nbsp;result[27]:=$50;</pre></td></tr>
-<tr class="nocodegen"><td>1448</td><td><pre style="display:inline;"> &nbsp;result[28]:=$51;</pre></td></tr>
-<tr class="nocodegen"><td>1449</td><td><pre style="display:inline;"> &nbsp;result[29]:=$52;</pre></td></tr>
-<tr class="nocodegen"><td>1450</td><td><pre style="display:inline;"> &nbsp;result[30]:=$53;</pre></td></tr>
-<tr class="nocodegen"><td>1451</td><td><pre style="display:inline;"> &nbsp;result[31]:=$54;</pre></td></tr>
-<tr class="nocodegen"><td>1452</td><td><pre style="display:inline;"> &nbsp;result[32]:=$55;</pre></td></tr>
-<tr class="nocodegen"><td>1453</td><td><pre style="display:inline;"> &nbsp;result[33]:=$56;</pre></td></tr>
-<tr class="nocodegen"><td>1454</td><td><pre style="display:inline;"> &nbsp;result[34]:=$57;</pre></td></tr>
-<tr class="nocodegen"><td>1455</td><td><pre style="display:inline;"> &nbsp;result[35]:=$58;</pre></td></tr>
-<tr class="nocodegen"><td>1456</td><td><pre style="display:inline;"> &nbsp;result[36]:=$59;</pre></td></tr>
-<tr class="nocodegen"><td>1457</td><td><pre style="display:inline;"> &nbsp;result[37]:=$5A;</pre></td></tr>
-<tr class="nocodegen"><td>1458</td><td><pre style="display:inline;"> &nbsp;result[38]:=$61;</pre></td></tr>
-<tr class="nocodegen"><td>1459</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1460</td><td><pre style="display:inline;"> &nbsp;result[39]:=$62;</pre></td></tr>
-<tr class="nocodegen"><td>1461</td><td><pre style="display:inline;"> &nbsp;result[40]:=$63;</pre></td></tr>
-<tr class="nocodegen"><td>1462</td><td><pre style="display:inline;"> &nbsp;result[41]:=$64;</pre></td></tr>
-<tr class="nocodegen"><td>1463</td><td><pre style="display:inline;"> &nbsp;result[42]:=$65;</pre></td></tr>
-<tr class="nocodegen"><td>1464</td><td><pre style="display:inline;"> &nbsp;result[43]:=$66;</pre></td></tr>
-<tr class="nocodegen"><td>1465</td><td><pre style="display:inline;"> &nbsp;result[44]:=$67;</pre></td></tr>
-<tr class="nocodegen"><td>1466</td><td><pre style="display:inline;"> &nbsp;result[45]:=$68;</pre></td></tr>
-<tr class="nocodegen"><td>1467</td><td><pre style="display:inline;"> &nbsp;result[46]:=$69;</pre></td></tr>
-<tr class="nocodegen"><td>1468</td><td><pre style="display:inline;"> &nbsp;result[47]:=$6A;</pre></td></tr>
-<tr class="nocodegen"><td>1469</td><td><pre style="display:inline;"> &nbsp;result[48]:=$6B;</pre></td></tr>
-<tr class="nocodegen"><td>1470</td><td><pre style="display:inline;"> &nbsp;result[49]:=$6C;</pre></td></tr>
-<tr class="nocodegen"><td>1471</td><td><pre style="display:inline;"> &nbsp;result[50]:=$6D;</pre></td></tr>
-<tr class="nocodegen"><td>1472</td><td><pre style="display:inline;"> &nbsp;result[51]:=$6E;</pre></td></tr>
-<tr class="nocodegen"><td>1473</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1474</td><td><pre style="display:inline;"> &nbsp;result[52]:=$6F;</pre></td></tr>
-<tr class="nocodegen"><td>1475</td><td><pre style="display:inline;"> &nbsp;result[53]:=$70;</pre></td></tr>
-<tr class="nocodegen"><td>1476</td><td><pre style="display:inline;"> &nbsp;result[54]:=$71;</pre></td></tr>
-<tr class="nocodegen"><td>1477</td><td><pre style="display:inline;"> &nbsp;result[55]:=$72;</pre></td></tr>
-<tr class="nocodegen"><td>1478</td><td><pre style="display:inline;"> &nbsp;result[56]:=$73;</pre></td></tr>
-<tr class="nocodegen"><td>1479</td><td><pre style="display:inline;"> &nbsp;result[57]:=$74;</pre></td></tr>
-<tr class="nocodegen"><td>1480</td><td><pre style="display:inline;"> &nbsp;result[58]:=$75;</pre></td></tr>
-<tr class="nocodegen"><td>1481</td><td><pre style="display:inline;"> &nbsp;result[59]:=$76;</pre></td></tr>
-<tr class="nocodegen"><td>1482</td><td><pre style="display:inline;"> &nbsp;result[60]:=$77;</pre></td></tr>
-<tr class="nocodegen"><td>1483</td><td><pre style="display:inline;"> &nbsp;result[61]:=$78;</pre></td></tr>
-<tr class="nocodegen"><td>1484</td><td><pre style="display:inline;"> &nbsp;result[62]:=$79;</pre></td></tr>
-<tr class="nocodegen"><td>1485</td><td><pre style="display:inline;"> &nbsp;result[63]:=$7A;</pre></td></tr>
-<tr class="nocodegen"><td>1486</td><td><pre style="display:inline;"> &nbsp;result[64]:=$20;</pre></td></tr>
-<tr class="nocodegen"><td>1487</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1488</td><td><pre style="display:inline;"> &nbsp;result[65]:=$22;</pre></td></tr>
-<tr class="nocodegen"><td>1489</td><td><pre style="display:inline;"> &nbsp;result[66]:=$28;</pre></td></tr>
-<tr class="nocodegen"><td>1490</td><td><pre style="display:inline;"> &nbsp;result[67]:=$29;</pre></td></tr>
-<tr class="nocodegen"><td>1491</td><td><pre style="display:inline;"> &nbsp;result[68]:=$5B;</pre></td></tr>
-<tr class="nocodegen"><td>1492</td><td><pre style="display:inline;"> &nbsp;result[69]:=$5D;</pre></td></tr>
-<tr class="nocodegen"><td>1493</td><td><pre style="display:inline;"> &nbsp;result[70]:=$27;</pre></td></tr>
-<tr class="nocodegen"><td>1494</td><td><pre style="display:inline;"> &nbsp;result[71]:=$09;</pre></td></tr>
-<tr class="nocodegen"><td>1495</td><td><pre style="display:inline;"> &nbsp;result[72]:=$0A;</pre></td></tr>
-<tr class="nocodegen"><td>1496</td><td><pre style="display:inline;"> &nbsp;result[73]:=$0D;</pre></td></tr>
-<tr class="nocodegen"><td>1497</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
-<tr class="covered"><td>1498</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1499</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1500</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1501</td><td><pre style="display:inline;"> &nbsp;// Initlialized in initialization section, cannot be const because of the</pre></td></tr>
-<tr class="nocodegen"><td>1502</td><td><pre style="display:inline;"> &nbsp;// TBytes requirement</pre></td></tr>
-<tr class="nocodegen"><td>1503</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL: TBytes; //array[0..6] of Byte = ($61, $62, $74, $6E, $76, $66, $72);</pre></td></tr>
-<tr class="nocodegen"><td>1504</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU: TBytes; //array[0..6] of Byte = ($41, $42, $54, $4E, $56, $46, $52);</pre></td></tr>
-<tr class="nocodegen"><td>1505</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1506</td><td><pre style="display:inline;">class function TFormat_ESCAPE.CharTableBinary: TBytes;</pre></td></tr>
-<tr class="covered"><td>1507</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1508</td><td><pre style="display:inline;"> &nbsp;Result := TFormat_HEX.CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1509</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1510</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1511</td><td><pre style="display:inline;">class procedure TFormat_ESCAPE.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1512</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1513</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1514</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
-<tr class="nocodegen"><td>1515</td><td><pre style="display:inline;"> &nbsp;D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
-<tr class="nocodegen"><td>1516</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
-<tr class="covered"><td>1517</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1518</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
-<tr class="covered"><td>1519</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1520</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1326</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
+<tr class="covered"><td>1327</td><td><pre style="display:inline;"> &nbsp; &nbsp;Size := TableFindBinary(S^, T, 64);</pre></td></tr>
+<tr class="covered"><td>1328</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (Size &lt; 0) or (Size &gt; 45) then</pre></td></tr>
+<tr class="notcovered"><td>1329</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
+<tr class="covered"><td>1330</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1331</td><td><pre style="display:inline;"> &nbsp; &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1332</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1333</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;B := 0;</pre></td></tr>
+<tr class="covered"><td>1334</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := 4;</pre></td></tr>
+<tr class="covered"><td>1335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while (i &gt; 0) and (S &lt;= L) do</pre></td></tr>
+<tr class="nocodegen"><td>1336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;E := TableFindBinary(S^, T, 64);</pre></td></tr>
+<tr class="covered"><td>1338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if E &gt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1339</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1340</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;B := B shl 6 or Byte(E);</pre></td></tr>
+<tr class="covered"><td>1341</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
+<tr class="nocodegen"><td>1342</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1343</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1344</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1345</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := 2;</pre></td></tr>
+<tr class="nocodegen"><td>1346</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;repeat</pre></td></tr>
+<tr class="covered"><td>1347</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D[i] := Byte(B);</pre></td></tr>
+<tr class="covered"><td>1348</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;B &nbsp; &nbsp;:= B shr 8;</pre></td></tr>
+<tr class="covered"><td>1349</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
+<tr class="covered"><td>1350</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;until i &lt; 0;</pre></td></tr>
+<tr class="covered"><td>1351</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Size &gt; 3 then</pre></td></tr>
+<tr class="covered"><td>1352</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D, 3)</pre></td></tr>
+<tr class="nocodegen"><td>1353</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1354</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D, Size);</pre></td></tr>
+<tr class="covered"><td>1355</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size, 3);</pre></td></tr>
+<tr class="nocodegen"><td>1356</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1357</td><td><pre style="display:inline;"> &nbsp;until S &gt;= L;</pre></td></tr>
+<tr class="nocodegen"><td>1358</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1359</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
+<tr class="covered"><td>1360</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1361</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1362</td><td><pre style="display:inline;">class function TFormat_UU.DoIsValid(const Data; Size: Integer): Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>1363</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1364</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1365</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
+<tr class="nocodegen"><td>1366</td><td><pre style="display:inline;"> &nbsp;Len, P, i: Integer;</pre></td></tr>
+<tr class="covered"><td>1367</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1368</td><td><pre style="display:inline;"> &nbsp;Result := False;</pre></td></tr>
+<tr class="covered"><td>1369</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1370</td><td><pre style="display:inline;"> &nbsp;Len := Length(T);</pre></td></tr>
+<tr class="covered"><td>1371</td><td><pre style="display:inline;"> &nbsp;S := @Data;</pre></td></tr>
+<tr class="covered"><td>1372</td><td><pre style="display:inline;"> &nbsp;P := 0;</pre></td></tr>
+<tr class="nocodegen"><td>1373</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1374</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1375</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1376</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := TableFindBinary(S^, T, Len);</pre></td></tr>
+<tr class="covered"><td>1377</td><td><pre style="display:inline;"> &nbsp; &nbsp;if i &gt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1378</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1379</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>1380</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1381</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if P = 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1382</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1383</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &gt; 45 then</pre></td></tr>
+<tr class="nocodegen"><td>1384</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1385</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;P := (i * 4 + 2) div 3;</pre></td></tr>
+<tr class="nocodegen"><td>1386</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1387</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1388</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 64 then</pre></td></tr>
+<tr class="covered"><td>1389</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dec(P);</pre></td></tr>
+<tr class="nocodegen"><td>1390</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1391</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1392</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1393</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1394</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1395</td><td><pre style="display:inline;"> &nbsp;if P &lt;&gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1396</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1397</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1398</td><td><pre style="display:inline;"> &nbsp;Result := True;</pre></td></tr>
+<tr class="covered"><td>1399</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1400</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1401</td><td><pre style="display:inline;">class function TFormat_XX.CharTableBinary: TBytes;</pre></td></tr>
+<tr class="covered"><td>1402</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>1403</td><td><pre style="display:inline;"> &nbsp;// &apos;+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&apos; +</pre></td></tr>
+<tr class="nocodegen"><td>1404</td><td><pre style="display:inline;"> &nbsp;// &apos; &quot;()[]&apos;&apos;&apos;+CHR(9)+CHR(10)+CHR(13);</pre></td></tr>
+<tr class="covered"><td>1405</td><td><pre style="display:inline;"> &nbsp;SetLength(result, 74);</pre></td></tr>
+<tr class="nocodegen"><td>1406</td><td><pre style="display:inline;"> &nbsp;{$IF CompilerVersion &gt;= 28.0}</pre></td></tr>
+<tr class="covered"><td>1407</td><td><pre style="display:inline;"> &nbsp;result := [$2B, $2D, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41,</pre></td></tr>
+<tr class="nocodegen"><td>1408</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E,</pre></td></tr>
+<tr class="nocodegen"><td>1409</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A, $61,</pre></td></tr>
+<tr class="nocodegen"><td>1410</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D, $6E,</pre></td></tr>
+<tr class="nocodegen"><td>1411</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A, $20,</pre></td></tr>
+<tr class="covered"><td>1412</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; $22, $28, $29, $5B, $5D, $27, $09, $0A, $0D];</pre></td></tr>
+<tr class="nocodegen"><td>1413</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>1414</td><td><pre style="display:inline;"> &nbsp;// Remove this initialisation variant as soon as XE7+ is the new minimum</pre></td></tr>
+<tr class="nocodegen"><td>1415</td><td><pre style="display:inline;"> &nbsp;// supported Delphi version</pre></td></tr>
+<tr class="nocodegen"><td>1416</td><td><pre style="display:inline;"> &nbsp;result[ 0]:=$2B;</pre></td></tr>
+<tr class="nocodegen"><td>1417</td><td><pre style="display:inline;"> &nbsp;result[ 1]:=$2D;</pre></td></tr>
+<tr class="nocodegen"><td>1418</td><td><pre style="display:inline;"> &nbsp;result[ 2]:=$30;</pre></td></tr>
+<tr class="nocodegen"><td>1419</td><td><pre style="display:inline;"> &nbsp;result[ 3]:=$31;</pre></td></tr>
+<tr class="nocodegen"><td>1420</td><td><pre style="display:inline;"> &nbsp;result[ 4]:=$32;</pre></td></tr>
+<tr class="nocodegen"><td>1421</td><td><pre style="display:inline;"> &nbsp;result[ 5]:=$33;</pre></td></tr>
+<tr class="nocodegen"><td>1422</td><td><pre style="display:inline;"> &nbsp;result[ 6]:=$34;</pre></td></tr>
+<tr class="nocodegen"><td>1423</td><td><pre style="display:inline;"> &nbsp;result[ 7]:=$35;</pre></td></tr>
+<tr class="nocodegen"><td>1424</td><td><pre style="display:inline;"> &nbsp;result[ 8]:=$36;</pre></td></tr>
+<tr class="nocodegen"><td>1425</td><td><pre style="display:inline;"> &nbsp;result[ 9]:=$37;</pre></td></tr>
+<tr class="nocodegen"><td>1426</td><td><pre style="display:inline;"> &nbsp;result[10]:=$38;</pre></td></tr>
+<tr class="nocodegen"><td>1427</td><td><pre style="display:inline;"> &nbsp;result[11]:=$39;</pre></td></tr>
+<tr class="nocodegen"><td>1428</td><td><pre style="display:inline;"> &nbsp;result[12]:=$41;</pre></td></tr>
+<tr class="nocodegen"><td>1429</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1430</td><td><pre style="display:inline;"> &nbsp;result[13]:=$42;</pre></td></tr>
+<tr class="nocodegen"><td>1431</td><td><pre style="display:inline;"> &nbsp;result[14]:=$43;</pre></td></tr>
+<tr class="nocodegen"><td>1432</td><td><pre style="display:inline;"> &nbsp;result[15]:=$44;</pre></td></tr>
+<tr class="nocodegen"><td>1433</td><td><pre style="display:inline;"> &nbsp;result[16]:=$45;</pre></td></tr>
+<tr class="nocodegen"><td>1434</td><td><pre style="display:inline;"> &nbsp;result[17]:=$46;</pre></td></tr>
+<tr class="nocodegen"><td>1435</td><td><pre style="display:inline;"> &nbsp;result[18]:=$47;</pre></td></tr>
+<tr class="nocodegen"><td>1436</td><td><pre style="display:inline;"> &nbsp;result[19]:=$48;</pre></td></tr>
+<tr class="nocodegen"><td>1437</td><td><pre style="display:inline;"> &nbsp;result[20]:=$49;</pre></td></tr>
+<tr class="nocodegen"><td>1438</td><td><pre style="display:inline;"> &nbsp;result[21]:=$4A;</pre></td></tr>
+<tr class="nocodegen"><td>1439</td><td><pre style="display:inline;"> &nbsp;result[22]:=$4B;</pre></td></tr>
+<tr class="nocodegen"><td>1440</td><td><pre style="display:inline;"> &nbsp;result[23]:=$4C;</pre></td></tr>
+<tr class="nocodegen"><td>1441</td><td><pre style="display:inline;"> &nbsp;result[24]:=$4D;</pre></td></tr>
+<tr class="nocodegen"><td>1442</td><td><pre style="display:inline;"> &nbsp;result[25]:=$4E;</pre></td></tr>
+<tr class="nocodegen"><td>1443</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1444</td><td><pre style="display:inline;"> &nbsp;result[26]:=$4F;</pre></td></tr>
+<tr class="nocodegen"><td>1445</td><td><pre style="display:inline;"> &nbsp;result[27]:=$50;</pre></td></tr>
+<tr class="nocodegen"><td>1446</td><td><pre style="display:inline;"> &nbsp;result[28]:=$51;</pre></td></tr>
+<tr class="nocodegen"><td>1447</td><td><pre style="display:inline;"> &nbsp;result[29]:=$52;</pre></td></tr>
+<tr class="nocodegen"><td>1448</td><td><pre style="display:inline;"> &nbsp;result[30]:=$53;</pre></td></tr>
+<tr class="nocodegen"><td>1449</td><td><pre style="display:inline;"> &nbsp;result[31]:=$54;</pre></td></tr>
+<tr class="nocodegen"><td>1450</td><td><pre style="display:inline;"> &nbsp;result[32]:=$55;</pre></td></tr>
+<tr class="nocodegen"><td>1451</td><td><pre style="display:inline;"> &nbsp;result[33]:=$56;</pre></td></tr>
+<tr class="nocodegen"><td>1452</td><td><pre style="display:inline;"> &nbsp;result[34]:=$57;</pre></td></tr>
+<tr class="nocodegen"><td>1453</td><td><pre style="display:inline;"> &nbsp;result[35]:=$58;</pre></td></tr>
+<tr class="nocodegen"><td>1454</td><td><pre style="display:inline;"> &nbsp;result[36]:=$59;</pre></td></tr>
+<tr class="nocodegen"><td>1455</td><td><pre style="display:inline;"> &nbsp;result[37]:=$5A;</pre></td></tr>
+<tr class="nocodegen"><td>1456</td><td><pre style="display:inline;"> &nbsp;result[38]:=$61;</pre></td></tr>
+<tr class="nocodegen"><td>1457</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1458</td><td><pre style="display:inline;"> &nbsp;result[39]:=$62;</pre></td></tr>
+<tr class="nocodegen"><td>1459</td><td><pre style="display:inline;"> &nbsp;result[40]:=$63;</pre></td></tr>
+<tr class="nocodegen"><td>1460</td><td><pre style="display:inline;"> &nbsp;result[41]:=$64;</pre></td></tr>
+<tr class="nocodegen"><td>1461</td><td><pre style="display:inline;"> &nbsp;result[42]:=$65;</pre></td></tr>
+<tr class="nocodegen"><td>1462</td><td><pre style="display:inline;"> &nbsp;result[43]:=$66;</pre></td></tr>
+<tr class="nocodegen"><td>1463</td><td><pre style="display:inline;"> &nbsp;result[44]:=$67;</pre></td></tr>
+<tr class="nocodegen"><td>1464</td><td><pre style="display:inline;"> &nbsp;result[45]:=$68;</pre></td></tr>
+<tr class="nocodegen"><td>1465</td><td><pre style="display:inline;"> &nbsp;result[46]:=$69;</pre></td></tr>
+<tr class="nocodegen"><td>1466</td><td><pre style="display:inline;"> &nbsp;result[47]:=$6A;</pre></td></tr>
+<tr class="nocodegen"><td>1467</td><td><pre style="display:inline;"> &nbsp;result[48]:=$6B;</pre></td></tr>
+<tr class="nocodegen"><td>1468</td><td><pre style="display:inline;"> &nbsp;result[49]:=$6C;</pre></td></tr>
+<tr class="nocodegen"><td>1469</td><td><pre style="display:inline;"> &nbsp;result[50]:=$6D;</pre></td></tr>
+<tr class="nocodegen"><td>1470</td><td><pre style="display:inline;"> &nbsp;result[51]:=$6E;</pre></td></tr>
+<tr class="nocodegen"><td>1471</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1472</td><td><pre style="display:inline;"> &nbsp;result[52]:=$6F;</pre></td></tr>
+<tr class="nocodegen"><td>1473</td><td><pre style="display:inline;"> &nbsp;result[53]:=$70;</pre></td></tr>
+<tr class="nocodegen"><td>1474</td><td><pre style="display:inline;"> &nbsp;result[54]:=$71;</pre></td></tr>
+<tr class="nocodegen"><td>1475</td><td><pre style="display:inline;"> &nbsp;result[55]:=$72;</pre></td></tr>
+<tr class="nocodegen"><td>1476</td><td><pre style="display:inline;"> &nbsp;result[56]:=$73;</pre></td></tr>
+<tr class="nocodegen"><td>1477</td><td><pre style="display:inline;"> &nbsp;result[57]:=$74;</pre></td></tr>
+<tr class="nocodegen"><td>1478</td><td><pre style="display:inline;"> &nbsp;result[58]:=$75;</pre></td></tr>
+<tr class="nocodegen"><td>1479</td><td><pre style="display:inline;"> &nbsp;result[59]:=$76;</pre></td></tr>
+<tr class="nocodegen"><td>1480</td><td><pre style="display:inline;"> &nbsp;result[60]:=$77;</pre></td></tr>
+<tr class="nocodegen"><td>1481</td><td><pre style="display:inline;"> &nbsp;result[61]:=$78;</pre></td></tr>
+<tr class="nocodegen"><td>1482</td><td><pre style="display:inline;"> &nbsp;result[62]:=$79;</pre></td></tr>
+<tr class="nocodegen"><td>1483</td><td><pre style="display:inline;"> &nbsp;result[63]:=$7A;</pre></td></tr>
+<tr class="nocodegen"><td>1484</td><td><pre style="display:inline;"> &nbsp;result[64]:=$20;</pre></td></tr>
+<tr class="nocodegen"><td>1485</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1486</td><td><pre style="display:inline;"> &nbsp;result[65]:=$22;</pre></td></tr>
+<tr class="nocodegen"><td>1487</td><td><pre style="display:inline;"> &nbsp;result[66]:=$28;</pre></td></tr>
+<tr class="nocodegen"><td>1488</td><td><pre style="display:inline;"> &nbsp;result[67]:=$29;</pre></td></tr>
+<tr class="nocodegen"><td>1489</td><td><pre style="display:inline;"> &nbsp;result[68]:=$5B;</pre></td></tr>
+<tr class="nocodegen"><td>1490</td><td><pre style="display:inline;"> &nbsp;result[69]:=$5D;</pre></td></tr>
+<tr class="nocodegen"><td>1491</td><td><pre style="display:inline;"> &nbsp;result[70]:=$27;</pre></td></tr>
+<tr class="nocodegen"><td>1492</td><td><pre style="display:inline;"> &nbsp;result[71]:=$09;</pre></td></tr>
+<tr class="nocodegen"><td>1493</td><td><pre style="display:inline;"> &nbsp;result[72]:=$0A;</pre></td></tr>
+<tr class="nocodegen"><td>1494</td><td><pre style="display:inline;"> &nbsp;result[73]:=$0D;</pre></td></tr>
+<tr class="nocodegen"><td>1495</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
+<tr class="covered"><td>1496</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1497</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1498</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1499</td><td><pre style="display:inline;"> &nbsp;// Initlialized in initialization section, cannot be const because of the</pre></td></tr>
+<tr class="nocodegen"><td>1500</td><td><pre style="display:inline;"> &nbsp;// TBytes requirement</pre></td></tr>
+<tr class="nocodegen"><td>1501</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL: TBytes; //array[0..6] of Byte = ($61, $62, $74, $6E, $76, $66, $72);</pre></td></tr>
+<tr class="nocodegen"><td>1502</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU: TBytes; //array[0..6] of Byte = ($41, $42, $54, $4E, $56, $46, $52);</pre></td></tr>
+<tr class="nocodegen"><td>1503</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1504</td><td><pre style="display:inline;">class function TFormat_ESCAPE.CharTableBinary: TBytes;</pre></td></tr>
+<tr class="covered"><td>1505</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1506</td><td><pre style="display:inline;"> &nbsp;Result := TFormat_HEX.CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1507</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1508</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1509</td><td><pre style="display:inline;">class procedure TFormat_ESCAPE.DoEncode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1510</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1511</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1512</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
+<tr class="nocodegen"><td>1513</td><td><pre style="display:inline;"> &nbsp;D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
+<tr class="nocodegen"><td>1514</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
+<tr class="covered"><td>1515</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1516</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, 0);</pre></td></tr>
+<tr class="covered"><td>1517</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1518</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1519</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1520</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size + 8);</pre></td></tr>
 <tr class="nocodegen"><td>1521</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1522</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size + 8);</pre></td></tr>
-<tr class="nocodegen"><td>1523</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1524</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1525</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
-<tr class="covered"><td>1526</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="covered"><td>1522</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1523</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
+<tr class="covered"><td>1524</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="nocodegen"><td>1525</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1526</td><td><pre style="display:inline;"> &nbsp;i := Size;</pre></td></tr>
 <tr class="nocodegen"><td>1527</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1528</td><td><pre style="display:inline;"> &nbsp;i := Size;</pre></td></tr>
-<tr class="nocodegen"><td>1529</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1530</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1531</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1532</td><td><pre style="display:inline;"> &nbsp; &nbsp;if i &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1533</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1534</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := D - PByte(Dest);</pre></td></tr>
-<tr class="covered"><td>1535</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SetLength(Dest, i + Size + 8);</pre></td></tr>
-<tr class="covered"><td>1536</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D := PByte(Dest) + i;</pre></td></tr>
-<tr class="covered"><td>1537</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := Size;</pre></td></tr>
-<tr class="nocodegen"><td>1538</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1539</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (S^ &lt; 32) or (S^ &gt; $7F) then</pre></td></tr>
-<tr class="nocodegen"><td>1540</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1541</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if (S^ &gt;= 7) and (S^ &lt;= 13) then</pre></td></tr>
-<tr class="nocodegen"><td>1542</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1543</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1528</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1529</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1530</td><td><pre style="display:inline;"> &nbsp; &nbsp;if i &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1531</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1532</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := D - PByte(Dest);</pre></td></tr>
+<tr class="covered"><td>1533</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SetLength(Dest, i + Size + 8);</pre></td></tr>
+<tr class="covered"><td>1534</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D := PByte(Dest) + i;</pre></td></tr>
+<tr class="covered"><td>1535</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := Size;</pre></td></tr>
+<tr class="nocodegen"><td>1536</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1537</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (S^ &lt; 32) or (S^ &gt; $7F) then</pre></td></tr>
+<tr class="nocodegen"><td>1538</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1539</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if (S^ &gt;= 7) and (S^ &lt;= 13) then</pre></td></tr>
+<tr class="nocodegen"><td>1540</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1541</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1542</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="covered"><td>1543</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := ESCAPE_CodesL[S^ - 7];</pre></td></tr>
 <tr class="covered"><td>1544</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1545</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := ESCAPE_CodesL[S^ - 7];</pre></td></tr>
-<tr class="covered"><td>1546</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1547</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
-<tr class="nocodegen"><td>1548</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1549</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1550</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1551</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1545</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
+<tr class="nocodegen"><td>1546</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1547</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1548</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1549</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1550</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="covered"><td>1551</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $78; // x</pre></td></tr>
 <tr class="covered"><td>1552</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1553</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $78; // x</pre></td></tr>
+<tr class="covered"><td>1553</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := T[S^ shr 4];</pre></td></tr>
 <tr class="covered"><td>1554</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1555</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := T[S^ shr 4];</pre></td></tr>
+<tr class="covered"><td>1555</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := T[S^ and $F];</pre></td></tr>
 <tr class="covered"><td>1556</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1557</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := T[S^ and $F];</pre></td></tr>
-<tr class="covered"><td>1558</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1559</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 4);</pre></td></tr>
-<tr class="nocodegen"><td>1560</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1561</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1562</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1563</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>1564</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^is \ char?</pre></td></tr>
-<tr class="covered"><td>1565</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
-<tr class="nocodegen"><td>1566</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1557</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 4);</pre></td></tr>
+<tr class="nocodegen"><td>1558</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1559</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1560</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1561</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>1562</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^is \ char?</pre></td></tr>
+<tr class="covered"><td>1563</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
+<tr class="nocodegen"><td>1564</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1565</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1566</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
 <tr class="covered"><td>1567</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
 <tr class="covered"><td>1568</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1569</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
-<tr class="covered"><td>1570</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1571</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
-<tr class="nocodegen"><td>1572</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1573</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1574</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^ is &quot; char?</pre></td></tr>
-<tr class="covered"><td>1575</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S^ = $22 then</pre></td></tr>
-<tr class="nocodegen"><td>1576</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1577</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1569</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
+<tr class="nocodegen"><td>1570</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1571</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1572</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^ is &quot; char?</pre></td></tr>
+<tr class="covered"><td>1573</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S^ = $22 then</pre></td></tr>
+<tr class="nocodegen"><td>1574</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1575</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $5C; // \ char</pre></td></tr>
+<tr class="covered"><td>1576</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="covered"><td>1577</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $22; // &quot; char</pre></td></tr>
 <tr class="covered"><td>1578</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1579</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := $22; // &quot; char</pre></td></tr>
-<tr class="covered"><td>1580</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1581</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
-<tr class="nocodegen"><td>1582</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1583</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1584</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1585</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
-<tr class="covered"><td>1586</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1587</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
-<tr class="nocodegen"><td>1588</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1589</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1590</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="covered"><td>1591</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1592</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1593</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1594</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
-<tr class="covered"><td>1595</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1596</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1597</td><td><pre style="display:inline;">class function TFormat_ESCAPE.DoIsValid(const Data; Size: Integer): Boolean;</pre></td></tr>
-<tr class="nocodegen"><td>1598</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1599</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1600</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
-<tr class="covered"><td>1601</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1602</td><td><pre style="display:inline;"> &nbsp;Result := False;</pre></td></tr>
-<tr class="covered"><td>1603</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1604</td><td><pre style="display:inline;"> &nbsp;S := @Data;</pre></td></tr>
-<tr class="nocodegen"><td>1605</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1606</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>1607</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1608</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (S^ &gt; $7F) or (S^ &lt; 32) then</pre></td></tr>
-<tr class="nocodegen"><td>1609</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1610</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1611</td><td><pre style="display:inline;"> &nbsp; &nbsp;// start of an escape sequence</pre></td></tr>
-<tr class="covered"><td>1612</td><td><pre style="display:inline;"> &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
-<tr class="nocodegen"><td>1613</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1614</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="covered"><td>1615</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1616</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1617</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// \ at the end</pre></td></tr>
-<tr class="covered"><td>1618</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1619</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1620</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1621</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// X for hex notation</pre></td></tr>
-<tr class="covered"><td>1622</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if UpCaseBinary(S^) = $58 then</pre></td></tr>
-<tr class="nocodegen"><td>1623</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1624</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1625</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="nocodegen"><td>1626</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1627</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// incomplete hex notation follows?</pre></td></tr>
-<tr class="covered"><td>1628</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if (Size &lt; 2) or (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1629</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1630</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1631</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1632</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="nocodegen"><td>1633</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1634</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1635</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1636</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1637</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1638</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="nocodegen"><td>1639</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1640</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1641</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>1642</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// \ with invalid following char?</pre></td></tr>
-<tr class="covered"><td>1643</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7) &lt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1644</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="nocodegen"><td>1645</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1646</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="covered"><td>1647</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1648</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1649</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1650</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1651</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1652</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="covered"><td>1653</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1654</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1655</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1656</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1657</td><td><pre style="display:inline;"> &nbsp;Result := True;</pre></td></tr>
-<tr class="covered"><td>1658</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1659</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1660</td><td><pre style="display:inline;">class procedure TFormat_ESCAPE.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1661</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1662</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1663</td><td><pre style="display:inline;"> &nbsp;S: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
-<tr class="nocodegen"><td>1664</td><td><pre style="display:inline;"> &nbsp;D: PByte;</pre></td></tr>
-<tr class="nocodegen"><td>1665</td><td><pre style="display:inline;"> &nbsp;L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
-<tr class="nocodegen"><td>1666</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
-<tr class="covered"><td>1667</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1668</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1669</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="covered"><td>1670</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1671</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1672</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
-<tr class="covered"><td>1673</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
-<tr class="covered"><td>1674</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="covered"><td>1579</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i, 2);</pre></td></tr>
+<tr class="nocodegen"><td>1580</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1581</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1582</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1583</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
+<tr class="covered"><td>1584</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="covered"><td>1585</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(i);</pre></td></tr>
+<tr class="nocodegen"><td>1586</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1587</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1588</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>1589</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1590</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1591</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1592</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
+<tr class="covered"><td>1593</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1594</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1595</td><td><pre style="display:inline;">class function TFormat_ESCAPE.DoIsValid(const Data; Size: Integer): Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>1596</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1597</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1598</td><td><pre style="display:inline;"> &nbsp;S: PByte;</pre></td></tr>
+<tr class="covered"><td>1599</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1600</td><td><pre style="display:inline;"> &nbsp;Result := False;</pre></td></tr>
+<tr class="covered"><td>1601</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1602</td><td><pre style="display:inline;"> &nbsp;S := @Data;</pre></td></tr>
+<tr class="nocodegen"><td>1603</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1604</td><td><pre style="display:inline;"> &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>1605</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1606</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (S^ &gt; $7F) or (S^ &lt; 32) then</pre></td></tr>
+<tr class="nocodegen"><td>1607</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1608</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1609</td><td><pre style="display:inline;"> &nbsp; &nbsp;// start of an escape sequence</pre></td></tr>
+<tr class="covered"><td>1610</td><td><pre style="display:inline;"> &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
+<tr class="nocodegen"><td>1611</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1612</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>1613</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1614</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1615</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// \ at the end</pre></td></tr>
+<tr class="covered"><td>1616</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1617</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1618</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1619</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// X for hex notation</pre></td></tr>
+<tr class="covered"><td>1620</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if UpCaseBinary(S^) = $58 then</pre></td></tr>
+<tr class="nocodegen"><td>1621</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1622</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1623</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="nocodegen"><td>1624</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1625</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// incomplete hex notation follows?</pre></td></tr>
+<tr class="covered"><td>1626</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if (Size &lt; 2) or (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1627</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1628</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1629</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1630</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="nocodegen"><td>1631</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1632</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1633</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1634</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1635</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1636</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="nocodegen"><td>1637</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1638</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1639</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>1640</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// \ with invalid following char?</pre></td></tr>
+<tr class="covered"><td>1641</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7) &lt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1642</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="nocodegen"><td>1643</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1644</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>1645</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1646</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1647</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1648</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1649</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1650</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>1651</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1652</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1653</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1654</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1655</td><td><pre style="display:inline;"> &nbsp;Result := True;</pre></td></tr>
+<tr class="covered"><td>1656</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1657</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1658</td><td><pre style="display:inline;">class procedure TFormat_ESCAPE.DoDecode(const Source; var Dest: TBytes; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1659</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1660</td><td><pre style="display:inline;"> &nbsp;T: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1661</td><td><pre style="display:inline;"> &nbsp;S: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
+<tr class="nocodegen"><td>1662</td><td><pre style="display:inline;"> &nbsp;D: PByte;</pre></td></tr>
+<tr class="nocodegen"><td>1663</td><td><pre style="display:inline;"> &nbsp;L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes</pre></td></tr>
+<tr class="nocodegen"><td>1664</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
+<tr class="covered"><td>1665</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1666</td><td><pre style="display:inline;"> &nbsp;if Size &lt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1667</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1668</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1669</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1670</td><td><pre style="display:inline;"> &nbsp;T := CharTableBinary;</pre></td></tr>
+<tr class="covered"><td>1671</td><td><pre style="display:inline;"> &nbsp;S := @Source;</pre></td></tr>
+<tr class="covered"><td>1672</td><td><pre style="display:inline;"> &nbsp;D := @Dest[0];</pre></td></tr>
+<tr class="nocodegen"><td>1673</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1674</td><td><pre style="display:inline;"> &nbsp;L := S + Size;</pre></td></tr>
 <tr class="nocodegen"><td>1675</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1676</td><td><pre style="display:inline;"> &nbsp;L := S + Size;</pre></td></tr>
-<tr class="nocodegen"><td>1677</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1678</td><td><pre style="display:inline;"> &nbsp;while S &lt; L do</pre></td></tr>
-<tr class="nocodegen"><td>1679</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>1680</td><td><pre style="display:inline;"> &nbsp; &nbsp;// S^ is \ char?</pre></td></tr>
-<tr class="covered"><td>1681</td><td><pre style="display:inline;"> &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
-<tr class="nocodegen"><td>1682</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1683</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1684</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S &gt; L then Break;</pre></td></tr>
-<tr class="nocodegen"><td>1685</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^ is X char?</pre></td></tr>
-<tr class="covered"><td>1686</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if UpCaseBinary(S^) = $58 then</pre></td></tr>
-<tr class="nocodegen"><td>1687</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1688</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if S + 2 &gt; L then</pre></td></tr>
-<tr class="notcovered"><td>1689</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
-<tr class="covered"><td>1690</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1691</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), T, 16);</pre></td></tr>
-<tr class="covered"><td>1692</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 0 then</pre></td></tr>
-<tr class="notcovered"><td>1693</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
-<tr class="covered"><td>1694</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := i shl 4;</pre></td></tr>
-<tr class="covered"><td>1695</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="covered"><td>1696</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), T, 16);</pre></td></tr>
-<tr class="covered"><td>1697</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 0 then</pre></td></tr>
-<tr class="notcovered"><td>1698</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
-<tr class="covered"><td>1699</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := D^ or i;</pre></td></tr>
-<tr class="nocodegen"><td>1700</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1701</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>1702</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1703</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7);</pre></td></tr>
-<tr class="covered"><td>1704</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &gt;= 0 then</pre></td></tr>
-<tr class="covered"><td>1705</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;D^ := i + 7</pre></td></tr>
-<tr class="nocodegen"><td>1706</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1707</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
-<tr class="nocodegen"><td>1708</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1709</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1710</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1711</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
-<tr class="covered"><td>1712</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(D);</pre></td></tr>
-<tr class="covered"><td>1713</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
-<tr class="nocodegen"><td>1714</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1715</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1716</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
-<tr class="covered"><td>1717</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>1676</td><td><pre style="display:inline;"> &nbsp;while S &lt; L do</pre></td></tr>
+<tr class="nocodegen"><td>1677</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>1678</td><td><pre style="display:inline;"> &nbsp; &nbsp;// S^ is \ char?</pre></td></tr>
+<tr class="covered"><td>1679</td><td><pre style="display:inline;"> &nbsp; &nbsp;if S^ = $5C then</pre></td></tr>
+<tr class="nocodegen"><td>1680</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1681</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1682</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if S &gt; L then Break;</pre></td></tr>
+<tr class="nocodegen"><td>1683</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;// S^ is X char?</pre></td></tr>
+<tr class="covered"><td>1684</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if UpCaseBinary(S^) = $58 then</pre></td></tr>
+<tr class="nocodegen"><td>1685</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1686</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if S + 2 &gt; L then</pre></td></tr>
+<tr class="notcovered"><td>1687</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
+<tr class="covered"><td>1688</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1689</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), T, 16);</pre></td></tr>
+<tr class="covered"><td>1690</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 0 then</pre></td></tr>
+<tr class="notcovered"><td>1691</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
+<tr class="covered"><td>1692</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := i shl 4;</pre></td></tr>
+<tr class="covered"><td>1693</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="covered"><td>1694</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), T, 16);</pre></td></tr>
+<tr class="covered"><td>1695</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &lt; 0 then</pre></td></tr>
+<tr class="notcovered"><td>1696</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);</pre></td></tr>
+<tr class="covered"><td>1697</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;D^ := D^ or i;</pre></td></tr>
+<tr class="nocodegen"><td>1698</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1699</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>1700</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1701</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;i := TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7);</pre></td></tr>
+<tr class="covered"><td>1702</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if i &gt;= 0 then</pre></td></tr>
+<tr class="covered"><td>1703</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;D^ := i + 7</pre></td></tr>
+<tr class="nocodegen"><td>1704</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1705</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
+<tr class="nocodegen"><td>1706</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1707</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1708</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1709</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D^ := S^;</pre></td></tr>
+<tr class="covered"><td>1710</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(D);</pre></td></tr>
+<tr class="covered"><td>1711</td><td><pre style="display:inline;"> &nbsp; &nbsp;Inc(S);</pre></td></tr>
+<tr class="nocodegen"><td>1712</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1713</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1714</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, PByte(D) - PByte(Dest));</pre></td></tr>
+<tr class="covered"><td>1715</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1716</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1717</td><td><pre style="display:inline;">{ TFormat_BigEndian16 }</pre></td></tr>
 <tr class="nocodegen"><td>1718</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1719</td><td><pre style="display:inline;">{ TFormat_BigEndian16 }</pre></td></tr>
-<tr class="nocodegen"><td>1720</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1721</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1722</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1723</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1724</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1725</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1726</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1727</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1728</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1729</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1730</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1731</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1732</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1733</td><td><pre style="display:inline;">class function TFormat_BigEndian16.DoIsValid(const Data;</pre></td></tr>
-<tr class="nocodegen"><td>1734</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
-<tr class="covered"><td>1735</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>1736</td><td><pre style="display:inline;"> &nbsp;// swapping bytes in 16 bit mode requires even number of bytes</pre></td></tr>
-<tr class="covered"><td>1737</td><td><pre style="display:inline;"> &nbsp;result := not Odd(Size);</pre></td></tr>
-<tr class="covered"><td>1738</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1739</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1740</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1741</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1742</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1743</td><td><pre style="display:inline;"> &nbsp;i : Integer;</pre></td></tr>
-<tr class="covered"><td>1744</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1745</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or Odd(Size) then</pre></td></tr>
-<tr class="nocodegen"><td>1746</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="covered"><td>1747</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1748</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1749</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1750</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1751</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
-<tr class="nocodegen"><td>1752</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1753</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
-<tr class="covered"><td>1754</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
-<tr class="nocodegen"><td>1755</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1756</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;DECUtil.SwapBytes(Dest[i], 2);</pre></td></tr>
-<tr class="covered"><td>1757</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 2);</pre></td></tr>
-<tr class="nocodegen"><td>1758</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1759</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1760</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1719</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1720</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1721</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1722</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1723</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1724</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1725</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1726</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1727</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1728</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1729</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1730</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1731</td><td><pre style="display:inline;">class function TFormat_BigEndian16.DoIsValid(const Data;</pre></td></tr>
+<tr class="nocodegen"><td>1732</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
+<tr class="covered"><td>1733</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>1734</td><td><pre style="display:inline;"> &nbsp;// swapping bytes in 16 bit mode requires even number of bytes</pre></td></tr>
+<tr class="covered"><td>1735</td><td><pre style="display:inline;"> &nbsp;result := not Odd(Size);</pre></td></tr>
+<tr class="covered"><td>1736</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1737</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1738</td><td><pre style="display:inline;">class procedure TFormat_BigEndian16.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1739</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1740</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1741</td><td><pre style="display:inline;"> &nbsp;i : Integer;</pre></td></tr>
+<tr class="covered"><td>1742</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1743</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or Odd(Size) then</pre></td></tr>
+<tr class="nocodegen"><td>1744</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1745</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1746</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1747</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1748</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1749</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
+<tr class="nocodegen"><td>1750</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1751</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
+<tr class="covered"><td>1752</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
+<tr class="nocodegen"><td>1753</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1754</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;DECUtil.SwapBytes(Dest[i], 2);</pre></td></tr>
+<tr class="covered"><td>1755</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 2);</pre></td></tr>
+<tr class="nocodegen"><td>1756</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1757</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1758</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1759</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1760</td><td><pre style="display:inline;">{ TFormat_BigEndian32 }</pre></td></tr>
 <tr class="nocodegen"><td>1761</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1762</td><td><pre style="display:inline;">{ TFormat_BigEndian32 }</pre></td></tr>
-<tr class="nocodegen"><td>1763</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1764</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1765</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1766</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1767</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1768</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1769</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1770</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1771</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1772</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1773</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1774</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1775</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1776</td><td><pre style="display:inline;">class function TFormat_BigEndian32.DoIsValid(const Data;</pre></td></tr>
-<tr class="nocodegen"><td>1777</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
-<tr class="covered"><td>1778</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1779</td><td><pre style="display:inline;"> &nbsp;result := (Size mod 4) = 0;</pre></td></tr>
-<tr class="covered"><td>1780</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1781</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1782</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1783</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1784</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1785</td><td><pre style="display:inline;"> &nbsp;i &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>1786</td><td><pre style="display:inline;"> &nbsp;SwapRes : UInt32;</pre></td></tr>
-<tr class="covered"><td>1787</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1788</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or ((Size mod 4) &lt;&gt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1789</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="covered"><td>1790</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1791</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1792</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1793</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1794</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
-<tr class="nocodegen"><td>1795</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1796</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
-<tr class="covered"><td>1797</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
-<tr class="nocodegen"><td>1798</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1799</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(Dest[i], SwapRes, 4);</pre></td></tr>
-<tr class="covered"><td>1800</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SwapRes := DECUtil.SwapUInt32(SwapRes);</pre></td></tr>
-<tr class="covered"><td>1801</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(SwapRes, Dest[i], 4);</pre></td></tr>
-<tr class="covered"><td>1802</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 4);</pre></td></tr>
-<tr class="nocodegen"><td>1803</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1804</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1805</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1762</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1763</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1764</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1765</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1766</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1767</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1768</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1769</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1770</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1771</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1772</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1773</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1774</td><td><pre style="display:inline;">class function TFormat_BigEndian32.DoIsValid(const Data;</pre></td></tr>
+<tr class="nocodegen"><td>1775</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
+<tr class="covered"><td>1776</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1777</td><td><pre style="display:inline;"> &nbsp;result := (Size mod 4) = 0;</pre></td></tr>
+<tr class="covered"><td>1778</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1779</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1780</td><td><pre style="display:inline;">class procedure TFormat_BigEndian32.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1781</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1782</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1783</td><td><pre style="display:inline;"> &nbsp;i &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1784</td><td><pre style="display:inline;"> &nbsp;SwapRes : UInt32;</pre></td></tr>
+<tr class="covered"><td>1785</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1786</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or ((Size mod 4) &lt;&gt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1787</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1788</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1789</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1790</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1791</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1792</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
+<tr class="nocodegen"><td>1793</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1794</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
+<tr class="covered"><td>1795</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
+<tr class="nocodegen"><td>1796</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1797</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(Dest[i], SwapRes, 4);</pre></td></tr>
+<tr class="covered"><td>1798</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SwapRes := DECUtil.SwapUInt32(SwapRes);</pre></td></tr>
+<tr class="covered"><td>1799</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(SwapRes, Dest[i], 4);</pre></td></tr>
+<tr class="covered"><td>1800</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 4);</pre></td></tr>
+<tr class="nocodegen"><td>1801</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1802</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1803</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1804</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1805</td><td><pre style="display:inline;">{ TFormat_BigEndian64 }</pre></td></tr>
 <tr class="nocodegen"><td>1806</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1807</td><td><pre style="display:inline;">{ TFormat_BigEndian64 }</pre></td></tr>
-<tr class="nocodegen"><td>1808</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1809</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1810</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1811</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1812</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1813</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1814</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1815</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1816</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="covered"><td>1817</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1818</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
-<tr class="covered"><td>1819</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1820</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1821</td><td><pre style="display:inline;">class function TFormat_BigEndian64.DoIsValid(const Data;</pre></td></tr>
-<tr class="nocodegen"><td>1822</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
-<tr class="covered"><td>1823</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1824</td><td><pre style="display:inline;"> &nbsp;result := (Size mod 8) = 0;</pre></td></tr>
-<tr class="covered"><td>1825</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1826</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1827</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1828</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>1829</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1830</td><td><pre style="display:inline;"> &nbsp;i &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>1831</td><td><pre style="display:inline;"> &nbsp;SwapRes : Int64;</pre></td></tr>
-<tr class="covered"><td>1832</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1833</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or ((Size mod 8) &lt;&gt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1834</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
-<tr class="covered"><td>1835</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
-<tr class="nocodegen"><td>1836</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1837</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
-<tr class="nocodegen"><td>1838</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1839</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
-<tr class="nocodegen"><td>1840</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1841</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
-<tr class="covered"><td>1842</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
-<tr class="nocodegen"><td>1843</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1844</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(Dest[i], SwapRes, 8);</pre></td></tr>
-<tr class="covered"><td>1845</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SwapRes := DECUtil.SwapInt64(SwapRes);</pre></td></tr>
-<tr class="covered"><td>1846</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(SwapRes, Dest[i], 8);</pre></td></tr>
-<tr class="covered"><td>1847</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 8);</pre></td></tr>
-<tr class="nocodegen"><td>1848</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>1849</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>1850</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1851</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1852</td><td><pre style="display:inline;">initialization</pre></td></tr>
-<tr class="covered"><td>1853</td><td><pre style="display:inline;"> &nbsp;SetLength(ESCAPE_CodesL, 7);</pre></td></tr>
-<tr class="covered"><td>1854</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[0] := $61;</pre></td></tr>
-<tr class="covered"><td>1855</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[1] := $62;</pre></td></tr>
-<tr class="covered"><td>1856</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[2] := $74;</pre></td></tr>
-<tr class="covered"><td>1857</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[3] := $6E;</pre></td></tr>
-<tr class="covered"><td>1858</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[4] := $76;</pre></td></tr>
-<tr class="covered"><td>1859</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[5] := $66;</pre></td></tr>
-<tr class="covered"><td>1860</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[6] := $72;</pre></td></tr>
-<tr class="nocodegen"><td>1861</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1862</td><td><pre style="display:inline;"> &nbsp;SetLength(ESCAPE_CodesU, 7);</pre></td></tr>
-<tr class="covered"><td>1863</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[0] := $41;</pre></td></tr>
-<tr class="covered"><td>1864</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[1] := $42;</pre></td></tr>
-<tr class="covered"><td>1865</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[2] := $54;</pre></td></tr>
-<tr class="covered"><td>1866</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[3] := $4E;</pre></td></tr>
-<tr class="covered"><td>1867</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[4] := $56;</pre></td></tr>
-<tr class="covered"><td>1868</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[5] := $46;</pre></td></tr>
-<tr class="covered"><td>1869</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[6] := $52;</pre></td></tr>
-<tr class="nocodegen"><td>1870</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1871</td><td><pre style="display:inline;"> &nbsp;{$IFNDEF BCB}</pre></td></tr>
-<tr class="nocodegen"><td>1872</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFNDEF ManualRegisterFormatClasses}</pre></td></tr>
-<tr class="covered"><td>1873</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_HEX.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1874</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_HEXL.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1875</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1876</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_Base64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1877</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_Radix64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1878</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_UU.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1879</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_XX.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1880</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1881</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1882</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="covered"><td>1883</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
-<tr class="nocodegen"><td>1884</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>1885</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>1886</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1887</td><td><pre style="display:inline;"> &nbsp;// Init the number of chars per line as per RFC 4880 to 76 chars</pre></td></tr>
-<tr class="covered"><td>1888</td><td><pre style="display:inline;"> &nbsp;TFormat_Radix64.FCharsPerLine := 76;</pre></td></tr>
+<tr class="nocodegen"><td>1807</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoDecode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1808</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1809</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1810</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1811</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1812</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1813</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoEncode(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1814</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="covered"><td>1815</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1816</td><td><pre style="display:inline;"> &nbsp;DoSawp(Source, Dest, Size);</pre></td></tr>
+<tr class="covered"><td>1817</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1818</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1819</td><td><pre style="display:inline;">class function TFormat_BigEndian64.DoIsValid(const Data;</pre></td></tr>
+<tr class="nocodegen"><td>1820</td><td><pre style="display:inline;"> &nbsp;Size: Integer): Boolean;</pre></td></tr>
+<tr class="covered"><td>1821</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1822</td><td><pre style="display:inline;"> &nbsp;result := (Size mod 8) = 0;</pre></td></tr>
+<tr class="covered"><td>1823</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1824</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1825</td><td><pre style="display:inline;">class procedure TFormat_BigEndian64.DoSawp(const Source; var Dest: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1826</td><td><pre style="display:inline;"> &nbsp;Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>1827</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1828</td><td><pre style="display:inline;"> &nbsp;i &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1829</td><td><pre style="display:inline;"> &nbsp;SwapRes : Int64;</pre></td></tr>
+<tr class="covered"><td>1830</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1831</td><td><pre style="display:inline;"> &nbsp;if (Size &lt; 0) or ((Size mod 8) &lt;&gt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1832</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
+<tr class="covered"><td>1833</td><td><pre style="display:inline;"> &nbsp;SetLength(Dest, Size);</pre></td></tr>
+<tr class="nocodegen"><td>1834</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1835</td><td><pre style="display:inline;"> &nbsp;if (Size &gt; 0) then</pre></td></tr>
+<tr class="nocodegen"><td>1836</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1837</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Source, Dest[0], Size);</pre></td></tr>
+<tr class="nocodegen"><td>1838</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1839</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 0;</pre></td></tr>
+<tr class="covered"><td>1840</td><td><pre style="display:inline;"> &nbsp; &nbsp;while (i &lt; length(Dest)) do</pre></td></tr>
+<tr class="nocodegen"><td>1841</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1842</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(Dest[i], SwapRes, 8);</pre></td></tr>
+<tr class="covered"><td>1843</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SwapRes := DECUtil.SwapInt64(SwapRes);</pre></td></tr>
+<tr class="covered"><td>1844</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(SwapRes, Dest[i], 8);</pre></td></tr>
+<tr class="covered"><td>1845</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(i, 8);</pre></td></tr>
+<tr class="nocodegen"><td>1846</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>1847</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>1848</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1849</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1850</td><td><pre style="display:inline;">initialization</pre></td></tr>
+<tr class="covered"><td>1851</td><td><pre style="display:inline;"> &nbsp;SetLength(ESCAPE_CodesL, 7);</pre></td></tr>
+<tr class="covered"><td>1852</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[0] := $61;</pre></td></tr>
+<tr class="covered"><td>1853</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[1] := $62;</pre></td></tr>
+<tr class="covered"><td>1854</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[2] := $74;</pre></td></tr>
+<tr class="covered"><td>1855</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[3] := $6E;</pre></td></tr>
+<tr class="covered"><td>1856</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[4] := $76;</pre></td></tr>
+<tr class="covered"><td>1857</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[5] := $66;</pre></td></tr>
+<tr class="covered"><td>1858</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesL[6] := $72;</pre></td></tr>
+<tr class="nocodegen"><td>1859</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1860</td><td><pre style="display:inline;"> &nbsp;SetLength(ESCAPE_CodesU, 7);</pre></td></tr>
+<tr class="covered"><td>1861</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[0] := $41;</pre></td></tr>
+<tr class="covered"><td>1862</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[1] := $42;</pre></td></tr>
+<tr class="covered"><td>1863</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[2] := $54;</pre></td></tr>
+<tr class="covered"><td>1864</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[3] := $4E;</pre></td></tr>
+<tr class="covered"><td>1865</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[4] := $56;</pre></td></tr>
+<tr class="covered"><td>1866</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[5] := $46;</pre></td></tr>
+<tr class="covered"><td>1867</td><td><pre style="display:inline;"> &nbsp;ESCAPE_CodesU[6] := $52;</pre></td></tr>
+<tr class="nocodegen"><td>1868</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1869</td><td><pre style="display:inline;"> &nbsp;{$IFNDEF BCB}</pre></td></tr>
+<tr class="nocodegen"><td>1870</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFNDEF ManualRegisterFormatClasses}</pre></td></tr>
+<tr class="covered"><td>1871</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_HEX.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1872</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_HEXL.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1873</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1874</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_Base64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1875</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_Radix64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1876</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_UU.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1877</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_XX.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1878</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1879</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1880</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="covered"><td>1881</td><td><pre style="display:inline;"> &nbsp; &nbsp;TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);</pre></td></tr>
+<tr class="nocodegen"><td>1882</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>1883</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>1884</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1885</td><td><pre style="display:inline;"> &nbsp;// Init the number of chars per line as per RFC 4880 to 76 chars</pre></td></tr>
+<tr class="covered"><td>1886</td><td><pre style="display:inline;"> &nbsp;TFormat_Radix64.FCharsPerLine := 76;</pre></td></tr>
+<tr class="nocodegen"><td>1887</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1888</td><td><pre style="display:inline;">finalization</pre></td></tr>
 <tr class="nocodegen"><td>1889</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1890</td><td><pre style="display:inline;">finalization</pre></td></tr>
-<tr class="nocodegen"><td>1891</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1892</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="covered"><td>1890</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>

@@ -128,10 +128,12 @@ type
     procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
     procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
     procedure DoTestCalcStream(HashClass:TDECHash); virtual;
+    procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
     procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
 
     procedure DoTestClassByName(ExpectedClassName:String; ExpectedClass:TClass);
+    procedure DoTestUninitializedException;
   protected
     /// <summary>
     ///   This method has to be overridden in test classes where the hash object
@@ -147,11 +149,14 @@ type
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
     procedure TestCalcStream;
+    procedure TestCalcStreamRawByteString;
     procedure TestCalcRawByteString;
     procedure TestCalcUnicodeString;
     procedure TestIsPasswordHash;
     procedure TestGetPaddingByte;
     procedure TestIsPasswordHashBase;
+    procedure TestClassByIdentity;
+    procedure TestUninitializedException;
   end;
 
   // Test methods for base class for all hash classes
@@ -5327,8 +5332,12 @@ var
   i      : Integer;
   Buf    : TBytes;
   Hash   : TBytes;
+  ProgressCalled : Boolean;
+
+  BufSize: Integer;
 begin
-  Stream := TMemoryStream.Create;
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
 
   try
     for i := 0 to FTestData.Count-1 do
@@ -5344,13 +5353,93 @@ begin
         Stream.Position := 0;
 
         ConfigHashClass(HashClass, i);
-        HashClass.CalcStream(Stream, Length(Buf), Hash);
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        ProgressCalled := false;
+        HashClass.CalcStream(Stream, Length(Buf), Hash,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
+
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
 
         CheckEquals(FTestData[i].ExpectedOutput,
                     BytesToRawString(TFormat_HEXL.Encode(Hash)),
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
                     string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcStreamRawByteString(HashClass: TDECHash);
+var
+  Stream : TMemoryStream;
+  i      : Integer;
+  Buf    : TBytes;
+  Hash   : RawByteString;
+  ProgressCalled : Boolean;
+
+  BufSize: Integer;
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        Stream.Clear;
+        {$IF CompilerVersion >= 25.0}
+        Stream.Write(Buf, Length(Buf));
+        {$ELSE}
+        if Length(Buf) > 0 then
+          Stream.Write(Buf[0], Length(Buf));
+        {$IFEND}
+        Stream.Position := 0;
+
+        ConfigHashClass(HashClass, i);
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        ProgressCalled := false;
+        Hash := HashClass.CalcStream(Stream, Length(Buf), TFormat_HexL,
+                                     procedure(Size, Pos: Int64; State: TDECProgressState)
+                                     begin
+                                       ProgressCalled := true;
+                                     end);
+
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    Hash,
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(Hash) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
   finally
     Stream.Free;
@@ -5425,6 +5514,11 @@ begin
   DoTestCalcStream(FHash);
 end;
 
+procedure THash_TestBase.TestCalcStreamRawByteString;
+begin
+  DoTestCalcStreamRawByteString(FHash);
+end;
+
 procedure THash_TestBase.TestCalcUnicodeString;
 begin
   DoTestCalcUnicodeString(FHash);
@@ -5443,6 +5537,38 @@ end;
 procedure THash_TestBase.TestIsPasswordHashBase;
 begin
   CheckEquals(false, TDECHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestClassByIdentity;
+var
+  ReturnValue: TDECClass;
+begin
+  ReturnValue := TDECHash.ClassByIdentity(THash_MD5.Identity);
+  CheckEquals(ReturnValue, THash_MD5);
+
+  ReturnValue := TDECHash.ClassByIdentity(THash_SHA256.Identity);
+  CheckEquals(ReturnValue, THash_SHA256);
+end;
+
+procedure THash_TestBase.TestUninitializedException;
+begin
+  CheckException(DoTestUninitializedException, EDECHashException,
+                 'Uninitialized hash not detected');
+end;
+
+procedure THash_TestBase.DoTestUninitializedException;
+var
+  Hash : THash_MD5;
+  Buf  : TBytes;
+begin
+  Hash := THash_MD5.Create;
+  try
+    SetLength(Buf, 3);
+    FillChar(Buf[0], 3, 33);
+    Hash.Calc(Buf[0], 3);
+  finally
+    Hash.Free;
+  end;
 end;
 
 procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);

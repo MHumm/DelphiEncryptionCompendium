@@ -111,6 +111,7 @@ type
     procedure TestIsClassListCreated;
     procedure TestValidCipherSetDefaultCipherClass;
     procedure TestIsAuthenticatedBlockMode;
+    procedure TestClassByIdentity;
   end;
 
   // Testmethoden for Klasse TCipher_Null
@@ -154,6 +155,10 @@ type
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+
+    procedure DoTestInitKeyTooLong;
+    procedure DoTestInitVectorTooLong;
+    procedure DoTestInitKey0;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -163,6 +168,9 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestInitKeyTooLong;
+    procedure TestInitVectorTooLong;
+    procedure TestInitKey0;
   end;
 
   // Testmethods for class TCipher_IDEA
@@ -1014,6 +1022,62 @@ end;
 procedure TestTCipher_Twofish.TestIdentity;
 begin
   CheckEquals($B38AB3E6, FCipher_Twofish.Identity);
+end;
+
+procedure TestTCipher_Twofish.DoTestInitKeyTooLong;
+var
+  Key : TBytes;
+  IV  : TBytes;
+begin
+  SetLength(Key, FCipher_Twofish.Context.KeySize + 1);
+  FillChar(Key[0], Length(Key), 123);
+
+  SetLength(IV, 8);
+  FillChar(IV[0], Length(IV), 0);
+
+  FCipher_Twofish.Init(Key[0], Length(Key), IV[0], Length(IV), 255);
+end;
+
+procedure TestTCipher_Twofish.TestInitKeyTooLong;
+begin
+  CheckException(DoTestInitKeyTooLong, EDECCipherException);
+end;
+
+procedure TestTCipher_Twofish.DoTestInitVectorTooLong;
+var
+  Key : TBytes;
+  IV  : TBytes;
+begin
+  SetLength(Key, FCipher_Twofish.Context.KeySize);
+  FillChar(Key[0], Length(Key), 123);
+
+  SetLength(IV, 65535*8);
+  FillChar(IV[0], Length(IV), 0);
+
+  FCipher_Twofish.Init(Key[0], Length(Key), IV[0], Length(IV), 255);
+end;
+
+procedure TestTCipher_Twofish.TestInitVectorTooLong;
+begin
+  CheckException(DoTestInitVectorTooLong, EDECCipherException);
+end;
+
+procedure TestTCipher_Twofish.DoTestInitKey0;
+var
+  Key : TBytes;
+  IV  : TBytes;
+begin
+  SetLength(Key, 0);
+
+  SetLength(IV, 8);
+  FillChar(IV[0], Length(IV), 0);
+
+  FCipher_Twofish.Init(Key, IV, 255);
+end;
+
+procedure TestTCipher_Twofish.TestInitKey0;
+begin
+  CheckException(DoTestInitKey0, EDECCipherException);
 end;
 
 procedure TestTCipher_Twofish.TestClassByName;
@@ -4032,6 +4096,17 @@ begin
   CheckEquals(false, IsAuthenticatedBlockMode(cmCFSx));
   CheckEquals(false, IsAuthenticatedBlockMode(cmECBx));
   CheckEquals(true, IsAuthenticatedBlockMode(cmGCM));
+end;
+
+procedure TestTDECCipher.TestClassByIdentity;
+var
+  ReturnValue: TDECClass;
+begin
+  ReturnValue := TDECCipher.ClassByIdentity(TCipher_AES.Identity);
+  CheckEquals(ReturnValue, TCipher_AES);
+
+  ReturnValue := TDECCipher.ClassByIdentity(TCipher_XTEA.Identity);
+  CheckEquals(ReturnValue, TCipher_XTEA);
 end;
 
 procedure TestTDECCipher.TestIsClassListCreated;

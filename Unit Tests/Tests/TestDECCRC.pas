@@ -78,6 +78,7 @@ type
     procedure TestCRCCodeMultiBuffer(Test: TCRCTest; CRCDef: TCRCDef);
 
     procedure TestCRCCodeSingleBufferCallback(Test: TCRCTest; CRCDef: TCRCDef);
+    procedure TestCRCCodeSingleBufferCallbackSize(CRCDef: TCRCDef);
 
     /// <summary>
     ///   Callback for the tests for the CRCCode variant requiring a callback
@@ -112,6 +113,7 @@ type
     procedure TestCRCCodeCRC32MultiBuffer;
 
     procedure TestCRCCodeCallback;
+    procedure TestCRCCodeCallbackSize;
 
     procedure TestCRCCodeCRC16SingleBufferCallback;
 
@@ -355,6 +357,14 @@ begin
 
     inc(FTestDataIndex);
   end;
+end;
+
+procedure TestCRC.TestCRCCodeCallbackSize;
+var
+  CRCDef   : TCRCDef;
+begin
+  DECCRC.CRCInit(CRCDef, CRC_32);
+  TestCRCCodeSingleBufferCallbackSize(CRCDef);
 end;
 
 function TestCRC.ReadMethod(var Buffer; Count: Int64): Int64;
@@ -961,6 +971,17 @@ begin
   CheckEquals(Test.CRC, res, 'Wrong result for input: ' + string(test.Input));
 end;
 
+procedure TestCRC.TestCRCCodeSingleBufferCallbackSize(CRCDef: TCRCDef);
+var
+  res : Cardinal;
+begin
+  SetLength(FCallbackBuffer, 2048);
+  FillChar(FCallbackBuffer[0], Length(FCallbackBuffer), 111);
+
+  res := CRCCode(CRCDef, CRCCodeReadCallback, Length(FCallbackBuffer));
+  CheckEquals(96599965, res);
+end;
+
 procedure TestCRC.TestCRCDoneFinalVector0;
 var
   CRCDef : TCRCDef;
@@ -1009,3 +1030,4 @@ initialization
   RegisterTest(TestCRC.Suite);
   {$ENDIF}
 end.
+

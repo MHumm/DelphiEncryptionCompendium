@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECHashBase (D:\Projekte\DECGitMaster\Source\DECHashBase.pas)</strong>.</p>
-<p> Generated at 27.08.2021 16:57:33 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 29.08.2021 11:32:13 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECHashBase.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>171</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>79%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>185</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>85%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -674,8 +674,8 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>635</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>636</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>637</td><td><pre style="display:inline;">procedure TDECHash.RaiseHashNotInitialized;</pre></td></tr>
-<tr class="notcovered"><td>638</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>639</td><td><pre style="display:inline;"> &nbsp;raise EDECHashException.CreateRes(@sHashNotInitialized);</pre></td></tr>
+<tr class="covered"><td>638</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>639</td><td><pre style="display:inline;"> &nbsp;raise EDECHashException.CreateRes(@sHashNotInitialized);</pre></td></tr>
 <tr class="notcovered"><td>640</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>641</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>642</td><td><pre style="display:inline;">procedure TDECHash.Calc(const Data; DataSize: Integer);</pre></td></tr>
@@ -687,7 +687,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>648</td><td><pre style="display:inline;"> &nbsp; &nbsp;Exit;</pre></td></tr>
 <tr class="nocodegen"><td>649</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>650</td><td><pre style="display:inline;"> &nbsp;if not Assigned(FBuffer) then</pre></td></tr>
-<tr class="notcovered"><td>651</td><td><pre style="display:inline;"> &nbsp; &nbsp;RaiseHashNotInitialized;</pre></td></tr>
+<tr class="covered"><td>651</td><td><pre style="display:inline;"> &nbsp; &nbsp;RaiseHashNotInitialized;</pre></td></tr>
 <tr class="nocodegen"><td>652</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>653</td><td><pre style="display:inline;"> &nbsp;Increment8(FCount, DataSize);</pre></td></tr>
 <tr class="covered"><td>654</td><td><pre style="display:inline;"> &nbsp;Value := @TByteArray(Data)[0];</pre></td></tr>
@@ -832,9 +832,9 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>793</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>794</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>795</td><td><pre style="display:inline;">class function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;</pre></td></tr>
-<tr class="notcovered"><td>796</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>797</td><td><pre style="display:inline;"> &nbsp;Result := TDECHashClass(ClassList.ClassByIdentity(Identity));</pre></td></tr>
-<tr class="notcovered"><td>798</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>796</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>797</td><td><pre style="display:inline;"> &nbsp;Result := TDECHashClass(ClassList.ClassByIdentity(Identity));</pre></td></tr>
+<tr class="covered"><td>798</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>799</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>800</td><td><pre style="display:inline;">class function TDECHash.ClassByName(const Name: string): TDECHashClass;</pre></td></tr>
 <tr class="covered"><td>801</td><td><pre style="display:inline;">begin</pre></td></tr>
@@ -860,7 +860,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>821</td><td><pre style="display:inline;"> &nbsp; &nbsp;Init;</pre></td></tr>
 <tr class="nocodegen"><td>822</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>823</td><td><pre style="display:inline;"> &nbsp; &nbsp;if StreamBufferSize &lt;= 0 then</pre></td></tr>
-<tr class="notcovered"><td>824</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
+<tr class="covered"><td>824</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
 <tr class="nocodegen"><td>825</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>826</td><td><pre style="display:inline;"> &nbsp; &nbsp;Pos := Stream.Position;</pre></td></tr>
 <tr class="nocodegen"><td>827</td><td><pre style="display:inline;"></pre></td></tr>
@@ -870,7 +870,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>831</td><td><pre style="display:inline;"> &nbsp; &nbsp;Max &nbsp; &nbsp; &nbsp;:= Pos + Size;</pre></td></tr>
 <tr class="nocodegen"><td>832</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>833</td><td><pre style="display:inline;"> &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="notcovered"><td>834</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;OnProgress(Max, 0, Started);</pre></td></tr>
+<tr class="covered"><td>834</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;OnProgress(Max, 0, Started);</pre></td></tr>
 <tr class="nocodegen"><td>835</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>836</td><td><pre style="display:inline;"> &nbsp; &nbsp;Bytes := StreamBufferSize mod FBufferSize;</pre></td></tr>
 <tr class="nocodegen"><td>837</td><td><pre style="display:inline;"></pre></td></tr>
@@ -895,7 +895,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>856</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(Pos, Bytes);</pre></td></tr>
 <tr class="nocodegen"><td>857</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>858</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="notcovered"><td>859</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Pos, Processing);</pre></td></tr>
+<tr class="covered"><td>859</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Pos, Processing);</pre></td></tr>
 <tr class="nocodegen"><td>860</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
 <tr class="nocodegen"><td>861</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>862</td><td><pre style="display:inline;"> &nbsp; &nbsp;// Last byte is incomplete but algorithm may need its value for padding</pre></td></tr>
@@ -907,7 +907,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>868</td><td><pre style="display:inline;"> &nbsp;finally</pre></td></tr>
 <tr class="covered"><td>869</td><td><pre style="display:inline;"> &nbsp; &nbsp;ProtectBytes(Buffer);</pre></td></tr>
 <tr class="covered"><td>870</td><td><pre style="display:inline;"> &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="notcovered"><td>871</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;OnProgress(Max, Max, Finished);</pre></td></tr>
+<tr class="covered"><td>871</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;OnProgress(Max, Max, Finished);</pre></td></tr>
 <tr class="nocodegen"><td>872</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
 <tr class="covered"><td>873</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>874</td><td><pre style="display:inline;"></pre></td></tr>
@@ -915,10 +915,10 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>876</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass; const OnProgress:TDECProgressEvent): RawByteString;</pre></td></tr>
 <tr class="nocodegen"><td>877</td><td><pre style="display:inline;">var</pre></td></tr>
 <tr class="nocodegen"><td>878</td><td><pre style="display:inline;"> &nbsp;Hash: TBytes;</pre></td></tr>
-<tr class="notcovered"><td>879</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>880</td><td><pre style="display:inline;"> &nbsp;CalcStream(Stream, Size, Hash, OnProgress);</pre></td></tr>
-<tr class="notcovered"><td>881</td><td><pre style="display:inline;"> &nbsp;Result := BytesToRawString(ValidFormat(Format).Encode(Hash));</pre></td></tr>
-<tr class="notcovered"><td>882</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>879</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>880</td><td><pre style="display:inline;"> &nbsp;CalcStream(Stream, Size, Hash, OnProgress);</pre></td></tr>
+<tr class="covered"><td>881</td><td><pre style="display:inline;"> &nbsp;Result := BytesToRawString(ValidFormat(Format).Encode(Hash));</pre></td></tr>
+<tr class="covered"><td>882</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>883</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>884</td><td><pre style="display:inline;">procedure TDECHash.CalcFile(const FileName: string; var HashResult: TBytes;</pre></td></tr>
 <tr class="nocodegen"><td>885</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const OnProgress:TDECProgressEvent);</pre></td></tr>

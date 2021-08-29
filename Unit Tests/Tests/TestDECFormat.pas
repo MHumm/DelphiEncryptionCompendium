@@ -314,6 +314,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+
+    procedure DoSetCharsPerLine0;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -327,6 +329,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure SetCharsPerLine0Exception;
   end;
 
   // Test methods for class TFormat_UU
@@ -1059,6 +1062,17 @@ begin
     CheckEquals(true, TFormat_Base64.IsValid(SrcBuf[0], length(SrcBuf)),
                 'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
   end;
+end;
+
+procedure TestTFormat_Radix64.DoSetCharsPerLine0;
+begin
+  // Provoke exception
+  FFormat_Radix64.SetCharsPerLine(0);
+end;
+
+procedure TestTFormat_Radix64.SetCharsPerLine0Exception;
+begin
+  CheckException(DoSetCharsPerLine0, EArgumentOutOfRangeException);
 end;
 
 procedure TestTFormat_Radix64.SetUp;
