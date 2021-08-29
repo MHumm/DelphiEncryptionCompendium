@@ -46,28 +46,28 @@ type
     /// <summary>
     ///   Input value, needs to be of block size length or a multiple of it
     /// </summary>
-    Input      : RawByteString;
+    Input           : RawByteString;
     /// <summary>
     ///   Expected output value, needs to be of block size length or a multiple of it
     /// </summary>
-    Output     : RawByteString;
+    Output          : RawByteString;
     /// <summary>
     ///   Expected output value which is used if Output is empty. Contains the
     ///   output in hexadecimal notation.
     /// </summary>
-    OutputHex  : RawByteString;
+    OutputHex       : RawByteString;
     /// <summary>
     ///   Init Vektor für den ersten Test
     /// </summary>
-    InitVector : RawByteString;
+    InitVector      : RawByteString;
     /// <summary>
     ///   Class reference for the cipher class used for this test.
     /// </summary>
-    TestClass  : TFormattedCipherClass;
+    TestClass       : TFormattedCipherClass;
     /// <summary>
     ///   Block concatenating/padding mode
     /// </summary>
-    Mode       : TCipherMode;
+    Mode            : TCipherMode;
     /// <summary>
     ///   When true this is an authenticated block cipher mode
     /// </summary>
@@ -77,6 +77,15 @@ type
   /// <summary>
   ///   Prototype for a function to be passed to the generic test method
   /// </summary>
+  /// <param name="Source">
+  ///   Pointer to the source data for the operation
+  /// </param>
+  /// <param name="Dest">
+  ///   Pointer to the memory where the result of the operation shall be stored
+  /// </param>
+  /// <param name="Size">
+  ///   Size of the data to be processed in byte
+  /// </param>
   TTestFunction = procedure(Source, Dest: PByteArray; Size: Integer) of object;
 
   /// <summary>
@@ -466,11 +475,7 @@ end;
 
 procedure TestTDECCipherModes.TestIsAuthenticated;
 var
-  Dest   : TBytes;
-  Source : TBytes;
-  i, n   : Integer;
-  Result : string;
-
+  i      : Integer;
   Cipher : TDECCipherModes;
 begin
   for i := Low(Data) to High(Data) do
