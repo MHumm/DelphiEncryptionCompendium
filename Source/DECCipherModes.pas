@@ -789,7 +789,7 @@ end;
 
 procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
 begin
-  FGCM.DecodeGCM(Source, Dest, Size, DoDecode);
+  FGCM.DecodeGCM(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);
@@ -950,10 +950,10 @@ begin
 
   if (FMode = cmGCM) then
   begin
-{ TODO : Check which encode method is meant. GCM128.pas uses Encode, which woudl be the one internally casing about FMode... }
+{ TODO : Check which encode method is meant. GCM128.pas uses Encode, which would be the one internally casing about FMode... }
     SetLength(InitVector, FInitVectorSize);
     Move(FInitializationVector^[0], InitVector[0], FInitVectorSize);
-    FGCM.Init(self.DoEncode, InitVector);
+    FGCM.Init(self.DoEncode, self.DoDecode, InitVector);
   end;
 end;
 

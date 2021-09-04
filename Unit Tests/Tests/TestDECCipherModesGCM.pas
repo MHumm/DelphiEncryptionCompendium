@@ -40,27 +40,27 @@ type
     /// <summary>
     ///   Encryption/decryption key
     /// </summary>
-    CryptKey   : string;
+    CryptKey   : RawByteString;
     /// <summary>
     ///   Initialization vecotr
     /// </summary>
-    InitVector : string;
+    InitVector : RawByteString;
     /// <summary>
     ///   ???
     /// </summary>
-    PT         : string;
+    PT         : RawByteString;
     /// <summary>
     ///   ???
     /// </summary>
-    AAD        : string;
+    AAD        : RawByteString;
     /// <summary>
     ///   ???
     /// </summary>
-    CT         : string;
+    CT         : RawByteString;
     /// <summary>
     ///   Calculated authenticated "tag" value
     /// </summary>
-    TagResult  : string;
+    TagResult  : RawByteString;
 
     /// <summary>
     ///   Sets all fields and array entries to default values
@@ -135,7 +135,7 @@ type
     /// <returns>
     ///   Extracted hex string
     /// </returns>
-    function ExtractHexString(const Line: string): string;
+    function ExtractHexString(const Line: string): RawByteString;
 
     /// <summary>
     ///   Tries to interpret a given line as part of a block's meta data and if
@@ -188,16 +188,31 @@ type
     /// </param>
     /// <param name="TestData">
     ///   List in which to store the test data loaded. The list must exist but
-    ///   will not be cleared.
+    ///   will not be cleared, so newly loaded data will be appended.
     /// </param>
     procedure LoadFile(const FileName: string; TestData : TGCMTestDataList);
+  end;
+
+  // Testmethods for class TDECCipher
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTDECGCM = class(TTestCase)
+  strict private
+    FTestDataLoader : TGCMTestDataLoader;
+    FTestDataList   : TGCMTestDataList;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncode;
+//    procedure TestDecode;
   end;
 
 
 implementation
 
 uses
-  System.Classes;
+  System.Classes,
+  DECFormat;
 
 { TGCMTestSetEntry }
 
@@ -229,13 +244,13 @@ end;
 
 { TGCMTestDataLoader }
 
-function TGCMTestDataLoader.ExtractHexString(const Line: string): string;
+function TGCMTestDataLoader.ExtractHexString(const Line: string): RawByteString;
 var
   s : string;
 begin
   s := Line;
   Delete(s, 1, Pos('=', Line));
-  Result := Trim(s);
+  Result := RawByteString(Trim(s));
 end;
 
 function TGCMTestDataLoader.ExtractNumber(const Line: string): UInt16;
@@ -365,4 +380,57 @@ begin
   end;
 end;
 
+{ TestTDECGCM }
+
+procedure TestTDECGCM.SetUp;
+begin
+  inherited;
+
+  FTestDataLoader := TGCMTestDataLoader.Create;
+  FTestDataList   := TGCMTestDataList.Create;
+end;
+
+procedure TestTDECGCM.TearDown;
+begin
+  inherited;
+
+  FTestDataLoader.Free;
+  FTestDataList.Free;
+end;
+
+procedure TestTDECGCM.TestEncode;
+var
+  Cipher      : TCipher_AES;
+  TestDataSet : TGCMTestSetEntry;
+  i           : Integer;
+begin
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+
+  Cipher := TCipher_AES.Create;
+  try
+    for TestDataSet in FTestDataList do
+    begin
+      for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
+      begin
+        Cipher.Init(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey),
+                    TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector),
+                    0);
+
+        Cipher.AuthenticationResultBitLength := TestDataSet.Taglen;
+
+//        TestDataSet.TestData[
+      end;
+    end;
+  finally
+    Cipher.Free;
+  end;
+end;
+
+initialization
+  // Register all test cases to be run
+  {$IFDEF DUnitX}
+  TDUnitX.RegisterTestFixture(TestTDECGCM);
+  {$ELSE}
+  RegisterTest(TestTDECGCM.Suite);
+  {$ENDIF}
 end.

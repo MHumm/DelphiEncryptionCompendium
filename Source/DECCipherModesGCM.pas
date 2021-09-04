@@ -88,6 +88,10 @@ type
     ///   Reference to the encode method of the actual cipher used
     /// </summary>
     FEncryptionMethod: TEncodeDecodeMethod;
+    /// <summary>
+    ///   Reference to the decode method of the actual cipher used
+    /// </summary>
+    FDecryptionMethod: TEncodeDecodeMethod;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -167,13 +171,17 @@ type
     ///   Should be called when starting encryption/decryption in order to
     ///   initialize internal tables etc.
     /// </summary>
-    /// <param name="Method">
+    /// <param name="EncryptionMethod">
     ///   Encryption method of the cypher used
+    /// </param>
+    /// <param name="DecryptionMethod">
+    ///   Dencryption method of the cypher used
     /// </param>
     /// <param name="InitVector">
     ///   Initialization vector
     /// </param>
     procedure Init(EncryptionMethod : TEncodeDecodeMethod;
+                   DecryptionMethod : TEncodeDecodeMethod;
                    InitVector       : TBytes);
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
@@ -204,8 +212,7 @@ type
     /// </param>
     procedure DecodeGCM(Source,
                         Dest   : PByteArray;
-                        Size   : Integer;
-                        Method : TEncodeDecodeMethod);
+                        Size   : Integer);
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -379,14 +386,20 @@ begin
   {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 end;
 
-procedure TGCM.Init(EncryptionMethod: TEncodeDecodeMethod; InitVector:TBytes);
+procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
+                    DecryptionMethod : TEncodeDecodeMethod;
+                    InitVector       : TBytes);
 var
   b : ^Byte;
 //  bY : array[0..15] of byte absolute FY[0]; doesn't compile as FY is not seen as variable
 begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
+  // Clear calculated authentication value
+  FillChar(FAuthenticaton_tag, Length(FAuthenticaton_tag), #0);
+
   FEncryptionMethod := EncryptionMethod;
+  FDecryptionMethod := DecryptionMethod;
 
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
@@ -448,7 +461,7 @@ begin
   Result := poly_mult_H( XOR_128( aclen, x ) );
 end;
 
-procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer; Method: TEncodeDecodeMethod);
+procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
 begin
 
 end;
