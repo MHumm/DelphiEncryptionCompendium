@@ -104,6 +104,11 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipher = class(TCipherBasis)
   strict private
+    FCipher : TCipher_AES;
+
+    procedure DoInitRawByteStringNoKeyException;
+    procedure DoInitWideStringNoKeyException;
+    procedure DoInitMACWrongModeException;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -112,6 +117,13 @@ type
     procedure TestValidCipherSetDefaultCipherClass;
     procedure TestIsAuthenticatedBlockMode;
     procedure TestClassByIdentity;
+    procedure TestInitRawByteStringNoKey;
+    procedure TestInitRawByteStringInitVector;
+    procedure TestInitRawByteStringNoInitVector;
+    procedure TestInitWideStringNoKey;
+    procedure TestInitWideStringInitVector;
+    procedure TestInitWideStringNoInitVector;
+    procedure TestMACWrongMode;
   end;
 
   // Testmethoden for Klasse TCipher_Null
@@ -4077,12 +4089,121 @@ end;
 procedure TestTDECCipher.SetUp;
 begin
   inherited;
+
+  FCipher := TCipher_AES.Create;
 end;
 
 procedure TestTDECCipher.TearDown;
 begin
+  FCipher.Free;
+
   inherited;
 end;
+
+procedure TestTDECCipher.TestInitRawByteStringInitVector;
+var
+  IV    : string;
+  i     : Integer;
+begin
+  CheckEquals(16, FCipher.InitVectorSize);
+  FCipher.Init(RawByteString('Hihi'), RawByteString('012345'), 255);
+  CheckEquals(16, FCipher.InitVectorSize);
+
+  IV := '';
+
+  for i := 0 to 15 do
+    IV := IV + Chr(FCipher.InitVector[i]);
+
+  CheckEquals(string('012345'+#255#255#255#255#255#255#255#255#255#255), IV);
+end;
+
+procedure TestTDECCipher.TestInitRawByteStringNoInitVector;
+var
+  IV    : string;
+  i     : Integer;
+begin
+  CheckEquals(16, FCipher.InitVectorSize);
+  FCipher.Init(RawByteString('Hihi'), RawByteString(''), 255);
+  CheckEquals(16, FCipher.InitVectorSize);
+
+  IV := '';
+
+  for i := 0 to 15 do
+    IV := IV + Chr(FCipher.InitVector[i]);
+
+  CheckEquals('ba163f76a3a8bd77b75ebe293f229d10',
+              string(TFormat_HexL.Encode(RawByteString(IV))));
+end;
+
+procedure TestTDECCipher.TestInitRawByteStringNoKey;
+begin
+  CheckException(DoInitRawByteStringNoKeyException, EDECCipherException);
+end;
+
+procedure TestTDECCipher.TestInitWideStringInitVector;
+var
+  IV    : string;
+  i     : Integer;
+begin
+  CheckEquals(16, FCipher.InitVectorSize);
+  FCipher.Init(WideString('Hihi'), WideString('012345'), 255);
+  CheckEquals(16, FCipher.InitVectorSize);
+
+  IV := '';
+
+  for i := 0 to 15 do
+    IV := IV + Chr(FCipher.InitVector[i]);
+
+  CheckEquals(string('0'#0'1'#0'2'#0'3'#0'4'#0'5'#0#255#255#255#255), IV);
+end;
+
+procedure TestTDECCipher.TestInitWideStringNoInitVector;
+var
+  IV    : string;
+  i     : Integer;
+
+  b: TBytes;
+begin
+  CheckEquals(16, FCipher.InitVectorSize);
+  FCipher.Init(WideString('Hihi'), WideString(''), 255);
+  CheckEquals(16, FCipher.InitVectorSize);
+
+  IV := '';
+
+  for i := 0 to 15 do
+    IV := IV + Chr(FCipher.InitVector[i]);
+
+  b := TFormat_HexL.Encode(BytesOf(IV));
+  IV := '';
+
+  for i := 0 to length(b)-1 do
+    IV := IV + IntToHex(b[i], 2);
+
+  CheckEquals('6639353537346562653635343066636636383366343236323532636133663235',
+              IV);
+end;
+
+procedure TestTDECCipher.TestInitWideStringNoKey;
+begin
+  CheckException(DoInitWideStringNoKeyException, EDECCipherException);
+end;
+
+procedure TestTDECCipher.DoInitMACWrongModeException;
+begin
+  FCipher.Mode := TCipherMode.cmECBx;
+  FCipher.CalcMAC(TFormat_HexL);
+end;
+
+procedure TestTDECCipher.DoInitRawByteStringNoKeyException;
+begin
+  FCipher.Init(RawByteString(''), RawByteString('12345678'), 255);
+end;
+
+procedure TestTDECCipher.DoInitWideStringNoKeyException;
+begin
+  FCipher.Init(WideString(''), WideString('12345678'), 255);
+end;
+
 
 procedure TestTDECCipher.TestIsAuthenticatedBlockMode;
 begin
@@ -4112,6 +4233,11 @@ end;
 procedure TestTDECCipher.TestIsClassListCreated;
 begin
   CheckEquals(true, assigned(TDECCipher.ClassList), 'Class list has not been created in initialization');
+end;
+
+procedure TestTDECCipher.TestMACWrongMode;
+begin
+  CheckException(DoInitMACWrongModeException, EDECException);
 end;
 
 procedure TestTDECCipher.TestValidCipherSetDefaultCipherClass;

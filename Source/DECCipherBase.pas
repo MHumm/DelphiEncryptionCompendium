@@ -592,7 +592,9 @@ type
     ///   Encrypted data. Init must have been called previously.
     /// </returns>
     function EncodeRawByteString(const Source: RawByteString;
-                                 Format: TDECFormatClass = nil): RawByteString; deprecated; // please use EncodeBytes functions now
+                                 Format: TDECFormatClass = nil): RawByteString;
+                                 deprecated; // please use EncodeBytes functions now
+                                             // or TCipherFormats.EncodeStringToString
     /// <summary>
     ///   Decrypts the contents of a RawByteString. This method is deprecated
     ///   and should be replaced by a variant expecting TBytes as source in
@@ -745,7 +747,7 @@ procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
 ///   Provides information whether a certain block concatenation mode
 ///   provides authentication functionality or not.
 /// </summary>
-/// <param name="BlockMNode">
+/// <param name="BlockMode">
 ///   Block mode to check fo authentication features
 /// </param>
 /// <returns>

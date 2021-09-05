@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECCipherModesGCM (D:\Projekte\DECGitMaster\Source\DECCipherModesGCM.pas)</strong>.</p>
-<p> Generated at 29.08.2021 11:32:12 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 05.09.2021 11:38:01 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECCipherModesGCM.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>0</td></tr><tr><td>Number of lines with code gen</td><td>66</td></tr><tr><td>Line coverage</td><td>0%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>0</td></tr><tr><td>Number of lines with code gen</td><td>68</td></tr><tr><td>Line coverage</td><td>0%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -127,558 +127,571 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>88</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Reference to the encode method of the actual cipher used</pre></td></tr>
 <tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
 <tr class="nocodegen"><td>90</td><td><pre style="display:inline;"> &nbsp; &nbsp;FEncryptionMethod: TEncodeDecodeMethod;</pre></td></tr>
-<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XOR implementation for unsigned 128 bit numbers</pre></td></tr>
-<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; First number to xor</pre></td></tr>
-<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Second number to xor the first with</pre></td></tr>
-<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
-<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; x xor y</pre></td></tr>
-<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
-<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;function XOR_128(const x, y: T128): T128; inline;</pre></td></tr>
-<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XOR implementation for a pointer and an unsigned 128 bit number</pre></td></tr>
-<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Pointer on a T128 typed number to xor with y</pre></td></tr>
-<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Second number to xor the first with</pre></td></tr>
-<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
-<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; x xor y</pre></td></tr>
-<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
-<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp; &nbsp;function XOR_128_n(const x : Pointer; y : T128 ) : T128; inline;</pre></td></tr>
-<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XORs the bytes given in a byte array with a T128 number given</pre></td></tr>
-<tr class="nocodegen"><td>120</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Bytes which shall be XORed with the T128 number</pre></td></tr>
-<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;XIndex&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Starting index within x from which onwards to XOR</pre></td></tr>
-<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;len&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes from x beginning at XIndex to XOR</pre></td></tr>
-<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Value to XOR the bytes from y with. XOR is done bytewise for each</pre></td></tr>
-<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; byte of y</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Reference to the decode method of the actual cipher used</pre></td></tr>
+<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;FDecryptionMethod: TEncodeDecodeMethod;</pre></td></tr>
+<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XOR implementation for unsigned 128 bit numbers</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; First number to xor</pre></td></tr>
+<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Second number to xor the first with</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; x xor y</pre></td></tr>
+<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;function XOR_128(const x, y: T128): T128; inline;</pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XOR implementation for a pointer and an unsigned 128 bit number</pre></td></tr>
+<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Pointer on a T128 typed number to xor with y</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Second number to xor the first with</pre></td></tr>
+<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; x xor y</pre></td></tr>
+<tr class="nocodegen"><td>120</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp; &nbsp;function XOR_128_n(const x : Pointer; y : T128 ) : T128; inline;</pre></td></tr>
+<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; XORs the bytes given in a byte array with a T128 number given</pre></td></tr>
+<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;x&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Bytes which shall be XORed with the T128 number</pre></td></tr>
+<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;XIndex&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Starting index within x from which onwards to XOR</pre></td></tr>
+<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;len&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes from x beginning at XIndex to XOR</pre></td></tr>
 <tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;res&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Result of the XOR operation</pre></td></tr>
-<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes ); inline;</pre></td></tr>
-<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp; &nbsp;function poly_mult_H(const hx : T128) : T128; inline;</pre></td></tr>
-<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;</pre></td></tr>
-<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure Table_M_8Bit(const H : T128); inline;</pre></td></tr>
-<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Performs a right shift of all bytes in an 128 bit variable</pre></td></tr>
-<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;rx&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Variable on which the right shift is being performed</pre></td></tr>
-<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>149</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure rightshift(var rx : T128); inline;</pre></td></tr>
-<tr class="nocodegen"><td>150</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>151</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure INCR(var Y : T128);</pre></td></tr>
-<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Defines the length of the resulting authenticated data in bit.</pre></td></tr>
-<tr class="nocodegen"><td>155</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>156</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Value&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Sets the length of Authenticaton_tag in bit, values as per specification</pre></td></tr>
-<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are: 128, 120, 112, 104, or 96 bit. For certain applications, they</pre></td></tr>
-<tr class="nocodegen"><td>159</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; may be 64 or 32 as well, but the use of these two tag lengths</pre></td></tr>
-<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; constrains the length of the input data and the lifetime of the key.</pre></td></tr>
-<tr class="nocodegen"><td>161</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>162</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure SetAuthenticationTagLength(const Value: UInt32);</pre></td></tr>
-<tr class="nocodegen"><td>163</td><td><pre style="display:inline;"> &nbsp; &nbsp;function GetAuthenticationTagBitLength: UInt32;</pre></td></tr>
-<tr class="nocodegen"><td>164</td><td><pre style="display:inline;"> &nbsp; &nbsp;function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;</pre></td></tr>
-<tr class="nocodegen"><td>165</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
-<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>167</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Should be called when starting encryption/decryption in order to</pre></td></tr>
-<tr class="nocodegen"><td>168</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; initialize internal tables etc.</pre></td></tr>
-<tr class="nocodegen"><td>169</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>170</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Method&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encryption method of the cypher used</pre></td></tr>
-<tr class="nocodegen"><td>172</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>173</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;InitVector&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>174</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Initialization vector</pre></td></tr>
-<tr class="nocodegen"><td>175</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>176</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure Init(EncryptionMethod : TEncodeDecodeMethod;</pre></td></tr>
-<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; InitVector &nbsp; &nbsp; &nbsp; : TBytes);</pre></td></tr>
-<tr class="nocodegen"><td>178</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encodes a block of data using the supplied cipher</pre></td></tr>
-<tr class="nocodegen"><td>180</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>181</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Source&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>182</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Plain text to encrypt</pre></td></tr>
-<tr class="nocodegen"><td>183</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>184</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Dest&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>185</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Ciphertext after encryption</pre></td></tr>
-<tr class="nocodegen"><td>186</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>187</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>188</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes to encrypt</pre></td></tr>
-<tr class="nocodegen"><td>189</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>190</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure EncodeGCM(Source,</pre></td></tr>
-<tr class="nocodegen"><td>191</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dest &nbsp; : PByteArray;</pre></td></tr>
-<tr class="nocodegen"><td>192</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Size &nbsp; : Integer);</pre></td></tr>
-<tr class="nocodegen"><td>193</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>194</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Decodes a block of data using the supplied cipher</pre></td></tr>
-<tr class="nocodegen"><td>195</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>196</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Source&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>197</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encrypted ciphertext to decrypt</pre></td></tr>
-<tr class="nocodegen"><td>198</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>199</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Dest&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>200</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Plaintext after decryption</pre></td></tr>
-<tr class="nocodegen"><td>201</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>202</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>203</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes to decrypt</pre></td></tr>
-<tr class="nocodegen"><td>204</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>205</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure DecodeGCM(Source,</pre></td></tr>
-<tr class="nocodegen"><td>206</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dest &nbsp; : PByteArray;</pre></td></tr>
-<tr class="nocodegen"><td>207</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Size &nbsp; : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>208</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Method : TEncodeDecodeMethod);</pre></td></tr>
-<tr class="nocodegen"><td>209</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>210</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>211</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; The data which shall be authenticated in parallel to the encryption</pre></td></tr>
-<tr class="nocodegen"><td>212</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>213</td><td><pre style="display:inline;"> &nbsp; &nbsp;property Authenticated_data : TBytes</pre></td></tr>
-<tr class="nocodegen"><td>214</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; FAuthenticated_data</pre></td></tr>
-<tr class="nocodegen"><td>215</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;FAuthenticated_data;</pre></td></tr>
-<tr class="nocodegen"><td>216</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>217</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Sets the length of Authenticaton_tag in bit, values as per specification</pre></td></tr>
-<tr class="nocodegen"><td>218</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are: 128, 120, 112, 104, or 96 bit. For certain applications, they</pre></td></tr>
-<tr class="nocodegen"><td>219</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; may be 64 or 32 as well, but the use of these two tag lengths</pre></td></tr>
-<tr class="nocodegen"><td>220</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; constrains the length of the input data and the lifetime of the key.</pre></td></tr>
-<tr class="nocodegen"><td>221</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>222</td><td><pre style="display:inline;"> &nbsp; &nbsp;property AuthenticationTagBitLength &nbsp; &nbsp; &nbsp; : UInt32</pre></td></tr>
-<tr class="nocodegen"><td>223</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; GetAuthenticationTagBitLength</pre></td></tr>
-<tr class="nocodegen"><td>224</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;SetAuthenticationTagLength;</pre></td></tr>
-<tr class="nocodegen"><td>225</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>226</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Generated authentication tag</pre></td></tr>
-<tr class="nocodegen"><td>227</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>228</td><td><pre style="display:inline;"> &nbsp; &nbsp;property Authenticaton_tag &nbsp;: TBytes</pre></td></tr>
-<tr class="nocodegen"><td>229</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; FAuthenticaton_tag</pre></td></tr>
-<tr class="nocodegen"><td>230</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;FAuthenticaton_tag;</pre></td></tr>
-<tr class="nocodegen"><td>231</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>232</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>233</td><td><pre style="display:inline;">implementation</pre></td></tr>
-<tr class="nocodegen"><td>234</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>235</td><td><pre style="display:inline;">function TGCM.XOR_128(const x, y : T128) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>236</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>237</td><td><pre style="display:inline;"> &nbsp;Result[0] := x[0] xor y[0];</pre></td></tr>
-<tr class="nocodegen"><td>238</td><td><pre style="display:inline;"> &nbsp;Result[1] := x[1] xor y[1];</pre></td></tr>
-<tr class="nocodegen"><td>239</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>240</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>241</td><td><pre style="display:inline;">function TGCM.XOR_128_n(const x : Pointer; y : T128) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>242</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>243</td><td><pre style="display:inline;"> &nbsp;Result[0] := P128(x)^[0] xor y[0];</pre></td></tr>
-<tr class="nocodegen"><td>244</td><td><pre style="display:inline;"> &nbsp;Result[1] := P128(x)^[1] xor y[1];</pre></td></tr>
-<tr class="nocodegen"><td>245</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>246</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>247</td><td><pre style="display:inline;">procedure TGCM.XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes);</pre></td></tr>
-<tr class="nocodegen"><td>248</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>249</td><td><pre style="display:inline;"> &nbsp;i &nbsp;: integer;</pre></td></tr>
-<tr class="nocodegen"><td>250</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to y[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>251</td><td><pre style="display:inline;"> &nbsp;by : array[0..15] of byte absolute y[0];</pre></td></tr>
-<tr class="nocodegen"><td>252</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>253</td><td><pre style="display:inline;"> &nbsp;for i := 0 to len-1 do</pre></td></tr>
-<tr class="nocodegen"><td>254</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>255</td><td><pre style="display:inline;"> &nbsp; &nbsp;res[XIndex] := x[XIndex] xor by[i];</pre></td></tr>
-<tr class="nocodegen"><td>256</td><td><pre style="display:inline;"> &nbsp; &nbsp;inc(XIndex);</pre></td></tr>
-<tr class="nocodegen"><td>257</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>258</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>259</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>260</td><td><pre style="display:inline;">function TGCM.poly_mult_H(const hx : T128 ) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>261</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>262</td><td><pre style="display:inline;"> &nbsp;i : integer;</pre></td></tr>
-<tr class="nocodegen"><td>263</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to hx[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>264</td><td><pre style="display:inline;"> &nbsp;x : array[0..15] of byte absolute hx[0];</pre></td></tr>
-<tr class="nocodegen"><td>265</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>266</td><td><pre style="display:inline;"> &nbsp;Result := M[0,x[0]];</pre></td></tr>
-<tr class="nocodegen"><td>267</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>268</td><td><pre style="display:inline;"> &nbsp;for i := 1 to 15 do</pre></td></tr>
-<tr class="nocodegen"><td>269</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>270</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result[0] := Result[0] xor M[i,x[i]][0];</pre></td></tr>
-<tr class="nocodegen"><td>271</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result[1] := Result[1] xor M[i,x[i]][1];</pre></td></tr>
-<tr class="nocodegen"><td>272</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>273</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;y&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Value to XOR the bytes from y with. XOR is done bytewise for each</pre></td></tr>
+<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; byte of y</pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;res&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Result of the XOR operation</pre></td></tr>
+<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes ); inline;</pre></td></tr>
+<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"> &nbsp; &nbsp;function poly_mult_H(const hx : T128) : T128; inline;</pre></td></tr>
+<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;</pre></td></tr>
+<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure Table_M_8Bit(const H : T128); inline;</pre></td></tr>
+<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Performs a right shift of all bytes in an 128 bit variable</pre></td></tr>
+<tr class="nocodegen"><td>149</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>150</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;rx&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>151</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Variable on which the right shift is being performed</pre></td></tr>
+<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure rightshift(var rx : T128); inline;</pre></td></tr>
+<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>155</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure INCR(var Y : T128);</pre></td></tr>
+<tr class="nocodegen"><td>156</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Defines the length of the resulting authenticated data in bit.</pre></td></tr>
+<tr class="nocodegen"><td>159</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Value&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>161</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Sets the length of Authenticaton_tag in bit, values as per specification</pre></td></tr>
+<tr class="nocodegen"><td>162</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are: 128, 120, 112, 104, or 96 bit. For certain applications, they</pre></td></tr>
+<tr class="nocodegen"><td>163</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; may be 64 or 32 as well, but the use of these two tag lengths</pre></td></tr>
+<tr class="nocodegen"><td>164</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; constrains the length of the input data and the lifetime of the key.</pre></td></tr>
+<tr class="nocodegen"><td>165</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure SetAuthenticationTagLength(const Value: UInt32);</pre></td></tr>
+<tr class="nocodegen"><td>167</td><td><pre style="display:inline;"> &nbsp; &nbsp;function GetAuthenticationTagBitLength: UInt32;</pre></td></tr>
+<tr class="nocodegen"><td>168</td><td><pre style="display:inline;"> &nbsp; &nbsp;function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;</pre></td></tr>
+<tr class="nocodegen"><td>169</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
+<tr class="nocodegen"><td>170</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Should be called when starting encryption/decryption in order to</pre></td></tr>
+<tr class="nocodegen"><td>172</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; initialize internal tables etc.</pre></td></tr>
+<tr class="nocodegen"><td>173</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>174</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;EncryptionMethod&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>175</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encryption method of the cypher used</pre></td></tr>
+<tr class="nocodegen"><td>176</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;DecryptionMethod&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>178</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Dencryption method of the cypher used</pre></td></tr>
+<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>180</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;InitVector&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>181</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Initialization vector</pre></td></tr>
+<tr class="nocodegen"><td>182</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>183</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure Init(EncryptionMethod : TEncodeDecodeMethod;</pre></td></tr>
+<tr class="nocodegen"><td>184</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; DecryptionMethod : TEncodeDecodeMethod;</pre></td></tr>
+<tr class="nocodegen"><td>185</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; InitVector &nbsp; &nbsp; &nbsp; : TBytes);</pre></td></tr>
+<tr class="nocodegen"><td>186</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>187</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encodes a block of data using the supplied cipher</pre></td></tr>
+<tr class="nocodegen"><td>188</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>189</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Source&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>190</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Plain text to encrypt</pre></td></tr>
+<tr class="nocodegen"><td>191</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>192</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Dest&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>193</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Ciphertext after encryption</pre></td></tr>
+<tr class="nocodegen"><td>194</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>195</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>196</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes to encrypt</pre></td></tr>
+<tr class="nocodegen"><td>197</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>198</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure EncodeGCM(Source,</pre></td></tr>
+<tr class="nocodegen"><td>199</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dest &nbsp; : PByteArray;</pre></td></tr>
+<tr class="nocodegen"><td>200</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Size &nbsp; : Integer);</pre></td></tr>
+<tr class="nocodegen"><td>201</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>202</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Decodes a block of data using the supplied cipher</pre></td></tr>
+<tr class="nocodegen"><td>203</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>204</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Source&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>205</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Encrypted ciphertext to decrypt</pre></td></tr>
+<tr class="nocodegen"><td>206</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>207</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Dest&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>208</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Plaintext after decryption</pre></td></tr>
+<tr class="nocodegen"><td>209</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>210</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>211</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Number of bytes to decrypt</pre></td></tr>
+<tr class="nocodegen"><td>212</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>213</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure DecodeGCM(Source,</pre></td></tr>
+<tr class="nocodegen"><td>214</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Dest &nbsp; : PByteArray;</pre></td></tr>
+<tr class="nocodegen"><td>215</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Size &nbsp; : Integer);</pre></td></tr>
+<tr class="nocodegen"><td>216</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>217</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>218</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; The data which shall be authenticated in parallel to the encryption</pre></td></tr>
+<tr class="nocodegen"><td>219</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>220</td><td><pre style="display:inline;"> &nbsp; &nbsp;property Authenticated_data : TBytes</pre></td></tr>
+<tr class="nocodegen"><td>221</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; FAuthenticated_data</pre></td></tr>
+<tr class="nocodegen"><td>222</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;FAuthenticated_data;</pre></td></tr>
+<tr class="nocodegen"><td>223</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>224</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Sets the length of Authenticaton_tag in bit, values as per specification</pre></td></tr>
+<tr class="nocodegen"><td>225</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are: 128, 120, 112, 104, or 96 bit. For certain applications, they</pre></td></tr>
+<tr class="nocodegen"><td>226</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; may be 64 or 32 as well, but the use of these two tag lengths</pre></td></tr>
+<tr class="nocodegen"><td>227</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; constrains the length of the input data and the lifetime of the key.</pre></td></tr>
+<tr class="nocodegen"><td>228</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>229</td><td><pre style="display:inline;"> &nbsp; &nbsp;property AuthenticationTagBitLength &nbsp; &nbsp; &nbsp; : UInt32</pre></td></tr>
+<tr class="nocodegen"><td>230</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; GetAuthenticationTagBitLength</pre></td></tr>
+<tr class="nocodegen"><td>231</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;SetAuthenticationTagLength;</pre></td></tr>
+<tr class="nocodegen"><td>232</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>233</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Generated authentication tag</pre></td></tr>
+<tr class="nocodegen"><td>234</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>235</td><td><pre style="display:inline;"> &nbsp; &nbsp;property Authenticaton_tag &nbsp;: TBytes</pre></td></tr>
+<tr class="nocodegen"><td>236</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;read &nbsp; FAuthenticaton_tag</pre></td></tr>
+<tr class="nocodegen"><td>237</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;write &nbsp;FAuthenticaton_tag;</pre></td></tr>
+<tr class="nocodegen"><td>238</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>239</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>240</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>241</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>242</td><td><pre style="display:inline;">function TGCM.XOR_128(const x, y : T128) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>243</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>244</td><td><pre style="display:inline;"> &nbsp;Result[0] := x[0] xor y[0];</pre></td></tr>
+<tr class="nocodegen"><td>245</td><td><pre style="display:inline;"> &nbsp;Result[1] := x[1] xor y[1];</pre></td></tr>
+<tr class="nocodegen"><td>246</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>247</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>248</td><td><pre style="display:inline;">function TGCM.XOR_128_n(const x : Pointer; y : T128) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>249</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>250</td><td><pre style="display:inline;"> &nbsp;Result[0] := P128(x)^[0] xor y[0];</pre></td></tr>
+<tr class="nocodegen"><td>251</td><td><pre style="display:inline;"> &nbsp;Result[1] := P128(x)^[1] xor y[1];</pre></td></tr>
+<tr class="nocodegen"><td>252</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>253</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>254</td><td><pre style="display:inline;">procedure TGCM.XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes);</pre></td></tr>
+<tr class="nocodegen"><td>255</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>256</td><td><pre style="display:inline;"> &nbsp;i &nbsp;: integer;</pre></td></tr>
+<tr class="nocodegen"><td>257</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to y[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>258</td><td><pre style="display:inline;"> &nbsp;by : array[0..15] of byte absolute y[0];</pre></td></tr>
+<tr class="nocodegen"><td>259</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>260</td><td><pre style="display:inline;"> &nbsp;for i := 0 to len-1 do</pre></td></tr>
+<tr class="nocodegen"><td>261</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>262</td><td><pre style="display:inline;"> &nbsp; &nbsp;res[XIndex] := x[XIndex] xor by[i];</pre></td></tr>
+<tr class="nocodegen"><td>263</td><td><pre style="display:inline;"> &nbsp; &nbsp;inc(XIndex);</pre></td></tr>
+<tr class="nocodegen"><td>264</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>265</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>266</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>267</td><td><pre style="display:inline;">function TGCM.poly_mult_H(const hx : T128 ) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>268</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>269</td><td><pre style="display:inline;"> &nbsp;i : integer;</pre></td></tr>
+<tr class="nocodegen"><td>270</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to hx[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>271</td><td><pre style="display:inline;"> &nbsp;x : array[0..15] of byte absolute hx[0];</pre></td></tr>
+<tr class="nocodegen"><td>272</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>273</td><td><pre style="display:inline;"> &nbsp;Result := M[0,x[0]];</pre></td></tr>
 <tr class="nocodegen"><td>274</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>275</td><td><pre style="display:inline;">procedure TGCM.set_auth_Len_ciph_len(var x : T128; al, cl : UInt64);</pre></td></tr>
-<tr class="nocodegen"><td>276</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>277</td><td><pre style="display:inline;"> &nbsp;i &nbsp;: integer;</pre></td></tr>
-<tr class="nocodegen"><td>278</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to x[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>279</td><td><pre style="display:inline;"> &nbsp;hx : array[0..15] of byte absolute x[0];</pre></td></tr>
-<tr class="nocodegen"><td>280</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>281</td><td><pre style="display:inline;"> &nbsp;// al:</pre></td></tr>
-<tr class="nocodegen"><td>282</td><td><pre style="display:inline;"> &nbsp;x := nullbytes;</pre></td></tr>
-<tr class="nocodegen"><td>283</td><td><pre style="display:inline;"> &nbsp;i := 7;</pre></td></tr>
-<tr class="nocodegen"><td>284</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>285</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
-<tr class="nocodegen"><td>286</td><td><pre style="display:inline;"> &nbsp; &nbsp;hx[i] := al mod 256;</pre></td></tr>
-<tr class="nocodegen"><td>287</td><td><pre style="display:inline;"> &nbsp; &nbsp;al := al shr 8;</pre></td></tr>
-<tr class="nocodegen"><td>288</td><td><pre style="display:inline;"> &nbsp; &nbsp;dec(i);</pre></td></tr>
-<tr class="nocodegen"><td>289</td><td><pre style="display:inline;"> &nbsp;until al = 0;</pre></td></tr>
-<tr class="nocodegen"><td>290</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>291</td><td><pre style="display:inline;"> &nbsp;// cl:</pre></td></tr>
-<tr class="nocodegen"><td>292</td><td><pre style="display:inline;"> &nbsp;i := 15;</pre></td></tr>
-<tr class="nocodegen"><td>293</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>294</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
-<tr class="nocodegen"><td>295</td><td><pre style="display:inline;"> &nbsp; &nbsp;hx[i] := cl mod 256;</pre></td></tr>
-<tr class="nocodegen"><td>296</td><td><pre style="display:inline;"> &nbsp; &nbsp;cl := cl shr 8;</pre></td></tr>
-<tr class="nocodegen"><td>297</td><td><pre style="display:inline;"> &nbsp; &nbsp;dec(i);</pre></td></tr>
-<tr class="nocodegen"><td>298</td><td><pre style="display:inline;"> &nbsp;until cl = 0;</pre></td></tr>
-<tr class="nocodegen"><td>299</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>275</td><td><pre style="display:inline;"> &nbsp;for i := 1 to 15 do</pre></td></tr>
+<tr class="nocodegen"><td>276</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>277</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result[0] := Result[0] xor M[i,x[i]][0];</pre></td></tr>
+<tr class="nocodegen"><td>278</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result[1] := Result[1] xor M[i,x[i]][1];</pre></td></tr>
+<tr class="nocodegen"><td>279</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>280</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>281</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>282</td><td><pre style="display:inline;">procedure TGCM.set_auth_Len_ciph_len(var x : T128; al, cl : UInt64);</pre></td></tr>
+<tr class="nocodegen"><td>283</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>284</td><td><pre style="display:inline;"> &nbsp;i &nbsp;: integer;</pre></td></tr>
+<tr class="nocodegen"><td>285</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to x[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>286</td><td><pre style="display:inline;"> &nbsp;hx : array[0..15] of byte absolute x[0];</pre></td></tr>
+<tr class="nocodegen"><td>287</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>288</td><td><pre style="display:inline;"> &nbsp;// al:</pre></td></tr>
+<tr class="nocodegen"><td>289</td><td><pre style="display:inline;"> &nbsp;x := nullbytes;</pre></td></tr>
+<tr class="nocodegen"><td>290</td><td><pre style="display:inline;"> &nbsp;i := 7;</pre></td></tr>
+<tr class="nocodegen"><td>291</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>292</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
+<tr class="nocodegen"><td>293</td><td><pre style="display:inline;"> &nbsp; &nbsp;hx[i] := al mod 256;</pre></td></tr>
+<tr class="nocodegen"><td>294</td><td><pre style="display:inline;"> &nbsp; &nbsp;al := al shr 8;</pre></td></tr>
+<tr class="nocodegen"><td>295</td><td><pre style="display:inline;"> &nbsp; &nbsp;dec(i);</pre></td></tr>
+<tr class="nocodegen"><td>296</td><td><pre style="display:inline;"> &nbsp;until al = 0;</pre></td></tr>
+<tr class="nocodegen"><td>297</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>298</td><td><pre style="display:inline;"> &nbsp;// cl:</pre></td></tr>
+<tr class="nocodegen"><td>299</td><td><pre style="display:inline;"> &nbsp;i := 15;</pre></td></tr>
 <tr class="nocodegen"><td>300</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>301</td><td><pre style="display:inline;">procedure TGCM.Table_M_8Bit(const H : T128);</pre></td></tr>
-<tr class="nocodegen"><td>302</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>303</td><td><pre style="display:inline;"> &nbsp;hbit, hbyte, i, j : integer;</pre></td></tr>
-<tr class="nocodegen"><td>304</td><td><pre style="display:inline;"> &nbsp;HP : T128;</pre></td></tr>
-<tr class="nocodegen"><td>305</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to HP[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>306</td><td><pre style="display:inline;"> &nbsp;bHP : array[0..15] of byte absolute HP[0];</pre></td></tr>
-<tr class="nocodegen"><td>307</td><td><pre style="display:inline;"> &nbsp;mask : byte;</pre></td></tr>
-<tr class="nocodegen"><td>308</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>309</td><td><pre style="display:inline;"> &nbsp;HP := H;</pre></td></tr>
-<tr class="nocodegen"><td>310</td><td><pre style="display:inline;"> &nbsp;for hbyte := 0 to 15 do</pre></td></tr>
-<tr class="nocodegen"><td>311</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>312</td><td><pre style="display:inline;"> &nbsp; &nbsp;mask := 128;</pre></td></tr>
-<tr class="nocodegen"><td>313</td><td><pre style="display:inline;"> &nbsp; &nbsp;for hbit := 0 to 7 do</pre></td></tr>
-<tr class="nocodegen"><td>314</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>315</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;M[hbyte,mask] := HP;</pre></td></tr>
-<tr class="nocodegen"><td>316</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>317</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if (bHP[15] and 1 = 0) then</pre></td></tr>
-<tr class="nocodegen"><td>318</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;rightshift(HP)</pre></td></tr>
-<tr class="nocodegen"><td>319</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>320</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>321</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;rightshift(HP);</pre></td></tr>
-<tr class="nocodegen"><td>322</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;bHP[0] := bHP[0] xor $e1;</pre></td></tr>
-<tr class="nocodegen"><td>323</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>324</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>325</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;mask := mask shr 1;</pre></td></tr>
-<tr class="nocodegen"><td>326</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>327</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>328</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>329</td><td><pre style="display:inline;"> &nbsp;for hbyte := 0 to 15 do</pre></td></tr>
-<tr class="nocodegen"><td>330</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>331</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 2;</pre></td></tr>
-<tr class="nocodegen"><td>332</td><td><pre style="display:inline;"> &nbsp; &nbsp;while i &lt;= 128 do</pre></td></tr>
-<tr class="nocodegen"><td>333</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>334</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for j := 1 to i-1 do</pre></td></tr>
-<tr class="nocodegen"><td>335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;M[hbyte,i+j] := XOR_128(M[hbyte,i], M[hbyte,j]);</pre></td></tr>
-<tr class="nocodegen"><td>336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := i*2;</pre></td></tr>
-<tr class="nocodegen"><td>337</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp;M[hbyte,0] := nullbytes;</pre></td></tr>
-<tr class="nocodegen"><td>339</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>340</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>341</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>342</td><td><pre style="display:inline;">procedure TGCM.rightshift(var rx : T128);</pre></td></tr>
-<tr class="nocodegen"><td>343</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>344</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to rx[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>345</td><td><pre style="display:inline;"> &nbsp;x : array[0..15] of byte absolute rx[0];</pre></td></tr>
-<tr class="nocodegen"><td>346</td><td><pre style="display:inline;"> &nbsp;i : integer;</pre></td></tr>
-<tr class="notcovered"><td>347</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>348</td><td><pre style="display:inline;"> &nbsp;for i := 15 downto 1 do</pre></td></tr>
-<tr class="notcovered"><td>349</td><td><pre style="display:inline;"> &nbsp; &nbsp;x[i] := (x[i] shr 1) or ((x[i-1] and 1) shl 7);</pre></td></tr>
-<tr class="nocodegen"><td>350</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>351</td><td><pre style="display:inline;"> &nbsp;x[0] := x[0] shr 1;</pre></td></tr>
-<tr class="notcovered"><td>352</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>353</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>354</td><td><pre style="display:inline;">procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);</pre></td></tr>
-<tr class="notcovered"><td>355</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>356</td><td><pre style="display:inline;"> &nbsp;Flen_auth_tag := Value shr 3;</pre></td></tr>
-<tr class="notcovered"><td>357</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>358</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>359</td><td><pre style="display:inline;">procedure TGCM.INCR(var Y : T128);</pre></td></tr>
-<tr class="nocodegen"><td>360</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>361</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to Y[0], to get rid of the absolute? }</pre></td></tr>
-<tr class="nocodegen"><td>362</td><td><pre style="display:inline;"> &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
-<tr class="notcovered"><td>363</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>364</td><td><pre style="display:inline;"> &nbsp;{$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>365</td><td><pre style="display:inline;"> &nbsp;{$Q-}</pre></td></tr>
-<tr class="notcovered"><td>366</td><td><pre style="display:inline;"> &nbsp;inc(bY[15]);</pre></td></tr>
-<tr class="notcovered"><td>367</td><td><pre style="display:inline;"> &nbsp;if bY[15]=0 then</pre></td></tr>
-<tr class="nocodegen"><td>368</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>369</td><td><pre style="display:inline;"> &nbsp; &nbsp;inc(bY[14]);</pre></td></tr>
-<tr class="nocodegen"><td>370</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>371</td><td><pre style="display:inline;"> &nbsp; &nbsp;if bY[14] = 0 then</pre></td></tr>
-<tr class="nocodegen"><td>372</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>373</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(bY[13]);</pre></td></tr>
-<tr class="nocodegen"><td>374</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>375</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if bY[13] = 0 then</pre></td></tr>
-<tr class="notcovered"><td>376</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;inc(bY[12]);</pre></td></tr>
-<tr class="nocodegen"><td>377</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>378</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>379</td><td><pre style="display:inline;"> &nbsp;{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}</pre></td></tr>
-<tr class="notcovered"><td>380</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>301</td><td><pre style="display:inline;"> &nbsp;repeat</pre></td></tr>
+<tr class="nocodegen"><td>302</td><td><pre style="display:inline;"> &nbsp; &nbsp;hx[i] := cl mod 256;</pre></td></tr>
+<tr class="nocodegen"><td>303</td><td><pre style="display:inline;"> &nbsp; &nbsp;cl := cl shr 8;</pre></td></tr>
+<tr class="nocodegen"><td>304</td><td><pre style="display:inline;"> &nbsp; &nbsp;dec(i);</pre></td></tr>
+<tr class="nocodegen"><td>305</td><td><pre style="display:inline;"> &nbsp;until cl = 0;</pre></td></tr>
+<tr class="nocodegen"><td>306</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>307</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>308</td><td><pre style="display:inline;">procedure TGCM.Table_M_8Bit(const H : T128);</pre></td></tr>
+<tr class="nocodegen"><td>309</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>310</td><td><pre style="display:inline;"> &nbsp;hbit, hbyte, i, j : integer;</pre></td></tr>
+<tr class="nocodegen"><td>311</td><td><pre style="display:inline;"> &nbsp;HP : T128;</pre></td></tr>
+<tr class="nocodegen"><td>312</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to HP[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>313</td><td><pre style="display:inline;"> &nbsp;bHP : array[0..15] of byte absolute HP[0];</pre></td></tr>
+<tr class="nocodegen"><td>314</td><td><pre style="display:inline;"> &nbsp;mask : byte;</pre></td></tr>
+<tr class="nocodegen"><td>315</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>316</td><td><pre style="display:inline;"> &nbsp;HP := H;</pre></td></tr>
+<tr class="nocodegen"><td>317</td><td><pre style="display:inline;"> &nbsp;for hbyte := 0 to 15 do</pre></td></tr>
+<tr class="nocodegen"><td>318</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>319</td><td><pre style="display:inline;"> &nbsp; &nbsp;mask := 128;</pre></td></tr>
+<tr class="nocodegen"><td>320</td><td><pre style="display:inline;"> &nbsp; &nbsp;for hbit := 0 to 7 do</pre></td></tr>
+<tr class="nocodegen"><td>321</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>322</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;M[hbyte,mask] := HP;</pre></td></tr>
+<tr class="nocodegen"><td>323</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>324</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if (bHP[15] and 1 = 0) then</pre></td></tr>
+<tr class="nocodegen"><td>325</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;rightshift(HP)</pre></td></tr>
+<tr class="nocodegen"><td>326</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>327</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>328</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;rightshift(HP);</pre></td></tr>
+<tr class="nocodegen"><td>329</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;bHP[0] := bHP[0] xor $e1;</pre></td></tr>
+<tr class="nocodegen"><td>330</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>331</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>332</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;mask := mask shr 1;</pre></td></tr>
+<tr class="nocodegen"><td>333</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>334</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>335</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>336</td><td><pre style="display:inline;"> &nbsp;for hbyte := 0 to 15 do</pre></td></tr>
+<tr class="nocodegen"><td>337</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp;i := 2;</pre></td></tr>
+<tr class="nocodegen"><td>339</td><td><pre style="display:inline;"> &nbsp; &nbsp;while i &lt;= 128 do</pre></td></tr>
+<tr class="nocodegen"><td>340</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>341</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;for j := 1 to i-1 do</pre></td></tr>
+<tr class="nocodegen"><td>342</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;M[hbyte,i+j] := XOR_128(M[hbyte,i], M[hbyte,j]);</pre></td></tr>
+<tr class="nocodegen"><td>343</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;i := i*2;</pre></td></tr>
+<tr class="nocodegen"><td>344</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>345</td><td><pre style="display:inline;"> &nbsp; &nbsp;M[hbyte,0] := nullbytes;</pre></td></tr>
+<tr class="nocodegen"><td>346</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>347</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>348</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>349</td><td><pre style="display:inline;">procedure TGCM.rightshift(var rx : T128);</pre></td></tr>
+<tr class="nocodegen"><td>350</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>351</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to rx[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>352</td><td><pre style="display:inline;"> &nbsp;x : array[0..15] of byte absolute rx[0];</pre></td></tr>
+<tr class="nocodegen"><td>353</td><td><pre style="display:inline;"> &nbsp;i : integer;</pre></td></tr>
+<tr class="notcovered"><td>354</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>355</td><td><pre style="display:inline;"> &nbsp;for i := 15 downto 1 do</pre></td></tr>
+<tr class="notcovered"><td>356</td><td><pre style="display:inline;"> &nbsp; &nbsp;x[i] := (x[i] shr 1) or ((x[i-1] and 1) shl 7);</pre></td></tr>
+<tr class="nocodegen"><td>357</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>358</td><td><pre style="display:inline;"> &nbsp;x[0] := x[0] shr 1;</pre></td></tr>
+<tr class="notcovered"><td>359</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>360</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>361</td><td><pre style="display:inline;">procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);</pre></td></tr>
+<tr class="notcovered"><td>362</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>363</td><td><pre style="display:inline;"> &nbsp;Flen_auth_tag := Value shr 3;</pre></td></tr>
+<tr class="notcovered"><td>364</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>365</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>366</td><td><pre style="display:inline;">procedure TGCM.INCR(var Y : T128);</pre></td></tr>
+<tr class="nocodegen"><td>367</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>368</td><td><pre style="display:inline;"> &nbsp;{ TODO : change to a pointer to Y[0], to get rid of the absolute? }</pre></td></tr>
+<tr class="nocodegen"><td>369</td><td><pre style="display:inline;"> &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
+<tr class="notcovered"><td>370</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>371</td><td><pre style="display:inline;"> &nbsp;{$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>372</td><td><pre style="display:inline;"> &nbsp;{$Q-}</pre></td></tr>
+<tr class="notcovered"><td>373</td><td><pre style="display:inline;"> &nbsp;inc(bY[15]);</pre></td></tr>
+<tr class="notcovered"><td>374</td><td><pre style="display:inline;"> &nbsp;if bY[15]=0 then</pre></td></tr>
+<tr class="nocodegen"><td>375</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>376</td><td><pre style="display:inline;"> &nbsp; &nbsp;inc(bY[14]);</pre></td></tr>
+<tr class="nocodegen"><td>377</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>378</td><td><pre style="display:inline;"> &nbsp; &nbsp;if bY[14] = 0 then</pre></td></tr>
+<tr class="nocodegen"><td>379</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>380</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;inc(bY[13]);</pre></td></tr>
 <tr class="nocodegen"><td>381</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>382</td><td><pre style="display:inline;">procedure TGCM.Init(EncryptionMethod: TEncodeDecodeMethod; InitVector:TBytes);</pre></td></tr>
-<tr class="nocodegen"><td>383</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>384</td><td><pre style="display:inline;"> &nbsp;b : ^Byte;</pre></td></tr>
-<tr class="nocodegen"><td>385</td><td><pre style="display:inline;">// &nbsp;bY : array[0..15] of byte absolute FY[0]; doesn&apos;t compile as FY is not seen as variable</pre></td></tr>
-<tr class="notcovered"><td>386</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>387</td><td><pre style="display:inline;"> &nbsp;Assert(Assigned(EncryptionMethod), &apos;No encryption method specified&apos;);</pre></td></tr>
+<tr class="notcovered"><td>382</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if bY[13] = 0 then</pre></td></tr>
+<tr class="notcovered"><td>383</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;inc(bY[12]);</pre></td></tr>
+<tr class="nocodegen"><td>384</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>385</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>386</td><td><pre style="display:inline;"> &nbsp;{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}</pre></td></tr>
+<tr class="notcovered"><td>387</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>388</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>389</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod := EncryptionMethod;</pre></td></tr>
-<tr class="nocodegen"><td>390</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>391</td><td><pre style="display:inline;"> &nbsp;Nullbytes[0] := 0;</pre></td></tr>
-<tr class="notcovered"><td>392</td><td><pre style="display:inline;"> &nbsp;Nullbytes[1] := 0;</pre></td></tr>
-<tr class="nocodegen"><td>393</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>394</td><td><pre style="display:inline;"> &nbsp;EncryptionMethod(@Nullbytes[0], @FH[0], 16);</pre></td></tr>
-<tr class="notcovered"><td>395</td><td><pre style="display:inline;"> &nbsp;Table_M_8Bit(FH);</pre></td></tr>
-<tr class="nocodegen"><td>396</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>397</td><td><pre style="display:inline;"> &nbsp;if length(InitVector) = 12 then</pre></td></tr>
-<tr class="nocodegen"><td>398</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>399</td><td><pre style="display:inline;"> &nbsp; &nbsp; FY[1] := 0;</pre></td></tr>
-<tr class="notcovered"><td>400</td><td><pre style="display:inline;"> &nbsp; &nbsp; Move(InitVector[0], FY[0], 12);</pre></td></tr>
-<tr class="notcovered"><td>401</td><td><pre style="display:inline;"> &nbsp; &nbsp; b := @FY[0];</pre></td></tr>
-<tr class="notcovered"><td>402</td><td><pre style="display:inline;"> &nbsp; &nbsp; inc(b, 15);</pre></td></tr>
-<tr class="notcovered"><td>403</td><td><pre style="display:inline;"> &nbsp; &nbsp; b^ := 1;</pre></td></tr>
-<tr class="nocodegen"><td>404</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>405</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="notcovered"><td>406</td><td><pre style="display:inline;"> &nbsp; &nbsp; FY := GHASH(FH, nil, InitVector);</pre></td></tr>
-<tr class="notcovered"><td>407</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>408</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>409</td><td><pre style="display:inline;">function TGCM.GHASH(Hash : T128; authenticated_data, ciphertext : TBytes) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>410</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>411</td><td><pre style="display:inline;"> &nbsp;aclen : T128;</pre></td></tr>
-<tr class="nocodegen"><td>412</td><td><pre style="display:inline;"> &nbsp;x : T128;</pre></td></tr>
-<tr class="nocodegen"><td>413</td><td><pre style="display:inline;"> &nbsp;n : Uint64;</pre></td></tr>
-<tr class="nocodegen"><td>414</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>415</td><td><pre style="display:inline;"> &nbsp;procedure encode(data : TBytes);</pre></td></tr>
-<tr class="nocodegen"><td>416</td><td><pre style="display:inline;"> &nbsp;var</pre></td></tr>
-<tr class="nocodegen"><td>417</td><td><pre style="display:inline;"> &nbsp; &nbsp;i, mod_d, div_d, len_d : UInt64;</pre></td></tr>
-<tr class="nocodegen"><td>418</td><td><pre style="display:inline;"> &nbsp; &nbsp;hdata : T128;</pre></td></tr>
-<tr class="notcovered"><td>419</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>420</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;len_d := length( data );</pre></td></tr>
-<tr class="notcovered"><td>421</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if ( len_d &gt; 0 ) then</pre></td></tr>
-<tr class="nocodegen"><td>422</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>423</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;n := 0;</pre></td></tr>
-<tr class="notcovered"><td>424</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;div_d := len_d div 16;</pre></td></tr>
-<tr class="notcovered"><td>425</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if div_d &gt; 0 then</pre></td></tr>
-<tr class="notcovered"><td>426</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;for i := 0 to div_d -1 do</pre></td></tr>
-<tr class="nocodegen"><td>427</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>428</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128_n( @data[n], x ) );</pre></td></tr>
-<tr class="notcovered"><td>429</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;inc( n, 16 );</pre></td></tr>
-<tr class="notcovered"><td>430</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>431</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>432</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;mod_d := len_d mod 16;</pre></td></tr>
-<tr class="notcovered"><td>433</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if mod_d &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>434</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>435</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;hdata := nullbytes;</pre></td></tr>
-<tr class="notcovered"><td>436</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Move( data[n], hdata[0], mod_d );</pre></td></tr>
-<tr class="notcovered"><td>437</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128( hdata, x ) );</pre></td></tr>
-<tr class="nocodegen"><td>438</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>439</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="notcovered"><td>440</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>441</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>442</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>443</td><td><pre style="display:inline;"> &nbsp;x := nullbytes;</pre></td></tr>
-<tr class="notcovered"><td>444</td><td><pre style="display:inline;"> &nbsp;encode( authenticated_data );</pre></td></tr>
-<tr class="notcovered"><td>445</td><td><pre style="display:inline;"> &nbsp;encode( ciphertext );</pre></td></tr>
-<tr class="notcovered"><td>446</td><td><pre style="display:inline;"> &nbsp;set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);</pre></td></tr>
-<tr class="nocodegen"><td>447</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>448</td><td><pre style="display:inline;"> &nbsp;Result := poly_mult_H( XOR_128( aclen, x ) );</pre></td></tr>
-<tr class="notcovered"><td>449</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>450</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>451</td><td><pre style="display:inline;">procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer; Method: TEncodeDecodeMethod);</pre></td></tr>
-<tr class="notcovered"><td>452</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>453</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>454</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>455</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>456</td><td><pre style="display:inline;">procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);</pre></td></tr>
-<tr class="nocodegen"><td>457</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>458</td><td><pre style="display:inline;"> &nbsp;E_K_Y0 : T128; // most likely to be moved to the class itsself</pre></td></tr>
-<tr class="nocodegen"><td>459</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; : T128;</pre></td></tr>
-<tr class="notcovered"><td>460</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>461</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod(@FY[0], @E_K_Y0[0], 16);</pre></td></tr>
-<tr class="nocodegen"><td>462</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>463</td><td><pre style="display:inline;"> &nbsp;INCR(FY);</pre></td></tr>
-<tr class="nocodegen"><td>464</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>465</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod(@FY[0], @Temp[0], 16);</pre></td></tr>
+<tr class="nocodegen"><td>389</td><td><pre style="display:inline;">procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;</pre></td></tr>
+<tr class="nocodegen"><td>390</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;DecryptionMethod : TEncodeDecodeMethod;</pre></td></tr>
+<tr class="nocodegen"><td>391</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;InitVector &nbsp; &nbsp; &nbsp; : TBytes);</pre></td></tr>
+<tr class="nocodegen"><td>392</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>393</td><td><pre style="display:inline;"> &nbsp;b : ^Byte;</pre></td></tr>
+<tr class="nocodegen"><td>394</td><td><pre style="display:inline;">// &nbsp;bY : array[0..15] of byte absolute FY[0]; doesn&apos;t compile as FY is not seen as variable</pre></td></tr>
+<tr class="notcovered"><td>395</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>396</td><td><pre style="display:inline;"> &nbsp;Assert(Assigned(EncryptionMethod), &apos;No encryption method specified&apos;);</pre></td></tr>
+<tr class="nocodegen"><td>397</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>398</td><td><pre style="display:inline;"> &nbsp;// Clear calculated authentication value</pre></td></tr>
+<tr class="notcovered"><td>399</td><td><pre style="display:inline;"> &nbsp;FillChar(FAuthenticaton_tag, Length(FAuthenticaton_tag), #0);</pre></td></tr>
+<tr class="nocodegen"><td>400</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>401</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod := EncryptionMethod;</pre></td></tr>
+<tr class="notcovered"><td>402</td><td><pre style="display:inline;"> &nbsp;FDecryptionMethod := DecryptionMethod;</pre></td></tr>
+<tr class="nocodegen"><td>403</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>404</td><td><pre style="display:inline;"> &nbsp;Nullbytes[0] := 0;</pre></td></tr>
+<tr class="notcovered"><td>405</td><td><pre style="display:inline;"> &nbsp;Nullbytes[1] := 0;</pre></td></tr>
+<tr class="nocodegen"><td>406</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>407</td><td><pre style="display:inline;"> &nbsp;EncryptionMethod(@Nullbytes[0], @FH[0], 16);</pre></td></tr>
+<tr class="notcovered"><td>408</td><td><pre style="display:inline;"> &nbsp;Table_M_8Bit(FH);</pre></td></tr>
+<tr class="nocodegen"><td>409</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>410</td><td><pre style="display:inline;"> &nbsp;if length(InitVector) = 12 then</pre></td></tr>
+<tr class="nocodegen"><td>411</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>412</td><td><pre style="display:inline;"> &nbsp; &nbsp; FY[1] := 0;</pre></td></tr>
+<tr class="notcovered"><td>413</td><td><pre style="display:inline;"> &nbsp; &nbsp; Move(InitVector[0], FY[0], 12);</pre></td></tr>
+<tr class="notcovered"><td>414</td><td><pre style="display:inline;"> &nbsp; &nbsp; b := @FY[0];</pre></td></tr>
+<tr class="notcovered"><td>415</td><td><pre style="display:inline;"> &nbsp; &nbsp; inc(b, 15);</pre></td></tr>
+<tr class="notcovered"><td>416</td><td><pre style="display:inline;"> &nbsp; &nbsp; b^ := 1;</pre></td></tr>
+<tr class="nocodegen"><td>417</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>418</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="notcovered"><td>419</td><td><pre style="display:inline;"> &nbsp; &nbsp; FY := GHASH(FH, nil, InitVector);</pre></td></tr>
+<tr class="notcovered"><td>420</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>421</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>422</td><td><pre style="display:inline;">function TGCM.GHASH(Hash : T128; authenticated_data, ciphertext : TBytes) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>423</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>424</td><td><pre style="display:inline;"> &nbsp;aclen : T128;</pre></td></tr>
+<tr class="nocodegen"><td>425</td><td><pre style="display:inline;"> &nbsp;x : T128;</pre></td></tr>
+<tr class="nocodegen"><td>426</td><td><pre style="display:inline;"> &nbsp;n : Uint64;</pre></td></tr>
+<tr class="nocodegen"><td>427</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>428</td><td><pre style="display:inline;"> &nbsp;procedure encode(data : TBytes);</pre></td></tr>
+<tr class="nocodegen"><td>429</td><td><pre style="display:inline;"> &nbsp;var</pre></td></tr>
+<tr class="nocodegen"><td>430</td><td><pre style="display:inline;"> &nbsp; &nbsp;i, mod_d, div_d, len_d : UInt64;</pre></td></tr>
+<tr class="nocodegen"><td>431</td><td><pre style="display:inline;"> &nbsp; &nbsp;hdata : T128;</pre></td></tr>
+<tr class="notcovered"><td>432</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>433</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;len_d := length( data );</pre></td></tr>
+<tr class="notcovered"><td>434</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if ( len_d &gt; 0 ) then</pre></td></tr>
+<tr class="nocodegen"><td>435</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>436</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;n := 0;</pre></td></tr>
+<tr class="notcovered"><td>437</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;div_d := len_d div 16;</pre></td></tr>
+<tr class="notcovered"><td>438</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if div_d &gt; 0 then</pre></td></tr>
+<tr class="notcovered"><td>439</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;for i := 0 to div_d -1 do</pre></td></tr>
+<tr class="nocodegen"><td>440</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>441</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128_n( @data[n], x ) );</pre></td></tr>
+<tr class="notcovered"><td>442</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;inc( n, 16 );</pre></td></tr>
+<tr class="notcovered"><td>443</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>444</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>445</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;mod_d := len_d mod 16;</pre></td></tr>
+<tr class="notcovered"><td>446</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if mod_d &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>447</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="notcovered"><td>448</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;hdata := nullbytes;</pre></td></tr>
+<tr class="notcovered"><td>449</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Move( data[n], hdata[0], mod_d );</pre></td></tr>
+<tr class="notcovered"><td>450</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128( hdata, x ) );</pre></td></tr>
+<tr class="nocodegen"><td>451</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>452</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="notcovered"><td>453</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>454</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>455</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>456</td><td><pre style="display:inline;"> &nbsp;x := nullbytes;</pre></td></tr>
+<tr class="notcovered"><td>457</td><td><pre style="display:inline;"> &nbsp;encode( authenticated_data );</pre></td></tr>
+<tr class="notcovered"><td>458</td><td><pre style="display:inline;"> &nbsp;encode( ciphertext );</pre></td></tr>
+<tr class="notcovered"><td>459</td><td><pre style="display:inline;"> &nbsp;set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);</pre></td></tr>
+<tr class="nocodegen"><td>460</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>461</td><td><pre style="display:inline;"> &nbsp;Result := poly_mult_H( XOR_128( aclen, x ) );</pre></td></tr>
+<tr class="notcovered"><td>462</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>463</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>464</td><td><pre style="display:inline;">procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer);</pre></td></tr>
+<tr class="notcovered"><td>465</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="nocodegen"><td>466</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>467</td><td><pre style="display:inline;"> &nbsp;P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);</pre></td></tr>
-<tr class="notcovered"><td>468</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>469</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>470</td><td><pre style="display:inline;">function TGCM.GetAuthenticationTagBitLength: UInt32;</pre></td></tr>
-<tr class="notcovered"><td>471</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>472</td><td><pre style="display:inline;"> &nbsp;Result := Flen_auth_tag shl 3;</pre></td></tr>
-<tr class="notcovered"><td>473</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>474</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>475</td><td><pre style="display:inline;">//function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>476</td><td><pre style="display:inline;">//var aclen : T128;</pre></td></tr>
-<tr class="nocodegen"><td>477</td><td><pre style="display:inline;">// &nbsp; &nbsp;x : T128;</pre></td></tr>
-<tr class="nocodegen"><td>478</td><td><pre style="display:inline;">// &nbsp; &nbsp;n : Uint64;</pre></td></tr>
-<tr class="nocodegen"><td>479</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>480</td><td><pre style="display:inline;">// &nbsp; &nbsp;procedure encode( data : TBytes );</pre></td></tr>
-<tr class="nocodegen"><td>481</td><td><pre style="display:inline;">// &nbsp; &nbsp;var i, mod_d, div_d, len_d : Uint64;</pre></td></tr>
-<tr class="nocodegen"><td>482</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;hdata : T128;</pre></td></tr>
-<tr class="nocodegen"><td>483</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>484</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;len_d := length( data );</pre></td></tr>
-<tr class="nocodegen"><td>485</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;if ( len_d &gt; 0 ) then</pre></td></tr>
-<tr class="nocodegen"><td>486</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>487</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;n := 0;</pre></td></tr>
-<tr class="nocodegen"><td>488</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;div_d := len_d div 16;</pre></td></tr>
-<tr class="nocodegen"><td>489</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if div_d &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>490</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for i := 0 to div_d -1 do</pre></td></tr>
-<tr class="nocodegen"><td>491</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>492</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128_n( @data[n], x ) );</pre></td></tr>
-<tr class="nocodegen"><td>493</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;inc( n, 16 );</pre></td></tr>
-<tr class="nocodegen"><td>494</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>495</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>496</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;mod_d := len_d mod 16;</pre></td></tr>
-<tr class="nocodegen"><td>497</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if mod_d &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>498</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>499</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;hdata := nullbytes;</pre></td></tr>
-<tr class="nocodegen"><td>500</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Move( data[n], hdata[0], mod_d );</pre></td></tr>
-<tr class="nocodegen"><td>501</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128( hdata, x ) );</pre></td></tr>
-<tr class="nocodegen"><td>502</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>503</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>504</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>505</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>506</td><td><pre style="display:inline;">//begin</pre></td></tr>
-<tr class="nocodegen"><td>507</td><td><pre style="display:inline;">// &nbsp;x := nullbytes;</pre></td></tr>
-<tr class="nocodegen"><td>508</td><td><pre style="display:inline;">// &nbsp;encode( authenticated_data );</pre></td></tr>
-<tr class="nocodegen"><td>509</td><td><pre style="display:inline;">// &nbsp;encode( ciphertext );</pre></td></tr>
-<tr class="nocodegen"><td>510</td><td><pre style="display:inline;">// &nbsp;set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);</pre></td></tr>
-<tr class="nocodegen"><td>511</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>512</td><td><pre style="display:inline;">// &nbsp;Result := poly_mult_H( XOR_128( aclen, x ) );</pre></td></tr>
-<tr class="nocodegen"><td>513</td><td><pre style="display:inline;">//end;</pre></td></tr>
-<tr class="nocodegen"><td>514</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>515</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>516</td><td><pre style="display:inline;">//function E_Cipher( val : T128) : T128;</pre></td></tr>
-<tr class="nocodegen"><td>517</td><td><pre style="display:inline;">//var hval: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>518</td><td><pre style="display:inline;">//begin</pre></td></tr>
-<tr class="nocodegen"><td>519</td><td><pre style="display:inline;">// &nbsp;haes_DEC.Encode( val, Result[0], 16 );</pre></td></tr>
-<tr class="nocodegen"><td>520</td><td><pre style="display:inline;">//end;</pre></td></tr>
-<tr class="nocodegen"><td>521</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>522</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>523</td><td><pre style="display:inline;">//procedure E_Init( key : TBytes );</pre></td></tr>
-<tr class="nocodegen"><td>524</td><td><pre style="display:inline;">// var hkey : RawByteString;</pre></td></tr>
-<tr class="nocodegen"><td>525</td><td><pre style="display:inline;">//begin</pre></td></tr>
-<tr class="nocodegen"><td>526</td><td><pre style="display:inline;">// &nbsp; &nbsp;setlength(hkey,length(key));</pre></td></tr>
-<tr class="nocodegen"><td>527</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move(key[0], hkey[1], length(key));</pre></td></tr>
-<tr class="nocodegen"><td>528</td><td><pre style="display:inline;">// &nbsp; &nbsp;haes_DEC.Init( hkey );</pre></td></tr>
-<tr class="nocodegen"><td>529</td><td><pre style="display:inline;">//end;</pre></td></tr>
-<tr class="nocodegen"><td>530</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>531</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>532</td><td><pre style="display:inline;">//procedure encrypt( const key, IV : TBytes; const plaintext, authenticated_data : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>533</td><td><pre style="display:inline;">//out ciphertext : TBytes; len_auth_tag : integer; out authenticaton_tag : TBytes );</pre></td></tr>
-<tr class="nocodegen"><td>534</td><td><pre style="display:inline;">//var</pre></td></tr>
-<tr class="nocodegen"><td>535</td><td><pre style="display:inline;">// &nbsp; &nbsp;i, j, div_len_plain, len_plain : Uint64;</pre></td></tr>
-<tr class="nocodegen"><td>536</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag, E_K_Y0, Y, H : T128;</pre></td></tr>
-<tr class="nocodegen"><td>537</td><td><pre style="display:inline;">// &nbsp; &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
-<tr class="nocodegen"><td>538</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>539</td><td><pre style="display:inline;">//begin</pre></td></tr>
-<tr class="nocodegen"><td>540</td><td><pre style="display:inline;">// &nbsp; &nbsp;// len_auth_tag := len_auth_tag shr 3; wird schon im Setter gemacht</pre></td></tr>
-<tr class="nocodegen"><td>541</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>542</td><td><pre style="display:inline;">// &nbsp; &nbsp;//E_Init( key ); wurde vorher schon in der Basisklasse gemacht oder so</pre></td></tr>
-<tr class="nocodegen"><td>543</td><td><pre style="display:inline;">// &nbsp; &nbsp;//H := E_Cipher( nullbytes ); ist eingebaut</pre></td></tr>
-<tr class="nocodegen"><td>544</td><td><pre style="display:inline;">// &nbsp; &nbsp;//Table_M_8Bit(H); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ist eingebaut</pre></td></tr>
-<tr class="nocodegen"><td>545</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>546</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_plain := length( plaintext );</pre></td></tr>
-<tr class="nocodegen"><td>547</td><td><pre style="display:inline;">// &nbsp; &nbsp;SetLength( ciphertext, len_plain );</pre></td></tr>
-<tr class="nocodegen"><td>548</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>549</td><td><pre style="display:inline;">// &nbsp; &nbsp;//if length(IV) = 12 then</pre></td></tr>
-<tr class="nocodegen"><td>550</td><td><pre style="display:inline;">// &nbsp; &nbsp;//begin</pre></td></tr>
-<tr class="nocodegen"><td>551</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Y[1] := 0;</pre></td></tr>
-<tr class="nocodegen"><td>552</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Move( IV[0], Y[0], 12 );</pre></td></tr>
-<tr class="nocodegen"><td>553</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; bY[15] := 1;</pre></td></tr>
-<tr class="nocodegen"><td>554</td><td><pre style="display:inline;">// &nbsp; &nbsp;//end</pre></td></tr>
-<tr class="nocodegen"><td>555</td><td><pre style="display:inline;">// &nbsp; &nbsp;//else</pre></td></tr>
-<tr class="nocodegen"><td>556</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Y := GHASH( H, nil, IV );</pre></td></tr>
-<tr class="nocodegen"><td>557</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>558</td><td><pre style="display:inline;">// &nbsp; &nbsp;//E_K_Y0 := E_Cipher( y );</pre></td></tr>
-<tr class="nocodegen"><td>559</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>560</td><td><pre style="display:inline;">// &nbsp; &nbsp;i := 0;</pre></td></tr>
-<tr class="nocodegen"><td>561</td><td><pre style="display:inline;">// &nbsp; &nbsp;div_len_plain := len_plain div 16;</pre></td></tr>
-<tr class="nocodegen"><td>562</td><td><pre style="display:inline;">// &nbsp; &nbsp;for j := 1 to div_len_plain do</pre></td></tr>
-<tr class="nocodegen"><td>563</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>564</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
-<tr class="nocodegen"><td>565</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;P128(@ciphertext[i])^ := XOR_128_n( @plaintext[i], E_cipher( Y ) );</pre></td></tr>
-<tr class="nocodegen"><td>566</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;inc(i,16);</pre></td></tr>
-<tr class="nocodegen"><td>567</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>568</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>569</td><td><pre style="display:inline;">// &nbsp; &nbsp;if i &lt; len_plain then</pre></td></tr>
-<tr class="nocodegen"><td>570</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>571</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
-<tr class="nocodegen"><td>572</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;XOR_128_n_l( plaintext, i, len_plain-i, E_cipher( Y ), ciphertext );</pre></td></tr>
-<tr class="nocodegen"><td>573</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>574</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>575</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );</pre></td></tr>
-<tr class="nocodegen"><td>576</td><td><pre style="display:inline;">// &nbsp; &nbsp;Setlength( authenticaton_tag, len_auth_tag );</pre></td></tr>
-<tr class="nocodegen"><td>577</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move( a_tag[0], authenticaton_tag[0], len_auth_tag );</pre></td></tr>
-<tr class="nocodegen"><td>578</td><td><pre style="display:inline;">//end;</pre></td></tr>
-<tr class="nocodegen"><td>579</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>580</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>581</td><td><pre style="display:inline;">//function decrypt( const key, IV : TBytes; out plaintext : TBytes; const authenticated_data,</pre></td></tr>
-<tr class="nocodegen"><td>582</td><td><pre style="display:inline;">//ciphertext : TBytes; len_auth_tag : integer; const authenticaton_tag : TBytes ) : boolean;</pre></td></tr>
-<tr class="nocodegen"><td>583</td><td><pre style="display:inline;">//var</pre></td></tr>
-<tr class="nocodegen"><td>584</td><td><pre style="display:inline;">// &nbsp; &nbsp;i, j, div_len_ciph, len_ciph : Uint64;</pre></td></tr>
-<tr class="nocodegen"><td>585</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag, E_K_Y0, Y, H : T128;</pre></td></tr>
-<tr class="nocodegen"><td>586</td><td><pre style="display:inline;">// &nbsp; &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
-<tr class="nocodegen"><td>587</td><td><pre style="display:inline;">// &nbsp; &nbsp;ba_Tag : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>588</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>589</td><td><pre style="display:inline;">// &nbsp; &nbsp;function equal( const a, b : TBytes ):boolean;</pre></td></tr>
-<tr class="nocodegen"><td>590</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>591</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;if length(a) &lt;&gt; length(b) then Result := false</pre></td></tr>
-<tr class="nocodegen"><td>592</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>593</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;Result := CompareMem( @a[0], @b[0], length(a) );</pre></td></tr>
-<tr class="nocodegen"><td>594</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>595</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>596</td><td><pre style="display:inline;">//begin</pre></td></tr>
-<tr class="nocodegen"><td>597</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_auth_tag := len_auth_tag shr 3;</pre></td></tr>
-<tr class="nocodegen"><td>598</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>599</td><td><pre style="display:inline;">// &nbsp; &nbsp;E_Init( key );</pre></td></tr>
-<tr class="nocodegen"><td>600</td><td><pre style="display:inline;">// &nbsp; &nbsp;H := E_Cipher( nullbytes );</pre></td></tr>
-<tr class="nocodegen"><td>601</td><td><pre style="display:inline;">// &nbsp; &nbsp;Table_M_8Bit(H);</pre></td></tr>
-<tr class="nocodegen"><td>602</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>603</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_ciph := length( ciphertext );</pre></td></tr>
-<tr class="nocodegen"><td>604</td><td><pre style="display:inline;">// &nbsp; &nbsp;SetLength( plaintext, len_ciph );</pre></td></tr>
-<tr class="nocodegen"><td>605</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>606</td><td><pre style="display:inline;">// &nbsp; &nbsp;if length(IV) = 12 then</pre></td></tr>
-<tr class="nocodegen"><td>607</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>608</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Y[1] := 0;</pre></td></tr>
-<tr class="nocodegen"><td>609</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Move( IV[0], Y[0], 12 );</pre></td></tr>
-<tr class="nocodegen"><td>610</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; bY[15] := 1;</pre></td></tr>
-<tr class="nocodegen"><td>611</td><td><pre style="display:inline;">// &nbsp; &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>612</td><td><pre style="display:inline;">// &nbsp; &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>613</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Y := GHASH( H, nil, IV );</pre></td></tr>
-<tr class="nocodegen"><td>614</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>615</td><td><pre style="display:inline;">// &nbsp; &nbsp;E_K_Y0 := E_Cipher( y );</pre></td></tr>
-<tr class="nocodegen"><td>616</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>617</td><td><pre style="display:inline;">// &nbsp; &nbsp;i := 0;</pre></td></tr>
-<tr class="nocodegen"><td>618</td><td><pre style="display:inline;">// &nbsp; &nbsp;div_len_ciph := len_ciph div 16;</pre></td></tr>
-<tr class="nocodegen"><td>619</td><td><pre style="display:inline;">// &nbsp; &nbsp;for j := 1 to div_len_ciph do</pre></td></tr>
+<tr class="notcovered"><td>467</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>468</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>469</td><td><pre style="display:inline;">procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>470</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>471</td><td><pre style="display:inline;"> &nbsp;E_K_Y0 : T128; // most likely to be moved to the class itsself</pre></td></tr>
+<tr class="nocodegen"><td>472</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; : T128;</pre></td></tr>
+<tr class="notcovered"><td>473</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>474</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod(@FY[0], @E_K_Y0[0], 16);</pre></td></tr>
+<tr class="nocodegen"><td>475</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>476</td><td><pre style="display:inline;"> &nbsp;INCR(FY);</pre></td></tr>
+<tr class="nocodegen"><td>477</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>478</td><td><pre style="display:inline;"> &nbsp;FEncryptionMethod(@FY[0], @Temp[0], 16);</pre></td></tr>
+<tr class="nocodegen"><td>479</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>480</td><td><pre style="display:inline;"> &nbsp;P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);</pre></td></tr>
+<tr class="notcovered"><td>481</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>482</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>483</td><td><pre style="display:inline;">function TGCM.GetAuthenticationTagBitLength: UInt32;</pre></td></tr>
+<tr class="notcovered"><td>484</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>485</td><td><pre style="display:inline;"> &nbsp;Result := Flen_auth_tag shl 3;</pre></td></tr>
+<tr class="notcovered"><td>486</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>487</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>488</td><td><pre style="display:inline;">//function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>489</td><td><pre style="display:inline;">//var aclen : T128;</pre></td></tr>
+<tr class="nocodegen"><td>490</td><td><pre style="display:inline;">// &nbsp; &nbsp;x : T128;</pre></td></tr>
+<tr class="nocodegen"><td>491</td><td><pre style="display:inline;">// &nbsp; &nbsp;n : Uint64;</pre></td></tr>
+<tr class="nocodegen"><td>492</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>493</td><td><pre style="display:inline;">// &nbsp; &nbsp;procedure encode( data : TBytes );</pre></td></tr>
+<tr class="nocodegen"><td>494</td><td><pre style="display:inline;">// &nbsp; &nbsp;var i, mod_d, div_d, len_d : Uint64;</pre></td></tr>
+<tr class="nocodegen"><td>495</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;hdata : T128;</pre></td></tr>
+<tr class="nocodegen"><td>496</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>497</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;len_d := length( data );</pre></td></tr>
+<tr class="nocodegen"><td>498</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;if ( len_d &gt; 0 ) then</pre></td></tr>
+<tr class="nocodegen"><td>499</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>500</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;n := 0;</pre></td></tr>
+<tr class="nocodegen"><td>501</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;div_d := len_d div 16;</pre></td></tr>
+<tr class="nocodegen"><td>502</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if div_d &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>503</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for i := 0 to div_d -1 do</pre></td></tr>
+<tr class="nocodegen"><td>504</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>505</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128_n( @data[n], x ) );</pre></td></tr>
+<tr class="nocodegen"><td>506</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;inc( n, 16 );</pre></td></tr>
+<tr class="nocodegen"><td>507</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>508</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>509</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;mod_d := len_d mod 16;</pre></td></tr>
+<tr class="nocodegen"><td>510</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if mod_d &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>511</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>512</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;hdata := nullbytes;</pre></td></tr>
+<tr class="nocodegen"><td>513</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Move( data[n], hdata[0], mod_d );</pre></td></tr>
+<tr class="nocodegen"><td>514</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;x := poly_mult_H( XOR_128( hdata, x ) );</pre></td></tr>
+<tr class="nocodegen"><td>515</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>516</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>517</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>518</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>519</td><td><pre style="display:inline;">//begin</pre></td></tr>
+<tr class="nocodegen"><td>520</td><td><pre style="display:inline;">// &nbsp;x := nullbytes;</pre></td></tr>
+<tr class="nocodegen"><td>521</td><td><pre style="display:inline;">// &nbsp;encode( authenticated_data );</pre></td></tr>
+<tr class="nocodegen"><td>522</td><td><pre style="display:inline;">// &nbsp;encode( ciphertext );</pre></td></tr>
+<tr class="nocodegen"><td>523</td><td><pre style="display:inline;">// &nbsp;set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);</pre></td></tr>
+<tr class="nocodegen"><td>524</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>525</td><td><pre style="display:inline;">// &nbsp;Result := poly_mult_H( XOR_128( aclen, x ) );</pre></td></tr>
+<tr class="nocodegen"><td>526</td><td><pre style="display:inline;">//end;</pre></td></tr>
+<tr class="nocodegen"><td>527</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>528</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>529</td><td><pre style="display:inline;">//function E_Cipher( val : T128) : T128;</pre></td></tr>
+<tr class="nocodegen"><td>530</td><td><pre style="display:inline;">//var hval: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>531</td><td><pre style="display:inline;">//begin</pre></td></tr>
+<tr class="nocodegen"><td>532</td><td><pre style="display:inline;">// &nbsp;haes_DEC.Encode( val, Result[0], 16 );</pre></td></tr>
+<tr class="nocodegen"><td>533</td><td><pre style="display:inline;">//end;</pre></td></tr>
+<tr class="nocodegen"><td>534</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>535</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>536</td><td><pre style="display:inline;">//procedure E_Init( key : TBytes );</pre></td></tr>
+<tr class="nocodegen"><td>537</td><td><pre style="display:inline;">// var hkey : RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>538</td><td><pre style="display:inline;">//begin</pre></td></tr>
+<tr class="nocodegen"><td>539</td><td><pre style="display:inline;">// &nbsp; &nbsp;setlength(hkey,length(key));</pre></td></tr>
+<tr class="nocodegen"><td>540</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move(key[0], hkey[1], length(key));</pre></td></tr>
+<tr class="nocodegen"><td>541</td><td><pre style="display:inline;">// &nbsp; &nbsp;haes_DEC.Init( hkey );</pre></td></tr>
+<tr class="nocodegen"><td>542</td><td><pre style="display:inline;">//end;</pre></td></tr>
+<tr class="nocodegen"><td>543</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>544</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>545</td><td><pre style="display:inline;">//procedure encrypt( const key, IV : TBytes; const plaintext, authenticated_data : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>546</td><td><pre style="display:inline;">//out ciphertext : TBytes; len_auth_tag : integer; out authenticaton_tag : TBytes );</pre></td></tr>
+<tr class="nocodegen"><td>547</td><td><pre style="display:inline;">//var</pre></td></tr>
+<tr class="nocodegen"><td>548</td><td><pre style="display:inline;">// &nbsp; &nbsp;i, j, div_len_plain, len_plain : Uint64;</pre></td></tr>
+<tr class="nocodegen"><td>549</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag, E_K_Y0, Y, H : T128;</pre></td></tr>
+<tr class="nocodegen"><td>550</td><td><pre style="display:inline;">// &nbsp; &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
+<tr class="nocodegen"><td>551</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>552</td><td><pre style="display:inline;">//begin</pre></td></tr>
+<tr class="nocodegen"><td>553</td><td><pre style="display:inline;">// &nbsp; &nbsp;// len_auth_tag := len_auth_tag shr 3; wird schon im Setter gemacht</pre></td></tr>
+<tr class="nocodegen"><td>554</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>555</td><td><pre style="display:inline;">// &nbsp; &nbsp;//E_Init( key ); wurde vorher schon in der Basisklasse gemacht oder so</pre></td></tr>
+<tr class="nocodegen"><td>556</td><td><pre style="display:inline;">// &nbsp; &nbsp;//H := E_Cipher( nullbytes ); ist eingebaut</pre></td></tr>
+<tr class="nocodegen"><td>557</td><td><pre style="display:inline;">// &nbsp; &nbsp;//Table_M_8Bit(H); &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ist eingebaut</pre></td></tr>
+<tr class="nocodegen"><td>558</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>559</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_plain := length( plaintext );</pre></td></tr>
+<tr class="nocodegen"><td>560</td><td><pre style="display:inline;">// &nbsp; &nbsp;SetLength( ciphertext, len_plain );</pre></td></tr>
+<tr class="nocodegen"><td>561</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>562</td><td><pre style="display:inline;">// &nbsp; &nbsp;//if length(IV) = 12 then</pre></td></tr>
+<tr class="nocodegen"><td>563</td><td><pre style="display:inline;">// &nbsp; &nbsp;//begin</pre></td></tr>
+<tr class="nocodegen"><td>564</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Y[1] := 0;</pre></td></tr>
+<tr class="nocodegen"><td>565</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Move( IV[0], Y[0], 12 );</pre></td></tr>
+<tr class="nocodegen"><td>566</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; bY[15] := 1;</pre></td></tr>
+<tr class="nocodegen"><td>567</td><td><pre style="display:inline;">// &nbsp; &nbsp;//end</pre></td></tr>
+<tr class="nocodegen"><td>568</td><td><pre style="display:inline;">// &nbsp; &nbsp;//else</pre></td></tr>
+<tr class="nocodegen"><td>569</td><td><pre style="display:inline;">// &nbsp; &nbsp;// &nbsp; Y := GHASH( H, nil, IV );</pre></td></tr>
+<tr class="nocodegen"><td>570</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>571</td><td><pre style="display:inline;">// &nbsp; &nbsp;//E_K_Y0 := E_Cipher( y );</pre></td></tr>
+<tr class="nocodegen"><td>572</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>573</td><td><pre style="display:inline;">// &nbsp; &nbsp;i := 0;</pre></td></tr>
+<tr class="nocodegen"><td>574</td><td><pre style="display:inline;">// &nbsp; &nbsp;div_len_plain := len_plain div 16;</pre></td></tr>
+<tr class="nocodegen"><td>575</td><td><pre style="display:inline;">// &nbsp; &nbsp;for j := 1 to div_len_plain do</pre></td></tr>
+<tr class="nocodegen"><td>576</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>577</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
+<tr class="nocodegen"><td>578</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;P128(@ciphertext[i])^ := XOR_128_n( @plaintext[i], E_cipher( Y ) );</pre></td></tr>
+<tr class="nocodegen"><td>579</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;inc(i,16);</pre></td></tr>
+<tr class="nocodegen"><td>580</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>581</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>582</td><td><pre style="display:inline;">// &nbsp; &nbsp;if i &lt; len_plain then</pre></td></tr>
+<tr class="nocodegen"><td>583</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>584</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
+<tr class="nocodegen"><td>585</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;XOR_128_n_l( plaintext, i, len_plain-i, E_cipher( Y ), ciphertext );</pre></td></tr>
+<tr class="nocodegen"><td>586</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>587</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>588</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );</pre></td></tr>
+<tr class="nocodegen"><td>589</td><td><pre style="display:inline;">// &nbsp; &nbsp;Setlength( authenticaton_tag, len_auth_tag );</pre></td></tr>
+<tr class="nocodegen"><td>590</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move( a_tag[0], authenticaton_tag[0], len_auth_tag );</pre></td></tr>
+<tr class="nocodegen"><td>591</td><td><pre style="display:inline;">//end;</pre></td></tr>
+<tr class="nocodegen"><td>592</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>593</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>594</td><td><pre style="display:inline;">//function decrypt( const key, IV : TBytes; out plaintext : TBytes; const authenticated_data,</pre></td></tr>
+<tr class="nocodegen"><td>595</td><td><pre style="display:inline;">//ciphertext : TBytes; len_auth_tag : integer; const authenticaton_tag : TBytes ) : boolean;</pre></td></tr>
+<tr class="nocodegen"><td>596</td><td><pre style="display:inline;">//var</pre></td></tr>
+<tr class="nocodegen"><td>597</td><td><pre style="display:inline;">// &nbsp; &nbsp;i, j, div_len_ciph, len_ciph : Uint64;</pre></td></tr>
+<tr class="nocodegen"><td>598</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag, E_K_Y0, Y, H : T128;</pre></td></tr>
+<tr class="nocodegen"><td>599</td><td><pre style="display:inline;">// &nbsp; &nbsp;bY : array[0..15] of byte absolute Y[0];</pre></td></tr>
+<tr class="nocodegen"><td>600</td><td><pre style="display:inline;">// &nbsp; &nbsp;ba_Tag : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>601</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>602</td><td><pre style="display:inline;">// &nbsp; &nbsp;function equal( const a, b : TBytes ):boolean;</pre></td></tr>
+<tr class="nocodegen"><td>603</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>604</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;if length(a) &lt;&gt; length(b) then Result := false</pre></td></tr>
+<tr class="nocodegen"><td>605</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>606</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;Result := CompareMem( @a[0], @b[0], length(a) );</pre></td></tr>
+<tr class="nocodegen"><td>607</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>608</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>609</td><td><pre style="display:inline;">//begin</pre></td></tr>
+<tr class="nocodegen"><td>610</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_auth_tag := len_auth_tag shr 3;</pre></td></tr>
+<tr class="nocodegen"><td>611</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>612</td><td><pre style="display:inline;">// &nbsp; &nbsp;E_Init( key );</pre></td></tr>
+<tr class="nocodegen"><td>613</td><td><pre style="display:inline;">// &nbsp; &nbsp;H := E_Cipher( nullbytes );</pre></td></tr>
+<tr class="nocodegen"><td>614</td><td><pre style="display:inline;">// &nbsp; &nbsp;Table_M_8Bit(H);</pre></td></tr>
+<tr class="nocodegen"><td>615</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>616</td><td><pre style="display:inline;">// &nbsp; &nbsp;len_ciph := length( ciphertext );</pre></td></tr>
+<tr class="nocodegen"><td>617</td><td><pre style="display:inline;">// &nbsp; &nbsp;SetLength( plaintext, len_ciph );</pre></td></tr>
+<tr class="nocodegen"><td>618</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>619</td><td><pre style="display:inline;">// &nbsp; &nbsp;if length(IV) = 12 then</pre></td></tr>
 <tr class="nocodegen"><td>620</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>621</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
-<tr class="nocodegen"><td>622</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;P128(@plaintext[i])^ := XOR_128_n( @ciphertext[i], E_cipher( Y ) );</pre></td></tr>
-<tr class="nocodegen"><td>623</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;inc(i,16);</pre></td></tr>
-<tr class="nocodegen"><td>624</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>625</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>626</td><td><pre style="display:inline;">// &nbsp; &nbsp;if i &lt; len_ciph then</pre></td></tr>
-<tr class="nocodegen"><td>627</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>628</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
-<tr class="nocodegen"><td>629</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );</pre></td></tr>
-<tr class="nocodegen"><td>630</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>631</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>632</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );</pre></td></tr>
-<tr class="nocodegen"><td>633</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>634</td><td><pre style="display:inline;">// &nbsp; &nbsp;Setlength( ba_tag, len_auth_tag );</pre></td></tr>
-<tr class="nocodegen"><td>635</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move( a_tag[0], ba_tag[0], len_auth_tag );</pre></td></tr>
-<tr class="nocodegen"><td>636</td><td><pre style="display:inline;">//</pre></td></tr>
-<tr class="nocodegen"><td>637</td><td><pre style="display:inline;">// &nbsp; &nbsp;Result := equal( authenticaton_tag, ba_tag );</pre></td></tr>
-<tr class="nocodegen"><td>638</td><td><pre style="display:inline;">// &nbsp; &nbsp;if not Result then SetLength( plaintext, 0 ); // NIST FAIL =&gt; pt=&apos;&apos;</pre></td></tr>
-<tr class="nocodegen"><td>639</td><td><pre style="display:inline;">//end;</pre></td></tr>
-<tr class="nocodegen"><td>640</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>641</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>642</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="nocodegen"><td>621</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Y[1] := 0;</pre></td></tr>
+<tr class="nocodegen"><td>622</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Move( IV[0], Y[0], 12 );</pre></td></tr>
+<tr class="nocodegen"><td>623</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; bY[15] := 1;</pre></td></tr>
+<tr class="nocodegen"><td>624</td><td><pre style="display:inline;">// &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>625</td><td><pre style="display:inline;">// &nbsp; &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>626</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp; Y := GHASH( H, nil, IV );</pre></td></tr>
+<tr class="nocodegen"><td>627</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>628</td><td><pre style="display:inline;">// &nbsp; &nbsp;E_K_Y0 := E_Cipher( y );</pre></td></tr>
+<tr class="nocodegen"><td>629</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>630</td><td><pre style="display:inline;">// &nbsp; &nbsp;i := 0;</pre></td></tr>
+<tr class="nocodegen"><td>631</td><td><pre style="display:inline;">// &nbsp; &nbsp;div_len_ciph := len_ciph div 16;</pre></td></tr>
+<tr class="nocodegen"><td>632</td><td><pre style="display:inline;">// &nbsp; &nbsp;for j := 1 to div_len_ciph do</pre></td></tr>
+<tr class="nocodegen"><td>633</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>634</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
+<tr class="nocodegen"><td>635</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;P128(@plaintext[i])^ := XOR_128_n( @ciphertext[i], E_cipher( Y ) );</pre></td></tr>
+<tr class="nocodegen"><td>636</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;inc(i,16);</pre></td></tr>
+<tr class="nocodegen"><td>637</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>638</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>639</td><td><pre style="display:inline;">// &nbsp; &nbsp;if i &lt; len_ciph then</pre></td></tr>
+<tr class="nocodegen"><td>640</td><td><pre style="display:inline;">// &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>641</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;INCR( Y );</pre></td></tr>
+<tr class="nocodegen"><td>642</td><td><pre style="display:inline;">// &nbsp; &nbsp; &nbsp;XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );</pre></td></tr>
+<tr class="nocodegen"><td>643</td><td><pre style="display:inline;">// &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>644</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>645</td><td><pre style="display:inline;">// &nbsp; &nbsp;a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );</pre></td></tr>
+<tr class="nocodegen"><td>646</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>647</td><td><pre style="display:inline;">// &nbsp; &nbsp;Setlength( ba_tag, len_auth_tag );</pre></td></tr>
+<tr class="nocodegen"><td>648</td><td><pre style="display:inline;">// &nbsp; &nbsp;Move( a_tag[0], ba_tag[0], len_auth_tag );</pre></td></tr>
+<tr class="nocodegen"><td>649</td><td><pre style="display:inline;">//</pre></td></tr>
+<tr class="nocodegen"><td>650</td><td><pre style="display:inline;">// &nbsp; &nbsp;Result := equal( authenticaton_tag, ba_tag );</pre></td></tr>
+<tr class="nocodegen"><td>651</td><td><pre style="display:inline;">// &nbsp; &nbsp;if not Result then SetLength( plaintext, 0 ); // NIST FAIL =&gt; pt=&apos;&apos;</pre></td></tr>
+<tr class="nocodegen"><td>652</td><td><pre style="display:inline;">//end;</pre></td></tr>
+<tr class="nocodegen"><td>653</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>654</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>655</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>
