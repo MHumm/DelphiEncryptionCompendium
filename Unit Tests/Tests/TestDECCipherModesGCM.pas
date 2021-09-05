@@ -46,15 +46,16 @@ type
     /// </summary>
     InitVector : RawByteString;
     /// <summary>
-    ///   ???
+    ///   Plain Text: text to be encrypted, given in HexL
     /// </summary>
     PT         : RawByteString;
     /// <summary>
-    ///   ???
+    ///   Additional Authehticated Data: the data which shall be authenticated
+    ///   but not encrypted.
     /// </summary>
     AAD        : RawByteString;
     /// <summary>
-    ///   ???
+    ///   Cipher Text: encrypted text, given in HexL
     /// </summary>
     CT         : RawByteString;
     /// <summary>
@@ -403,11 +404,14 @@ var
   Cipher      : TCipher_AES;
   TestDataSet : TGCMTestSetEntry;
   i           : Integer;
+  EncryptData : TBytes;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
 
   Cipher := TCipher_AES.Create;
   try
+    Cipher.Mode := TCipherMode.cmGCM;
+
     for TestDataSet in FTestDataList do
     begin
       for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
@@ -417,8 +421,11 @@ begin
                     0);
 
         Cipher.AuthenticationResultBitLength := TestDataSet.Taglen;
+        Cipher.AuthenticatedData             := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].AAD));
 
-//        TestDataSet.TestData[
+        EncryptData := Cipher.EncodeBytes(TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].PT)));
+
+        CheckEquals(string(TestDataSet.TestData[i].CT), StringOf(TFormat_HexL.Encode(EncryptData)));
       end;
     end;
   finally

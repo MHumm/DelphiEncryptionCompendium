@@ -361,6 +361,7 @@ end;
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
   Flen_auth_tag := Value shr 3;
+  SetLength(FAuthenticaton_tag, Flen_auth_tag);
 end;
 
 procedure TGCM.INCR(var Y : T128);

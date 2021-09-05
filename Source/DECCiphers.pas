@@ -944,7 +944,7 @@ end;
 
 procedure TCipher_Null.DoInit(const Key; Size: Integer);
 begin
-  // dummy
+  inherited;
 end;
 
 procedure TCipher_Null.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -1017,6 +1017,8 @@ begin
       S[I, J * 2 + 1] := SwapUInt32(B[1]);
     end;
   FillChar(B, SizeOf(B), 0);
+
+  inherited;
 end;
 
 procedure TCipher_Blowfish.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -1412,6 +1414,8 @@ begin
     SetupBox192
   else
     SetupBox256;
+
+  inherited;
 end;
 
 procedure TCipher_Twofish.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -1585,6 +1589,8 @@ begin
   A    := D[2];
   D[2] := D[1];
   D[1] := A;
+
+  inherited;
 end;
 
 function IDEAMul(X, Y: UInt32): UInt32;
@@ -1794,6 +1800,8 @@ begin
     K := @K[4];
   end;
   ProtectBuffer(X, SizeOf(X));
+
+  inherited;
 end;
 
 procedure TCipher_Cast256.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -2027,6 +2035,8 @@ begin
     K[I] := FixKey(K[I], K[I - 1]);
     Inc(I, 2);
   until I >= 37;
+
+  inherited;
 end;
 
 procedure TCipher_Mars.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -2351,6 +2361,8 @@ begin
   D[256] := 0;
   D[257] := 0;
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_RC4.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -2452,6 +2464,8 @@ begin
     J := (J + 1) mod L;
   end;
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_RC6.LimitRounds;
@@ -2845,6 +2859,8 @@ begin
   Move(Key, FAdditionalBuffer^, Size);
   BuildEncodeKey;
   BuildDecodeKey;
+
+  inherited;
 end;
 
 procedure TCipher_Rijndael.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3038,6 +3054,8 @@ begin
   end;
 
   D[8] := E[0];
+
+  inherited;
 end;
 
 procedure TCipher_Square.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3253,6 +3271,8 @@ begin
   P[1] := T[3] shr 16 and $FF;
   P[2] := T[3] shr  8 and $FF;
   ProtectBuffer(Init_State, SizeOf(Init_State));
+
+  inherited;
 end;
 
 procedure TCipher_SCOP.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3410,6 +3430,8 @@ begin
   P[1] := T[3] shr 16 and $FF;
   P[2] := T[3] shr  8 and $FF;
   ProtectBuffer(Init_State, SizeOf(Init_State));
+
+  inherited;
 end;
 
 procedure TCipher_SCOP_DEC52.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3555,6 +3577,8 @@ begin
     SKey.Plain     := SKey.Cards[7];
     SKey.Cipher    := SKey.Cards[Sum];
   end;
+
+  inherited;
 end;
 
 procedure TCipher_Sapphire.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3749,6 +3773,8 @@ begin
   DoInitKey(K, FAdditionalBuffer, False);
   DoInitKey(K, @PUInt32Array(FAdditionalBuffer)[32], True);
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_1DES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3790,6 +3816,8 @@ begin
   DoInitKey(K[0], @P[64], True);
   DoInitKey(K[8], @P[96], False);
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_2DES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3837,6 +3865,8 @@ begin
   DoInitKey(K[ 8], @P[128], False);
   DoInitKey(K[ 0], @P[160], True);
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_3DES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4093,6 +4123,8 @@ begin
   P3WayKey.D_Key[2] := ReverseBits(B0);
   P3WayKey.D_Key[1] := ReverseBits(B1);
   P3WayKey.D_Key[0] := ReverseBits(B2);
+
+  inherited;
 end;
 
 procedure TCipher_3Way.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4381,6 +4413,8 @@ begin
   ProtectBuffer(X, SizeOf(X));
   ProtectBuffer(Z, SizeOf(Z));
   ProtectBuffer(T, SizeOf(T));
+
+  inherited;
 end;
 
 procedure TCipher_Cast128.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4529,6 +4563,8 @@ end;
 procedure TCipher_Gost.DoInit(const Key; Size: Integer);
 begin
   Move(Key, FAdditionalBuffer^, Size);
+
+  inherited;
 end;
 
 procedure TCipher_Gost.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4719,6 +4755,8 @@ begin
   end;
 
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_Misty.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4855,6 +4893,8 @@ begin
   until False;
 
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_NewDES.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -4910,6 +4950,8 @@ begin
   end;
 
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_Q128.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -5107,6 +5149,8 @@ begin
   K[128 - L] := RC2_Data[K[128 - L] and Mask];
   for I := 127 - L downto 0 do
      K[I] := RC2_Data[K[I + 1] xor K[I + L]];
+
+  inherited;
 end;
 
 procedure TCipher_RC2.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -5248,6 +5292,8 @@ begin
     J := (J + 1) mod L;
   end;
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_RC5.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -5437,6 +5483,8 @@ begin
     end;
   InitTab;
   InitKey;
+
+  inherited;
 end;
 
 procedure TCipher_SAFER.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -5754,6 +5802,8 @@ begin
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_Shark.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -5950,6 +6000,8 @@ begin
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_Shark.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -6067,10 +6119,11 @@ begin
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 {$ELSE CPU64BITS}
-
 procedure TCipher_Shark_DEC52.DoInit(const Key; Size: Integer);
 var
   Log, ALog: TLogArray;
@@ -6133,6 +6186,8 @@ begin
   ProtectBuffer(T, SizeOf(T));
   ProtectBuffer(A, SizeOf(A));
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 {$ENDIF}
 
@@ -6166,6 +6221,8 @@ begin
       Inc(D);
     end;
   ProtectBuffer(K, SizeOf(K));
+
+  inherited;
 end;
 
 procedure TCipher_Skipjack.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -6373,6 +6430,8 @@ procedure TCipher_TEA.DoInit(const Key; Size: Integer);
 begin
   Move(Key, FAdditionalBuffer^, Size);
   SetRounds(FRounds);
+
+  inherited;
 end;
 
 procedure TCipher_TEA.DoEncode(Source, Dest: Pointer; Size: Integer);
