@@ -322,13 +322,6 @@ type
     procedure DoInit(const Key; Size: Integer); virtual; abstract;
 
     /// <summary>
-    ///   By overriding this one one can implement things which need to be done
-    ///   when somebody calls Done to finish a cryptographic operation. It is the
-    ///   first operation done in Done and state is not csDone yet.
-    /// </summary>
-    procedure DoDone; virtual; abstract;
-
-    /// <summary>
     ///   This abstract method needs to be overwritten by each concrete encryption
     ///   algorithm as this is the routine used internally to encrypt a single
     ///   block of data.
@@ -1031,7 +1024,6 @@ procedure TDECCipher.Done;
 begin
   if FState <> csDone then
   begin
-    DoDone;
     FState := csDone;
     FBufferIndex := 0;
     DoEncode(FFeedback, FBuffer, FBufferSize);

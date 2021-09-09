@@ -406,7 +406,8 @@ var
   i           : Integer;
   EncryptData : TBytes;
 begin
-  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
 
   Cipher := TCipher_AES.Create;
   try

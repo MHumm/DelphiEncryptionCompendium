@@ -153,7 +153,7 @@ type
     /// <param name="res">
     ///   Result of the XOR operation
     /// </param>
-    procedure XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes ); inline;
+    procedure XOR_128_n_l(const x : PByteArray; XIndex, len : UInt64; y : T128; var res : PByteArray); inline;
 
     function poly_mult_H(const hx : T128) : T128; inline;
     procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;
@@ -190,13 +190,15 @@ type
     function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;
 
     /// <summary>
-    ///   The final step of the encryption
+    ///   Encrypts a T128 value using the encryption method specified on init
     /// </summary>
-    procedure DoDoneEncryption;
-    /// <summary>
-    ///   The final step of the decryption
-    /// </summary>
-    procedure DoDoneDecryption;
+    /// <param name="Value">
+    ///   Value to be encrypted
+    /// </param>
+    /// <returns>
+    ///   Encrypted value
+    /// </returns>
+    function EncodeT128(Value: T128): T128;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -246,11 +248,6 @@ type
                         Size   : Integer);
 
     /// <summary>
-    ///   The final step of the encryption
-    /// </summary>
-    procedure Done;
-
-    /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
     property Authenticated_data : TBytes
@@ -287,7 +284,7 @@ begin
   Result[1] := P128(x)^[1] xor y[1];
 end;
 
-procedure TGCM.XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes);
+procedure TGCM.XOR_128_n_l(const x : PByteArray; XIndex, len : UInt64; y : T128; var res : PByteArray);
 var
   i  : integer;
   { TODO : change to a pointer to y[0], to get rid of the absolute? }
@@ -295,7 +292,7 @@ var
 begin
   for i := 0 to len-1 do
   begin
-    res[XIndex] := x[XIndex] xor by[i];
+    res^[XIndex] := x^[XIndex] xor by[i];
     inc(XIndex);
   end;
 end;
@@ -507,44 +504,35 @@ end;
 
 procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
 var
-  Temp   : T128;
+  i, j, div_len_plain : UInt64;
+  a_tag : T128;
 begin
-  if (Size >= 16) then
+  i := 0;
+  div_len_plain := Size div 16;
+  for j := 1 to div_len_plain do
   begin
     INCR(FY);
 
-    FEncryptionMethod(@FY[0], @Temp[0], 16);
-
-    P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);
+    P128(@Dest[i])^ := XOR_128_n(@Source[i], EncodeT128(FY));
 
     FIsEncryption := true;
+    inc(i,16);
   end;
+
+  if i < Size then
+  begin
+    INCR(FY);
+    XOR_128_n_l(Source, i, Size-i, EncodeT128(FY), Dest);
+  end;
+
+  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^[0])), FE_K_Y0);
+  Setlength(FAuthenticaton_tag, Flen_auth_tag);
+  Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
 end;
 
-procedure TGCM.DoDoneEncryption;
+function TGCM.EncodeT128(Value: T128): T128;
 begin
-//    if i < len_plain then
-//    begin
-//      INCR( Y );
-//      XOR_128_n_l( plaintext, i, len_plain-i, E_cipher( Y ), ciphertext );
-//    end;
-//
-//    a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );
-//    Setlength( authenticaton_tag, len_auth_tag );
-//    Move( a_tag[0], authenticaton_tag[0], len_auth_tag );
-end;
-
-procedure TGCM.DoDoneDecryption;
-begin
-
-end;
-
-procedure TGCM.Done;
-begin
-  if FIsEncryption then
-    DoDoneEncryption
-  else
-    DoDoneDecryption;
+  FEncryptionMethod(@Value[0], @Result[0], 16);
 end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;
