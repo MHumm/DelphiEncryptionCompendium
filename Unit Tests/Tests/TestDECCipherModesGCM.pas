@@ -421,11 +421,34 @@ begin
                     0);
 
         Cipher.AuthenticationResultBitLength := TestDataSet.Taglen;
-        Cipher.AuthenticatedData             := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].AAD));
+        Cipher.AuthenticatedData             := TFormat_HexL.Decode(
+                                                  BytesOf(
+                                                    TestDataSet.TestData[i].AAD));
 
-        EncryptData := Cipher.EncodeBytes(TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].PT)));
+        EncryptData := Cipher.EncodeBytes(
+                         TFormat_HexL.Decode(
+                           BytesOf(TestDataSet.TestData[i].PT)));
 
-        CheckEquals(string(TestDataSet.TestData[i].CT), StringOf(TFormat_HexL.Encode(EncryptData)));
+        CheckEquals(string(TestDataSet.TestData[i].CT),
+                    StringOf(TFormat_HexL.Encode(EncryptData)),
+                    'Cipher text wrong for Key ' +
+                    string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
+                    string(TestDataSet.TestData[i].InitVector) + ' PT ' +
+                    string(TestDataSet.TestData[i].PT) + ' AAD ' +
+                    string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+                    string(TestDataSet.TestData[i].CT) + ' Act.: ' +
+                    StringOf(TFormat_HexL.Encode(EncryptData)));
+
+        // Additional Authentication Data prüfen
+        CheckEquals(string(TestDataSet.TestData[i].TagResult),
+                           StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)),
+                    'Authentication tag wrong for Key ' +
+                    string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
+                    string(TestDataSet.TestData[i].InitVector) + ' PT ' +
+                    string(TestDataSet.TestData[i].PT) + ' AAD ' +
+                    string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+                    string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
+                    StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)));
       end;
     end;
   finally

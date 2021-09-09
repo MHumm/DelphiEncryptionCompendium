@@ -59,8 +59,14 @@ type
   /// </summary>
   TGCM = class(TObject)
   private
+     /// <summary>
+     ///   Empty value?
+     /// </summary>
      nullbytes : T128;
-     M         : array[0..15,0..255] of T128;
+     /// <summary>
+     ///   Table with precalculated values
+     /// </summary>
+     FM        : array[0..15,0..255] of T128;
 
      /// <summary>
      ///   Required for creating the table and encryption at least
@@ -70,6 +76,10 @@ type
      ///   Calculated in initialization
      /// </summary>
      FY        : T128;
+     /// <summary>
+     ///   Calculated in initialization
+     /// </summary>
+     FE_K_Y0   : T128;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -92,6 +102,11 @@ type
     ///   Reference to the decode method of the actual cipher used
     /// </summary>
     FDecryptionMethod: TEncodeDecodeMethod;
+    /// <summary>
+    ///   True, when EncodeGCM zhas been called, false when DecodeGCM has been
+    ///   called, as the last step depends on whether it is encryption or decryption
+    /// </summary>
+    FIsEncryption    : Boolean;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -143,14 +158,21 @@ type
     function poly_mult_H(const hx : T128) : T128; inline;
     procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;
 
-    procedure Table_M_8Bit(const H : T128); inline;
+    /// <summary>
+    ///   Calculates a table with precalculated values which speeds up
+    ///   operations later. The initialized table is the FM field.
+    /// </summary>
+    /// <param name="H">
+    ///   Start value for the precalculation
+    /// </param>
+    procedure GenerateTableM8Bit(const H : T128); inline;
     /// <summary>
     ///   Performs a right shift of all bytes in an 128 bit variable
     /// </summary>
     /// <param name="rx">
     ///   Variable on which the right shift is being performed
     /// </param>
-    procedure rightshift(var rx : T128); inline;
+    procedure ShiftRight(var rx : T128); inline;
 
     procedure INCR(var Y : T128);
 
@@ -166,6 +188,15 @@ type
     procedure SetAuthenticationTagLength(const Value: UInt32);
     function GetAuthenticationTagBitLength: UInt32;
     function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;
+
+    /// <summary>
+    ///   The final step of the encryption
+    /// </summary>
+    procedure DoDoneEncryption;
+    /// <summary>
+    ///   The final step of the decryption
+    /// </summary>
+    procedure DoDoneDecryption;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -213,6 +244,11 @@ type
     procedure DecodeGCM(Source,
                         Dest   : PByteArray;
                         Size   : Integer);
+
+    /// <summary>
+    ///   The final step of the encryption
+    /// </summary>
+    procedure Done;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -270,12 +306,12 @@ var
   { TODO : change to a pointer to hx[0], to get rid of the absolute? }
   x : array[0..15] of byte absolute hx[0];
 begin
-  Result := M[0,x[0]];
+  Result := FM[0,x[0]];
 
   for i := 1 to 15 do
   begin
-    Result[0] := Result[0] xor M[i,x[i]][0];
-    Result[1] := Result[1] xor M[i,x[i]][1];
+    Result[0] := Result[0] xor FM[i,x[i]][0];
+    Result[1] := Result[1] xor FM[i,x[i]][1];
   end;
 end;
 
@@ -305,7 +341,7 @@ begin
   until cl = 0;
 end;
 
-procedure TGCM.Table_M_8Bit(const H : T128);
+procedure TGCM.GenerateTableM8Bit(const H : T128);
 var
   hbit, hbyte, i, j : integer;
   HP : T128;
@@ -319,13 +355,13 @@ begin
     mask := 128;
     for hbit := 0 to 7 do
     begin
-      M[hbyte,mask] := HP;
+      FM[hbyte,mask] := HP;
 
       if (bHP[15] and 1 = 0) then
-        rightshift(HP)
+        ShiftRight(HP)
       else
       begin
-        rightshift(HP);
+        ShiftRight(HP);
         bHP[0] := bHP[0] xor $e1;
       end;
 
@@ -339,14 +375,14 @@ begin
     while i <= 128 do
     begin
       for j := 1 to i-1 do
-        M[hbyte,i+j] := XOR_128(M[hbyte,i], M[hbyte,j]);
+        FM[hbyte,i+j] := XOR_128(FM[hbyte,i], FM[hbyte,j]);
       i := i*2;
     end;
-    M[hbyte,0] := nullbytes;
+    FM[hbyte,0] := nullbytes;
   end;
 end;
 
-procedure TGCM.rightshift(var rx : T128);
+procedure TGCM.ShiftRight(var rx : T128);
 var
   { TODO : change to a pointer to rx[0], to get rid of the absolute? }
   x : array[0..15] of byte absolute rx[0];
@@ -406,7 +442,7 @@ begin
   Nullbytes[1] := 0;
 
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
-  Table_M_8Bit(FH);
+  GenerateTableM8Bit(FH);
 
   if length(InitVector) = 12 then
   begin
@@ -418,6 +454,8 @@ begin
   end
   else
      FY := GHASH(FH, nil, InitVector);
+
+  FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
 end;
 
 function TGCM.GHASH(Hash : T128; authenticated_data, ciphertext : TBytes) : T128;
@@ -469,16 +507,44 @@ end;
 
 procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
 var
-  E_K_Y0 : T128; // most likely to be moved to the class itsself
   Temp   : T128;
 begin
-  FEncryptionMethod(@FY[0], @E_K_Y0[0], 16);
+  if (Size >= 16) then
+  begin
+    INCR(FY);
 
-  INCR(FY);
+    FEncryptionMethod(@FY[0], @Temp[0], 16);
 
-  FEncryptionMethod(@FY[0], @Temp[0], 16);
+    P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);
 
-  P128(@Dest[0])^ := XOR_128_n(@Source[0], Temp);
+    FIsEncryption := true;
+  end;
+end;
+
+procedure TGCM.DoDoneEncryption;
+begin
+//    if i < len_plain then
+//    begin
+//      INCR( Y );
+//      XOR_128_n_l( plaintext, i, len_plain-i, E_cipher( Y ), ciphertext );
+//    end;
+//
+//    a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );
+//    Setlength( authenticaton_tag, len_auth_tag );
+//    Move( a_tag[0], authenticaton_tag[0], len_auth_tag );
+end;
+
+procedure TGCM.DoDoneDecryption;
+begin
+
+end;
+
+procedure TGCM.Done;
+begin
+  if FIsEncryption then
+    DoDoneEncryption
+  else
+    DoDoneDecryption;
 end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;
@@ -486,47 +552,6 @@ begin
   Result := Flen_auth_tag shl 3;
 end;
 
-//function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;
-//var aclen : T128;
-//    x : T128;
-//    n : Uint64;
-//
-//    procedure encode( data : TBytes );
-//    var i, mod_d, div_d, len_d : Uint64;
-//        hdata : T128;
-//    begin
-//        len_d := length( data );
-//        if ( len_d > 0 ) then
-//        begin
-//          n := 0;
-//          div_d := len_d div 16;
-//          if div_d > 0 then
-//          for i := 0 to div_d -1 do
-//          begin
-//            x := poly_mult_H( XOR_128_n( @data[n], x ) );
-//            inc( n, 16 );
-//          end;
-//
-//          mod_d := len_d mod 16;
-//          if mod_d > 0 then
-//          begin
-//            hdata := nullbytes;
-//            Move( data[n], hdata[0], mod_d );
-//            x := poly_mult_H( XOR_128( hdata, x ) );
-//          end;
-//        end;
-//    end;
-//
-//begin
-//  x := nullbytes;
-//  encode( authenticated_data );
-//  encode( ciphertext );
-//  set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);
-//
-//  Result := poly_mult_H( XOR_128( aclen, x ) );
-//end;
-//
-//
 //function E_Cipher( val : T128) : T128;
 //var hval: TBytes;
 //begin
@@ -650,6 +675,47 @@ end;
 //
 //    Result := equal( authenticaton_tag, ba_tag );
 //    if not Result then SetLength( plaintext, 0 ); // NIST FAIL => pt=''
+//end;
+//
+//
+//function GHASH( Hash : T128; authenticated_data , ciphertext : TBytes ) : T128;
+//var aclen : T128;
+//    x : T128;
+//    n : Uint64;
+//
+//    procedure encode( data : TBytes );
+//    var i, mod_d, div_d, len_d : Uint64;
+//        hdata : T128;
+//    begin
+//        len_d := length( data );
+//        if ( len_d > 0 ) then
+//        begin
+//          n := 0;
+//          div_d := len_d div 16;
+//          if div_d > 0 then
+//          for i := 0 to div_d -1 do
+//          begin
+//            x := poly_mult_H( XOR_128_n( @data[n], x ) );
+//            inc( n, 16 );
+//          end;
+//
+//          mod_d := len_d mod 16;
+//          if mod_d > 0 then
+//          begin
+//            hdata := nullbytes;
+//            Move( data[n], hdata[0], mod_d );
+//            x := poly_mult_H( XOR_128( hdata, x ) );
+//          end;
+//        end;
+//    end;
+//
+//begin
+//  x := nullbytes;
+//  encode( authenticated_data );
+//  encode( ciphertext );
+//  set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);
+//
+//  Result := poly_mult_H( XOR_128( aclen, x ) );
 //end;
 
 

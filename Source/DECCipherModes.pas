@@ -108,6 +108,11 @@ type
     /// </param>
     procedure DoInit(const Key; Size: Integer); override;
     /// <summary>
+    ///   At least for cmGCM something needs to be done when the cipher operation
+    ///   is being finished by calling Done.
+    /// </summary>
+    procedure DoDone; override;
+    /// <summary>
     ///   Electronic Code Book
     ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize
     ///   and should be used only in 1-byte Streamciphers.
@@ -940,6 +945,14 @@ begin
   FGCM.Free;
 
   inherited;
+end;
+
+procedure TDECCipherModes.DoDone;
+begin
+  inherited;
+
+  if (FMode = cmGCM) then
+    FGCM.Done;
 end;
 
 procedure TDECCipherModes.DoInit(const Key; Size: Integer);
