@@ -5675,10 +5675,12 @@ begin
   Result.L := D.L xor K.L;
   Result.R := D.R xor K.R;
 end;
+{$ENDIF}
 
 function TCipher_SharkBase.Transform(A: TLong64; Log, ALog: TLogArray): TLong64;
   function Mul(A, B: Integer): Byte;
   begin
+    // GF(256) multiplication via logarithm tables
     Result := ALog[(Log[A] + Log[B]) mod 255];
   end;
 
@@ -5686,15 +5688,23 @@ var
   I, J: Byte;
   K, T: array[0..7] of Byte;
 begin
+  {$IFNDEF CPU64BITS}
   Move(A.R, K[0], 4);
   Move(A.L, K[4], 4);
   SwapUInt32Buffer(K, K, 2);
+  {$ELSE CPU64BITS}
+  for I := 0 to 7 do
+    K[I] := A shr (56 - 8 * i);
+  {$ENDIF}
+
   for I := 0 to 7 do
   begin
     T[I] := Mul(Shark_I[I, 0], K[0]);
     for J := 1 to 7 do
       T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
   end;
+
+  {$IFNDEF CPU64BITS}
   Result.L := T[0];
   Result.R := 0;
   for I := 1 to 7 do
@@ -5702,32 +5712,12 @@ begin
     Result.R := Result.R shl 8 or Result.L shr 24;
     Result.L := Result.L shl 8 xor T[I];
   end;
-end;
-{$ELSE CPU64BITS}
-function TCipher_SharkBase.Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
-var
-  I, J: Integer;
-  K, T: array[0..7] of Byte;
-
-  function Mul(A, B: Byte): Byte;
-  begin
-    // GF(256) multiplication via logarithm tables
-    Result := ALog[(Log[A] + Log[B]) mod 255];
-  end;
-begin
-  for I := 0 to 7 do
-    K[I] := A shr (56 - 8 * i);
-  for I := 0 to 7 do
-  begin
-    T[I] := Mul(Shark_I[I, 0], K[0]);
-    for J := 1 to 7 do
-      T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
-  end;
+  {$ELSE CPU64BITS}
   Result := T[0];
   for I := 1 to 7 do
     Result := (Result shl 8) xor T[I];
+  {$ENDIF}
 end;
-{$ENDIF}
 
 { TCipher_Shark }
 
@@ -5743,6 +5733,9 @@ begin
   Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
+const
+  SHARK_ROOT = $01F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
+
 {$IFNDEF CPU64BITS}
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
 var
@@ -5757,7 +5750,7 @@ var
     begin
       J := ALog[I - 1] shl 1;
       if J and $100 <> 0 then
-        J := J xor $01F5;
+        J := J xor SHARK_ROOT;
       ALog[I] := J;
     end;
     Log[0] := 0;
@@ -5915,7 +5908,6 @@ end;
 const
   SHARK_ROUNDS = 6;
   SHARK_ROUNDKEYS = SHARK_ROUNDS + 1;
-  SHARK_ROOT = $1F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
 
 function SharkEncode(D: UInt64; K: PUInt64): UInt64;
 var
