@@ -467,8 +467,13 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_1DES = class(TDECFormattedCipher)
-  protected
+  /// <summary>
+  ///   Base class for all DES based ciphers to fix issues with calling
+  ///   inherited in DoInit, as all other DES based classes did inherit from
+  ///   TCipher_1DES and inherited called the DoInit of that as well...
+  /// </summary>
+  TCipher_DESBase = class(TDECFormattedCipher)
+  strict protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
     /// </summary>
@@ -486,6 +491,10 @@ type
     ///   start index or the highest index  (= reverse)
     /// </param>
     procedure DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
+  end;
+
+  TCipher_1DES = class(TCipher_DESBase)
+  protected
     procedure DoInit(const Key; Size: Integer); override;
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
@@ -493,7 +502,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_2DES = class(TCipher_1DES)
+  TCipher_2DES = class(TCipher_DESBase)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -511,7 +520,7 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TCipher_3DES = class(TCipher_1DES)
+  TCipher_3DES = class(TCipher_DESBase)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -792,6 +801,9 @@ type
     {$ELSE}
     function Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
     {$ENDIF}
+
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   end;
 
   TCipher_Shark = class(TCipher_SharkBase)
@@ -806,8 +818,6 @@ type
     ///   Size of the key passed in bytes.
     /// </param>
     procedure DoInit(const Key; Size: Integer); override;
-    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
-    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
   end;
@@ -816,7 +826,7 @@ type
   ///   Do only use if backwards compatibility with old code is necessary as
   ///   this implementation is faulty!
   /// </remarks>
-  TCipher_Shark_DEC52 = class(TCipher_Shark)
+  TCipher_Shark_DEC52 = class(TCipher_SharkBase)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -3328,8 +3338,6 @@ end;
 
 { TCipher_SCOP_DEC52 }
 
-{ TODO : The old failure needs to be restored again }
-
 class function TCipher_SCOP_DEC52.Context: TCipherContext;
 begin
   Result.KeySize                     := 48;
@@ -3633,7 +3641,7 @@ begin
   end;
 end;
 
-{ TCipher_1DES }
+{ DES basics }
 
 procedure DES_Func(Source, Dest, Key: PUInt32Array);
 var
@@ -3686,19 +3694,7 @@ begin
   Dest[1] := SwapUInt32(L);
 end;
 
-class function TCipher_1DES.Context: TCipherContext;
-begin
-  Result.KeySize                     := 8;
-  Result.BlockSize                   := 8;
-  Result.BufferSize                  := 8;
-  Result.AdditionalBufferSize        := 32 * 4 * 2;
-  Result.NeedsAdditionalBufferBackup := False;
-  Result.MinRounds                   := 1;
-  Result.MaxRounds                   := 1;
-  Result.CipherType                  := [ctSymmetric, ctBlock];
-end;
-
-procedure TCipher_1DES.DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
+procedure TCipher_DESBase.DoInitKey(const Data: array of Byte; Key: PUInt32Array; Reverse: Boolean);
 const
   ROT: array[0..15] of Byte = (1, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 25, 27, 28);
 var
@@ -3762,6 +3758,20 @@ begin
   ProtectBuffer(K, SizeOf(K));
   ProtectBuffer(PC_M, SizeOf(PC_M));
   ProtectBuffer(PC_R, SizeOf(PC_R));
+end;
+
+{ TCipher_1DES }
+
+class function TCipher_1DES.Context: TCipherContext;
+begin
+  Result.KeySize                     := 8;
+  Result.BlockSize                   := 8;
+  Result.BufferSize                  := 8;
+  Result.AdditionalBufferSize        := 32 * 4 * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 procedure TCipher_1DES.DoInit(const Key; Size: Integer);
@@ -5806,7 +5816,7 @@ begin
   inherited;
 end;
 
-procedure TCipher_Shark.DoEncode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SharkBase.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
   I: Integer;
   T, L, R: UInt32;
@@ -5853,7 +5863,7 @@ begin
   PLong64(Dest).R := R xor K[13];
 end;
 
-procedure TCipher_Shark.DoDecode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SharkBase.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   I: Integer;
   T, R, L: UInt32;
@@ -6004,14 +6014,14 @@ begin
   inherited;
 end;
 
-procedure TCipher_Shark.DoEncode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SharkBase.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BufferSize);
 
   PUInt64(Dest)^ := SharkEncode(PUInt64(Source)^, FAdditionalBuffer);
 end;
 
-procedure TCipher_Shark.DoDecode(Source, Dest: Pointer; Size: Integer);
+procedure TCipher_SharkBase.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   R: Integer;
   D: UInt64;

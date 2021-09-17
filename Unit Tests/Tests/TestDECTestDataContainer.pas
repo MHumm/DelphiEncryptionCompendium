@@ -378,9 +378,13 @@ type
     /// </summary>
     FOutputUTFStrTest     : RawByteString;
     /// <summary>
-    ///
+    ///   Requested size for the calculated hash value
     /// </summary>
     FReqDigSize           : UInt32;
+    /// <summary>
+    ///   Contents of the filler byte used to fill up the last byte if a
+    ///   finalbitlength other than 8 hasd been specified
+    /// </summary>
     FPaddingByte          : Byte;
     /// <summary>
     ///   Number of bits of the last byte of the message considered when

@@ -12,10 +12,10 @@ object FormMain: TFormMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  PixelsPerInch = 96
   DesignSize = (
     635
     187)
-  PixelsPerInch = 96
   TextHeight = 13
   object Button1: TButton
     Left = 8

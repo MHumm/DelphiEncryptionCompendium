@@ -36,6 +36,9 @@
         <Projects Include="..\Demos\HashBenchmark_FMX\HashBenchmark.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -143,14 +146,23 @@
     <Target Name="HashBenchmark:Make">
         <MSBuild Projects="..\Demos\HashBenchmark_FMX\HashBenchmark.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GenerateData">
+        <MSBuild Projects="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj"/>
+    </Target>
+    <Target Name="GenerateData:Clean">
+        <MSBuild Projects="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GenerateData:Make">
+        <MSBuild Projects="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;ProgressDemoVCL;HashBenchmark"/>
+        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;ProgressDemoVCL;HashBenchmark;GenerateData"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;ProgressDemoVCL:Clean;HashBenchmark:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;ProgressDemoVCL:Clean;HashBenchmark:Clean;GenerateData:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;ProgressDemoVCL:Make;HashBenchmark:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;ProgressDemoVCL:Make;HashBenchmark:Make;GenerateData:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

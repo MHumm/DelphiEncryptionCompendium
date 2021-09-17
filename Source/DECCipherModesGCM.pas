@@ -507,6 +507,7 @@ var
   i, j, div_len_plain : UInt64;
   a_tag : T128;
 begin
+// Mittels Debugger gegen Michael's Version vergleichen
   i := 0;
   div_len_plain := Size div 16;
   for j := 1 to div_len_plain do
@@ -522,7 +523,7 @@ begin
   if i < Size then
   begin
     INCR(FY);
-    XOR_128_n_l(Source, i, Size-i, EncodeT128(FY), Dest);
+    XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
   a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^[0])), FE_K_Y0);

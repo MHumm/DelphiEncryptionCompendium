@@ -36,7 +36,8 @@ uses
   TestDECTestDataContainer in 'Tests\TestDECTestDataContainer.pas',
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
-  TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas';
+  TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
+  TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas';
 
 {$R *.RES}
 
