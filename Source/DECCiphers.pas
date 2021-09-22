@@ -800,6 +800,7 @@ type
     function Shark(D: TLong64; K: PLong64): TLong64;
     {$ELSE}
     function Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
+    function SharkEncode(D: UInt64; K: PUInt64): UInt64;
     {$ENDIF}
 
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
@@ -5634,6 +5635,11 @@ end;
 
 { TCipher_SharkBase }
 
+const
+  SHARK_ROOT      = $01F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
+  SHARK_ROUNDS    = 6;
+  SHARK_ROUNDKEYS = SHARK_ROUNDS + 1;
+
 {$IFNDEF CPU64BITS}
 function TCipher_SharkBase.Shark(D: TLong64; K: PLong64): TLong64;
 var
@@ -5733,10 +5739,95 @@ begin
   Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
-{ TCipher_Shark }
 
-const
-  SHARK_ROOT = $01F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
+procedure TCipher_SharkBase.DoEncode(Source, Dest: Pointer; Size: Integer);
+{$IFNDEF CPU64BITS}
+var
+  I: Integer;
+  T, L, R: UInt32;
+  K: PUInt32Array;
+begin
+  Assert(Size = Context.BlockSize);
+
+  K := FAdditionalBuffer;
+  L := PLong64(Source).L;
+  R := PLong64(Source).R;
+  for I := 0 to 4 do
+  begin
+    L := L xor K[I * 2 + 0];
+    R := R xor K[I * 2 + 1];
+    T := Shark_CE[0, R shr 23 and $1FE] xor
+         Shark_CE[1, R shr 15 and $1FE] xor
+         Shark_CE[2, R shr  7 and $1FE] xor
+         Shark_CE[3, R shl  1 and $1FE] xor
+         Shark_CE[4, L shr 23 and $1FE] xor
+         Shark_CE[5, L shr 15 and $1FE] xor
+         Shark_CE[6, L shr  7 and $1FE] xor
+         Shark_CE[7, L shl  1 and $1FE];
+    R := Shark_CE[0, R shr 23 and $1FE or 1] xor
+         Shark_CE[1, R shr 15 and $1FE or 1] xor
+         Shark_CE[2, R shr  7 and $1FE or 1] xor
+         Shark_CE[3, R shl  1 and $1FE or 1] xor
+         Shark_CE[4, L shr 23 and $1FE or 1] xor
+         Shark_CE[5, L shr 15 and $1FE or 1] xor
+         Shark_CE[6, L shr  7 and $1FE or 1] xor
+         Shark_CE[7, L shl  1 and $1FE or 1];
+    L := T;
+  end;
+  L := L xor K[10];
+  R := R xor K[11];
+  L := UInt32(Shark_SE[L shr 24        ]) shl 24 xor
+       UInt32(Shark_SE[L shr 16 and $FF]) shl 16 xor
+       UInt32(Shark_SE[L shr  8 and $FF]) shl  8 xor
+       UInt32(Shark_SE[L        and $FF]);
+  R := UInt32(Shark_SE[R shr 24        ]) shl 24 xor
+       UInt32(Shark_SE[R shr 16 and $FF]) shl 16 xor
+       UInt32(Shark_SE[R shr  8 and $FF]) shl  8 xor
+       UInt32(Shark_SE[R        and $FF]);
+  PLong64(Dest).L := L xor K[12];
+  PLong64(Dest).R := R xor K[13];
+{$ELSE}
+  // 64 bit
+  Assert(Size = Context.BufferSize);
+
+  PUInt64(Dest)^ := SharkEncode(PUInt64(Source)^, FAdditionalBuffer);
+{$ENDIF}
+end;
+
+{$IFDEF CPU64BIT}
+function TCipher_SharkBase.SharkEncode(D: UInt64; K: PUInt64): UInt64;
+var
+  R: Integer;
+begin
+  for R := 1 to SHARK_ROUNDS - 1 do
+  begin
+    D := D xor K^;
+    Inc(K);
+    D := Shark_CE[0, D shr 56 and $FF] xor
+         Shark_CE[1, D shr 48 and $FF] xor
+         Shark_CE[2, D shr 40 and $FF] xor
+         Shark_CE[3, D shr 32 and $FF] xor
+         Shark_CE[4, D shr 24 and $FF] xor
+         Shark_CE[5, D shr 16 and $FF] xor
+         Shark_CE[6, D shr 8  and $FF] xor
+         Shark_CE[7, D        and $FF];
+  end;
+  D := D xor K^;
+  Inc(K);
+  D := UInt64(Shark_SE[D shr 56 and $FF]) shl 56 xor
+       UInt64(Shark_SE[D shr 48 and $FF]) shl 48 xor
+       UInt64(Shark_SE[D shr 40 and $FF]) shl 40 xor
+       UInt64(Shark_SE[D shr 32 and $FF]) shl 32 xor
+       UInt64(Shark_SE[D shr 24 and $FF]) shl 24 xor
+       UInt64(Shark_SE[D shr 16 and $FF]) shl 16 xor
+       UInt64(Shark_SE[D shr  8 and $FF]) shl  8 xor
+       UInt64(Shark_SE[D        and $FF]);
+  Result := D xor K^;
+end;
+{$ENDIF}
+
+
+{ TCipher_Shark }
 
 {$IFNDEF CPU64BITS}
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
@@ -5810,54 +5901,9 @@ begin
 
   inherited;
 end;
+{$ENDIF}
 
-procedure TCipher_SharkBase.DoEncode(Source, Dest: Pointer; Size: Integer);
-var
-  I: Integer;
-  T, L, R: UInt32;
-  K: PUInt32Array;
-begin
-  Assert(Size = Context.BlockSize);
-
-  K := FAdditionalBuffer;
-  L := PLong64(Source).L;
-  R := PLong64(Source).R;
-  for I := 0 to 4 do
-  begin
-    L := L xor K[I * 2 + 0];
-    R := R xor K[I * 2 + 1];
-    T := Shark_CE[0, R shr 23 and $1FE] xor
-         Shark_CE[1, R shr 15 and $1FE] xor
-         Shark_CE[2, R shr  7 and $1FE] xor
-         Shark_CE[3, R shl  1 and $1FE] xor
-         Shark_CE[4, L shr 23 and $1FE] xor
-         Shark_CE[5, L shr 15 and $1FE] xor
-         Shark_CE[6, L shr  7 and $1FE] xor
-         Shark_CE[7, L shl  1 and $1FE];
-    R := Shark_CE[0, R shr 23 and $1FE or 1] xor
-         Shark_CE[1, R shr 15 and $1FE or 1] xor
-         Shark_CE[2, R shr  7 and $1FE or 1] xor
-         Shark_CE[3, R shl  1 and $1FE or 1] xor
-         Shark_CE[4, L shr 23 and $1FE or 1] xor
-         Shark_CE[5, L shr 15 and $1FE or 1] xor
-         Shark_CE[6, L shr  7 and $1FE or 1] xor
-         Shark_CE[7, L shl  1 and $1FE or 1];
-    L := T;
-  end;
-  L := L xor K[10];
-  R := R xor K[11];
-  L := UInt32(Shark_SE[L shr 24        ]) shl 24 xor
-       UInt32(Shark_SE[L shr 16 and $FF]) shl 16 xor
-       UInt32(Shark_SE[L shr  8 and $FF]) shl  8 xor
-       UInt32(Shark_SE[L        and $FF]);
-  R := UInt32(Shark_SE[R shr 24        ]) shl 24 xor
-       UInt32(Shark_SE[R shr 16 and $FF]) shl 16 xor
-       UInt32(Shark_SE[R shr  8 and $FF]) shl  8 xor
-       UInt32(Shark_SE[R        and $FF]);
-  PLong64(Dest).L := L xor K[12];
-  PLong64(Dest).R := R xor K[13];
-end;
-
+{$IFNDEF CPU64BITS}
 procedure TCipher_SharkBase.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   I: Integer;
@@ -5906,41 +5952,6 @@ begin
 end;
 
 {$ELSE CPU64BITS}
-
-const
-  SHARK_ROUNDS = 6;
-  SHARK_ROUNDKEYS = SHARK_ROUNDS + 1;
-
-function SharkEncode(D: UInt64; K: PUInt64): UInt64;
-var
-  R: Integer;
-begin
-  for R := 1 to SHARK_ROUNDS - 1 do
-  begin
-    D := D xor K^;
-    Inc(K);
-    D := Shark_CE[0, D shr 56 and $FF] xor
-         Shark_CE[1, D shr 48 and $FF] xor
-         Shark_CE[2, D shr 40 and $FF] xor
-         Shark_CE[3, D shr 32 and $FF] xor
-         Shark_CE[4, D shr 24 and $FF] xor
-         Shark_CE[5, D shr 16 and $FF] xor
-         Shark_CE[6, D shr 8  and $FF] xor
-         Shark_CE[7, D        and $FF];
-  end;
-  D := D xor K^;
-  Inc(K);
-  D := UInt64(Shark_SE[D shr 56 and $FF]) shl 56 xor
-       UInt64(Shark_SE[D shr 48 and $FF]) shl 48 xor
-       UInt64(Shark_SE[D shr 40 and $FF]) shl 40 xor
-       UInt64(Shark_SE[D shr 32 and $FF]) shl 32 xor
-       UInt64(Shark_SE[D shr 24 and $FF]) shl 24 xor
-       UInt64(Shark_SE[D shr 16 and $FF]) shl 16 xor
-       UInt64(Shark_SE[D shr  8 and $FF]) shl  8 xor
-       UInt64(Shark_SE[D        and $FF]);
-  Result := D xor K^;
-end;
-
 procedure TCipher_Shark.DoInit(const Key; Size: Integer);
 var
   Log, ALog: TLogArray;
@@ -6008,13 +6019,6 @@ begin
   inherited;
 end;
 
-procedure TCipher_SharkBase.DoEncode(Source, Dest: Pointer; Size: Integer);
-begin
-  Assert(Size = Context.BufferSize);
-
-  PUInt64(Dest)^ := SharkEncode(PUInt64(Source)^, FAdditionalBuffer);
-end;
-
 procedure TCipher_SharkBase.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
   R: Integer;
@@ -6064,12 +6068,13 @@ var
   var
     I, J: Word;
   begin
+    // Generate GF(256) anti-logarithm and logarithm tables
     ALog[0] := 1;
     for I := 1 to 255 do
     begin
       J := ALog[I - 1] shl 1;
       if J and $100 <> 0 then
-        J := J xor $01F5;
+        J := J xor SHARK_ROOT;
       ALog[I] := J;
     end;
     for I := 1 to 254 do
@@ -6077,8 +6082,8 @@ var
   end;
 
 var
-  T: array[0..6] of TLong64;
-  A: array[0..6] of TLong64;
+  T: array[0..SHARK_ROUNDS] of TLong64;
+  A: array[0..SHARK_ROUNDS] of TLong64;
   K: array[0..15] of Byte;
   I, J, R: Byte;
   E, D: PLong64Array;
