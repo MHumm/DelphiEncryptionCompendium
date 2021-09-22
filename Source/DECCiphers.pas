@@ -804,6 +804,8 @@ type
 
     procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
   end;
 
   TCipher_Shark = class(TCipher_SharkBase)
@@ -819,7 +821,7 @@ type
     /// </param>
     procedure DoInit(const Key; Size: Integer); override;
   public
-    class function Context: TCipherContext; override;
+
   end;
 
   /// <remarks>
@@ -5719,9 +5721,7 @@ begin
   {$ENDIF}
 end;
 
-{ TCipher_Shark }
-
-class function TCipher_Shark.Context: TCipherContext;
+class function TCipher_SharkBase.Context: TCipherContext;
 begin
   Result.KeySize                     := 16;
   Result.BlockSize                   := 8;
@@ -5732,6 +5732,8 @@ begin
   Result.MaxRounds                   := 1;
   Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
+
+{ TCipher_Shark }
 
 const
   SHARK_ROOT = $01F5; // GF(256) polynomial x^8 + x^7 + x^6 + x^5 + x^4 + x^2 + 1
