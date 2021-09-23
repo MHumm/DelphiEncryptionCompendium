@@ -5685,6 +5685,7 @@ begin
 end;
 {$ENDIF}
 
+{$IFNDEF CPU64BITS}
 function TCipher_SharkBase.Transform(A: TLong64; Log, ALog: TLogArray): TLong64;
   function Mul(A, B: Integer): Byte;
   begin
@@ -5696,14 +5697,9 @@ var
   I, J: Byte;
   K, T: array[0..7] of Byte;
 begin
-  {$IFNDEF CPU64BITS}
   Move(A.R, K[0], 4);
   Move(A.L, K[4], 4);
   SwapUInt32Buffer(K, K, 2);
-  {$ELSE CPU64BITS}
-  for I := 0 to 7 do
-    K[I] := A shr (56 - 8 * i);
-  {$ENDIF}
 
   for I := 0 to 7 do
   begin
@@ -5712,7 +5708,6 @@ begin
       T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
   end;
 
-  {$IFNDEF CPU64BITS}
   Result.L := T[0];
   Result.R := 0;
   for I := 1 to 7 do
@@ -5720,12 +5715,35 @@ begin
     Result.R := Result.R shl 8 or Result.L shr 24;
     Result.L := Result.L shl 8 xor T[I];
   end;
-  {$ELSE CPU64BITS}
+end;
+
+{$ELSE CPU64BITS}
+function TCipher_SharkBase.Transform(A: UInt64; Log, ALog: TLogArray): UInt64;
+  function Mul(A, B: Integer): Byte;
+  begin
+    // GF(256) multiplication via logarithm tables
+    Result := ALog[(Log[A] + Log[B]) mod 255];
+  end;
+
+var
+  I, J: Byte;
+  K, T: array[0..7] of Byte;
+begin
+  for I := 0 to 7 do
+    K[I] := A shr (56 - 8 * i);
+
+  for I := 0 to 7 do
+  begin
+    T[I] := Mul(Shark_I[I, 0], K[0]);
+    for J := 1 to 7 do
+      T[I] := T[I] xor Mul(Shark_I[I, J], K[J]);
+  end;
+
   Result := T[0];
   for I := 1 to 7 do
     Result := (Result shl 8) xor T[I];
-  {$ENDIF}
 end;
+{$ENDIF}
 
 class function TCipher_SharkBase.Context: TCipherContext;
 begin
@@ -5786,7 +5804,8 @@ begin
        UInt32(Shark_SE[R        and $FF]);
   PLong64(Dest).L := L xor K[12];
   PLong64(Dest).R := R xor K[13];
-{$ELSE}
+{$ELSE CPU64BITS}
+begin
   // 64 bit
   Assert(Size = Context.BufferSize);
 
@@ -5794,7 +5813,7 @@ begin
 {$ENDIF}
 end;
 
-{$IFDEF CPU64BIT}
+{$IFDEF CPU64BITS}
 function TCipher_SharkBase.SharkEncode(D: UInt64; K: PUInt64): UInt64;
 var
   R: Integer;
@@ -6059,7 +6078,7 @@ end;
 
 { TCipher_Shark_DEC52 }
 
-{$IFNDEF CPU64BITS}
+
 procedure TCipher_Shark_DEC52.DoInit(const Key; Size: Integer);
 var
   Log, ALog: TLogArray;
@@ -6081,6 +6100,7 @@ var
       Log[ALog[I]] := I;
   end;
 
+{$IFNDEF CPU64BITS}
 var
   T: array[0..SHARK_ROUNDS] of TLong64;
   A: array[0..SHARK_ROUNDS] of TLong64;
@@ -6130,30 +6150,7 @@ begin
   ProtectBuffer(K, SizeOf(K));
 
   inherited;
-end;
-
-{$ELSE CPU64BITS}
-procedure TCipher_Shark_DEC52.DoInit(const Key; Size: Integer);
-var
-  Log, ALog: TLogArray;
-
-  procedure InitLog;
-  var
-    I, J: Word;
-  begin
-    // Generate GF(256) anti-logarithm and logarithm tables
-    ALog[0] := 1;
-    for I := 1 to 255 do
-    begin
-      J := ALog[I - 1] shl 1;
-      if J and $100 <> 0 then
-        J := J xor SHARK_ROOT;
-      ALog[I] := J;
-    end;
-    for I := 1 to 254 do
-      Log[ALog[I]] := I;
-  end;
-
+  {$ELSE}
 var
   T: array[0..SHARK_ROUNDS] of UInt64;
   A: array[0..SHARK_ROUNDKEYS-1] of UInt64;
@@ -6197,8 +6194,8 @@ begin
   ProtectBuffer(K, SizeOf(K));
 
   inherited;
+  {$ENDIF}
 end;
-{$ENDIF}
 
 { TCipher_Skipjack }
 
