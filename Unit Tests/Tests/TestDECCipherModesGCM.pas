@@ -412,20 +412,42 @@ begin
 
 //  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
 
+//  TestDataSet.Keylen := 16*8;
+//  TestDataSet.IVlen  := 12*8;
+//  TestDataSet.PTlen  := 16*8;;
+//  TestDataSet.AADlen := 16*8;
+//  TestDataSet.Taglen := 14*8;
+//  TestDataSet.TestData[0].CryptKey   := 'bad6049678bf75c9087b3e3ae7e72c13';
+//  TestDataSet.TestData[0].InitVector := 'a0a017b83a67d8f1b883e561';
+//  TestDataSet.TestData[0].PT         := 'a1be93012f05a1958440f74a5311f4a1';
+//  TestDataSet.TestData[0].AAD        := 'f7c27b51d5367161dc2ff1e9e3edc6f2';
+//  TestDataSet.TestData[0].CT         := '36f032f7e3dc3275ca22aedcdc68436b';
+//  TestDataSet.TestData[0].TagResult  := '99a2227f8bb69d45ea5d8842cd08';
+//
+//  FTestDataList.Clear;
+//  FTestDataList.Add(TestDataSet);
+
   TestDataSet.Keylen := 16*8;
   TestDataSet.IVlen  := 12*8;
-  TestDataSet.PTlen  := 16*8;;
-  TestDataSet.AADlen := 16*8;
-  TestDataSet.Taglen := 14*8;
-  TestDataSet.TestData[0].CryptKey   := 'bad6049678bf75c9087b3e3ae7e72c13';
-  TestDataSet.TestData[0].InitVector := 'a0a017b83a67d8f1b883e561';
-  TestDataSet.TestData[0].PT         := 'a1be93012f05a1958440f74a5311f4a1';
-  TestDataSet.TestData[0].AAD        := 'f7c27b51d5367161dc2ff1e9e3edc6f2';
-  TestDataSet.TestData[0].CT         := '36f032f7e3dc3275ca22aedcdc68436b';
-  TestDataSet.TestData[0].TagResult  := '99a2227f8bb69d45ea5d8842cd08';
+  TestDataSet.PTlen  := 0;
+  TestDataSet.AADlen := 0;
+  TestDataSet.Taglen := 16*8;
+  TestDataSet.TestData[0].CryptKey   := '11754cd72aec309bf52f7687212e8957';
+  TestDataSet.TestData[0].InitVector := '3c819d9a9bed087615030b65';
+  TestDataSet.TestData[0].PT         := '';
+  TestDataSet.TestData[0].AAD        := '';
+  TestDataSet.TestData[0].CT         := '';
+  TestDataSet.TestData[0].TagResult  := '250327c674aaf477aef2675748cf6971';
 
   FTestDataList.Clear;
   FTestDataList.Add(TestDataSet);
+
+      // Key = 11754cd72aec309bf52f7687212e8957
+      // IV = 3c819d9a9bed087615030b65
+      // PT =
+      // AAD =
+      // CT =
+      // Tag = 250327c674aaf477aef2675748cf6971
 
   Cipher := TCipher_AES.Create;
   try
@@ -438,8 +460,6 @@ begin
         KeyBytes := System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey));
         SetLength(Key,length(KeyBytes));
         Move(KeyBytes[0], Key[1], length(Key));
-
-//        Cipher.Init(Key);
 
         Cipher.Init(System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
                     System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),

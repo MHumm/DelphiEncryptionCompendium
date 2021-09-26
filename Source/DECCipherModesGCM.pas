@@ -507,7 +507,6 @@ var
   i, j, div_len_plain : UInt64;
   a_tag : T128;
 begin
-// Mittels Debugger gegen Michael's Version vergleichen
   i := 0;
   div_len_plain := Size div 16;
   for j := 1 to div_len_plain do

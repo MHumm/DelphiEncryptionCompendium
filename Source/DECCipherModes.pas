@@ -180,6 +180,12 @@ type
     ///   inputstream into Feedback register.
     /// </summary>
     procedure EncodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    /// <summary>
+    ///   Galois Counter Mode: encryption with addtional optional authentication.
+    ///   Implemented in its own unit, but needed here to be callable even if
+    ///   source length is 0.
+    /// </summary>
+    procedure EncodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -705,6 +711,11 @@ begin
     FState := csEncode;
 end;
 
+procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+begin
+  FGCM.EncodeGCM(@Source, @Dest, Size);
+end;
+
 {$IFDEF DEC3_CMCTS}
 procedure TDECCipherModes.EncodeCTS3(Source, Dest: PByteArray; Size: Integer);
 var
@@ -942,18 +953,11 @@ begin
 end;
 
 procedure TDECCipherModes.OnAfterInitVectorInitialization(OriginalInitVector: TBytes);
-var
-  InitVector : TBytes;
 begin
   inherited;
 
   if (FMode = cmGCM) then
-  begin
-{ TODO : Check which encode method is meant. GCM128.pas uses Encode, which would be the one internally casing about FMode... }
-    SetLength(InitVector, FInitVectorSize);
-    Move(FInitializationVector^[0], InitVector[0], FInitVectorSize);
     FGCM.Init(self.DoEncode, self.DoDecode, OriginalInitVector);
-  end;
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);
