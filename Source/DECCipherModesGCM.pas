@@ -103,7 +103,7 @@ type
     /// </summary>
     FDecryptionMethod: TEncodeDecodeMethod;
     /// <summary>
-    ///   True, when EncodeGCM zhas been called, false when DecodeGCM has been
+    ///   True, when EncodeGCM has been called, false when DecodeGCM has been
     ///   called, as the last step depends on whether it is encryption or decryption
     /// </summary>
     FIsEncryption    : Boolean;
@@ -165,14 +165,14 @@ type
     /// <param name="H">
     ///   Start value for the precalculation
     /// </param>
-    procedure GenerateTableM8Bit(const H : T128); inline;
+    procedure GenerateTableM8Bit(const H : T128); //inline;
     /// <summary>
     ///   Performs a right shift of all bytes in an 128 bit variable
     /// </summary>
     /// <param name="rx">
     ///   Variable on which the right shift is being performed
     /// </param>
-    procedure ShiftRight(var rx : T128); inline;
+    procedure ShiftRight(var rx : T128); //inline;
 
     procedure INCR(var Y : T128);
 
@@ -506,6 +506,7 @@ procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
 var
   i, j, div_len_plain : UInt64;
   a_tag : T128;
+  DestBytes: TBytes;
 begin
 // Mittels Debugger gegen Michael's Version vergleichen
   i := 0;
@@ -526,7 +527,11 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^[0])), FE_K_Y0);
+// der übergebene Ciphertext ist falsch!
+  SetLength(DestBytes, Size);
+  Move(Dest^, DestBytes[0], Size);
+  a_tag := XOR_128( GHASH(FH, authenticated_data, DestBytes), FE_K_Y0);
+//  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
 end;

@@ -405,9 +405,27 @@ var
   TestDataSet : TGCMTestSetEntry;
   i           : Integer;
   EncryptData : TBytes;
+  Key         : RawByteString;
+  KeyBytes    : TBytes;
 begin
 //  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
-  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
+
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
+
+  TestDataSet.Keylen := 16*8;
+  TestDataSet.IVlen  := 12*8;
+  TestDataSet.PTlen  := 16*8;;
+  TestDataSet.AADlen := 16*8;
+  TestDataSet.Taglen := 14*8;
+  TestDataSet.TestData[0].CryptKey   := 'bad6049678bf75c9087b3e3ae7e72c13';
+  TestDataSet.TestData[0].InitVector := 'a0a017b83a67d8f1b883e561';
+  TestDataSet.TestData[0].PT         := 'a1be93012f05a1958440f74a5311f4a1';
+  TestDataSet.TestData[0].AAD        := 'f7c27b51d5367161dc2ff1e9e3edc6f2';
+  TestDataSet.TestData[0].CT         := '36f032f7e3dc3275ca22aedcdc68436b';
+  TestDataSet.TestData[0].TagResult  := '99a2227f8bb69d45ea5d8842cd08';
+
+  FTestDataList.Clear;
+  FTestDataList.Add(TestDataSet);
 
   Cipher := TCipher_AES.Create;
   try
@@ -417,9 +435,15 @@ begin
     begin
       for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
       begin
-        Cipher.Init(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey),
-                    TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector),
-                    0);
+        KeyBytes := System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey));
+        SetLength(Key,length(KeyBytes));
+        Move(KeyBytes[0], Key[1], length(Key));
+
+//        Cipher.Init(Key);
+
+        Cipher.Init(System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
+                    System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
+                    $FF);
 
         Cipher.AuthenticationResultBitLength := TestDataSet.Taglen;
         Cipher.AuthenticatedData             := TFormat_HexL.Decode(
@@ -450,6 +474,7 @@ begin
                     string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                     string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
                     StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)));
+exit;
       end;
     end;
   finally

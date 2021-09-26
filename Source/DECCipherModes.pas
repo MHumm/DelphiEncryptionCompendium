@@ -98,15 +98,14 @@ type
     /// </summary>
     procedure ReportInvalidMessageLength(Cipher: TDECCipher);
     /// <summary>
-    ///   Initialize the key, based on the key passed in
+    ///   Allows to run code after the initialization vector has been initialized
+    ///   inside the Init call, which is after DoInit has been called.
     /// </summary>
-    /// <param name="Key">
-    ///   Encryption/Decryption key to be used
+    /// <param name="OriginalIVector">
+    ///   Value of the init vector as originally passed to the Init call without
+    ///   any initialization steps done to/on it
     /// </param>
-    /// <param name="Size">
-    ///   Size of the key passed in bytes.
-    /// </param>
-    procedure DoInit(const Key; Size: Integer); override;
+    procedure OnAfterInitVectorInitialization(OriginalInitVector: TBytes); override;
     /// <summary>
     ///   Electronic Code Book
     ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize
@@ -942,7 +941,7 @@ begin
   inherited;
 end;
 
-procedure TDECCipherModes.DoInit(const Key; Size: Integer);
+procedure TDECCipherModes.OnAfterInitVectorInitialization(OriginalInitVector: TBytes);
 var
   InitVector : TBytes;
 begin
@@ -953,7 +952,7 @@ begin
 { TODO : Check which encode method is meant. GCM128.pas uses Encode, which would be the one internally casing about FMode... }
     SetLength(InitVector, FInitVectorSize);
     Move(FInitializationVector^[0], InitVector[0], FInitVectorSize);
-    FGCM.Init(self.DoEncode, self.DoDecode, InitVector);
+    FGCM.Init(self.DoEncode, self.DoDecode, OriginalInitVector);
   end;
 end;
 

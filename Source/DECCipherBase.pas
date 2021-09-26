@@ -311,15 +311,25 @@ type
     procedure CheckState(States: TCipherStates);
 
     /// <summary>
-    ///   Initialize the key, based on the key passed in
+    ///   Initialize the key, based on the key passed in. This is called before
+    ///   OnAfterInitVectorInitialization is called.
     /// </summary>
     /// <param name="Key">
     ///   Encryption/Decryption key to be used
     /// </param>
     /// <param name="Size">
-    ///   Size of the key passed in bytes. 
+    ///   Size of the key passed in bytes.
     /// </param>
     procedure DoInit(const Key; Size: Integer); virtual; abstract;
+    /// <summary>
+    ///   Allows to run code after the initialization vector has been initialized
+    ///   inside the Init call, which is after DoInit has been called.
+    /// </summary>
+    /// <param name="OriginalInitVector">
+    ///   Value of the init vector as originally passed to the Init call without
+    ///   any initialization steps done to/on it
+    /// </param>
+    procedure OnAfterInitVectorInitialization(OriginalInitVector: TBytes); virtual; abstract;
 
     /// <summary>
     ///   This abstract method needs to be overwritten by each concrete encryption
@@ -903,6 +913,8 @@ begin
 end;
 
 procedure TDECCipher.Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte);
+var
+  OriginalInitVector : TBytes;
 begin
   FState          := csNew;
   FInitVectorSize := IVectorSize;
@@ -920,7 +932,14 @@ begin
     Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
 
   FillChar(FInitializationVector^, FBufferSize, IFiller);
-  if IVectorSize = 0 then
+
+{ TODO : Figure out what to do if IVectorSize = 0 and GCM is used... }
+  SetLength(OriginalInitVector, IVectorSize);
+  if (IVectorSize > 0) then
+    Move(IVector, OriginalInitVector[0], IVectorSize);
+
+  // GCM needs same treatment as empty IV even if IV specified
+  if (IVectorSize = 0) or (FMode = cmGCM) then
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
     if FAdditionalBufferBackup <> nil then
@@ -929,6 +948,8 @@ begin
   end
   else
     Move(IVector, FInitializationVector^, IVectorSize);
+
+  OnAfterInitVectorInitialization(OriginalInitVector);
 
   Move(FInitializationVector^, FFeedback^, FBufferSize);
 
