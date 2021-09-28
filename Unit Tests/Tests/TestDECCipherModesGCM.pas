@@ -312,7 +312,7 @@ begin
       // CT = 36f032f7e3dc3275ca22aedcdc68436b
       // Tag = 99a2227f8bb69d45ea5d8842cd08
 
-      Line := LowerCase(Line);
+      Line := LowerCase(Line).Replace(' ', '', [rfReplaceAll]);
       ReadBlockMetaDataLine(Line, TestData, Entry, Index);
       ReadDataLine(Line, Entry, Index);
     end;
@@ -364,19 +364,19 @@ begin
     // AAD = f7c27b51d5367161dc2ff1e9e3edc6f2
     // CT = 36f032f7e3dc3275ca22aedcdc68436b
     // Tag = 99a2227f8bb69d45ea5d8842cd08
-    if (Pos('count', Line) > 0) then
+    if (Pos('count=', Line) > 0) then
       Index := ExtractNumber(Line)
-    else if (Pos('key', Line) > 0) then
+    else if (Pos('key=', Line) > 0) then
       Entry.TestData[Index].CryptKey := ExtractHexString(Line)
-    else if (Pos('iv', Line) > 0) then
+    else if (Pos('iv=', Line) > 0) then
       Entry.TestData[Index].InitVector := ExtractHexString(Line)
-    else if (Pos('pt', Line) > 0) then
+    else if (Pos('pt=', Line) > 0) then
       Entry.TestData[Index].PT := ExtractHexString(Line)
-    else if (Pos('aad', Line) > 0) then
+    else if (Pos('aad=', Line) > 0) then
       Entry.TestData[Index].AAD := ExtractHexString(Line)
-    else if (Pos('ct', Line) > 0) then
+    else if (Pos('ct=', Line) > 0) then
       Entry.TestData[Index].CT := ExtractHexString(Line)
-    else if (Pos('tag', Line) > 0) then
+    else if (Pos('tag=', Line) > 0) then
       Entry.TestData[Index].TagResult := ExtractHexString(Line);
   end;
 end;
@@ -408,7 +408,7 @@ var
   Key         : RawByteString;
   KeyBytes    : TBytes;
 begin
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
 
 //  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
 
@@ -426,28 +426,21 @@ begin
 //
 //  FTestDataList.Clear;
 //  FTestDataList.Add(TestDataSet);
-
-  TestDataSet.Keylen := 16*8;
-  TestDataSet.IVlen  := 12*8;
-  TestDataSet.PTlen  := 0;
-  TestDataSet.AADlen := 0;
-  TestDataSet.Taglen := 16*8;
-  TestDataSet.TestData[0].CryptKey   := '11754cd72aec309bf52f7687212e8957';
-  TestDataSet.TestData[0].InitVector := '3c819d9a9bed087615030b65';
-  TestDataSet.TestData[0].PT         := '';
-  TestDataSet.TestData[0].AAD        := '';
-  TestDataSet.TestData[0].CT         := '';
-  TestDataSet.TestData[0].TagResult  := '250327c674aaf477aef2675748cf6971';
-
-  FTestDataList.Clear;
-  FTestDataList.Add(TestDataSet);
-
-      // Key = 11754cd72aec309bf52f7687212e8957
-      // IV = 3c819d9a9bed087615030b65
-      // PT =
-      // AAD =
-      // CT =
-      // Tag = 250327c674aaf477aef2675748cf6971
+//
+//  TestDataSet.Keylen := 16*8;
+//  TestDataSet.IVlen  := 12*8;
+//  TestDataSet.PTlen  := 0;
+//  TestDataSet.AADlen := 384;
+//  TestDataSet.Taglen := 128;
+//  TestDataSet.TestData[0].CryptKey   := '99e3e8793e686e571d8285c564f75e2b';
+//  TestDataSet.TestData[0].InitVector := 'c2dd0ab868da6aa8ad9c0d23';
+//  TestDataSet.TestData[0].PT         := '';
+//  TestDataSet.TestData[0].AAD        := 'b668e42d4e444ca8b23cfdd95a9fedd5178aa521144890b093733cf5cf22526c5917ee476541809ac6867a8c399309fc';
+//  TestDataSet.TestData[0].CT         := '';
+//  TestDataSet.TestData[0].TagResult  := '3f4fba100eaf1f34b0baadaae9995d85';
+//
+//  FTestDataList.Clear;
+//  FTestDataList.Add(TestDataSet);
 
   Cipher := TCipher_AES.Create;
   try
@@ -459,7 +452,9 @@ begin
       begin
         KeyBytes := System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey));
         SetLength(Key,length(KeyBytes));
-        Move(KeyBytes[0], Key[1], length(Key));
+
+        if (Length(Key) > 0) then
+          Move(KeyBytes[0], Key[1], length(Key));
 
         Cipher.Init(System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
                     System.SysUtils.BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
@@ -494,7 +489,7 @@ begin
                     string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                     string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
                     StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)));
-exit;
+//exit;
       end;
     end;
   finally

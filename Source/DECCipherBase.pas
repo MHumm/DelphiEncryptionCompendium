@@ -923,7 +923,7 @@ begin
   if (Size > Context.KeySize) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
 
-  if FInitVectorSize > FBufferSize then
+  if (FInitVectorSize > FBufferSize) and (not (FMode = cmGCM)) then
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);
@@ -933,7 +933,6 @@ begin
 
   FillChar(FInitializationVector^, FBufferSize, IFiller);
 
-{ TODO : Figure out what to do if IVectorSize = 0 and GCM is used... }
   SetLength(OriginalInitVector, IVectorSize);
   if (IVectorSize > 0) then
     Move(IVector, OriginalInitVector[0], IVectorSize);
@@ -958,7 +957,9 @@ end;
 
 procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF);
 begin
-  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
+  // GCM allows empty key as the authentication still works
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+     (not (FMode = cmGCM)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if IVector <> nil then
@@ -967,9 +968,13 @@ begin
     Init(Key[0], Length(Key), NullStr, 0, IFiller);
 end;
 
-procedure TDECCipher.Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF);
+procedure TDECCipher.Init(const Key     : RawByteString;
+                          const IVector : RawByteString = '';
+                          IFiller       : Byte = $FF);
 begin
-  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
+  // GCM allows empty key as the authentication still works
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+     (not (FMode = cmGCM)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
@@ -1016,7 +1021,9 @@ end;
 {$IFNDEF NEXTGEN}
 procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
 begin
-  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
+  // GCM allows empty key as the authentication still works
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+     (not (FMode = cmGCM)) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
