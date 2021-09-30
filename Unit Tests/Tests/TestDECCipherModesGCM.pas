@@ -409,38 +409,8 @@ var
   KeyBytes    : TBytes;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
-
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncodeTest.rsp', FTestDataList);
-
-//  TestDataSet.Keylen := 16*8;
-//  TestDataSet.IVlen  := 12*8;
-//  TestDataSet.PTlen  := 16*8;;
-//  TestDataSet.AADlen := 16*8;
-//  TestDataSet.Taglen := 14*8;
-//  TestDataSet.TestData[0].CryptKey   := 'bad6049678bf75c9087b3e3ae7e72c13';
-//  TestDataSet.TestData[0].InitVector := 'a0a017b83a67d8f1b883e561';
-//  TestDataSet.TestData[0].PT         := 'a1be93012f05a1958440f74a5311f4a1';
-//  TestDataSet.TestData[0].AAD        := 'f7c27b51d5367161dc2ff1e9e3edc6f2';
-//  TestDataSet.TestData[0].CT         := '36f032f7e3dc3275ca22aedcdc68436b';
-//  TestDataSet.TestData[0].TagResult  := '99a2227f8bb69d45ea5d8842cd08';
-//
-//  FTestDataList.Clear;
-//  FTestDataList.Add(TestDataSet);
-//
-//  TestDataSet.Keylen := 16*8;
-//  TestDataSet.IVlen  := 12*8;
-//  TestDataSet.PTlen  := 0;
-//  TestDataSet.AADlen := 384;
-//  TestDataSet.Taglen := 128;
-//  TestDataSet.TestData[0].CryptKey   := '99e3e8793e686e571d8285c564f75e2b';
-//  TestDataSet.TestData[0].InitVector := 'c2dd0ab868da6aa8ad9c0d23';
-//  TestDataSet.TestData[0].PT         := '';
-//  TestDataSet.TestData[0].AAD        := 'b668e42d4e444ca8b23cfdd95a9fedd5178aa521144890b093733cf5cf22526c5917ee476541809ac6867a8c399309fc';
-//  TestDataSet.TestData[0].CT         := '';
-//  TestDataSet.TestData[0].TagResult  := '3f4fba100eaf1f34b0baadaae9995d85';
-//
-//  FTestDataList.Clear;
-//  FTestDataList.Add(TestDataSet);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
   Cipher := TCipher_AES.Create;
   try
@@ -489,7 +459,6 @@ begin
                     string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                     string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
                     StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)));
-//exit;
       end;
     end;
   finally

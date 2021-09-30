@@ -424,7 +424,9 @@ procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
                     DecryptionMethod : TEncodeDecodeMethod;
                     InitVector       : TBytes);
 var
-  b : ^Byte;
+  b      : ^Byte;
+  OldKey : T128;
+
 //  bY : array[0..15] of byte absolute FY[0]; doesn't compile as FY is not seen as variable
 begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
@@ -438,8 +440,11 @@ begin
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
 
+  OldKey := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
-  GenerateTableM8Bit(FH);
+
+  if (OldKey[0] <> FH[0]) and (OldKey[1] <> FH[1]) then
+    GenerateTableM8Bit(FH);
 
   if length(InitVector) = 12 then
   begin
