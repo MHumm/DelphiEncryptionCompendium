@@ -199,6 +199,7 @@ type
     ///   Encrypted value
     /// </returns>
     function EncodeT128(Value: T128): T128;
+    procedure SetAuthenticated_data(const Value: TBytes);
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -252,7 +253,7 @@ type
     /// </summary>
     property Authenticated_data : TBytes
       read   FAuthenticated_data
-      write  FAuthenticated_data;
+      write  SetAuthenticated_data;
     /// <summary>
     ///   Sets the length of Authenticaton_tag in bit, values as per specification
     ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
@@ -391,6 +392,11 @@ begin
   x[0] := x[0] shr 1;
 end;
 
+procedure TGCM.SetAuthenticated_data(const Value: TBytes);
+begin
+  FAuthenticated_data := Value;
+end;
+
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
   Flen_auth_tag := Value shr 3;
@@ -424,15 +430,16 @@ procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
                     DecryptionMethod : TEncodeDecodeMethod;
                     InitVector       : TBytes);
 var
-  b      : ^Byte;
-  OldKey : T128;
+  b    : ^Byte;
+  OldH : T128;
 
 //  bY : array[0..15] of byte absolute FY[0]; doesn't compile as FY is not seen as variable
 begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
   // Clear calculated authentication value
-  FillChar(FAuthenticaton_tag, Length(FAuthenticaton_tag), #0);
+  if (Length(FAuthenticaton_tag) > 0) then
+    FillChar(FAuthenticaton_tag[0], Length(FAuthenticaton_tag), #0);
 
   FEncryptionMethod := EncryptionMethod;
   FDecryptionMethod := DecryptionMethod;
@@ -440,10 +447,10 @@ begin
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
 
-  OldKey := FH;
+  OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
 
-  if (OldKey[0] <> FH[0]) and (OldKey[1] <> FH[1]) then
+  if (OldH[0] <> FH[0]) or (OldH[1] <> FH[1]) then
     GenerateTableM8Bit(FH);
 
   if length(InitVector) = 12 then

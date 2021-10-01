@@ -408,6 +408,7 @@ var
   Key         : RawByteString;
   KeyBytes    : TBytes;
 begin
+{ TODO : Check if the first set of test data is skipped when reading it in }
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);

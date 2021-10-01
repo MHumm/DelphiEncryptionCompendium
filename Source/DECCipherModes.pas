@@ -105,7 +105,7 @@ type
     ///   Value of the init vector as originally passed to the Init call without
     ///   any initialization steps done to/on it
     /// </param>
-    procedure OnAfterInitVectorInitialization(OriginalInitVector: TBytes); override;
+    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
     /// <summary>
     ///   Electronic Code Book
     ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize
@@ -952,7 +952,7 @@ begin
   inherited;
 end;
 
-procedure TDECCipherModes.OnAfterInitVectorInitialization(OriginalInitVector: TBytes);
+procedure TDECCipherModes.OnAfterInitVectorInitialization(const OriginalInitVector: TBytes);
 begin
   inherited;
 

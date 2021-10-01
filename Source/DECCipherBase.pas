@@ -329,7 +329,7 @@ type
     ///   Value of the init vector as originally passed to the Init call without
     ///   any initialization steps done to/on it
     /// </param>
-    procedure OnAfterInitVectorInitialization(OriginalInitVector: TBytes); virtual; abstract;
+    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); virtual; abstract;
 
     /// <summary>
     ///   This abstract method needs to be overwritten by each concrete encryption
