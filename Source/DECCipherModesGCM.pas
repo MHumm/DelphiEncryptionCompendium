@@ -200,6 +200,19 @@ type
     /// </returns>
     function EncodeT128(Value: T128): T128;
     procedure SetAuthenticated_data(const Value: TBytes);
+    /// <summary>
+    ///   Checks whether two TBytes values contain the same data
+    /// </summary>
+    /// <param name="a">
+    ///   First value for the comparison
+    /// </param>
+    /// <param name="b">
+    ///   Second value for the comparison
+    /// </param>
+    /// <returns>
+    ///   true, if both contain exactly the same data
+    /// </returns>
+    function IsEqual(const a, b : TBytes ):Boolean;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -432,8 +445,6 @@ procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
 var
   b    : ^Byte;
   OldH : T128;
-
-//  bY : array[0..15] of byte absolute FY[0]; doesn't compile as FY is not seen as variable
 begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
@@ -510,8 +521,35 @@ begin
 end;
 
 procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
+var
+  i, j, div_len_ciph : Uint64;
+  a_tag : T128;
+//  ba_Tag : TBytes;
 begin
+  i := 0;
+  div_len_ciph := Size div 16;
+  for j := 1 to div_len_ciph do
+  begin
+    INCR( FY );
+    P128(@Dest[i])^ := XOR_128_n( @Source[i], EncodeT128(FY));
+    inc(i, 16);
+  end;
 
+  if i < Size then
+  begin
+    INCR( FY );
+    XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
+  end;
+
+  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
+
+  Setlength(FAuthenticaton_tag, Flen_auth_tag);
+  Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
+
+//  Result := IsEqual(authenticaton_tag, ba_tag);
+
+//  if not IsEqual(authenticaton_tag, ba_tag) then
+//    SetLength(plaintext, 0); // NIST FAIL => pt=''
 end;
 
 procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
@@ -540,6 +578,14 @@ begin
   a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Dest^)), FE_K_Y0);
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
+end;
+
+function TGCM.IsEqual(const a, b : TBytes ):Boolean;
+begin
+  if (length(a) <> length(b)) then
+    Result := false
+  else
+    Result := CompareMem(@a[0], @b[0], length(a));
 end;
 
 function TGCM.EncodeT128(Value: T128): T128;
