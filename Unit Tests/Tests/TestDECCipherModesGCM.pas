@@ -312,8 +312,11 @@ begin
       // Tag = 99a2227f8bb69d45ea5d8842cd08
 
       Line := LowerCase(Line).Replace(' ', '', [rfReplaceAll]);
-      ReadBlockMetaDataLine(Line, Entry, Index);
-      ReadDataLine(Line, Entry, TestData, Index);
+      if (Line <> '') then
+      begin
+        ReadBlockMetaDataLine(Line, Entry, Index);
+        ReadDataLine(Line, Entry, TestData, Index);
+      end;
     end;
   finally
     Reader.Free;
@@ -371,10 +374,12 @@ begin
     else if (Pos('ct=', Line) > 0) then
       Entry.TestData[Index].CT := ExtractHexString(Line)
     else if (Pos('tag=', Line) > 0) then
+    begin
       Entry.TestData[Index].TagResult := ExtractHexString(Line);
 
-    if (Index = Length(Entry.TestData) - 1) then
-      TestData.Add(Entry);
+      if (Index = Length(Entry.TestData) - 1) then
+        TestData.Add(Entry);
+    end;
   end;
 end;
 
@@ -405,13 +410,9 @@ var
   Key         : RawByteString;
   KeyBytes    : TBytes;
 begin
-{ TODO : After fixing the loading algorithm, the case with empty authentication
-  value given is not correctly treated }
-  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\Test.rsp', FTestDataList);
-
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
   Cipher := TCipher_AES.Create;
   try
@@ -460,6 +461,7 @@ begin
                     string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                     string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
                     StringOf(TFormat_HexL.Encode(Cipher.AuthenticatedData)));
+
       end;
     end;
   finally
