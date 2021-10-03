@@ -758,7 +758,7 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   DecodeGCM(@Source, @Dest, DataSize);
+    cmGCM :   FGCM.DecodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -799,7 +799,7 @@ end;
 
 procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
 begin
-  FGCM.DecodeGCM(Source, Dest, Size);
+  FGCM.DecodeGCM(@Source, @Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);

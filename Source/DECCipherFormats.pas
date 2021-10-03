@@ -612,9 +612,14 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-  Result := Source;
+//  Result := Source;
+  SetLength(Result, Length(Source));
   if Length(Result) > 0 then
-    Decode(Result[0], Result[0], Length(Source));
+    Decode(Source[0], Result[0], Length(Source))
+//    Decode(Result[0], Result[0], Length(Source))
+  else
+    if (FMode = cmGCM) then
+      DecodeGCM(@Source, @Result, 0);
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;

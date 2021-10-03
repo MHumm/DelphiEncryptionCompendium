@@ -498,15 +498,15 @@ var
         for i := 0 to div_d -1 do
         begin
           x := poly_mult_H( XOR_128_n( @data[n], x ) );
-          inc( n, 16 );
+          inc(n, 16);
         end;
 
         mod_d := len_d mod 16;
         if mod_d > 0 then
         begin
           hdata := nullbytes;
-          Move( data[n], hdata[0], mod_d );
-          x := poly_mult_H( XOR_128( hdata, x ) );
+          Move(data[n], hdata[0], mod_d);
+          x := poly_mult_H(XOR_128(hdata, x));
         end;
       end;
   end;
@@ -541,6 +541,7 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
+//  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Dest^)), FE_K_Y0);
   a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
 
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
