@@ -84,7 +84,7 @@ type
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
-    FAuthenticated_data : TBytes;
+    FDataToAuthenticate : TBytes;
     /// <summary>
     ///   Length of the authentication tag to generate in byte
     /// </summary>
@@ -199,7 +199,7 @@ type
     ///   Encrypted value
     /// </returns>
     function EncodeT128(Value: T128): T128;
-    procedure SetAuthenticated_data(const Value: TBytes);
+    procedure SetDataToAuthenticate(const Value: TBytes);
     /// <summary>
     ///   Checks whether two TBytes values contain the same data
     /// </summary>
@@ -264,9 +264,9 @@ type
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
-    property Authenticated_data : TBytes
-      read   FAuthenticated_data
-      write  SetAuthenticated_data;
+    property DataToAuthenticate : TBytes
+      read   FDataToAuthenticate
+      write  SetDataToAuthenticate;
     /// <summary>
     ///   Sets the length of Authenticaton_tag in bit, values as per specification
     ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
@@ -405,9 +405,9 @@ begin
   x[0] := x[0] shr 1;
 end;
 
-procedure TGCM.SetAuthenticated_data(const Value: TBytes);
+procedure TGCM.SetDataToAuthenticate(const Value: TBytes);
 begin
-  FAuthenticated_data := Value;
+  FDataToAuthenticate := Value;
 end;
 
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
@@ -541,8 +541,11 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-//  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Dest^)), FE_K_Y0);
-  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
+// Hier liegt das Problem: im Falle des fehlgeschlagenen
+// key 7fddb57453c241d03efbed3ac44e371c müsste es Source statt Dest sein,
+// dann geht aber was anderes schief...
+  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, TBytes(@Dest^)), FE_K_Y0);
+//  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
 
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
@@ -576,7 +579,7 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Dest^)), FE_K_Y0);
+  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, TBytes(@Dest^)), FE_K_Y0);
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
 end;

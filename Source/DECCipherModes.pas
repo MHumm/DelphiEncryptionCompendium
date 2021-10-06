@@ -47,7 +47,7 @@ type
     ///   Data to be authenticated. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </returns>
-    function  GetAuthenticatedData: TBytes;
+    function  GetDataToAuthenticate: TBytes;
     /// <summary>
     ///   Returns the length of the resulting authentication value if a
     ///   cipher mode which provides authentication support as well is used.
@@ -75,7 +75,7 @@ type
     ///   Data to be authenticated. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </param>
-    procedure SetAuthenticatedData(const Value: TBytes);
+    procedure SetDataToAuthenticate(const Value: TBytes);
     /// <summary>
     ///   Sets the length of the resulting authentication value if a
     ///   cipher mode which provides authentication support as well is used.
@@ -330,9 +330,9 @@ type
     ///   in addition to encrypting it. This property contains the data which
     ///   shall be authenticated in parallel to the encryption.
     /// </summary>
-    property AuthenticatedData : TBytes
-      read   GetAuthenticatedData
-      write  SetAuthenticatedData;
+    property DataToAuthenticate : TBytes
+      read   GetDataToAuthenticate
+      write  SetDataToAuthenticate;
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it.
@@ -349,7 +349,7 @@ type
     ///   in addition to encrypting it. This property contains the generated
     ///   authentication tag
     /// </summary>
-    property AuthenticatonResult  : TBytes
+    property AuthenticationResult  : TBytes
       read   GetAuthenticatonResult;
   end;
 
@@ -376,10 +376,10 @@ begin
                                          Cipher.Context.BlockSize]);
 end;
 
-procedure TDECCipherModes.SetAuthenticatedData(const Value: TBytes);
+procedure TDECCipherModes.SetDataToAuthenticate(const Value: TBytes);
 begin
   if (FMode = cmGCM) then
-    FGCM.Authenticated_data := Value
+    FGCM.DataToAuthenticate := Value
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
@@ -580,10 +580,10 @@ begin
   end;
 end;
 
-function TDECCipherModes.GetAuthenticatedData: TBytes;
+function TDECCipherModes.GetDataToAuthenticate: TBytes;
 begin
   if (FMode = cmGCM) then
-    Result := FGCM.Authenticaton_tag
+    Result := FGCM.DataToAuthenticate
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
