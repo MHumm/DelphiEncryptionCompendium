@@ -410,7 +410,8 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   FGCM.EncodeGCM(@Source, @Dest, DataSize);
+    cmGCM :   FGCM.EncodeGCM(TBytes(@Source), TBytes(@Dest), DataSize);
+//    cmGCM :   FGCM.EncodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -712,8 +713,22 @@ begin
 end;
 
 procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+var
+  PlainText,
+  CipherText : TBytes;
 begin
-  FGCM.EncodeGCM(@Source, @Dest, Size);
+  if (Size > 0) then
+  begin
+    PlainText  := TBytes(@Source^);
+    CipherText := TBytes(@Dest^);
+  end
+  else
+  begin
+    SetLength(PlainText, 0);
+    SetLength(CipherText, 0);
+  end;
+
+  FGCM.EncodeGCM(PlainText, CipherText, Size);
 end;
 
 {$IFDEF DEC3_CMCTS}
@@ -758,7 +773,7 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   FGCM.DecodeGCM(@Source, @Dest, DataSize);
+    cmGCM :   FGCM.DecodeGCM(TBytes(@Source), TBytes(@Dest), DataSize);
   end;
 end;
 
@@ -798,8 +813,22 @@ begin
 end;
 
 procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
+var
+  PlainText,
+  CipherText : TBytes;
 begin
-  FGCM.DecodeGCM(@Source, @Dest, Size);
+  if (Size > 0) then
+  begin
+    PlainText  := TBytes(@Source^);
+    CipherText := TBytes(@Dest^);
+  end
+  else
+  begin
+    SetLength(PlainText, 0);
+    SetLength(CipherText, 0);
+  end;
+
+  FGCM.DecodeGCM(PlainText, CipherText, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);

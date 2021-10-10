@@ -153,7 +153,7 @@ type
     /// <param name="res">
     ///   Result of the XOR operation
     /// </param>
-    procedure XOR_128_n_l(const x : PByteArray; XIndex, len : UInt64; y : T128; var res : PByteArray); inline;
+    procedure XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes); inline;
 
     function poly_mult_H(const hx : T128) : T128; inline;
     procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;
@@ -243,7 +243,7 @@ type
     ///   Number of bytes to encrypt
     /// </param>
     procedure EncodeGCM(Source,
-                        Dest   : PByteArray;
+                        Dest   : TBytes;
                         Size   : Integer);
     /// <summary>
     ///   Decodes a block of data using the supplied cipher
@@ -258,7 +258,7 @@ type
     ///   Number of bytes to decrypt
     /// </param>
     procedure DecodeGCM(Source,
-                        Dest   : PByteArray;
+                        Dest   : TBytes;
                         Size   : Integer);
 
     /// <summary>
@@ -286,6 +286,11 @@ type
 
 implementation
 
+function T128ToStr(T:T128):string;
+begin
+  Result := IntToStr(T[0]) + '/' + IntToStr(T[1])
+end;
+
 function TGCM.XOR_128(const x, y : T128) : T128;
 begin
   Result[0] := x[0] xor y[0];
@@ -298,7 +303,7 @@ begin
   Result[1] := P128(x)^[1] xor y[1];
 end;
 
-procedure TGCM.XOR_128_n_l(const x : PByteArray; XIndex, len : UInt64; y : T128; var res : PByteArray);
+procedure TGCM.XOR_128_n_l(const x : TBytes; XIndex, len : UInt64; y : T128; var res : TBytes);
 var
   i  : integer;
   { TODO : change to a pointer to y[0], to get rid of the absolute? }
@@ -306,7 +311,7 @@ var
 begin
   for i := 0 to len-1 do
   begin
-    res^[XIndex] := x^[XIndex] xor by[i];
+    res[XIndex] := x[XIndex] xor by[i];
     inc(XIndex);
   end;
 end;
@@ -520,7 +525,7 @@ begin
   Result := poly_mult_H( XOR_128( aclen, x ) );
 end;
 
-procedure TGCM.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
+procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
 var
   i, j, div_len_ciph : Uint64;
   a_tag : T128;
@@ -530,8 +535,8 @@ begin
   div_len_ciph := Size div 16;
   for j := 1 to div_len_ciph do
   begin
-    INCR( FY );
-    P128(@Dest[i])^ := XOR_128_n( @Source[i], EncodeT128(FY));
+    INCR(FY);
+    P128(@Dest[i])^ := XOR_128_n(@Source[i], EncodeT128(FY));
     inc(i, 16);
   end;
 
@@ -541,11 +546,7 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-// Hier liegt das Problem: im Falle des fehlgeschlagenen
-// key 7fddb57453c241d03efbed3ac44e371c müsste es Source statt Dest sein,
-// dann geht aber was anderes schief...
-  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, TBytes(@Dest^)), FE_K_Y0);
-//  a_tag := XOR_128( GHASH(FH, authenticated_data, TBytes(@Source^)), FE_K_Y0);
+  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, Source), FE_K_Y0);
 
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
@@ -556,7 +557,7 @@ begin
 //    SetLength(plaintext, 0); // NIST FAIL => pt=''
 end;
 
-procedure TGCM.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+procedure TGCM.EncodeGCM(Source, Dest: TBytes; Size: Integer);
 var
   i, j, div_len_plain : UInt64;
   a_tag : T128;
@@ -579,7 +580,8 @@ begin
     XOR_128_n_l(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, TBytes(@Dest^)), FE_K_Y0);
+  //a_tag := XOR_128( GHASH(FH, DataToAuthenticate, TBytes(@Dest^)), FE_K_Y0);
+  a_tag := XOR_128( GHASH(FH, DataToAuthenticate, Dest), FE_K_Y0);
   Setlength(FAuthenticaton_tag, Flen_auth_tag);
   Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
 end;

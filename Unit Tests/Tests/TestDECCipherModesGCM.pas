@@ -414,34 +414,10 @@ var
   i           : Integer;
   DecryptData : TBytes;
 begin
-// Fehler wenn authenticated data leer ist, im Decode wird dann kein
-// Authentication Wert berechnet, weil der Ciphertext gefüllt ist
-//TestDecode: ETestFailure
-//at  $006E464B
-//Authentication tag wrong for
-//key 7fddb57453c241d03efbed3ac44e371c
-//IV ee283a3fc75575e33efd4887
-//PT d5de42b461646c255c87bd2962d3b9a2
-//AAD
-//Exp.: b36d1df9b9d5e596f83e8b7f52971cb3 Act.: 7636da600c4d27693027584451fc3609, expected: <b36d1df9b9d5e596f83e8b7f52971cb3> but was: <7636da600c4d27693027584451fc3609>
-  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\test.rsp', FTestDataList);
-//FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
-
-//  TestDataSet.Keylen                 := 128;
-//  TestDataSet.IVlen                  := 96;
-//  TestDataSet.PTlen                  := 128;
-//  TestDataSet.AADlen                 := 0;
-//  TestDataSet.Taglen                 := 128;
-//  TestDataSet.TestData[0].CryptKey   := '7fddb57453c241d03efbed3ac44e371c';
-//  TestDataSet.TestData[0].InitVector := 'ee283a3fc75575e33efd4887';
-//  TestDataSet.TestData[0].PT         := 'd5de42b461646c255c87bd2962d3b9a2';
-//  TestDataSet.TestData[0].AAD        := '';
-//  TestDataSet.TestData[0].CT         := '2ccda4a5415cb91e135c2a0f78c9b2fd';
-//  TestDataSet.TestData[0].TagResult  := 'b36d1df9b9d5e596f83e8b7f52971cb3';
-//
-//  FTestDataList.Add(TestDataSet);
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\test.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
   for TestDataSet in FTestDataList do
   begin
@@ -484,7 +460,7 @@ begin
                   string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                   string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
-exit;
+
     end;
   end;
 end;
@@ -495,6 +471,7 @@ var
   i           : Integer;
   EncryptData : TBytes;
 begin
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\Test.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
