@@ -84,24 +84,24 @@ type
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
-    FDataToAuthenticate : TBytes;
+    FDataToAuthenticate      : TBytes;
     /// <summary>
     ///   Length of the authentication tag to generate in byte
     /// </summary>
-    Flen_auth_tag       : UInt32;
+    FAuthenticationTagLength : UInt32;
     /// <summary>
     ///   Generated authentication tag
     /// </summary>
-    FAuthenticaton_tag  : TBytes;
+    FAuthenticationTag        : TBytes;
 
     /// <summary>
     ///   Reference to the encode method of the actual cipher used
     /// </summary>
-    FEncryptionMethod: TEncodeDecodeMethod;
+    FEncryptionMethod        : TEncodeDecodeMethod;
     /// <summary>
     ///   Reference to the decode method of the actual cipher used
     /// </summary>
-    FDecryptionMethod: TEncodeDecodeMethod;
+    FDecryptionMethod        : TEncodeDecodeMethod;
     /// <summary>
     ///   True, when EncodeGCM has been called, false when DecodeGCM has been
     ///   called, as the last step depends on whether it is encryption or decryption
@@ -167,7 +167,7 @@ type
     function poly_mult_H(const hx: T128) : T128; inline;
 
 { TODO : Klären durch Michael was das tut, dann Doku }
-    procedure set_auth_Len_ciph_len(var x : T128; al, cl : UInt64); inline;
+    procedure SetAuthenticationCipherLength(var x : T128; al, cl : UInt64); inline;
 
     /// <summary>
     ///   Calculates a table with precalculated values which speeds up
@@ -178,7 +178,7 @@ type
     /// </param>
     procedure GenerateTableM8Bit(const H: T128); //inline;
     /// <summary>
-    ///   Performs a right shift of all bytes in an 128 bit variable
+    ///   Performs a right shift of 1 of all bytes in an 128 bit variable
     /// </summary>
     /// <param name="rx">
     ///   Variable on which the right shift is being performed
@@ -194,7 +194,7 @@ type
     procedure INCR(var Y : T128);
 
     /// <summary>
-    ///   Defines the length of the resulting authenticated data in bit.
+    ///   Defines the length of the resulting authentication value in bit.
     /// </summary>
     /// <param name="Value">
     ///   Sets the length of Authenticaton_tag in bit, values as per specification
@@ -203,8 +203,28 @@ type
     ///   constrains the length of the input data and the lifetime of the key.
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32);
+    /// <summary>
+    ///   Returns the length of the calculated authehtication value in bit
+    /// </summary>
+    /// <returns>
+    ///   Length of the calculated authentication value in bit
+    /// </returns>
     function GetAuthenticationTagBitLength: UInt32;
-    function GHASH(Hash: T128; authenticated_data, ciphertext: TBytes): T128;
+
+    /// <summary>
+    ///   Calculates the hash value
+    /// </summary>
+    /// <param name="AuthenticatedData">
+    ///   Specifys the data for which an authentication value shall be
+    ///   calculated. It is allowed to be nil.
+    /// </param>
+    /// <param name="Ciphertext">
+    ///   Encrypted data used in the calculation
+    /// </param>
+    /// <returns>
+    ///   Calculated raw hash value which will later get returned as AuthenticatedTag
+    /// </returns>
+    function CalcGaloisHash(AuthenticatedData, Ciphertext: TBytes): T128;
 
     /// <summary>
     ///   Encrypts a T128 value using the encryption method specified on init
@@ -216,7 +236,7 @@ type
     ///   Encrypted value
     /// </returns>
     function EncodeT128(Value: T128): T128;
-    procedure SetDataToAuthenticate(const Value: TBytes);
+
     /// <summary>
     ///   Checks whether two TBytes values contain the same data
     /// </summary>
@@ -283,38 +303,34 @@ type
     /// </summary>
     property DataToAuthenticate : TBytes
       read   FDataToAuthenticate
-      write  SetDataToAuthenticate;
+      write  FDataToAuthenticate;
     /// <summary>
-    ///   Sets the length of Authenticaton_tag in bit, values as per specification
-    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
-    ///   may be 64 or 32 as well, but the use of these two tag lengths
-    ///   constrains the length of the input data and the lifetime of the key.
+    ///   Sets the length of AuthenticatonTag in bit, values as per official
+    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain
+    ///   applications, they may be 64 or 32 as well, but the use of these two
+    ///   tag lengths constrains the length of the input data and the lifetime
+    ///   of the key.
     /// </summary>
-    property AuthenticationTagBitLength       : UInt32
+    property AuthenticationTagBitLength : UInt32
       read   GetAuthenticationTagBitLength
       write  SetAuthenticationTagLength;
     /// <summary>
-    ///   Generated authentication tag
+    ///   Calculated authentication value
     /// </summary>
-    property Authenticaton_tag  : TBytes
-      read   FAuthenticaton_tag
-      write  FAuthenticaton_tag;
+    property AuthenticationTag : TBytes
+      read   FAuthenticationTag
+      write  FAuthenticationTag;
   end;
 
 implementation
 
-function T128ToStr(T:T128):string;
-begin
-  Result := IntToStr(T[0]) + '/' + IntToStr(T[1])
-end;
-
-function TGCM.XOR_T128(const x, y : T128) : T128;
+function TGCM.XOR_T128(const x, y : T128): T128;
 begin
   Result[0] := x[0] xor y[0];
   Result[1] := x[1] xor y[1];
 end;
 
-function TGCM.XOR_PointerWithT128(const x : Pointer; y : T128) : T128;
+function TGCM.XOR_PointerWithT128(const x : Pointer; y : T128): T128;
 begin
   Result[0] := P128(x)^[0] xor y[0];
   Result[1] := P128(x)^[1] xor y[1];
@@ -333,22 +349,22 @@ begin
   end;
 end;
 
-function TGCM.poly_mult_H(const hx : T128 ) : T128;
+function TGCM.poly_mult_H(const hx : T128): T128;
 var
   i : integer;
   { TODO : change to a pointer to hx[0], to get rid of the absolute? }
   x : array[0..15] of byte absolute hx[0];
 begin
-  Result := FM[0,x[0]];
+  Result := FM[0, x[0]];
 
   for i := 1 to 15 do
   begin
-    Result[0] := Result[0] xor FM[i,x[i]][0];
-    Result[1] := Result[1] xor FM[i,x[i]][1];
+    Result[0] := Result[0] xor FM[i, x[i]][0];
+    Result[1] := Result[1] xor FM[i, x[i]][1];
   end;
 end;
 
-procedure TGCM.set_auth_Len_ciph_len(var x : T128; al, cl : UInt64);
+procedure TGCM.SetAuthenticationCipherLength(var x : T128; al, cl : UInt64);
 var
   i  : integer;
   { TODO : change to a pointer to x[0], to get rid of the absolute? }
@@ -388,7 +404,7 @@ begin
     mask := 128;
     for hbit := 0 to 7 do
     begin
-      FM[hbyte,mask] := HP;
+      FM[hbyte, mask] := HP;
 
       if (bHP[15] and 1 = 0) then
         ShiftRight(HP)
@@ -405,13 +421,15 @@ begin
   for hbyte := 0 to 15 do
   begin
     i := 2;
+
     while i <= 128 do
     begin
       for j := 1 to i-1 do
-        FM[hbyte,i+j] := XOR_T128(FM[hbyte,i], FM[hbyte,j]);
+        FM[hbyte, i+j] := XOR_T128(FM[hbyte, i], FM[hbyte, j]);
       i := i*2;
     end;
-    FM[hbyte,0] := nullbytes;
+
+    FM[hbyte, 0] := nullbytes;
   end;
 end;
 
@@ -427,15 +445,10 @@ begin
   x[0] := x[0] shr 1;
 end;
 
-procedure TGCM.SetDataToAuthenticate(const Value: TBytes);
-begin
-  FDataToAuthenticate := Value;
-end;
-
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
-  Flen_auth_tag := Value shr 3;
-  SetLength(FAuthenticaton_tag, Flen_auth_tag);
+  FAuthenticationTagLength := Value shr 3;
+  SetLength(FAuthenticationTag, FAuthenticationTagLength);
 end;
 
 procedure TGCM.INCR(var Y : T128);
@@ -446,7 +459,7 @@ begin
   {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
   {$Q-}
   inc(bY[15]);
-  if bY[15]=0 then
+  if bY[15] = 0 then
   begin
     inc(bY[14]);
 
@@ -471,8 +484,8 @@ begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
   // Clear calculated authentication value
-  if (Length(FAuthenticaton_tag) > 0) then
-    FillChar(FAuthenticaton_tag[0], Length(FAuthenticaton_tag), #0);
+  if (Length(FAuthenticationTag) > 0) then
+    FillChar(FAuthenticationTag[0], Length(FAuthenticationTag), #0);
 
   FEncryptionMethod := EncryptionMethod;
   FDecryptionMethod := DecryptionMethod;
@@ -483,6 +496,7 @@ begin
   OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
 
+  // Only generate the table when not already generated
   if (OldH[0] <> FH[0]) or (OldH[1] <> FH[1]) then
     GenerateTableM8Bit(FH);
 
@@ -495,14 +509,14 @@ begin
      b^ := 1;
   end
   else
-     FY := GHASH(FH, nil, InitVector);
+     FY := CalcGaloisHash(nil, InitVector);
 
   FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
 end;
 
-function TGCM.GHASH(Hash : T128; authenticated_data, ciphertext : TBytes) : T128;
+function TGCM.CalcGaloisHash(AuthenticatedData, Ciphertext : TBytes): T128;
 var
-  aclen : T128;
+  AuthCipherLength : T128;
   x : T128;
   n : Uint64;
 
@@ -511,46 +525,46 @@ var
     i, mod_d, div_d, len_d : UInt64;
     hdata : T128;
   begin
-      len_d := length( data );
-      if ( len_d > 0 ) then
+    len_d := length(data);
+    if (len_d > 0) then
+    begin
+      n := 0;
+      div_d := len_d div 16;
+      if div_d > 0 then
+      for i := 0 to div_d -1 do
       begin
-        n := 0;
-        div_d := len_d div 16;
-        if div_d > 0 then
-        for i := 0 to div_d -1 do
-        begin
-          x := poly_mult_H(XOR_PointerWithT128( @data[n], x ) );
-          inc(n, 16);
-        end;
-
-        mod_d := len_d mod 16;
-        if mod_d > 0 then
-        begin
-          hdata := nullbytes;
-          Move(data[n], hdata[0], mod_d);
-          x := poly_mult_H(XOR_T128(hdata, x));
-        end;
+        x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
+        inc(n, 16);
       end;
+
+      mod_d := len_d mod 16;
+      if mod_d > 0 then
+      begin
+        hdata := nullbytes;
+        Move(data[n], hdata[0], mod_d);
+        x := poly_mult_H(XOR_T128(hdata, x));
+      end;
+    end;
   end;
 
 begin
   x := nullbytes;
-  encode( authenticated_data );
-  encode( ciphertext );
-  set_auth_Len_ciph_len( aclen, length(authenticated_data) shl 3, length(ciphertext) shl 3);
+  encode(AuthenticatedData);
+  encode(Ciphertext);
+  SetAuthenticationCipherLength(AuthCipherLength, length(AuthenticatedData) shl 3, length(ciphertext) shl 3);
 
-  Result := poly_mult_H(XOR_T128(aclen, x));
+  Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
 end;
 
 procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
 var
-  i, j, div_len_ciph : Uint64;
+  i, j, BlockCount : Uint64;
   a_tag : T128;
-//  ba_Tag : TBytes;
 begin
   i := 0;
-  div_len_ciph := Size div 16;
-  for j := 1 to div_len_ciph do
+  BlockCount := Size div 16;
+
+  for j := 1 to BlockCount do
   begin
     INCR(FY);
     P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
@@ -559,14 +573,14 @@ begin
 
   if i < Size then
   begin
-    INCR( FY );
+    INCR(FY);
     XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  a_tag := XOR_T128(GHASH(FH, DataToAuthenticate, Source), FE_K_Y0);
+  a_tag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Source), FE_K_Y0);
 
-  Setlength(FAuthenticaton_tag, Flen_auth_tag);
-  Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
+  Setlength(FAuthenticationTag, FAuthenticationTagLength);
+  Move(a_tag[0], FAuthenticationTag[0], FAuthenticationTagLength);
 
 //  Result := IsEqual(authenticaton_tag, ba_tag);
 
@@ -577,7 +591,7 @@ end;
 procedure TGCM.EncodeGCM(Source, Dest: TBytes; Size: Integer);
 var
   i, j, div_len_plain : UInt64;
-  a_tag : T128;
+  AuthTag : T128;
 begin
   i := 0;
   div_len_plain := Size div 16;
@@ -596,12 +610,12 @@ begin
     XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  a_tag := XOR_T128(GHASH(FH, DataToAuthenticate, Dest), FE_K_Y0);
-  Setlength(FAuthenticaton_tag, Flen_auth_tag);
-  Move(a_tag[0], FAuthenticaton_tag[0], Flen_auth_tag);
+  AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest), FE_K_Y0);
+  Setlength(FAuthenticationTag, FAuthenticationTagLength);
+  Move(AuthTag[0], FAuthenticationTag[0], FAuthenticationTagLength);
 end;
 
-function TGCM.IsEqual(const a, b : TBytes ):Boolean;
+function TGCM.IsEqual(const a, b : TBytes):Boolean;
 begin
   if (length(a) <> length(b)) then
     Result := false
@@ -616,7 +630,7 @@ end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;
 begin
-  Result := Flen_auth_tag shl 3;
+  Result := FAuthenticationTagLength shl 3;
 end;
 
 //
@@ -652,7 +666,7 @@ end;
 //       bY[15] := 1;
 //    end
 //    else
-//       Y := GHASH( H, nil, IV );
+//       Y := CalcGaloisHash( H, nil, IV );
 //
 //    E_K_Y0 := E_Cipher( y );
 //
@@ -671,7 +685,7 @@ end;
 //      XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );
 //    end;
 //
-//    a_tag := XOR_128( GHASH( H, authenticated_data, ciphertext ), E_K_Y0 );
+//    a_tag := XOR_128( CalcGaloisHash( H, authenticated_data, ciphertext ), E_K_Y0 );
 //
 //    Setlength( ba_tag, len_auth_tag );
 //    Move( a_tag[0], ba_tag[0], len_auth_tag );

@@ -600,7 +600,7 @@ end;
 function TDECCipherModes.GetAuthenticatonResult: TBytes;
 begin
   if (FMode = cmGCM) then
-    Result := FGCM.Authenticaton_tag
+    Result := FGCM.AuthenticationTag
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
