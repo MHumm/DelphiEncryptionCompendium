@@ -26,7 +26,7 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECCipherBase, DECCipherModesGCM;
+  DECTypes, DECCipherBase, DECCipherModesGCM;
 
 type
   /// <summary>
@@ -326,6 +326,16 @@ type
     procedure Decode(const Source; var Dest; DataSize: Integer);
 
     /// <summary>
+    ///   Returns a list of authentication tag lengs explicitely specified by
+    ///   the official speciication of the standard.
+    /// </summary>
+    /// <returns>
+    ///   List of bit lengths. If the cipher mode used is not an authenticated
+    ///   one, the array will just contain a single value of 0.
+    /// </returns>
+    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+
+    /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it. This property contains the data which
     ///   shall be authenticated in parallel to the encryption.
@@ -361,7 +371,7 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECTypes, DECUtil;
+  DECUtil;
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
@@ -587,6 +597,18 @@ begin
     Result := FGCM.DataToAuthenticate
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
+end;
+
+function TDECCipherModes.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
+begin
+  case FMode of
+    cmGCM: Result := FGCM.GetStandardAuthenticationTagBitLengths;
+    else
+    begin
+      SetLength(Result, 1);
+      Result[0] := 0;
+    end;
+  end;
 end;
 
 function TDECCipherModes.GetAuthenticationResultBitLength: Integer;

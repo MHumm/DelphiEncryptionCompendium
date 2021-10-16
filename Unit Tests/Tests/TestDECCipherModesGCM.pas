@@ -208,6 +208,7 @@ type
     procedure TestDecode;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
+    procedure TestGetStandardAuthenticationTagBitLengths;
   end;
 
 
@@ -215,6 +216,7 @@ implementation
 
 uses
   System.Classes,
+  DECTypes,
   DECFormat;
 
 { TGCMTestSetEntry }
@@ -437,7 +439,7 @@ begin
                          TFormat_HexL.Decode(
                            BytesOf(TestDataSet.TestData[i].CT)));
       except
-        self.Status('CryptKey ' + TestDataSet.TestData[i].CryptKey);
+        self.Status('CryptKey ' + string(TestDataSet.TestData[i].CryptKey));
       end;
 
       CheckEquals(string(TestDataSet.TestData[i].PT),
@@ -515,6 +517,19 @@ begin
                   StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
     end;
   end;
+end;
+
+procedure TestTDECGCM.TestGetStandardAuthenticationTagBitLengths;
+var
+  BitLengths: TStandardBitLengths;
+begin
+  BitLengths := FCipherAES.GetStandardAuthenticationTagBitLengths;
+
+  CheckEquals( 96, BitLengths[0]);
+  CheckEquals(104, BitLengths[1]);
+  CheckEquals(112, BitLengths[2]);
+  CheckEquals(120, BitLengths[3]);
+  CheckEquals(128, BitLengths[4]);
 end;
 
 procedure TestTDECGCM.TestSetGetAuthenticationBitLength;

@@ -22,10 +22,11 @@ interface
 
 uses
   {$IFDEF FPC}
-  SysUtils;
+  SysUtils,
   {$ELSE}
-  System.SysUtils;
+  System.SysUtils,
   {$ENDIF}
+  DECTypes;
 
 type
   /// <summary>
@@ -297,6 +298,15 @@ type
     procedure DecodeGCM(Source,
                         Dest   : TBytes;
                         Size   : Integer);
+
+    /// <summary>
+    ///   Returns a list of authentication tag lengs explicitely specified by
+    ///   the official speciication of the standard.
+    /// </summary>
+    /// <returns>
+    ///   List of bit lengths
+    /// </returns>
+    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -631,6 +641,12 @@ end;
 function TGCM.GetAuthenticationTagBitLength: UInt32;
 begin
   Result := FAuthenticationTagLength shl 3;
+end;
+
+function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
+begin
+  SetLength(Result, 5);
+  Result := [96, 104, 112, 120, 128];
 end;
 
 //
