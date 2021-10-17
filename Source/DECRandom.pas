@@ -434,6 +434,8 @@ begin
   except
   end;
   FHash := nil;
+
+  FreeAndNil(FHash);
   FillChar(FRegister, SizeOf(FRegister), 0);
   FCounter := 0;
 end;

@@ -811,10 +811,6 @@ var
 begin
   Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
 
-  // Last byte is incomplete so it mustn't be processed
-  if (FFinalByteLength > 0) then
-    Dec(Size);
-
   Max := 0;
   SetLength(HashResult, 0);
   try
@@ -827,6 +823,10 @@ begin
 
     if Size < 0 then
       Size := Stream.Size - Pos;
+
+    // Last byte is incomplete so it mustn't be processed
+    if (FFinalByteLength > 0) then
+      Dec(Size);
 
     Max      := Pos + Size;
 

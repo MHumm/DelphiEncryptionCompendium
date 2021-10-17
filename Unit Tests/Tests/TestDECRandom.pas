@@ -45,18 +45,27 @@ type
   private
     RandomNumbers: TBytes;
   public
+    procedure SetUp; override;
   published
     procedure TestRandomLong;
     procedure TestRandomBytes;
     procedure TestRandomBuffer;
     procedure TestRandomBufferElse;
     procedure TestRandomSeedElse;
+    procedure TestRandomSeedElseSizeGreaterZero;
     procedure TestRandomBufferIncompletelyFilled;
   end;
 
 implementation
 
 { TTestRandom }
+
+procedure TTestRandom.SetUp;
+begin
+  inherited;
+
+  SetLength(RandomNumbers, 0);
+end;
 
 procedure TTestRandom.TestRandomBuffer;
 var
@@ -103,6 +112,8 @@ begin
 
   try
     DoRandomBuffer := nil;
+    DoRandomSeed   := nil;
+    RandomSeed(Result, 0);
 
     SetLength(Result, 5);
     FillChar(Result[0], 5, 0);
@@ -222,6 +233,50 @@ begin
     RandomBuffer(Result[0], 5);
 
     Expected := TBytes.Create(133, 117, 227, 28, 0);
+
+    for i := Low(Expected) to High(Expected) do
+      CheckEquals(Expected[i], Result[i],
+                  'Wrong random number in known sequence at index ' + IntToStr(i));
+  finally
+    DoRandomSeed   := SaveSeedProc;
+  end;
+end;
+
+procedure TTestRandom.TestRandomSeedElseSizeGreaterZero;
+var
+  SaveSeedProc : TRandomSeedProc;
+  Result       : TBytes;
+  Expected     : TBytes;
+  i            : Integer;
+begin
+  SaveSeedProc   := DoRandomSeed;
+
+  try
+    DoRandomSeed := nil;
+
+    // Set up the seed with a known value of 0 so always the same known sequence
+    // results
+    SetLength(RandomNumbers, 4);
+    RandomNumbers := [0, 1, 2, 3];
+
+    RandomSeed(RandomNumbers, Length(RandomNumbers));
+    SetLength(Result, 5);
+    FillChar(Result[0], 5, 0);
+
+    RandomBuffer(Result[0], 5);
+
+    Expected := TBytes.Create(245, 16, 255, 53, 99);
+
+    for i := Low(Expected) to High(Expected) do
+      CheckEquals(Expected[i], Result[i],
+                  'Wrong random number in known sequence at index ' + IntToStr(i));
+
+    SetLength(Result, 5);
+    FillChar(Result[0], 5, 0);
+
+    RandomBuffer(Result[0], 5);
+
+    Expected := TBytes.Create(234, 3, 187, 112, 222);
 
     for i := Low(Expected) to High(Expected) do
       CheckEquals(Expected[i], Result[i],

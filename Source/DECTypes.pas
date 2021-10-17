@@ -56,6 +56,12 @@ type
   TUInt64Array = array[0..1023] of UInt64;
 
   /// <summary>
+  ///   List of standard bit lengths defined in the official standard for some
+  ///  algorithm property which allows a variable bit length.
+  /// </summary>
+  TStandardBitLengths = array of UInt16;
+
+  /// <summary>
   ///   Reason for calling the progress event
   /// </summary>
   TDECProgressState = (Started, Processing, Finished);

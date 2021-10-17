@@ -5380,6 +5380,29 @@ begin
                     string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
+
+//if HashClass.ClassName.ToUpper.Contains('SHA3_224') then
+//  sleep(10);
+
+        ProgressCalled := false;
+        Stream.Seek(0, TSeekOrigin.soBeginning);
+        HashClass.CalcStream(Stream, -1, Hash,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
+
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
   finally
     Stream.Free;

@@ -50,6 +50,9 @@ type
     procedure ProtectBuffer;
     procedure ProtectStream;
     procedure ProtectStreamPartial;
+    procedure ProtectStreamZeroBytes;
+    procedure ProtectStreamExceededSize;
+    procedure ProtectStreamBigSize;
     procedure ProtectBytes;
     procedure ProtectString;
     {$IFDEF ANSISTRINGSUPPORTED}
@@ -269,6 +272,14 @@ begin
 
   CheckEquals(0, CheckBuf.UInt32);
 
+  // Special case in the ASM version triggered when size is 3
+  DECUtil.XORBuffers(LBuf[0], RBuf[0], 3, DestBuf[0]);
+
+  for i := Low(DestBuf) to High(DestBuf) do
+    CheckBuf.Bytes[i] := DestBuf[i];
+
+  CheckEquals(0, CheckBuf.UInt32, 'Failure in buffer size = 0 test');
+
   SetLength(LBuf, 4);
   SetLength(RBuf, 4);
   SetLength(DestBuf, 4);
@@ -328,6 +339,64 @@ begin
   end;
 end;
 
+procedure TTestBufferProtection.ProtectStreamExceededSize;
+var
+  Stream  : TMemoryStream;
+  SrcBuf  : TBytes;
+  DestBuf : TBytes;
+  i       : Integer;
+begin
+  SetLength(SrcBuf, 12);
+  for i := $40 to $40 + Length(SrcBuf) - 1 do
+    SrcBuf[i-$40] := i;
+
+  SetLength(DestBuf, Length(SrcBuf));
+
+  Stream := TMemoryStream.Create;
+  try
+    Stream.Write(SrcBuf[0], Length(SrcBuf));
+    Stream.Position := 0;
+    DECUtil.ProtectStream(Stream, Stream.Size + 1);
+
+    Stream.Read(DestBuf[0], Stream.Size);
+    CheckEquals(#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00,
+                string(DECUtil.BytesToRawString(DestBuf)));
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure TTestBufferProtection.ProtectStreamBigSize;
+var
+  Stream  : TMemoryStream;
+  SrcBuf  : TBytes;
+  DestBuf : TBytes;
+  i       : Integer;
+  Exp     : RawByteString;
+begin
+  SetLength(SrcBuf, 1024);
+  for i := 0 to Length(SrcBuf) - 1 do
+    SrcBuf[i] := i mod 10;
+
+  SetLength(DestBuf, Length(SrcBuf));
+
+  Stream := TMemoryStream.Create;
+  try
+    Stream.Write(SrcBuf[0], Length(SrcBuf));
+    Stream.Position := 0;
+    DECUtil.ProtectStream(Stream, Stream.Size);
+
+    Stream.Read(DestBuf[0], Stream.Size);
+    SetLength(Exp, Length(SrcBuf));
+    FillChar(Exp[1], Length(Exp), #0);
+
+    CheckEquals(string(Exp),
+                string(DECUtil.BytesToRawString(DestBuf)));
+  finally
+    Stream.Free;
+  end;
+end;
+
 procedure TTestBufferProtection.ProtectStreamPartial;
 var
   Stream  : TMemoryStream;
@@ -349,6 +418,33 @@ begin
 
     Stream.Read(DestBuf[0], Stream.Size);
     CheckEquals(#$42+#$43+#$44+#$45+#$46+#$47+#$48+#$49+#$4A+#$4B+#$00+#$00,
+                string(DECUtil.BytesToRawString(DestBuf)));
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure TTestBufferProtection.ProtectStreamZeroBytes;
+var
+  Stream  : TMemoryStream;
+  SrcBuf  : TBytes;
+  DestBuf : TBytes;
+  i       : Integer;
+begin
+  SetLength(SrcBuf, 12);
+  for i := $40 to $40 + Length(SrcBuf) - 1 do
+    SrcBuf[i-$40] := i;
+
+  SetLength(DestBuf, Length(SrcBuf));
+
+  Stream := TMemoryStream.Create;
+  try
+    Stream.Write(SrcBuf[0], Length(SrcBuf));
+    Stream.Position := 0;
+    DECUtil.ProtectStream(Stream, 0);
+
+    Stream.Read(DestBuf[0], Stream.Size);
+    CheckEquals(#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00+#$00,
                 string(DECUtil.BytesToRawString(DestBuf)));
   finally
     Stream.Free;
