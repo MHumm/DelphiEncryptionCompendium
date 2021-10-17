@@ -168,7 +168,21 @@ type
     function poly_mult_H(const hx: T128) : T128; inline;
 
 { TODO : Klären durch Michael was das tut, dann Doku }
-    procedure SetAuthenticationCipherLength(var x : T128; al, cl : UInt64); inline;
+    /// <summary>
+    ///   Encodes the 64 bit lengths of DataToAuthenticate and of the cipher
+    ///   text into a T128 value, swapping the bytes in the process.
+    /// </summary>
+    /// <param name="x">
+    ///   Result of the operation
+    /// </param>
+    /// <param name="AuthDataLength">
+    ///   Length of the data to authenticate in byte
+    /// </param>
+    /// <param name="CipherTextLength">
+    ///   Length of the ciphertext in byte
+    /// </param>
+    procedure SetAuthenticationCipherLength(var x : T128;
+                                            AuthDataLength, CipherTextLength : UInt64); inline;
 
     /// <summary>
     ///   Calculates a table with precalculated values which speeds up
@@ -374,7 +388,8 @@ begin
   end;
 end;
 
-procedure TGCM.SetAuthenticationCipherLength(var x : T128; al, cl : UInt64);
+procedure TGCM.SetAuthenticationCipherLength(var x : T128;
+                                             AuthDataLength, CipherTextLength : UInt64);
 var
   i  : integer;
   { TODO : change to a pointer to x[0], to get rid of the absolute? }
@@ -385,19 +400,19 @@ begin
   i := 7;
 
   repeat
-    hx[i] := al mod 256;
-    al := al shr 8;
+    hx[i] := AuthDataLength mod 256;
+    AuthDataLength := AuthDataLength shr 8;
     dec(i);
-  until al = 0;
+  until AuthDataLength = 0;
 
   // cl:
   i := 15;
 
   repeat
-    hx[i] := cl mod 256;
-    cl := cl shr 8;
+    hx[i] := CipherTextLength mod 256;
+    CipherTextLength := CipherTextLength shr 8;
     dec(i);
-  until cl = 0;
+  until CipherTextLength = 0;
 end;
 
 procedure TGCM.GenerateTableM8Bit(const H : T128);
