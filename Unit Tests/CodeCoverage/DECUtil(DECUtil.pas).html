@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECUtil (D:\Projekte\DECGitMaster\Source\DECUtil.pas)</strong>.</p>
-<p> Generated at 05.09.2021 11:38:03 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 18.10.2021 20:05:13 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECUtil.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>130</td></tr><tr><td>Number of lines with code gen</td><td>139</td></tr><tr><td>Line coverage</td><td>93%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>139</td></tr><tr><td>Number of lines with code gen</td><td>139</td></tr><tr><td>Line coverage</td><td>100%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -472,11 +472,11 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>433</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;XOR &nbsp; &nbsp; EAX,[EDX + ECX]</pre></td></tr>
 <tr class="covered"><td>434</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; [EDI + ECX],EAX</pre></td></tr>
 <tr class="covered"><td>435</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;JMP &nbsp; &nbsp; @@2</pre></td></tr>
-<tr class="notcovered"><td>436</td><td><pre style="display:inline;">@@3: &nbsp;DEC &nbsp; &nbsp; ECX</pre></td></tr>
-<tr class="notcovered"><td>437</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; AL,[ESI + ECX]</pre></td></tr>
-<tr class="notcovered"><td>438</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;XOR &nbsp; &nbsp; AL,[EDX + ECX]</pre></td></tr>
-<tr class="notcovered"><td>439</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; [EDI + ECX],AL</pre></td></tr>
-<tr class="notcovered"><td>440</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;JMP &nbsp; &nbsp; @@1</pre></td></tr>
+<tr class="covered"><td>436</td><td><pre style="display:inline;">@@3: &nbsp;DEC &nbsp; &nbsp; ECX</pre></td></tr>
+<tr class="covered"><td>437</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; AL,[ESI + ECX]</pre></td></tr>
+<tr class="covered"><td>438</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;XOR &nbsp; &nbsp; AL,[EDX + ECX]</pre></td></tr>
+<tr class="covered"><td>439</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; [EDI + ECX],AL</pre></td></tr>
+<tr class="covered"><td>440</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;JMP &nbsp; &nbsp; @@1</pre></td></tr>
 <tr class="covered"><td>441</td><td><pre style="display:inline;">@@4: &nbsp;POP &nbsp; &nbsp; EDI</pre></td></tr>
 <tr class="covered"><td>442</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;POP &nbsp; &nbsp; ESI</pre></td></tr>
 <tr class="nocodegen"><td>443</td><td><pre style="display:inline;">@@5:</pre></td></tr>
@@ -531,13 +531,13 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>492</td><td><pre style="display:inline;"> &nbsp;Size := Stream.Size;</pre></td></tr>
 <tr class="covered"><td>493</td><td><pre style="display:inline;"> &nbsp;if SizeToProtect &lt;= 0 then</pre></td></tr>
 <tr class="nocodegen"><td>494</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>495</td><td><pre style="display:inline;"> &nbsp; &nbsp;SizeToProtect := Size;</pre></td></tr>
-<tr class="notcovered"><td>496</td><td><pre style="display:inline;"> &nbsp; &nbsp;Position := 0;</pre></td></tr>
+<tr class="covered"><td>495</td><td><pre style="display:inline;"> &nbsp; &nbsp;SizeToProtect := Size;</pre></td></tr>
+<tr class="covered"><td>496</td><td><pre style="display:inline;"> &nbsp; &nbsp;Position := 0;</pre></td></tr>
 <tr class="nocodegen"><td>497</td><td><pre style="display:inline;"> &nbsp;end else</pre></td></tr>
 <tr class="nocodegen"><td>498</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
 <tr class="covered"><td>499</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size, Position);</pre></td></tr>
 <tr class="covered"><td>500</td><td><pre style="display:inline;"> &nbsp; &nbsp;if SizeToProtect &gt; Size then</pre></td></tr>
-<tr class="notcovered"><td>501</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SizeToProtect := Size;</pre></td></tr>
+<tr class="covered"><td>501</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;SizeToProtect := Size;</pre></td></tr>
 <tr class="nocodegen"><td>502</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
 <tr class="covered"><td>503</td><td><pre style="display:inline;"> &nbsp;SetLength(Buffer, BufferSize);</pre></td></tr>
 <tr class="covered"><td>504</td><td><pre style="display:inline;"> &nbsp;for Count := 0 to WipeCount -1 do</pre></td></tr>
@@ -553,7 +553,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>514</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
 <tr class="covered"><td>515</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Bytes := Size;</pre></td></tr>
 <tr class="covered"><td>516</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Bytes &gt; BufferSize then</pre></td></tr>
-<tr class="notcovered"><td>517</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Bytes := BufferSize;</pre></td></tr>
+<tr class="covered"><td>517</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Bytes := BufferSize;</pre></td></tr>
 <tr class="nocodegen"><td>518</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
 <tr class="covered"><td>519</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Stream.Write(Buffer[Low(Buffer)], Bytes);</pre></td></tr>
 <tr class="nocodegen"><td>520</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ELSE}</pre></td></tr>

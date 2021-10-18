@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECHashBase (D:\Projekte\DECGitMaster\Source\DECHashBase.pas)</strong>.</p>
-<p> Generated at 05.09.2021 11:38:03 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 18.10.2021 20:05:13 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECHashBase.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>185</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>85%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>186</td></tr><tr><td>Number of lines with code gen</td><td>216</td></tr><tr><td>Line coverage</td><td>86%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -850,22 +850,22 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>811</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="covered"><td>812</td><td><pre style="display:inline;"> &nbsp;Assert(Assigned(Stream), &apos;Stream to calculate hash on is not assigned&apos;);</pre></td></tr>
 <tr class="nocodegen"><td>813</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>814</td><td><pre style="display:inline;"> &nbsp;// Last byte is incomplete so it mustn&apos;t be processed</pre></td></tr>
-<tr class="covered"><td>815</td><td><pre style="display:inline;"> &nbsp;if (FFinalByteLength &gt; 0) then</pre></td></tr>
-<tr class="covered"><td>816</td><td><pre style="display:inline;"> &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="nocodegen"><td>817</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>818</td><td><pre style="display:inline;"> &nbsp;Max := 0;</pre></td></tr>
-<tr class="covered"><td>819</td><td><pre style="display:inline;"> &nbsp;SetLength(HashResult, 0);</pre></td></tr>
-<tr class="covered"><td>820</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
-<tr class="covered"><td>821</td><td><pre style="display:inline;"> &nbsp; &nbsp;Init;</pre></td></tr>
-<tr class="nocodegen"><td>822</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>823</td><td><pre style="display:inline;"> &nbsp; &nbsp;if StreamBufferSize &lt;= 0 then</pre></td></tr>
-<tr class="covered"><td>824</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
-<tr class="nocodegen"><td>825</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>826</td><td><pre style="display:inline;"> &nbsp; &nbsp;Pos := Stream.Position;</pre></td></tr>
-<tr class="nocodegen"><td>827</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>828</td><td><pre style="display:inline;"> &nbsp; &nbsp;if Size &lt; 0 then</pre></td></tr>
-<tr class="notcovered"><td>829</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Size := Stream.Size - Pos;</pre></td></tr>
+<tr class="covered"><td>814</td><td><pre style="display:inline;"> &nbsp;Max := 0;</pre></td></tr>
+<tr class="covered"><td>815</td><td><pre style="display:inline;"> &nbsp;SetLength(HashResult, 0);</pre></td></tr>
+<tr class="covered"><td>816</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
+<tr class="covered"><td>817</td><td><pre style="display:inline;"> &nbsp; &nbsp;Init;</pre></td></tr>
+<tr class="nocodegen"><td>818</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>819</td><td><pre style="display:inline;"> &nbsp; &nbsp;if StreamBufferSize &lt;= 0 then</pre></td></tr>
+<tr class="covered"><td>820</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
+<tr class="nocodegen"><td>821</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>822</td><td><pre style="display:inline;"> &nbsp; &nbsp;Pos := Stream.Position;</pre></td></tr>
+<tr class="nocodegen"><td>823</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>824</td><td><pre style="display:inline;"> &nbsp; &nbsp;if Size &lt; 0 then</pre></td></tr>
+<tr class="covered"><td>825</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Size := Stream.Size - Pos;</pre></td></tr>
+<tr class="nocodegen"><td>826</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>827</td><td><pre style="display:inline;"> &nbsp; &nbsp;// Last byte is incomplete so it mustn&apos;t be processed</pre></td></tr>
+<tr class="covered"><td>828</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (FFinalByteLength &gt; 0) then</pre></td></tr>
+<tr class="covered"><td>829</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
 <tr class="nocodegen"><td>830</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="covered"><td>831</td><td><pre style="display:inline;"> &nbsp; &nbsp;Max &nbsp; &nbsp; &nbsp;:= Pos + Size;</pre></td></tr>
 <tr class="nocodegen"><td>832</td><td><pre style="display:inline;"></pre></td></tr>

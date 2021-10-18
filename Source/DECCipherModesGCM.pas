@@ -167,7 +167,6 @@ type
     /// </returns>
     function poly_mult_H(const hx: T128) : T128; inline;
 
-{ TODO : Klären durch Michael was das tut, dann Doku }
     /// <summary>
     ///   Encodes the 64 bit lengths of DataToAuthenticate and of the cipher
     ///   text into a T128 value, swapping the bytes in the process.

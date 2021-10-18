@@ -32,7 +32,7 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECTypes (D:\Projekte\DECGitMaster\Source\DECTypes.pas)</strong>.</p>
-<p> Generated at 05.09.2021 11:38:03 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 18.10.2021 20:05:13 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECTypes.pas </p>
 <table  class="o"><tr><td>Number of lines covered</td><td>0</td></tr><tr><td>Number of lines with code gen</td><td>3</td></tr><tr><td>Line coverage</td><td>0%</td></tr></table>
 <br /><br />
@@ -95,128 +95,134 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>56</td><td><pre style="display:inline;"> &nbsp;TUInt64Array = array[0..1023] of UInt64;</pre></td></tr>
 <tr class="nocodegen"><td>57</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>58</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>59</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Reason for calling the progress event</pre></td></tr>
-<tr class="nocodegen"><td>60</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>61</td><td><pre style="display:inline;"> &nbsp;TDECProgressState = (Started, Processing, Finished);</pre></td></tr>
-<tr class="nocodegen"><td>62</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>63</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>64</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Event type used by several hash- and cipher methods to display their</pre></td></tr>
-<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; progress. It can be implemented as regular method, procedure and as</pre></td></tr>
-<tr class="nocodegen"><td>66</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; anonymous method, means: in place.</pre></td></tr>
-<tr class="nocodegen"><td>67</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>68</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>69</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Number of bytes to process. For files this is usually the file size. For</pre></td></tr>
-<tr class="nocodegen"><td>70</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; streams this can be less than the stream size if the stream is not being</pre></td></tr>
-<tr class="nocodegen"><td>71</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; processed from the beginning.</pre></td></tr>
-<tr class="nocodegen"><td>72</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>73</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Pos&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>74</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Position within size in byte. For streams this may be a position</pre></td></tr>
-<tr class="nocodegen"><td>75</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; relative to the starting position for processing.</pre></td></tr>
-<tr class="nocodegen"><td>76</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>77</td><td><pre style="display:inline;"> &nbsp;TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);</pre></td></tr>
-<tr class="nocodegen"><td>78</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>79</td><td><pre style="display:inline;"> &nbsp;// Exception Classes</pre></td></tr>
-<tr class="nocodegen"><td>80</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>81</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Base exception class for all DEC specific exceptions,</pre></td></tr>
-<tr class="nocodegen"><td>83</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"> &nbsp;EDECException &nbsp; &nbsp; &nbsp; = class(Exception)</pre></td></tr>
-<tr class="nocodegen"><td>85</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
-<tr class="nocodegen"><td>86</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
-<tr class="nocodegen"><td>87</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>88</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
-<tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
-<tr class="nocodegen"><td>90</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
-<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
-<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
-<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(const Msg: string); reintroduce; overload;</pre></td></tr>
-<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
-<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
-<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
-<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
-<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
-<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Args&quot;&gt;</pre></td></tr>
-<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Array with values for the parameters specified in the format string</pre></td></tr>
-<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
-<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor CreateFmt(const Msg: string;</pre></td></tr>
-<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const); reintroduce; overload;</pre></td></tr>
-<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class used when reporting that a class searched in a list is</pre></td></tr>
-<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; not contained in that list, e.g. when searching for a non existant</pre></td></tr>
-<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; formatting class.</pre></td></tr>
-<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"> &nbsp;EDECClassNotRegisteredException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>59</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; List of standard bit lengths defined in the official standard for some</pre></td></tr>
+<tr class="nocodegen"><td>60</td><td><pre style="display:inline;"> &nbsp;/// &nbsp;algorithm property which allows a variable bit length.</pre></td></tr>
+<tr class="nocodegen"><td>61</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>62</td><td><pre style="display:inline;"> &nbsp;TStandardBitLengths = array of UInt16;</pre></td></tr>
+<tr class="nocodegen"><td>63</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>64</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Reason for calling the progress event</pre></td></tr>
+<tr class="nocodegen"><td>66</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>67</td><td><pre style="display:inline;"> &nbsp;TDECProgressState = (Started, Processing, Finished);</pre></td></tr>
+<tr class="nocodegen"><td>68</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>69</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>70</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Event type used by several hash- and cipher methods to display their</pre></td></tr>
+<tr class="nocodegen"><td>71</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; progress. It can be implemented as regular method, procedure and as</pre></td></tr>
+<tr class="nocodegen"><td>72</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; anonymous method, means: in place.</pre></td></tr>
+<tr class="nocodegen"><td>73</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>74</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>75</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Number of bytes to process. For files this is usually the file size. For</pre></td></tr>
+<tr class="nocodegen"><td>76</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; streams this can be less than the stream size if the stream is not being</pre></td></tr>
+<tr class="nocodegen"><td>77</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; processed from the beginning.</pre></td></tr>
+<tr class="nocodegen"><td>78</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>79</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Pos&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>80</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Position within size in byte. For streams this may be a position</pre></td></tr>
+<tr class="nocodegen"><td>81</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; relative to the starting position for processing.</pre></td></tr>
+<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>83</td><td><pre style="display:inline;"> &nbsp;TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);</pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>85</td><td><pre style="display:inline;"> &nbsp;// Exception Classes</pre></td></tr>
+<tr class="nocodegen"><td>86</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>87</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>88</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Base exception class for all DEC specific exceptions,</pre></td></tr>
+<tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>90</td><td><pre style="display:inline;"> &nbsp;EDECException &nbsp; &nbsp; &nbsp; = class(Exception)</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
+<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
+<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
+<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(const Msg: string); reintroduce; overload;</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
+<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
+<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Args&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Array with values for the parameters specified in the format string</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor CreateFmt(const Msg: string;</pre></td></tr>
+<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const); reintroduce; overload;</pre></td></tr>
+<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>120</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting formatting related exceptions</pre></td></tr>
-<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp;EDECFormatException = class(EDECException);</pre></td></tr>
-<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting exceptions related to hash functions</pre></td></tr>
-<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp;EDECHashException &nbsp; = class(EDECException);</pre></td></tr>
-<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting encryption/decryption caused exceptions</pre></td></tr>
-<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp;EDECCipherException = class(EDECException);</pre></td></tr>
-<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting the use of abstract things which cannot</pre></td></tr>
-<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; be called directly</pre></td></tr>
+<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class used when reporting that a class searched in a list is</pre></td></tr>
+<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; not contained in that list, e.g. when searching for a non existant</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; formatting class.</pre></td></tr>
+<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp;EDECClassNotRegisteredException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting formatting related exceptions</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp;EDECFormatException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting exceptions related to hash functions</pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp;EDECHashException &nbsp; = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting encryption/decryption caused exceptions</pre></td></tr>
 <tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp;EDECAbstractError = class(EDECException)</pre></td></tr>
-<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Create the exception using a meaningfull error message</pre></td></tr>
-<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
-<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(ClassName: string); overload;</pre></td></tr>
-<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>144</td><td><pre style="display:inline;">const</pre></td></tr>
-<tr class="nocodegen"><td>145</td><td><pre style="display:inline;">{ TODO : Check why this is a constant, which is immediately used by the</pre></td></tr>
-<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; resource string. Is this because of the lack of resource string support</pre></td></tr>
-<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; of FMX on some platforms?}</pre></td></tr>
-<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp;cAbstractError = &apos;Abstract Error: %s is not implemented&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp;EDECCipherException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting the use of abstract things which cannot</pre></td></tr>
+<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; be called directly</pre></td></tr>
+<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"> &nbsp;EDECAbstractError = class(EDECException)</pre></td></tr>
+<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Create the exception using a meaningfull error message</pre></td></tr>
+<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(ClassName: string); overload;</pre></td></tr>
+<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
 <tr class="nocodegen"><td>149</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>150</td><td><pre style="display:inline;">resourcestring</pre></td></tr>
-<tr class="nocodegen"><td>151</td><td><pre style="display:inline;"> &nbsp;sAbstractError = cAbstractError;</pre></td></tr>
-<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>153</td><td><pre style="display:inline;">implementation</pre></td></tr>
-<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>155</td><td><pre style="display:inline;">{ EDECException }</pre></td></tr>
-<tr class="nocodegen"><td>156</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>157</td><td><pre style="display:inline;">{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
-<tr class="nocodegen"><td>158</td><td><pre style="display:inline;">constructor EDECException.Create(const Msg: string);</pre></td></tr>
-<tr class="nocodegen"><td>159</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"> &nbsp;inherited Create(Translate(msg));</pre></td></tr>
-<tr class="nocodegen"><td>161</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>150</td><td><pre style="display:inline;">const</pre></td></tr>
+<tr class="nocodegen"><td>151</td><td><pre style="display:inline;">{ TODO : Check why this is a constant, which is immediately used by the</pre></td></tr>
+<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; resource string. Is this because of the lack of resource string support</pre></td></tr>
+<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; of FMX on some platforms?}</pre></td></tr>
+<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"> &nbsp;cAbstractError = &apos;Abstract Error: %s is not implemented&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>155</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>156</td><td><pre style="display:inline;">resourcestring</pre></td></tr>
+<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp;sAbstractError = cAbstractError;</pre></td></tr>
+<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>159</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>161</td><td><pre style="display:inline;">{ EDECException }</pre></td></tr>
 <tr class="nocodegen"><td>162</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>163</td><td><pre style="display:inline;">constructor EDECException.CreateFmt(const Msg: string;</pre></td></tr>
-<tr class="nocodegen"><td>164</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const);</pre></td></tr>
+<tr class="nocodegen"><td>163</td><td><pre style="display:inline;">{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
+<tr class="nocodegen"><td>164</td><td><pre style="display:inline;">constructor EDECException.Create(const Msg: string);</pre></td></tr>
 <tr class="nocodegen"><td>165</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(Msg), Args));</pre></td></tr>
+<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp;inherited Create(Translate(msg));</pre></td></tr>
 <tr class="nocodegen"><td>167</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>168</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>169</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
-<tr class="nocodegen"><td>170</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(sAbstractError), [ClassName]));</pre></td></tr>
-<tr class="nocodegen"><td>172</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>173</td><td><pre style="display:inline;">{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>174</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
-<tr class="notcovered"><td>175</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>176</td><td><pre style="display:inline;"> &nbsp;inherited CreateResFmt(@sAbstractError, [ClassName]);</pre></td></tr>
-<tr class="notcovered"><td>177</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>178</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>180</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="nocodegen"><td>169</td><td><pre style="display:inline;">constructor EDECException.CreateFmt(const Msg: string;</pre></td></tr>
+<tr class="nocodegen"><td>170</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const);</pre></td></tr>
+<tr class="nocodegen"><td>171</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>172</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(Msg), Args));</pre></td></tr>
+<tr class="nocodegen"><td>173</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>174</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>175</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
+<tr class="nocodegen"><td>176</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(sAbstractError), [ClassName]));</pre></td></tr>
+<tr class="nocodegen"><td>178</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>179</td><td><pre style="display:inline;">{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>180</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
+<tr class="notcovered"><td>181</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>182</td><td><pre style="display:inline;"> &nbsp;inherited CreateResFmt(@sAbstractError, [ClassName]);</pre></td></tr>
+<tr class="notcovered"><td>183</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>184</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>185</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>186</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>

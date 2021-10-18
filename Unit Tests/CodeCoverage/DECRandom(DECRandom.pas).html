@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECRandom (D:\Projekte\DECGitMaster\Source\DECRandom.pas)</strong>.</p>
-<p> Generated at 05.09.2021 11:38:03 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 18.10.2021 20:05:13 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECRandom.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>88</td></tr><tr><td>Number of lines with code gen</td><td>93</td></tr><tr><td>Line coverage</td><td>94%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>91</td></tr><tr><td>Number of lines with code gen</td><td>94</td></tr><tr><td>Line coverage</td><td>96%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -373,8 +373,8 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>334</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FRndSeed := 0;</pre></td></tr>
 <tr class="covered"><td>335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while Size &gt; 0 do</pre></td></tr>
 <tr class="nocodegen"><td>336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="notcovered"><td>337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
-<tr class="notcovered"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;FRndSeed := (FRndSeed shl 8 + FRndSeed shr 24) xor TByteArray(Buffer)[Size]</pre></td></tr>
+<tr class="covered"><td>337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;FRndSeed := (FRndSeed shl 8 + FRndSeed shr 24) xor TByteArray(Buffer)[Size]</pre></td></tr>
 <tr class="nocodegen"><td>339</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
 <tr class="nocodegen"><td>340</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
 <tr class="nocodegen"><td>341</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
@@ -473,26 +473,28 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="nocodegen"><td>434</td><td><pre style="display:inline;"> &nbsp;except</pre></td></tr>
 <tr class="notcovered"><td>435</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
 <tr class="covered"><td>436</td><td><pre style="display:inline;"> &nbsp;FHash := nil;</pre></td></tr>
-<tr class="covered"><td>437</td><td><pre style="display:inline;"> &nbsp;FillChar(FRegister, SizeOf(FRegister), 0);</pre></td></tr>
-<tr class="covered"><td>438</td><td><pre style="display:inline;"> &nbsp;FCounter := 0;</pre></td></tr>
-<tr class="covered"><td>439</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>440</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>441</td><td><pre style="display:inline;">{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>442</td><td><pre style="display:inline;">{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>443</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>444</td><td><pre style="display:inline;">initialization</pre></td></tr>
-<tr class="nocodegen"><td>445</td><td><pre style="display:inline;"> &nbsp;{$DEFINE AUTO_PRNG}</pre></td></tr>
-<tr class="nocodegen"><td>446</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>447</td><td><pre style="display:inline;"> &nbsp;DoInit;</pre></td></tr>
+<tr class="nocodegen"><td>437</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>438</td><td><pre style="display:inline;"> &nbsp;FreeAndNil(FHash);</pre></td></tr>
+<tr class="covered"><td>439</td><td><pre style="display:inline;"> &nbsp;FillChar(FRegister, SizeOf(FRegister), 0);</pre></td></tr>
+<tr class="covered"><td>440</td><td><pre style="display:inline;"> &nbsp;FCounter := 0;</pre></td></tr>
+<tr class="covered"><td>441</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>442</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>443</td><td><pre style="display:inline;">{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>444</td><td><pre style="display:inline;">{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>445</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>446</td><td><pre style="display:inline;">initialization</pre></td></tr>
+<tr class="nocodegen"><td>447</td><td><pre style="display:inline;"> &nbsp;{$DEFINE AUTO_PRNG}</pre></td></tr>
 <tr class="nocodegen"><td>448</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>449</td><td><pre style="display:inline;"> &nbsp;{$IFDEF AUTO_PRNG} // see DECOptions.inc</pre></td></tr>
-<tr class="covered"><td>450</td><td><pre style="display:inline;"> &nbsp;RandomSeed;</pre></td></tr>
-<tr class="nocodegen"><td>451</td><td><pre style="display:inline;"> &nbsp;{$ENDIF AUTO_PRNG}</pre></td></tr>
-<tr class="nocodegen"><td>452</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>453</td><td><pre style="display:inline;">finalization</pre></td></tr>
-<tr class="covered"><td>454</td><td><pre style="display:inline;"> &nbsp;DoDone;</pre></td></tr>
-<tr class="nocodegen"><td>455</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>456</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="covered"><td>449</td><td><pre style="display:inline;"> &nbsp;DoInit;</pre></td></tr>
+<tr class="nocodegen"><td>450</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>451</td><td><pre style="display:inline;"> &nbsp;{$IFDEF AUTO_PRNG} // see DECOptions.inc</pre></td></tr>
+<tr class="covered"><td>452</td><td><pre style="display:inline;"> &nbsp;RandomSeed;</pre></td></tr>
+<tr class="nocodegen"><td>453</td><td><pre style="display:inline;"> &nbsp;{$ENDIF AUTO_PRNG}</pre></td></tr>
+<tr class="nocodegen"><td>454</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>455</td><td><pre style="display:inline;">finalization</pre></td></tr>
+<tr class="covered"><td>456</td><td><pre style="display:inline;"> &nbsp;DoDone;</pre></td></tr>
+<tr class="nocodegen"><td>457</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>458</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>

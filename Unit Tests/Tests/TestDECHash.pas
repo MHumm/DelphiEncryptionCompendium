@@ -5381,9 +5381,6 @@ begin
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
 
-//if HashClass.ClassName.ToUpper.Contains('SHA3_224') then
-//  sleep(10);
-
         ProgressCalled := false;
         Stream.Seek(0, TSeekOrigin.soBeginning);
         HashClass.CalcStream(Stream, -1, Hash,

@@ -99,6 +99,8 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherModes = class(TTestCase)
   strict private
+    FCipher : TDECCipherModes;
+
     const
       Data: array[1..27] of TTestEntry = ((Input:          'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:          'ABCDEFGHIJKLMNOPQRSTUVWX';
@@ -315,6 +317,38 @@ type
     ///   carried out
     /// </param>
     procedure DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
+
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFailureCallToAuthenticationResultHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFailureCallToAuthenticationResultBitLengthWriteHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFailureCallToAuthenticationResultBitLengthReadHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFailureCallToDataToAuthehticateWriteHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter
+    /// </summary>
+    procedure TestFailureCallToDataToAuthehticateReadHelper;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Simply sets FCipher.Mode to GCM.
+    /// </summary>
+    procedure TestFailureSetGCMMode;
   published
     procedure TestEncodeECBx;
     procedure TestEncodeOFB8;
@@ -338,6 +372,13 @@ type
     procedure TestDecode;
     procedure TestIsAuthenticated;
     procedure TestGetStandardAuthenticationTagBitLengths;
+    procedure TestFailureCallToDataToAuthehticateWrite;
+    procedure TestFailureCallToDataToAuthehticateRead;
+    procedure TestFailureCallToAuthenticationResultBitLengthWrite;
+    procedure TestFailureCallToAuthenticationResultBitLengthRead;
+    procedure TestFailureCallToAuthenticationResult;
+    procedure InitGCMBlocksizeNot128Failure;
+    procedure InitGCMStreamCipherFailure;
   end;
 
 implementation
@@ -351,8 +392,6 @@ var
   Source : TBytes;
   i, n   : Integer;
   Result : string;
-
-  Cipher : TDECCipherModes;
 begin
   for i := Low(Data) to High(Data) do
   begin
@@ -361,13 +400,13 @@ begin
       if Data[i].Mode <> Mode then
         Continue;
 
-    Cipher := Data[i].TestClass.Create;
-    Cipher.Mode := Data[i].Mode;
+    FCipher := Data[i].TestClass.Create;
+    FCipher.Mode := Data[i].Mode;
 
-    CheckEquals(true, Data[i].Mode = Cipher.Mode, 'Cipher mode not properly set');
+    CheckEquals(true, Data[i].Mode = FCipher.Mode, 'Cipher mode not properly set');
 
     try
-      Cipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
+      FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
 
       SetLength(Source, Length(Data[i].Input));
       FillChar(Source[0], Length(Source), $FF);
@@ -375,7 +414,7 @@ begin
       Move(Data[i].Input[1], Source[0], Length(Data[i].Input));
 
       SetLength(Dest, length(Source));
-      Cipher.Encode(Source[0], Dest[0], length(Source));
+      FCipher.Encode(Source[0], Dest[0], length(Source));
 
       // Output is noted non hexadecimal
       if Data[i].Output <> '' then
@@ -411,7 +450,7 @@ begin
       end;
 
     finally
-      Cipher.Free;
+      FCipher.Free;
     end;
   end;
 end;
@@ -421,8 +460,6 @@ var
   Dest    : TBytes;
   Source  : TBytes;
   i, n, m : Integer;
-
-  Cipher : TDECCipherModes;
 begin
   for i := Low(Data) to High(Data) do
   begin
@@ -431,11 +468,11 @@ begin
       if Data[i].Mode <> Mode then
         Continue;
 
-    Cipher := Data[i].TestClass.Create;
-    Cipher.Mode := Data[i].Mode;
+    FCipher := Data[i].TestClass.Create;
+    FCipher.Mode := Data[i].Mode;
 
     try
-      Cipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
+      FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf(Data[i].InitVector), $FF);
 
       if (Data[i].Output <> '') then
       begin
@@ -460,7 +497,7 @@ begin
       end;
 
       SetLength(Dest, length(Source));
-      Cipher.Decode(Source[0], Dest[0], length(Source));
+      FCipher.Decode(Source[0], Dest[0], length(Source));
 
       for n := Low(Dest) to High(Dest) do
       begin
@@ -471,7 +508,7 @@ begin
       end;
 
     finally
-      Cipher.Free;
+      FCipher.Free;
     end;
   end;
 end;
@@ -504,6 +541,127 @@ end;
 procedure TestTDECCipherModes.TestEncodeOFBx;
 begin
   DoTestEncode(Data, TCipherMode.cmOFBx);
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResult;
+begin
+  FCipher := TCipher_RC6.Create;
+  try
+    FCipher.Mode := TCipherMode.cmCTSx;
+
+    CheckException(TestFailureCallToAuthenticationResultHelper, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultBitLengthWrite;
+begin
+  FCipher := TCipher_RC6.Create;
+  try
+    FCipher.Mode := TCipherMode.cmCTSx;
+
+    CheckException(TestFailureCallToAuthenticationResultBitLengthWriteHelper, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultBitLengthRead;
+begin
+  FCipher := TCipher_RC6.Create;
+  try
+    FCipher.Mode := TCipherMode.cmCTSx;
+
+    CheckException(TestFailureCallToAuthenticationResultBitLengthReadHelper, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToDataToAuthehticateWrite;
+begin
+  FCipher := TCipher_RC6.Create;
+  try
+    FCipher.Mode := TCipherMode.cmCTSx;
+
+    CheckException(TestFailureCallToDataToAuthehticateWriteHelper, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToDataToAuthehticateRead;
+begin
+  FCipher := TCipher_RC6.Create;
+  try
+    FCipher.Mode := TCipherMode.cmCTSx;
+
+    CheckException(TestFailureCallToDataToAuthehticateReadHelper, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultHelper;
+var
+  AuthRes : TBytes;
+begin
+  AuthRes := FCipher.AuthenticationResult;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultBitLengthWriteHelper;
+begin
+  FCipher.AuthenticationResultBitLength := 128;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultBitLengthReadHelper;
+var
+  Result : Integer;
+begin
+  Result := FCipher.AuthenticationResultBitLength;
+  CheckEquals(128, Result);
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToDataToAuthehticateWriteHelper;
+var
+  AuthData : TBytes;
+begin
+  SetLength(AuthData, 4);
+  AuthData := [0, 1, 2, 3];
+  FCipher.DataToAuthenticate := AuthData;
+end;
+
+procedure TestTDECCipherModes.TestFailureCallToDataToAuthehticateReadHelper;
+var
+  AuthRes : TBytes;
+begin
+  AuthRes := FCipher.DataToAuthenticate;
+end;
+
+procedure TestTDECCipherModes.InitGCMBlocksizeNot128Failure;
+begin
+  FCipher := TCipher_Blowfish.Create;
+  try
+    CheckException(TestFailureSetGCMMode, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.InitGCMStreamCipherFailure;
+begin
+  FCipher := TCipher_RC4.Create;
+  try
+    CheckException(TestFailureSetGCMMode, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureSetGCMMode;
+begin
+  FCipher.Mode := TCipherMode.cmGCM;
 end;
 
 procedure TestTDECCipherModes.TestGetStandardAuthenticationTagBitLengths;

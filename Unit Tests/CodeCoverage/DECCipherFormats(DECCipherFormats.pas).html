@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECCipherFormats (D:\Projekte\DECGitMaster\Source\DECCipherFormats.pas)</strong>.</p>
-<p> Generated at 05.09.2021 11:38:01 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 18.10.2021 20:05:11 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECCipherFormats.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>137</td></tr><tr><td>Number of lines with code gen</td><td>157</td></tr><tr><td>Line coverage</td><td>87%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>141</td></tr><tr><td>Number of lines with code gen</td><td>161</td></tr><tr><td>Line coverage</td><td>87%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -643,440 +643,449 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>604</td><td><pre style="display:inline;">begin</pre></td></tr>
 <tr class="covered"><td>605</td><td><pre style="display:inline;"> &nbsp;SetLength(Result, Length(Source));</pre></td></tr>
 <tr class="covered"><td>606</td><td><pre style="display:inline;"> &nbsp;if Length(Result) &gt; 0 then</pre></td></tr>
-<tr class="covered"><td>607</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[0], Result[0], Length(Source));</pre></td></tr>
-<tr class="covered"><td>608</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>609</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>610</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;</pre></td></tr>
-<tr class="covered"><td>611</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>612</td><td><pre style="display:inline;"> &nbsp;Result := Source;</pre></td></tr>
-<tr class="covered"><td>613</td><td><pre style="display:inline;"> &nbsp;if Length(Result) &gt; 0 then</pre></td></tr>
-<tr class="covered"><td>614</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Result[0], Result[0], Length(Source));</pre></td></tr>
-<tr class="covered"><td>615</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>616</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>617</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;</pre></td></tr>
-<tr class="nocodegen"><td>618</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; DataSize: Int64;</pre></td></tr>
-<tr class="nocodegen"><td>619</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const CipherProc: TDECCipherCodeEvent;</pre></td></tr>
-<tr class="nocodegen"><td>620</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="nocodegen"><td>621</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>622</td><td><pre style="display:inline;"> &nbsp;Buffer: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>623</td><td><pre style="display:inline;"> &nbsp;BufferSize, Bytes: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>624</td><td><pre style="display:inline;"> &nbsp;Max, StartPos, Pos: Int64;</pre></td></tr>
-<tr class="covered"><td>625</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>626</td><td><pre style="display:inline;"> &nbsp;Pos := Source.Position;</pre></td></tr>
-<tr class="covered"><td>627</td><td><pre style="display:inline;"> &nbsp;if DataSize &lt; 0 then</pre></td></tr>
-<tr class="notcovered"><td>628</td><td><pre style="display:inline;"> &nbsp; &nbsp;DataSize := Source.Size - Pos;</pre></td></tr>
-<tr class="nocodegen"><td>629</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>630</td><td><pre style="display:inline;"> &nbsp;Max &nbsp; &nbsp; &nbsp;:= Pos + DataSize;</pre></td></tr>
-<tr class="covered"><td>631</td><td><pre style="display:inline;"> &nbsp;StartPos := Pos;</pre></td></tr>
-<tr class="nocodegen"><td>632</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>633</td><td><pre style="display:inline;"> &nbsp;if DataSize &gt; 0 then</pre></td></tr>
-<tr class="covered"><td>634</td><td><pre style="display:inline;"> &nbsp; &nbsp;try</pre></td></tr>
-<tr class="covered"><td>635</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="covered"><td>636</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, 0, Started);</pre></td></tr>
-<tr class="nocodegen"><td>637</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>638</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if StreamBufferSize &lt;= 0 then</pre></td></tr>
-<tr class="notcovered"><td>639</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
-<tr class="covered"><td>640</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize mod Context.BlockSize;</pre></td></tr>
-<tr class="covered"><td>641</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if BufferSize = 0 then</pre></td></tr>
-<tr class="covered"><td>642</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize</pre></td></tr>
-<tr class="nocodegen"><td>643</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="notcovered"><td>644</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize + Context.BlockSize - BufferSize;</pre></td></tr>
-<tr class="covered"><td>645</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if DataSize &gt; BufferSize then</pre></td></tr>
-<tr class="notcovered"><td>646</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;SetLength(Buffer, BufferSize)</pre></td></tr>
-<tr class="nocodegen"><td>647</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
-<tr class="covered"><td>648</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;SetLength(Buffer, DataSize);</pre></td></tr>
-<tr class="covered"><td>649</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while DataSize &gt; 0 do</pre></td></tr>
-<tr class="nocodegen"><td>650</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>651</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Bytes := BufferSize;</pre></td></tr>
-<tr class="covered"><td>652</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if Bytes &gt; DataSize then</pre></td></tr>
-<tr class="covered"><td>653</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Bytes := DataSize;</pre></td></tr>
-<tr class="covered"><td>654</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Source.ReadBuffer(Buffer[0], Bytes);</pre></td></tr>
-<tr class="nocodegen"><td>655</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>656</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// The real encryption or decryption routine</pre></td></tr>
-<tr class="covered"><td>657</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;CipherProc(Buffer[0], Buffer[0], Bytes);</pre></td></tr>
-<tr class="covered"><td>658</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dest.WriteBuffer(Buffer[0], Bytes);</pre></td></tr>
-<tr class="covered"><td>659</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(DataSize, Bytes);</pre></td></tr>
-<tr class="covered"><td>660</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(Pos, Bytes);</pre></td></tr>
-<tr class="nocodegen"><td>661</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>662</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="covered"><td>663</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Pos - StartPos, Processing);</pre></td></tr>
-<tr class="nocodegen"><td>664</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>665</td><td><pre style="display:inline;"> &nbsp; &nbsp;finally</pre></td></tr>
-<tr class="covered"><td>666</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;ProtectBytes(Buffer);</pre></td></tr>
-<tr class="covered"><td>667</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
-<tr class="covered"><td>668</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Max, Finished);</pre></td></tr>
-<tr class="nocodegen"><td>669</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="covered"><td>670</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>671</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>672</td><td><pre style="display:inline;">procedure TDECFormattedCipher.EncodeStream(const Source, Dest: TStream; DataSize: Int64;</pre></td></tr>
-<tr class="nocodegen"><td>673</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="covered"><td>674</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>675</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeStream(Source, Dest, DataSize,</pre></td></tr>
-<tr class="nocodegen"><td>676</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Encode, OnProgress);</pre></td></tr>
-<tr class="covered"><td>677</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>678</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>679</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DecodeStream(const Source, Dest: TStream; DataSize: Int64;</pre></td></tr>
-<tr class="nocodegen"><td>680</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="covered"><td>681</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>682</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeStream(Source, Dest, DataSize,</pre></td></tr>
-<tr class="nocodegen"><td>683</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Decode, OnProgress);</pre></td></tr>
-<tr class="covered"><td>684</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>685</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>686</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
-<tr class="nocodegen"><td>687</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const Proc: TDECCipherCodeEvent;</pre></td></tr>
-<tr class="nocodegen"><td>688</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="nocodegen"><td>689</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>690</td><td><pre style="display:inline;"> &nbsp;S, D: TStream;</pre></td></tr>
-<tr class="notcovered"><td>691</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>692</td><td><pre style="display:inline;"> &nbsp;Assert(SourceFileName &lt;&gt; DestFileName, &apos;Source and Dest file name may not be equal&apos;);</pre></td></tr>
-<tr class="nocodegen"><td>693</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="notcovered"><td>694</td><td><pre style="display:inline;"> &nbsp;S := TFileStream.Create(SourceFileName, fmOpenRead or fmShareDenyNone);</pre></td></tr>
-<tr class="notcovered"><td>695</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
-<tr class="notcovered"><td>696</td><td><pre style="display:inline;"> &nbsp; &nbsp;D := TFileStream.Create(DestFileName, fmCreate);</pre></td></tr>
-<tr class="notcovered"><td>697</td><td><pre style="display:inline;"> &nbsp; &nbsp;try</pre></td></tr>
-<tr class="notcovered"><td>698</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;DoEncodeDecodeStream(S, D, S.Size, Proc, OnProgress);</pre></td></tr>
-<tr class="nocodegen"><td>699</td><td><pre style="display:inline;"> &nbsp; &nbsp;finally</pre></td></tr>
-<tr class="notcovered"><td>700</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D.Free;</pre></td></tr>
-<tr class="nocodegen"><td>701</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
-<tr class="nocodegen"><td>702</td><td><pre style="display:inline;"> &nbsp;finally</pre></td></tr>
-<tr class="notcovered"><td>703</td><td><pre style="display:inline;"> &nbsp; &nbsp;S.Free;</pre></td></tr>
-<tr class="nocodegen"><td>704</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
-<tr class="notcovered"><td>705</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>706</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>707</td><td><pre style="display:inline;">procedure TDECFormattedCipher.EncodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
-<tr class="nocodegen"><td>708</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="notcovered"><td>709</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>710</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeFile(SourceFileName, DestFileName, Encode, OnProgress);</pre></td></tr>
-<tr class="notcovered"><td>711</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>712</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>713</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DecodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
-<tr class="nocodegen"><td>714</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
-<tr class="notcovered"><td>715</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="notcovered"><td>716</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeFile(SourceFileName, DestFileName, Decode, OnProgress);</pre></td></tr>
-<tr class="notcovered"><td>717</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>718</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>719</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: string;</pre></td></tr>
-<tr class="nocodegen"><td>720</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Format: TDECFormatClass = nil): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>721</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>722</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="covered"><td>723</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>724</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>725</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>726</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>727</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
-<tr class="covered"><td>728</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="covered"><td>729</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>730</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>731</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>732</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="nocodegen"><td>733</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>734</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>735</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>736</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
-<tr class="nocodegen"><td>737</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>738</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>739</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>740</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>741</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>742</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>743</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>744</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="covered"><td>745</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>746</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>747</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>748</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>749</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
-<tr class="covered"><td>750</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="covered"><td>751</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>752</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>753</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>754</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="nocodegen"><td>755</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>756</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>757</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>758</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
-<tr class="nocodegen"><td>759</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>760</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>761</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>762</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>763</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>764</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>765</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>766</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>767</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
-<tr class="covered"><td>768</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>769</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>770</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>771</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
+<tr class="covered"><td>607</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[0], Result[0], Length(Source))</pre></td></tr>
+<tr class="nocodegen"><td>608</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>609</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (FMode = cmGCM) then</pre></td></tr>
+<tr class="covered"><td>610</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;EncodeGCM(@Source, @Result, 0);</pre></td></tr>
+<tr class="covered"><td>611</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>612</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>613</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;</pre></td></tr>
+<tr class="covered"><td>614</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>615</td><td><pre style="display:inline;">// &nbsp;Result := Source;</pre></td></tr>
+<tr class="covered"><td>616</td><td><pre style="display:inline;"> &nbsp;SetLength(Result, Length(Source));</pre></td></tr>
+<tr class="nocodegen"><td>617</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>618</td><td><pre style="display:inline;"> &nbsp;if Length(Result) &gt; 0 then</pre></td></tr>
+<tr class="covered"><td>619</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Source[0], Result[0], Length(Source))</pre></td></tr>
+<tr class="nocodegen"><td>620</td><td><pre style="display:inline;">// &nbsp; &nbsp;Decode(Result[0], Result[0], Length(Source))</pre></td></tr>
+<tr class="nocodegen"><td>621</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>622</td><td><pre style="display:inline;"> &nbsp; &nbsp;if (FMode = cmGCM) then</pre></td></tr>
+<tr class="covered"><td>623</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;DecodeGCM(@Source, @Result, 0);</pre></td></tr>
+<tr class="covered"><td>624</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>625</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>626</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;</pre></td></tr>
+<tr class="nocodegen"><td>627</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; DataSize: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>628</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const CipherProc: TDECCipherCodeEvent;</pre></td></tr>
+<tr class="nocodegen"><td>629</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="nocodegen"><td>630</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>631</td><td><pre style="display:inline;"> &nbsp;Buffer: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>632</td><td><pre style="display:inline;"> &nbsp;BufferSize, Bytes: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>633</td><td><pre style="display:inline;"> &nbsp;Max, StartPos, Pos: Int64;</pre></td></tr>
+<tr class="covered"><td>634</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>635</td><td><pre style="display:inline;"> &nbsp;Pos := Source.Position;</pre></td></tr>
+<tr class="covered"><td>636</td><td><pre style="display:inline;"> &nbsp;if DataSize &lt; 0 then</pre></td></tr>
+<tr class="notcovered"><td>637</td><td><pre style="display:inline;"> &nbsp; &nbsp;DataSize := Source.Size - Pos;</pre></td></tr>
+<tr class="nocodegen"><td>638</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>639</td><td><pre style="display:inline;"> &nbsp;Max &nbsp; &nbsp; &nbsp;:= Pos + DataSize;</pre></td></tr>
+<tr class="covered"><td>640</td><td><pre style="display:inline;"> &nbsp;StartPos := Pos;</pre></td></tr>
+<tr class="nocodegen"><td>641</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>642</td><td><pre style="display:inline;"> &nbsp;if DataSize &gt; 0 then</pre></td></tr>
+<tr class="covered"><td>643</td><td><pre style="display:inline;"> &nbsp; &nbsp;try</pre></td></tr>
+<tr class="covered"><td>644</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
+<tr class="covered"><td>645</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, 0, Started);</pre></td></tr>
+<tr class="nocodegen"><td>646</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>647</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if StreamBufferSize &lt;= 0 then</pre></td></tr>
+<tr class="notcovered"><td>648</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;StreamBufferSize := 8192;</pre></td></tr>
+<tr class="covered"><td>649</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize mod Context.BlockSize;</pre></td></tr>
+<tr class="covered"><td>650</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if BufferSize = 0 then</pre></td></tr>
+<tr class="covered"><td>651</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize</pre></td></tr>
+<tr class="nocodegen"><td>652</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="notcovered"><td>653</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;BufferSize := StreamBufferSize + Context.BlockSize - BufferSize;</pre></td></tr>
+<tr class="covered"><td>654</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if DataSize &gt; BufferSize then</pre></td></tr>
+<tr class="notcovered"><td>655</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;SetLength(Buffer, BufferSize)</pre></td></tr>
+<tr class="nocodegen"><td>656</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>657</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;SetLength(Buffer, DataSize);</pre></td></tr>
+<tr class="covered"><td>658</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while DataSize &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>659</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>660</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Bytes := BufferSize;</pre></td></tr>
+<tr class="covered"><td>661</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if Bytes &gt; DataSize then</pre></td></tr>
+<tr class="covered"><td>662</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Bytes := DataSize;</pre></td></tr>
+<tr class="covered"><td>663</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Source.ReadBuffer(Buffer[0], Bytes);</pre></td></tr>
+<tr class="nocodegen"><td>664</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>665</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;// The real encryption or decryption routine</pre></td></tr>
+<tr class="covered"><td>666</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;CipherProc(Buffer[0], Buffer[0], Bytes);</pre></td></tr>
+<tr class="covered"><td>667</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dest.WriteBuffer(Buffer[0], Bytes);</pre></td></tr>
+<tr class="covered"><td>668</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(DataSize, Bytes);</pre></td></tr>
+<tr class="covered"><td>669</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Inc(Pos, Bytes);</pre></td></tr>
+<tr class="nocodegen"><td>670</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>671</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
+<tr class="covered"><td>672</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Pos - StartPos, Processing);</pre></td></tr>
+<tr class="nocodegen"><td>673</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>674</td><td><pre style="display:inline;"> &nbsp; &nbsp;finally</pre></td></tr>
+<tr class="covered"><td>675</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;ProtectBytes(Buffer);</pre></td></tr>
+<tr class="covered"><td>676</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if Assigned(OnProgress) then</pre></td></tr>
+<tr class="covered"><td>677</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;OnProgress(Max, Max, Finished);</pre></td></tr>
+<tr class="nocodegen"><td>678</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>679</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>680</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>681</td><td><pre style="display:inline;">procedure TDECFormattedCipher.EncodeStream(const Source, Dest: TStream; DataSize: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>682</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="covered"><td>683</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>684</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeStream(Source, Dest, DataSize,</pre></td></tr>
+<tr class="nocodegen"><td>685</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Encode, OnProgress);</pre></td></tr>
+<tr class="covered"><td>686</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>687</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>688</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DecodeStream(const Source, Dest: TStream; DataSize: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>689</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="covered"><td>690</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>691</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeStream(Source, Dest, DataSize,</pre></td></tr>
+<tr class="nocodegen"><td>692</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Decode, OnProgress);</pre></td></tr>
+<tr class="covered"><td>693</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>694</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>695</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
+<tr class="nocodegen"><td>696</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const Proc: TDECCipherCodeEvent;</pre></td></tr>
+<tr class="nocodegen"><td>697</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="nocodegen"><td>698</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>699</td><td><pre style="display:inline;"> &nbsp;S, D: TStream;</pre></td></tr>
+<tr class="notcovered"><td>700</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>701</td><td><pre style="display:inline;"> &nbsp;Assert(SourceFileName &lt;&gt; DestFileName, &apos;Source and Dest file name may not be equal&apos;);</pre></td></tr>
+<tr class="nocodegen"><td>702</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="notcovered"><td>703</td><td><pre style="display:inline;"> &nbsp;S := TFileStream.Create(SourceFileName, fmOpenRead or fmShareDenyNone);</pre></td></tr>
+<tr class="notcovered"><td>704</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
+<tr class="notcovered"><td>705</td><td><pre style="display:inline;"> &nbsp; &nbsp;D := TFileStream.Create(DestFileName, fmCreate);</pre></td></tr>
+<tr class="notcovered"><td>706</td><td><pre style="display:inline;"> &nbsp; &nbsp;try</pre></td></tr>
+<tr class="notcovered"><td>707</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;DoEncodeDecodeStream(S, D, S.Size, Proc, OnProgress);</pre></td></tr>
+<tr class="nocodegen"><td>708</td><td><pre style="display:inline;"> &nbsp; &nbsp;finally</pre></td></tr>
+<tr class="notcovered"><td>709</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;D.Free;</pre></td></tr>
+<tr class="nocodegen"><td>710</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>711</td><td><pre style="display:inline;"> &nbsp;finally</pre></td></tr>
+<tr class="notcovered"><td>712</td><td><pre style="display:inline;"> &nbsp; &nbsp;S.Free;</pre></td></tr>
+<tr class="nocodegen"><td>713</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="notcovered"><td>714</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>715</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>716</td><td><pre style="display:inline;">procedure TDECFormattedCipher.EncodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
+<tr class="nocodegen"><td>717</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="notcovered"><td>718</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>719</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeFile(SourceFileName, DestFileName, Encode, OnProgress);</pre></td></tr>
+<tr class="notcovered"><td>720</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>721</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>722</td><td><pre style="display:inline;">procedure TDECFormattedCipher.DecodeFile(const SourceFileName, DestFileName: string;</pre></td></tr>
+<tr class="nocodegen"><td>723</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const OnProgress: TDECProgressEvent);</pre></td></tr>
+<tr class="notcovered"><td>724</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>725</td><td><pre style="display:inline;"> &nbsp;DoEncodeDecodeFile(SourceFileName, DestFileName, Decode, OnProgress);</pre></td></tr>
+<tr class="notcovered"><td>726</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>727</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>728</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: string;</pre></td></tr>
+<tr class="nocodegen"><td>729</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Format: TDECFormatClass = nil): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>730</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>731</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="covered"><td>732</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>733</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>734</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>735</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>736</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
+<tr class="covered"><td>737</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="covered"><td>738</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>739</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>740</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>741</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="nocodegen"><td>742</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>743</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>744</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>745</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
+<tr class="nocodegen"><td>746</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>747</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>748</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>749</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>750</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>751</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>752</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>753</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="covered"><td>754</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>755</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>756</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>757</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>758</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
+<tr class="covered"><td>759</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="covered"><td>760</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>761</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>762</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>763</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="nocodegen"><td>764</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>765</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>766</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>767</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
+<tr class="nocodegen"><td>768</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>769</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>770</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>771</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>772</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>773</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="covered"><td>774</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Src;</pre></td></tr>
-<tr class="covered"><td>775</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Result[0], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>776</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>777</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>778</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>779</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>780</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>781</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>782</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>783</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>784</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
-<tr class="covered"><td>785</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>786</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>787</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>788</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
+<tr class="nocodegen"><td>773</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>774</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>775</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>776</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
+<tr class="covered"><td>777</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>778</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>779</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>780</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
+<tr class="nocodegen"><td>781</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>782</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="covered"><td>783</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Src;</pre></td></tr>
+<tr class="covered"><td>784</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Result[0], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>785</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>786</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>787</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>788</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>789</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>790</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="covered"><td>791</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Src;</pre></td></tr>
-<tr class="covered"><td>792</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Result[0], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>793</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>794</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>795</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>796</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>797</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>798</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
-<tr class="nocodegen"><td>799</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>800</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>801</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>802</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>803</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>804</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>805</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>806</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="nocodegen"><td>807</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>808</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>809</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
-<tr class="nocodegen"><td>810</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>811</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>812</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="nocodegen"><td>813</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>814</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>815</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>816</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
-<tr class="nocodegen"><td>817</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>818</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>819</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>820</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>821</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>822</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>823</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>824</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));</pre></td></tr>
-<tr class="nocodegen"><td>825</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>826</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="nocodegen"><td>827</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="nocodegen"><td>828</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>829</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>830</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>831</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="nocodegen"><td>832</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>833</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>790</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>791</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>792</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>793</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
+<tr class="covered"><td>794</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>795</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>796</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>797</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
+<tr class="nocodegen"><td>798</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>799</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="covered"><td>800</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Src;</pre></td></tr>
+<tr class="covered"><td>801</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Result[0], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>802</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>803</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>804</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>805</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>806</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>807</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
+<tr class="nocodegen"><td>808</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>809</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>810</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>811</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>812</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>813</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>814</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>815</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="nocodegen"><td>816</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>817</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>818</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
+<tr class="nocodegen"><td>819</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>820</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>821</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="nocodegen"><td>822</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>823</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>824</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>825</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
+<tr class="nocodegen"><td>826</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>827</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>828</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>829</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>830</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>831</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>832</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>833</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));</pre></td></tr>
 <tr class="nocodegen"><td>834</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>835</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
-<tr class="nocodegen"><td>836</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>837</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>838</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="covered"><td>839</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>840</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>841</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>842</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="covered"><td>843</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="covered"><td>844</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>845</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>846</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
-<tr class="nocodegen"><td>847</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>848</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>849</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>850</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>851</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>852</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: WideString;</pre></td></tr>
-<tr class="nocodegen"><td>853</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): WideString;</pre></td></tr>
-<tr class="covered"><td>854</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>855</td><td><pre style="display:inline;"> &nbsp;result := WideString(EncodeStringToString(string(Source), Format));</pre></td></tr>
-<tr class="covered"><td>856</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>857</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>858</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>859</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
-<tr class="nocodegen"><td>860</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: AnsiString;</pre></td></tr>
-<tr class="nocodegen"><td>861</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): AnsiString;</pre></td></tr>
-<tr class="nocodegen"><td>862</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>863</td><td><pre style="display:inline;"> &nbsp;Len &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>864</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>865</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>866</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>867</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>868</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>869</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>870</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, Len);</pre></td></tr>
-<tr class="nocodegen"><td>871</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>872</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>873</td><td><pre style="display:inline;"> &nbsp; &nbsp;Temp := ValidFormat(Format).Encode(EncryptedBuffer);</pre></td></tr>
-<tr class="nocodegen"><td>874</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Temp));</pre></td></tr>
-<tr class="nocodegen"><td>875</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[1], length(Temp));</pre></td></tr>
-<tr class="nocodegen"><td>876</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>877</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>878</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="nocodegen"><td>879</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>880</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>835</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="nocodegen"><td>836</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="nocodegen"><td>837</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>838</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>839</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>840</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="nocodegen"><td>841</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>842</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>843</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>844</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
+<tr class="nocodegen"><td>845</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>846</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>847</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="covered"><td>848</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>849</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>850</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>851</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="covered"><td>852</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="covered"><td>853</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>854</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>855</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := ValidFormat(Format).Encode(Result);</pre></td></tr>
+<tr class="nocodegen"><td>856</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>857</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>858</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>859</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>860</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>861</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: WideString;</pre></td></tr>
+<tr class="nocodegen"><td>862</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): WideString;</pre></td></tr>
+<tr class="covered"><td>863</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>864</td><td><pre style="display:inline;"> &nbsp;result := WideString(EncodeStringToString(string(Source), Format));</pre></td></tr>
+<tr class="covered"><td>865</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>866</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>867</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>868</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
+<tr class="nocodegen"><td>869</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: AnsiString;</pre></td></tr>
+<tr class="nocodegen"><td>870</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): AnsiString;</pre></td></tr>
+<tr class="nocodegen"><td>871</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>872</td><td><pre style="display:inline;"> &nbsp;Len &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>873</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>874</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>875</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>876</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>877</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>878</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>879</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, Len);</pre></td></tr>
+<tr class="nocodegen"><td>880</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], Len);</pre></td></tr>
 <tr class="nocodegen"><td>881</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>882</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: string;</pre></td></tr>
-<tr class="nocodegen"><td>883</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): string;</pre></td></tr>
-<tr class="nocodegen"><td>884</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>885</td><td><pre style="display:inline;"> &nbsp;SourceSize &nbsp; &nbsp; &nbsp;: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>886</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
-<tr class="covered"><td>887</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>888</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>889</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>890</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>891</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
-<tr class="covered"><td>892</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
-<tr class="covered"><td>893</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>894</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>895</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>896</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>897</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>898</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>899</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>900</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));</pre></td></tr>
-<tr class="nocodegen"><td>901</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>902</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>903</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := &apos;&apos;;</pre></td></tr>
-<tr class="covered"><td>904</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>905</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>906</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: RawByteString;</pre></td></tr>
-<tr class="nocodegen"><td>907</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): RawByteString;</pre></td></tr>
-<tr class="nocodegen"><td>908</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>909</td><td><pre style="display:inline;"> &nbsp;SourceSize &nbsp; &nbsp; &nbsp;: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>910</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>911</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: TBytes;</pre></td></tr>
-<tr class="covered"><td>912</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>913</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>914</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>915</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>916</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
-<tr class="covered"><td>917</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
-<tr class="covered"><td>918</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>919</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>920</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
-<tr class="nocodegen"><td>921</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>922</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], SourceSize);</pre></td></tr>
-<tr class="nocodegen"><td>923</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>924</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>925</td><td><pre style="display:inline;"> &nbsp; &nbsp;Temp &nbsp; := ValidFormat(Format).Encode(EncryptedBuffer);</pre></td></tr>
-<tr class="covered"><td>926</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Temp));</pre></td></tr>
-<tr class="nocodegen"><td>927</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>928</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[low(Result)], length(Temp))</pre></td></tr>
-<tr class="nocodegen"><td>929</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>930</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[1], length(Temp))</pre></td></tr>
-<tr class="nocodegen"><td>931</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>932</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>933</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>934</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := &apos;&apos;;</pre></td></tr>
-<tr class="covered"><td>935</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>936</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>937</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
-<tr class="nocodegen"><td>938</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>939</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>940</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
-<tr class="nocodegen"><td>941</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
-<tr class="covered"><td>942</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>943</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>944</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>945</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
-<tr class="nocodegen"><td>946</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>947</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="covered"><td>948</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
-<tr class="covered"><td>949</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Result[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>950</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>951</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>952</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>953</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>954</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>882</td><td><pre style="display:inline;"> &nbsp; &nbsp;Temp := ValidFormat(Format).Encode(EncryptedBuffer);</pre></td></tr>
+<tr class="nocodegen"><td>883</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Temp));</pre></td></tr>
+<tr class="nocodegen"><td>884</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[1], length(Temp));</pre></td></tr>
+<tr class="nocodegen"><td>885</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>886</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>887</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="nocodegen"><td>888</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>889</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>890</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>891</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: string;</pre></td></tr>
+<tr class="nocodegen"><td>892</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): string;</pre></td></tr>
+<tr class="nocodegen"><td>893</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>894</td><td><pre style="display:inline;"> &nbsp;SourceSize &nbsp; &nbsp; &nbsp;: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>895</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
+<tr class="covered"><td>896</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>897</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>898</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>899</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>900</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
+<tr class="covered"><td>901</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
+<tr class="covered"><td>902</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>903</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>904</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>905</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>906</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>907</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>908</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>909</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));</pre></td></tr>
+<tr class="nocodegen"><td>910</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>911</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>912</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := &apos;&apos;;</pre></td></tr>
+<tr class="covered"><td>913</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>914</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>915</td><td><pre style="display:inline;">function TDECFormattedCipher.EncodeStringToString(const Source: RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>916</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>917</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>918</td><td><pre style="display:inline;"> &nbsp;SourceSize &nbsp; &nbsp; &nbsp;: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>919</td><td><pre style="display:inline;"> &nbsp;EncryptedBuffer : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>920</td><td><pre style="display:inline;"> &nbsp;Temp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: TBytes;</pre></td></tr>
+<tr class="covered"><td>921</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>922</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>923</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>924</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>925</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[low(Source)]);</pre></td></tr>
+<tr class="covered"><td>926</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
+<tr class="covered"><td>927</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>928</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>929</td><td><pre style="display:inline;"> &nbsp; &nbsp;SourceSize := Length(Source) * SizeOf(Source[1]);</pre></td></tr>
+<tr class="nocodegen"><td>930</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(EncryptedBuffer, SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>931</td><td><pre style="display:inline;"> &nbsp; &nbsp;Encode(Source[1], EncryptedBuffer[0], SourceSize);</pre></td></tr>
+<tr class="nocodegen"><td>932</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>933</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>934</td><td><pre style="display:inline;"> &nbsp; &nbsp;Temp &nbsp; := ValidFormat(Format).Encode(EncryptedBuffer);</pre></td></tr>
+<tr class="covered"><td>935</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Temp));</pre></td></tr>
+<tr class="nocodegen"><td>936</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>937</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[low(Result)], length(Temp))</pre></td></tr>
+<tr class="nocodegen"><td>938</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>939</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Temp[0], Result[1], length(Temp))</pre></td></tr>
+<tr class="nocodegen"><td>940</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>941</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>942</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>943</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := &apos;&apos;;</pre></td></tr>
+<tr class="covered"><td>944</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>945</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>946</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
+<tr class="nocodegen"><td>947</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>948</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>949</td><td><pre style="display:inline;"> &nbsp;Len: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>950</td><td><pre style="display:inline;"> &nbsp;Src: TBytes;</pre></td></tr>
+<tr class="covered"><td>951</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>952</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>953</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>954</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
 <tr class="nocodegen"><td>955</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>956</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
-<tr class="nocodegen"><td>957</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: AnsiString;</pre></td></tr>
-<tr class="nocodegen"><td>958</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): AnsiString;</pre></td></tr>
-<tr class="nocodegen"><td>959</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>960</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>961</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>962</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>963</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="nocodegen"><td>964</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>965</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="nocodegen"><td>966</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));</pre></td></tr>
-<tr class="nocodegen"><td>967</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>968</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="nocodegen"><td>969</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
-<tr class="nocodegen"><td>970</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>971</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>972</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Tmp));</pre></td></tr>
-<tr class="nocodegen"><td>973</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>974</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="nocodegen"><td>975</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[low(Result)], length(Tmp))</pre></td></tr>
-<tr class="nocodegen"><td>976</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>977</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[1], length(Tmp))</pre></td></tr>
-<tr class="nocodegen"><td>978</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>979</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>980</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="nocodegen"><td>981</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="nocodegen"><td>982</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>983</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>984</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>985</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
-<tr class="nocodegen"><td>986</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: WideString;</pre></td></tr>
-<tr class="nocodegen"><td>987</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): WideString;</pre></td></tr>
-<tr class="covered"><td>988</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>989</td><td><pre style="display:inline;"> &nbsp;Result := WideString(DecodeStringToString(string(Source), Format));</pre></td></tr>
-<tr class="covered"><td>990</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>991</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
-<tr class="nocodegen"><td>992</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>993</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: RawByteString;</pre></td></tr>
-<tr class="nocodegen"><td>994</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): RawByteString;</pre></td></tr>
-<tr class="nocodegen"><td>995</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>996</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>997</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>998</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
-<tr class="covered"><td>999</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1000</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1001</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1002</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
-<tr class="nocodegen"><td>1003</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1004</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="covered"><td>1005</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
-<tr class="covered"><td>1006</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
-<tr class="nocodegen"><td>1007</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1008</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Tmp));</pre></td></tr>
-<tr class="nocodegen"><td>1009</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1010</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
-<tr class="covered"><td>1011</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[low(Result)], length(Tmp))</pre></td></tr>
-<tr class="nocodegen"><td>1012</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
-<tr class="nocodegen"><td>1013</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[1], length(Tmp))</pre></td></tr>
-<tr class="nocodegen"><td>1014</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
-<tr class="nocodegen"><td>1015</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1016</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1017</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>1018</td><td><pre style="display:inline;">end;</pre></td></tr>
-<tr class="nocodegen"><td>1019</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1020</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: string;</pre></td></tr>
-<tr class="nocodegen"><td>1021</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): string;</pre></td></tr>
-<tr class="nocodegen"><td>1022</td><td><pre style="display:inline;">var</pre></td></tr>
-<tr class="nocodegen"><td>1023</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
-<tr class="nocodegen"><td>1024</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
-<tr class="nocodegen"><td>1025</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
-<tr class="covered"><td>1026</td><td><pre style="display:inline;">begin</pre></td></tr>
-<tr class="covered"><td>1027</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
-<tr class="nocodegen"><td>1028</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
-<tr class="covered"><td>1029</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
-<tr class="nocodegen"><td>1030</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="covered"><td>1031</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
-<tr class="covered"><td>1032</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
-<tr class="covered"><td>1033</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
-<tr class="covered"><td>1034</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := WideStringOf(Tmp);</pre></td></tr>
-<tr class="nocodegen"><td>1035</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
-<tr class="nocodegen"><td>1036</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="covered"><td>1037</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
-<tr class="covered"><td>1038</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="covered"><td>956</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="covered"><td>957</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, Len);</pre></td></tr>
+<tr class="covered"><td>958</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Result[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>959</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>960</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>961</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>962</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>963</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>964</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>965</td><td><pre style="display:inline;">{$IFDEF ANSISTRINGSUPPORTED}</pre></td></tr>
+<tr class="nocodegen"><td>966</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: AnsiString;</pre></td></tr>
+<tr class="nocodegen"><td>967</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): AnsiString;</pre></td></tr>
+<tr class="nocodegen"><td>968</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>969</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>970</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>971</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>972</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>973</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>974</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>975</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));</pre></td></tr>
+<tr class="nocodegen"><td>976</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>977</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="nocodegen"><td>978</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
+<tr class="nocodegen"><td>979</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>980</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>981</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Tmp));</pre></td></tr>
+<tr class="nocodegen"><td>982</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>983</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="nocodegen"><td>984</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[low(Result)], length(Tmp))</pre></td></tr>
+<tr class="nocodegen"><td>985</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>986</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[1], length(Tmp))</pre></td></tr>
+<tr class="nocodegen"><td>987</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>988</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>989</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>990</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="nocodegen"><td>991</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>992</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>993</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>994</td><td><pre style="display:inline;">{$IFNDEF NEXTGEN}</pre></td></tr>
+<tr class="nocodegen"><td>995</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: WideString;</pre></td></tr>
+<tr class="nocodegen"><td>996</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): WideString;</pre></td></tr>
+<tr class="covered"><td>997</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>998</td><td><pre style="display:inline;"> &nbsp;Result := WideString(DecodeStringToString(string(Source), Format));</pre></td></tr>
+<tr class="covered"><td>999</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1000</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>1001</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1002</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>1003</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>1004</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1005</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1006</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1007</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
+<tr class="covered"><td>1008</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1009</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1010</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1011</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
+<tr class="nocodegen"><td>1012</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1013</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="covered"><td>1014</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
+<tr class="covered"><td>1015</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
+<tr class="nocodegen"><td>1016</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>1017</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, length(Tmp));</pre></td></tr>
+<tr class="nocodegen"><td>1018</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1019</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>1020</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[low(Result)], length(Tmp))</pre></td></tr>
+<tr class="nocodegen"><td>1021</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>1022</td><td><pre style="display:inline;"> &nbsp; &nbsp;Move(Tmp[0], Result[1], length(Tmp))</pre></td></tr>
+<tr class="nocodegen"><td>1023</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>1024</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1025</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1026</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>1027</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1028</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1029</td><td><pre style="display:inline;">function TDECFormattedCipher.DecodeStringToString(const Source: string;</pre></td></tr>
+<tr class="nocodegen"><td>1030</td><td><pre style="display:inline;"> &nbsp;Format: TDECFormatClass): string;</pre></td></tr>
+<tr class="nocodegen"><td>1031</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>1032</td><td><pre style="display:inline;"> &nbsp;Len : Integer;</pre></td></tr>
+<tr class="nocodegen"><td>1033</td><td><pre style="display:inline;"> &nbsp;Src : TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>1034</td><td><pre style="display:inline;"> &nbsp;Tmp : TBytes;</pre></td></tr>
+<tr class="covered"><td>1035</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>1036</td><td><pre style="display:inline;"> &nbsp;if Length(Source) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>1037</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>1038</td><td><pre style="display:inline;"> &nbsp; &nbsp;Src := ValidFormat(Format).Decode(BytesOf(Source));</pre></td></tr>
 <tr class="nocodegen"><td>1039</td><td><pre style="display:inline;"></pre></td></tr>
-<tr class="nocodegen"><td>1040</td><td><pre style="display:inline;">end.</pre></td></tr>
+<tr class="covered"><td>1040</td><td><pre style="display:inline;"> &nbsp; &nbsp;Len := Length(Src);</pre></td></tr>
+<tr class="covered"><td>1041</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Tmp, Len);</pre></td></tr>
+<tr class="covered"><td>1042</td><td><pre style="display:inline;"> &nbsp; &nbsp;Decode(Src[0], Tmp[0], Len);</pre></td></tr>
+<tr class="covered"><td>1043</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := WideStringOf(Tmp);</pre></td></tr>
+<tr class="nocodegen"><td>1044</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>1045</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>1046</td><td><pre style="display:inline;"> &nbsp; &nbsp;SetLength(Result, 0);</pre></td></tr>
+<tr class="covered"><td>1047</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>1048</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>1049</td><td><pre style="display:inline;">end.</pre></td></tr>
 </table>
 </body>
 </html>
