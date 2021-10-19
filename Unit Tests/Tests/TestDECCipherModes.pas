@@ -607,7 +607,7 @@ procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultHelper;
 var
   AuthRes : TBytes;
 begin
-  AuthRes := FCipher.AuthenticationResult;
+  AuthRes := FCipher.CalculatedAuthenticationResult;
 end;
 
 procedure TestTDECCipherModes.TestFailureCallToAuthenticationResultBitLengthWriteHelper;

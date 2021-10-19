@@ -89,24 +89,21 @@ type
     /// <summary>
     ///   Length of the authentication tag to generate in byte
     /// </summary>
-    FAuthenticationTagLength : UInt32;
+    FCalcAuthenticationTagLength : UInt32;
     /// <summary>
     ///   Generated authentication tag
     /// </summary>
-    FAuthenticationTag        : TBytes;
+    FCalcAuthenticationTag       : TBytes;
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished.
+    /// </summary>
+    FExpectedAuthenticationTag   : TBytes;
 
     /// <summary>
     ///   Reference to the encode method of the actual cipher used
     /// </summary>
     FEncryptionMethod        : TEncodeDecodeMethod;
-    /// <summary>
-    ///   Reference to the decode method of the actual cipher used
-    /// </summary>
-    FDecryptionMethod        : TEncodeDecodeMethod;
-    /// <summary>
-    ///   True, when EncodeGCM has been called, false when DecodeGCM has been
-    ///   called, as the last step depends on whether it is encryption or decryption
-    /// </summary>
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -272,14 +269,10 @@ type
     /// <param name="EncryptionMethod">
     ///   Encryption method of the cypher used
     /// </param>
-    /// <param name="DecryptionMethod">
-    ///   Dencryption method of the cypher used
-    /// </param>
     /// <param name="InitVector">
     ///   Initialization vector
     /// </param>
     procedure Init(EncryptionMethod : TEncodeDecodeMethod;
-                   DecryptionMethod : TEncodeDecodeMethod;
                    InitVector       : TBytes);
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
@@ -314,12 +307,17 @@ type
 
     /// <summary>
     ///   Returns a list of authentication tag lengs explicitely specified by
-    ///   the official speciication of the standard.
+    ///   the official specification of the standard.
     /// </summary>
     /// <returns>
     ///   List of bit lengths
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+
+//    /// <summary>
+//    ///   Checks whether the calculated authentication value matches the expected one
+//    /// </summary>
+//    function CheckAuthenticationResult(RequiredValue: TBytes):Boolean;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -340,12 +338,26 @@ type
     /// <summary>
     ///   Calculated authentication value
     /// </summary>
-    property AuthenticationTag : TBytes
-      read   FAuthenticationTag
-      write  FAuthenticationTag;
+    property CalculatedAuthenticationTag : TBytes
+      read   FCalcAuthenticationTag
+      write  FCalcAuthenticationTag;
+
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished.
+    /// </summary>
+    property ExpectedAuthenticationTag : TBytes
+      read   FExpectedAuthenticationTag
+      write  FExpectedAuthenticationTag;
   end;
 
 implementation
+
+resourcestring
+  /// <summary>
+  ///   Calculated authentication value on decryption does not match expected one
+  /// </summary>
+  sInvalidAuthenticationValue = 'Authentication value of decryption is invalid';
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -471,8 +483,8 @@ end;
 
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
-  FAuthenticationTagLength := Value shr 3;
-  SetLength(FAuthenticationTag, FAuthenticationTagLength);
+  FCalcAuthenticationTagLength := Value shr 3;
+  SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
 end;
 
 procedure TGCM.INCR(var Y : T128);
@@ -499,7 +511,6 @@ begin
 end;
 
 procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
-                    DecryptionMethod : TEncodeDecodeMethod;
                     InitVector       : TBytes);
 var
   b    : ^Byte;
@@ -508,11 +519,10 @@ begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
   // Clear calculated authentication value
-  if (Length(FAuthenticationTag) > 0) then
-    FillChar(FAuthenticationTag[0], Length(FAuthenticationTag), #0);
+  if (Length(FCalcAuthenticationTag) > 0) then
+    FillChar(FCalcAuthenticationTag[0], Length(FCalcAuthenticationTag), #0);
 
   FEncryptionMethod := EncryptionMethod;
-  FDecryptionMethod := DecryptionMethod;
 
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
@@ -603,10 +613,11 @@ begin
 
   a_tag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Source), FE_K_Y0);
 
-  Setlength(FAuthenticationTag, FAuthenticationTagLength);
-  Move(a_tag[0], FAuthenticationTag[0], FAuthenticationTagLength);
+  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 
-//  Result := IsEqual(authenticaton_tag, ba_tag);
+  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
+    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
 
 //  if not IsEqual(authenticaton_tag, ba_tag) then
 //    SetLength(plaintext, 0); // NIST FAIL => pt=''
@@ -635,8 +646,8 @@ begin
   end;
 
   AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest), FE_K_Y0);
-  Setlength(FAuthenticationTag, FAuthenticationTagLength);
-  Move(AuthTag[0], FAuthenticationTag[0], FAuthenticationTagLength);
+  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 end;
 
 function TGCM.IsEqual(const a, b : TBytes):Boolean;
@@ -654,7 +665,7 @@ end;
 
 function TGCM.GetAuthenticationTagBitLength: UInt32;
 begin
-  Result := FAuthenticationTagLength shl 3;
+  Result := FCalcAuthenticationTagLength shl 3;
 end;
 
 function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;

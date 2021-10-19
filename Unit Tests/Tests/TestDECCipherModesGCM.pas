@@ -435,6 +435,9 @@ begin
                                                       BytesOf(
                                                         TestDataSet.TestData[i].AAD));
 
+        FCipherAES.ExpectedAuthenticationTag :=
+          TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
+
         DecryptData := FCipherAES.DecodeBytes(
                          TFormat_HexL.Decode(
                            BytesOf(TestDataSet.TestData[i].CT)));
@@ -454,7 +457,7 @@ begin
 
       // Additional Authentication Data prüfen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
-                         StringOf(TFormat_HexL.Encode(FCipherAES.AuthenticationResult)),
+                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
                   string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
                   string(TestDataSet.TestData[i].InitVector) + ' PT ' +
@@ -507,7 +510,7 @@ begin
 
       // Additional Authentication Data prüfen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
-                         StringOf(TFormat_HexL.Encode(FCipherAES.AuthenticationResult)),
+                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
                   string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
                   string(TestDataSet.TestData[i].InitVector) + ' PT ' +

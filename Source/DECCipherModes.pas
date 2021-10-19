@@ -61,12 +61,14 @@ type
     /// <summary>
     ///   Returns the value calculated over the data to be authenticated if a
     ///   cipher mode which provides authentication support as well is used.
+    ///   The value will be returned even if decryption resulted in a wrong value.
+    ///   A wrong authentication result on decryption is signalled via exception.
     /// </summary>
     /// <returns>
     ///   Result of the authentication. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </returns>
-    function  GetAuthenticatonResult: TBytes;
+    function  GetCalcAuthenticatonResult: TBytes;
     /// <summary>
     ///   Defines the data which shall get authenticated when using a cipher
     ///   mode which provides authentication support as well.
@@ -86,7 +88,22 @@ type
     ///   authentication.
     /// </param>
     procedure SetAuthenticationResultBitLength(const Value: Integer);
-  strict protected
+  strict
+  private
+    /// <summary>
+    ///   Returns the value set as expected authenthication value for ciphers
+    ///   providing authehtication features as well. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </summary>
+    function GetExpectedAuthenticationTag: TBytes;
+    /// <summary>
+    ///   Sets the value used as expected authenthication value when decrypting
+    ///   and a cipher providing authehtication features is being used. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </summary>
+    procedure SetExpectedAuthenticationTag(const Value: TBytes); protected
     /// <summary>
     ///   Implementation of the Galois counter mode. Only created when gmGCM is
     ///   set as mode.
@@ -357,10 +374,20 @@ type
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it. This property contains the generated
-    ///   authentication tag
+    ///   authentication tag. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
     /// </summary>
-    property AuthenticationResult  : TBytes
-      read   GetAuthenticatonResult;
+    property CalculatedAuthenticationResult  : TBytes
+      read   GetCalcAuthenticatonResult;
+
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </summary>
+    property ExpectedAuthenticationTag : TBytes
+      read   GetExpectedAuthenticationTag
+      write  SetExpectedAuthenticationTag;
   end;
 
 implementation
@@ -390,6 +417,14 @@ procedure TDECCipherModes.SetDataToAuthenticate(const Value: TBytes);
 begin
   if (FMode = cmGCM) then
     FGCM.DataToAuthenticate := Value
+  else
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
+end;
+
+procedure TDECCipherModes.SetExpectedAuthenticationTag(const Value: TBytes);
+begin
+  if (FMode = cmGCM) then
+    FGCM.ExpectedAuthenticationTag := Value
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
@@ -599,6 +634,14 @@ begin
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
 
+function TDECCipherModes.GetExpectedAuthenticationTag: TBytes;
+begin
+  if (FMode = cmGCM) then
+    Result := FGCM.ExpectedAuthenticationTag
+  else
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
+end;
+
 function TDECCipherModes.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 begin
   case FMode of
@@ -619,10 +662,10 @@ begin
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
 
-function TDECCipherModes.GetAuthenticatonResult: TBytes;
+function TDECCipherModes.GetCalcAuthenticatonResult: TBytes;
 begin
   if (FMode = cmGCM) then
-    Result := FGCM.AuthenticationTag
+    Result := FGCM.CalculatedAuthenticationTag
   else
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
@@ -1008,7 +1051,7 @@ begin
   inherited;
 
   if (FMode = cmGCM) then
-    FGCM.Init(self.DoEncode, self.DoDecode, OriginalInitVector);
+    FGCM.Init(self.DoEncode, OriginalInitVector);
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);

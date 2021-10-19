@@ -135,6 +135,11 @@ type
   ///   Exception class for reporting encryption/decryption caused exceptions
   /// </summary>
   EDECCipherException = class(EDECException);
+  /// <summary>
+  ///   Exception class for reporting calculation of a wrong authentication
+  ///   value when decrypting using a cipher supporting authentication
+  /// </summary>
+  EDECCipherAuthenticationException = class(EDECException);
 
   /// <summary>
   ///   Exception class for reporting the use of abstract things which cannot
