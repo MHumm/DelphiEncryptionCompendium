@@ -655,7 +655,10 @@ begin
   if (length(a) <> length(b)) then
     Result := false
   else
-    Result := CompareMem(@a[0], @b[0], length(a));
+    if (Length(a) > 0) then
+      Result := CompareMem(@a[0], @b[0], length(a))
+    else
+      Result := true;
 end;
 
 function TGCM.EncodeT128(Value: T128): T128;

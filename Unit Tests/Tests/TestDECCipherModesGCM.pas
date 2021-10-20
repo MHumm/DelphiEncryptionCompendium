@@ -50,7 +50,7 @@ type
     /// </summary>
     PT         : RawByteString;
     /// <summary>
-    ///   Additional Authehticated Data: the data which shall be authenticated
+    ///   Additional Authenticated Data: the data which shall be authenticated
     ///   but not encrypted.
     /// </summary>
     AAD        : RawByteString;
@@ -62,6 +62,16 @@ type
     ///   Calculated authenticated "tag" value
     /// </summary>
     TagResult  : RawByteString;
+    /// <summary>
+    ///   Used additional authenticated data for testing authentication failures.
+    ///   Only filled when present in test data file.
+    /// </summary>
+    ModifiedAAD: RawByteString;
+    /// <summary>
+    ///   Used ciphertext data for testing authentication failures.
+    ///   Only filled when present in test data file.
+    /// </summary>
+    ModifiedCT: RawByteString;
 
     /// <summary>
     ///   Sets all fields and array entries to default values
@@ -200,15 +210,20 @@ type
     FTestDataLoader : TGCMTestDataLoader;
     FTestDataList   : TGCMTestDataList;
     FCipherAES      : TCipher_AES;
+  private
+    function IsEqual(const a, b: TBytes): Boolean;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
     procedure TestEncode;
     procedure TestDecode;
+    procedure TestDecodeAuthenticationFailure;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
+    procedure TestGetExpectedAuthenticationResult;
+    procedure TestSetExpectedAuthenticationResult;
   end;
 
 
@@ -239,12 +254,14 @@ end;
 
 procedure TGCMSingleTestData.Clear;
 begin
-  CryptKey   := '';
-  InitVector := '';
-  PT         := '';
-  AAD        := '';
-  CT         := '';
-  TagResult  := '';
+  CryptKey    := '';
+  InitVector  := '';
+  PT          := '';
+  AAD         := '';
+  CT          := '';
+  TagResult   := '';
+  ModifiedAAD := '';
+  ModifiedCT  := '';
 end;
 
 { TGCMTestDataLoader }
@@ -366,19 +383,23 @@ begin
     // AAD = f7c27b51d5367161dc2ff1e9e3edc6f2
     // CT = 36f032f7e3dc3275ca22aedcdc68436b
     // Tag = 99a2227f8bb69d45ea5d8842cd08
-    if (Pos('count=', Line) > 0) then
+    if (Pos('count=', Line) = 1) then
       Index := ExtractNumber(Line)
-    else if (Pos('key=', Line) > 0) then
+    else if (Pos('key=', Line) = 1) then
       Entry.TestData[Index].CryptKey := ExtractHexString(Line)
-    else if (Pos('iv=', Line) > 0) then
+    else if (Pos('iv=', Line) = 1) then
       Entry.TestData[Index].InitVector := ExtractHexString(Line)
-    else if (Pos('pt=', Line) > 0) then
+    else if (Pos('pt=', Line) = 1) then
       Entry.TestData[Index].PT := ExtractHexString(Line)
-    else if (Pos('aad=', Line) > 0) then
+    else if (Pos('aad=', Line) = 1) then
       Entry.TestData[Index].AAD := ExtractHexString(Line)
-    else if (Pos('ct=', Line) > 0) then
+    else if (Pos('ct=', Line) = 1) then
       Entry.TestData[Index].CT := ExtractHexString(Line)
-    else if (Pos('tag=', Line) > 0) then
+    else if (Pos('modaad=', Line) = 1) then
+      Entry.TestData[Index].ModifiedAAD := ExtractHexString(Line)
+    else if (Pos('modct=', Line) = 1) then
+      Entry.TestData[Index].ModifiedCT := ExtractHexString(Line)
+    else if (Pos('tag=', Line) = 1) then
     begin
       Entry.TestData[Index].TagResult := ExtractHexString(Line);
 
@@ -470,6 +491,76 @@ begin
   end;
 end;
 
+procedure TestTDECGCM.TestDecodeAuthenticationFailure;
+var
+  TestDataSet : TGCMTestSetEntry;
+  i           : Integer;
+  DecryptData : TBytes;
+begin
+//TestDecodeAuthenticationFailure: ETestFailure
+//at  $006E7946
+//Plaintext wrong for key d4a22488f8dd1d5c6c19a7d6ca17964c IV f3d5837f22ac1a0425e0d1d5 PT 7b43016a16896497fb457be6d2a54122 AAD f1c5d424b83f96c6ad8cb28ca0d20e475e023b5a Exp.: c2bd67eef5e95cac27e3b06e3031d0a8 Act.: , expected: <7b43016a16896497fb457be6d2a54122> but was: <>
+//
+//Status Messages
+//CryptKey d4a22488f8dd1d5c6c19a7d6ca17964c
+
+
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM128AuthenticationFailures.rsp', FTestDataList);
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
+//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
+
+  for TestDataSet in FTestDataList do
+  begin
+    for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
+    begin
+      try
+        FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
+                        BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
+                        $FF);
+
+        FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
+        FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
+                                                      BytesOf(
+                                                        TestDataSet.TestData[i].ModifiedAAD));
+
+        FCipherAES.ExpectedAuthenticationTag :=
+          TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
+
+{ TODO :
+Needs to be put in parameterless a method somehow and called via CheckException.
+In addition the resulting values for PT and AuthehticationTag still needs to be checked. }
+        DecryptData := FCipherAES.DecodeBytes(
+                         TFormat_HexL.Decode(
+                           BytesOf(TestDataSet.TestData[i].ModifiedCT)));
+      except
+        self.Status('CryptKey ' + string(TestDataSet.TestData[i].CryptKey));
+      end;
+
+      CheckEquals(string(TestDataSet.TestData[i].PT),
+                  StringOf(TFormat_HexL.Encode(DecryptData)),
+                  'Plaintext wrong for key ' +
+                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
+                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
+                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
+                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+                  string(TestDataSet.TestData[i].CT) + ' Act.: ' +
+                  StringOf(TFormat_HexL.Encode(DecryptData)));
+
+      // Additional Authentication Data prüfen
+      CheckEquals(string(TestDataSet.TestData[i].TagResult),
+                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+                  'Authentication tag wrong for key ' +
+                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
+                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
+                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
+                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+                  string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
+                  StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
+
+    end;
+  end;
+end;
+
 procedure TestTDECGCM.TestEncode;
 var
   TestDataSet : TGCMTestSetEntry;
@@ -522,6 +613,35 @@ begin
   end;
 end;
 
+procedure TestTDECGCM.TestGetExpectedAuthenticationResult;
+var
+  Exp, Act: TBytes;
+begin
+  SetLength(Exp, 4);
+  Exp := [1, 2, 3, 4];
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 4');
+
+  SetLength(Exp, 0);
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
+end;
+
+function TestTDECGCM.IsEqual(const a, b : TBytes):Boolean;
+begin
+  if (length(a) <> length(b)) then
+    Result := false
+  else
+    if (Length(a) > 0) then
+      Result := CompareMem(@a[0], @b[0], length(a))
+    else
+      Result := true;
+end;
+
 procedure TestTDECGCM.TestGetStandardAuthenticationTagBitLengths;
 var
   BitLengths: TStandardBitLengths;
@@ -533,6 +653,38 @@ begin
   CheckEquals(112, BitLengths[2]);
   CheckEquals(120, BitLengths[3]);
   CheckEquals(128, BitLengths[4]);
+end;
+
+procedure TestTDECGCM.TestSetExpectedAuthenticationResult;
+var
+  Exp, Act: TBytes;
+begin
+  SetLength(Exp, 4);
+  Exp := [1, 2, 3, 4];
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 4');
+
+  SetLength(Exp, 8);
+  Exp := [1, 2, 3, 4, 5, 6, 7, 8];
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 8');
+
+  SetLength(Exp, 12);
+  Exp := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 12');
+
+  SetLength(Exp, 0);
+  FCipherAES.ExpectedAuthenticationTag := Exp;
+  Act := FCipherAES.ExpectedAuthenticationTag;
+
+  CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
 end;
 
 procedure TestTDECGCM.TestSetGetAuthenticationBitLength;
@@ -563,3 +715,4 @@ initialization
   RegisterTest(TestTDECGCM.Suite);
   {$ENDIF}
 end.
+
