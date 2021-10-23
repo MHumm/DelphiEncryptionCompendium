@@ -502,14 +502,6 @@ var
   TestDataSet : TGCMTestSetEntry;
   i           : Integer;
 begin
-//TestDecodeAuthenticationFailure: ETestFailure
-//at  $006E7946
-//Plaintext wrong for key d4a22488f8dd1d5c6c19a7d6ca17964c IV f3d5837f22ac1a0425e0d1d5 PT 7b43016a16896497fb457be6d2a54122 AAD f1c5d424b83f96c6ad8cb28ca0d20e475e023b5a Exp.: c2bd67eef5e95cac27e3b06e3031d0a8 Act.: , expected: <7b43016a16896497fb457be6d2a54122> but was: <>
-//
-//Status Messages
-//CryptKey d4a22488f8dd1d5c6c19a7d6ca17964c
-
-
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM128AuthenticationFailures.rsp', FTestDataList);
 //  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
 //  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
@@ -541,22 +533,9 @@ begin
                   string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
                   string(TestDataSet.TestData[i].InitVector) + ' PT ' +
                   string(TestDataSet.TestData[i].PT) + ' AAD ' +
-                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+                  string(TestDataSet.TestData[i].AAD) + ' CT: ' +
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(FDecryptedData)));
-//
-//      // Additional Authentication Data prüfen
-//      CheckEquals(string(TestDataSet.TestData[i].TagResult),
-//                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
-//                  'Authentication tag wrong for key ' +
-//                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
-//                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
-//                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
-//                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
-//                  string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
-//                  StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
-
-
     end;
   end;
 end;
