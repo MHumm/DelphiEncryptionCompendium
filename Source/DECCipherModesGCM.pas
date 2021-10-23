@@ -300,11 +300,6 @@ type
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
 
-//    /// <summary>
-//    ///   Checks whether the calculated authentication value matches the expected one
-//    /// </summary>
-//    function CheckAuthenticationResult(RequiredValue: TBytes):Boolean;
-
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>

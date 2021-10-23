@@ -366,6 +366,7 @@ type
     property DataToAuthenticate : TBytes
       read   GetDataToAuthenticate
       write  SetDataToAuthenticate;
+
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it.
@@ -1063,7 +1064,6 @@ begin
 
   if (FMode = cmGCM) then
   begin
-{ TODO : Check if the calculated AuthenticationTag matches the expected one }
     if (length(FGCM.ExpectedAuthenticationTag) > 0) and
        (not IsEqual(FGCM.ExpectedAuthenticationTag, FGCM.CalculatedAuthenticationTag)) then
       raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
