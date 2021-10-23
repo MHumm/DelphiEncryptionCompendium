@@ -501,7 +501,6 @@ procedure TestTDECGCM.TestDecodeAuthenticationFailure;
 var
   TestDataSet : TGCMTestSetEntry;
   i           : Integer;
-  DecryptData : TBytes;
 begin
 //TestDecodeAuthenticationFailure: ETestFailure
 //at  $006E7946
@@ -531,9 +530,6 @@ begin
       FCipherAES.ExpectedAuthenticationTag :=
         TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
 
-{ TODO :
-Needs to be put in parameterless a method somehow and called via CheckException.
-In addition the resulting values for PT and AuthehticationTag still needs to be checked. }
       FCipherText := TFormat_HexL.Decode(
                        BytesOf(TestDataSet.TestData[i].ModifiedCT));
 

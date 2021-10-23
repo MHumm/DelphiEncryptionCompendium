@@ -68,6 +68,13 @@ type
     procedure BytesToRawStringEmpty;
   end;
 
+  TTestIsEqual = class(TTestCase)
+  published
+    procedure IsEqualsNormal;
+    procedure IsEqualsFailure;
+    procedure IsEqualsZeroLength;
+  end;
+
 implementation
 
 type
@@ -536,12 +543,98 @@ begin
   CheckEquals('', string(DECUtil.BytesToRawString(Buf)));
 end;
 
+procedure TTestIsEqual.IsEqualsFailure;
+var
+  a, b   : TBytes;
+  Result : Boolean;
+begin
+  SetLength(a, 4);
+  a := [1, 2, 3, 4];
+
+  SetLength(b, 4);
+  b := [1, 2, 3, 5];
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(false, Result);
+
+  SetLength(a, 4);
+  a := [1, 2, 3, 4];
+
+  SetLength(b, 4);
+  b := [2, 2, 3, 4];
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(false, Result);
+
+  SetLength(a, 4);
+  a := [1, 2, 3, 4];
+
+  SetLength(b, 5);
+  b := [1, 2, 3, 4, 5];
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(false, Result);
+end;
+
+procedure TTestIsEqual.IsEqualsNormal;
+var
+  a, b   : TBytes;
+  Result : Boolean;
+begin
+  SetLength(a, 4);
+  a := [1, 2, 3, 4];
+
+  SetLength(b, 4);
+  b := [1, 2, 3, 4];
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(true, Result);
+end;
+
+procedure TTestIsEqual.IsEqualsZeroLength;
+var
+  a, b   : TBytes;
+  Result : Boolean;
+begin
+  SetLength(a, 0);
+
+  SetLength(b, 4);
+  b := [1, 2, 3, 4];
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(false, Result, 'a = length 0');
+
+  SetLength(a, 4);
+  a := [1, 2, 3, 4];
+
+  SetLength(b, 0);
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(false, Result, 'b = length 0');
+
+  SetLength(a, 0);
+  SetLength(b, 0);
+
+  Result := IsEqual(a, b);
+
+  CheckEquals(true, Result, 'a = b = length 0');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TTestBitTwiddling);
   TDUnitX.RegisterTestFixture(TTestBufferProtection);
+  TDUnitX.RegisterTestFixture(TTestIsEqual);
   {$ELSE}
-  RegisterTests('DECUtil', [TTestBitTwiddling.Suite, TTestBufferProtection.Suite]);
+  RegisterTests('DECUtil', [TTestBitTwiddling.Suite,
+                            TTestBufferProtection.Suite,
+                            TTestIsEqual.Suite]);
   {$ENDIF}
 end.
