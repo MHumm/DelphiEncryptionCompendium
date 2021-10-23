@@ -60,27 +60,27 @@ type
   /// </summary>
   TGCM = class(TObject)
   private
-     /// <summary>
-     ///   Empty value?
-     /// </summary>
-     nullbytes : T128;
-     /// <summary>
-     ///   Table with precalculated values
-     /// </summary>
-     FM        : array[0..15,0..255] of T128;
+    /// <summary>
+    ///   Empty value?
+    /// </summary>
+    nullbytes : T128;
+    /// <summary>
+    ///   Table with precalculated values
+    /// </summary>
+    FM        : array[0..15,0..255] of T128;
 
-     /// <summary>
-     ///   Required for creating the table and encryption at least
-     /// </summary>
-     FH        : T128;
-     /// <summary>
-     ///   Calculated in initialization
-     /// </summary>
-     FY        : T128;
-     /// <summary>
-     ///   Calculated in initialization
-     /// </summary>
-     FE_K_Y0   : T128;
+    /// <summary>
+    ///   Required for creating the table and encryption at least
+    /// </summary>
+    FH        : T128;
+    /// <summary>
+    ///   Calculated in initialization
+    /// </summary>
+    FY        : T128;
+    /// <summary>
+    ///   Calculated in initialization
+    /// </summary>
+    FE_K_Y0   : T128;
 
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -247,20 +247,6 @@ type
     ///   Encrypted value
     /// </returns>
     function EncodeT128(Value: T128): T128;
-
-    /// <summary>
-    ///   Checks whether two TBytes values contain the same data
-    /// </summary>
-    /// <param name="a">
-    ///   First value for the comparison
-    /// </param>
-    /// <param name="b">
-    ///   Second value for the comparison
-    /// </param>
-    /// <returns>
-    ///   true, if both contain exactly the same data
-    /// </returns>
-    function IsEqual(const a, b : TBytes ):Boolean;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -352,12 +338,6 @@ type
   end;
 
 implementation
-
-resourcestring
-  /// <summary>
-  ///   Calculated authentication value on decryption does not match expected one
-  /// </summary>
-  sInvalidAuthenticationValue = 'Authentication value of decryption is invalid';
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -616,8 +596,8 @@ begin
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 
-  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
-    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+//  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
+//    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
 
 //  if not IsEqual(authenticaton_tag, ba_tag) then
 //    SetLength(plaintext, 0); // NIST FAIL => pt=''
@@ -648,17 +628,6 @@ begin
   AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest), FE_K_Y0);
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
-end;
-
-function TGCM.IsEqual(const a, b : TBytes):Boolean;
-begin
-  if (length(a) <> length(b)) then
-    Result := false
-  else
-    if (Length(a) > 0) then
-      Result := CompareMem(@a[0], @b[0], length(a))
-    else
-      Result := true;
 end;
 
 function TGCM.EncodeT128(Value: T128): T128;

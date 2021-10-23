@@ -210,8 +210,13 @@ type
     FTestDataLoader : TGCMTestDataLoader;
     FTestDataList   : TGCMTestDataList;
     FCipherAES      : TCipher_AES;
+
+    // Needed for passing data to and from DoTestDecodeFailure
+    FDecryptedData  : TBytes;
+    FCipherText     : TBytes;
   private
     function IsEqual(const a, b: TBytes): Boolean;
+    procedure DoTestDecodeFailure;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -462,6 +467,7 @@ begin
         DecryptData := FCipherAES.DecodeBytes(
                          TFormat_HexL.Decode(
                            BytesOf(TestDataSet.TestData[i].CT)));
+        FCipherAES.Done;
       except
         self.Status('CryptKey ' + string(TestDataSet.TestData[i].CryptKey));
       end;
@@ -513,49 +519,47 @@ begin
   begin
     for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
     begin
-      try
-        FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
-                        BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
-                        $FF);
+      FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
+                      BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
+                      $FF);
 
-        FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
-        FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
-                                                      BytesOf(
-                                                        TestDataSet.TestData[i].ModifiedAAD));
+      FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
+      FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
+                                                    BytesOf(
+                                                      TestDataSet.TestData[i].ModifiedAAD));
 
-        FCipherAES.ExpectedAuthenticationTag :=
-          TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
+      FCipherAES.ExpectedAuthenticationTag :=
+        TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
 
 { TODO :
 Needs to be put in parameterless a method somehow and called via CheckException.
 In addition the resulting values for PT and AuthehticationTag still needs to be checked. }
-        DecryptData := FCipherAES.DecodeBytes(
-                         TFormat_HexL.Decode(
-                           BytesOf(TestDataSet.TestData[i].ModifiedCT)));
-      except
-        self.Status('CryptKey ' + string(TestDataSet.TestData[i].CryptKey));
-      end;
+      FCipherText := TFormat_HexL.Decode(
+                       BytesOf(TestDataSet.TestData[i].ModifiedCT));
+
+      CheckException(DoTestDecodeFailure, EDECCipherAuthenticationException);
 
       CheckEquals(string(TestDataSet.TestData[i].PT),
-                  StringOf(TFormat_HexL.Encode(DecryptData)),
+                  StringOf(TFormat_HexL.Encode(FDecryptedData)),
                   'Plaintext wrong for key ' +
                   string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
                   string(TestDataSet.TestData[i].InitVector) + ' PT ' +
                   string(TestDataSet.TestData[i].PT) + ' AAD ' +
                   string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
-                  StringOf(TFormat_HexL.Encode(DecryptData)));
+                  StringOf(TFormat_HexL.Encode(FDecryptedData)));
+//
+//      // Additional Authentication Data prüfen
+//      CheckEquals(string(TestDataSet.TestData[i].TagResult),
+//                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+//                  'Authentication tag wrong for key ' +
+//                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
+//                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
+//                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
+//                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
+//                  string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
+//                  StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-      // Additional Authentication Data prüfen
-      CheckEquals(string(TestDataSet.TestData[i].TagResult),
-                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
-                  'Authentication tag wrong for key ' +
-                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
-                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
-                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
-                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
-                  string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
-                  StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
     end;
   end;
@@ -588,6 +592,7 @@ begin
       EncryptData := FCipherAES.EncodeBytes(
                        TFormat_HexL.Decode(
                          BytesOf(TestDataSet.TestData[i].PT)));
+      FCipherAES.Done;
 
       CheckEquals(string(TestDataSet.TestData[i].CT),
                   StringOf(TFormat_HexL.Encode(EncryptData)),
@@ -629,6 +634,12 @@ begin
   Act := FCipherAES.ExpectedAuthenticationTag;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
+end;
+
+procedure TestTDECGCM.DoTestDecodeFailure;
+begin
+  FDecryptedData := FCipherAES.DecodeBytes(FCipherText);
+  FCipherAES.Done;
 end;
 
 function TestTDECGCM.IsEqual(const a, b : TBytes):Boolean;

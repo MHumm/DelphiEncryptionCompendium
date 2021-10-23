@@ -222,6 +222,22 @@ procedure ProtectString(var Source: WideString); overload;
 /// </remarks>
 function BytesToRawString(const Source: TBytes): RawByteString;
 
+// Buffer comparison
+
+/// <summary>
+///   Checks whether two TBytes values contain the same data
+/// </summary>
+/// <param name="a">
+///   First value for the comparison
+/// </param>
+/// <param name="b">
+///   Second value for the comparison
+/// </param>
+/// <returns>
+///   true, if both contain exactly the same data
+/// </returns>
+function IsEqual(const a, b : TBytes ):Boolean;
+
 implementation
 
 {$IFDEF FMXTranslateableExceptions}
@@ -606,6 +622,17 @@ begin
     Move(Source[0], Result[1], Length(Source));
     {$IFEND}
   end;
+end;
+
+function IsEqual(const a, b : TBytes):Boolean;
+begin
+  if (length(a) <> length(b)) then
+    Result := false
+  else
+    if (Length(a) > 0) then
+      Result := CompareMem(@a[0], @b[0], length(a))
+    else
+      Result := true;
 end;
 
 end.

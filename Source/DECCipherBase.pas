@@ -567,12 +567,11 @@ type
     {$ENDIF}
 
     /// <summary>
-{ TODO : Description needs to be revised }
     ///   Properly finishes the cryptographic operation. It needs to be called
     ///   at the end of encrypting or decrypting data, otherwise the last block
     ///   or last byte of the data will not be properly processed.
     /// </summary>
-    procedure Done;
+    procedure Done; virtual;
 
     // Encoding / Decoding Routines
     // Do not add further methods of that kind here! If needed add them to

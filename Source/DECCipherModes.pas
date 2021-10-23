@@ -88,8 +88,12 @@ type
     ///   authentication.
     /// </param>
     procedure SetAuthenticationResultBitLength(const Value: Integer);
-  strict
-  private
+  strict private
+    /// <summary>
+    ///   Implementation of the Galois counter mode. Only created when gmGCM is
+    ///   set as mode.
+    /// </summary>
+    FGCM : TGCM;
     /// <summary>
     ///   Returns the value set as expected authenthication value for ciphers
     ///   providing authehtication features as well. Raises an
@@ -104,11 +108,6 @@ type
     ///   authentication.
     /// </summary>
     procedure SetExpectedAuthenticationTag(const Value: TBytes); protected
-    /// <summary>
-    ///   Implementation of the Galois counter mode. Only created when gmGCM is
-    ///   set as mode.
-    /// </summary>
-    FGCM : TGCM;
     /// <summary>
     ///   Raises an EDECCipherException exception and provides the correct value
     ///   for block size in that message
@@ -343,6 +342,13 @@ type
     procedure Decode(const Source; var Dest; DataSize: Integer);
 
     /// <summary>
+    ///   Properly finishes the cryptographic operation. It needs to be called
+    ///   at the end of encrypting or decrypting data, otherwise the last block
+    ///   or last byte of the data will not be properly processed.
+    /// </summary>
+    procedure Done; override;
+
+    /// <summary>
     ///   Returns a list of authentication tag lengs explicitely specified by
     ///   the official speciication of the standard.
     /// </summary>
@@ -404,6 +410,11 @@ resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
   sInvalidBlockSize     = 'Block size must be %0:d bit for the selected mode %1:s';
   sInvalidModeForMethod = 'Invalid mode for this method. Mode must be %0:s';
+
+  /// <summary>
+  ///   Calculated authentication value on decryption does not match expected one
+  /// </summary>
+  sInvalidAuthenticationValue = 'Authentication value of decryption is invalid';
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
@@ -1044,6 +1055,19 @@ begin
   FGCM.Free;
 
   inherited;
+end;
+
+procedure TDECCipherModes.Done;
+begin
+  inherited;
+
+  if (FMode = cmGCM) then
+  begin
+{ TODO : Check if the calculated AuthenticationTag matches the expected one }
+    if (length(FGCM.ExpectedAuthenticationTag) > 0) and
+       (not IsEqual(FGCM.ExpectedAuthenticationTag, FGCM.CalculatedAuthenticationTag)) then
+      raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+  end;
 end;
 
 procedure TDECCipherModes.OnAfterInitVectorInitialization(const OriginalInitVector: TBytes);
