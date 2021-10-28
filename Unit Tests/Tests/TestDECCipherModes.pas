@@ -349,6 +349,34 @@ type
     ///   Simply sets FCipher.Mode to GCM.
     /// </summary>
     procedure TestFailureSetGCMMode;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Tries to encrypt data using ECB-mode but data is not a multiple of
+    ///   the block size (length data > 1 block)
+    /// </summary>
+    procedure TestFailureEncodeECBDataDoesNotMatchBlockSize;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Tries to encrypt data using ECB-mode but data is not a multiple of
+    ///   the block size (length data < 1 block)
+    /// </summary>
+    procedure TestFailureEncodeECBDataDoesNotMatchBlockSizeSmall;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Tries to encrypt data using ECB-mode but data is not a multiple of
+    ///   the block size (length data > 1 block)
+    /// </summary>
+    procedure TestFailureDecodeECBDataDoesNotMatchBlockSize;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Tries to encrypt data using ECB-mode but data is not a multiple of
+    ///   the block size (length data < 1 block)
+    /// </summary>
+    procedure TestFailureDecodeECBDataDoesNotMatchBlockSizeSmall;
   published
     procedure TestEncodeECBx;
     procedure TestEncodeOFB8;
@@ -379,6 +407,10 @@ type
     procedure TestFailureCallToAuthenticationResult;
     procedure InitGCMBlocksizeNot128Failure;
     procedure InitGCMStreamCipherFailure;
+    procedure TestEncodeECBDataDoesNotMatchBlockSizeFailureSmall;
+    procedure TestEncodeECBDataDoesNotMatchBlockSizeFailure;
+    procedure TestDecodeECBDataDoesNotMatchBlockSizeFailureSmall;
+    procedure TestDecodeECBDataDoesNotMatchBlockSizeFailure;
   end;
 
 implementation
@@ -632,6 +664,62 @@ begin
   FCipher.DataToAuthenticate := AuthData;
 end;
 
+procedure TestTDECCipherModes.TestFailureDecodeECBDataDoesNotMatchBlockSize;
+var
+  Source, Dest: TBytes;
+begin
+  FCipher.Mode := TCipherMode.cmECBx;
+  FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf('0011223344556677'), $FF);
+
+  SetLength(Source, 65);
+  SetLength(Dest, 65);
+  FillChar(Source[0], Length(Source), #1);
+
+  FCipher.Decode(Source[0], Dest[0], Length(Dest));
+end;
+
+procedure TestTDECCipherModes.TestFailureDecodeECBDataDoesNotMatchBlockSizeSmall;
+var
+  Source, Dest: TBytes;
+begin
+  FCipher.Mode := TCipherMode.cmECBx;
+  FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf('0011223344556677'), $FF);
+
+  SetLength(Source, 15);
+  SetLength(Dest, 15);
+  FillChar(Source[0], Length(Source), #1);
+
+  FCipher.Decode(Source[0], Dest[0], Length(Dest));
+end;
+
+procedure TestTDECCipherModes.TestFailureEncodeECBDataDoesNotMatchBlockSizeSmall;
+var
+  Source, Dest: TBytes;
+begin
+  FCipher.Mode := TCipherMode.cmECBx;
+  FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf('0011223344556677'), $FF);
+
+  SetLength(Source, 15);
+  SetLength(Dest, 15);
+  FillChar(Source[0], Length(Source), #1);
+
+  FCipher.Encode(Source[0], Dest[0], Length(Dest));
+end;
+
+procedure TestTDECCipherModes.TestFailureEncodeECBDataDoesNotMatchBlockSize;
+var
+  Source, Dest: TBytes;
+begin
+  FCipher.Mode := TCipherMode.cmECBx;
+  FCipher.Init(BytesOf(RawByteString('ABCDEFGH')), BytesOf('0011223344556677'), $FF);
+
+  SetLength(Source, 65);
+  SetLength(Dest, 65);
+  FillChar(Source[0], Length(Source), #1);
+
+  FCipher.Encode(Source[0], Dest[0], Length(Dest));
+end;
+
 procedure TestTDECCipherModes.TestFailureCallToDataToAuthehticateReadHelper;
 var
   AuthRes : TBytes;
@@ -729,6 +817,26 @@ begin
   DoTestEncode(Data, TCipherMode.cmCTSx);
 end;
 
+procedure TestTDECCipherModes.TestDecodeECBDataDoesNotMatchBlockSizeFailure;
+begin
+  FCipher := TCipher_AES.Create;
+  try
+    CheckException(TestFailureDecodeECBDataDoesNotMatchBlockSize, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestDecodeECBDataDoesNotMatchBlockSizeFailureSmall;
+begin
+  FCipher := TCipher_AES.Create;
+  try
+    CheckException(TestFailureDecodeECBDataDoesNotMatchBlockSizeSmall, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
 procedure TestTDECCipherModes.TestDecodeECBx;
 begin
   DoTestDecode(Data, TCipherMode.cmECBx);
@@ -772,6 +880,26 @@ end;
 procedure TestTDECCipherModes.TestDecodeCTSx;
 begin
   DoTestDecode(Data, TCipherMode.cmCTSx);
+end;
+
+procedure TestTDECCipherModes.TestEncodeECBDataDoesNotMatchBlockSizeFailure;
+begin
+  FCipher := TCipher_AES.Create;
+  try
+    CheckException(TestFailureEncodeECBDataDoesNotMatchBlockSize, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestEncodeECBDataDoesNotMatchBlockSizeFailureSmall;
+begin
+  FCipher := TCipher_AES.Create;
+  try
+    CheckException(TestFailureEncodeECBDataDoesNotMatchBlockSizeSmall, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
 end;
 
 procedure TestTDECCipherModes.TestEncode;
