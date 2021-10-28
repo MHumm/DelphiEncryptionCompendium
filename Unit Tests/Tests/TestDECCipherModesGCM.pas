@@ -381,6 +381,7 @@ begin
   // Data entries do not contain [
   if (Index <= Length(Entry.TestData)) and (Pos('[', Line) = 0) then
   begin
+    // Format example:
     // Count = 0
     // Key = bad6049678bf75c9087b3e3ae7e72c13
     // IV = a0a017b83a67d8f1b883e561
@@ -388,6 +389,9 @@ begin
     // AAD = f7c27b51d5367161dc2ff1e9e3edc6f2
     // CT = 36f032f7e3dc3275ca22aedcdc68436b
     // Tag = 99a2227f8bb69d45ea5d8842cd08
+    // And files with data for testing exceptions are raised do additionally
+    // contain: ModAAD = f7c27b51d5367161dc2ff1e9e3edc6f3
+    //          ModCt = 36f032f7e3dc3275ca22aedcdc68436c
     if (Pos('count=', Line) = 1) then
       Index := ExtractNumber(Line)
     else if (Pos('key=', Line) = 1) then
@@ -442,7 +446,6 @@ var
   i           : Integer;
   DecryptData : TBytes;
 begin
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\test.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
@@ -503,8 +506,8 @@ var
   i           : Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM128AuthenticationFailures.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM192AuthenticationFailures.rsp', FTestDataList);
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM256AuthenticationFailures.rsp', FTestDataList);
 
   for TestDataSet in FTestDataList do
   begin
@@ -525,7 +528,8 @@ begin
       FCipherText := TFormat_HexL.Decode(
                        BytesOf(TestDataSet.TestData[i].ModifiedCT));
 
-      CheckException(DoTestDecodeFailure, EDECCipherAuthenticationException);
+      CheckException(DoTestDecodeFailure, EDECCipherAuthenticationException,
+                     'i: ' + i.ToString + ' Key: ' + string(TestDataSet.TestData[0].CryptKey));
 
       CheckEquals(string(TestDataSet.TestData[i].PT),
                   StringOf(TFormat_HexL.Encode(FDecryptedData)),

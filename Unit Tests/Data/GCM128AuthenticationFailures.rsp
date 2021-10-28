@@ -9,7 +9,6 @@
 
 # wrong AAD, first byte
 Count = 0
-
 Key = d4a22488f8dd1d5c6c19a7d6ca17964c
 IV = f3d5837f22ac1a0425e0d1d5
 PT = 7b43016a16896497fb457be6d2a54122
@@ -31,7 +30,6 @@ ModCT = 8e44bf07454255aa9e36eb34cdfd0036
 Tag = 2f501e5249aa595a53e1985e90346a22
 
 # wrong CT, first byte, adapted PT
-
 Count = 2
 Key = c1629d6320b9da80a23c81be53f0ef57
 IV = b8615f6ffa30668947556cd8
@@ -43,7 +41,6 @@ ModCT = c3a72d693181c819f69b42b52088d3a2
 Tag = cadaee305d8bb6d70259a6503280d99a
 
 # wrong CT, last byte, adapted PT
-
 Count = 3
 Key = 196ed78281bb7543d60e68cca2aaa941
 IV = 6e7d2c8f135715532a075c50
@@ -55,7 +52,6 @@ ModCT = 06e5cc81c2d022cb2b5de5a881c62d0A
 Tag = 28e8cad3346ce583d5eebaa796e50974
 
 # wrong key first byte, adapted PT
-
 Count = 4
 Key = 56fe8a1bdc6806ed2f4a84891db943a0
 IV = af4d0ba0a90f1e713d71ae94
@@ -67,7 +63,6 @@ ModCT = c47bcb27c5a8d9beb19fee38b90861b7
 Tag = e061ee4868edf2d969e875b8685ca8a9
 
 # wrong key last byte, adapted PT
-
 Count = 5
 Key = 6d86a855508657f804091be2290a17e1
 IV = 65dce18a4461afd83f1480f5
@@ -79,7 +74,6 @@ ModCT = 53505d449369c9bcd8a138740ea6602e
 Tag = 86f928b4532825af9cac3820234afe73
 
 # wrong IV first byte, adapted PT
-
 Count = 6
 Key = 66bd7b5dfd0aaaed8bb8890eee9b9c9a
 IV = 6f92bf7e8fd0fb932451fdf2
@@ -91,7 +85,6 @@ ModCT = 83b99253de05625aa8e68490bb368bb9
 Tag = 65d444b02a23e854a85423217562d07f
 
 # wrong IV last byte, adapted PT
-
 Count = 7
 Key = e7e825707c5b7ccf6cfc009dd134f166
 IV = dd0c7a9c68d14e073f16a7a1
@@ -146,15 +139,15 @@ ModAAD = f461946c4feba79c18366555d85311248d269c87
 ModCT = ee743d29dcbaa084fda92eb48b3be961
 Tag = 07934a5372d41928f2ee7d4bb8c18982
 
-# wrong CT "middle" byte
+# wrong AAD "middle" byte
 Count = 12
 Key = 39b4f826b520830941b3b1bcd57e41d5
 IV = ca32ac523fe7dfefe415cba1
 PT = aa2b7a6c918ed6715441d046858b525f
 AAD = c586cd939b27821695b4ee4dd799fb0e3449a80e
-CT = 8b64f5ea9a8cb521c66df9c74d4b7ecd
-ModAAD = c586cd939b27821685b4ee4dd799fb0e3449a80e
-ModCT = 8b64f5ea9a8cb521c66df9c74d4b7ecd
+CT = 8b64f5ea9a8cb521c66df9c74d4b7ecd          
+ModAAD = c586cd939b27821685b4ee4dd799fb0e3449a80e         
+ModCT = 8b64f5ea9a8cb521c66df9c74d4b7ecd        
 Tag = 3db56a792b67ac6d0c4001e17f446111
 
 # wrong CT "middle" byte

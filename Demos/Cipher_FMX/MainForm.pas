@@ -155,6 +155,7 @@ begin
       if InputFormatting.IsValid(InputBuffer) then
       begin
         OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
+        (Cipher as TDECFormattedCipher).Done;
 
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
       end

@@ -1,0 +1,173 @@
+# GCM Encrypt with keysize 192 test information
+# Test data set up to test authentication failures
+
+[Keylen = 192]
+[IVlen = 96]
+[PTlen = 128]
+[AADlen = 160]
+[Taglen = 128]
+
+# wrong AAD, first byte
+Count = 0
+Key = 95e5c8dcee4ef17571e1becc3f2d4ac8d5aa73e74b3f1115
+IV = e3b91649120f92b4f712644b
+PT = eca3606b9e2a0c7a1c6c4b765176f643
+AAD = 68b093733bd1e77448fe5687b74796834d1797cf
+CT = 0ff6d858cf0f5309c0f4b2747f6b551f
+ModAAD = 69b093733bd1e77448fe5687b74796834d1797cf
+ModCT = 0ff6d858cf0f5309c0f4b2747f6b551f
+Tag = 94d6ac2796a9b9901933a0f9e5377979
+
+# wrong AAD, last byte
+Count = 1
+Key = 48b82b72fc81be86860f72065efa62186f9da596bdf95158
+IV = 24da67aef74be3338589ccb6
+PT = f86a57a30c06efb10ecbeb3d5a9d97b5
+AAD = c1f7f5c8f8cc5137a53991941f388ffd2b27f0dd
+CT = 4be58cd06378c03878d4f1659443c5d1
+ModAAD = c1f7f5c8f8cc5137a53991941f388ffd2b27f0dc
+ModCT = 4be58cd06378c03878d4f1659443c5d1
+Tag = 84dd00b8b03acb9219ec5116e3de7362
+
+# wrong CT, first byte, adapted PT
+Count = 2
+Key = e61d09d6b0ae050174246a3c2a2cab0e721a28e80fba2a5a
+IV = 728efe71da22d20c123fdc12
+PT = 476dd6a8b0e8cc27de66c057de1640d7
+AAD = 467d50ea72c46588314eb534ed492c2bba3a922c
+CT = bb42279bbb9cb98347a75328639a2f3b
+ModAAD = 467d50ea72c46588314eb534ed492c2bba3a922c
+ModCT = bc42279bbb9cb98347a75328639a2f3b
+Tag = a892fb8169de7ba2e8cbf215340b2bc9
+
+# wrong CT, last byte, adapted PT
+Count = 3
+Key = 15dee564b868b716f4f413424224d5c203404f73070bd536
+IV = 64bd0c03f8777b3e4f625a28
+PT = 9d73be1fb2e4ca35bc84dccd4bef48b7
+AAD = 43028f3eb8d814af65599b1d75ea9e2cd5b6620d
+CT = a8197b8f75daf3ad6fa1ed18baa6f623
+ModAAD = 43028f3eb8d814af65599b1d75ea9e2cd5b6620d
+ModCT = a8197b8f75daf3ad6fa1ed18baa6f624
+Tag = 3d018209c945ab324edda59a454ca233
+
+# wrong key first byte, adapted PT
+Count = 4
+Key = 2e530d65a90549d89fe91880799eee4863128c2937b26db3
+IV = 06684bdbea2344e06d57373b
+PT = 793ed0f64edd6532ef82baace3645db6
+AAD = 556239791fff36fafc5783e291f142c36c29af70
+CT = 786c514df4d030d1798914a9d28353a3
+ModAAD = 556239791fff36fafc5783e291f142c36c29af70
+ModCT = 786c514df4d030d1798914a9d28353a3
+Tag = acba85fafe26e1971cec39414ae1440a
+
+# wrong key last byte, adapted PT
+Count = 5
+Key = fac90528b639d0a1353192dc0de29f1cd9b46cd5ee314e11
+IV = 78d7ba9d78940b7f0bfd6e9b
+PT = e51a41cf8b382cb599a80a4b6ec46b2d
+AAD = e4ce785b1b1aafe21c6ca2ce54b2118810cca01f
+CT = 6c940aade9a7b45cfaed784d8952bcf8
+ModAAD = e4ce785b1b1aafe21c6ca2ce54b2118810cca01f
+ModCT = 6c940aade9a7b45cfaed784d8952bcf8
+Tag = b5be187d456751ca589bcddc654b0b02
+
+# wrong IV first byte, adapted PT
+Count = 6
+Key = 466acd78e42fde6ff455e562756d1313cee15d1089d1a4d2
+IV = 008d02efd7d2efc7e7cecc42
+PT = a5cb0aa76464feed09961347be3dd1a9
+AAD = f20551086e4c46161b312a7cb6c373c4a7dc4647
+CT = e281b825b34e0cd53e91e9260074b9a3
+ModAAD = f20551086e4c46161b312a7cb6c373c4a7dc4647
+ModCT = e281b825b34e0cd53e91e9260074b9a3
+Tag = 84c2d75dab4d6cf7de0b7c41c6115646
+
+# wrong IV last byte, adapted PT
+Count = 7
+Key = d998dfeeca62107b4a916d831d91d8c4551de15d08f2dcfb
+IV = dd52c5f471eeaa798b9bf3ab
+PT = 57312e27bc520feb662e401f719fe08a
+AAD = 8836495f03f6a2963bb18fcca390d0e32d778e13
+CT = b66a928bb272524ddd1ed1fd331e8c01
+ModAAD = 8836495f03f6a2963bb18fcca390d0e32d778e13
+ModCT = b66a928bb272524ddd1ed1fd331e8c01
+Tag = 8782356421e555c33ded92bf79aad130
+
+# wrong AAD "middle" byte
+Count = 8
+Key = f8846e9e3cc7e8d4f08028fe0c5cf030a57eb108fa3ecd4c
+IV = b6d77bb321e23b364614847e
+PT = c4e4ccc135d0ad00785d273a45652968
+AAD = 55882abdabbede1cecf412c8b387a9173aa4285e
+CT = adc15c4bb08e75377f07d6b7ea578daa
+ModAAD = 55882abdabbede1ce11412c8b387a9173aa4285e
+ModCT = adc15c4bb08e75377f07d6b7ea578daa
+Tag = eecc6ebd564caef221ce1d9850004832
+
+# wrong AAD "middle" byte
+Count = 9
+Key = aab1d3e93b0e081200510cf468134920f9a6ae32fef34a0f
+IV = 3f26812688196a6ea1a06ed4
+PT = cc21170db29c67dc239944b4aa51a78a
+AAD = 4a8ce870127715223dd774bf2593144d97bb8452
+CT = 8befe087c5c5e76393e0f1b7e43d2bfe
+ModAAD = 4a8ce87012771522300774bf2593144d97bb8452
+ModCT = 8befe087c5c5e76393e0f1b7e43d2bfe
+Tag = 8549867ed6445117a216da230beb54cd
+
+# wrong AAD "middle" byte
+Count = 10
+Key = 4f6650a2f7a328acf4b05e7e84dc271b781788f620dfa44b
+IV = 9c8db0a99fe1d0c7357ecbae
+PT = fa8371188c73b206ff3e2714249ab906
+AAD = 91e9013e9b7a7bb95525b5303fd315a98593e6af
+CT = b82da87c67b564a6bbbe3022446eba6c
+ModAAD = 91e9013e9b7b7ab95525b5303fd315a98593e6af
+ModCT = b82da87c67b564a6bbbe3022446eba6c
+Tag = 37ef882f00767da46efc80b52adfedf3
+
+# wrong CT "middle" byte, adapted PT
+Count = 11
+Key = 83e01276aa3ccba7eb799549d1184460e10d75f60db7126d
+IV = 211b4754695b37c79d62bb6a
+PT = eb10eb9fef1c248f42b5e0fb0c9ecf99
+AAD = 2de1ff8e51af6d8434cd2bddeb9e0778a78c98cc
+CT = 7d85ee71f54480213034c4210121d013
+ModAAD = 2de1ff8e51af6d8434cd2bddeb9e0778a78c98cc
+ModCT = 7d85ee71f54480123034c4210121d013
+Tag = ebcbb96f9bd5334a73341d566949911b
+
+# wrong AAD "middle" byte
+Count = 12
+Key = d1ee8fcd902da5754aa835d8332c9ea312ef50f4c2b8a5ff
+IV = 5b4be5afb5e1990d8e1668f4
+PT = bc860f8fa741c42e8a5cb5e85a4f2c9a
+AAD = c101ea086c862b5869298d0f2df7e10ac18248ad
+CT = 3012135b62a253e6815b1cbb65dc0548
+ModAAD = c101ea086c862b4869298d0f2df7e10ac18248ad
+ModCT = 3012135b62a253e6815b1cbb65dc0548
+Tag = 0c4bbb16d97cd2fab895fbb0bd9f85e4
+
+# wrong CT "middle" byte
+Count = 13
+Key = 9df8afc4801009cc0ef7922deba528bcba12e3c91b632c74
+IV = 9bef19d43b2772f6aae99d13
+PT = a2ef7803e1b023e3c7e588c57e7d996d     
+AAD = 1a7d0b9ae1d2f8854c2e85d42fd0541657b7d6c8
+CT = e9708d64ba8d3fed9d690ebf6fbdd69f
+ModAAD = 1a7d0b9ae1d2f8854c2e85d42fd0541657b7d6c8
+ModCT = e9708d64ba8d3fde9d690ebf6fbdd69f
+Tag = 7ab28b61ac7b030e2ab61cf95a98ebe7
+
+# wrong Key "middle" byte
+Count = 14
+Key = 772c8a3f06d812e3b4437c36b09e264eaf584e7e01f3530e
+IV = a58cd3e867a855b6df995a3c
+PT = 66ce06868e326d1c44fa33ff6edceb37
+AAD = eb17a37f81150f4bddd9a1c7bc6cb635d0e422db
+CT = 7ea02275bdfa333a5dbf8dd57b5e1103
+ModAAD = eb17a37f81150f4bddd9a1c7bc6cb635d0e422db
+ModCT = 7ea02275bdfa333a5dbf8dd57b5e1103
+Tag = 51d7f95df150cdcf33fb5dde0b5757f2
