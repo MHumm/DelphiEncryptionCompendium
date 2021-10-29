@@ -2,20 +2,20 @@
 <report>
   <stats>
     <packages value="17"/>
-    <classes value="192"/>
-    <methods value="587"/>
+    <classes value="193"/>
+    <methods value="591"/>
     <srcfiles value="17"/>
-    <srclines value="35424"/>
-    <totallines value="35392"/>
-    <coveredlines value="35020"/>
+    <srclines value="35446"/>
+    <totallines value="35414"/>
+    <coveredlines value="35046"/>
     <coveredpercent value="98"/>
   </stats>
   <data>
     <all name="all classes">
-      <coverage type="class, %" value="96%   (184/192)"/>
-      <coverage type="method, %" value="93%   (545/587)"/>
-      <coverage type="block, %" value="99%   (35035/35424)"/>
-      <coverage type="line, %" value="99%   (35035/35424)"/>
+      <coverage type="class, %" value="96%   (185/193)"/>
+      <coverage type="method, %" value="93%   (550/591)"/>
+      <coverage type="block, %" value="99%   (35061/35446)"/>
+      <coverage type="line, %" value="99%   (35061/35446)"/>
       <package name="DECHash">
         <coverage type="class, %" value="100%   (45/45)"/>
         <coverage type="method, %" value="98%   (148/151)"/>
@@ -1055,19 +1055,19 @@
       </package>
       <package name="DECCipherModes">
         <coverage type="class, %" value="100%   (1/1)"/>
-        <coverage type="method, %" value="97%   (31/32)"/>
-        <coverage type="block, %" value="81%   (356/441)"/>
-        <coverage type="line, %" value="81%   (356/441)"/>
+        <coverage type="method, %" value="100%   (35/35)"/>
+        <coverage type="block, %" value="82%   (376/457)"/>
+        <coverage type="line, %" value="82%   (376/457)"/>
         <srcfile name="DECCipherModes.pas">
           <coverage type="class, %" value="100%   (1/1)"/>
-          <coverage type="method, %" value="97%   (31/32)"/>
-          <coverage type="block, %" value="81%   (356/441)"/>
-          <coverage type="line, %" value="81%   (356/441)"/>
+          <coverage type="method, %" value="100%   (35/35)"/>
+          <coverage type="block, %" value="82%   (376/457)"/>
+          <coverage type="line, %" value="82%   (376/457)"/>
           <class name="TDECCipherModes">
             <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="97%   (31/32)"/>
-            <coverage type="block, %" value="81%   (356/441)"/>
-            <coverage type="line, %" value="81%   (356/441)"/>
+            <coverage type="method, %" value="100%   (35/35)"/>
+            <coverage type="block, %" value="82%   (376/457)"/>
+            <coverage type="line, %" value="82%   (376/457)"/>
             <method name="Encode">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (14/14)"/>
@@ -1083,20 +1083,25 @@
               <coverage type="block, %" value="75%   (6/8)"/>
               <coverage type="line, %" value="75%   (6/8)"/>
             </method>
+            <method name="SetExpectedAuthenticationTag">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="80%   (4/5)"/>
+              <coverage type="line, %" value="80%   (4/5)"/>
+            </method>
             <method name="SetAuthenticationResultBitLength">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (5/5)"/>
               <coverage type="line, %" value="100%   (5/5)"/>
             </method>
-            <method name="EncodeCTSx">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (14/14)"/>
-              <coverage type="line, %" value="100%   (14/14)"/>
-            </method>
             <method name="EncodeCBCx">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="88%   (15/17)"/>
               <coverage type="line, %" value="88%   (15/17)"/>
+            </method>
+            <method name="EncodeCTSx">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (14/14)"/>
+              <coverage type="line, %" value="100%   (14/14)"/>
             </method>
             <method name="DecodeCFB8">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1109,9 +1114,9 @@
               <coverage type="line, %" value="100%   (4/4)"/>
             </method>
             <method name="ReportInvalidMessageLength">
-              <coverage type="method, %" value="0%   (0/1)"/>
-              <coverage type="block, %" value="0%   (0/3)"/>
-              <coverage type="line, %" value="0%   (0/3)"/>
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="67%   (2/3)"/>
+              <coverage type="line, %" value="67%   (2/3)"/>
             </method>
             <method name="InitMode">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1140,8 +1145,8 @@
             </method>
             <method name="EncodeECBx">
               <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="88%   (15/17)"/>
-              <coverage type="line, %" value="88%   (15/17)"/>
+              <coverage type="block, %" value="100%   (17/17)"/>
+              <coverage type="line, %" value="100%   (17/17)"/>
             </method>
             <method name="EncodeCFSx">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1170,8 +1175,8 @@
             </method>
             <method name="DecodeECBx">
               <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="88%   (15/17)"/>
-              <coverage type="line, %" value="88%   (15/17)"/>
+              <coverage type="block, %" value="100%   (17/17)"/>
+              <coverage type="line, %" value="100%   (17/17)"/>
             </method>
             <method name="EncodeCFB8">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1198,10 +1203,15 @@
               <coverage type="block, %" value="100%   (5/5)"/>
               <coverage type="line, %" value="100%   (5/5)"/>
             </method>
-            <method name="GetAuthenticatonResult">
+            <method name="GetCalcAuthenticatonResult">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (5/5)"/>
               <coverage type="line, %" value="100%   (5/5)"/>
+            </method>
+            <method name="Done">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (6/6)"/>
+              <coverage type="line, %" value="100%   (6/6)"/>
             </method>
             <method name="DecodeCFBx">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1212,6 +1222,11 @@
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (5/5)"/>
               <coverage type="line, %" value="100%   (5/5)"/>
+            </method>
+            <method name="GetExpectedAuthenticationTag">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="80%   (4/5)"/>
+              <coverage type="line, %" value="80%   (4/5)"/>
             </method>
             <method name="DecodeOFBx">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -3598,18 +3613,18 @@
       <package name="DECCipherModesGCM">
         <coverage type="class, %" value="100%   (2/2)"/>
         <coverage type="method, %" value="100%   (12/12)"/>
-        <coverage type="block, %" value="98%   (121/124)"/>
-        <coverage type="line, %" value="98%   (121/124)"/>
+        <coverage type="block, %" value="98%   (120/123)"/>
+        <coverage type="line, %" value="98%   (120/123)"/>
         <srcfile name="DECCipherModesGCM.pas">
           <coverage type="class, %" value="100%   (2/2)"/>
           <coverage type="method, %" value="100%   (12/12)"/>
-          <coverage type="block, %" value="98%   (121/124)"/>
-          <coverage type="line, %" value="98%   (121/124)"/>
+          <coverage type="block, %" value="98%   (120/123)"/>
+          <coverage type="line, %" value="98%   (120/123)"/>
           <class name="TGCM">
             <coverage type="class, %" value="100%   (1/1)"/>
             <coverage type="method, %" value="100%   (11/11)"/>
-            <coverage type="block, %" value="97%   (105/108)"/>
-            <coverage type="line, %" value="97%   (105/108)"/>
+            <coverage type="block, %" value="97%   (104/107)"/>
+            <coverage type="line, %" value="97%   (104/107)"/>
             <method name="DecodeGCM">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (15/15)"/>
@@ -3647,8 +3662,8 @@
             </method>
             <method name="Init">
               <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (21/21)"/>
-              <coverage type="line, %" value="100%   (21/21)"/>
+              <coverage type="block, %" value="100%   (20/20)"/>
+              <coverage type="line, %" value="100%   (20/20)"/>
             </method>
             <method name="GenerateTableM8Bit">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -4164,26 +4179,15 @@
         </srcfile>
       </package>
       <package name="DECUtil">
-        <coverage type="class, %" value="100%   (12/12)"/>
-        <coverage type="method, %" value="100%   (12/12)"/>
-        <coverage type="block, %" value="100%   (139/139)"/>
-        <coverage type="line, %" value="100%   (139/139)"/>
+        <coverage type="class, %" value="100%   (13/13)"/>
+        <coverage type="method, %" value="100%   (13/13)"/>
+        <coverage type="block, %" value="100%   (146/146)"/>
+        <coverage type="line, %" value="100%   (146/146)"/>
         <srcfile name="DECUtil.pas">
-          <coverage type="class, %" value="100%   (12/12)"/>
-          <coverage type="method, %" value="100%   (12/12)"/>
-          <coverage type="block, %" value="100%   (139/139)"/>
-          <coverage type="line, %" value="100%   (139/139)"/>
-          <class name="BytesToRawString">
-            <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="100%   (1/1)"/>
-            <coverage type="block, %" value="100%   (5/5)"/>
-            <coverage type="line, %" value="100%   (5/5)"/>
-            <method name="BytesToRawString">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (5/5)"/>
-              <coverage type="line, %" value="100%   (5/5)"/>
-            </method>
-          </class>
+          <coverage type="class, %" value="100%   (13/13)"/>
+          <coverage type="method, %" value="100%   (13/13)"/>
+          <coverage type="block, %" value="100%   (146/146)"/>
+          <coverage type="line, %" value="100%   (146/146)"/>
           <class name="SwapUInt32">
             <coverage type="class, %" value="100%   (1/1)"/>
             <coverage type="method, %" value="100%   (1/1)"/>
@@ -4206,17 +4210,6 @@
               <coverage type="line, %" value="100%   (17/17)"/>
             </method>
           </class>
-          <class name="ReverseBits">
-            <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="100%   (1/1)"/>
-            <coverage type="block, %" value="100%   (6/6)"/>
-            <coverage type="line, %" value="100%   (6/6)"/>
-            <method name="ReverseBits">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (6/6)"/>
-              <coverage type="line, %" value="100%   (6/6)"/>
-            </method>
-          </class>
           <class name="SwapInt64Buffer">
             <coverage type="class, %" value="100%   (1/1)"/>
             <coverage type="method, %" value="100%   (1/1)"/>
@@ -4226,28 +4219,6 @@
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (18/18)"/>
               <coverage type="line, %" value="100%   (18/18)"/>
-            </method>
-          </class>
-          <class name="SwapInt64">
-            <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="100%   (1/1)"/>
-            <coverage type="block, %" value="100%   (6/6)"/>
-            <coverage type="line, %" value="100%   (6/6)"/>
-            <method name="SwapInt64">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (6/6)"/>
-              <coverage type="line, %" value="100%   (6/6)"/>
-            </method>
-          </class>
-          <class name="ProtectBuffer">
-            <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="100%   (1/1)"/>
-            <coverage type="block, %" value="100%   (5/5)"/>
-            <coverage type="line, %" value="100%   (5/5)"/>
-            <method name="ProtectBuffer">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (5/5)"/>
-              <coverage type="line, %" value="100%   (5/5)"/>
             </method>
           </class>
           <class name="SwapUInt32Buffer">
@@ -4272,17 +4243,6 @@
               <coverage type="line, %" value="100%   (22/22)"/>
             </method>
           </class>
-          <class name="ProtectBytes">
-            <coverage type="class, %" value="100%   (1/1)"/>
-            <coverage type="method, %" value="100%   (1/1)"/>
-            <coverage type="block, %" value="100%   (5/5)"/>
-            <coverage type="line, %" value="100%   (5/5)"/>
-            <method name="ProtectBytes">
-              <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="100%   (5/5)"/>
-              <coverage type="line, %" value="100%   (5/5)"/>
-            </method>
-          </class>
           <class name="ProtectString">
             <coverage type="class, %" value="100%   (1/1)"/>
             <coverage type="method, %" value="100%   (1/1)"/>
@@ -4292,6 +4252,72 @@
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (18/18)"/>
               <coverage type="line, %" value="100%   (18/18)"/>
+            </method>
+          </class>
+          <class name="BytesToRawString">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (5/5)"/>
+            <coverage type="line, %" value="100%   (5/5)"/>
+            <method name="BytesToRawString">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (5/5)"/>
+              <coverage type="line, %" value="100%   (5/5)"/>
+            </method>
+          </class>
+          <class name="IsEqual">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (7/7)"/>
+            <coverage type="line, %" value="100%   (7/7)"/>
+            <method name="IsEqual">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (7/7)"/>
+              <coverage type="line, %" value="100%   (7/7)"/>
+            </method>
+          </class>
+          <class name="ReverseBits">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (6/6)"/>
+            <coverage type="line, %" value="100%   (6/6)"/>
+            <method name="ReverseBits">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (6/6)"/>
+              <coverage type="line, %" value="100%   (6/6)"/>
+            </method>
+          </class>
+          <class name="SwapInt64">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (6/6)"/>
+            <coverage type="line, %" value="100%   (6/6)"/>
+            <method name="SwapInt64">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (6/6)"/>
+              <coverage type="line, %" value="100%   (6/6)"/>
+            </method>
+          </class>
+          <class name="ProtectBuffer">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (5/5)"/>
+            <coverage type="line, %" value="100%   (5/5)"/>
+            <method name="ProtectBuffer">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (5/5)"/>
+              <coverage type="line, %" value="100%   (5/5)"/>
+            </method>
+          </class>
+          <class name="ProtectBytes">
+            <coverage type="class, %" value="100%   (1/1)"/>
+            <coverage type="method, %" value="100%   (1/1)"/>
+            <coverage type="block, %" value="100%   (5/5)"/>
+            <coverage type="line, %" value="100%   (5/5)"/>
+            <method name="ProtectBytes">
+              <coverage type="method, %" value="100%   (1/1)"/>
+              <coverage type="block, %" value="100%   (5/5)"/>
+              <coverage type="line, %" value="100%   (5/5)"/>
             </method>
           </class>
           <class name="XORBuffers">

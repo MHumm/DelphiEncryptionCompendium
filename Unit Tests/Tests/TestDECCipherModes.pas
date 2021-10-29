@@ -377,6 +377,18 @@ type
     ///   the block size (length data < 1 block)
     /// </summary>
     procedure TestFailureDecodeECBDataDoesNotMatchBlockSizeSmall;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Attempt to call SetExpectedAuthenticationTag for non GCM mode
+    /// </summary>
+    procedure DoTestFailureSetExpectedAuthenticationTag;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
+    ///   Attempt to call GetExpectedAuthenticationTag for non GCM mode
+    /// </summary>
+    procedure DoTestFailureGetExpectedAuthenticationTag;
   published
     procedure TestEncodeECBx;
     procedure TestEncodeOFB8;
@@ -405,6 +417,8 @@ type
     procedure TestFailureCallToAuthenticationResultBitLengthWrite;
     procedure TestFailureCallToAuthenticationResultBitLengthRead;
     procedure TestFailureCallToAuthenticationResult;
+    procedure TestFailureSetExpectedAuthenticationTag;
+    procedure TestFailureGetExpectedAuthenticationTag;
     procedure InitGCMBlocksizeNot128Failure;
     procedure InitGCMStreamCipherFailure;
     procedure TestEncodeECBDataDoesNotMatchBlockSizeFailureSmall;
@@ -485,6 +499,26 @@ begin
       FCipher.Free;
     end;
   end;
+end;
+
+procedure TestTDECCipherModes.DoTestFailureGetExpectedAuthenticationTag;
+var
+  Buf : TBytes;
+begin
+  Buf := FCipher.ExpectedAuthenticationTag;
+  // Suppress warning about unused value
+  if (length(Buf) > 0) then
+    ;
+end;
+
+procedure TestTDECCipherModes.DoTestFailureSetExpectedAuthenticationTag;
+var
+  Buf : TBytes;
+begin
+  SetLength(Buf, 3);
+  Buf := [0, 1, 2];
+
+  FCipher.ExpectedAuthenticationTag := Buf;
 end;
 
 procedure TestTDECCipherModes.DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);
@@ -742,6 +776,28 @@ begin
   FCipher := TCipher_RC4.Create;
   try
     CheckException(TestFailureSetGCMMode, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureSetExpectedAuthenticationTag;
+begin
+  FCipher := TCipher_RC4.Create;
+  FCipher.Mode := TCipherMode.cmECBx;
+  try
+    CheckException(DoTestFailureSetExpectedAuthenticationTag, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestFailureGetExpectedAuthenticationTag;
+begin
+  FCipher := TCipher_RC4.Create;
+  FCipher.Mode := TCipherMode.cmECBx;
+  try
+    CheckException(DoTestFailureGetExpectedAuthenticationTag, EDECCipherException);
   finally
     FCipher.Free;
   end;
