@@ -88,7 +88,7 @@ type
     ///   authentication.
     /// </param>
     procedure SetAuthenticationResultBitLength(const Value: Integer);
-  strict private
+  strict protected
     /// <summary>
     ///   Implementation of the Galois counter mode. Only created when gmGCM is
     ///   set as mode.
@@ -350,7 +350,7 @@ type
 
     /// <summary>
     ///   Returns a list of authentication tag lengs explicitely specified by
-    ///   the official speciication of the standard.
+    ///   the official specification of the standard.
     /// </summary>
     /// <returns>
     ///   List of bit lengths. If the cipher mode used is not an authenticated

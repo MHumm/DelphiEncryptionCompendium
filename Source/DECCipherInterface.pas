@@ -601,6 +601,126 @@ type
       write  SetMode;
   end;
 
+  /// <summary>
+  ///   Common interface for all authenticated ciphers like GCM mode.
+  ///   Some ciphers may have additional methods/properties though!
+  /// </summary>
+  IDECAuthenticatedCipher = Interface(IDECCipher)
+  ['{506A865D-9461-4038-BAB7-A013A9321E8E}']
+    /// <summary>
+    ///   Returns the data which shall get authenticated when using a cipher
+    ///   mode which provides authentication support as well.
+    /// </summary>
+    /// <returns>
+    ///   Data to be authenticated. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </returns>
+    function  GetDataToAuthenticate: TBytes;
+    /// <summary>
+    ///   Returns the length of the resulting authentication value if a
+    ///   cipher mode which provides authentication support as well is used.
+    /// </summary>
+    /// <returns>
+    ///   Length of the authentication result in bit. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </returns>
+    function  GetAuthenticationResultBitLength: Integer;
+    /// <summary>
+    ///   Returns the value calculated over the data to be authenticated if a
+    ///   cipher mode which provides authentication support as well is used.
+    ///   The value will be returned even if decryption resulted in a wrong value.
+    ///   A wrong authentication result on decryption is signalled via exception.
+    /// </summary>
+    /// <returns>
+    ///   Result of the authentication. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </returns>
+    function  GetCalcAuthenticatonResult: TBytes;
+    /// <summary>
+    ///   Defines the data which shall get authenticated when using a cipher
+    ///   mode which provides authentication support as well.
+    /// </summary>
+    /// <param name="Value">
+    ///   Data to be authenticated. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </param>
+    procedure SetDataToAuthenticate(const Value: TBytes);
+    /// <summary>
+    ///   Sets the length of the resulting authentication value if a
+    ///   cipher mode which provides authentication support as well is used.
+    /// </summary>
+    /// <param name="Value">
+    ///   Length of the authentication result in bit. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </param>
+    procedure SetAuthenticationResultBitLength(const Value: Integer);
+
+    /// <summary>
+    ///   Returns a list of authentication tag lengs explicitely specified by
+    ///   the official specification of the standard.
+    /// </summary>
+    /// <returns>
+    ///   List of bit lengths. If the cipher mode used is not an authenticated
+    ///   one, the array will just contain a single value of 0.
+    /// </returns>
+    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+
+    /// <summary>
+    ///   Returns the value set as expected authenthication value for ciphers
+    ///   providing authehtication features as well. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </summary>
+    function GetExpectedAuthenticationTag: TBytes;
+    /// <summary>
+    ///   Sets the value used as expected authenthication value when decrypting
+    ///   and a cipher providing authehtication features is being used. Raises an
+    ///   EDECCipherException if this is called for a cipher mode not supporting
+    ///   authentication.
+    /// </summary>
+    procedure SetExpectedAuthenticationTag(const Value: TBytes);
+
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it. This property contains the data which
+    ///   shall be authenticated in parallel to the encryption.
+    /// </summary>
+    property DataToAuthenticate : TBytes
+      read   GetDataToAuthenticate
+      write  SetDataToAuthenticate;
+
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it.
+    ///   Represents the length of AuthenticatonValue in bit, values as per
+    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain applications,
+    ///   they may be 64 or 32 as well, but the use of these two tag lengths
+    ///   constrains the length of the input data and the lifetime of the key.
+    /// </summary>
+    property AuthenticationResultBitLength : Integer
+      read   GetAuthenticationResultBitLength
+      write  SetAuthenticationResultBitLength;
+    /// <summary>
+    ///   Some block chaining modes have the ability to authenticate the message
+    ///   in addition to encrypting it. This property contains the generated
+    ///   authentication tag. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </summary>
+    property CalculatedAuthenticationResult  : TBytes
+      read   GetCalcAuthenticatonResult;
+
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished. Raises an EDECCipherException if this is
+    ///   called for a cipher mode not supporting authentication.
+    /// </summary>
+    property ExpectedAuthenticationTag : TBytes
+      read   GetExpectedAuthenticationTag
+      write  SetExpectedAuthenticationTag;
+  end;
+
 implementation
 
 end.

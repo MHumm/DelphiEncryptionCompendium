@@ -7,15 +7,15 @@
     <srcfiles value="17"/>
     <srclines value="35446"/>
     <totallines value="35414"/>
-    <coveredlines value="35046"/>
+    <coveredlines value="35048"/>
     <coveredpercent value="98"/>
   </stats>
   <data>
     <all name="all classes">
       <coverage type="class, %" value="96%   (185/193)"/>
       <coverage type="method, %" value="93%   (550/591)"/>
-      <coverage type="block, %" value="99%   (35061/35446)"/>
-      <coverage type="line, %" value="99%   (35061/35446)"/>
+      <coverage type="block, %" value="99%   (35063/35446)"/>
+      <coverage type="line, %" value="99%   (35063/35446)"/>
       <package name="DECHash">
         <coverage type="class, %" value="100%   (45/45)"/>
         <coverage type="method, %" value="98%   (148/151)"/>
@@ -1056,18 +1056,18 @@
       <package name="DECCipherModes">
         <coverage type="class, %" value="100%   (1/1)"/>
         <coverage type="method, %" value="100%   (35/35)"/>
-        <coverage type="block, %" value="82%   (376/457)"/>
-        <coverage type="line, %" value="82%   (376/457)"/>
+        <coverage type="block, %" value="83%   (378/457)"/>
+        <coverage type="line, %" value="83%   (378/457)"/>
         <srcfile name="DECCipherModes.pas">
           <coverage type="class, %" value="100%   (1/1)"/>
           <coverage type="method, %" value="100%   (35/35)"/>
-          <coverage type="block, %" value="82%   (376/457)"/>
-          <coverage type="line, %" value="82%   (376/457)"/>
+          <coverage type="block, %" value="83%   (378/457)"/>
+          <coverage type="line, %" value="83%   (378/457)"/>
           <class name="TDECCipherModes">
             <coverage type="class, %" value="100%   (1/1)"/>
             <coverage type="method, %" value="100%   (35/35)"/>
-            <coverage type="block, %" value="82%   (376/457)"/>
-            <coverage type="line, %" value="82%   (376/457)"/>
+            <coverage type="block, %" value="83%   (378/457)"/>
+            <coverage type="line, %" value="83%   (378/457)"/>
             <method name="Encode">
               <coverage type="method, %" value="100%   (1/1)"/>
               <coverage type="block, %" value="100%   (14/14)"/>
@@ -1085,8 +1085,8 @@
             </method>
             <method name="SetExpectedAuthenticationTag">
               <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="80%   (4/5)"/>
-              <coverage type="line, %" value="80%   (4/5)"/>
+              <coverage type="block, %" value="100%   (5/5)"/>
+              <coverage type="line, %" value="100%   (5/5)"/>
             </method>
             <method name="SetAuthenticationResultBitLength">
               <coverage type="method, %" value="100%   (1/1)"/>
@@ -1225,8 +1225,8 @@
             </method>
             <method name="GetExpectedAuthenticationTag">
               <coverage type="method, %" value="100%   (1/1)"/>
-              <coverage type="block, %" value="80%   (4/5)"/>
-              <coverage type="line, %" value="80%   (4/5)"/>
+              <coverage type="block, %" value="100%   (5/5)"/>
+              <coverage type="line, %" value="100%   (5/5)"/>
             </method>
             <method name="DecodeOFBx">
               <coverage type="method, %" value="100%   (1/1)"/>

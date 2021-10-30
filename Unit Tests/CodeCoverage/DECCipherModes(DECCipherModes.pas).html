@@ -32,9 +32,9 @@ table.sum tr td:first-child {text-align:left;}
 </head>
 <body>
 <p>Coverage report for <strong>DECCipherModes (D:\Projekte\DECGitMaster\Source\DECCipherModes.pas)</strong>.</p>
-<p> Generated at 29.10.2021 18:30:30 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Generated at 29.10.2021 18:49:29 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
 <p> Statistics for D:\Projekte\DECGitMaster\Source\DECCipherModes.pas </p>
-<table  class="o"><tr><td>Number of lines covered</td><td>376</td></tr><tr><td>Number of lines with code gen</td><td>457</td></tr><tr><td>Line coverage</td><td>82%</td></tr></table>
+<table  class="o"><tr><td>Number of lines covered</td><td>378</td></tr><tr><td>Number of lines with code gen</td><td>457</td></tr><tr><td>Line coverage</td><td>82%</td></tr></table>
 <br /><br />
 <table  class="s">
 <tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
@@ -477,7 +477,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>438</td><td><pre style="display:inline;"> &nbsp;if (FMode = cmGCM) then</pre></td></tr>
 <tr class="covered"><td>439</td><td><pre style="display:inline;"> &nbsp; &nbsp;FGCM.ExpectedAuthenticationTag := Value</pre></td></tr>
 <tr class="nocodegen"><td>440</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="notcovered"><td>441</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, [&apos;cmGCM&apos;]);</pre></td></tr>
+<tr class="covered"><td>441</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, [&apos;cmGCM&apos;]);</pre></td></tr>
 <tr class="covered"><td>442</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>443</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>444</td><td><pre style="display:inline;">procedure TDECCipherModes.SetAuthenticationResultBitLength(</pre></td></tr>
@@ -690,7 +690,7 @@ table.sum tr td:first-child {text-align:left;}
 <tr class="covered"><td>651</td><td><pre style="display:inline;"> &nbsp;if (FMode = cmGCM) then</pre></td></tr>
 <tr class="covered"><td>652</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := FGCM.ExpectedAuthenticationTag</pre></td></tr>
 <tr class="nocodegen"><td>653</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
-<tr class="notcovered"><td>654</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, [&apos;cmGCM&apos;]);</pre></td></tr>
+<tr class="covered"><td>654</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, [&apos;cmGCM&apos;]);</pre></td></tr>
 <tr class="covered"><td>655</td><td><pre style="display:inline;">end;</pre></td></tr>
 <tr class="nocodegen"><td>656</td><td><pre style="display:inline;"></pre></td></tr>
 <tr class="nocodegen"><td>657</td><td><pre style="display:inline;">function TDECCipherModes.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;</pre></td></tr>
