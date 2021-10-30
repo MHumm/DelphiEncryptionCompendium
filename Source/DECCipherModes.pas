@@ -38,7 +38,12 @@ type
   ///   algorithms for linking blocks.
   /// </summary>
   TDECCipherModes = class(TDECCipher)
-  strict private
+  strict protected
+    /// <summary>
+    ///   Implementation of the Galois counter mode. Only created when gmGCM is
+    ///   set as mode.
+    /// </summary>
+    FGCM : TGCM;
     /// <summary>
     ///   Returns the data which shall get authenticated when using a cipher
     ///   mode which provides authentication support as well.
@@ -88,12 +93,6 @@ type
     ///   authentication.
     /// </param>
     procedure SetAuthenticationResultBitLength(const Value: Integer);
-  strict protected
-    /// <summary>
-    ///   Implementation of the Galois counter mode. Only created when gmGCM is
-    ///   set as mode.
-    /// </summary>
-    FGCM : TGCM;
     /// <summary>
     ///   Returns the value set as expected authenthication value for ciphers
     ///   providing authehtication features as well. Raises an
