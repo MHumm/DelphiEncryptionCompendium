@@ -117,7 +117,7 @@ type
     ///   Allows to run code after the initialization vector has been initialized
     ///   inside the Init call, which is after DoInit has been called.
     /// </summary>
-    /// <param name="OriginalIVector">
+    /// <param name="OriginalInitVector">
     ///   Value of the init vector as originally passed to the Init call without
     ///   any initialization steps done to/on it
     /// </param>
