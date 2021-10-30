@@ -673,14 +673,14 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
-    function GetExpectedAuthenticationTag: TBytes;
+    function GetExpectedAuthenticationResult: TBytes;
     /// <summary>
     ///   Sets the value used as expected authenthication value when decrypting
     ///   and a cipher providing authehtication features is being used. Raises an
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
-    procedure SetExpectedAuthenticationTag(const Value: TBytes);
+    procedure SetExpectedAuthenticationResult(const Value: TBytes);
 
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
@@ -716,9 +716,9 @@ type
     ///   when decryption finished. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </summary>
-    property ExpectedAuthenticationTag : TBytes
-      read   GetExpectedAuthenticationTag
-      write  SetExpectedAuthenticationTag;
+    property ExpectedAuthenticationResult : TBytes
+      read   GetExpectedAuthenticationResult
+      write  SetExpectedAuthenticationResult;
   end;
 
 implementation

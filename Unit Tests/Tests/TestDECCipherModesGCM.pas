@@ -464,7 +464,7 @@ begin
                                                       BytesOf(
                                                         TestDataSet.TestData[i].AAD));
 
-        FCipherAES.ExpectedAuthenticationTag :=
+        FCipherAES.ExpectedAuthenticationResult :=
           TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
 
         DecryptData := FCipherAES.DecodeBytes(
@@ -522,7 +522,7 @@ begin
                                                     BytesOf(
                                                       TestDataSet.TestData[i].ModifiedAAD));
 
-      FCipherAES.ExpectedAuthenticationTag :=
+      FCipherAES.ExpectedAuthenticationResult :=
         TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].TagResult));
 
       FCipherText := TFormat_HexL.Decode(
@@ -602,14 +602,14 @@ var
 begin
   SetLength(Exp, 4);
   Exp := [1, 2, 3, 4];
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 4');
 
   SetLength(Exp, 0);
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
 end;
@@ -650,28 +650,28 @@ var
 begin
   SetLength(Exp, 4);
   Exp := [1, 2, 3, 4];
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 4');
 
   SetLength(Exp, 8);
   Exp := [1, 2, 3, 4, 5, 6, 7, 8];
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 8');
 
   SetLength(Exp, 12);
   Exp := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 12');
 
   SetLength(Exp, 0);
-  FCipherAES.ExpectedAuthenticationTag := Exp;
-  Act := FCipherAES.ExpectedAuthenticationTag;
+  FCipherAES.ExpectedAuthenticationResult := Exp;
+  Act := FCipherAES.ExpectedAuthenticationResult;
 
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
 end;

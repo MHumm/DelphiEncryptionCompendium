@@ -505,7 +505,7 @@ procedure TestTDECCipherModes.DoTestFailureGetExpectedAuthenticationTag;
 var
   Buf : TBytes;
 begin
-  Buf := FCipher.ExpectedAuthenticationTag;
+  Buf := FCipher.ExpectedAuthenticationResult;
   // Suppress warning about unused value
   if (length(Buf) > 0) then
     ;
@@ -518,7 +518,7 @@ begin
   SetLength(Buf, 3);
   Buf := [0, 1, 2];
 
-  FCipher.ExpectedAuthenticationTag := Buf;
+  FCipher.ExpectedAuthenticationResult := Buf;
 end;
 
 procedure TestTDECCipherModes.DoTestDecode(Data: array of TTestEntry; Mode: TCipherMode; TestAllModes: Boolean = false);

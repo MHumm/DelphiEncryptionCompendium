@@ -100,14 +100,14 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
-    function GetExpectedAuthenticationTag: TBytes;
+    function GetExpectedAuthenticationResult: TBytes;
     /// <summary>
     ///   Sets the value used as expected authenthication value when decrypting
     ///   and a cipher providing authehtication features is being used. Raises an
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
-    procedure SetExpectedAuthenticationTag(const Value: TBytes); protected
+    procedure SetExpectedAuthenticationResult(const Value: TBytes); protected
     /// <summary>
     ///   Raises an EDECCipherException exception and provides the correct value
     ///   for block size in that message
@@ -392,9 +392,9 @@ type
     ///   when decryption finished. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </summary>
-    property ExpectedAuthenticationTag : TBytes
-      read   GetExpectedAuthenticationTag
-      write  SetExpectedAuthenticationTag;
+    property ExpectedAuthenticationResult : TBytes
+      read   GetExpectedAuthenticationResult
+      write  SetExpectedAuthenticationResult;
   end;
 
 implementation
@@ -433,7 +433,7 @@ begin
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
 
-procedure TDECCipherModes.SetExpectedAuthenticationTag(const Value: TBytes);
+procedure TDECCipherModes.SetExpectedAuthenticationResult(const Value: TBytes);
 begin
   if (FMode = cmGCM) then
     FGCM.ExpectedAuthenticationTag := Value
@@ -646,7 +646,7 @@ begin
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM']);
 end;
 
-function TDECCipherModes.GetExpectedAuthenticationTag: TBytes;
+function TDECCipherModes.GetExpectedAuthenticationResult: TBytes;
 begin
   if (FMode = cmGCM) then
     Result := FGCM.ExpectedAuthenticationTag
