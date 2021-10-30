@@ -34,7 +34,7 @@ type
   ///   Class in which the various encode/decode variants provided have been
   ///   moved in order to keep the base cipher class small and clean.
   /// </summary>
-  TDECFormattedCipher = class(TDECCipherModes, IDECCipher, IDECAuthenticatedCipher)
+  TDECFormattedCipher = class(TDECCipherModes, IDECCipher)
   private
     /// <summary>
     ///   Encrypts or decrypts the data contained in a given stream

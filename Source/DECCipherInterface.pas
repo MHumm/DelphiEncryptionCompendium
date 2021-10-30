@@ -605,7 +605,7 @@ type
   ///   Common interface for all authenticated ciphers like GCM mode.
   ///   Some ciphers may have additional methods/properties though!
   /// </summary>
-  IDECAuthenticatedCipher = Interface(IDECCipher)
+  IDECAuthenticatedCipher = Interface
   ['{506A865D-9461-4038-BAB7-A013A9321E8E}']
     /// <summary>
     ///   Returns the data which shall get authenticated when using a cipher

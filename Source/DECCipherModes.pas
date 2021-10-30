@@ -26,7 +26,7 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECTypes, DECCipherBase, DECCipherModesGCM;
+  DECTypes, DECCipherBase, DECCipherModesGCM, DECCipherInterface;
 
 type
   /// <summary>
@@ -37,13 +37,8 @@ type
   ///   initialization vector). This class implements the various supported
   ///   algorithms for linking blocks.
   /// </summary>
-  TDECCipherModes = class(TDECCipher)
-  strict protected
-    /// <summary>
-    ///   Implementation of the Galois counter mode. Only created when gmGCM is
-    ///   set as mode.
-    /// </summary>
-    FGCM : TGCM;
+  TDECCipherModes = class(TDECCipher, IDECAuthenticatedCipher)
+  strict private
     /// <summary>
     ///   Returns the data which shall get authenticated when using a cipher
     ///   mode which provides authentication support as well.
@@ -106,7 +101,13 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
-    procedure SetExpectedAuthenticationResult(const Value: TBytes); protected
+    procedure SetExpectedAuthenticationResult(const Value: TBytes);
+  strict protected
+    /// <summary>
+    ///   Implementation of the Galois counter mode. Only created when gmGCM is
+    ///   set as mode.
+    /// </summary>
+    FGCM : TGCM;
     /// <summary>
     ///   Raises an EDECCipherException exception and provides the correct value
     ///   for block size in that message
