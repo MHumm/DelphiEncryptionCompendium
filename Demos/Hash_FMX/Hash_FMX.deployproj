@@ -94,15 +94,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\lib\android\debug\armeabi\libnative-activity.so" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\library\lib\armeabi\</RemoteDir>
-            <RemoteName>libHash_FMX.so</RemoteName>
-            <DeployClass>AndroidLibnativeArmeabiFile</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles.xml" Condition="'$(Config)'=='Release'">
             <RemoteDir>Hash_FMX\res\values\</RemoteDir>
             <RemoteName>styles.xml</RemoteName>
@@ -185,15 +176,6 @@
             <Overwrite>True</Overwrite>
             <Required>True</Required>
         </DeployFile>
-        <DeployFile Include="$(BDS)\lib\android\debug\mips\libnative-activity.so" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\library\lib\mips\</RemoteDir>
-            <RemoteName>libHash_FMX.so</RemoteName>
-            <DeployClass>AndroidLibnativeMipsFile</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
         <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libHash_FMX.so" Condition="'$(Config)'=='Release'">
             <RemoteDir>Hash_FMX\library\lib\arm64-v8a\</RemoteDir>
             <RemoteName>libHash_FMX.so</RemoteName>
@@ -222,11 +204,11 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\lib\android\debug\armeabi-v7a\libnative-activity.so" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
-            <RemoteName>libHash_FMX.so</RemoteName>
-            <DeployClass>AndroidLibnativeArmeabiv7aFile</DeployClass>
-            <Operation>1</Operation>
+        <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android64__Demos\Hash_FMX.classes" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Hash_FMX\classes\</RemoteDir>
+            <RemoteName>Hash_FMX.classes</RemoteName>
+            <DeployClass>AndroidClasses</DeployClass>
+            <Operation>64</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
@@ -384,6 +366,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android__Demos\libHash_FMX.so" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
+            <RemoteName>libHash_FMX.so</RemoteName>
+            <DeployClass>ProjectOutput_Android32</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="Hash72.png" Condition="'$(Config)'=='Release'">
             <RemoteDir>Hash_FMX\res\drawable-hdpi\</RemoteDir>
             <RemoteName>ic_launcher.png</RemoteName>
@@ -490,15 +481,6 @@
             <RemoteDir>Hash_FMX\res\drawable-mdpi\</RemoteDir>
             <RemoteName>ic_launcher.png</RemoteName>
             <DeployClass>Android_LauncherIcon48</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="$(NDKBasePath)\prebuilt\android-arm\gdbserver\gdbserver" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
-            <RemoteName>gdbserver</RemoteName>
-            <DeployClass>AndroidGDBServer</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
