@@ -27,7 +27,7 @@ uses
   {$ELSE}
   FMX.Grid.Style,
   {$ENDIF}
-  FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase;
+  FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase, FMX.ComboEdit;
 
 type
   /// <summary>
@@ -61,7 +61,17 @@ type
     EditCipherText: TEdit;
     ButtonEncrypt: TButton;
     ButtonDecrypt: TButton;
+    LayoutEncrypt: TLayout;
     LabelVersion: TLabel;
+    LayoutAuthentication: TLayout;
+    Label11: TLabel;
+    EditAuthenticatedData: TEdit;
+    Label12: TLabel;
+    EditExpectedAuthenthicationResult: TEdit;
+    Label13: TLabel;
+    Label14: TLabel;
+    EditCalculatedAuthehticationValue: TEdit;
+    ComboEditLengthCalculatedValue: TComboEdit;
     procedure FormResize(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
@@ -79,6 +89,7 @@ type
                          var OutputFormatting : TDECFormatClass): Boolean;
     function GetCipherAlgorithm(var Cipher: TDECCipher): Boolean;
     procedure UpdateIsAuthenticated;
+    procedure UpdateLayoutPositions;
   public
   end;
 
@@ -277,7 +288,7 @@ end;
 
 procedure TFormMain.UpdateIsAuthenticated;
 var
-  Cipher : TDECCipher;
+  Cipher : TDECCipher;                   //234
 begin
   if (not EditInitVector.Text.IsEmpty) and (not EditFiller.Text.IsEmpty) then
   begin
@@ -285,20 +296,43 @@ begin
     begin
       try
         if Cipher.IsAuthenticated then
-          StringGridContext.Cells[1, 7] := 'yes'
+        begin
+          StringGridContext.Cells[1, 7] := 'yes';
+          LayoutAuthentication.Visible := true;
+          UpdateLayoutPositions;
+        end
         else
+        begin
           StringGridContext.Cells[1, 7] := 'no';
+          LayoutAuthentication.Visible := false;
+          UpdateLayoutPositions;
+        end;
       finally
         Cipher.Free;
       end;
     end
     else
+    begin
       StringGridContext.Cells[1, 7] := 'no';
+      LayoutAuthentication.Visible := false;
+      UpdateLayoutPositions;
+    end;
   end
   else
+  begin
     StringGridContext.Cells[1, 7] := 'no';
+    LayoutAuthentication.Visible := false;
+    UpdateLayoutPositions;
+  end;
 end;
 
+procedure TFormMain.UpdateLayoutPositions;
+begin
+  if LayoutAuthentication.Visible then
+    LayoutEncrypt.Position.Y := LayoutTop.Height + LayoutAuthentication.Height
+  else
+    LayoutEncrypt.Position.Y := LayoutTop.Height;
+end;
 
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);
 var

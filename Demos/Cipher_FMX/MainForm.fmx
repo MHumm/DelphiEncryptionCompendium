@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Top = 0
   ActiveControl = ComboBoxCipherAlgorithm
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 711
+  ClientHeight = 810
   ClientWidth = 425
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,16 +14,16 @@ object FormMain: TFormMain
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 425.000000000000000000
-    Size.Height = 711.000000000000000000
+    Size.Height = 810.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 0
     Viewport.Width = 409.000000000000000000
-    Viewport.Height = 711.000000000000000000
+    Viewport.Height = 810.000000000000000000
     object LayoutTop: TLayout
-      Position.Y = -320.000000000000000000
-      Size.Width = 425.000000000000000000
-      Size.Height = 1170.000000000000000000
+      Align = Top
+      Size.Width = 409.000000000000000000
+      Size.Height = 714.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label2: TLabel
@@ -41,7 +41,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 44.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
@@ -63,7 +63,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 116.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
@@ -84,7 +84,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 188.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
@@ -108,7 +108,7 @@ object FormMain: TFormMain
         TabOrder = 3
         Position.X = 16.000000000000000000
         Position.Y = 272.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -128,9 +128,10 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 4
+        FilterChar = '0123456789ABCDEFabcdef'
         Position.X = 16.000000000000000000
         Position.Y = 344.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -150,9 +151,10 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 5
+        FilterChar = '0123456789ABCDEFabcdef'
         Position.X = 16.000000000000000000
         Position.Y = 408.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
       end
@@ -171,7 +173,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 476.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
@@ -182,7 +184,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 528.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'checkboxstyle'
@@ -206,13 +208,13 @@ object FormMain: TFormMain
         ClipChildren = True
         Position.X = 16.000000000000000000
         Position.Y = 600.000000000000000000
-        Size.Width = 385.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 100.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'gridstyle'
         TabOrder = 8
-        Viewport.Width = 365.000000000000000000
-        Viewport.Height = 75.000000000000000000
+        Viewport.Width = 349.000000000000000000
+        Viewport.Height = 59.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Property'
           Size.Width = 250.000000000000000000
@@ -221,68 +223,18 @@ object FormMain: TFormMain
           Header = 'Value'
         end
       end
-      object Label9: TLabel
-        AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 720.000000000000000000
-        Size.Width = 49.000000000000000000
-        Size.Height = 16.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'labelstyle'
-        TextSettings.WordWrap = False
-        Text = 'Plain text'
-      end
-      object Label10: TLabel
-        AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 784.000000000000000000
-        Size.Width = 58.000000000000000000
-        Size.Height = 16.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'labelstyle'
-        TextSettings.WordWrap = False
-        Text = 'Cipher text'
-      end
-      object EditPlainText: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        Anchors = [akLeft, akTop, akRight]
-        StyleLookup = 'editstyle'
-        TabOrder = 9
-        Position.X = 16.000000000000000000
-        Position.Y = 752.000000000000000000
-        Size.Width = 385.000000000000000000
-        Size.Height = 22.000000000000000000
-        Size.PlatformDefault = False
-        OnChangeTracking = EditPlainTextChangeTracking
-      end
-      object EditCipherText: TEdit
-        Touch.InteractiveGestures = [LongTap, DoubleTap]
-        Anchors = [akLeft, akTop, akRight]
-        StyleLookup = 'editstyle'
-        TabOrder = 10
-        Position.X = 16.000000000000000000
-        Position.Y = 816.000000000000000000
-        Size.Width = 385.000000000000000000
-        Size.Height = 22.000000000000000000
-        Size.PlatformDefault = False
-      end
-      object ButtonEncrypt: TButton
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
-        Position.Y = 864.000000000000000000
-        Size.Width = 385.000000000000000000
-        Size.Height = 33.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'buttonstyle'
-        TabOrder = 11
-        Text = 'Encrypt'
-        OnClick = ButtonEncryptClick
-      end
+    end
+    object LayoutEncrypt: TLayout
+      Position.Y = 948.000000000000000000
+      Size.Width = 409.000000000000000000
+      Size.Height = 400.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
       object ButtonDecrypt: TButton
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 920.000000000000000000
-        Size.Width = 385.000000000000000000
+        Position.Y = 172.000000000000000000
+        Size.Width = 369.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
@@ -290,16 +242,174 @@ object FormMain: TFormMain
         Text = 'Decrypt'
         OnClick = ButtonDecryptClick
       end
+      object ButtonEncrypt: TButton
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 16.000000000000000000
+        Position.Y = 124.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'buttonstyle'
+        TabOrder = 11
+        Text = 'Encrypt'
+        OnClick = ButtonEncryptClick
+      end
+      object EditCipherText: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        StyleLookup = 'editstyle'
+        TabOrder = 10
+        Position.X = 16.000000000000000000
+        Position.Y = 88.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+      end
+      object EditPlainText: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        StyleLookup = 'editstyle'
+        TabOrder = 9
+        Position.X = 16.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = EditPlainTextChangeTracking
+      end
+      object Label10: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 64.000000000000000000
+        Size.Width = 58.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Cipher text'
+        TabOrder = 13
+      end
+      object Label9: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 49.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Plain text'
+        TabOrder = 14
+      end
       object LabelVersion: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 968.000000000000000000
+        Position.Y = 208.000000000000000000
         Size.Width = 178.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = #169' 2018-2021 by Team DEC V%0:s'
+        TabOrder = 15
+      end
+    end
+    object LayoutAuthentication: TLayout
+      Position.Y = 714.000000000000000000
+      Size.Width = 409.000000000000000000
+      Size.Height = 234.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      object Label11: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 377.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Authenticated data'
+        TabOrder = 4
+      end
+      object EditAuthenticatedData: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 5
+        Position.X = 16.000000000000000000
+        Position.Y = 33.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TextPrompt = 'Optional ASCII text'
+      end
+      object Label12: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 72.000000000000000000
+        Size.Width = 377.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Expected authentication result'
+        TabOrder = 2
+      end
+      object EditExpectedAuthenthicationResult: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 3
+        Position.X = 16.000000000000000000
+        Position.Y = 97.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TextPrompt = 'Optional ASCII text'
+      end
+      object Label13: TLabel
+        Position.X = 16.000000000000000000
+        Position.Y = 136.000000000000000000
+        Size.Width = 377.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        Text = 'Calculated authentication value'
+        TabOrder = 0
+        object Label14: TLabel
+          Position.Y = 64.000000000000000000
+          Size.Width = 377.000000000000000000
+          Size.Height = 17.000000000000000000
+          Size.PlatformDefault = False
+          StyleLookup = 'labelstyle'
+          Text = 'Length calculated value (bit)'
+          TabOrder = 0
+        end
+      end
+      object EditCalculatedAuthehticationValue: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'editstyle'
+        TabOrder = 1
+        ReadOnly = True
+        Position.X = 16.000000000000000000
+        Position.Y = 161.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 22.000000000000000000
+        Size.PlatformDefault = False
+        TextPrompt = 'Result in hex'
+      end
+      object ComboEditLengthCalculatedValue: TComboEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        StyleLookup = 'comboeditstyle'
+        TabOrder = 6
+        ItemHeight = 19.000000000000000000
+        Items.Strings = (
+          '32'
+          '64'
+          '96'
+          '104'
+          '112'
+          '120'
+          '128')
+        ItemIndex = 6
+        Text = '128'
+        Position.X = 285.000000000000000000
+        Position.Y = 200.000000000000000000
       end
     end
   end
