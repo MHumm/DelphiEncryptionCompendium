@@ -21,9 +21,9 @@ object FormMain: TFormMain
     Viewport.Width = 436.000000000000000000
     Viewport.Height = 790.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 492.000000000000000000
+      Position.Y = 520.000000000000000000
       Size.Width = 425.000000000000000000
-      Size.Height = 393.000000000000000000
+      Size.Height = 450.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label3: TLabel
@@ -98,7 +98,7 @@ object FormMain: TFormMain
     object LayoutTop: TLayout
       Margins.Right = 10.000000000000000000
       Size.Width = 425.000000000000000000
-      Size.Height = 492.000000000000000000
+      Size.Height = 520.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object ComboBoxHashFunction: TComboBox
@@ -192,7 +192,7 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         Enabled = False
         Position.X = 16.000000000000000000
-        Position.Y = 433.000000000000000000
+        Position.Y = 457.000000000000000000
         Size.Width = 401.000000000000000000
         Size.Height = 19.000000000000000000
         Size.PlatformDefault = False
@@ -203,7 +203,7 @@ object FormMain: TFormMain
       object LabelHashLength: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 460.000000000000000000
+        Position.Y = 484.000000000000000000
         Size.Width = 242.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -213,6 +213,7 @@ object FormMain: TFormMain
       end
       object EditHashLength: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 13
         MaxLength = 4
@@ -220,7 +221,7 @@ object FormMain: TFormMain
         Text = '64'
         TextSettings.HorzAlign = Trailing
         Position.X = 317.000000000000000000
-        Position.Y = 444.000000000000000000
+        Position.Y = 468.000000000000000000
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -239,6 +240,7 @@ object FormMain: TFormMain
       end
       object EditRounds: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 11
         MaxLength = 4
@@ -277,18 +279,22 @@ object FormMain: TFormMain
         Text = 'Supports incomplete last byte'
       end
       object LabelLastByteBits: TLabel
+        Anchors = [akLeft, akTop, akRight]
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 390.000000000000000000
-        Size.Width = 209.000000000000000000
-        Size.Height = 16.000000000000000000
+        Size.Width = 293.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
-        Text = 'Number of used bits of last byte'
+        TextSettings.VertAlign = Leading
+        TextSettings.Trimming = Word
+        Text = 'Number of used bits of last byte (0 = use complete byte)'
         TabOrder = 8
       end
       object EditLastByteBits: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 9
         MaxLength = 4
@@ -300,18 +306,6 @@ object FormMain: TFormMain
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-      end
-      object Label1: TLabel
-        StyledSettings = [Family, Size, Style]
-        Position.X = 16.000000000000000000
-        Position.Y = 408.000000000000000000
-        Size.Width = 137.000000000000000000
-        Size.Height = 17.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'labelstyle'
-        TextSettings.FontColor = claDimgray
-        Text = '(0 = use complete byte)'
-        TabOrder = 14
       end
     end
   end

@@ -53,7 +53,6 @@ type
     CheckBoxLastByteBitSize: TCheckBox;
     LabelLastByteBits: TLabel;
     EditLastByteBits: TEdit;
-    Label1: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
     procedure ComboBoxHashFunctionChange(Sender: TObject);
