@@ -68,6 +68,7 @@ type
     procedure ButtonEncryptClick(Sender: TObject);
     procedure EditPlainTextChangeTracking(Sender: TObject);
     procedure ButtonDecryptClick(Sender: TObject);
+    procedure ComboBoxChainingMethodChange(Sender: TObject);
   private
     procedure InitFormatCombos;
     procedure InitCipherCombo;
@@ -77,6 +78,7 @@ type
     function GetSettings(var InputFormatting  : TDECFormatClass;
                          var OutputFormatting : TDECFormatClass): Boolean;
     function GetCipherAlgorithm(var Cipher: TDECCipher): Boolean;
+    procedure UpdateIsAuthenticated;
   public
   end;
 
@@ -234,11 +236,18 @@ begin
 end;
 
 function TFormMain.GetSelectedCipherMode:TCipherMode;
+var
+  ModeStr : string;
 begin
+  ModeStr := ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex];
+
+  if ModeStr.Contains('(') then
+    ModeStr := ModeStr.Remove(ModeStr.IndexOf('(')-1);
+
   // Determine selected block chaining method via RTTI (runtime type information)
   result := TCipherMode(System.TypInfo.GetEnumValue(
               TypeInfo(TCipherMode),
-              ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex]));
+              ModeStr));
 end;
 
 procedure TFormMain.ShowErrorMessage(ErrorMsg: string);
@@ -261,6 +270,36 @@ begin
   {$ENDIF}
 end;
 
+procedure TFormMain.ComboBoxChainingMethodChange(Sender: TObject);
+begin
+  UpdateIsAuthenticated;
+end;
+
+procedure TFormMain.UpdateIsAuthenticated;
+var
+  Cipher : TDECCipher;
+begin
+  if (not EditInitVector.Text.IsEmpty) and (not EditFiller.Text.IsEmpty) then
+  begin
+    if GetCipherAlgorithm(Cipher) then
+    begin
+      try
+        if Cipher.IsAuthenticated then
+          StringGridContext.Cells[1, 7] := 'yes'
+        else
+          StringGridContext.Cells[1, 7] := 'no';
+      finally
+        Cipher.Free;
+      end;
+    end
+    else
+      StringGridContext.Cells[1, 7] := 'no';
+  end
+  else
+    StringGridContext.Cells[1, 7] := 'no';
+end;
+
+
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);
 var
   Context : TCipherContext;
@@ -268,7 +307,7 @@ begin
   Context := TDECCipher.ClassByName(
     ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Context;
 
-  StringGridContext.RowCount := 7;
+  StringGridContext.RowCount := 8;
   StringGridContext.Cells[0, 0] := 'Key size (bit)';
   StringGridContext.Cells[0, 1] := 'Block size (bit)';
   StringGridContext.Cells[0, 2] := 'Buffer size (bit)';
@@ -276,6 +315,7 @@ begin
   StringGridContext.Cells[0, 4] := 'User save';
   StringGridContext.Cells[0, 5] := 'Cipher mode';
   StringGridContext.Cells[0, 6] := 'Cipher key';
+  StringGridContext.Cells[0, 7] := 'Authenticated';
 
   StringGridContext.Cells[1, 0] :=  IntToStr(Context.KeySize*8);
   StringGridContext.Cells[1, 1] :=  IntToStr(Context.BlockSize*8);
@@ -292,6 +332,8 @@ begin
     StringGridContext.Cells[1, 6] := 'symmetric'
   else
     StringGridContext.Cells[1, 6] := 'asymmetric';
+
+  UpdateIsAuthenticated;
 end;
 
 procedure TFormMain.EditPlainTextChangeTracking(Sender: TObject);

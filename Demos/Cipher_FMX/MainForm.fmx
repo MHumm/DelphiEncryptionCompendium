@@ -21,6 +21,7 @@ object FormMain: TFormMain
     Viewport.Width = 409.000000000000000000
     Viewport.Height = 711.000000000000000000
     object LayoutTop: TLayout
+      Position.Y = -320.000000000000000000
       Size.Width = 425.000000000000000000
       Size.Height = 1170.000000000000000000
       Size.PlatformDefault = False
@@ -175,6 +176,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 6
+        OnChange = ComboBoxChainingMethodChange
       end
       object CheckBoxLiveCalc: TCheckBox
         Anchors = [akLeft, akTop, akRight]
