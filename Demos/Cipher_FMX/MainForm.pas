@@ -23,11 +23,12 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
   FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
+  FMX.Grid, FMX.ScrollBox, FMX.ComboEdit,
   {$IF RTLVersion < 31}
   {$ELSE}
   FMX.Grid.Style,
   {$ENDIF}
-  FMX.Grid, FMX.ScrollBox, DECCipherBase, DECFormatBase, FMX.ComboEdit;
+  DECCipherBase, DECFormatBase, DECCipherModes;
 
 type
   /// <summary>
@@ -87,7 +88,7 @@ type
     function GetSelectedCipherMode: TCipherMode;
     function GetSettings(var InputFormatting  : TDECFormatClass;
                          var OutputFormatting : TDECFormatClass): Boolean;
-    function GetCipherAlgorithm(var Cipher: TDECCipher): Boolean;
+    function GetCipherAlgorithm(var Cipher: TDECCipherModes): Boolean;
     procedure UpdateIsAuthenticated;
     procedure UpdateLayoutPositions;
   public
@@ -100,8 +101,8 @@ implementation
 
 uses
   System.TypInfo, Generics.Collections, FMX.Platform,
-  DECBaseClass, DECFormat, DECCipherModes,
-  DECCipherFormats, DECCiphers, DECUtil
+  DECBaseClass, DECFormat,
+  DECCipherFormats, DECCiphers, DECUtil, DECCipherInterface
   {$IFDEF Android}
   ,
   Androidapi.JNI.GraphicsContentViewText,
@@ -113,7 +114,7 @@ uses
 
 procedure TFormMain.ButtonDecryptClick(Sender: TObject);
 var
-  Cipher           : TDECCipher;
+  Cipher           : TDECCipherModes;
   InputFormatting  : TDECFormatClass;
   OutputFormatting : TDECFormatClass;
   InputBuffer      : TBytes;
@@ -148,7 +149,7 @@ end;
 
 procedure TFormMain.ButtonEncryptClick(Sender: TObject);
 var
-  Cipher           : TDECCipher;
+  Cipher           : TDECCipherModes;
   InputFormatting  : TDECFormatClass;
   OutputFormatting : TDECFormatClass;
   InputBuffer      : TBytes;
@@ -167,10 +168,28 @@ begin
 
       if InputFormatting.IsValid(InputBuffer) then
       begin
+        // Set all authentication related properties
+        if Cipher.IsAuthenticated then
+        begin
+          Cipher.AuthenticationResultBitLength :=
+            ComboEditLengthCalculatedValue.Text.ToInteger;
+
+          Cipher.DataToAuthenticate :=
+            BytesOf(RawByteString(EditAuthenticatedData.Text));
+
+          Cipher.ExpectedAuthenticationResult :=
+            BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text));
+        end;
+
         OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
         (Cipher as TDECFormattedCipher).Done;
 
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
+
+        if Cipher.IsAuthenticated then
+          EditCalculatedAuthehticationValue.Text :=
+           StringOf(Cipher.CalculatedAuthenticationResult);
+           //StringOf(TFormat_HEX.Encode(Cipher.CalculatedAuthenticationResult));
       end
       else
         ShowErrorMessage('Input has wrong format');
@@ -220,22 +239,22 @@ begin
   result := true;
 end;
 
-function TFormMain.GetCipherAlgorithm(var Cipher : TDECCipher):Boolean;
+function TFormMain.GetCipherAlgorithm(var Cipher : TDECCipherModes):Boolean;
 begin
   result := false;
 
   // Find the class type of the selected cipher class and create an instance of it
   Cipher := TDECCipher.ClassByName(
-    ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create;
+    ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create as TDECCipherModes;
 
   if TFormat_HEX.IsValid(RawByteString(EditInitVector.Text)) and
      TFormat_HEX.IsValid(RawByteString(EditFiller.Text)) then
   begin
+    Cipher.Mode := GetSelectedCipherMode;
+
     Cipher.Init(RawByteString(EditKey.Text),
                 TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
                 StrToInt('0x' + EditFiller.Text));
-
-    Cipher.Mode := GetSelectedCipherMode;
   end
   else
   begin
@@ -288,7 +307,7 @@ end;
 
 procedure TFormMain.UpdateIsAuthenticated;
 var
-  Cipher : TDECCipher;                   //234
+  Cipher : TDECCipherModes;
 begin
   if (not EditInitVector.Text.IsEmpty) and (not EditFiller.Text.IsEmpty) then
   begin

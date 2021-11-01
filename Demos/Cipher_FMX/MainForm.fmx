@@ -213,14 +213,18 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'gridstyle'
         TabOrder = 8
+        Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, Tabs, Header, AutoDisplacement]
         Viewport.Width = 349.000000000000000000
-        Viewport.Height = 59.000000000000000000
+        Viewport.Height = 75.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Property'
+          ReadOnly = True
           Size.Width = 250.000000000000000000
         end
         object StringColumn2: TStringColumn
           Header = 'Value'
+          ReadOnly = True
+          Size.Width = 95.000000000000000000
         end
       end
     end
@@ -328,12 +332,12 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         Text = 'Authenticated data'
-        TabOrder = 4
+        TabOrder = 6
       end
       object EditAuthenticatedData: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 5
+        TabOrder = 1
         Position.X = 16.000000000000000000
         Position.Y = 33.000000000000000000
         Size.Width = 369.000000000000000000
@@ -349,12 +353,12 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         Text = 'Expected authentication result'
-        TabOrder = 2
+        TabOrder = 5
       end
       object EditExpectedAuthenthicationResult: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 3
+        TabOrder = 2
         Position.X = 16.000000000000000000
         Position.Y = 97.000000000000000000
         Size.Width = 369.000000000000000000
@@ -384,7 +388,7 @@ object FormMain: TFormMain
       object EditCalculatedAuthehticationValue: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 1
+        TabOrder = 3
         ReadOnly = True
         Position.X = 16.000000000000000000
         Position.Y = 161.000000000000000000
@@ -396,7 +400,7 @@ object FormMain: TFormMain
       object ComboEditLengthCalculatedValue: TComboEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'comboeditstyle'
-        TabOrder = 6
+        TabOrder = 4
         ItemHeight = 19.000000000000000000
         Items.Strings = (
           '32'

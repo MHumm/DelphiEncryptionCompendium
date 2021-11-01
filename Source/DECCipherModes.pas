@@ -468,7 +468,6 @@ begin
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
     cmGCM :   FGCM.EncodeGCM(TBytes(@Source), TBytes(@Dest), DataSize);
-//    cmGCM :   FGCM.EncodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
