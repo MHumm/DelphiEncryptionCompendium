@@ -88,8 +88,31 @@ type
     function GetSelectedCipherMode: TCipherMode;
     function GetSettings(var InputFormatting  : TDECFormatClass;
                          var OutputFormatting : TDECFormatClass): Boolean;
+    /// <summary>
+    ///   Creates an instance of the selected cipher algorithm and initializes it.
+    ///   It is expected that all selectable (means all registered) algorithms
+    ///   inherit from TDECCipherModes at least.
+    /// </summary>
+    /// <param name="Cipher">
+    ///   The created instance.
+    /// </param>
+    /// <returns>
+    ///   true if the entered initialization vector and filler were properly
+    ///   hex formatted so the instance could properly created and initialized
+    ///   with the key, initialization vector and filler.
+    /// </returns>
     function GetCipherAlgorithm(var Cipher: TDECCipherModes): Boolean;
+    /// <summary>
+    ///   Checks whether the selected cipher block chaining mode is an
+    ///   authenticated one (requires selection of a compatible cipher algorithm
+    ///   prior to that) and displays the result in the cipher properties grid.
+    /// </summary>
     procedure UpdateIsAuthenticated;
+    /// <summary>
+    ///   If an authehticated cipher mode is selected the layout with the
+    ///   parameters for that one is made visible and the encryption/decryption
+    ///    layout is placed below it.
+    /// </summary>
     procedure UpdateLayoutPositions;
   public
   end;
@@ -133,6 +156,19 @@ begin
 
       if InputFormatting.IsValid(InputBuffer) then
       begin
+        // Set all authentication related properties
+        if Cipher.IsAuthenticated then
+        begin
+          Cipher.AuthenticationResultBitLength :=
+            ComboEditLengthCalculatedValue.Text.ToInteger;
+
+          Cipher.DataToAuthenticate :=
+            BytesOf(RawByteString(EditAuthenticatedData.Text));
+
+          Cipher.ExpectedAuthenticationResult :=
+            BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text));
+        end;
+
         OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
 
         EditPlainText.Text := string(DECUtil.BytesToRawString(InputFormatting.Encode(OutputBuffer)));
@@ -189,7 +225,6 @@ begin
         if Cipher.IsAuthenticated then
           EditCalculatedAuthehticationValue.Text :=
            StringOf(Cipher.CalculatedAuthenticationResult);
-           //StringOf(TFormat_HEX.Encode(Cipher.CalculatedAuthenticationResult));
       end
       else
         ShowErrorMessage('Input has wrong format');
@@ -311,27 +346,36 @@ var
 begin
   if (not EditInitVector.Text.IsEmpty) and (not EditFiller.Text.IsEmpty) then
   begin
-    if GetCipherAlgorithm(Cipher) then
-    begin
-      try
-        if Cipher.IsAuthenticated then
-        begin
-          StringGridContext.Cells[1, 7] := 'yes';
-          LayoutAuthentication.Visible := true;
-          UpdateLayoutPositions;
-        end
-        else
-        begin
-          StringGridContext.Cells[1, 7] := 'no';
-          LayoutAuthentication.Visible := false;
-          UpdateLayoutPositions;
+    try
+      if GetCipherAlgorithm(Cipher) then
+      begin
+        try
+          if Cipher.IsAuthenticated then
+          begin
+            StringGridContext.Cells[1, 7] := 'yes';
+            LayoutAuthentication.Visible := true;
+            UpdateLayoutPositions;
+          end
+          else
+          begin
+            StringGridContext.Cells[1, 7] := 'no';
+            LayoutAuthentication.Visible := false;
+            UpdateLayoutPositions;
+          end;
+        finally
+          Cipher.Free;
         end;
-      finally
-        Cipher.Free;
+      end
+      else
+      begin
+        StringGridContext.Cells[1, 7] := 'no';
+        LayoutAuthentication.Visible := false;
+        UpdateLayoutPositions;
       end;
-    end
-    else
-    begin
+    except
+      ShowErrorMessage('Invalid cipher algorithm selected for selected block '+
+                       'chaining mode');
+
       StringGridContext.Cells[1, 7] := 'no';
       LayoutAuthentication.Visible := false;
       UpdateLayoutPositions;
