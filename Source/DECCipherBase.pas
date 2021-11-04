@@ -1082,15 +1082,22 @@ end;
 {$IFDEF DELPHIORBCB}
 procedure ModuleUnload(Instance: NativeInt);
 var // automaticaly deregistration/releasing
-  i: Integer;
+  i: Int64;
 begin
   if TDECCipher.ClassList <> nil then
   begin
-    for i := TDECCipher.ClassList.Count - 1 downto 0 do
+    // EZ - fix wrong code as TDECCipher.ClassList[i] dose not take the index as a param, one has to provide the identity of the registred DEC-class here because ClassList is a TDictionary and not TList
+    for i in TDECCipher.ClassList.Keys do
+    begin
+      if NativeInt(FindClassHInstance(TClass(TDECCipher.ClassList[i]))) = Instance then
+        TDECCipher.ClassList.Remove(i);
+    end;
+    // original code:
+    {for i := TDECCipher.ClassList.Count - 1 downto 0 do
     begin
       if NativeInt(FindClassHInstance(TClass(TDECCipher.ClassList[i]))) = Instance then
         TDECCipher.ClassList.Remove(TDECCipher.ClassList[i].Identity);
-    end;
+    end;}
   end;
 end;
 {$ENDIF DELPHIORBCB}
