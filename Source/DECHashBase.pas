@@ -907,14 +907,14 @@ end;
 {$IFDEF DELPHIORBCB}
 procedure ModuleUnload(Instance: NativeInt);
 var // automaticaly deregistration/releasing
-  i: Integer;
+  i: Int64;
 begin
   if TDECHash.ClassList <> nil then
   begin
-    for i := TDECHash.ClassList.Count - 1 downto 0 do
+    for i in TDECHash.ClassList.Keys do
     begin
       if NativeInt(FindClassHInstance(TClass(TDECHash.ClassList[i]))) = Instance then
-        TDECHash.ClassList.Remove(TDECHash.ClassList[i].Identity);
+        TDECHash.ClassList.Remove(i);
     end;
   end;
 end;

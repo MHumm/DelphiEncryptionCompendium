@@ -603,15 +603,15 @@ end;
 
 procedure ModuleUnload(Instance: NativeInt);
 var
-  i: Integer;
+  i: Int64;
 begin
   if TDECFormat.ClassList <> nil then
   begin
-    for i := TDECFormat.ClassList.Count - 1 downto 0 do
+    for i in TDECFormat.ClassList.Keys do
     begin
       if NativeInt(FindClassHInstance(TClass(TDECFormat.ClassList[i]))) = Instance
       then
-        TDECFormat.ClassList.Remove(TDECFormat.ClassList[i].Identity);
+        TDECFormat.ClassList.Remove(i);
     end;
   end;
 end;
