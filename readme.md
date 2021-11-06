@@ -37,7 +37,7 @@ The FMX based demos are even available via Google play as "DEC cipher demo" and
 "DEC hash demo".
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.3 you will find further files with information about 
+In the root folder of DEC V6.4 you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 Also take the time to read DEC61.pdf in the *Docs* folder or look at the demos 
 provided in the *Demos* subfolder.
