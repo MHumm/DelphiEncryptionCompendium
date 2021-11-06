@@ -413,9 +413,11 @@ resourcestring
   sInvalidModeForMethod = 'Invalid mode for this method. Mode must be %0:s';
 
   /// <summary>
-  ///   Calculated authentication value on decryption does not match expected one
+  ///   Exception message when calculated authentication value does not match
+  ///   given expected one
   /// </summary>
-  sInvalidAuthenticationValue = 'Authentication value of decryption is invalid';
+  sInvalidAuthenticationValue = 'Calculated authentication value does not match '+
+                                'given expected value';
 
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin

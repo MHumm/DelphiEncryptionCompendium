@@ -307,8 +307,8 @@ var
   Entry  : TGCMTestSetEntry;
   Index  : Byte;
 begin
-  Assert(FileName <> '', 'No file to load specified');
-  Assert(Assigned(TestData), 'Unassigned test data list given');
+  System.Assert(FileName <> '', 'No file to load specified');
+  System.Assert(Assigned(TestData), 'Unassigned test data list given');
 
   Entry.Clear;
   Index := 0;

@@ -94,12 +94,12 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 240.000000000000000000
-        Size.Width = 117.000000000000000000
+        Size.Width = 216.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Encryption key (ASCII)'
+        Text = 'Encryption key (hexadecimal, lower case)'
       end
       object EditKey: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -116,12 +116,12 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 312.000000000000000000
-        Size.Width = 130.000000000000000000
+        Size.Width = 191.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Init vector (hexadecimal)'
+        Text = 'Init vector (hexadecimal, lower case)'
       end
       object EditInitVector: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -139,12 +139,12 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 16.000000000000000000
         Position.Y = 384.000000000000000000
-        Size.Width = 128.000000000000000000
+        Size.Width = 190.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Filler byte (hexadecimal)'
+        Text = 'Filler byte (hexadecimal, lower case)'
       end
       object EditFiller: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -343,7 +343,7 @@ object FormMain: TFormMain
         Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TextPrompt = 'Optional ASCII text'
+        TextPrompt = 'Optional, hexadecimal lower case'
       end
       object Label12: TLabel
         Position.X = 16.000000000000000000
@@ -364,7 +364,7 @@ object FormMain: TFormMain
         Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
-        TextPrompt = 'Optional ASCII text'
+        TextPrompt = 'Optional, hexadecimal lower case'
       end
       object Label13: TLabel
         Position.X = 16.000000000000000000

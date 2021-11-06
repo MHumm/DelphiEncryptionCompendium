@@ -81,13 +81,52 @@ type
     procedure ButtonDecryptClick(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
   private
+    /// <summary>
+    ///   Add all registered formats to the combobox and select TFormat_Copy
+    ///   if available
+    /// </summary>
     procedure InitFormatCombos;
+    /// <summary>
+    ///   Add all registered ciphers except TCipher_Null to the combobox
+    /// </summary>
     procedure InitCipherCombo;
+    /// <summary>
+    ///   Add all defined cipher block chaining modes to the combo box
+    /// </summary>
     procedure InitCipherModes;
+    /// <summary>
+    ///   Displays an error message in a platform independent way
+    /// </summary>
+    /// <param name="ErrorMsg">
+    ///   Message to display
+    /// </param>
     procedure ShowErrorMessage(ErrorMsg: string);
+    /// <summary>
+    ///   Returns the selected block chaining mode
+    /// </summary>
     function GetSelectedCipherMode: TCipherMode;
+    /// <summary>
+    ///   Get the settings for the input and output formatting and checks whether
+    ///   the user has entered any key, input vector and filler byte values.
+    /// </summary>
+    /// <param name="InputFormatting">
+    ///   An instance of the input format class selected will be returned here
+    /// </param>
+    /// <param name="OutputFormatting">
+    ///   An instance of the output format class selected will be returned here
+    /// </param>
+    /// <returns>
+    ///   true if input and output instances could be created and the user has
+    ///   entered values for key, input vector and filler byte. False if one of
+    ///   the conditions was not met.
+    /// </returns>
     function GetSettings(var InputFormatting  : TDECFormatClass;
                          var OutputFormatting : TDECFormatClass): Boolean;
+    /// <summary>
+    ///   Set all authehtication related properties of the cipher isntance to
+    ///   the values the user entered
+    /// </summary>
+    procedure SetAuthenticationParams(Cipher : TDECCipherModes);
     /// <summary>
     ///   Creates an instance of the selected cipher algorithm and initializes it.
     ///   It is expected that all selectable (means all registered) algorithms
@@ -157,19 +196,22 @@ begin
       if InputFormatting.IsValid(InputBuffer) then
       begin
         // Set all authentication related properties
-        if Cipher.IsAuthenticated then
-        begin
-          Cipher.AuthenticationResultBitLength :=
-            ComboEditLengthCalculatedValue.Text.ToInteger;
+        SetAuthenticationParams(Cipher);
 
-          Cipher.DataToAuthenticate :=
-            BytesOf(RawByteString(EditAuthenticatedData.Text));
-
-          Cipher.ExpectedAuthenticationResult :=
-            BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text));
+        try
+          OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
+          // in case of an authenticated cipher mode like cmGCM the Done method
+          // will raise an exceptino when the calculated authentication value does
+          // not match the given expected one
+          (Cipher as TDECFormattedCipher).Done;
+        except
+          On e:Exception do
+            ShowErrorMessage('Failure in decryption:' + sLineBreak + e.Message);
         end;
 
-        OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
+        if Cipher.IsAuthenticated then
+          EditCalculatedAuthehticationValue.Text :=
+            StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
 
         EditPlainText.Text := string(DECUtil.BytesToRawString(InputFormatting.Encode(OutputBuffer)));
       end
@@ -205,26 +247,21 @@ begin
       if InputFormatting.IsValid(InputBuffer) then
       begin
         // Set all authentication related properties
-        if Cipher.IsAuthenticated then
-        begin
-          Cipher.AuthenticationResultBitLength :=
-            ComboEditLengthCalculatedValue.Text.ToInteger;
+        SetAuthenticationParams(Cipher);
 
-          Cipher.DataToAuthenticate :=
-            BytesOf(RawByteString(EditAuthenticatedData.Text));
-
-          Cipher.ExpectedAuthenticationResult :=
-            BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text));
+        try
+          OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
+          (Cipher as TDECFormattedCipher).Done;
+        except
+          On e:Exception do
+            ShowErrorMessage('Failure in encryption:' + sLineBreak + e.Message);
         end;
-
-        OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputFormatting.Decode(InputBuffer));
-        (Cipher as TDECFormattedCipher).Done;
 
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
 
         if Cipher.IsAuthenticated then
           EditCalculatedAuthehticationValue.Text :=
-           StringOf(Cipher.CalculatedAuthenticationResult);
+            StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
       end
       else
         ShowErrorMessage('Input has wrong format');
@@ -234,6 +271,24 @@ begin
   end
   else
     ShowErrorMessage('No cipher algorithm selected');
+end;
+
+procedure TFormMain.SetAuthenticationParams(Cipher : TDECCipherModes);
+begin
+  Assert(Assigned(Cipher));
+
+  // Set all authentication related properties
+  if Cipher.IsAuthenticated then
+  begin
+    Cipher.AuthenticationResultBitLength :=
+      ComboEditLengthCalculatedValue.Text.ToInteger;
+
+    Cipher.DataToAuthenticate :=
+      TFormat_HexL.Decode(BytesOf(RawByteString(EditAuthenticatedData.Text)));
+
+    Cipher.ExpectedAuthenticationResult :=
+      TFormat_HexL.Decode(BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text)));
+  end;
 end;
 
 function TFormMain.GetSettings(var InputFormatting  : TDECFormatClass;
@@ -282,13 +337,13 @@ begin
   Cipher := TDECCipher.ClassByName(
     ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create as TDECCipherModes;
 
-  if TFormat_HEX.IsValid(RawByteString(EditInitVector.Text)) and
-     TFormat_HEX.IsValid(RawByteString(EditFiller.Text)) then
+  if TFormat_HEXL.IsValid(RawByteString(EditInitVector.Text)) and
+     TFormat_HEXL.IsValid(RawByteString(EditFiller.Text)) then
   begin
     Cipher.Mode := GetSelectedCipherMode;
 
-    Cipher.Init(RawByteString(EditKey.Text),
-                TFormat_HEX.Decode(RawByteString(EditInitVector.Text)),
+    Cipher.Init(BytesOf(TFormat_HexL.Decode(RawByteString(EditKey.Text))),
+                BytesOf(TFormat_HexL.Decode(RawByteString(EditInitVector.Text))),
                 StrToInt('0x' + EditFiller.Text));
   end
   else

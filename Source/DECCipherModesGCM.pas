@@ -591,11 +591,15 @@ begin
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 
-//  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
-//    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+  // Check for correct authentication result is in Done of DECCipherModes
+  //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
+  //    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
 
-//  if not IsEqual(authenticaton_tag, ba_tag) then
-//    SetLength(plaintext, 0); // NIST FAIL => pt=''
+  // In difference to the NIST recommendation we do not discard plaintext if
+  // authentication failed to make data recovery possible. But since we throw
+  // an exception the user will get notified that there's something wrong
+  //  if not IsEqual(authenticaton_tag, ba_tag) then
+  //    SetLength(plaintext, 0); // NIST FAIL => pt=''
 end;
 
 procedure TGCM.EncodeGCM(Source, Dest: TBytes; Size: Integer);
