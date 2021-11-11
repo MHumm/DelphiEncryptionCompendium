@@ -95,12 +95,16 @@ type
     /// </summary>
     procedure InitCipherModes;
     /// <summary>
-    ///   Displays an error message in a platform independent way
+    ///   Displays a message in a platform independent way
     /// </summary>
-    /// <param name="ErrorMsg">
+    /// <param name="Msg">
     ///   Message to display
     /// </param>
-    procedure ShowErrorMessage(ErrorMsg: string);
+    /// <param name="MessageType">
+    ///   Type of the message: mtError...
+    /// </param>
+    procedure ShowMessage(Msg: string;
+                          MessageType:TMsgDlgType);
     /// <summary>
     ///   Returns the selected block chaining mode
     /// </summary>
@@ -181,6 +185,8 @@ var
   OutputFormatting : TDECFormatClass;
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
+  AuthenticationOK : Boolean; // for authenticated ciphers: is the calculated
+                              // authentication result value correct?
 begin
   if not GetSettings(InputFormatting, OutputFormatting) then
     exit;
@@ -197,6 +203,7 @@ begin
       begin
         // Set all authentication related properties
         SetAuthenticationParams(Cipher);
+        AuthenticationOK := false;
 
         try
           OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
@@ -204,25 +211,35 @@ begin
           // will raise an exceptino when the calculated authentication value does
           // not match the given expected one
           (Cipher as TDECFormattedCipher).Done;
+          // If we managed to get to here, the calculated authentication value
+          // if we're in an authenticated mode is ok.
+          AuthenticationOK := true;
         except
           On e:Exception do
-            ShowErrorMessage('Failure in decryption:' + sLineBreak + e.Message);
+            ShowMessage('Failure in decryption:' + sLineBreak + e.Message,
+                        TMsgDlgType.mtError);
         end;
 
         if Cipher.IsAuthenticated then
+        begin
           EditCalculatedAuthehticationValue.Text :=
             StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
+
+          if AuthenticationOK then
+            ShowMessage('Calculated authentication result value is correct!',
+                        TMsgDlgType.mtInformation);
+        end;
 
         EditPlainText.Text := string(DECUtil.BytesToRawString(InputFormatting.Encode(OutputBuffer)));
       end
       else
-        ShowErrorMessage('Input has wrong format');
+        ShowMessage('Input has wrong format', TMsgDlgType.mtError);
     finally
       Cipher.Free;
     end;
   end
   else
-    ShowErrorMessage('No cipher algorithm selected');
+    ShowMessage('No cipher algorithm selected', TMsgDlgType.mtError);
 end;
 
 procedure TFormMain.ButtonEncryptClick(Sender: TObject);
@@ -254,7 +271,8 @@ begin
           (Cipher as TDECFormattedCipher).Done;
         except
           On e:Exception do
-            ShowErrorMessage('Failure in encryption:' + sLineBreak + e.Message);
+            ShowMessage('Failure in encryption:' + sLineBreak + e.Message,
+                        TMsgDlgType.mtError);
         end;
 
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
@@ -264,13 +282,13 @@ begin
             StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
       end
       else
-        ShowErrorMessage('Input has wrong format');
+        ShowMessage('Input has wrong format', TMsgDlgType.mtError);
     finally
       Cipher.Free;
     end;
   end
   else
-    ShowErrorMessage('No cipher algorithm selected');
+    ShowMessage('No cipher algorithm selected', TMsgDlgType.mtError);
 end;
 
 procedure TFormMain.SetAuthenticationParams(Cipher : TDECCipherModes);
@@ -304,7 +322,7 @@ begin
   end
   else
   begin
-    ShowErrorMessage('No input format selected');
+    ShowMessage('No input format selected', TMsgDlgType.mtError);
     exit;
   end;
 
@@ -316,13 +334,14 @@ begin
   end
   else
   begin
-    ShowErrorMessage('No output format selected');
+    ShowMessage('No output format selected', TMsgDlgType.mtError);
     exit;
   end;
 
-  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or EditFiller.Text.IsEmpty then
+  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or
+     (EditFiller.Text.IsEmpty and not (GetSelectedCipherMode in [cmGCM]) ) then
   begin
-    ShowErrorMessage('No key, initialization vector or filler byte given');
+    ShowMessage('No key, initialization vector or filler byte given', TMsgDlgType.mtError);
     exit;
   end;
 
@@ -342,13 +361,19 @@ begin
   begin
     Cipher.Mode := GetSelectedCipherMode;
 
+    // Some cipher block chaining modes do not require a filler byte, but in
+    // order to use the same init method call for all ciphers we need one.
+    while length(EditFiller.Text) < 2 do
+      EditFiller.Text := '0' + EditFiller.Text;
+
     Cipher.Init(BytesOf(TFormat_HexL.Decode(RawByteString(EditKey.Text))),
                 BytesOf(TFormat_HexL.Decode(RawByteString(EditInitVector.Text))),
                 StrToInt('0x' + EditFiller.Text));
   end
   else
   begin
-    ShowErrorMessage('Init vector or filler byte  not given in hexadecimal representation');
+    ShowMessage('Init vector or filler byte  not given in hexadecimal representation',
+                TMsgDlgType.mtError);
     exit;
   end;
 
@@ -370,7 +395,7 @@ begin
               ModeStr));
 end;
 
-procedure TFormMain.ShowErrorMessage(ErrorMsg: string);
+procedure TFormMain.ShowMessage(Msg: string; MessageType:TMsgDlgType);
 {$IF RTLVersion > 30}
 var
   AsyncDlg : IFMXDialogServiceASync;
@@ -379,13 +404,13 @@ begin
   {$IF RTLVersion > 30}
   if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
                                                        IInterface(AsyncDlg)) then
-    AsyncDlg.MessageDialogAsync(Translate(ErrorMsg),
+    AsyncDlg.MessageDialogAsync(Translate(Msg),
              TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
     procedure (const AResult: TModalResult)
     begin
     end);
   {$ELSE}
-  MessageDlg(Translate(ErrorMsg),
+  MessageDlg(Translate(Msg),
              TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
   {$ENDIF}
 end;
@@ -399,7 +424,9 @@ procedure TFormMain.UpdateIsAuthenticated;
 var
   Cipher : TDECCipherModes;
 begin
-  if (not EditInitVector.Text.IsEmpty) and (not EditFiller.Text.IsEmpty) then
+  // for some authenticated cipher modes no filler byte is required
+  if (not EditInitVector.Text.IsEmpty) and
+     ((GetSelectedCipherMode in [cmGCM]) or (not EditFiller.Text.IsEmpty)) then
   begin
     try
       if GetCipherAlgorithm(Cipher) then
@@ -428,8 +455,8 @@ begin
         UpdateLayoutPositions;
       end;
     except
-      ShowErrorMessage('Invalid cipher algorithm selected for selected block '+
-                       'chaining mode');
+      ShowMessage('Invalid cipher algorithm selected for selected block '+
+                  'chaining mode', TMsgDlgType.mtError);
 
       StringGridContext.Cells[1, 7] := 'no';
       LayoutAuthentication.Visible := false;
