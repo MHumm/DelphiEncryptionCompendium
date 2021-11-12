@@ -349,8 +349,8 @@ type
     procedure Done; override;
 
     /// <summary>
-    ///   Returns a list of authentication tag lengs explicitely specified by
-    ///   the official specification of the standard.
+    ///   Returns a list of CalculatedAuthenticationResult lengs explicitely
+    ///   specified by the official specification of the standard.
     /// </summary>
     /// <returns>
     ///   List of bit lengths. If the cipher mode used is not an authenticated
@@ -361,7 +361,9 @@ type
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it. This property contains the data which
-    ///   shall be authenticated in parallel to the encryption.
+    ///   shall be authenticated in parallel to the encryption. Some authenticated
+    ///   modes still generate an authentication result even if no additional
+    ///   data is supplied via this property, e.g. cmGCM is one of those.
     /// </summary>
     property DataToAuthenticate : TBytes
       read   GetDataToAuthenticate
@@ -370,10 +372,11 @@ type
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it.
-    ///   Represents the length of AuthenticatonValue in bit, values as per
-    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain applications,
-    ///   they may be 64 or 32 as well, but the use of these two tag lengths
-    ///   constrains the length of the input data and the lifetime of the key.
+    ///   Represents the length of CalculatedAuthenticationResult in bit, values
+    ///   as per specification are: 128, 120, 112, 104, or 96 bit. For certain
+    ///   applications, they may be 64 or 32 as well, but the use of these two
+    ///   tag lengths constrains the length of the input data and the lifetime
+    ///   of the key.
     /// </summary>
     property AuthenticationResultBitLength : Integer
       read   GetAuthenticationResultBitLength
@@ -388,9 +391,9 @@ type
       read   GetCalcAuthenticatonResult;
 
     /// <summary>
-    ///   Expected authentication tag value, will be compared with actual value
-    ///   when decryption finished. Raises an EDECCipherException if this is
-    ///   called for a cipher mode not supporting authentication.
+    ///   Expected CalculatedAuthenticationResult value, will be compared with
+    ///   actual value when decryption finished. Raises an EDECCipherException
+    ///   if this is called for a cipher mode not supporting authentication.
     /// </summary>
     property ExpectedAuthenticationResult : TBytes
       read   GetExpectedAuthenticationResult
