@@ -657,9 +657,11 @@ begin
 end;
 
 function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
+const
+  BitLengths : TStandardBitLengths = [96, 104, 112, 120, 128];
 begin
   SetLength(Result, 5);
-  Result := [96, 104, 112, 120, 128];
+  Result := BitLengths;
 end;
 
 //

@@ -114,7 +114,12 @@
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
 
-{$LEGACYIFEND ON}
+{$IFDEF CONDITIONALEXPRESSIONS}
+  {$IF CompilerVersion >= 24.0}
+    {$LEGACYIFEND ON}
+  {$IFEND}
+{$ENDIF}
+
 {$DEFINE DELPHIORBCB}
 
 //------------------------------------------------------------------------------
