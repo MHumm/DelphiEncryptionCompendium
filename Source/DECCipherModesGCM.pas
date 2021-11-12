@@ -540,10 +540,16 @@ var
       n := 0;
       div_d := len_d div 16;
       if div_d > 0 then
-      for i := 0 to div_d -1 do
+      { TODO : When 6.5 is started the while should be replaced by the for loop again }
+      //for i := 0 to div_d -1 do
+      i := 0;
+      while (i <= div_d -1) do
+
       begin
         x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
         inc(n, 16);
+        { TODO : Remove the inc when 6.5 implementation starts }
+        inc(i);
       end;
 
       mod_d := len_d mod 16;
@@ -567,17 +573,22 @@ end;
 
 procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
 var
-  i, j, BlockCount : Uint64;
+  i, j, BlockCount : UInt64;
   a_tag : T128;
 begin
   i := 0;
   BlockCount := Size div 16;
 
-  for j := 1 to BlockCount do
+  { TODO : When 6.5 is started the while should be replaced by the for loop again }
+  //for j := 1 to BlockCount do
+  j := 1;
+  while (j <= BlockCount) do
   begin
     INCR(FY);
     P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
     inc(i, 16);
+    { TODO : Remove the inc when 6.5 implementation starts }
+    inc(j);
   end;
 
   if i < Size then
@@ -609,13 +620,19 @@ var
 begin
   i := 0;
   div_len_plain := Size div 16;
-  for j := 1 to div_len_plain do
+
+  { TODO : When 6.5 is started the while should be replaced by the for loop again }
+  //for j := 1 to div_len_plain do
+  j := 1;
+  while (j <= div_len_plain) do
   begin
     INCR(FY);
 
     P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
 
     inc(i,16);
+    { TODO : Remove the inc when 6.5 implementation starts }
+    inc(j);
   end;
 
   if i < Size then
