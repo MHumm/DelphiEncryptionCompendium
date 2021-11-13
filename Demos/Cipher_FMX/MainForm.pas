@@ -22,8 +22,8 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
-  FMX.StdCtrls, FMX.ListBox, FMX.Controls.Presentation, FMX.Edit, System.Rtti,
-  FMX.Grid, FMX.ScrollBox, FMX.ComboEdit,
+  FMX.ListBox, FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti,
+  FMX.Grid, FMX.ScrollBox, FMX.ComboEdit, FMX.Edit, FMX.Platform,
   {$IF RTLVersion < 31}
   {$ELSE}
   FMX.Grid.Style,
@@ -32,38 +32,14 @@ uses
 
 type
   /// <summary>
+  ///   Used for lists of cipher block chaining modes
+  /// </summary>
+  TCipherModes = set of TCipherMode;
+
+  /// <summary>
   ///   Form of the cross platform FMX Cipher demo
   /// </summary>
   TFormMain = class(TForm)
-    VertScrollBox1: TVertScrollBox;
-    LayoutTop: TLayout;
-    Label2: TLabel;
-    ComboBoxCipherAlgorithm: TComboBox;
-    Label5: TLabel;
-    ComboBoxInputFormatting: TComboBox;
-    Label6: TLabel;
-    ComboBoxOutputFormatting: TComboBox;
-    Label1: TLabel;
-    EditKey: TEdit;
-    Label3: TLabel;
-    EditInitVector: TEdit;
-    Label4: TLabel;
-    EditFiller: TEdit;
-    Label7: TLabel;
-    ComboBoxChainingMethod: TComboBox;
-    CheckBoxLiveCalc: TCheckBox;
-    Label8: TLabel;
-    StringGridContext: TStringGrid;
-    StringColumn1: TStringColumn;
-    StringColumn2: TStringColumn;
-    Label9: TLabel;
-    Label10: TLabel;
-    EditPlainText: TEdit;
-    EditCipherText: TEdit;
-    ButtonEncrypt: TButton;
-    ButtonDecrypt: TButton;
-    LayoutEncrypt: TLayout;
-    LabelVersion: TLabel;
     LayoutAuthentication: TLayout;
     Label11: TLabel;
     EditAuthenticatedData: TEdit;
@@ -73,13 +49,42 @@ type
     Label14: TLabel;
     EditCalculatedAuthehticationValue: TEdit;
     ComboEditLengthCalculatedValue: TComboEdit;
-    procedure FormResize(Sender: TObject);
+    VertScrollBox1: TVertScrollBox;
+    LayoutTop: TLayout;
+    Label2: TLabel;
+    ComboBoxCipherAlgorithm: TComboBox;
+    Label7: TLabel;
+    ComboBoxChainingMethod: TComboBox;
+    Label8: TLabel;
+    StringGridContext: TStringGrid;
+    StringColumn1: TStringColumn;
+    StringColumn2: TStringColumn;
+    LayoutCipherSettings: TLayout;
+    Label1: TLabel;
+    EditKey: TEdit;
+    Label3: TLabel;
+    EditInitVector: TEdit;
+    LabelFillerByte: TLabel;
+    EditFiller: TEdit;
+    LayoutEncrypt: TLayout;
+    ButtonDecrypt: TButton;
+    ButtonEncrypt: TButton;
+    EditCipherText: TEdit;
+    EditPlainText: TEdit;
+    Label10: TLabel;
+    Label9: TLabel;
+    LabelVersion: TLabel;
+    Label5: TLabel;
+    ComboBoxInputFormatting: TComboBox;
+    Label6: TLabel;
+    ComboBoxOutputFormatting: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
-    procedure ButtonEncryptClick(Sender: TObject);
-    procedure EditPlainTextChangeTracking(Sender: TObject);
-    procedure ButtonDecryptClick(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ButtonEncryptClick(Sender: TObject);
+    procedure ButtonDecryptClick(Sender: TObject);
+    procedure ButtonCopyClick(Sender: TObject);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -103,12 +108,54 @@ type
     /// <param name="MessageType">
     ///   Type of the message: mtError...
     /// </param>
-    procedure ShowMessage(Msg: string;
-                          MessageType:TMsgDlgType);
+    procedure ShowMessage(Msg: string; MessageType:TMsgDlgType);
+    /// <summary>
+    ///   Set all authehtication related properties of the cipher isntance to
+    ///   the values the user entered
+    /// </summary>
+    procedure SetAuthenticationParams(Cipher : TDECCipherModes);
+
+    /// <summary>
+    ///   Makes the authentication fields visible or not and adjusts the layout
+    ///   accordingly.
+    /// </summary>
+    /// <param name="Visible">
+    ///   True when the authentication fields shall be visible
+    /// </param>
+    procedure SetAuthenticationFieldsVisibility(Visible: Boolean);
+    /// <summary>
+    ///   Checks whether the currently selected combination of cipher algorithm
+    ///   and cipher mode is an authenticated one.
+    /// </summary>
+    function IsAuthenticatedCipher: Boolean;
+    /// <summary>
+    ///   Creates and instance of the selected cipher and already sets its
+    ///   block chaining mode, as that's a combo box which always has a selected
+    ///   value.
+    /// </summary>
+    /// <returns>
+    ///   Created instance of the selected cipher but Init has not been called yet.
+    /// </returns>
+    function GetCipherInstance: TDECCipherModes;
+    /// <summary>
+    ///   Creates and instance of the selected cipher, sets its block chaining
+    ///   mode and call init with the entered key, initialization vector and
+    ///   filler byte values.
+    /// </summary>
+    /// <returns>
+    ///   Created instance of the selected cipher but Init has not been called yet.
+    /// </returns>
+    function GetInitializedCipherInstance: TDECCipherModes;
     /// <summary>
     ///   Returns the selected block chaining mode
     /// </summary>
     function GetSelectedCipherMode: TCipherMode;
+    /// <summary>
+    ///   If a cipher and block chaining mode is selected which provide
+    ///   authentication capabilities show the authentication fields. Also show
+    ///   authentication status info in the grid.
+    /// </summary>
+    procedure UpdateAuthenticationStatus;
     /// <summary>
     ///   Get the settings for the input and output formatting and checks whether
     ///   the user has entered any key, input vector and filler byte values.
@@ -124,40 +171,32 @@ type
     ///   entered values for key, input vector and filler byte. False if one of
     ///   the conditions was not met.
     /// </returns>
-    function GetSettings(var InputFormatting  : TDECFormatClass;
-                         var OutputFormatting : TDECFormatClass): Boolean;
+    function GetFormatSettings(var InputFormatting  : TDECFormatClass;
+                               var OutputFormatting : TDECFormatClass): Boolean;
+
     /// <summary>
-    ///   Set all authehtication related properties of the cipher isntance to
-    ///   the values the user entered
+    ///   Get the clipboard instance to be able to put something in it
     /// </summary>
-    procedure SetAuthenticationParams(Cipher : TDECCipherModes);
-    /// <summary>
-    ///   Creates an instance of the selected cipher algorithm and initializes it.
-    ///   It is expected that all selectable (means all registered) algorithms
-    ///   inherit from TDECCipherModes at least.
-    /// </summary>
-    /// <param name="Cipher">
-    ///   The created instance.
+    /// <param name="Clipboard">
+    ///   If successfull the aquired clipboard object
     /// </param>
     /// <returns>
-    ///   true if the entered initialization vector and filler were properly
-    ///   hex formatted so the instance could properly created and initialized
-    ///   with the key, initialization vector and filler.
+    ///   true if the clipboard instance could be aquired
     /// </returns>
-    function GetCipherAlgorithm(var Cipher: TDECCipherModes): Boolean;
+    function TryGetClipboardService(out Clipboard: IFMXClipboardService): Boolean;
     /// <summary>
-    ///   Checks whether the selected cipher block chaining mode is an
-    ///   authenticated one (requires selection of a compatible cipher algorithm
-    ///   prior to that) and displays the result in the cipher properties grid.
+    ///   Puts a sting into the clipboard
     /// </summary>
-    procedure UpdateIsAuthenticated;
+    /// <param name="s">
+    ///   String to put into the clipboard
+    /// </param>
+    procedure StringToClipboard(const s: string);
     /// <summary>
-    ///   If an authehticated cipher mode is selected the layout with the
-    ///   parameters for that one is made visible and the encryption/decryption
-    ///    layout is placed below it.
+    ///   Returns the list of block chaining modes which do not have a filler byte
     /// </summary>
-    procedure UpdateLayoutPositions;
+    function GetCipherModesWithoutFiller:TCipherModes;
   public
+    { Public-Deklarationen }
   end;
 
 var
@@ -166,7 +205,7 @@ var
 implementation
 
 uses
-  System.TypInfo, Generics.Collections, FMX.Platform,
+  System.TypInfo, Generics.Collections,
   DECBaseClass, DECFormat,
   DECCipherFormats, DECCiphers, DECUtil, DECCipherInterface
   {$IFDEF Android}
@@ -178,6 +217,50 @@ uses
 
 {$R *.fmx}
 
+function TFormMain.TryGetClipboardService(out Clipboard: IFMXClipboardService): Boolean;
+begin
+  Result := TPlatformServices.Current.SupportsPlatformService(IFMXClipboardService);
+  if Result then
+    Clipboard := IFMXClipboardService(TPlatformServices.Current.GetPlatformService(IFMXClipboardService));
+end;
+
+procedure TFormMain.StringToClipboard(const s: string);
+var
+  ClipBoard: IFMXClipboardService;
+begin
+  if TryGetClipboardService(ClipBoard) then
+    ClipBoard.SetClipboard(s);
+end;
+
+procedure TFormMain.ButtonCopyClick(Sender: TObject);
+var
+  s : string;
+begin
+  s := 'Cipher: ' +
+         ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex] +
+         sLineBreak +
+       'Mode: ' +
+         ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex] +
+         sLineBreak +
+       'Key: ' + EditKey.Text + sLineBreak +
+       'Init vector: ' + EditInitVector.Text + sLineBreak +
+       'Filler: ' + EditFiller.Text + sLineBreak +
+       'Data to auhenticate: ' + EditAuthenticatedData.Text + sLineBreak +
+       'Expected authentication result: ' +
+         EditExpectedAuthenthicationResult.Text + sLineBreak +
+       'Authentication result: ' +
+         EditExpectedAuthenthicationResult.Text + sLineBreak +
+       'Format input: ' +
+         ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex] +
+         sLineBreak +
+       'Format output: ' +
+         ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex] +
+         sLineBreak +
+       'Plain text: ' + EditPlainText.Text + sLineBreak +
+       'Cipher text: ' + EditCipherText.Text;
+  StringToClipboard(s);
+end;
+
 procedure TFormMain.ButtonDecryptClick(Sender: TObject);
 var
   Cipher           : TDECCipherModes;
@@ -188,13 +271,11 @@ var
   AuthenticationOK : Boolean; // for authenticated ciphers: is the calculated
                               // authentication result value correct?
 begin
-  if not GetSettings(InputFormatting, OutputFormatting) then
+  if not GetFormatSettings(InputFormatting, OutputFormatting) then
     exit;
 
-  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
-  begin
-    if not GetCipherAlgorithm(Cipher) then
-      exit;
+  try
+    Cipher := GetInitializedCipherInstance;
 
     try
       InputBuffer  := System.SysUtils.BytesOf(EditCipherText.Text);
@@ -216,7 +297,7 @@ begin
           AuthenticationOK := true;
         except
           On e:Exception do
-            ShowMessage('Failure in decryption:' + sLineBreak + e.Message,
+            ShowMessage('Decryption failure:' + sLineBreak + e.Message,
                         TMsgDlgType.mtError);
         end;
 
@@ -237,9 +318,10 @@ begin
     finally
       Cipher.Free;
     end;
-  end
-  else
-    ShowMessage('No cipher algorithm selected', TMsgDlgType.mtError);
+  except
+    On e:Exception do
+      ShowMessage('Decryption init failure: ' + e.Message, TMsgDlgType.mtError);
+  end;
 end;
 
 procedure TFormMain.ButtonEncryptClick(Sender: TObject);
@@ -250,13 +332,11 @@ var
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
 begin
-  if not GetSettings(InputFormatting, OutputFormatting) then
+  if not GetFormatSettings(InputFormatting, OutputFormatting) then
     exit;
 
-  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
-  begin
-    if not GetCipherAlgorithm(Cipher) then
-      exit;
+  try
+    Cipher := GetInitializedCipherInstance;
 
     try
       InputBuffer  := System.SysUtils.BytesOf(EditPlainText.Text);
@@ -271,7 +351,7 @@ begin
           (Cipher as TDECFormattedCipher).Done;
         except
           On e:Exception do
-            ShowMessage('Failure in encryption:' + sLineBreak + e.Message,
+            ShowMessage('Encryption failure:' + sLineBreak + e.Message,
                         TMsgDlgType.mtError);
         end;
 
@@ -286,197 +366,28 @@ begin
     finally
       Cipher.Free;
     end;
-  end
-  else
-    ShowMessage('No cipher algorithm selected', TMsgDlgType.mtError);
-end;
-
-procedure TFormMain.SetAuthenticationParams(Cipher : TDECCipherModes);
-begin
-  Assert(Assigned(Cipher));
-
-  // Set all authentication related properties
-  if Cipher.IsAuthenticated then
-  begin
-    Cipher.AuthenticationResultBitLength :=
-      ComboEditLengthCalculatedValue.Text.ToInteger;
-
-    Cipher.DataToAuthenticate :=
-      TFormat_HexL.Decode(BytesOf(RawByteString(EditAuthenticatedData.Text)));
-
-    Cipher.ExpectedAuthenticationResult :=
-      TFormat_HexL.Decode(BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text)));
+  except
+    On e:Exception do
+      ShowMessage('Encryption init failure: ' + e.Message, TMsgDlgType.mtError);
   end;
-end;
-
-function TFormMain.GetSettings(var InputFormatting  : TDECFormatClass;
-                               var OutputFormatting : TDECFormatClass): Boolean;
-begin
-  result := false;
-
-  if ComboBoxInputFormatting.ItemIndex >= 0 then
-  begin
-    // Find the class type of the selected formatting class and create an instance of it
-    InputFormatting := TDECFormat.ClassByName(
-      ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex]);
-  end
-  else
-  begin
-    ShowMessage('No input format selected', TMsgDlgType.mtError);
-    exit;
-  end;
-
-  if ComboBoxOutputFormatting.ItemIndex >= 0 then
-  begin
-    // Find the class type of the selected formatting class and create an instance of it
-    OutputFormatting := TDECFormat.ClassByName(
-      ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex]);
-  end
-  else
-  begin
-    ShowMessage('No output format selected', TMsgDlgType.mtError);
-    exit;
-  end;
-
-  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or
-     (EditFiller.Text.IsEmpty and not (GetSelectedCipherMode in [cmGCM]) ) then
-  begin
-    ShowMessage('No key, initialization vector or filler byte given', TMsgDlgType.mtError);
-    exit;
-  end;
-
-  result := true;
-end;
-
-function TFormMain.GetCipherAlgorithm(var Cipher : TDECCipherModes):Boolean;
-begin
-  result := false;
-
-  // Find the class type of the selected cipher class and create an instance of it
-  Cipher := TDECCipher.ClassByName(
-    ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create as TDECCipherModes;
-
-  if TFormat_HEXL.IsValid(RawByteString(EditInitVector.Text)) and
-     TFormat_HEXL.IsValid(RawByteString(EditFiller.Text)) then
-  begin
-    Cipher.Mode := GetSelectedCipherMode;
-
-    // Some cipher block chaining modes do not require a filler byte, but in
-    // order to use the same init method call for all ciphers we need one.
-    while length(EditFiller.Text) < 2 do
-      EditFiller.Text := '0' + EditFiller.Text;
-
-    Cipher.Init(BytesOf(TFormat_HexL.Decode(RawByteString(EditKey.Text))),
-                BytesOf(TFormat_HexL.Decode(RawByteString(EditInitVector.Text))),
-                StrToInt('0x' + EditFiller.Text));
-  end
-  else
-  begin
-    ShowMessage('Init vector or filler byte  not given in hexadecimal representation',
-                TMsgDlgType.mtError);
-    exit;
-  end;
-
-  result := true;
-end;
-
-function TFormMain.GetSelectedCipherMode:TCipherMode;
-var
-  ModeStr : string;
-begin
-  ModeStr := ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex];
-
-  if ModeStr.Contains('(') then
-    ModeStr := ModeStr.Remove(ModeStr.IndexOf('(')-1);
-
-  // Determine selected block chaining method via RTTI (runtime type information)
-  result := TCipherMode(System.TypInfo.GetEnumValue(
-              TypeInfo(TCipherMode),
-              ModeStr));
-end;
-
-procedure TFormMain.ShowMessage(Msg: string; MessageType:TMsgDlgType);
-{$IF RTLVersion > 30}
-var
-  AsyncDlg : IFMXDialogServiceASync;
-{$ENDIF}
-begin
-  {$IF RTLVersion > 30}
-  if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
-                                                       IInterface(AsyncDlg)) then
-    AsyncDlg.MessageDialogAsync(Translate(Msg),
-             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
-    procedure (const AResult: TModalResult)
-    begin
-    end);
-  {$ELSE}
-  MessageDlg(Translate(Msg),
-             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
-  {$ENDIF}
 end;
 
 procedure TFormMain.ComboBoxChainingMethodChange(Sender: TObject);
-begin
-  UpdateIsAuthenticated;
-end;
-
-procedure TFormMain.UpdateIsAuthenticated;
 var
-  Cipher : TDECCipherModes;
+  NeedsFiller: Boolean;
 begin
-  // for some authenticated cipher modes no filler byte is required
-  if (not EditInitVector.Text.IsEmpty) and
-     ((GetSelectedCipherMode in [cmGCM]) or (not EditFiller.Text.IsEmpty)) then
-  begin
-    try
-      if GetCipherAlgorithm(Cipher) then
-      begin
-        try
-          if Cipher.IsAuthenticated then
-          begin
-            StringGridContext.Cells[1, 7] := 'yes';
-            LayoutAuthentication.Visible := true;
-            UpdateLayoutPositions;
-          end
-          else
-          begin
-            StringGridContext.Cells[1, 7] := 'no';
-            LayoutAuthentication.Visible := false;
-            UpdateLayoutPositions;
-          end;
-        finally
-          Cipher.Free;
-        end;
-      end
-      else
-      begin
-        StringGridContext.Cells[1, 7] := 'no';
-        LayoutAuthentication.Visible := false;
-        UpdateLayoutPositions;
-      end;
-    except
-      ShowMessage('Invalid cipher algorithm selected for selected block '+
-                  'chaining mode', TMsgDlgType.mtError);
+  // this on change handler is already called during form creation but at that
+  // point the cipher algorithm combo may not have been fully initialized yet so
+  // we must not update authentication status yet.
+  if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
+    UpdateAuthenticationStatus;
 
-      StringGridContext.Cells[1, 7] := 'no';
-      LayoutAuthentication.Visible := false;
-      UpdateLayoutPositions;
-    end;
-  end
-  else
-  begin
-    StringGridContext.Cells[1, 7] := 'no';
-    LayoutAuthentication.Visible := false;
-    UpdateLayoutPositions;
-  end;
-end;
-
-procedure TFormMain.UpdateLayoutPositions;
-begin
-  if LayoutAuthentication.Visible then
-    LayoutEncrypt.Position.Y := LayoutTop.Height + LayoutAuthentication.Height
-  else
-    LayoutEncrypt.Position.Y := LayoutTop.Height;
+  // does the selected mode requiring padding?
+  // ECB mode doesn't need filler as we expect the user to enter completely
+  // filled blocks
+  NeedsFiller             := not (GetSelectedCipherMode in [cmGCM, cmECBx]);
+  LabelFillerByte.Enabled := NeedsFiller;
+  EditFiller.Enabled      := NeedsFiller;
 end;
 
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);
@@ -512,13 +423,11 @@ begin
   else
     StringGridContext.Cells[1, 6] := 'asymmetric';
 
-  UpdateIsAuthenticated;
-end;
-
-procedure TFormMain.EditPlainTextChangeTracking(Sender: TObject);
-begin
-  if CheckBoxLiveCalc.IsChecked then
-    ButtonEncryptClick(self)
+  // this on change handler is already called during form creation but at that
+  // point the block chaining mode combo has not been fully initialized yet so
+  // we must not update authentication status yet.
+  if ComboBoxChainingMethod.ItemIndex >= 0 then
+    UpdateAuthenticationStatus;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -536,43 +445,107 @@ begin
   InitCipherModes;
 end;
 
-procedure TFormMain.FormResize(Sender: TObject);
+procedure TFormMain.FormShow(Sender: TObject);
 begin
-  LayoutTop.Width    := VertScrollBox1.Width;
+  // since all combo boxes are initialized now we can check authentication status
+  UpdateAuthenticationStatus;
 end;
 
-procedure TFormMain.InitFormatCombos;
-var
-  MyClass : TPair<Int64, TDECClass>;
-  Formats : TStringList;
-  CopyIdx : Integer;
+function TFormMain.GetCipherInstance: TDECCipherModes;
 begin
-  Formats := TStringList.Create;
+  // Find the class type of the selected cipher class and create an instance of it
+  Result := TDECCipher.ClassByName(
+    ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Create as TDECCipherModes;
 
-  try
-    for MyClass in TDECFormat.ClassList do
-      Formats.Add(MyClass.Value.ClassName);
+  Result.Mode := GetSelectedCipherMode;
+end;
 
-    Formats.Sort;
-    ComboBoxInputFormatting.Items.AddStrings(Formats);
-    ComboBoxOutputFormatting.Items.AddStrings(Formats);
+function TFormMain.GetCipherModesWithoutFiller: TCipherModes;
+begin
+  Result := [cmGCM, cmECBx];
+end;
 
-    if Formats.Count > 0 then
-    begin
-      if Formats.Find('TFormat_Copy', CopyIdx) then
-      begin
-        ComboBoxInputFormatting.ItemIndex  := CopyIdx;
-        ComboBoxOutputFormatting.ItemIndex := CopyIdx;
-      end
-      else
-      begin
-        ComboBoxInputFormatting.ItemIndex  := 0;
-        ComboBoxOutputFormatting.ItemIndex := 0;
-      end;
-    end;
-  finally
-    Formats.Free;
+function TFormMain.GetFormatSettings(var InputFormatting,
+  OutputFormatting: TDECFormatClass): Boolean;
+begin
+  result := false;
+
+  if ComboBoxInputFormatting.ItemIndex >= 0 then
+  begin
+    // Find the class type of the selected formatting class and create an instance of it
+    InputFormatting := TDECFormat.ClassByName(
+      ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex]);
+  end
+  else
+  begin
+    ShowMessage('No input format selected', TMsgDlgType.mtError);
+    exit;
   end;
+
+  if ComboBoxOutputFormatting.ItemIndex >= 0 then
+  begin
+    // Find the class type of the selected formatting class and create an instance of it
+    OutputFormatting := TDECFormat.ClassByName(
+      ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex]);
+  end
+  else
+  begin
+    ShowMessage('No output format selected', TMsgDlgType.mtError);
+    exit;
+  end;
+
+  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or
+     (EditFiller.Text.IsEmpty and
+      not (GetSelectedCipherMode in GetCipherModesWithoutFiller)) then
+  begin
+    ShowMessage('No key, initialization vector or filler byte given', TMsgDlgType.mtError);
+    exit;
+  end;
+
+  result := true;
+end;
+
+function TFormMain.GetInitializedCipherInstance: TDECCipherModes;
+var
+  FillerByte : UInt8;
+begin
+  if not EditFiller.Text.IsEmpty then
+  begin
+    while length(EditFiller.Text) < 2 do
+      EditFiller.Text := '0' + EditFiller.Text;
+
+    FillerByte := StrToInt('0x' + EditFiller.Text)
+  end
+  else
+    // we need to assume something to be able to call that init overload
+    FillerByte := 0;
+
+  if TFormat_HEXL.IsValid(RawByteString(EditInitVector.Text.ToLower)) and
+     TFormat_HEXL.IsValid(RawByteString(EditKey.Text.ToLower)) then
+  begin
+    Result := GetCipherInstance;
+
+    Result.Init(BytesOf(TFormat_HexL.Decode(RawByteString(EditKey.Text.ToLower))),
+                BytesOf(TFormat_HexL.Decode(RawByteString(EditInitVector.Text.ToLower))),
+                FillerByte);
+  end
+  else
+    raise Exception.Create('No valid encryption key or init vector given!');
+end;
+
+function TFormMain.GetSelectedCipherMode: TCipherMode;
+var
+  ModeStr : string;
+begin
+  ModeStr := ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex];
+
+  if ModeStr.Contains('(') then
+    ModeStr := ModeStr.Remove(ModeStr.IndexOf('(')-1);
+
+  // Determine selected block chaining method via RTTI (runtime type information)
+  result := TCipherMode(System.TypInfo.GetEnumValue(
+              TypeInfo(TCipherMode),
+              ModeStr));
 end;
 
 procedure TFormMain.InitCipherCombo;
@@ -618,6 +591,128 @@ begin
 
   if ComboBoxChainingMethod.Items.Count > 0 then
     ComboBoxChainingMethod.ItemIndex := 0;
+end;
+
+procedure TFormMain.InitFormatCombos;
+var
+  MyClass : TPair<Int64, TDECClass>;
+  Formats : TStringList;
+  CopyIdx : Integer;
+begin
+  Formats := TStringList.Create;
+
+  try
+    for MyClass in TDECFormat.ClassList do
+      Formats.Add(MyClass.Value.ClassName);
+
+    Formats.Sort;
+    ComboBoxInputFormatting.Items.AddStrings(Formats);
+    ComboBoxOutputFormatting.Items.AddStrings(Formats);
+
+    if Formats.Count > 0 then
+    begin
+      if Formats.Find('TFormat_Copy', CopyIdx) then
+      begin
+        ComboBoxInputFormatting.ItemIndex  := CopyIdx;
+        ComboBoxOutputFormatting.ItemIndex := CopyIdx;
+      end
+      else
+      begin
+        ComboBoxInputFormatting.ItemIndex  := 0;
+        ComboBoxOutputFormatting.ItemIndex := 0;
+      end;
+    end;
+  finally
+    Formats.Free;
+  end;
+end;
+
+function TFormMain.IsAuthenticatedCipher: Boolean;
+var
+  Cipher : TDECCipherModes;
+begin
+  Cipher := GetCipherInstance;
+  try
+    Result := Cipher.IsAuthenticated;
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TFormMain.SetAuthenticationFieldsVisibility(Visible: Boolean);
+begin
+  LayoutAuthentication.Visible := Visible;
+
+  // Adjust layout
+  if Visible then
+    LayoutEncrypt.Position.Y        := LayoutAuthentication.Position.Y +
+                                       LayoutAuthentication.Height
+  else
+    LayoutEncrypt.Position.Y := LayoutCipherSettings.Position.Y +
+                                LayoutCipherSettings.Height;
+
+  self.VertScrollBox1.ClientHeight
+end;
+
+procedure TFormMain.SetAuthenticationParams(Cipher: TDECCipherModes);
+begin
+  Assert(Assigned(Cipher));
+
+  // Set all authentication related properties
+  if Cipher.IsAuthenticated then
+  begin
+    Cipher.AuthenticationResultBitLength :=
+      ComboEditLengthCalculatedValue.Text.ToInteger;
+
+    Cipher.DataToAuthenticate :=
+      TFormat_HexL.Decode(BytesOf(RawByteString(EditAuthenticatedData.Text)));
+
+    Cipher.ExpectedAuthenticationResult :=
+      TFormat_HexL.Decode(BytesOf(RawByteString(EditExpectedAuthenthicationResult.Text)));
+  end;
+end;
+
+procedure TFormMain.ShowMessage(Msg: string; MessageType: TMsgDlgType);
+{$IF RTLVersion > 30}
+var
+  AsyncDlg : IFMXDialogServiceASync;
+{$ENDIF}
+begin
+  {$IF RTLVersion > 30}
+  if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
+                                                       IInterface(AsyncDlg)) then
+    AsyncDlg.MessageDialogAsync(Translate(Msg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], TMsgDlgBtn.mbOk, 0,
+    procedure (const AResult: TModalResult)
+    begin
+    end);
+  {$ELSE}
+  MessageDlg(Translate(Msg),
+             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
+  {$ENDIF}
+end;
+
+procedure TFormMain.UpdateAuthenticationStatus;
+begin
+  try
+    if IsAuthenticatedCipher then
+    begin
+      SetAuthenticationFieldsVisibility(true);
+      StringGridContext.Cells[1, 7] := 'yes';
+    end
+    else
+    begin
+      SetAuthenticationFieldsVisibility(false);
+      StringGridContext.Cells[1, 7] := 'no';
+    end;
+  except
+    On e:Exception do
+    begin
+      SetAuthenticationFieldsVisibility(false);
+      StringGridContext.Cells[1, 7] := 'no';
+      ShowMessage(e.Message, TMsgDlgType.mtError);
+    end;
+  end;
 end;
 
 end.

@@ -412,7 +412,7 @@ uses
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
-  sInvalidBlockSize     = 'Block size must be %0:d bit for the selected mode %1:s';
+  sInvalidBlockSize     = 'Block size must be %0:d bit for selected mode %1:s';
   sInvalidModeForMethod = 'Invalid mode for this method. Mode must be %0:s';
 
   /// <summary>

@@ -1,7 +1,7 @@
 # DEC - Delphi Encryption Compendium
 
 ## What is DEC?
-DEC is a library for Embarcadero Delphi, containing different cryptographic algorithms .
+DEC is a library for Embarcadero Delphi, containing different cryptographic algorithms.
 It contains algorithms for these categories:
 
 * Ciphers: encryption/decryption of data
@@ -39,7 +39,7 @@ The FMX based demos are even available via Google play as "DEC cipher demo" and
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of DEC V6.4 you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
-Also take the time to read DEC61.pdf in the *Docs* folder or look at the demos 
+Also take the time to read DEC64.pdf in the *Docs* folder and look at the demos 
 provided in the *Demos* subfolder.
 
 ## Has it been tested?
@@ -170,6 +170,9 @@ Modes ending on x have been invented by the original developer of DEC
 * UU       
 * XX       
 * ESCAPE   
+* BigEndian16
+* BigEndian32
+* BigEndian64
 
 ## Contained CRCs
 * 8
