@@ -113,7 +113,7 @@ object FormMain: TFormMain
       Size.Width = 409.000000000000000000
       Size.Height = 234.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 8
+      TabOrder = 2
       object Label11: TLabel
         Position.X = 16.000000000000000000
         Position.Y = 8.000000000000000000
@@ -211,7 +211,7 @@ object FormMain: TFormMain
       Size.Width = 409.000000000000000000
       Size.Height = 225.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 9
+      TabOrder = 1
       object Label1: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
@@ -291,7 +291,7 @@ object FormMain: TFormMain
       Size.Width = 409.000000000000000000
       Size.Height = 550.000000000000000000
       Size.PlatformDefault = False
-      TabOrder = 1
+      TabOrder = 3
       object ButtonDecrypt: TButton
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
