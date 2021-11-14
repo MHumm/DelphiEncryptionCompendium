@@ -34,7 +34,7 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Cipher function'
-        TabOrder = 1
+        TabOrder = 3
       end
       object ComboBoxCipherAlgorithm: TComboBox
         Anchors = [akLeft, akTop, akRight]
@@ -57,7 +57,7 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Cipher mode'
-        TabOrder = 2
+        TabOrder = 4
       end
       object ComboBoxChainingMethod: TComboBox
         Anchors = [akLeft, akTop, akRight]
@@ -67,7 +67,7 @@ object FormMain: TFormMain
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 6
+        TabOrder = 1
         OnChange = ComboBoxChainingMethodChange
       end
       object Label8: TLabel
@@ -80,7 +80,7 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Cipher properties'
-        TabOrder = 7
+        TabOrder = 8
       end
       object StringGridContext: TStringGrid
         Anchors = [akLeft, akTop, akRight]
@@ -92,7 +92,7 @@ object FormMain: TFormMain
         Size.Height = 100.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'gridstyle'
-        TabOrder = 8
+        TabOrder = 2
         Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, Tabs, Header, AutoDisplacement]
         Viewport.Width = 349.000000000000000000
         Viewport.Height = 75.000000000000000000
@@ -122,12 +122,12 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         Text = 'Authenticated data'
-        TabOrder = 6
+        TabOrder = 2
       end
       object EditAuthenticatedData: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 1
+        TabOrder = 3
         Position.X = 16.000000000000000000
         Position.Y = 33.000000000000000000
         Size.Width = 369.000000000000000000
@@ -143,12 +143,12 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         Text = 'Expected authentication result'
-        TabOrder = 5
+        TabOrder = 1
       end
       object EditExpectedAuthenthicationResult: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 2
+        TabOrder = 5
         Position.X = 16.000000000000000000
         Position.Y = 97.000000000000000000
         Size.Width = 369.000000000000000000
@@ -178,7 +178,7 @@ object FormMain: TFormMain
       object EditCalculatedAuthehticationValue: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'editstyle'
-        TabOrder = 3
+        TabOrder = 7
         ReadOnly = True
         Position.X = 16.000000000000000000
         Position.Y = 161.000000000000000000
@@ -190,7 +190,7 @@ object FormMain: TFormMain
       object ComboEditLengthCalculatedValue: TComboEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'comboeditstyle'
-        TabOrder = 4
+        TabOrder = 9
         ItemHeight = 19.000000000000000000
         Items.Strings = (
           '32'
@@ -287,7 +287,7 @@ object FormMain: TFormMain
       end
     end
     object LayoutEncrypt: TLayout
-      Position.Y = 756.000000000000000000
+      Position.Y = 758.000000000000000000
       Size.Width = 409.000000000000000000
       Size.Height = 550.000000000000000000
       Size.PlatformDefault = False
@@ -300,7 +300,7 @@ object FormMain: TFormMain
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
-        TabOrder = 12
+        TabOrder = 15
         Text = 'Decrypt'
         OnClick = ButtonDecryptClick
       end
@@ -312,7 +312,7 @@ object FormMain: TFormMain
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
-        TabOrder = 11
+        TabOrder = 13
         Text = 'Encrypt'
         OnClick = ButtonEncryptClick
       end
@@ -324,7 +324,7 @@ object FormMain: TFormMain
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
-        TabOrder = 18
+        TabOrder = 16
         Text = 'Copy to clipboard'
         OnClick = ButtonCopyClick
       end
@@ -332,9 +332,9 @@ object FormMain: TFormMain
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 10
+        TabOrder = 11
         Position.X = 16.000000000000000000
-        Position.Y = 88.000000000000000000
+        Position.Y = 216.000000000000000000
         Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -343,9 +343,9 @@ object FormMain: TFormMain
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 9
+        TabOrder = 8
         Position.X = 16.000000000000000000
-        Position.Y = 32.000000000000000000
+        Position.Y = 96.000000000000000000
         Size.Width = 369.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -353,26 +353,26 @@ object FormMain: TFormMain
       object Label10: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 64.000000000000000000
+        Position.Y = 196.000000000000000000
         Size.Width = 58.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Cipher text'
-        TabOrder = 13
+        TabOrder = 10
       end
       object Label9: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 8.000000000000000000
+        Position.Y = 72.000000000000000000
         Size.Width = 49.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Plain text'
-        TabOrder = 14
+        TabOrder = 12
       end
       object LabelVersion: TLabel
         AutoSize = True
@@ -384,21 +384,43 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = #169' 2018-2021 by Team DEC V%0:s'
-        TabOrder = 15
+        TabOrder = 14
       end
       object Label5: TLabel
         AutoSize = True
         Position.X = 18.000000000000000000
-        Position.Y = 128.000000000000000000
-        Size.Width = 91.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 88.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Input is in format'
-        TabOrder = 16
+        Text = 'Plain text format'
+        TabOrder = 17
       end
       object ComboBoxInputFormatting: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 16.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 369.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'comboboxstyle'
+        TabOrder = 7
+      end
+      object Label6: TLabel
+        AutoSize = True
+        Position.X = 20.000000000000000000
+        Position.Y = 128.000000000000000000
+        Size.Width = 97.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Cipher text format'
+        TabOrder = 18
+      end
+      object ComboBoxOutputFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 148.000000000000000000
@@ -406,29 +428,7 @@ object FormMain: TFormMain
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 1
-      end
-      object Label6: TLabel
-        AutoSize = True
-        Position.X = 20.000000000000000000
-        Position.Y = 188.000000000000000000
-        Size.Width = 119.000000000000000000
-        Size.Height = 16.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'labelstyle'
-        TextSettings.WordWrap = False
-        Text = 'Desired output format'
-        TabOrder = 17
-      end
-      object ComboBoxOutputFormatting: TComboBox
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
-        Position.Y = 208.000000000000000000
-        Size.Width = 369.000000000000000000
-        Size.Height = 32.000000000000000000
-        Size.PlatformDefault = False
-        StyleLookup = 'comboboxstyle'
-        TabOrder = 2
+        TabOrder = 9
       end
     end
   end
