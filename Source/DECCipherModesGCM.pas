@@ -658,10 +658,15 @@ end;
 
 function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 const
-  BitLengths : TStandardBitLengths = [96, 104, 112, 120, 128];
+  BitLengths : array[0..4] of Uint16 = (96, 104, 112, 120, 128);
+var
+  i : integer;
 begin
   SetLength(Result, 5);
-  Result := BitLengths;
+  { TODO: When 6.5 is started the array can be assigned directly again }
+  //  Result := [96, 104, 112, 120, 128];
+  for i := 0 to high(BitLengths) do
+    result[i] := BitLengths[i];
 end;
 
 //
