@@ -85,6 +85,7 @@ type
     procedure ButtonEncryptClick(Sender: TObject);
     procedure ButtonDecryptClick(Sender: TObject);
     procedure ButtonCopyClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -236,7 +237,8 @@ procedure TFormMain.ButtonCopyClick(Sender: TObject);
 var
   s : string;
 begin
-  s := 'Cipher: ' +
+  s := '//start' + sLineBreak +
+       'Cipher: ' +
          ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex] +
          sLineBreak +
        'Mode: ' +
@@ -257,7 +259,9 @@ begin
          ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex] +
          sLineBreak +
        'Plain text: ' + EditPlainText.Text + sLineBreak +
-       'Cipher text: ' + EditCipherText.Text;
+       'Cipher text: ' + EditCipherText.Text + sLineBreak +
+       'Demo version: ' + LabelVersion.Text + sLineBreak +
+       '//end';
   StringToClipboard(s);
 end;
 
@@ -287,14 +291,18 @@ begin
         AuthenticationOK := false;
 
         try
-          OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(OutputFormatting.Decode(InputBuffer));
+          OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(
+                            OutputFormatting.Decode(InputBuffer));
           // in case of an authenticated cipher mode like cmGCM the Done method
           // will raise an exceptino when the calculated authentication value does
           // not match the given expected one
           (Cipher as TDECFormattedCipher).Done;
-          // If we managed to get to here, the calculated authentication value
-          // if we're in an authenticated mode is ok.
-          AuthenticationOK := true;
+          // If we managed to get to here, the calculated authentication value is
+          // ok if we're in an authenticated mode and have entered an expected value.
+          if (length(EditExpectedAuthenthicationResult.Text) > 0) and
+             (length(EditExpectedAuthenthicationResult.Text) =
+              length(EditCalculatedAuthehticationValue.Text)) then
+            AuthenticationOK := true;
         except
           On e:Exception do
             ShowMessage('Decryption failure:' + sLineBreak + e.Message,
@@ -443,6 +451,14 @@ begin
   InitFormatCombos;
   InitCipherCombo;
   InitCipherModes;
+end;
+
+procedure TFormMain.FormResize(Sender: TObject);
+begin
+  LayoutTop.Width := self.Width - 20;
+  LayoutCipherSettings.Width := self.Width - 20;
+  LayoutAuthentication.Width := self.Width - 20;
+  LayoutEncrypt.Width := self.Width - 20;
 end;
 
 procedure TFormMain.FormShow(Sender: TObject);
