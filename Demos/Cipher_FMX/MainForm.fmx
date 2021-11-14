@@ -121,7 +121,7 @@ object FormMain: TFormMain
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
-        Text = 'Authenticated data'
+        Text = 'Authenticated data (AAD)'
         TabOrder = 2
       end
       object EditAuthenticatedData: TEdit
@@ -142,7 +142,7 @@ object FormMain: TFormMain
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
-        Text = 'Expected authentication result'
+        Text = 'Expected authentication result (Tag)'
         TabOrder = 1
       end
       object EditExpectedAuthenthicationResult: TEdit
@@ -163,15 +163,15 @@ object FormMain: TFormMain
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
-        Text = 'Calculated authentication value'
+        Text = 'Calculated authentication value (Tag)'
         TabOrder = 0
         object Label14: TLabel
           Position.Y = 64.000000000000000000
-          Size.Width = 377.000000000000000000
+          Size.Width = 254.000000000000000000
           Size.Height = 17.000000000000000000
           Size.PlatformDefault = False
           StyleLookup = 'labelstyle'
-          Text = 'Length calculated value (bit)'
+          Text = 'Length calculated auth. value (bit)'
           TabOrder = 0
         end
       end
@@ -390,12 +390,12 @@ object FormMain: TFormMain
         AutoSize = True
         Position.X = 18.000000000000000000
         Position.Y = 8.000000000000000000
-        Size.Width = 88.000000000000000000
+        Size.Width = 90.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Plain text format'
+        Text = 'Format plain text'
         TabOrder = 17
       end
       object ComboBoxInputFormatting: TComboBox
@@ -417,7 +417,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Cipher text format'
+        Text = 'Format cipher text'
         TabOrder = 18
       end
       object ComboBoxOutputFormatting: TComboBox
