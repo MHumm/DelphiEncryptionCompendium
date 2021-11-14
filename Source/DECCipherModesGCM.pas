@@ -540,16 +540,17 @@ var
       n := 0;
       div_d := len_d div 16;
       if div_d > 0 then
-      { TODO : When 6.5 is started the while should be replaced by the for loop again }
-      //for i := 0 to div_d -1 do
-      i := 0;
-      while (i <= div_d -1) do
-
       begin
-        x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
-        inc(n, 16);
-        { TODO : Remove the inc when 6.5 implementation starts }
-        inc(i);
+        { TODO : When 6.5 is started the while should be replaced by the for loop again }
+//      for i := 0 to div_d-1 do
+        i := 0;
+        while (i <= div_d-1) do
+        begin
+          x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
+          inc(n, 16);
+          { TODO : Remove the inc when 6.5 implementation starts }
+          inc(i);
+        end;
       end;
 
       mod_d := len_d mod 16;
@@ -580,7 +581,7 @@ begin
   BlockCount := Size div 16;
 
   { TODO : When 6.5 is started the while should be replaced by the for loop again }
-  //for j := 1 to BlockCount do
+//  for j := 1 to BlockCount do
   j := 1;
   while (j <= BlockCount) do
   begin
@@ -622,7 +623,7 @@ begin
   div_len_plain := Size div 16;
 
   { TODO : When 6.5 is started the while should be replaced by the for loop again }
-  //for j := 1 to div_len_plain do
+//  for j := 1 to div_len_plain do
   j := 1;
   while (j <= div_len_plain) do
   begin
