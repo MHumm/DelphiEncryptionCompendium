@@ -612,12 +612,15 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-//  Result := Source;
-  SetLength(Result, Length(Source));
+  Result := Source;
 
   if Length(Result) > 0 then
-    Decode(Source[0], Result[0], Length(Source))
-//    Decode(Result[0], Result[0], Length(Source))
+  begin
+    if (FMode = cmGCM) then
+      SetLength(Result, Length(Source));
+
+    Decode(Source[0], Result[0], Length(Source));
+  end
   else
     if (FMode = cmGCM) then
       DecodeGCM(@Source, @Result, 0);
