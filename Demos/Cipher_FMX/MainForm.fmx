@@ -171,7 +171,7 @@ object FormMain: TFormMain
         Text = 'Calculated authentication value (Tag)'
         TabOrder = 1
       end
-      object EditCalculatedAuthehticationValue: TEdit
+      object EditCalculatedAuthenticationValue: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'

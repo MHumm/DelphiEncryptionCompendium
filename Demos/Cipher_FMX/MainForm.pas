@@ -47,7 +47,7 @@ type
     EditExpectedAuthenthicationResult: TEdit;
     Label13: TLabel;
     Label14: TLabel;
-    EditCalculatedAuthehticationValue: TEdit;
+    EditCalculatedAuthenticationValue: TEdit;
     ComboEditLengthCalculatedValue: TComboEdit;
     VertScrollBox1: TVertScrollBox;
     LayoutTop: TLayout;
@@ -301,7 +301,7 @@ begin
           // ok if we're in an authenticated mode and have entered an expected value.
           if (length(EditExpectedAuthenthicationResult.Text) > 0) and
              (length(EditExpectedAuthenthicationResult.Text) =
-              length(EditCalculatedAuthehticationValue.Text)) then
+              length(EditCalculatedAuthenticationValue.Text)) then
             AuthenticationOK := true;
         except
           On e:Exception do
@@ -311,7 +311,7 @@ begin
 
         if Cipher.IsAuthenticated then
         begin
-          EditCalculatedAuthehticationValue.Text :=
+          EditCalculatedAuthenticationValue.Text :=
             StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
 
           if AuthenticationOK then
@@ -366,7 +366,7 @@ begin
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
 
         if Cipher.IsAuthenticated then
-          EditCalculatedAuthehticationValue.Text :=
+          EditCalculatedAuthenticationValue.Text :=
             StringOf(TFormat_HEXL.Encode(Cipher.CalculatedAuthenticationResult));
       end
       else
