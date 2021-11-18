@@ -408,7 +408,7 @@ object FormMain: TFormMain
         Text = 'Format plain text'
         TabOrder = 17
       end
-      object ComboBoxInputFormatting: TComboBox
+      object ComboBoxPlainTextFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 32.000000000000000000
@@ -430,7 +430,7 @@ object FormMain: TFormMain
         Text = 'Format cipher text'
         TabOrder = 18
       end
-      object ComboBoxOutputFormatting: TComboBox
+      object ComboBoxCipherTextFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 148.000000000000000000

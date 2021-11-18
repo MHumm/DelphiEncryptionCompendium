@@ -75,9 +75,9 @@ type
     Label9: TLabel;
     LabelVersion: TLabel;
     Label5: TLabel;
-    ComboBoxInputFormatting: TComboBox;
+    ComboBoxPlainTextFormatting: TComboBox;
     Label6: TLabel;
-    ComboBoxOutputFormatting: TComboBox;
+    ComboBoxCipherTextFormatting: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
@@ -161,10 +161,10 @@ type
     ///   Get the settings for the input and output formatting and checks whether
     ///   the user has entered any key, input vector and filler byte values.
     /// </summary>
-    /// <param name="InputFormatting">
+    /// <param name="PlainTextFormatting">
     ///   An instance of the input format class selected will be returned here
     /// </param>
-    /// <param name="OutputFormatting">
+    /// <param name="CipherTextFormatting">
     ///   An instance of the output format class selected will be returned here
     /// </param>
     /// <returns>
@@ -172,8 +172,8 @@ type
     ///   entered values for key, input vector and filler byte. False if one of
     ///   the conditions was not met.
     /// </returns>
-    function GetFormatSettings(var InputFormatting  : TDECFormatClass;
-                               var OutputFormatting : TDECFormatClass): Boolean;
+    function GetFormatSettings(var PlainTextFormatting  : TDECFormatClass;
+                               var CipherTextFormatting : TDECFormatClass): Boolean;
 
     /// <summary>
     ///   Get the clipboard instance to be able to put something in it
@@ -253,10 +253,10 @@ begin
        'Authentication result: ' +
          EditExpectedAuthenthicationResult.Text + sLineBreak +
        'Format input: ' +
-         ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex] +
+         ComboBoxPlainTextFormatting.Items[ComboBoxPlainTextFormatting.ItemIndex] +
          sLineBreak +
        'Format output: ' +
-         ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex] +
+         ComboBoxCipherTextFormatting.Items[ComboBoxCipherTextFormatting.ItemIndex] +
          sLineBreak +
        'Plain text: ' + EditPlainText.Text + sLineBreak +
        'Cipher text: ' + EditCipherText.Text + sLineBreak +
@@ -267,32 +267,32 @@ end;
 
 procedure TFormMain.ButtonDecryptClick(Sender: TObject);
 var
-  Cipher           : TDECCipherModes;
-  InputFormatting  : TDECFormatClass;
-  OutputFormatting : TDECFormatClass;
-  InputBuffer      : TBytes;
-  OutputBuffer     : TBytes;
-  AuthenticationOK : Boolean; // for authenticated ciphers: is the calculated
+  Cipher               : TDECCipherModes;
+  CipherTextFormatting : TDECFormatClass;
+  PlainTextFormatting  : TDECFormatClass;
+  CipherTextBuffer     : TBytes;
+  PlainTextBuffer      : TBytes;
+  AuthenticationOK     : Boolean; // for authenticated ciphers: is the calculated
                               // authentication result value correct?
 begin
-  if not GetFormatSettings(InputFormatting, OutputFormatting) then
+  if not GetFormatSettings(PlainTextFormatting, CipherTextFormatting) then
     exit;
 
   try
     Cipher := GetInitializedCipherInstance;
 
     try
-      InputBuffer  := System.SysUtils.BytesOf(EditCipherText.Text);
+      CipherTextBuffer  := System.SysUtils.BytesOf(EditCipherText.Text);
 
-      if InputFormatting.IsValid(InputBuffer) then
+      if CipherTextFormatting.IsValid(CipherTextBuffer) then
       begin
         // Set all authentication related properties
         SetAuthenticationParams(Cipher);
         AuthenticationOK := false;
 
         try
-          OutputBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(
-                            OutputFormatting.Decode(InputBuffer));
+          PlainTextBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(
+                            CipherTextFormatting.Decode(CipherTextBuffer));
           // in case of an authenticated cipher mode like cmGCM the Done method
           // will raise an exceptino when the calculated authentication value does
           // not match the given expected one
@@ -319,7 +319,7 @@ begin
                         TMsgDlgType.mtInformation);
         end;
 
-        EditPlainText.Text := string(DECUtil.BytesToRawString(InputFormatting.Encode(OutputBuffer)));
+        EditPlainText.Text := string(DECUtil.BytesToRawString(PlainTextFormatting.Encode(PlainTextBuffer)));
       end
       else
         ShowMessage('Input has wrong format', TMsgDlgType.mtError);
@@ -481,32 +481,32 @@ begin
   Result := [cmGCM, cmECBx];
 end;
 
-function TFormMain.GetFormatSettings(var InputFormatting,
-  OutputFormatting: TDECFormatClass): Boolean;
+function TFormMain.GetFormatSettings(var PlainTextFormatting,
+  CipherTextFormatting: TDECFormatClass): Boolean;
 begin
   result := false;
 
-  if ComboBoxInputFormatting.ItemIndex >= 0 then
+  if ComboBoxPlainTextFormatting.ItemIndex >= 0 then
   begin
     // Find the class type of the selected formatting class and create an instance of it
-    InputFormatting := TDECFormat.ClassByName(
-      ComboBoxInputFormatting.Items[ComboBoxInputFormatting.ItemIndex]);
+    PlainTextFormatting := TDECFormat.ClassByName(
+      ComboBoxPlainTextFormatting.Items[ComboBoxPlainTextFormatting.ItemIndex]);
   end
   else
   begin
-    ShowMessage('No input format selected', TMsgDlgType.mtError);
+    ShowMessage('No plain text format selected', TMsgDlgType.mtError);
     exit;
   end;
 
-  if ComboBoxOutputFormatting.ItemIndex >= 0 then
+  if ComboBoxCipherTextFormatting.ItemIndex >= 0 then
   begin
     // Find the class type of the selected formatting class and create an instance of it
-    OutputFormatting := TDECFormat.ClassByName(
-      ComboBoxOutputFormatting.Items[ComboBoxOutputFormatting.ItemIndex]);
+    CipherTextFormatting := TDECFormat.ClassByName(
+      ComboBoxCipherTextFormatting.Items[ComboBoxCipherTextFormatting.ItemIndex]);
   end
   else
   begin
-    ShowMessage('No output format selected', TMsgDlgType.mtError);
+    ShowMessage('No cipher text format selected', TMsgDlgType.mtError);
     exit;
   end;
 
@@ -622,20 +622,20 @@ begin
       Formats.Add(MyClass.Value.ClassName);
 
     Formats.Sort;
-    ComboBoxInputFormatting.Items.AddStrings(Formats);
-    ComboBoxOutputFormatting.Items.AddStrings(Formats);
+    ComboBoxPlainTextFormatting.Items.AddStrings(Formats);
+    ComboBoxCipherTextFormatting.Items.AddStrings(Formats);
 
     if Formats.Count > 0 then
     begin
       if Formats.Find('TFormat_Copy', CopyIdx) then
       begin
-        ComboBoxInputFormatting.ItemIndex  := CopyIdx;
-        ComboBoxOutputFormatting.ItemIndex := CopyIdx;
+        ComboBoxPlainTextFormatting.ItemIndex  := CopyIdx;
+        ComboBoxCipherTextFormatting.ItemIndex := CopyIdx;
       end
       else
       begin
-        ComboBoxInputFormatting.ItemIndex  := 0;
-        ComboBoxOutputFormatting.ItemIndex := 0;
+        ComboBoxPlainTextFormatting.ItemIndex  := 0;
+        ComboBoxCipherTextFormatting.ItemIndex := 0;
       end;
     end;
   finally
