@@ -2085,7 +2085,7 @@ procedure TestTCipher_2DES.SetUp;
 begin
   FCipher_2DES := TCipher_2DES.Create;
 
-  SetLength(FTestData, 1);
+  SetLength(FTestData, 2);
 
   FTestData[0].OutputData  := '665c7927e91c8ba0a9e4995a158cbd465c9c75913c38069d75b47e68e947fdab';
   FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
@@ -2099,6 +2099,15 @@ begin
   FTestData[0].InitVector := '';
   FTestData[0].Filler     := $FF;
   FTestData[0].Mode       := cmCTSx;
+
+  // Test data for GitHub issue #34
+  FTestData[1].OutputData  := 'b71faab72d3c4f50';
+  FTestData[1].InputData   := TFormat_HEX.Decode('31C35143663E7A00');
+
+  FTestData[1].Key        := TFormat_HEX.Decode('00112233445566778899AABBCCDDEEFF');
+  FTestData[1].InitVector := TFormat_HEX.Decode('0000000000000000');
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmCBCx;
 end;
 
 procedure TestTCipher_2DES.TearDown;
