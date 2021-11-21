@@ -1,5 +1,5 @@
 DEC - Delphi Encryption Compendium
-Version 6.3
+Version 6.4.1
 
 Copyright (c) 2018 - 2020 Norman Gallery (ng931884 [at] gmx [dot] de)
 Copyright (c) 2016 - 2021 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
@@ -23,6 +23,8 @@ mknox74
 EdAdvokat
 Michael II
 jbg
+Gloegg
+pierangelodalben
 
 Parts of the work loosely based on the works of Wolfgang Erhardt, who is
 unfortunately dead already.
