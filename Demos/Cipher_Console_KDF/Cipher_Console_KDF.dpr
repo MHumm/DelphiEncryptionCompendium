@@ -81,7 +81,7 @@ begin
       WriteLn;
 
       // Decrypt
-      Cipher.Init(CipherKey, IV, 0);
+      Cipher.Init(RawByteString(StringOf(KeyKDF)), IV, 0);
       Output := Cipher.DecodeBytes(Output);
       // clean up inside the cipher instance, which also removes the key from RAM
       Cipher.Done;
