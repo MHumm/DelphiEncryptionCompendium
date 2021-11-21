@@ -39,7 +39,7 @@
         <Projects Include="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\2DES_34\DEC_Test.dproj">
+        <Projects Include="..\Demos\Cipher_Console_KDF\Cipher_Console_KDF.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -158,23 +158,23 @@
     <Target Name="GenerateData:Make">
         <MSBuild Projects="..\Unit Tests\HashTestDataGenerator\GenerateData.dproj" Targets="Make"/>
     </Target>
-    <Target Name="DEC_Test">
-        <MSBuild Projects="..\2DES_34\DEC_Test.dproj"/>
+    <Target Name="Cipher_Console_KDF">
+        <MSBuild Projects="..\Demos\Cipher_Console_KDF\Cipher_Console_KDF.dproj"/>
     </Target>
-    <Target Name="DEC_Test:Clean">
-        <MSBuild Projects="..\2DES_34\DEC_Test.dproj" Targets="Clean"/>
+    <Target Name="Cipher_Console_KDF:Clean">
+        <MSBuild Projects="..\Demos\Cipher_Console_KDF\Cipher_Console_KDF.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="DEC_Test:Make">
-        <MSBuild Projects="..\2DES_34\DEC_Test.dproj" Targets="Make"/>
+    <Target Name="Cipher_Console_KDF:Make">
+        <MSBuild Projects="..\Demos\Cipher_Console_KDF\Cipher_Console_KDF.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;ProgressDemoVCL;HashBenchmark;GenerateData;DEC_Test"/>
+        <CallTarget Targets="DEC60;DECDUnitTestSuite;DECDUnitXTestSuite;Cipher_Console;Cipher_FMX;Format_Console;Hash_Console;Hash_FMX;Random_Console;ProgressDemoVCL;HashBenchmark;GenerateData;Cipher_Console_KDF"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;ProgressDemoVCL:Clean;HashBenchmark:Clean;GenerateData:Clean;DEC_Test:Clean"/>
+        <CallTarget Targets="DEC60:Clean;DECDUnitTestSuite:Clean;DECDUnitXTestSuite:Clean;Cipher_Console:Clean;Cipher_FMX:Clean;Format_Console:Clean;Hash_Console:Clean;Hash_FMX:Clean;Random_Console:Clean;ProgressDemoVCL:Clean;HashBenchmark:Clean;GenerateData:Clean;Cipher_Console_KDF:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;ProgressDemoVCL:Make;HashBenchmark:Make;GenerateData:Make;DEC_Test:Make"/>
+        <CallTarget Targets="DEC60:Make;DECDUnitTestSuite:Make;DECDUnitXTestSuite:Make;Cipher_Console:Make;Cipher_FMX:Make;Format_Console:Make;Hash_Console:Make;Hash_FMX:Make;Random_Console:Make;ProgressDemoVCL:Make;HashBenchmark:Make;GenerateData:Make;Cipher_Console_KDF:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

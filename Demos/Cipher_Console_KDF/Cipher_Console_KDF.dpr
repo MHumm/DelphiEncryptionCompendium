@@ -16,9 +16,10 @@
 *****************************************************************************}
 
 /// <summary>
-///   Most simple demonstration of using a DEC cipher
+///   Demonstration of using a DEC cipher where the key security is improved by
+///   using a key deviation function based on a hash algorithm.
 /// </summary>
-program Cipher_Console;
+program Cipher_Console_KDF;
 
 {$APPTYPE CONSOLE}
 
@@ -29,7 +30,8 @@ uses
   DECCipherBase,
   DECCipherModes,
   DECCipherFormats,
-  DECCiphers;
+  DECCiphers,
+  DECHash;
 
 var
   Cipher     : TCipher_TwoFish;
@@ -37,24 +39,30 @@ var
   // is not given
   SourceText : RawByteString;
   CipherKey  : RawByteString; // Key for the initialization of our encryption run
+  Seed       : RawByteString; // Seed for the key deviation function
   IV         : RawByteString; // Initialization vector for the en/decryption
   Input,
   Output     : TBytes;
+  KeyKDF     : TBytes; // Key after applying KDF to it
   i          : Integer;
 begin
   Cipher := TCipher_TwoFish.Create;
 
   try
     try
-      WriteLn('Simple encryption demo using a better block chaining mode than ECB');
+      WriteLn('Encryption demo using a KDF to improve key security');
       WriteLn;
 
       // Init our encryption, note that this is the German spelling of Password
       CipherKey := 'Passwort';
+      Seed      := 'SaltValueForThePassword';
+
+      KeyKDF := THash_SHA256.KDF1(BytesOf(CipherKey), BytesOf(Seed), 8);
+
       // The IV should be different each time you encrypt/decrypt something. The
       // decrypting party needs to know the IV as well of course.
       IV := #0#0#0#0#0#0#0#0;
-      Cipher.Init(CipherKey, IV, 0);
+      Cipher.Init(RawByteString(StringOf(KeyKDF)), IV, 0);
       Cipher.Mode := cmCBCx;
 
       SourceText := 'Beispielklartext';
@@ -81,22 +89,6 @@ begin
       SourceText := RawByteString(System.SysUtils.StringOf(Output));
 
       WriteLn('Decrypted data: ' + SourceText);
-
-      // Show that using a different key results in a different output
-      WriteLn;
-
-      // note the English spelling of Password here, so we differ in the last char
-      CipherKey := 'Password';
-      Cipher.Init(CipherKey, IV, 0);
-      Output := Cipher.DecodeBytes(Output);
-      // clean up inside the cipher instance, which also removes the key from RAM
-      Cipher.Done;
-
-      SourceText := RawByteString(System.SysUtils.StringOf(Output));
-
-      WriteLn('Decrypted with different key: ' + SourceText);
-
-      WriteLn;
     except
       on E: Exception do
         Writeln(E.ClassName, ': ', E.Message);

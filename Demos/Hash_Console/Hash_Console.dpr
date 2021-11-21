@@ -54,11 +54,12 @@ begin
       WriteLn('RipeMD160 digest (hash value) of ' + s + ' is ' + sLineBreak +
               W.CalcString(s, TFormat_HEX));
       W.Free;
-      ReadLn;
     except
       on E: Exception do
         Writeln(E.ClassName, ': ', E.Message);
     end;
+
+    ReadLn;
   finally
     Hash.Free;
   end;

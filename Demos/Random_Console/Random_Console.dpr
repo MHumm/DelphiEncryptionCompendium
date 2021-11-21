@@ -65,10 +65,10 @@ begin
 
     RandomSeed(RandomNumbers, 0);
     WriteLn('Random UInt32 1: ', RandomLong);
-
-    ReadLn;
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
+
+  ReadLn;
 end.

@@ -43,9 +43,10 @@ begin
     WriteLn('Hex ' + s1 + ' is ' +
       System.SysUtils.StringOf(TFormat_HEX.Decode(System.SysUtils.BytesOf(s1))) +
       ' unencoded');
-    ReadLn;
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
+
+  ReadLn;
 end.
