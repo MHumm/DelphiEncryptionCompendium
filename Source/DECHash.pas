@@ -4633,7 +4633,8 @@ end;
 
 procedure THash_SHA3Base.DoDone;
 begin
-  FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
+  if not FSpongeState.SqueezeActive then
+    FinalBit_LSB(FFinalByte, FFinalByteLength, FDigest);
 end;
 
 procedure THash_SHA3Base.DoInit;
