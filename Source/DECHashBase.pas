@@ -88,12 +88,7 @@ type
     /// <summary>
     ///   Value used to fill up data
     /// </summary>
-    FPaddingByte : Byte;
-    /// <summary>
-    ///   Last byte of the message to be hashed if the algorithm is capable of
-    ///   processing bit sized message lengths and FFinalBitLen > 0.
-    /// </summary>
-    FFinalByte   : UInt8;
+    FPaddingByte : UInt8;
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
@@ -370,6 +365,31 @@ type
                         const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
+    ///   Calculates the hash value over a given stream of bytes. The calculated
+    ///   hash value can be retrieved with one of the DigestAsXXX methods.
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    /// <remarks>
+    ///   After calling this method Done needs to be called and in case of
+    ///   algorithms (like SHA3) with a message size in bits and not whole bytes
+    ///   the contents of the last byte needs to be assigned to PaddingByte before
+    ///   calling Done!
+    /// </remarks>
+    procedure CalcStream(const Stream: TStream; Size: Int64;
+                         const OnProgress:TDECProgressEvent = nil); overload;
+
+    /// <summary>
     ///   Calculates the hash value over the contents of a given file
     /// </summary>
     /// <param name="FileName">
@@ -410,10 +430,22 @@ type
                       const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
-    ///   Defines the byte used in the KDF methods to padd the end of the data
+    ///   Defines the byte used in some algorithms to padd the end of the data
     ///   if the length of the data cannot be divided by required size for the
-    ///   hash algorithm without reminder
+    ///   hash algorithm without reminder. For algorithms which can handle message
+    ///   lengths which are not whole bytes (e.g. SHA3), it can be used to define
+    ///   the last bits. This should be done only for those methods not already
+    ///   returning the calculated hash value, as those manage handling of the
+    ///   last byte themselves.
     /// </summary>
+    /// <remarks>
+    ///   If an algorithm is used which can operate on bit sized message lengths
+    ///   and a method for feeding the data is used which does not already return
+    ///   the calculated hash value one needs to set the contents of the last
+    ///   byte with this property! For a stream for instance the length specified
+    ///   when calling CalcStream needs to be 1 byte less and that last byte
+    ///   needs to be assigned to this property just before calling Done.
+    /// </remarks>
     property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
@@ -725,7 +757,7 @@ begin
       // algorithms which have some automatic padding logic
       DataPtr := @Buffer;
       Inc(DataPtr, BufferSize - 1);
-      FFinalByte := DataPtr^;
+      FPaddingByte := DataPtr^;
 
       // Last byte is incomplete so do not process normally
       Calc(Buffer, BufferSize-1);
@@ -861,7 +893,7 @@ begin
 
     // Last byte is incomplete but algorithm may need its value for padding
     if (FFinalByteLength > 0) then
-      Stream.ReadBuffer(FFinalByte, 1);
+      Stream.ReadBuffer(FPaddingByte, 1);
 
     Done;
     HashResult := DigestAsBytes;
@@ -879,6 +911,64 @@ var
 begin
   CalcStream(Stream, Size, Hash, OnProgress);
   Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
+end;
+
+procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
+                              const OnProgress:TDECProgressEvent);
+var
+  Buffer: TBytes;
+  Bytes: Integer;
+  Max, Pos: Int64;
+begin
+  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+
+  Max := 0;
+  try
+    Init;
+
+    if StreamBufferSize <= 0 then
+      StreamBufferSize := 8192;
+
+    Pos := Stream.Position;
+
+    if Size < 0 then
+      Size := Stream.Size - Pos;
+
+    Max      := Pos + Size;
+
+    if Assigned(OnProgress) then
+      OnProgress(Max, 0, Started);
+
+    Bytes := StreamBufferSize mod FBufferSize;
+
+    if Bytes = 0 then
+      Bytes := StreamBufferSize
+    else
+      Bytes := StreamBufferSize + FBufferSize - Bytes;
+
+    if Bytes > Size then
+      SetLength(Buffer, Size)
+    else
+      SetLength(Buffer, Bytes);
+
+    while Size > 0 do
+    begin
+      Bytes := Length(Buffer);
+      if Bytes > Size then
+        Bytes := Size;
+      Stream.ReadBuffer(Buffer[0], Bytes);
+      Calc(Buffer[0], Bytes);
+      Dec(Size, Bytes);
+      Inc(Pos, Bytes);
+
+      if Assigned(OnProgress) then
+        OnProgress(Max, Pos, Processing);
+    end;
+  finally
+    ProtectBytes(Buffer);
+    if Assigned(OnProgress) then
+      OnProgress(Max, Max, Finished);
+  end;
 end;
 
 procedure TDECHash.CalcFile(const FileName: string; var HashResult: TBytes;
