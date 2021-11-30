@@ -99,7 +99,13 @@ type
     ///   to initialize the necessary data structures.
     /// </summary>
     procedure DoInit; virtual; abstract;
-
+    /// <summary>
+    ///   The concrete calculation. Needs to be overridden by each concrete hash
+    ///   implementation.
+    /// </summary>
+    /// <param name="Buffer">
+    ///   Data to operate on
+    /// </param>
     procedure DoTransform(Buffer: PUInt32Array); virtual; abstract;
     /// <summary>
     ///   This abstract method has to be overridden by each concrete hash algorithm
@@ -381,6 +387,8 @@ type
     ///   the operation.
     /// </param>
     /// <remarks>
+    ///   Before calling this method for the first time after creation of the
+    ///   hash instance or after calling Done Init needs to be called.
     ///   After calling this method Done needs to be called and in case of
     ///   algorithms (like SHA3) with a message size in bits and not whole bytes
     ///   the contents of the last byte needs to be assigned to PaddingByte before
@@ -924,8 +932,6 @@ begin
 
   Max := 0;
   try
-    Init;
-
     if StreamBufferSize <= 0 then
       StreamBufferSize := 8192;
 
