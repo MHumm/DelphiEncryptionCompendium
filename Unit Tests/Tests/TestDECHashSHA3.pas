@@ -85,6 +85,11 @@ type
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); override;
+    /// <summary>
+    ///   Overridden so that loading of the test data file only happens here
+    ///   and not also for the metadata etc. tests as well
+    /// </summary>
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
@@ -288,6 +293,12 @@ begin
 end;
 
 procedure TestTHash_SHA3_Base.DoTestCalcStream(HashClass:TDECHash);
+begin
+  LoadTestFiles;
+  inherited;
+end;
+
+procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDone(HashClass: TDECHash);
 begin
   LoadTestFiles;
   inherited;

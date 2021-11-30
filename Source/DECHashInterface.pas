@@ -201,6 +201,31 @@ type
                         const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
 
     /// <summary>
+    ///   Calculates the hash value over a given stream of bytes. The calculated
+    ///   hash value can be retrieved with one of the DigestAsXXX methods.
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    /// <remarks>
+    ///   After calling this method Done needs to be called and in case of
+    ///   algorithms (like SHA3) with a message size in bits and not whole bytes
+    ///   the contents of the last byte needs to be assigned to PaddingByte before
+    ///   calling Done!
+    /// </remarks>
+    procedure CalcStream(const Stream: TStream; Size: Int64;
+                         const OnProgress:TDECProgressEvent = nil); overload;
+
+    /// <summary>
     ///   Calculates the hash value over the contents of a given file
     /// </summary>
     /// <param name="FileName">

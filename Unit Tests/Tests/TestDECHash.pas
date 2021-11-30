@@ -92,6 +92,21 @@ type
     procedure TestIncrement8;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  // class for checking some exceptions which get raised for C++ Builder
+  THash_TestCPPBuilderExceptions = class(TTestCase)
+  strict protected
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+
+    procedure DoTestBlockSizeException;
+    procedure DoTestDigestSizeException;
+  published
+    procedure TestBlockSizeException;
+    procedure TestDigestSizeException;
+  end;
+
   /// <summary>
   ///   Base class for all hash tests, provides generalized test methods so that
   ///   concrete classes only need to provide the actual test data.
@@ -128,6 +143,8 @@ type
     procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
     procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
     procedure DoTestCalcStream(HashClass:TDECHash); virtual;
+    // variant for the overload which doesn't return the calculated hash
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
     procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
     procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
@@ -151,6 +168,7 @@ type
     procedure TestCalcStream;
     procedure TestCalcStreamRawByteString;
     procedure TestCalcRawByteString;
+    procedure TestCalcStreamNoDone;
     procedure TestCalcUnicodeString;
     procedure TestIsPasswordHash;
     procedure TestGetPaddingByte;
@@ -599,7 +617,7 @@ implementation
 
 uses
   System.TypInfo, System.Rtti,
-  DECFormat;
+  DECHashInterface, DECFormat;
 
 procedure TestTHash_MD2.SetUp;
 var
@@ -5389,6 +5407,81 @@ begin
                                 ProgressCalled := true;
                               end);
 
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcStreamNoDone(HashClass: TDECHash);
+var
+  Stream         : TMemoryStream;
+  i              : Integer;
+  Buf            : TBytes;
+  Hash           : TBytes;
+  ProgressCalled : Boolean;
+  Count          : UInt32;
+  BufSize        : Integer;
+  b              : UInt8; // last byte of thest data for bit sized ones
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        Stream.Clear;
+        {$IF CompilerVersion >= 25.0}
+        Stream.Write(Buf, Length(Buf));
+        {$ELSE}
+        if Length(Buf) > 0 then
+          Stream.Write(Buf[0], Length(Buf));
+        {$IFEND}
+        Stream.Position := 0;
+
+        ConfigHashClass(HashClass, i);
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        Count := Length(Buf);
+
+//        if Supports(HashClass.ClassType, IDECHashBitsized) and (Count > 0) then
+//          Dec(Count);
+
+        ProgressCalled := false;
+        HashClass.Init;
+        HashClass.CalcStream(Stream, Count,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
+
+        if Supports(HashClass.ClassType, IDECHashBitsized) and (Count > 0) then
+        begin
+          Stream.Seek(-1, TSeekOrigin.soCurrent);
+          Stream.ReadData(b, 1);
+          HashClass.PaddingByte := b;
+        end;
+
+        HashClass.Done;
+        Hash := HashClass.DigestAsBytes;
 
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
@@ -5400,6 +5493,29 @@ begin
                     string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
+
+//        ProgressCalled := false;
+//        Stream.Seek(0, TSeekOrigin.soBeginning);
+//        HashClass.Init;
+//        HashClass.CalcStream(Stream, -1,
+//                              procedure(Size, Pos: Int64; State: TDECProgressState)
+//                              begin
+//                                ProgressCalled := true;
+//                              end);
+//
+//        HashClass.Done;
+//        Hash := HashClass.DigestAsBytes;
+//
+//        if (i = FTestData.Count-1) then
+//          StreamBufferSize := BufSize;
+//
+//        CheckEquals(FTestData[i].ExpectedOutput,
+//                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+//                    'Index: ' + IntToStr(i) + ' - expected: <' +
+//                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+//                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+//
+//        CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
   finally
     Stream.Free;
@@ -5532,6 +5648,12 @@ end;
 procedure THash_TestBase.TestCalcStream;
 begin
   DoTestCalcStream(FHash);
+end;
+
+procedure THash_TestBase.TestCalcStreamNoDone;
+
+begin
+  DoTestCalcStreamNoDone(FHash);
 end;
 
 procedure THash_TestBase.TestCalcStreamRawByteString;
@@ -5705,10 +5827,55 @@ begin
   end;
 end;
 
+{ THash_TestCPPBuilderExceptions }
+
+procedure THash_TestCPPBuilderExceptions.DoTestBlockSizeException;
+var
+  Result : UInt32;
+begin
+  Result := TDECHash.BlockSize;
+  CheckEquals(0, Result, 'Dummy check which should never get reached due to ' +
+                         'the exception being raised before');
+end;
+
+procedure THash_TestCPPBuilderExceptions.DoTestDigestSizeException;
+var
+  Result : UInt32;
+begin
+  Result := TDECHash.DigestSize;
+  CheckEquals(0, Result, 'Dummy check which should never get reached due to ' +
+                         'the exception being raised before');
+end;
+
+procedure THash_TestCPPBuilderExceptions.SetUp;
+begin
+  // Empty on purpose as only class functions are tested
+  inherited;
+end;
+
+procedure THash_TestCPPBuilderExceptions.TearDown;
+begin
+  // Empty on purpose as only class functions are tested
+  inherited;
+end;
+
+procedure THash_TestCPPBuilderExceptions.TestBlockSizeException;
+begin
+  CheckException(DoTestBlockSizeException, EDECAbstractError,
+                 'Abstract error raised for C++ Builder not detected');
+end;
+
+procedure THash_TestCPPBuilderExceptions.TestDigestSizeException;
+begin
+  CheckException(DoTestDigestSizeException, EDECAbstractError,
+                 'Abstract error raised for C++ Builder not detected');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(THash_TestIncrement8);
+  TDUnitX.RegisterTestFixture(THash_TestCPPBuilderExceptions);
   TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
@@ -5750,6 +5917,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Sapphire);
   {$ELSE}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
+                            THash_TestCPPBuilderExceptions.Suite,
                             TestTDECHash.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
