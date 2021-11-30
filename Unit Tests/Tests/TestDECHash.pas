@@ -5432,7 +5432,6 @@ var
   ProgressCalled : Boolean;
   Count          : UInt32;
   BufSize        : Integer;
-  b              : UInt8; // last byte of thest data for bit sized ones
 begin
   Stream  := TMemoryStream.Create;
   BufSize := 0;
@@ -5462,25 +5461,14 @@ begin
 
         Count := Length(Buf);
 
-//        if Supports(HashClass.ClassType, IDECHashBitsized) and (Count > 0) then
-//          Dec(Count);
-
         ProgressCalled := false;
         HashClass.Init;
         HashClass.CalcStream(Stream, Count,
                               procedure(Size, Pos: Int64; State: TDECProgressState)
                               begin
                                 ProgressCalled := true;
-                              end);
+                              end, true);
 
-        if Supports(HashClass.ClassType, IDECHashBitsized) and (Count > 0) then
-        begin
-          Stream.Seek(-1, TSeekOrigin.soCurrent);
-          Stream.ReadData(b, 1);
-          HashClass.PaddingByte := b;
-        end;
-
-        HashClass.Done;
         Hash := HashClass.DigestAsBytes;
 
         if (i = FTestData.Count-1) then
@@ -5494,28 +5482,27 @@ begin
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
 
-//        ProgressCalled := false;
-//        Stream.Seek(0, TSeekOrigin.soBeginning);
-//        HashClass.Init;
-//        HashClass.CalcStream(Stream, -1,
-//                              procedure(Size, Pos: Int64; State: TDECProgressState)
-//                              begin
-//                                ProgressCalled := true;
-//                              end);
-//
-//        HashClass.Done;
-//        Hash := HashClass.DigestAsBytes;
-//
-//        if (i = FTestData.Count-1) then
-//          StreamBufferSize := BufSize;
-//
-//        CheckEquals(FTestData[i].ExpectedOutput,
-//                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
-//                    'Index: ' + IntToStr(i) + ' - expected: <' +
-//                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
-//                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
-//
-//        CheckEquals(true, ProgressCalled, 'Progress event not called');
+        ProgressCalled := false;
+        Stream.Seek(0, TSeekOrigin.soBeginning);
+        HashClass.Init;
+        HashClass.CalcStream(Stream, -1,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end, true);
+
+        Hash := HashClass.DigestAsBytes;
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
   finally
     Stream.Free;

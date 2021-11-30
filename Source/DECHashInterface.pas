@@ -216,14 +216,22 @@ type
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
+    /// <param name="DoFinalize">
+    ///   Optinal parameter: if true this call is the last one and the
+    ///   finalization of the hash calculation, including calling done, will be
+    ///   carried out in this method call as well.
+    /// </param>
     /// <remarks>
+    ///   Before calling this method for the first time after creation of the
+    ///   hash instance or after calling Done Init needs to be called.
     ///   After calling this method Done needs to be called and in case of
     ///   algorithms (like SHA3) with a message size in bits and not whole bytes
     ///   the contents of the last byte needs to be assigned to PaddingByte before
     ///   calling Done!
     /// </remarks>
     procedure CalcStream(const Stream: TStream; Size: Int64;
-                         const OnProgress:TDECProgressEvent = nil); overload;
+                         const OnProgress:TDECProgressEvent = nil;
+                         DoFinalize: Boolean = false); overload;
 
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
