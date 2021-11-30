@@ -386,6 +386,11 @@ type
     ///   Optional callback routine. It can be used to display the progress of
     ///   the operation.
     /// </param>
+    /// <param name="DoFinalize">
+    ///   Optinal parameter: if true this call is the last one and the
+    ///   finalization of the hash calculation, including calling done, will be
+    ///   carried out in this method call as well.
+    /// </param>
     /// <remarks>
     ///   Before calling this method for the first time after creation of the
     ///   hash instance or after calling Done Init needs to be called.
@@ -395,7 +400,8 @@ type
     ///   calling Done!
     /// </remarks>
     procedure CalcStream(const Stream: TStream; Size: Int64;
-                         const OnProgress:TDECProgressEvent = nil); overload;
+                         const OnProgress:TDECProgressEvent = nil;
+                         DoFinalize: Boolean = false); overload;
 
     /// <summary>
     ///   Calculates the hash value over the contents of a given file
@@ -922,7 +928,8 @@ begin
 end;
 
 procedure TDECHash.CalcStream(const Stream: TStream; Size: Int64;
-                              const OnProgress:TDECProgressEvent);
+                              const OnProgress:TDECProgressEvent;
+                              DoFinalize: Boolean);
 var
   Buffer: TBytes;
   Bytes: Integer;
@@ -939,6 +946,10 @@ begin
 
     if Size < 0 then
       Size := Stream.Size - Pos;
+
+    // Last byte is incomplete so it mustn't be processed
+    if DoFinalize and (FFinalByteLength > 0) then
+      Dec(Size);
 
     Max      := Pos + Size;
 
@@ -969,6 +980,14 @@ begin
 
       if Assigned(OnProgress) then
         OnProgress(Max, Pos, Processing);
+    end;
+
+    // Last byte is incomplete but algorithm may need its value for padding
+    if DoFinalize then
+    begin
+      if (FFinalByteLength > 0) then
+        Stream.ReadBuffer(FPaddingByte, 1);
+      Done;
     end;
   finally
     ProtectBytes(Buffer);
