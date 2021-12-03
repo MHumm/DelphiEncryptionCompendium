@@ -5540,16 +5540,15 @@ begin
         end;
 
         Count := Length(Buf);
+        Stream.Clear;
 
-        for n := 0 to Count - 1 do
+        n := 0;
+        while (n <= Count - 1) do
         begin
-          Stream.Clear;
           Stream.Write(Buf[n], 1);
           Stream.Seek(-1, TSeekOrigin.soCurrent);
 
           IsLastByte := not (Count-n > 1);
-          if IsLastByte then
-            sleep(10);
 
           ProgressCalled := false;
           HashClass.CalcStream(Stream, 1,
@@ -5557,6 +5556,8 @@ begin
                                 begin
                                   ProgressCalled := true;
                                 end, IsLastByte);
+
+          inc(n);
         end;
 
         // if we have empty input something still might be needed to be done
