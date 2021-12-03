@@ -5520,6 +5520,7 @@ var
   BufSize        : Integer;
   Count          : Integer;
   IsLastByte     : Boolean;
+  Idx, CopyCount : Integer;
 begin
   Stream  := TMemoryStream.Create;
   BufSize := 0;
@@ -5543,21 +5544,34 @@ begin
         Stream.Clear;
 
         n := 0;
+        idx := 0;
+        CopyCount := 1;
         while (n <= Count - 1) do
         begin
-          Stream.Write(Buf[n], 1);
-          Stream.Seek(-1, TSeekOrigin.soCurrent);
+          Stream.Write(Buf[idx], CopyCount);
+          Stream.Seek(-CopyCount, TSeekOrigin.soCurrent);
 
           IsLastByte := not (Count-n > 1);
 
           ProgressCalled := false;
-          HashClass.CalcStream(Stream, 1,
+          HashClass.CalcStream(Stream, CopyCount,
                                 procedure(Size, Pos: Int64; State: TDECProgressState)
                                 begin
                                   ProgressCalled := true;
                                 end, IsLastByte);
 
-          inc(n);
+          inc(idx, CopyCount);
+
+          if ((n + 4) <= (Count - 1)) then
+          begin
+            inc(n, 4);
+            CopyCount := 4;
+          end
+          else
+          begin
+            inc(n, 1);
+            CopyCount := 1;
+          end;
         end;
 
         // if we have empty input something still might be needed to be done
