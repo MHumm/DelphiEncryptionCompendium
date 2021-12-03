@@ -90,6 +90,11 @@ type
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); override;
+    /// <summary>
+    ///   Overridden so that loading of the test data file only happens here
+    ///   and not also for the metadata etc. tests as well
+    /// </summary>
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
@@ -304,6 +309,12 @@ begin
   inherited;
 end;
 
+procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
+begin
+  LoadTestFiles;
+  inherited;
+end;
+
 procedure TestTHash_SHA3_Base.DoTestCalcUnicodeString(HashClass:TDECHash);
 begin
   LoadTestFiles;
@@ -422,7 +433,6 @@ begin
   inherited;
 
   THash_SHA3_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_SHA3_224(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_224.SetUp;
@@ -440,6 +450,28 @@ begin
   FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
   FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
+
+// Für Unittests für CalcStream verschoben Start
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32d' +
+                                       'ca6b3301489674ab';
+  lDataRow.ExpectedOutputUTFStrTest := '3d0e88c1e4fe0f6577e921e50805155b0748b40a' +
+                                       '3ab368c96b63f686';
+  lDataRow.AddInputVector(#$13);
+  lDataRow.FinalBitLength := 5;
+
+  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //        and-Guidelines/documents/examples/SHA3-224_Msg30.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac985' +
+                                       '1b5f0baab007df3b';
+  lDataRow.ExpectedOutputUTFStrTest := '098526f4e121e977c325078374bf13ee9b0f2ed3' +
+                                       '14ce743c5641cebe';
+  lDataRow.AddInputVector(#$53#$58#$7B#$19);
+  lDataRow.FinalBitLength := 6;
+// Für Unittests für CalcStream verschoben Ende
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
@@ -624,7 +656,6 @@ begin
   inherited;
 
   THash_SHA3_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_SHA3_256(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_256.SetUp;
@@ -776,7 +807,6 @@ begin
   inherited;
 
   THash_SHA3_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_SHA3_384(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_384.SetUp;
@@ -938,7 +968,6 @@ begin
   inherited;
 
   THash_SHA3_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_SHA3_512(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
 end;
 
 procedure TestTHash_SHA3_512.SetUp;
@@ -1099,7 +1128,6 @@ begin
   inherited;
 
   THash_Shake128(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_Shake128(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
   THash_Shake128(FHash).HashSize        := FTestData[IdxTestData].HashResultByteLength;
 end;
 
@@ -1283,7 +1311,6 @@ begin
   inherited;
 
   THash_Shake256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
-  THash_Shake256(FHash).PaddingByte     := FTestData[IdxTestData].PaddingByte;
   THash_Shake256(FHash).HashSize        := FTestData[IdxTestData].HashResultByteLength;
 end;
 

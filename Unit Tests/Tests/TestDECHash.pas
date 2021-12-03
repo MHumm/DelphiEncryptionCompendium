@@ -145,6 +145,9 @@ type
     procedure DoTestCalcStream(HashClass:TDECHash); virtual;
     // variant for the overload which doesn't return the calculated hash
     procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
+    // variant for the overload which doesn't return the calculated hash and which
+    // tries to splitt the input data into multiple calls
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); virtual;
     procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
     procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
@@ -169,6 +172,7 @@ type
     procedure TestCalcStreamRawByteString;
     procedure TestCalcRawByteString;
     procedure TestCalcStreamNoDone;
+    procedure TestCalcStreamNoDoneMulti;
     procedure TestCalcUnicodeString;
     procedure TestIsPasswordHash;
     procedure TestGetPaddingByte;
@@ -5430,7 +5434,6 @@ var
   Buf            : TBytes;
   Hash           : TBytes;
   ProgressCalled : Boolean;
-  Count          : UInt32;
   BufSize        : Integer;
 begin
   Stream  := TMemoryStream.Create;
@@ -5459,11 +5462,9 @@ begin
           StreamBufferSize := -1;
         end;
 
-        Count := Length(Buf);
-
         ProgressCalled := false;
         HashClass.Init;
-        HashClass.CalcStream(Stream, Count,
+        HashClass.CalcStream(Stream, Length(Buf),
                               procedure(Size, Pos: Int64; State: TDECProgressState)
                               begin
                                 ProgressCalled := true;
@@ -5490,6 +5491,82 @@ begin
                               begin
                                 ProgressCalled := true;
                               end, true);
+
+        Hash := HashClass.DigestAsBytes;
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
+var
+  Stream         : TMemoryStream;
+  i, n           : Integer;
+  Buf            : TBytes;
+  Hash           : TBytes;
+  ProgressCalled : Boolean;
+  BufSize        : Integer;
+  Count          : Integer;
+  IsLastByte     : Boolean;
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        ConfigHashClass(HashClass, i);
+        HashClass.Init;
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        Count := Length(Buf);
+
+        for n := 0 to Count - 1 do
+        begin
+          Stream.Clear;
+          Stream.Write(Buf[n], 1);
+          Stream.Seek(-1, TSeekOrigin.soCurrent);
+
+          IsLastByte := not (Count-n > 1);
+          if IsLastByte then
+            sleep(10);
+
+          ProgressCalled := false;
+          HashClass.CalcStream(Stream, 1,
+                                procedure(Size, Pos: Int64; State: TDECProgressState)
+                                begin
+                                  ProgressCalled := true;
+                                end, IsLastByte);
+        end;
+
+        // if we have empty input something still might be needed to be done
+        if (Count = 0) then
+          HashClass.CalcStream(Stream, 0,
+                                procedure(Size, Pos: Int64; State: TDECProgressState)
+                                begin
+                                  ProgressCalled := true;
+                                end, true);
+
 
         Hash := HashClass.DigestAsBytes;
 
@@ -5641,6 +5718,11 @@ procedure THash_TestBase.TestCalcStreamNoDone;
 
 begin
   DoTestCalcStreamNoDone(FHash);
+end;
+
+procedure THash_TestBase.TestCalcStreamNoDoneMulti;
+begin
+  DoTestCalcStreamNoDoneMulti(FHash);
 end;
 
 procedure THash_TestBase.TestCalcStreamRawByteString;
