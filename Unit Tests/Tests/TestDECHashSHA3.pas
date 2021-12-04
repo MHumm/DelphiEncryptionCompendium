@@ -151,6 +151,7 @@ type
     procedure TestIdentity;
     procedure TestFinalByteLength;
     procedure TestFinalByteLengthOverflow;
+    procedure TestRegressionDoneCalledTwice;
   end;
 
   // Test methods for class THash_SHA3_256
@@ -646,6 +647,36 @@ end;
 procedure TestTHash_SHA3_224.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_SHA3_224.TestRegressionDoneCalledTwice;
+var
+  Hash   : THash_SHA3_224;
+  Stream : TMemoryStream;
+  Result : TBytes;
+begin
+  // Regression test for a bug reported by Harry Rogers via private e-mail.
+  // The failure was that Done raisedn an exception when called after calling
+  // one of the CalcFile or CalcStream variants which automatically call Done
+  // at the end.
+  Hash := THash_SHA3_224.Create;
+  try
+    Stream := TMemoryStream.Create;
+    try
+      Stream.WriteData($af);
+      Stream.Seek(0, TSeekOrigin.soBeginning);
+
+      Hash.CalcStream(Stream, 1, Result, nil);
+      Hash.Done;
+
+      CheckEquals(RawByteString('1545e234dd648d51afe85b758f865c4855715cccf276eeb004a37a74'),
+                  BytesToRawString(TFormat_HEXL.Encode(Result)));
+    finally
+      Stream.Free;
+    end;
+  finally
+    Hash.Free;
+  end;
 end;
 
 { TestTHash_SHA3_256 }

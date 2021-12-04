@@ -5582,7 +5582,6 @@ begin
                                   ProgressCalled := true;
                                 end, true);
 
-
         Hash := HashClass.DigestAsBytes;
 
         if (i = FTestData.Count-1) then
