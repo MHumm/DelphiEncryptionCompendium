@@ -1,0 +1,5 @@
+This is the privacy policy for the DEC Cipher Demo and DEC Hash Demo applications.
+
+We, Team DEC, do not collect any data entered in these apps.
+The only information we get from using these apps is an anonymous statistic
+about how many users installed these apps.
