@@ -367,6 +367,19 @@ type
   TCipher_Rijndael = class(TDECFormattedCipher)
   private
     FRounds: Integer;
+    /// <summary>
+    ///   Calculates the key used for encoding. Implemented is the "new AES
+    ///   conform key scheduling".
+    /// </summary>
+    /// <param name="KeySize">
+    ///   Length of the key in byte, but here the AES variant is relevant rather
+    /// </param>
+    procedure BuildEncodeKey(KeySize:Integer); inline;
+    /// <summary>
+    ///   Calculates the key used for decoding. Implemented is the "new AES
+    ///   conform key scheduling".
+    /// </summary>
+    procedure BuildDecodeKey; inline;
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -2769,97 +2782,6 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
   end; }
 {$ENDREGION}
 
-  // New AES conform Key Scheduling
-
-  procedure BuildEncodeKey;
-  const
-    RCon: array[0..9] of UInt32 = ($01, $02, $04, $08, $10, $20, $40, $80, $1b, $36);
-  var
-    I: Integer;
-    T: UInt32;
-    P: PUInt32Array;
-  begin
-    P := FAdditionalBuffer;
-    if Size <= 16 then
-    begin
-      for I := 0 to 9 do
-      begin
-        T := P[3];
-        P[4] := Rijndael_S[0, T shr  8 and $FF]        xor
-                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                Rijndael_S[0, T shr 24        ] shl 16 xor
-                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-        P[5] := P[1] xor P[4];
-        P[6] := P[2] xor P[5];
-        P[7] := P[3] xor P[6];
-        P    := @P[4];
-      end;
-    end
-    else
-      if Size <= 24 then
-      begin
-        for I := 0 to 7 do
-        begin
-          T := P[5];
-          P[6] := Rijndael_S[0, T shr  8 and $FF]        xor
-                  Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                  Rijndael_S[0, T shr 24        ] shl 16 xor
-                  Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-          P[7] := P[1] xor P[6];
-          P[8] := P[2] xor P[7];
-          P[9] := P[3] xor P[8];
-          if I = 7 then
-            Break;
-          P[10] := P[4] xor P[9];
-          P[11] := P[5] xor P[10];
-          P     := @P[6];
-        end;
-      end
-      else
-      begin
-        for I :=0 to 6 do
-        begin
-          T := P[7];
-          P[8] := Rijndael_S[0, T shr  8 and $FF]        xor
-                  Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                  Rijndael_S[0, T shr 24        ] shl 16 xor
-                  Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-          P[9] := P[1] xor P[8];
-          P[10] := P[2] xor P[9];
-          P[11] := P[3] xor P[10];
-          if I = 6 then
-            Break;
-          T := P[11];
-          P[12] := Rijndael_S[0, T        and $FF]        xor
-                   Rijndael_S[0, T shr  8 and $FF] shl  8 xor
-                   Rijndael_S[0, T shr 16 and $FF] shl 16 xor
-                   Rijndael_S[0, T shr 24        ] shl 24 xor P[4];
-          P[13] := P[5] xor P[12];
-          P[14] := P[6] xor P[13];
-          P[15] := P[7] xor P[14];
-          P     := @P[8];
-        end;
-      end;
-  end;
-
-  procedure BuildDecodeKey;
-  var
-    P: PUInt32;
-    I: Integer;
-  begin
-    P := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1); // for Pointer Math
-    Move(FAdditionalBuffer^, P^, FAdditionalBufferSize shr 1);
-    Inc(P, 4);
-    for I := 0 to FRounds * 4 - 5 do
-    begin
-      P^ := Rijndael_T[4, Rijndael_S[0, P^        and $FF]] xor
-            Rijndael_T[5, Rijndael_S[0, P^ shr  8 and $FF]] xor
-            Rijndael_T[6, Rijndael_S[0, P^ shr 16 and $FF]] xor
-            Rijndael_T[7, Rijndael_S[0, P^ shr 24        ]];
-      Inc(P);
-    end;
-  end;
-
 begin
   if Size <= 16 then
     FRounds := 10
@@ -2870,10 +2792,97 @@ begin
     FRounds := 14;
   FillChar(FAdditionalBuffer^, 32, 0);
   Move(Key, FAdditionalBuffer^, Size);
-  BuildEncodeKey;
+  BuildEncodeKey(Size);
   BuildDecodeKey;
 
   inherited;
+end;
+
+procedure TCipher_Rijndael.BuildEncodeKey(KeySize:Integer);
+var
+  I: Integer;
+  T: UInt32;
+  P: PUInt32Array;
+begin
+  P := FAdditionalBuffer;
+  if KeySize <= 16 then
+  begin
+    for I := 0 to 9 do
+    begin
+      T := P[3];
+      P[4] := Rijndael_S[0, T shr  8 and $FF]        xor
+              Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+              Rijndael_S[0, T shr 24        ] shl 16 xor
+              Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+      P[5] := P[1] xor P[4];
+      P[6] := P[2] xor P[5];
+      P[7] := P[3] xor P[6];
+      P    := @P[4];
+    end;
+  end
+  else
+    if KeySize <= 24 then
+    begin
+      for I := 0 to 7 do
+      begin
+        T := P[5];
+        P[6] := Rijndael_S[0, T shr  8 and $FF]        xor
+                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+                Rijndael_S[0, T shr 24        ] shl 16 xor
+                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+        P[7] := P[1] xor P[6];
+        P[8] := P[2] xor P[7];
+        P[9] := P[3] xor P[8];
+        if I = 7 then
+          Break;
+        P[10] := P[4] xor P[9];
+        P[11] := P[5] xor P[10];
+        P     := @P[6];
+      end;
+    end
+    else
+    begin
+      for I :=0 to 6 do
+      begin
+        T := P[7];
+        P[8] := Rijndael_S[0, T shr  8 and $FF]        xor
+                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+                Rijndael_S[0, T shr 24        ] shl 16 xor
+                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+        P[9] := P[1] xor P[8];
+        P[10] := P[2] xor P[9];
+        P[11] := P[3] xor P[10];
+        if I = 6 then
+          Break;
+        T := P[11];
+        P[12] := Rijndael_S[0, T        and $FF]        xor
+                 Rijndael_S[0, T shr  8 and $FF] shl  8 xor
+                 Rijndael_S[0, T shr 16 and $FF] shl 16 xor
+                 Rijndael_S[0, T shr 24        ] shl 24 xor P[4];
+        P[13] := P[5] xor P[12];
+        P[14] := P[6] xor P[13];
+        P[15] := P[7] xor P[14];
+        P     := @P[8];
+      end;
+    end;
+end;
+
+procedure TCipher_Rijndael.BuildDecodeKey;
+var
+  P: PUInt32;
+  I: Integer;
+begin
+  P := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1); // for Pointer Math
+  Move(FAdditionalBuffer^, P^, FAdditionalBufferSize shr 1);
+  Inc(P, 4);
+  for I := 0 to FRounds * 4 - 5 do
+  begin
+    P^ := Rijndael_T[4, Rijndael_S[0, P^        and $FF]] xor
+          Rijndael_T[5, Rijndael_S[0, P^ shr  8 and $FF]] xor
+          Rijndael_T[6, Rijndael_S[0, P^ shr 16 and $FF]] xor
+          Rijndael_T[7, Rijndael_S[0, P^ shr 24        ]];
+    Inc(P);
+  end;
 end;
 
 procedure TCipher_Rijndael.DoEncode(Source, Dest: Pointer; Size: Integer);

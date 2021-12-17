@@ -833,6 +833,11 @@ const
     $09D0C479,$28C8FFE0,$84AA6C39,$9DAD7287,$7DFF9BE3,$D4268361,$C96DA1D4
   );
 
+  /// <summary>
+  ///   Constant used in AES encryption key initialization
+  /// </summary>
+  RijndaelEncryptionSheduleConst: array[0..9] of UInt32 = ($01, $02, $04, $08, $10, $20, $40, $80, $1b, $36);
+
   Rijndael_S: array[0..1, 0..255] of Byte = (
    ($63,$7C,$77,$7B,$F2,$6B,$6F,$C5,$30,$01,$67,$2B,$FE,$D7,$AB,$76,
     $CA,$82,$C9,$7D,$FA,$59,$47,$F0,$AD,$D4,$A2,$AF,$9C,$A4,$72,$C0,

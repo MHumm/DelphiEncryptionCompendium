@@ -483,7 +483,7 @@ type
   ///   in Delphi XE6 or lower.
   /// </summary>
   /// <remarks>
-  ///   SHall be removed as soon as the minimum supported version is XE7 or higher.
+  ///   Shall be removed as soon as the minimum supported version is XE7 or higher.
   /// </remarks>
   TArrHelper = class
     class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
