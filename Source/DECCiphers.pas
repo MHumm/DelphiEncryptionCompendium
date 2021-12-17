@@ -413,6 +413,17 @@ type
   ///   EDECCipherException exception
   /// </summary>
   TCipher_AES128 = class(TCipher_Rijndael)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
   public
 { TODO :
 A variant of DoInit needs to be added which ensures
@@ -3068,6 +3079,21 @@ begin
   Result.MinRounds                   := 1;
   Result.MaxRounds                   := 1;
   Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+procedure TCipher_AES128.DoInit(const Key; Size: Integer);
+begin
+  // number of rounds is fixed for 128 bit and if a size > 16 is given the
+  // inherited call should raise the "key material too large" exception.
+  // but that has still to be tested!
+  FRounds := 10;
+
+  FillChar(FAdditionalBuffer^, 32, 0);
+  Move(Key, FAdditionalBuffer^, Size);
+  BuildEncodeKey(Size);
+  BuildDecodeKey;
+
+  inherited;
 end;
 
 { TCipher_AES192 }
