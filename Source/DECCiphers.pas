@@ -402,7 +402,42 @@ type
     property Rounds: Integer read FRounds;
   end;
 
+  /// <summary>
+  ///   Generic implementation. The bit length one gets depends on the length
+  ///   of the key defined via Init.
+  /// </summary>
   TCipher_AES = class(TCipher_Rijndael);
+
+  /// <summary>
+  ///   128 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  TCipher_AES128 = class(TCipher_Rijndael)
+  public
+{ TODO :
+A variant of DoInit needs to be added which ensures
+the key length doesn't exceed 128 bit and which sets
+the rounds to the proper value for 128 bit AES! }
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <summary>
+  ///   192 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  TCipher_AES192 = class(TCipher_Rijndael)
+  public
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <summary>
+  ///   256 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  TCipher_AES256 = class(TCipher_Rijndael)
+  public
+    class function Context: TCipherContext; override;
+  end;
 
   TCipher_Square = class(TDECFormattedCipher)
   protected
@@ -3015,6 +3050,60 @@ begin
                           Rijndael_S[1, C2 shr  8 and $FF] shl  8 or
                           Rijndael_S[1, B2 shr 16 and $FF] shl 16 or
                           Rijndael_S[1, A2 shr 24]         shl 24)    xor P[3];
+end;
+
+{ TCipher_AES128 }
+
+class function TCipher_AES128.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+{ TCipher_AES192 }
+
+class function TCipher_AES192.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 24;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+{ TCipher_AES256 }
+
+class function TCipher_AES256.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
 end;
 
 { TCipher_Square }
@@ -6630,6 +6719,9 @@ initialization
 // more common name
 //  TCipher_Rijndael.RegisterClass(TDECCipher.ClassList);
   TCipher_AES.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES128.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES192.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES256.RegisterClass(TDECCipher.ClassList);
   TCipher_Square.RegisterClass(TDECCipher.ClassList);
   TCipher_SCOP.RegisterClass(TDECCipher.ClassList);
   TCipher_Sapphire.RegisterClass(TDECCipher.ClassList);
