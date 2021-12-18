@@ -311,10 +311,13 @@ type
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+    procedure DoTestTooLargeKey;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
     procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
@@ -330,10 +333,13 @@ type
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+    procedure DoTestTooLargeKey;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
     procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
@@ -349,10 +355,13 @@ type
 
     procedure Init(TestData: TCipherTestData);
     procedure Done;
+    procedure DoTestTooLargeKey;
   public
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
     procedure TestIdentity;
     procedure TestContext;
     procedure TestEncode;
@@ -4544,6 +4553,19 @@ begin
   FCipher_AES.Done;
 end;
 
+procedure TestTCipher_AES128.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES128;
+begin
+  Cipher := TCipher_AES128.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEFa'),RawByteString('0000000000000000'), $FF);
+    CheckEquals(10, Cipher.Rounds, 'Wrong number of rounds for AES128');
+  finally
+    Cipher.Free;
+  end;
+end;
+
 procedure TestTCipher_AES128.Init(TestData: TCipherTestData);
 begin
   LimitKeyLength(TestData.Key, FCipher_AES.Context.KeySize);
@@ -4637,11 +4659,43 @@ begin
   CheckEquals($C8F90061, FCipher_AES.Identity);
 end;
 
+procedure TestTCipher_AES128.TestInitialization;
+var
+  Cipher: TCipher_AES128;
+begin
+  Cipher := TCipher_AES128.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF'),RawByteString('0000000000000000'), $FF);
+    CheckEquals(10, Cipher.Rounds, 'Wrong number of rounds for AES128');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES128.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
 { TestTCipher_AES192 }
 
 procedure TestTCipher_AES192.Done;
 begin
   FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES192.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES192;
+begin
+  Cipher := TCipher_AES192.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF01234567a'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(12, Cipher.Rounds, 'Wrong number of rounds for AES192');
+  finally
+    Cipher.Free;
+  end;
 end;
 
 procedure TestTCipher_AES192.Init(TestData: TCipherTestData);
@@ -4716,11 +4770,44 @@ begin
   CheckEquals($CBD830B4, FCipher_AES.Identity);
 end;
 
+procedure TestTCipher_AES192.TestInitialization;
+var
+  Cipher: TCipher_AES192;
+begin
+  Cipher := TCipher_AES192.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF01234567'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(12, Cipher.Rounds, 'Wrong number of rounds for AES192');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES192.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
 { TestTCipher_AES256 }
 
 procedure TestTCipher_AES256.Done;
 begin
   FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES256.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES256;
+begin
+  Cipher := TCipher_AES256.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF0123456789ABCDEFa'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(14, Cipher.Rounds, 'Wrong number of rounds for AES256');
+  finally
+    Cipher.Free;
+  end;
 end;
 
 procedure TestTCipher_AES256.Init(TestData: TCipherTestData);
@@ -4794,6 +4881,25 @@ end;
 procedure TestTCipher_AES256.TestIdentity;
 begin
   CheckEquals($624605F8, FCipher_AES.Identity);
+end;
+
+procedure TestTCipher_AES256.TestInitialization;
+var
+  Cipher: TCipher_AES256;
+begin
+  Cipher := TCipher_AES256.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF0123456789ABCDEF'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(14, Cipher.Rounds, 'Wrong number of rounds for AES256');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES256.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
 end;
 
 initialization
