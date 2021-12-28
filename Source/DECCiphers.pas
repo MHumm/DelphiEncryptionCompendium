@@ -412,7 +412,7 @@ type
   ///   128 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
-  TCipher_AES128 = class(TCipher_Rijndael)
+  TCipher_AES128 = class(TCipher_AES)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -432,7 +432,7 @@ type
   ///   192 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
-  TCipher_AES192 = class(TCipher_Rijndael)
+  TCipher_AES192 = class(TCipher_AES)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -452,7 +452,7 @@ type
   ///   256 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
-  TCipher_AES256 = class(TCipher_Rijndael)
+  TCipher_AES256 = class(TCipher_AES)
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in

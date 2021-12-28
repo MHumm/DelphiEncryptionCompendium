@@ -55,6 +55,8 @@ type
 
   TFormat_DECMIME32   = class;
 
+  TFormat_Base32      = class;
+
   TFormat_Base64      = class;
   TFormat_MIME64      = class;
 
@@ -145,6 +147,35 @@ type
   /// </summary>
   TFormat_MIME32 = class(TFormat_DECMIME32)
   end deprecated 'Use TFormat_DECMIME32 instead';
+
+  /// <summary>
+  ///   Base32, see http://tools.ietf.org/html/rfc4648
+  /// </summary>
+  TFormat_Base32 = class(TFormat_HEX)
+  private const
+    /// <summary>
+    ///   The data will be encoded using only these chars
+    /// </summary>
+    cBase32 : array [0..31] of Char = (
+       'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+       'Q','R','S','T','U','V','W','X','Y','Z','2','3','4','5','6','7');
+  private
+    /// <summary>
+    ///   Table used for decioding, initialized on first use
+    /// </summary>
+    class var FBase32DecodeTable : array [#0..'z'] of Byte;
+
+    /// <summary>
+    ///   Initializes the contents of FBase32DecodeTable, which is only required
+    ///   when DoDecode is called for the very first time.
+    /// </summary>
+    class procedure PrepareTable;
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  public
+  end;
 
   /// <summary>
   ///   Base64 (without soft wraps), see http://tools.ietf.org/html/rfc4648
@@ -555,71 +586,10 @@ begin
   // special and skipped chars
   // 'abcdefghijklnpqrstuwxyz123456789 =$()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13);
   SetLength(result, 53);
-  {$IF CompilerVersion >= 28.0}
   result := [$61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6E, $70,
              $71, $72, $73, $74, $75, $77, $78, $79, $7A, $31, $32, $33, $34, $35,
              $36, $37, $38, $39, $20, $3D, $24, $28, $29, $5B, $5D, $7B, $7D, $2C,
              $3B, $3A, $2D, $5F, $5C, $2A, $22, $27, $09, $0A, $0D];
-  {$ELSE}
-  // Remove this initialisation variant as soon as XE7+ is the new minimum
-  // supported Delphi version
-  result[ 0]:=$61;
-  result[ 1]:=$62;
-  result[ 2]:=$63;
-  result[ 3]:=$64;
-  result[ 4]:=$65;
-  result[ 5]:=$66;
-  result[ 6]:=$67;
-  result[ 7]:=$68;
-  result[ 8]:=$69;
-  result[ 9]:=$6A;
-  result[10]:=$6B;
-  result[11]:=$6C;
-  result[12]:=$6E;
-  result[13]:=$70;
-
-  result[14]:=$71;
-  result[15]:=$72;
-  result[16]:=$73;
-  result[17]:=$74;
-  result[18]:=$75;
-  result[19]:=$77;
-  result[20]:=$78;
-  result[21]:=$79;
-  result[22]:=$7A;
-  result[23]:=$31;
-  result[24]:=$32;
-  result[25]:=$33;
-  result[26]:=$34;
-  result[27]:=$35;
-
-  result[28]:=$36;
-  result[29]:=$37;
-  result[30]:=$38;
-  result[31]:=$39;
-  result[32]:=$20;
-  result[33]:=$3D;
-  result[34]:=$24;
-  result[35]:=$28;
-  result[36]:=$29;
-  result[37]:=$5B;
-  result[38]:=$5D;
-  result[39]:=$7B;
-  result[40]:=$7D;
-  result[41]:=$2C;
-
-  result[42]:=$3B;
-  result[43]:=$3A;
-  result[44]:=$2D;
-  result[45]:=$5F;
-  result[46]:=$5C;
-  result[47]:=$2A;
-  result[48]:=$22;
-  result[49]:=$27;
-  result[50]:=$09;
-  result[51]:=$0A;
-  result[52]:=$0D;
-  {$IFEND}
 end;
 
 class procedure TFormat_DECMIME32.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1847,6 +1817,105 @@ begin
   end;
 end;
 
+{ TFormat_Base32 }
+
+class procedure TFormat_Base32.PrepareTable;
+var
+  c : Char;
+begin
+  for c := #0 to High(FBase32DecodeTable) do begin
+     case c of
+        'A'..'Z' : FBase32DecodeTable[c] := Ord(c)-Ord('A');
+        'a'..'z' : FBase32DecodeTable[c] := Ord(c)-Ord('a');
+        '2'..'7' : FBase32DecodeTable[c] := Ord(c)+(26-Ord('2'));
+        '0' : FBase32DecodeTable[c] := Ord('O')-Ord('A');
+     else
+        FBase32DecodeTable[c] := 255;
+     end;
+  end;
+end;
+
+class procedure TFormat_Base32.DoDecode(const Source; var Dest: TBytes;
+  Size: Integer);
+var
+   c, b, i, n, d : Integer;
+   pIn : PChar;
+   pOut : PByte;
+begin
+   if (Pointer(Source) = nil) then
+   begin
+     SetLength(Dest, 0);
+     Exit;
+   end;
+
+   if (FBase32DecodeTable['z'] = 0) then
+     PrepareTable;
+
+   n := Size;
+   SetLength(Dest, ((n div 8)+1)*5);
+   pIn := @Source;
+   pOut := @Dest[0];
+   c := 0;
+   b := 0;
+   for i := 0 to n-1 do begin
+      d := FBase32DecodeTable[pIn[i]];
+      if d = 255 then begin
+         if pIn[i] = '=' then break;
+         raise Exception.CreateFmt('Invalid character (#%d) in Base32', [Ord(pIn[i])]);
+      end;
+      c := (c shl 5) or d;
+      Inc(b, 5);
+      if b >= 8 then begin
+         Dec(b, 8);
+         pOut^ := c shr b;
+         Inc(pOut);
+      end;
+   end;
+   n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
+   SetLength(Dest, n);
+end;
+
+class procedure TFormat_Base32.DoEncode(const Source; var Dest: TBytes;
+  Size: Integer);
+var
+   i, n, c, b : Integer;
+   pIn : PByteArray;
+   pOut : PChar;
+begin
+   if (Size = 0) or (Pointer(Source) = nil) then
+   begin
+     SetLength(Dest, 0);
+     Exit;
+   end;
+
+   n := Size;
+   SetLength(Dest, ((n div 5)+1)*8);
+   c := 0;
+   b := 0;
+   pIn := @Source;
+   pOut := @Dest[0];
+   for i := 0 to n-1 do begin
+      c := (c shl 8) or pIn[i];
+      Inc(b, 8);
+      while b >= 5 do begin
+         Dec(b, 5);
+         pOut^ := cBase32[(c shr b) and $1F];
+         Inc(pOut);
+      end;
+   end;
+   if b > 0 then begin
+      pOut^ := cBase32[(c shl (5-b)) and $1F];
+      Inc(pOut);
+   end;
+   n := (NativeUInt(pOut) - NativeUInt(Pointer(Dest))) div SizeOf(Char);
+   SetLength(Dest, n);
+end;
+
+class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
+begin
+
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -1871,6 +1940,7 @@ initialization
     TFormat_HEX.RegisterClass(TDECFormat.ClassList);
     TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
     TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
+    TFormat_Base32.RegisterClass(TDECFormat.ClassList);
     TFormat_Base64.RegisterClass(TDECFormat.ClassList);
     TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
     TFormat_UU.RegisterClass(TDECFormat.ClassList);
