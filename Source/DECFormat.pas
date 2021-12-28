@@ -1933,8 +1933,24 @@ begin
 end;
 
 class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  T: TBytes;
+  S: PByte;
 begin
-
+  Result := True;
+  T := CharTableBinary;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // A-Z, 2-7
+    if S^ in [$41..$5A, $32..$37, $3D] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
 end;
 
 initialization

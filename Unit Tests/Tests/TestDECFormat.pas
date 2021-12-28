@@ -2279,18 +2279,110 @@ begin
 end;
 
 procedure TestTFormat_Base32.TestIsValidRawByteString;
+var
+  i : Integer;
 begin
-// Muss erst noch in TFormat_Base32 umgesetzt werden
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('')));
+
+  CheckEquals(true, TFormat_Base64.IsValid(
+    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=')));
+  CheckEquals(false, TFormat_Base64.IsValid(BytesOf('ABC"')));
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('6')));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Base64.IsValid(RawByteString(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_Base32.TestIsValidTBytes;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
 begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf));
 
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base32.IsValid(SrcBuf),
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
+  end;
+
+  SrcBuf := BytesOf('ABC"');
+  CheckEquals(false, TFormat_Base32.IsValid(SrcBuf), 'Data: ABC" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 procedure TestTFormat_Base32.TestIsValidTypeless;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
 begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf, 0));
 
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
+  end;
+
+
+  SrcBuf := BytesOf('ABC"');
+  CheckEquals(false, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)), 'Data: ABC" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
 end;
 
 initialization
