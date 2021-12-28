@@ -30,7 +30,7 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  DECBaseClass, DECUtil, DECFormat, DECFormatBase;
+  DECBaseClass, DECTypes, DECUtil, DECFormat, DECFormatBase;
 
 type
   /// <summary>
@@ -243,6 +243,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -250,6 +252,7 @@ type
     procedure TestDecodeBytes;
     procedure TestDecodeRawByteString;
     procedure TestDecodeTypeless;
+    procedure TestDecodeException;
     procedure TestIsValidTypeless;
     procedure TestIsValidTBytes;
     procedure TestIsValidRawByteString;
@@ -2224,6 +2227,11 @@ end;
 
 { TestTFormat_Base32 }
 
+procedure TestTFormat_Base32.DoTestDecodeException;
+begin
+  FFormat_Base32.Decode('A'#47);
+end;
+
 procedure TestTFormat_Base32.SetUp;
 begin
   FFormat_Base32 := TFormat_Base32.Create;
@@ -2245,17 +2253,22 @@ end;
 
 procedure TestTFormat_Base32.TestDecodeBytes;
 begin
-  DoTestEncodeDecode(FFormat_Base32.Decode, cTestDataEncode);
+  DoTestEncodeDecode(FFormat_Base32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base32.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_Base32.TestDecodeRawByteString;
 begin
-  DoTestEncodeDecodeRawByteString(FFormat_Base32.Decode, cTestDataEncode);
+  DoTestEncodeDecodeRawByteString(FFormat_Base32.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_Base32.TestDecodeTypeless;
 begin
-  DoTestEncodeDecodeTypeless(FFormat_Base32.Decode, cTestDataEncode);
+  DoTestEncodeDecodeTypeless(FFormat_Base32.Decode, cTestDataDecode);
 end;
 
 procedure TestTFormat_Base32.TestEncodeBytes;

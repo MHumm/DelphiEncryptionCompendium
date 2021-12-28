@@ -163,7 +163,7 @@ type
     cPaddingChar = '=';
   private
     /// <summary>
-    ///   Table used for decioding, initialized on first use
+    ///   Table used for decoding, initialized on first use
     /// </summary>
     class var FBase32DecodeTable : array [#0..'z'] of Byte;
 
@@ -350,7 +350,8 @@ uses
   DECTypes, DECCRC; // needed by TFormat_Radix64
 
 resourcestring
-  sInvalidStringFormat  = 'Input is not an valid %s format';
+  sInvalidStringFormat   = 'Input is not an valid %s format';
+  sInvalidInputCharacter = 'Invalid character (#%d) in input';
 
 class function TFormat_HEX.CharTableBinary: TBytes;
 begin
@@ -1731,26 +1732,29 @@ end;
 
 { TFormat_BigEndian32 }
 
-class procedure TFormat_BigEndian32.DoDecode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoDecode(const Source;
+                                             var Dest: TBytes;
+                                             Size: Integer);
 begin
   DoSawp(Source, Dest, Size);
 end;
 
-class procedure TFormat_BigEndian32.DoEncode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoEncode(const Source;
+                                             var Dest: TBytes;
+                                             Size: Integer);
 begin
   DoSawp(Source, Dest, Size);
 end;
 
 class function TFormat_BigEndian32.DoIsValid(const Data;
-  Size: Integer): Boolean;
+                                             Size: Integer): Boolean;
 begin
   result := (Size mod 4) = 0;
 end;
 
-class procedure TFormat_BigEndian32.DoSawp(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoSawp(const Source;
+                                           var Dest: TBytes;
+                                           Size: Integer);
 var
   i       : Integer;
   SwapRes : UInt32;
@@ -1842,7 +1846,7 @@ class procedure TFormat_Base32.DoDecode(const Source;
                                         Size: Integer);
 var
    c, b, i, n, d : Integer;
-   pIn : PChar;
+   pIn : PByte;
    pOut : PByte;
 begin
    if (Pointer(Source) = nil) then
@@ -1860,19 +1864,25 @@ begin
    pOut := @Dest[0];
    c := 0;
    b := 0;
-   for i := 0 to n-1 do begin
-      d := FBase32DecodeTable[pIn[i]];
-      if d = 255 then begin
-         if pIn[i] = '=' then break;
-         raise Exception.CreateFmt('Invalid character (#%d) in Base32', [Ord(pIn[i])]);
-      end;
-      c := (c shl 5) or d;
-      Inc(b, 5);
-      if b >= 8 then begin
-         Dec(b, 8);
-         pOut^ := c shr b;
-         Inc(pOut);
-      end;
+   for i := 0 to n-1 do
+   begin
+     d := FBase32DecodeTable[Chr(pIn^)];
+     if d = 255 then
+     begin
+       if (Chr(pIn^) = '=') then break;
+       raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
+     end;
+
+     c := (c shl 5) or d;
+     Inc(b, 5);
+     if b >= 8 then
+     begin
+       Dec(b, 8);
+       pOut^ := Lo(c shr b);
+       Inc(pOut);
+     end;
+
+     Inc(pIn);
    end;
    n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
    SetLength(Dest, n);
@@ -1893,14 +1903,12 @@ begin
      Exit;
    end;
 
-   n := Size;
-   SetLength(Dest, ((n div 5)+1)*8);
-//   SetLength(Dest, Trunc((n / 5) * 8) + 6 + 1);
+   SetLength(Dest, ((Size div 5)+1)*8);
    c := 0;
    b := 0;
    pIn := @Source;
    pOut := @Dest[0];
-   for i := 0 to n-1 do
+   for i := 0 to Size-1 do
    begin
      c := (c shl 8) or pIn[i];
      Inc(b, 8);
@@ -1917,7 +1925,9 @@ begin
      pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+1]);
      Inc(pOut);
    end;
-   n := (NativeUInt(pOut) - NativeUInt(@Dest[0])); // div SizeOf(Char);
+
+   // Calculate the length of chars needed to encode the data
+   n := (NativeUInt(pOut) - NativeUInt(@Dest[0]));
 
     case Size mod 5 of
       1: PadChars := 6;
