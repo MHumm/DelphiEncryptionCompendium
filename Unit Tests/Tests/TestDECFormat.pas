@@ -205,6 +205,61 @@ type
 
   // Test methods for class TFormat_Base64
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_Base32 = class(TFormatTestsBase)
+  strict private
+    FFormat_Base32: TFormat_Base32;
+    const
+      cTestDataEncode : array[1..7] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('f');
+         Output: 'MY======'),
+        (Input:  RawByteString('fo');
+         Output: 'MZXQ===='),
+        (Input:  RawByteString('foo');
+         Output: 'MZXW6==='),
+        (Input:  RawByteString('foob');
+         Output: 'MZXW6YQ='),
+        (Input:  RawByteString('fooba');
+         Output: 'MZXW6YTB'),
+        (Input:  RawByteString('foobar');
+         Output: 'MZXW6YTBOI======'));
+
+      cTestDataDecode : array[1..7] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  'MY======';
+         Output: RawByteString('f')),
+        (Input:  'MZXQ====';
+         Output:  RawByteString('fo')),
+        (Input:  'MZXW6===';
+         Output: RawByteString('foo')),
+        (Input:  'MZXW6YQ=';
+         Output: RawByteString('foob')),
+        (Input:  'MZXW6YTB';
+         Output: RawByteString('fooba')),
+        (Input:  'MZXW6YTBOI======';
+         Output: RawByteString('foobar')));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+
+  // Test methods for class TFormat_Base64
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_Base64 = class(TFormatTestsBase)
   strict private
     FFormat_Base64: TFormat_Base64;
@@ -2167,6 +2222,77 @@ begin
   CheckEquals(true, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 16-byte data');
 end;
 
+{ TestTFormat_Base32 }
+
+procedure TestTFormat_Base32.SetUp;
+begin
+  FFormat_Base32 := TFormat_Base32.Create;
+end;
+
+procedure TestTFormat_Base32.TearDown;
+begin
+  FFormat_Base32.Free;
+  FFormat_Base32 := nil;
+end;
+
+procedure TestTFormat_Base32.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_Base32.ClassByName('TFormat_Base32');
+  CheckEquals(TFormat_Base32, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_Base32.TestDecodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_Base32.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base32.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base32.Decode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestIdentity;
+begin
+  CheckEquals($C60FF021, FFormat_Base32.Identity);
+end;
+
+procedure TestTFormat_Base32.TestIsValidRawByteString;
+begin
+// Muss erst noch in TFormat_Base32 umgesetzt werden
+end;
+
+procedure TestTFormat_Base32.TestIsValidTBytes;
+begin
+
+end;
+
+procedure TestTFormat_Base32.TestIsValidTypeless;
+begin
+
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -2174,6 +2300,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_HEX);
   TDUnitX.RegisterTestFixture(TestTFormat_HEXL);
   TDUnitX.RegisterTestFixture(TestTFormat_DECMIME32);
+  TDUnitX.RegisterTestFixture(TestTFormat_Base32);
   TDUnitX.RegisterTestFixture(TestTFormat_Base64);
   TDUnitX.RegisterTestFixture(TestTFormat_Radix64);
   TDUnitX.RegisterTestFixture(TestTFormat_UU);
@@ -2185,9 +2312,13 @@ initialization
   {$ELSE}
   RegisterTests('DECFormat', [//TestTFormat,
                               TestTFormat_HEX.Suite,
-                              TestTFormat_HEXL.Suite,   TestTFormat_DECMIME32.Suite,
-                              TestTFormat_Base64.Suite, TestTFormat_Radix64.Suite,
-                              TestTFormat_UU.Suite,     TestTFormat_XX.Suite,
+                              TestTFormat_HEXL.Suite,
+                              TestTFormat_DECMIME32.Suite,
+                              TestTFormat_Base32.Suite,
+                              TestTFormat_Base64.Suite,
+                              TestTFormat_Radix64.Suite,
+                              TestTFormat_UU.Suite,
+                              TestTFormat_XX.Suite,
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,

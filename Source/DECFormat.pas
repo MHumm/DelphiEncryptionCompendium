@@ -156,9 +156,11 @@ type
     /// <summary>
     ///   The data will be encoded using only these chars
     /// </summary>
-    cBase32 : array [0..31] of Char = (
-       'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
-       'Q','R','S','T','U','V','W','X','Y','Z','2','3','4','5','6','7');
+    cBase32 : RawByteString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    /// <summary>
+    ///   Char used to fill up the output when performing encoding
+    /// </summary>
+    cPaddingChar = '=';
   private
     /// <summary>
     ///   Table used for decioding, initialized on first use
@@ -1835,8 +1837,9 @@ begin
   end;
 end;
 
-class procedure TFormat_Base32.DoDecode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_Base32.DoDecode(const Source;
+                                        var Dest: TBytes;
+                                        Size: Integer);
 var
    c, b, i, n, d : Integer;
    pIn : PChar;
@@ -1875,12 +1878,14 @@ begin
    SetLength(Dest, n);
 end;
 
-class procedure TFormat_Base32.DoEncode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_Base32.DoEncode(const Source;
+                                        var Dest: TBytes;
+                                        Size: Integer);
 var
    i, n, c, b : Integer;
    pIn : PByteArray;
-   pOut : PChar;
+   pOut : PByte;
+   PadChars : UInt8;
 begin
    if (Size = 0) or (Pointer(Source) = nil) then
    begin
@@ -1890,25 +1895,41 @@ begin
 
    n := Size;
    SetLength(Dest, ((n div 5)+1)*8);
+//   SetLength(Dest, Trunc((n / 5) * 8) + 6 + 1);
    c := 0;
    b := 0;
    pIn := @Source;
    pOut := @Dest[0];
-   for i := 0 to n-1 do begin
-      c := (c shl 8) or pIn[i];
-      Inc(b, 8);
-      while b >= 5 do begin
-         Dec(b, 5);
-         pOut^ := cBase32[(c shr b) and $1F];
-         Inc(pOut);
-      end;
+   for i := 0 to n-1 do
+   begin
+     c := (c shl 8) or pIn[i];
+     Inc(b, 8);
+     while b >= 5 do
+     begin
+       Dec(b, 5);
+       pOut^ := Byte(cBase32[((c shr b) and $1F)+1]);
+       Inc(pOut);
+     end;
    end;
-   if b > 0 then begin
-      pOut^ := cBase32[(c shl (5-b)) and $1F];
-      Inc(pOut);
+
+   if b > 0 then
+   begin
+     pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+1]);
+     Inc(pOut);
    end;
-   n := (NativeUInt(pOut) - NativeUInt(Pointer(Dest))) div SizeOf(Char);
-   SetLength(Dest, n);
+   n := (NativeUInt(pOut) - NativeUInt(@Dest[0])); // div SizeOf(Char);
+
+    case Size mod 5 of
+      1: PadChars := 6;
+      2: PadChars := 4;
+      3: PadChars := 3;
+      4: PadChars := 1;
+    else
+      PadChars := 0;
+    end;
+
+   FillChar(Dest[n], PadChars, cPaddingChar);
+   SetLength(Dest, n+PadChars);
 end;
 
 class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
