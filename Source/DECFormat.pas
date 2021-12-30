@@ -1849,43 +1849,43 @@ var
    pIn : PByte;
    pOut : PByte;
 begin
-   if (Pointer(Source) = nil) then
-   begin
-     SetLength(Dest, 0);
-     Exit;
-   end;
+  if (Pointer(Source) = nil) then
+  begin
+    SetLength(Dest, 0);
+    Exit;
+  end;
 
-   if (FBase32DecodeTable['z'] = 0) then
-     PrepareTable;
+  if (FBase32DecodeTable['z'] = 0) then
+    PrepareTable;
 
-   n := Size;
-   SetLength(Dest, ((n div 8)+1)*5);
-   pIn := @Source;
-   pOut := @Dest[0];
-   c := 0;
-   b := 0;
-   for i := 0 to n-1 do
-   begin
-     d := FBase32DecodeTable[Chr(pIn^)];
-     if d = 255 then
-     begin
-       if (Chr(pIn^) = '=') then break;
-       raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
-     end;
+  n := Size;
+  SetLength(Dest, ((n div 8)+1)*5);
+  pIn := @Source;
+  pOut := @Dest[0];
+  c := 0;
+  b := 0;
+  for i := 0 to n-1 do
+  begin
+    d := FBase32DecodeTable[Chr(pIn^)];
+    if d = 255 then
+    begin
+      if (Chr(pIn^) = '=') then break;
+      raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
+    end;
 
-     c := (c shl 5) or d;
-     Inc(b, 5);
-     if b >= 8 then
-     begin
-       Dec(b, 8);
-       pOut^ := Lo(c shr b);
-       Inc(pOut);
-     end;
+    c := (c shl 5) or d;
+    Inc(b, 5);
+    if b >= 8 then
+    begin
+      Dec(b, 8);
+      pOut^ := Lo(c shr b);
+      Inc(pOut);
+    end;
 
-     Inc(pIn);
-   end;
-   n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
-   SetLength(Dest, n);
+    Inc(pIn);
+  end;
+  n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
+  SetLength(Dest, n);
 end;
 
 class procedure TFormat_Base32.DoEncode(const Source;
@@ -1897,49 +1897,67 @@ var
    pOut : PByte;
    PadChars : UInt8;
 begin
-   if (Size = 0) or (Pointer(Source) = nil) then
-   begin
-     SetLength(Dest, 0);
-     Exit;
-   end;
+  if (Size = 0) or (Pointer(Source) = nil) then
+  begin
+    SetLength(Dest, 0);
+    Exit;
+  end;
 
-   SetLength(Dest, ((Size div 5)+1)*8);
-   c := 0;
-   b := 0;
-   pIn := @Source;
-   pOut := @Dest[0];
-   for i := 0 to Size-1 do
-   begin
-     c := (c shl 8) or pIn[i];
-     Inc(b, 8);
-     while b >= 5 do
-     begin
-       Dec(b, 5);
-       pOut^ := Byte(cBase32[((c shr b) and $1F)+1]);
-       Inc(pOut);
-     end;
-   end;
+  {$IF Low(string) = 0}
+    {$DEFINE ZBS_IS_ON}
+    {$ZEROBASEDSTRINGS OFF}
+  {$IFEND}
 
-   if b > 0 then
-   begin
-     pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+1]);
-     Inc(pOut);
-   end;
-
-   // Calculate the length of chars needed to encode the data
-   n := (NativeUInt(pOut) - NativeUInt(@Dest[0]));
-
-    case Size mod 5 of
-      1: PadChars := 6;
-      2: PadChars := 4;
-      3: PadChars := 3;
-      4: PadChars := 1;
-    else
-      PadChars := 0;
+  SetLength(Dest, ((Size div 5)+1)*8);
+  c := 0;
+  b := 0;
+  pIn := @Source;
+  pOut := @Dest[0];
+  for i := 0 to Size-1 do
+  begin
+    c := (c shl 8) or pIn[i];
+    Inc(b, 8);
+    while b >= 5 do
+    begin
+      Dec(b, 5);
+      {$IFDEF ZBS_IS_ON}
+      pOut^ := Byte(cBase32[((c shr b) and $1F)]);
+      {$ELSE}
+      pOut^ := Byte(cBase32[((c shr b) and $1F)+1]);
+      {$ENDIF}
+      Inc(pOut);
     end;
+  end;
 
-   FillChar(Dest[n], PadChars, cPaddingChar);
-   SetLength(Dest, n+PadChars);
+  if b > 0 then
+  begin
+    {$IFDEF ZBS_IS_ON}
+    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)]);
+    {$ELSE}
+    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+1]);
+    {$ENDIF}
+    Inc(pOut);
+  end;
+
+  // Calculate the length of chars needed to encode the data
+  n := (NativeUInt(pOut) - NativeUInt(@Dest[0]));
+
+  case Size mod 5 of
+    1: PadChars := 6;
+    2: PadChars := 4;
+    3: PadChars := 3;
+    4: PadChars := 1;
+  else
+    PadChars := 0;
+  end;
+
+  FillChar(Dest[n], PadChars, cPaddingChar);
+  SetLength(Dest, n+PadChars);
+
+  {$IFDEF ZBS_IS_ON}
+    {$UNDEFINE ZBS_IS_ON}
+    {$ZEROBASEDSTRINGS ON}
+  {$ENDIF}
 end;
 
 class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;

@@ -1,5 +1,5 @@
 DEC - Delphi Encryption Compendium
-Version 6.4.1
+Version 6.5
 
 Copyright (c) 2018 - 2020 Norman Gallery (ng931884 [at] gmx [dot] de)
 Copyright (c) 2016 - 2021 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
@@ -30,7 +30,8 @@ Parts of the work loosely based on the works of Wolfgang Erhardt, who is
 unfortunately dead already.
 
 The SHA3 permutation kernel used is original copyright by Eric Grange and used 
-with his permission.
+with his permission. Most parts of the Base32 implementation are based on his 
+as well with minor parts taken from the one of Darian Miller.
 
 
                       *** Export/Import Controls ***
