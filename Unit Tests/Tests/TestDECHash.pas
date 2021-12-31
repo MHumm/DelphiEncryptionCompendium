@@ -628,6 +628,7 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestMaximumSaltLength;
   end;
 
 implementation
@@ -6009,6 +6010,11 @@ end;
 procedure TestTHash_BCrypt.TestIsPasswordHash;
 begin
   CheckEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_BCrypt.TestMaximumSaltLength;
+begin
+  CheckEquals(16, TDECPasswordHash(FHash).MaxSaltLength);
 end;
 
 initialization

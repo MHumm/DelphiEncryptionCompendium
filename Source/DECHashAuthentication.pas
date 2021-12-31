@@ -475,7 +475,37 @@ type
   ///   those from normal hash algorithms not really meant to be used for password
   ///   hashing.
   /// </summary>
-  TDECPasswordHash = class(TDECHashAuthentication);
+  TDECPasswordHash = class(TDECHashAuthentication)
+  strict private
+    /// <summary>
+    ///   Sets the salt value given. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength.
+    /// </summary>
+    procedure SetSalt(const Value: TBytes);
+  strict protected
+    /// <summary>
+    ///   Most if not all password hashing algorithms (like bcrypt) have a salt
+    ///   parameter to modify the entered password value.
+    /// </summary>
+    FSalt : TBytes;
+  public
+    /// <summary>
+    ///   Returns the maximum length of a salt value given for the algorithm
+    /// </summary>
+    function MaxSaltLength:UInt8; virtual; abstract;
+
+    /// <summary>
+    ///   Defines the salt value used. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength. The salt has to be passed
+    ///   in binary form. Any Base64 encoded salt needs to be decoded before
+    ///   passing.
+    /// </summary>
+{ TODO : Prüfen, ob das mit dem Base64 so stimmt bzw. wie W. Erhardts Quellcode
+  damit umgeht }
+    property Salt: TBytes
+      read   FSalt
+      write  SetSalt;
+  end;
 
   {$IF CompilerVersion < 28.0}
   /// <summary>
@@ -493,7 +523,13 @@ type
 implementation
 
 uses
-  DECUtil;
+  DECUtil, DECTypes;
+
+resourcestring
+  /// <summary>
+  ///   Exception message when specifying a salt value longer than allowed
+  /// </summary>
+  sSaltValueTooLong = 'Maximum allowed salt length (%0:d byte) exceeded';
 
 class function TDECHashAuthentication.IsPasswordHash: Boolean;
 begin
@@ -877,5 +913,15 @@ begin
     A[L + i] := B[i];
 end;
 {$IFEND}
+
+{ TDECPasswordHash }
+
+procedure TDECPasswordHash.SetSalt(const Value: TBytes);
+begin
+  if (Length(Value) > MaxSaltLength) then
+    raise EDECHashException.CreateFmt(sSaltValueTooLong, [MaxSaltLength]);
+
+  FSalt := Value;
+end;
 
 end.

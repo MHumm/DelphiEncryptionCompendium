@@ -1049,6 +1049,10 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
+    /// <summary>
+    ///   Returns the maximum length of a salt value given for the algorithm
+    /// </summary>
+    function MaxSaltLength:UInt8; override;
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
@@ -4818,6 +4822,11 @@ procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
 begin
   inherited;
 
+end;
+
+function THash_BCrypt.MaxSaltLength: UInt8;
+begin
+  Result := 16;
 end;
 
 initialization
