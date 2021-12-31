@@ -617,6 +617,19 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class THash_BCrypt
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_BCrypt = class(THash_TestBase)
+  public
+    procedure SetUp; override;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 implementation
 
 uses
@@ -5954,6 +5967,50 @@ begin
                  'Abstract error raised for C++ Builder not detected');
 end;
 
+{ TestTHash_BCrypt }
+
+procedure TestTHash_BCrypt.SetUp;
+var
+  lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash := THash_BCrypt.Create;
+
+{ TODO : Fill in! }
+//  // Source: all including 12345678901234567890123456789012345678901234567890123
+//  // 456789012345678901234567890 are from: https://www.ietf.org/rfc/rfc1319.txt
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '8350e5a3e24c153df2275c9f80692773';
+//  lDataRow.ExpectedOutputUTFStrTest := '8350e5a3e24c153df2275c9f80692773';
+//  lDataRow.AddInputVector('');
+end;
+
+procedure TestTHash_BCrypt.TestBlockSize;
+begin
+  CheckEquals(8, FHash.BlockSize);
+end;
+
+procedure TestTHash_BCrypt.TestClassByName;
+begin
+  DoTestClassByName('THash_BCrypt', THash_BCrypt);
+end;
+
+procedure TestTHash_BCrypt.TestDigestSize;
+begin
+  CheckEquals(23, FHash.DigestSize);
+end;
+
+procedure TestTHash_BCrypt.TestIdentity;
+begin
+  CheckEquals($9CA55338, FHash.Identity);
+end;
+
+procedure TestTHash_BCrypt.TestIsPasswordHash;
+begin
+  CheckEquals(true, FHash.IsPasswordHash);
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -5998,6 +6055,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Snefru128);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru256);
   TDUnitX.RegisterTestFixture(TestTHash_Sapphire);
+  TDUnitX.RegisterTestFixture(TestTHash_BCrypt);
   {$ELSE}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             THash_TestCPPBuilderExceptions.Suite,
@@ -6037,7 +6095,9 @@ initialization
                             TestTHash_Square.Suite,
                             TestTHash_Snefru128.Suite,
                             TestTHash_Snefru256.Suite,
-                            TestTHash_Sapphire.Suite
+                            TestTHash_Sapphire.Suite,
+
+                            TestTHash_BCrypt.Suite
                            ]);
   {$ENDIF}
 end.

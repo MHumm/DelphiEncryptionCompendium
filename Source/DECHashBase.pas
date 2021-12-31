@@ -539,7 +539,7 @@ end;
 procedure TDECHash.SecureErase;
 begin
   ProtectBuffer(Digest^, DigestSize);
-  if FBuffer = nil then
+  if FBuffer <> nil then
     ProtectBuffer(FBuffer^, FBufferSize);
 end;
 

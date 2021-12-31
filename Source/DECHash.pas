@@ -1043,7 +1043,7 @@ type
   /// </summary>
   THash_BCrypt = class(TDECPasswordHash)
   private
-    FDigest: array[0..63] of Byte;
+    FDigest: array[0..22] of Byte;
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -4787,19 +4787,19 @@ end;
 
 class function THash_BCrypt.BlockSize: UInt32;
 begin
-
+  Result := 8;
 end;
 
 function THash_BCrypt.Digest: PByteArray;
 begin
-
+  Result := @FDigest;
 end;
 
 class function THash_BCrypt.DigestSize: UInt32;
 begin
-  // Should have been 192 bit, but original imnplementation had a flaw not
-  // returning the last byte which has been kept instead of fixing it.
-  Result := 184;
+  // Should have been 192 bit = 24 byte, but original imnplementation had a flaw
+  // not returning the last byte which has been kept instead of fixing it.
+  Result := 23;
 end;
 
 procedure THash_BCrypt.DoDone;
