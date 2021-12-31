@@ -1036,6 +1036,24 @@ type
       write  SetDigestSize;
   end;
 
+  /// <summary>
+  ///   Implementation of the bcrypt password hash algorithm. Maximum password
+  ///   length is 72 byte. When encoding typed in passwords in UTF8 that can mean
+  ///   18 chars in worst case of all typed chars being encoded in 4 byte each
+  /// </summary>
+  THash_BCrypt = class(TDECPasswordHash)
+  private
+    FDigest: array[0..63] of Byte;
+  protected
+    procedure DoInit; override;
+    procedure DoTransform(Buffer: PUInt32Array); override;
+    procedure DoDone; override;
+  public
+    function Digest: PByteArray; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
+  end;
+
 implementation
 
 uses
@@ -4765,6 +4783,43 @@ begin
     Move(Digest^, Result[0], Length(Result));
 end;
 
+{ THash_BCrypt }
+
+class function THash_BCrypt.BlockSize: UInt32;
+begin
+
+end;
+
+function THash_BCrypt.Digest: PByteArray;
+begin
+
+end;
+
+class function THash_BCrypt.DigestSize: UInt32;
+begin
+  // Should have been 192 bit, but original imnplementation had a flaw not
+  // returning the last byte which has been kept instead of fixing it.
+  Result := 184;
+end;
+
+procedure THash_BCrypt.DoDone;
+begin
+  inherited;
+
+end;
+
+procedure THash_BCrypt.DoInit;
+begin
+  inherited;
+
+end;
+
+procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
+begin
+  inherited;
+
+end;
+
 initialization
   // Define the has returned by ValidHash if passing nil as parameter
   SetDefaultHashClass(THash_SHA256);
@@ -4812,6 +4867,8 @@ initialization
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
   THash_Sapphire.RegisterClass(TDECHash.ClassList);
+
+  THash_BCrypt.RegisterClass(TDECHash.ClassList);
 
     {$IFDEF OLD_SHA_NAME}
     THash_SHA.RegisterClass(TDECHash.ClassList);
