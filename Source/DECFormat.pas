@@ -1903,11 +1903,6 @@ begin
     Exit;
   end;
 
-  {$IF Low(string) = 0}
-    {$DEFINE ZBS_IS_ON}
-    {$ZEROBASEDSTRINGS OFF}
-  {$IFEND}
-
   SetLength(Dest, ((Size div 5)+1)*8);
   c := 0;
   b := 0;
@@ -1920,22 +1915,14 @@ begin
     while b >= 5 do
     begin
       Dec(b, 5);
-      {$IFDEF ZBS_IS_ON}
-      pOut^ := Byte(cBase32[((c shr b) and $1F)]);
-      {$ELSE}
-      pOut^ := Byte(cBase32[((c shr b) and $1F)+1]);
-      {$ENDIF}
+      pOut^ := Byte(cBase32[((c shr b) and $1F)+Low(string)]);
       Inc(pOut);
     end;
   end;
 
   if b > 0 then
   begin
-    {$IFDEF ZBS_IS_ON}
-    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)]);
-    {$ELSE}
-    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+1]);
-    {$ENDIF}
+    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+Low(string)]);
     Inc(pOut);
   end;
 
@@ -1953,11 +1940,6 @@ begin
 
   FillChar(Dest[n], PadChars, cPaddingChar);
   SetLength(Dest, n+PadChars);
-
-  {$IFDEF ZBS_IS_ON}
-    {$UNDEFINE ZBS_IS_ON}
-    {$ZEROBASEDSTRINGS ON}
-  {$ENDIF}
 end;
 
 class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
