@@ -155,6 +155,34 @@ type
                         Format: TDECFormatClass): RawByteString; overload;
 
     /// <summary>
+    ///   Returns the current value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    function GetPaddingByte: Byte;
+    /// <summary>
+    ///   Changes the value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    /// <param name="Value">
+    ///   New value for the padding byte
+    /// </param>
+    procedure SetPaddingByte(Value: Byte);
+
+    /// <summary>
+    ///   Defines the byte used in the KDF methods to padd the end of the data
+    ///   if the length of the data cannot be divided by required size for the
+    ///   hash algorithm without reminder
+    /// </summary>
+    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
+  end;
+
+  /// <summary>
+  ///   Adds all methods which shall not be present in the specialized password
+  ///   hash classes. Mostly the CalcStreamXX and CalcFileXXX ones.
+  /// </summary>
+  IDECHashExtended = Interface(IDECHash)
+  ['{FCC6C79E-C32C-4520-967A-FD1E60572E0F}']
+    /// <summary>
     ///   Calculates the hash value over a givens stream of bytes
     /// </summary>
     /// <param name="Stream">
@@ -272,34 +300,13 @@ type
     /// </remarks>
     function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
                       const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
-
-    /// <summary>
-    ///   Returns the current value of the padding byte used to fill up data
-    ///   if necessary
-    /// </summary>
-    function GetPaddingByte: Byte;
-    /// <summary>
-    ///   Changes the value of the padding byte used to fill up data
-    ///   if necessary
-    /// </summary>
-    /// <param name="Value">
-    ///   New value for the padding byte
-    /// </param>
-    procedure SetPaddingByte(Value: Byte);
-
-    /// <summary>
-    ///   Defines the byte used in the KDF methods to padd the end of the data
-    ///   if the length of the data cannot be divided by required size for the
-    ///   hash algorithm without reminder
-    /// </summary>
-    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
   /// <summary>
   ///   Interface for all hash classes which are able to operate on bit sized
   ///   message lengths instead of byte sized ones only.
   /// </summary>
-  IDECHashBitsized = Interface(IDECHash)
+  IDECHashBitsized = Interface(IDECHashExtended)
   ['{7F2232CB-C3A7-4A14-858B-D98AB61E04E4}']
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of

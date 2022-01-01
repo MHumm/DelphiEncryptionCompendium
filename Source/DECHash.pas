@@ -80,7 +80,7 @@ type
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,
   ///   at least on paper.
   /// </summary>
-  THash_MD2 = class(TDECHashAuthentication)
+  THash_MD2 = class(TDECHashExtended)
   private
     FDigest: array[0..63] of Byte;
   protected
@@ -97,7 +97,7 @@ type
   ///   Base class for the MD4 hash alrogithm and for other hash-algorithms which
   ///   are close relatives to the MD4 algorithm like the RipeMD ones.
   /// </summary>
-  THashBaseMD4 = class(TDECHashAuthentication)
+  THashBaseMD4 = class(TDECHashExtended)
   private
     FDigest: array[0..9] of UInt32;
   protected
@@ -227,7 +227,7 @@ type
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
   /// </summary>
-  THash_SHA384 = class(TDECHashAuthentication)
+  THash_SHA384 = class(TDECHashExtended)
   private
     FDigest: array[0..7] of Int64;
   protected
@@ -669,7 +669,7 @@ type
   /// <summary>
   ///   Base class for all Haval implementations
   /// </summary>
-  THashBaseHaval = class(TDECHashAuthentication, IDECHashRounds)
+  THashBaseHaval = class(TDECHashExtended, IDECHashRounds)
   private
     FDigest: array[0..7] of UInt32;
       /// <summary>
@@ -805,7 +805,7 @@ type
   ///   The Panama algorithm is being considered to be unsafe. Support is only
   ///   being provided for backward compatibility.
   /// </summary>
-  THash_Panama = class(TDECHashAuthentication)
+  THash_Panama = class(TDECHashExtended)
   private
     FLFSRBuffer: array[0..31, 0..7] of UInt32;
     FDigest: array[0..16] of UInt32;
@@ -821,7 +821,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THashBaseWhirlpool = class(TDECHashAuthentication)
+  THashBaseWhirlpool = class(TDECHashExtended)
   private
     FDigest: array[0..15] of UInt32;
     FTableC: Pointer;
@@ -903,7 +903,7 @@ type
   THash_Whirlpool1 = class(THash_Whirlpool1_);
   {$ENDIF}
 
-  THash_Square = class(TDECHashAuthentication)
+  THash_Square = class(TDECHashExtended)
   private
     FDigest: array[0..3] of UInt32;
   protected
@@ -920,7 +920,7 @@ type
   ///   This 1990 developed hash function was named after the Egyptian Pharaoh
   ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
-  THashBaseSnefru = class(TDECHashAuthentication, IDECHashRounds)
+  THashBaseSnefru = class(TDECHashExtended, IDECHashRounds)
   private
     FDigest: array[0..23] of UInt32;
     /// <summary>
@@ -984,7 +984,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THash_Sapphire = class(TDECHashAuthentication)
+  THash_Sapphire = class(TDECHashExtended)
   private
     FCards: array[0..255] of UInt32;
     FDigest: array[0..15] of UInt32;

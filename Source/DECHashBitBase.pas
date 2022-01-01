@@ -38,7 +38,7 @@ type
   ///   Base class for all hash algorithms which can operate on bit sized
   ///   messsages as well.
   /// </summary>
-  TDECHashBit = class(TDECHashAuthentication, IDECHashBitsized)
+  TDECHashBit = class(TDECHashExtended, IDECHashBitsized)
   strict private
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of

@@ -80,17 +80,17 @@ type
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
-    procedure DoTestCalcStream(HashClass:TDECHash); override;
+    procedure DoTestCalcStream(HashClass: TDECHashExtended); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
-    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); override;
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHashExtended); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
-    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); override;
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
@@ -298,19 +298,19 @@ begin
   inherited;
 end;
 
-procedure TestTHash_SHA3_Base.DoTestCalcStream(HashClass:TDECHash);
+procedure TestTHash_SHA3_Base.DoTestCalcStream(HashClass:TDECHashExtended);
 begin
   LoadTestFiles;
   inherited;
 end;
 
-procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDone(HashClass: TDECHash);
+procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDone(HashClass: TDECHashExtended);
 begin
   LoadTestFiles;
   inherited;
 end;
 
-procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
+procedure TestTHash_SHA3_Base.DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended);
 begin
   LoadTestFiles;
   inherited;

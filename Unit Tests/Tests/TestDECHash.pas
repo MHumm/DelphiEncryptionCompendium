@@ -178,13 +178,13 @@ type
   /// </summary>
   THash_TestBaseExtended = class(THash_TestBase)
   strict protected
-    procedure DoTestCalcStream(HashClass:TDECHash); virtual;
+    procedure DoTestCalcStream(HashClass:TDECHashExtended); virtual;
     // variant for the overload which doesn't return the calculated hash
-    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHashExtended); virtual;
     // variant for the overload which doesn't return the calculated hash and which
     // tries to splitt the input data into multiple calls
-    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); virtual;
-    procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended); virtual;
+    procedure DoTestCalcStreamRawByteString(HashClass: TDECHashExtended); virtual;
   published
     procedure TestCalcStream;
     procedure TestCalcStreamRawByteString;
@@ -5506,7 +5506,7 @@ end;
 
 { THash_TestBaseExtended }
 
-procedure THash_TestBaseExtended.DoTestCalcStream(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStream(HashClass: TDECHashExtended);
 var
   Stream : TMemoryStream;
   i      : Integer;
@@ -5585,7 +5585,7 @@ begin
   end;
 end;
 
-procedure THash_TestBaseExtended.DoTestCalcStreamNoDone(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDone(HashClass: TDECHashExtended);
 var
   Stream         : TMemoryStream;
   i              : Integer;
@@ -5668,7 +5668,7 @@ begin
   end;
 end;
 
-procedure THash_TestBaseExtended.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended);
 var
   Stream         : TMemoryStream;
   i, n           : Integer;
@@ -5758,7 +5758,7 @@ begin
   end;
 end;
 
-procedure THash_TestBaseExtended.DoTestCalcStreamRawByteString(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamRawByteString(HashClass: TDECHashExtended);
 var
   Stream : TMemoryStream;
   i      : Integer;
@@ -5820,23 +5820,23 @@ end;
 
 procedure THash_TestBaseExtended.TestCalcStream;
 begin
-  DoTestCalcStream(FHash);
+  DoTestCalcStream(FHash as TDECHashExtended);
 end;
 
 procedure THash_TestBaseExtended.TestCalcStreamNoDone;
 
 begin
-  DoTestCalcStreamNoDone(FHash);
+  DoTestCalcStreamNoDone(FHash  as TDECHashExtended);
 end;
 
 procedure THash_TestBaseExtended.TestCalcStreamNoDoneMulti;
 begin
-  DoTestCalcStreamNoDoneMulti(FHash);
+  DoTestCalcStreamNoDoneMulti(FHash as TDECHashExtended);
 end;
 
 procedure THash_TestBaseExtended.TestCalcStreamRawByteString;
 begin
-  DoTestCalcStreamRawByteString(FHash);
+  DoTestCalcStreamRawByteString(FHash  as TDECHashExtended);
 end;
 
 { TestTDECHash }
