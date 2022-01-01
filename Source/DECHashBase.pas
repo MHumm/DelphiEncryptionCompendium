@@ -72,6 +72,10 @@ type
     /// </param>
     procedure SetPaddingByte(Value: Byte);
   strict protected
+    /// <summary>
+    ///   This array holds some state, espscially for Merkle-Darmgard based
+    ///   hash algorithms like MD4, SHA1 or HAVAL.
+    /// </summary>
     FCount       : array[0..7] of UInt32;
     /// <summary>
     ///   Internal processing buffer

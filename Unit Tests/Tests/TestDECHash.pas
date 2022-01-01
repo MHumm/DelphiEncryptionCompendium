@@ -633,6 +633,7 @@ type
   TestTHash_BCrypt = class(THash_TestBase)
   public
     procedure SetUp; override;
+    procedure DoTestCostFactor0Exception;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -640,6 +641,10 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
     procedure TestMaximumSaltLength;
+    procedure TestMaximumPasswordLength;
+    procedure TestCostFactor0Exception;
+
+    procedure Development;
   end;
 
 implementation
@@ -5983,6 +5988,32 @@ end;
 
 { TestTHash_BCrypt }
 
+procedure TestTHash_BCrypt.Development;
+var
+  R: RawByteString;
+  Hash:THash_MD4;
+begin
+  R := '1234';
+
+  Hash:=THash_MD4.Create;
+  try
+    Hash.Init;
+    R := Hash.CalcString(R, TFormat_Copy);
+  finally
+    Hash.Free;
+  end;
+
+  R := '1234';
+  R := FHash.CalcString(R, TFormat_Copy);
+
+  CheckEquals('1234', R);
+end;
+
+procedure TestTHash_BCrypt.DoTestCostFactor0Exception;
+begin
+  THash_BCrypt(FHash).Cost := 0;
+end;
+
 procedure TestTHash_BCrypt.SetUp;
 var
   lDataRow:IHashTestDataRowSetup;
@@ -6010,6 +6041,11 @@ begin
   DoTestClassByName('THash_BCrypt', THash_BCrypt);
 end;
 
+procedure TestTHash_BCrypt.TestCostFactor0Exception;
+begin
+  CheckException(DoTestCostFactor0Exception, EDECHashException);
+end;
+
 procedure TestTHash_BCrypt.TestDigestSize;
 begin
   CheckEquals(23, FHash.DigestSize);
@@ -6023,6 +6059,11 @@ end;
 procedure TestTHash_BCrypt.TestIsPasswordHash;
 begin
   CheckEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_BCrypt.TestMaximumPasswordLength;
+begin
+  CheckEquals(55, TDECPasswordHash(FHash).MaxPasswordLength);
 end;
 
 procedure TestTHash_BCrypt.TestMaximumSaltLength;

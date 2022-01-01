@@ -625,8 +625,14 @@ type
   public
     /// <summary>
     ///   Returns the maximum length of a salt value given for the algorithm
+    ///   in byte
     /// </summary>
     function MaxSaltLength:UInt8; virtual; abstract;
+    /// <summary>
+    ///   Returns the maximum length of a user supplied password given for the
+    ///   algorithm in byte
+    /// </summary>
+    function MaxPasswordLength:UInt8; virtual; abstract;
 
     /// <summary>
     ///   Defines the salt value used. Throws an EDECHashException if a salt is

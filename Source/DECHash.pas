@@ -1043,19 +1043,41 @@ type
   /// </summary>
   THash_BCrypt = class(TDECPasswordHash)
   private
-    FDigest: array[0..22] of Byte;
+    FDigest : array[0..22] of Byte;
+    /// <summary>
+    ///   Cost factor which might be used to adapt the algorithm to increased
+    ///   processing power.
+    /// </summary>
+    FCost   : UInt32;
+    procedure SetCost(const Value: UInt32);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
     /// <summary>
-    ///   Returns the maximum length of a salt value given for the algorithm
+    ///   Initialize internal fields
     /// </summary>
+    constructor Create; override;
     function MaxSaltLength:UInt8; override;
+    /// <remarks>
+    ///   For BCrypt version "2a" it is specified that the password ends with a
+    ///   null-terminator, which will be added internally in our implementation
+    /// </remarks>
+    function MaxPasswordLength:UInt8; override;
+
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
+
+    /// <summary>
+    ///   Defines the cost factor of the calculation. Real factor will be 2^Cost.
+    ///   This is used to adapt to increasing CPU power and must be stored along
+    ///   with the hash value and salt to be able to verify a password against it
+    /// </summary>
+    property Cost: UInt32
+      read   FCost
+      write  SetCost;
   end;
 
 implementation
@@ -1108,17 +1130,24 @@ resourcestring
   /// <summary>
   ///   Failure message when a hash algorithm is initialized with wrong parameters
   /// </summary>
-  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters '+
+                       'specified: %1:s';
   /// <summary>
   ///   Failure message when absorb is callt with a bitlength not divideable by 8
   ///   without reminder or when it is called while already in squeezing state
   /// </summary>
-  sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
-                       'Squeezing: %1:s';
+  sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. '+
+                       'Bits: %0:d, Squeezing: %1:s';
   /// <summary>
   ///   Part of the failure message shown when setting HashSize of Shake algorithms to 0
   /// </summary>
   sHashOutputLength0 = 'HashSize must not be 0';
+  /// <summary>
+  ///   Some password hash algorithms have a cost factor to be able to adopt
+  ///   them to increasing CPU power. This text is the exception message when
+  ///   the user specifies 0 for this.
+  /// </summary>
+  sCostFactor0       = 'Specified cost factor must not be 0';
 
 { THash_MD2 }
 
@@ -4794,6 +4823,14 @@ begin
   Result := 8;
 end;
 
+constructor THash_BCrypt.Create;
+begin
+  inherited;
+
+  FCost := 10; // must be specified by the user, but better init with a
+               // fixed value instead of no initialization at all.
+end;
+
 function THash_BCrypt.Digest: PByteArray;
 begin
   Result := @FDigest;
@@ -4808,25 +4845,39 @@ end;
 
 procedure THash_BCrypt.DoDone;
 begin
-  inherited;
-
+  DoTransform(Pointer(FBuffer));
 end;
 
 procedure THash_BCrypt.DoInit;
 begin
-  inherited;
-
+  FillChar(FDigest, SizeOf(FDigest), 0);
+  FCost := 10;
 end;
 
 procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
+var
+  i : Integer;
 begin
-  inherited;
+  i := 5;
+  Sleep(10);
+end;
 
+function THash_BCrypt.MaxPasswordLength: UInt8;
+begin
+  Result := 55;
 end;
 
 function THash_BCrypt.MaxSaltLength: UInt8;
 begin
   Result := 16;
+end;
+
+procedure THash_BCrypt.SetCost(const Value: UInt32);
+begin
+  if Value > 0 then
+    FCost := Value
+  else
+    raise EDECHashException.Create(sCostFactor0);
 end;
 
 initialization
