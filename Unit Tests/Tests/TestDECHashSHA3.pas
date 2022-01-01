@@ -40,7 +40,7 @@ type
   /// <summary>
   ///   Base class for the SHA3 tests, provides loading the test data from files
   /// </summary>
-  TestTHash_SHA3_Base = class(THash_TestBase)
+  TestTHash_SHA3_Base = class(THash_TestBaseExtended)
   strict private
     /// <summary>
     ///   Load the data of all test files specified for the test class

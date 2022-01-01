@@ -142,13 +142,6 @@ type
 
     procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
     procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
-    procedure DoTestCalcStream(HashClass:TDECHash); virtual;
-    // variant for the overload which doesn't return the calculated hash
-    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
-    // variant for the overload which doesn't return the calculated hash and which
-    // tries to splitt the input data into multiple calls
-    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); virtual;
-    procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
     procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
 
@@ -168,17 +161,35 @@ type
     procedure Test52;
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
-    procedure TestCalcStream;
-    procedure TestCalcStreamRawByteString;
     procedure TestCalcRawByteString;
-    procedure TestCalcStreamNoDone;
-    procedure TestCalcStreamNoDoneMulti;
     procedure TestCalcUnicodeString;
     procedure TestIsPasswordHash;
     procedure TestGetPaddingByte;
     procedure TestIsPasswordHashBase;
     procedure TestClassByIdentity;
     procedure TestUninitializedException;
+  end;
+
+  /// <summary>
+  ///   Base class for all non password hash tests, adds the CalcStream/CalcFile
+  ///   test methods which are not implemented by the password hash classes.
+  ///   Provides generalized test methods so that concrete classes only need to
+  ///   provide the actual test data.
+  /// </summary>
+  THash_TestBaseExtended = class(THash_TestBase)
+  strict protected
+    procedure DoTestCalcStream(HashClass:TDECHash); virtual;
+    // variant for the overload which doesn't return the calculated hash
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
+    // variant for the overload which doesn't return the calculated hash and which
+    // tries to splitt the input data into multiple calls
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); virtual;
+    procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
+  published
+    procedure TestCalcStream;
+    procedure TestCalcStreamRawByteString;
+    procedure TestCalcStreamNoDone;
+    procedure TestCalcStreamNoDoneMulti;
   end;
 
   // Test methods for base class for all hash classes
@@ -191,7 +202,7 @@ type
 
   // Test methods for class THash_MD2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD2 = class(THash_TestBase)
+  TestTHash_MD2 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -204,7 +215,7 @@ type
 
   // Test methods for class THash_MD4
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD4 = class(THash_TestBase)
+  TestTHash_MD4 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -217,7 +228,7 @@ type
 
   // Test methods for class THash_MD5
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD5 = class(THash_TestBase)
+  TestTHash_MD5 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -230,7 +241,7 @@ type
 
   // Test methods for class THash_RipeMD128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD128 = class(THash_TestBase)
+  TestTHash_RipeMD128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -243,7 +254,7 @@ type
 
   // Test methods for class THash_RipeMD160
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD160 = class(THash_TestBase)
+  TestTHash_RipeMD160 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -256,7 +267,7 @@ type
 
   // Test methods for class THash_RipeMD256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD256 = class(THash_TestBase)
+  TestTHash_RipeMD256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -269,7 +280,7 @@ type
 
   // Test methods for class THash_RipeMD320
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD320 = class(THash_TestBase)
+  TestTHash_RipeMD320 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -282,7 +293,7 @@ type
 
   // Test methods for class THash_SHA0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA0 = class(THash_TestBase)
+  TestTHash_SHA0 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -308,7 +319,7 @@ type
 
   // Test methods for class THash_SHA1
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA1 = class(THash_TestBase)
+  TestTHash_SHA1 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -321,7 +332,7 @@ type
 
   // Test methods for class THash_SHA256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA256 = class(THash_TestBase)
+  TestTHash_SHA256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -334,7 +345,7 @@ type
 
   // Test methods for class THash_SHA224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA224 = class(THash_TestBase)
+  TestTHash_SHA224 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -347,7 +358,7 @@ type
 
   // Test methods for class THash_SHA384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA384 = class(THash_TestBase)
+  TestTHash_SHA384 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -360,7 +371,7 @@ type
 
   // Test methods for class THash_SHA512
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA512 = class(THash_TestBase)
+  TestTHash_SHA512 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -373,7 +384,7 @@ type
 
   // Test methods for class THash_Haval128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval128 = class(THash_TestBase)
+  TestTHash_Haval128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -390,7 +401,7 @@ type
 
   // Test methods for class THash_Haval160
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval160 = class(THash_TestBase)
+  TestTHash_Haval160 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -407,7 +418,7 @@ type
 
   // Test methods for class THash_Haval192
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval192 = class(THash_TestBase)
+  TestTHash_Haval192 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -424,7 +435,7 @@ type
 
   // Test methods for class THash_Haval224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval224 = class(THash_TestBase)
+  TestTHash_Haval224 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -441,7 +452,7 @@ type
 
   // Test methods for class THash_Haval256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval256 = class(THash_TestBase)
+  TestTHash_Haval256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -458,7 +469,7 @@ type
 
   // Test methods for class THash_Tiger
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Tiger_3Rounds = class(THash_TestBase)
+  TestTHash_Tiger_3Rounds = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -479,7 +490,7 @@ type
 
   // Test methods for class THash_Panama
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Panama = class(THash_TestBase)
+  TestTHash_Panama = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -492,7 +503,7 @@ type
 
   // Test methods for class THash_Whirlpool0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool0 = class(THash_TestBase)
+  TestTHash_Whirlpool0 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -517,7 +528,7 @@ type
 
   // Test methods for class THash_WhirlpoolT
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_WhirlpoolT = class(THash_TestBase)
+  TestTHash_WhirlpoolT = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -543,7 +554,7 @@ type
   {$IFNDEF OLD_WHIRLPOOL_NAMES}
   // Test methods for class THash_Whirlpool1
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool1 = class(THash_TestBase)
+  TestTHash_Whirlpool1 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -557,7 +568,7 @@ type
 
   // Test methods for class THash_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Square = class(THash_TestBase)
+  TestTHash_Square = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -570,7 +581,7 @@ type
 
   // Test methods for class THash_Snefru128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Snefru128 = class(THash_TestBase)
+  TestTHash_Snefru128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -587,7 +598,7 @@ type
 
   // Test methods for class THash_Snefru256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Snefru256 = class(THash_TestBase)
+  TestTHash_Snefru256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -604,7 +615,7 @@ type
 
   // Test methods for class THash_Sapphire
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Sapphire = class(THash_TestBase)
+  TestTHash_Sapphire = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   protected
@@ -5362,7 +5373,140 @@ begin
     end;
 end;
 
-procedure THash_TestBase.DoTestCalcStream(HashClass: TDECHash);
+procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
+var
+  i      : Integer;
+  InpStr : string;
+begin
+  for i := 0 to FTestData.Count-1 do
+    begin
+      InpStr := string(FTestData[i].InputData);
+      ConfigHashClass(HashClass, i);
+
+      CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
+                  BytesToRawString(
+                    TFormat_HEXL.Encode(
+                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
+                  string(BytesToRawString(
+                    TFormat_HEXL.Encode(
+                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
+    end;
+end;
+
+procedure THash_TestBase.DoTestClassByName(ExpectedClassName: String; ExpectedClass: TClass);
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash.ClassByName(ExpectedClassName);
+  CheckEquals(ExpectedClass, ReturnValue, 'unexpected class');
+end;
+
+procedure THash_TestBase.Setup;
+begin
+  inherited;
+  FTestData  := CreateTestDataContainer as IHashTestDataContainer;
+end;
+
+procedure THash_TestBase.TearDown;
+begin
+  inherited;
+  FHash.Free;
+  FTestData := nil;
+end;
+
+procedure THash_TestBase.Test52;
+begin
+  DoTest52(FHash);
+end;
+
+procedure THash_TestBase.TestCalcBuffer;
+begin
+  DoTestCalcBuffer(FHash);
+end;
+
+procedure THash_TestBase.TestCalcBytes;
+begin
+  DoTestCalcBytes(FHash);
+end;
+
+procedure THash_TestBase.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash);
+end;
+
+procedure THash_TestBase.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash);
+end;
+
+procedure THash_TestBase.TestGetPaddingByte;
+begin
+  CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
+end;
+
+procedure THash_TestBase.TestIsPasswordHash;
+begin
+  CheckEquals(false, FHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestIsPasswordHashBase;
+begin
+  CheckEquals(false, TDECHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestClassByIdentity;
+var
+  ReturnValue: TDECClass;
+begin
+  ReturnValue := TDECHash.ClassByIdentity(THash_MD5.Identity);
+  CheckEquals(ReturnValue, THash_MD5);
+
+  ReturnValue := TDECHash.ClassByIdentity(THash_SHA256.Identity);
+  CheckEquals(ReturnValue, THash_SHA256);
+end;
+
+procedure THash_TestBase.TestUninitializedException;
+begin
+  CheckException(DoTestUninitializedException, EDECHashException,
+                 'Uninitialized hash not detected');
+end;
+
+procedure THash_TestBase.DoTestUninitializedException;
+var
+  Hash : THash_MD5;
+  Buf  : TBytes;
+begin
+  Hash := THash_MD5.Create;
+  try
+    SetLength(Buf, 3);
+    FillChar(Buf[0], 3, 33);
+    Hash.Calc(Buf[0], 3);
+  finally
+    Hash.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
+var
+  i : Integer;
+begin
+  for i := 0 to FTestData.Count-1 do
+    begin
+      ConfigHashClass(HashClass, i);
+
+      CheckEquals(FTestData[i].ExpectedOutput,
+                  HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL),
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                  string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
+    end;
+end;
+
+{ THash_TestBaseExtended }
+
+procedure THash_TestBaseExtended.DoTestCalcStream(HashClass: TDECHash);
 var
   Stream : TMemoryStream;
   i      : Integer;
@@ -5441,7 +5585,7 @@ begin
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcStreamNoDone(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDone(HashClass: TDECHash);
 var
   Stream         : TMemoryStream;
   i              : Integer;
@@ -5524,7 +5668,7 @@ begin
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDoneMulti(HashClass: TDECHash);
 var
   Stream         : TMemoryStream;
   i, n           : Integer;
@@ -5614,7 +5758,7 @@ begin
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcStreamRawByteString(HashClass: TDECHash);
+procedure THash_TestBaseExtended.DoTestCalcStreamRawByteString(HashClass: TDECHash);
 var
   Stream : TMemoryStream;
   i      : Integer;
@@ -5674,156 +5818,25 @@ begin
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
-var
-  i      : Integer;
-  InpStr : string;
-begin
-  for i := 0 to FTestData.Count-1 do
-    begin
-      InpStr := string(FTestData[i].InputData);
-      ConfigHashClass(HashClass, i);
-
-      CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
-                  BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
-                  'Index: ' + IntToStr(i) + ' - expected: <' +
-                  string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
-                  string(BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
-    end;
-end;
-
-procedure THash_TestBase.DoTestClassByName(ExpectedClassName: String; ExpectedClass: TClass);
-var
-  ReturnValue : TDECHashClass;
-begin
-  ReturnValue := FHash.ClassByName(ExpectedClassName);
-  CheckEquals(ExpectedClass, ReturnValue, 'unexpected class');
-end;
-
-procedure THash_TestBase.Setup;
-begin
-  inherited;
-  FTestData  := CreateTestDataContainer as IHashTestDataContainer;
-end;
-
-procedure THash_TestBase.TearDown;
-begin
-  inherited;
-  FHash.Free;
-  FTestData := nil;
-end;
-
-procedure THash_TestBase.Test52;
-begin
-  DoTest52(FHash);
-end;
-
-procedure THash_TestBase.TestCalcBuffer;
-begin
-  DoTestCalcBuffer(FHash);
-end;
-
-procedure THash_TestBase.TestCalcBytes;
-begin
-  DoTestCalcBytes(FHash);
-end;
-
-procedure THash_TestBase.TestCalcRawByteString;
-begin
-  DoTestCalcRawByteString(FHash);
-end;
-
-procedure THash_TestBase.TestCalcStream;
+procedure THash_TestBaseExtended.TestCalcStream;
 begin
   DoTestCalcStream(FHash);
 end;
 
-procedure THash_TestBase.TestCalcStreamNoDone;
+procedure THash_TestBaseExtended.TestCalcStreamNoDone;
 
 begin
   DoTestCalcStreamNoDone(FHash);
 end;
 
-procedure THash_TestBase.TestCalcStreamNoDoneMulti;
+procedure THash_TestBaseExtended.TestCalcStreamNoDoneMulti;
 begin
   DoTestCalcStreamNoDoneMulti(FHash);
 end;
 
-procedure THash_TestBase.TestCalcStreamRawByteString;
+procedure THash_TestBaseExtended.TestCalcStreamRawByteString;
 begin
   DoTestCalcStreamRawByteString(FHash);
-end;
-
-procedure THash_TestBase.TestCalcUnicodeString;
-begin
-  DoTestCalcUnicodeString(FHash);
-end;
-
-procedure THash_TestBase.TestGetPaddingByte;
-begin
-  CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
-end;
-
-procedure THash_TestBase.TestIsPasswordHash;
-begin
-  CheckEquals(false, FHash.IsPasswordHash);
-end;
-
-procedure THash_TestBase.TestIsPasswordHashBase;
-begin
-  CheckEquals(false, TDECHash.IsPasswordHash);
-end;
-
-procedure THash_TestBase.TestClassByIdentity;
-var
-  ReturnValue: TDECClass;
-begin
-  ReturnValue := TDECHash.ClassByIdentity(THash_MD5.Identity);
-  CheckEquals(ReturnValue, THash_MD5);
-
-  ReturnValue := TDECHash.ClassByIdentity(THash_SHA256.Identity);
-  CheckEquals(ReturnValue, THash_SHA256);
-end;
-
-procedure THash_TestBase.TestUninitializedException;
-begin
-  CheckException(DoTestUninitializedException, EDECHashException,
-                 'Uninitialized hash not detected');
-end;
-
-procedure THash_TestBase.DoTestUninitializedException;
-var
-  Hash : THash_MD5;
-  Buf  : TBytes;
-begin
-  Hash := THash_MD5.Create;
-  try
-    SetLength(Buf, 3);
-    FillChar(Buf[0], 3, 33);
-    Hash.Calc(Buf[0], 3);
-  finally
-    Hash.Free;
-  end;
-end;
-
-procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
-var
-  i : Integer;
-begin
-  for i := 0 to FTestData.Count-1 do
-    begin
-      ConfigHashClass(HashClass, i);
-
-      CheckEquals(FTestData[i].ExpectedOutput,
-                  HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL),
-                  'Index: ' + IntToStr(i) + ' - expected: <' +
-                  string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
-    end;
 end;
 
 { TestTDECHash }

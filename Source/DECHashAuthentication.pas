@@ -482,7 +482,9 @@ type
     ///   passed which is longer than MaxSaltLength.
     /// </summary>
     procedure SetSalt(const Value: TBytes);
-  strict protected
+  strict
+  private
+    function GetSalt: TBytes; protected
     /// <summary>
     ///   Most if not all password hashing algorithms (like bcrypt) have a salt
     ///   parameter to modify the entered password value.
@@ -503,7 +505,7 @@ type
 { TODO : Prüfen, ob das mit dem Base64 so stimmt bzw. wie W. Erhardts Quellcode
   damit umgeht }
     property Salt: TBytes
-      read   FSalt
+      read   GetSalt
       write  SetSalt;
   end;
 
@@ -915,6 +917,11 @@ end;
 {$IFEND}
 
 { TDECPasswordHash }
+
+function TDECPasswordHash.GetSalt: TBytes;
+begin
+  Result := FSalt;
+end;
 
 procedure TDECPasswordHash.SetSalt(const Value: TBytes);
 begin
