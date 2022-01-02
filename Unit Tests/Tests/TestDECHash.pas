@@ -107,6 +107,26 @@ type
     procedure TestDigestSizeException;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  // class for checking all general methods etc. for the password hash base class
+  // Testing needs to be done on a concrete derrived class, as that needs to
+  // implement the abstract methods as they're used for the basic functionality.
+  THash_TestTDECPasswordHash = class(TTestCase)
+  private
+    FHash : THash_BCrypt;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  protected
+//    procedure DoTestSalt0Exception;
+    procedure DoTestSaltTooLongException;
+  published
+    procedure TestGetSalt;
+    procedure TestSetSalt;
+//    procedure TestSalt0Exception;
+    procedure TestSaltTooLongException;
+  end;
+
   /// <summary>
   ///   Base class for all hash tests, provides generalized test methods so that
   ///   concrete classes only need to provide the actual test data.
@@ -633,7 +653,8 @@ type
   TestTHash_BCrypt = class(THash_TestBase)
   public
     procedure SetUp; override;
-    procedure DoTestCostFactor0Exception;
+    procedure DoTestCostFactorTooShortException;
+    procedure DoTestCostFactorTooLongException;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -642,7 +663,10 @@ type
     procedure TestIdentity;
     procedure TestMaximumSaltLength;
     procedure TestMaximumPasswordLength;
-    procedure TestCostFactor0Exception;
+    procedure TestCostFactorTooShortException;
+    procedure TestCostFactorTooLongException;
+    procedure TestSetGetCostFactor;
+//    procedure TestTooLongPasswordException;
 
     procedure Development;
   end;
@@ -6004,14 +6028,20 @@ begin
   end;
 
   R := '1234';
+{ TODO : Evtl. gar nicht wichtig zu wiessen wieviele Daten? }
   R := FHash.CalcString(R, TFormat_Copy);
 
   CheckEquals('1234', R);
 end;
 
-procedure TestTHash_BCrypt.DoTestCostFactor0Exception;
+procedure TestTHash_BCrypt.DoTestCostFactorTooLongException;
 begin
-  THash_BCrypt(FHash).Cost := 0;
+  THash_BCrypt(FHash).Cost := 32;
+end;
+
+procedure TestTHash_BCrypt.DoTestCostFactorTooShortException;
+begin
+  THash_BCrypt(FHash).Cost := 3;
 end;
 
 procedure TestTHash_BCrypt.SetUp;
@@ -6041,9 +6071,14 @@ begin
   DoTestClassByName('THash_BCrypt', THash_BCrypt);
 end;
 
-procedure TestTHash_BCrypt.TestCostFactor0Exception;
+procedure TestTHash_BCrypt.TestCostFactorTooLongException;
 begin
-  CheckException(DoTestCostFactor0Exception, EDECHashException);
+  CheckException(DoTestCostFactorTooLongException, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestCostFactorTooShortException;
+begin
+  CheckException(DoTestCostFactorTooShortException, EDECHashException);
 end;
 
 procedure TestTHash_BCrypt.TestDigestSize;
@@ -6071,11 +6106,98 @@ begin
   CheckEquals(16, TDECPasswordHash(FHash).MaxSaltLength);
 end;
 
+procedure TestTHash_BCrypt.TestSetGetCostFactor;
+begin
+  THash_BCrypt(FHash).Cost := 4;
+  CheckEquals(4, THash_BCrypt(FHash).Cost);
+
+  THash_BCrypt(FHash).Cost := 31;
+  CheckEquals(31, THash_BCrypt(FHash).Cost);
+end;
+
+{ THash_TestTDECPasswordHash }
+
+//procedure THash_TestTDECPasswordHash.DoTestSalt0Exception;
+//var
+//  EmptySalt : TBytes;
+//begin
+//  SetLength(EmptySalt, 0);
+//  FHash.Salt := EmptySalt;
+//end;
+
+procedure THash_TestTDECPasswordHash.DoTestSaltTooLongException;
+var
+  EmptySalt : TBytes;
+begin
+  SetLength(EmptySalt, FHash.MaxSaltLength + 1);
+
+  FHash.Salt := EmptySalt;
+end;
+
+
+procedure THash_TestTDECPasswordHash.SetUp;
+begin
+  inherited;
+
+  FHash := THash_BCrypt.Create;
+end;
+
+procedure THash_TestTDECPasswordHash.TearDown;
+begin
+  FHash.Free;
+
+  inherited;
+end;
+
+procedure THash_TestTDECPasswordHash.TestGetSalt;
+var
+  SetSalt, ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  SetSalt := [1, 2, 3, 4];
+  FHash.Salt := SetSalt;
+
+  ActSalt := FHash.Salt;
+  CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
+end;
+
+//procedure THash_TestTDECPasswordHash.TestSalt0Exception;
+//begin
+//  CheckException(DoTestSalt0Exception, EDECHashException);
+//end;
+
+procedure THash_TestTDECPasswordHash.TestSaltTooLongException;
+var
+  ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  CheckException(DoTestSaltTooLongException, EDECHashException);
+
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+end;
+
+procedure THash_TestTDECPasswordHash.TestSetSalt;
+var
+  SetSalt, ActSalt : TBytes;
+begin
+  SetSalt := [1, 2, 3, 4];
+  FHash.Salt := SetSalt;
+
+  ActSalt := FHash.Salt;
+  CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(THash_TestIncrement8);
   TDUnitX.RegisterTestFixture(THash_TestCPPBuilderExceptions);
+  TDUnitX.RegisterTestFixture(THash_TestTDECPasswordHash);
   TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
@@ -6119,6 +6241,7 @@ initialization
   {$ELSE}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             THash_TestCPPBuilderExceptions.Suite,
+                            THash_TestTDECPasswordHash.Suite,
                             TestTDECHash.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,

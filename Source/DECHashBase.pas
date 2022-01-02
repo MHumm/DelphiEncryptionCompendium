@@ -276,7 +276,13 @@ type
     // hash calculation wrappers
 
     /// <summary>
-    ///   Calculates the hash value (digest) for a given buffer
+    ///   Calculates the hash value (digest) for a given buffer. All other
+    ///   CalcXXX methods do call this one for the actual calculation. So for
+    ///   algorithms where overwriting of DoTransform and getting is called the
+    ///   way it is implemented here, the inheriting class should overwrite
+    ///   CalcBuffer and do calculation in that as desired. If DoTransform is
+    ///   not really needed in such a case the inheriting class should overwrite
+    ///   it anyway but leave it empty and comment the reason.
     /// </summary>
     /// <param name="Buffer">
     ///   Untyped buffer the hash shall be calculated for

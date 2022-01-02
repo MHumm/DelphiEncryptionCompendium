@@ -1051,10 +1051,6 @@ end;
 
 { TCipher_Blowfish }
 
-type
-  PBlowfish = ^TBlowfish;
-  TBlowfish = array[0..3, 0..255] of UInt32;
-
 class function TCipher_Blowfish.Context: TCipherContext;
 begin
   Result.KeySize                     := 56;

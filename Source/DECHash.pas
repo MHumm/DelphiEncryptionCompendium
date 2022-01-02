@@ -1043,13 +1043,79 @@ type
   /// </summary>
   THash_BCrypt = class(TDECPasswordHash)
   private
-    FDigest : array[0..22] of Byte;
+    type
+      TBFParray  = packed array[0..17]  of UInt32;
+      TBFBlock   = packed array[0..7]   of UInt8;
+      TBCSalt    = packed array[0..15] of byte;
+      TBCDigest  = packed array[0..23] of byte;
+      /// <summary>
+      ///   user supplied IncCTR proc
+      /// </summary>
+      TBFIncProc = procedure(var CTR: TBFBlock);
+
+      TBFContext = packed record
+                     /// <summary>
+                     ///   key dependend SBox: 0..3, 0..255
+                     /// </summary>
+                     SBox    : TBlowfish;
+                     /// <summary>
+                     ///   key dependend PArray
+                     /// </summary>
+                     PArray  : TBFPArray;
+                     /// <summary>
+                     ///   InitVector or CTR
+                     /// </summary>
+                     IV      : TBFBlock;
+                     /// <summary>
+                     ///  Working buffer
+                     /// </summary>
+                     buf     : TBFBlock;
+                     /// <summary>
+                     ///   Bytes used in buf
+                     /// </summary>
+                     bLen    : UInt16;
+                     /// <summary>
+                     ///   Bit 1: Short block
+                     /// </summary>
+                     Flag    : UInt16;
+                     /// <summary>
+                     ///   Increment proc CTR-Mode
+                     /// </summary>
+                     IncProc : TBFIncProc;
+                   end;
+
+      var
+        /// <summary>
+        ///   The calculated hash value
+        /// </summary>
+        FDigest  : array[0..22] of Byte;
+        /// <summary>
+        ///   Context with the working data used by all the initialization and
+        ///   calculation methods
+        /// </summary>
+        FContext : TBFContext;
+        /// <summary>
+        ///   Cost factor which might be used to adapt the algorithm to increased
+        ///   processing power.
+        /// </summary>
+        FCost   : UInt32;
     /// <summary>
-    ///   Cost factor which might be used to adapt the algorithm to increased
-    ///   processing power.
+    ///   Sets the cost factor. Throws an EDECHashException when a value of 0
+    ///   is to be set.
     /// </summary>
-    FCost   : UInt32;
     procedure SetCost(const Value: UInt32);
+    /// <summary>
+    ///   Special setup for the bcrypt variant of the blowfish implementation.
+    ///   Designed to be unavoidably slow.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password from which the salt shall be calculated
+    /// </param>
+    /// <param name="PasswordSize">
+    ///    Length of the password in byte
+    /// </param>
+    procedure EksBlowfishSetup(var Password: TBytes;
+                               PasswordSize: Integer);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -1066,6 +1132,17 @@ type
     /// </remarks>
     function MaxPasswordLength:UInt8; override;
 
+    /// <summary>
+    ///   Processes one chunk of data to be hashed.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data on which the hash value shall be calculated on
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the data in bytes
+    /// </param>
+    procedure Calc(const Data; DataSize: Integer); override;
+
     function Digest: PByteArray; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
@@ -1073,7 +1150,9 @@ type
     /// <summary>
     ///   Defines the cost factor of the calculation. Real factor will be 2^Cost.
     ///   This is used to adapt to increasing CPU power and must be stored along
-    ///   with the hash value and salt to be able to verify a password against it
+    ///   with the hash value and salt to be able to verify a password against it.
+    ///   Value must be between 4 and 31, other values will raise a
+    ///   EDECHashException
     /// </summary>
     property Cost: UInt32
       read   FCost
@@ -1147,7 +1226,11 @@ resourcestring
   ///   them to increasing CPU power. This text is the exception message when
   ///   the user specifies 0 for this.
   /// </summary>
-  sCostFactor0       = 'Specified cost factor must not be 0';
+  sCostFactorInvalid = 'Specified cost factor must be in the range of %0:d-%1:d';
+  /// <summary>
+  ///   Exception message for password hashes when a too long password is specified
+  /// </summary>
+  sPasswordTooLong   = 'Password to be hashed is too long. Max. length: %0:d bytes';
 
 { THash_MD2 }
 
@@ -4823,6 +4906,49 @@ begin
   Result := 8;
 end;
 
+procedure THash_BCrypt.Calc(const Data; DataSize: Integer);
+const
+  ctext: TBCDigest = ($4F,$72,$70,$68,$65,$61,$6E,$42, {'OrpheanBeholderScryDoubt'}
+                      $65,$68,$6F,$6C,$64,$65,$72,$53,
+                      $63,$72,$79,$44,$6F,$75,$62,$74);
+var
+  PwdData : TBytes;
+begin
+  if (DataSize > 55) then
+    raise EDECHashException.Create(sPasswordTooLong);
+
+  // This automatically "adds" the required #0 terminator at the end of the password
+  SetLength(PwdData, DataSize + 1);
+  Move(Data, PwdData[0], DataSize);
+
+  EksBlowfishSetup(PwdData, DataSize+1);
+end;
+
+procedure THash_BCrypt.EksBlowfishSetup(var Password : TBytes;
+                                        PasswordSize : Integer);
+var
+  i, rounds: UInt32;
+  err      : Integer;
+const
+  zero: TBCSalt = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+begin
+  // number of rounds = 2^cost, loop includes 0
+  if (FCost = 31) then
+    rounds := MaxLongint
+  else
+    rounds := (UInt32(1) shl cost) - 1;
+
+//  // Just copy the boxes into the context
+//  ExpandKey(FContext, salt, key, klen);
+//
+//  // This is the time consuming part
+//  for i := rounds downto 0 do
+//  begin
+//    ExpandKey(FContext, zero, Password,  PasswordSIze);
+//    ExpandKey(FContext, zero, FSalt, 16);
+//  end;
+end;
+
 constructor THash_BCrypt.Create;
 begin
   inherited;
@@ -4845,21 +4971,28 @@ end;
 
 procedure THash_BCrypt.DoDone;
 begin
-  DoTransform(Pointer(FBuffer));
+{ TODO : Check if that is correct, do nothing on purpose }
+//  inherited;
 end;
 
 procedure THash_BCrypt.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
   FCost := 10;
+
+  FillChar(FContext, sizeof(FContext), 0);
+
+{ TODO :
+Problem: these values are already defined, but in DECDataCipher because
+BCrypt uses the blowfish cipher. }
+//  FContext.SBox   := _bf_s;
+//  FContext.PArray := _bf_p;
 end;
 
 procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
-var
-  i : Integer;
 begin
-  i := 5;
-  Sleep(10);
+  // Empty on purpose, as bcrypt needs to know the input length. Thus calculation
+  // is done directly in CalcBuffer.
 end;
 
 function THash_BCrypt.MaxPasswordLength: UInt8;
@@ -4874,10 +5007,10 @@ end;
 
 procedure THash_BCrypt.SetCost(const Value: UInt32);
 begin
-  if Value > 0 then
+  if (Value in [4..31]) then
     FCost := Value
   else
-    raise EDECHashException.Create(sCostFactor0);
+    raise EDECHashException.CreateFmt(sCostFactorInvalid, [4, 31]);
 end;
 
 initialization
