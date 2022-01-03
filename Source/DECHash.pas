@@ -1044,10 +1044,16 @@ type
   THash_BCrypt = class(TDECPasswordHash)
   private
     type
-      TBFParray  = packed array[0..17]  of UInt32;
-      TBFBlock   = packed array[0..7]   of UInt8;
+      TBFBlock   = packed array[0..7]  of UInt8;
+      PBFBlock   = ^TBFBlock;
+
       TBCSalt    = packed array[0..15] of byte;
       TBCDigest  = packed array[0..23] of byte;
+
+      TBF2Long   = packed record
+                     L,R: UInt32;
+                   end;
+
       /// <summary>
       ///   user supplied IncCTR proc
       /// </summary>
@@ -1057,11 +1063,11 @@ type
                      /// <summary>
                      ///   key dependend SBox: 0..3, 0..255
                      /// </summary>
-                     SBox    : TBlowfish;
+                     SBox    : TBlowfishMatrix;
                      /// <summary>
                      ///   key dependend PArray
                      /// </summary>
-                     PArray  : TBFPArray;
+                     PArray  : TBlowfishKey;
                      /// <summary>
                      ///   InitVector or CTR
                      /// </summary>
@@ -1087,8 +1093,12 @@ type
       var
         /// <summary>
         ///   The calculated hash value
+        ///   Should have been 192 bit = 24 byte, but original author's
+        ///   imnplementation had a flaw not returning the last byte, which has
+        ///   been kept instead of fixing it. Thus DigestSize returns 23 instead
+        ///   of 24!
         /// </summary>
-        FDigest  : array[0..22] of Byte;
+        FDigest  : array[0..23] of Byte;
         /// <summary>
         ///   Context with the working data used by all the initialization and
         ///   calculation methods
@@ -1116,6 +1126,39 @@ type
     /// </param>
     procedure EksBlowfishSetup(var Password: TBytes;
                                PasswordSize: Integer);
+    /// <summary>
+    ///   Expensive key setup for Blowfish
+    /// </summary>
+    /// <param name="Salt">
+    ///   Needed as parameter here as something else than FSalt has to be
+    ///   passed sometimes.
+    /// </param>
+    /// <param name="Password">
+    ///   Password from which the salt shall be calculated
+    /// </param>
+    /// <param name="PasswordSize">
+    ///    Length of the password in byte
+    /// </param>
+    procedure Expandkey(Salt         : TBytes;
+                        var Password : TBytes;
+                        PasswordSize : Integer);
+    /// <summary>
+    ///   Encrypt one block (in ECB mode)
+    /// </summary>
+    procedure BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
+    /// <summary>
+    ///   xors two blocks and returns the result in a 3rd one result in third
+    /// </summary>
+    /// <param name="B1">
+    ///   1st block to xor
+    /// </param>
+    /// <param name="B2">
+    ///   2nd block to xor
+    /// </param>
+    /// <param name="B3">
+    ///   Block to store the result in
+    /// </param>
+    procedure BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
   protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -1162,7 +1205,7 @@ type
 implementation
 
 uses
-  DECData, DECDataHash;
+  DECData, DECDataHash, DECDataCipherBlowfish;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
@@ -4913,6 +4956,7 @@ const
                       $63,$72,$79,$44,$6F,$75,$62,$74);
 var
   PwdData : TBytes;
+  i       : Integer;
 begin
   if (DataSize > 55) then
     raise EDECHashException.Create(sPasswordTooLong);
@@ -4921,16 +4965,26 @@ begin
   SetLength(PwdData, DataSize + 1);
   Move(Data, PwdData[0], DataSize);
 
-  EksBlowfishSetup(PwdData, DataSize+1);
+  EksBlowfishSetup(PwdData, DataSize + 1);
+
+  Move(ctext, FDigest[0], Length(ctext));
+//  digest := ctext;
+  // Encrypt the magic initialisation text 64 times using ECB mode
+  for i := 1 to 64 do
+  begin
+    BF_Encrypt(PBFBlock(@FDigest[ 0])^, PBFBlock(@FDigest[ 0])^);
+    BF_Encrypt(PBFBlock(@FDigest[ 8])^, PBFBlock(@FDigest[ 8])^);
+    BF_Encrypt(PBFBlock(@FDigest[16])^, PBFBlock(@FDigest[16])^);
+  end;
+
 end;
 
 procedure THash_BCrypt.EksBlowfishSetup(var Password : TBytes;
                                         PasswordSize : Integer);
 var
   i, rounds: UInt32;
-  err      : Integer;
 const
-  zero: TBCSalt = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+  zero: TBytes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 begin
   // number of rounds = 2^cost, loop includes 0
   if (FCost = 31) then
@@ -4938,15 +4992,144 @@ begin
   else
     rounds := (UInt32(1) shl cost) - 1;
 
-//  // Just copy the boxes into the context
-//  ExpandKey(FContext, salt, key, klen);
-//
-//  // This is the time consuming part
-//  for i := rounds downto 0 do
-//  begin
-//    ExpandKey(FContext, zero, Password,  PasswordSIze);
-//    ExpandKey(FContext, zero, FSalt, 16);
-//  end;
+  // Just copy the boxes into the context
+  ExpandKey(FSalt, Password, PasswordSize);
+
+  // This is the time consuming part
+  for i := rounds downto 0 do
+  begin
+    ExpandKey(zero, Password,  PasswordSIze);
+    ExpandKey(zero, FSalt, 16);
+  end;
+end;
+
+procedure THash_BCrypt.Expandkey(Salt             : TBytes;
+                                 var Password     : TBytes;
+                                     PasswordSize : Integer);
+type
+  TByteArray72 = packed array[0..71] of byte;
+
+var
+  i,j,k,h : Integer;
+  KL      : UInt32;
+  tmp     : TBFBlock;
+  KBP: ^TByteArray72;
+//var
+//  KB: packed array[0..71] of byte absolute Password;
+begin
+  KBP := @Password[0];
+
+//  if (len<1) or (len > 56) then begin
+//    Expandkey := BF_Err_Invalid_Key_Size;
+//    exit;
+//  end
+//  else Expandkey := 0;
+
+  {Text explanations and comments are from the N.Provos & D.Mazieres paper.}
+
+  {ExpandKey(state,salt,key) modifies the P-Array and S-boxes based on the }
+  {value of the 128-bit salt and the variable length key. First XOR all the}
+  {subkeys in the P-array with the encryption key. The first 32 bits of the}
+  {key are XORed with P1, the next 32 bits with P2, and so on. The key is  }
+  {viewed as being cyclic; when the process reaches the end of the key, it }
+  {starts reusing bits from the beginning to XOR with subkeys.             }
+
+  {WE: Same as standard key part except that PArray[i] is used for _bf_p[i]}
+  k := 0;
+  for i := 0 to 17 do
+  begin
+    KL := 0;
+    for j:=0 to 3 do
+    begin
+      KL := (KL shl 8) or KBP^[k];
+      inc(k);
+
+      if (k = PasswordSize) then
+        k := 0;
+    end;
+
+    FContext.PArray[i] := FContext.PArray[i] xor KL;
+  end;
+
+  {Subsequently, ExpandKey blowfish-encrypts the first 64 bits of}
+  {its salt argument using the current state of the key schedule.}
+  BF_Encrypt(PBFBlock(@salt[0])^, tmp);
+
+  {The resulting ciphertext replaces subkeys P_1 and P_2.}
+  FContext.PArray[0] := SwapUInt32(TBF2Long(tmp).L);
+  FContext.PArray[1] := SwapUInt32(TBF2Long(tmp).R);
+
+  {That same ciphertext is also XORed with the second 64-bits of }
+  {salt, and the result encrypted with the new state of the key  }
+  {schedule. The output of the second encryption replaces subkeys}
+  {P_3 and P_4. It is also XORed with the first 64-bits of salt  }
+  {and encrypted to replace P_5 and P_6. The process continues,  }
+  {alternating between the first and second 64 bits salt.        }
+  h := 8;
+  for i := 1 to 8 do
+  begin
+    BF_XorBlock(tmp, PBFBlock(@Salt[h])^, tmp);
+    h := h xor 8;
+    BF_Encrypt(tmp, tmp);
+    FContext.PArray[2*i]   := SwapUInt32(TBF2Long(tmp).L);
+    FContext.PArray[2*i+1] := SwapUInt32(TBF2Long(tmp).R);
+  end;
+
+  {When ExpandKey finishes replacing entries in the P-Array, it continues}
+  {on replacing S-box entries two at a time. After replacing the last two}
+  {entries of the last S-box, ExpandKey returns the new key schedule.    }
+  for j := 0 to 3 do
+  begin
+    for i := 0 to 127 do
+    begin
+      BF_XorBlock(tmp, PBFBlock(@Salt[h])^, tmp);
+      h := h xor 8;
+      BF_Encrypt(tmp, tmp);
+      FContext.SBox[j, 2*i]  := SwapUInt32(TBF2Long(tmp).L);
+      FContext.SBox[j, 2*i+1]:= SwapUInt32(TBF2Long(tmp).R);
+    end;
+  end;
+end;
+
+{ TODO : Entfernen falls doch nicht benötigt, d.h. falls SwapUInt32 genau dasselbe tut }
+//function THash_BCrypt.RB(A: UInt32): UInt32;
+//  {-reverse byte order in longint}
+//begin
+//  RB := ((A and $FF) shl 24) or ((A and $FF00) shl 8) or ((A and $FF0000) shr 8) or ((A and longint($FF000000)) shr 24);
+//end;
+
+procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
+var
+  xl, xr : UInt32;
+  pp     : ^UInt32; //PLongInt;
+  i      : integer;
+begin
+  xl := SwapUInt32(TBF2Long(BI).L) xor FContext.PArray[0];
+  xr := SwapUInt32(TBF2Long(BI).R);
+  pp := @FContext.PArray[1];
+
+  // 16 rounds = 8 double rounds without swapping
+  for i := 1 to 8 do
+  begin
+    xr := xr xor pp^ xor (FContext.SBox[0][xl shr 24        ] +
+                          FContext.SBox[1][xl shr 16 and $ff] xor
+                          FContext.SBox[2][xl shr 8  and $ff] +
+                          FContext.SBox[3][xl        and $ff]);
+    inc(pp);
+    xl := xl xor pp^ xor (FContext.SBox[0][xr shr 24        ] +
+                          FContext.SBox[1][xr shr 16 and $ff] xor
+                          FContext.SBox[2][xr shr 8  and $ff] +
+                          FContext.SBox[3][xr        and $ff]);
+    inc(pp);
+  end;
+  TBF2Long(BO).R := SwapUInt32(xl);
+  TBF2Long(BO).L := SwapUInt32(xr xor pp^);
+end;
+
+procedure THash_BCrypt.BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
+begin
+  TBF2Long(B3).L := TBF2Long(B1).L xor TBF2Long(B2).L;
+  TBF2Long(B3).R := TBF2Long(B1).R xor TBF2Long(B2).R;
 end;
 
 constructor THash_BCrypt.Create;
@@ -4982,11 +5165,8 @@ begin
 
   FillChar(FContext, sizeof(FContext), 0);
 
-{ TODO :
-Problem: these values are already defined, but in DECDataCipher because
-BCrypt uses the blowfish cipher. }
-//  FContext.SBox   := _bf_s;
-//  FContext.PArray := _bf_p;
+  FContext.SBox   := Blowfish_Data;
+  FContext.PArray := Blowfish_Key;
 end;
 
 procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
