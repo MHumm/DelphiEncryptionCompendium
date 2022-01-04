@@ -212,6 +212,14 @@ type
     procedure TestCalcStreamNoDoneMulti;
   end;
 
+  /// <summary>
+  ///   Adds test data initialization common for all password hash algorithms
+  /// </summary>
+  THash_TestPasswordBase = class(THash_TestBase)
+  protected
+    procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
+  end;
+
   // Test methods for base class for all hash classes
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECHash = class(TTestCase)
@@ -650,7 +658,9 @@ type
 
   // Test methods for class THash_BCrypt
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_BCrypt = class(THash_TestBase)
+  TestTHash_BCrypt = class(THash_TestPasswordBase)
+  protected
+    procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
   public
     procedure SetUp; override;
     procedure DoTestCostFactorTooShortException;
@@ -6012,6 +6022,13 @@ end;
 
 { TestTHash_BCrypt }
 
+procedure TestTHash_BCrypt.ConfigHashClass(aHashClass: TDECHash;
+  aIdxTestData: Integer);
+begin
+  inherited;
+  THash_BCrypt(FHash).Cost := FTestData[aIdxTestData].Cost;
+end;
+
 procedure TestTHash_BCrypt.Development;
 var
   R: RawByteString;
@@ -6043,13 +6060,168 @@ begin
 
   FHash := THash_BCrypt.Create;
 
-{ TODO : Fill in! }
-//  // Source: all including 12345678901234567890123456789012345678901234567890123
-//  // 456789012345678901234567890 are from: https://www.ietf.org/rfc/rfc1319.txt
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := '8350e5a3e24c153df2275c9f80692773';
-//  lDataRow.ExpectedOutputUTFStrTest := '8350e5a3e24c153df2275c9f80692773';
-//  lDataRow.AddInputVector('');
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '';
+  lDataRow.ExpectedOutputUTFStrTest := '';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+// Programm schreiben, welches das Salt als Binäre TBytes initialisierung extrahiert
+// und den Hash Wert von Base64 nach HexL umwandelt.
+//          (pn: 0; bs: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+//          (pn: 0; bs: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
+//          (pn: 0; bs: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
+//          (pn: 0; bs: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
+//          (pn: 1; bs: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
+//          (pn: 1; bs: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
+//          (pn: 1; bs: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
+//          (pn: 1; bs: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
+//          (pn: 2; bs: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
+//          (pn: 2; bs: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
+//          (pn: 2; bs: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
+//          (pn: 2; bs: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
+//          (pn: 3; bs: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
+//          (pn: 3; bs: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
+//          (pn: 3; bs: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
+//          (pn: 3; bs: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
+//          (pn: 4; bs: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
+//          (pn: 4; bs: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
+//          (pn: 4; bs: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
+//          (pn: 4; bs: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
 end;
 
 procedure TestTHash_BCrypt.TestBlockSize;
@@ -6181,6 +6353,15 @@ begin
 
   ActSalt := FHash.Salt;
   CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
+end;
+
+{ THash_TestPasswordBase }
+
+procedure THash_TestPasswordBase.ConfigHashClass(aHashClass: TDECHash;
+  aIdxTestData: Integer);
+begin
+  inherited;
+  TDECPasswordHash(FHash).Salt := FTestData[aIdxTestData].Salt;
 end;
 
 initialization
