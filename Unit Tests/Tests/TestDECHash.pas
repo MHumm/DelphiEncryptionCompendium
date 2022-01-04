@@ -6015,23 +6015,14 @@ end;
 procedure TestTHash_BCrypt.Development;
 var
   R: RawByteString;
-  Hash:THash_MD4;
 begin
-  R := '1234';
-
-  Hash:=THash_MD4.Create;
-  try
-    Hash.Init;
-    R := Hash.CalcString(R, TFormat_Copy);
-  finally
-    Hash.Free;
-  end;
-
-  R := '1234';
-{ TODO : Evtl. gar nicht wichtig zu wiessen wieviele Daten? }
-  R := FHash.CalcString(R, TFormat_Copy);
-
-  CheckEquals('1234', R);
+  R := 'Wrdblbrnft+42';
+//  THash_BCrypt(FHash).Cost := 8;
+  THash_BCrypt(FHash).Salt := [81, 224, 52, 40, 5, 216, 186, 0, 157, 253, 148, 127, 108, 8, 222, 128];
+  THash_BCrypt(FHash).Cost := 8;
+  R := FHash.CalcString(R, TFormat_Copy); //TFormat_Base64);
+//(111, 220, 97, 164, 46, 223, 212, 27, 220, 213, 7, 236, 5, 70, 12, 89, 34, 25, 175, 212, 55, 90, 90, 9)
+  CheckEquals(RawByteString('1234'), R);
 end;
 
 procedure TestTHash_BCrypt.DoTestCostFactorTooLongException;

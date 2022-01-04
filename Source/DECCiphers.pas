@@ -1168,6 +1168,8 @@ begin
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
   begin
+    {$IFOPT Q+}The following code requires overflow checks being off!{$ENDIF}
+
     B := B xor P[0] xor (D[0, A shr 24        ] +
                          D[1, A shr 16 and $FF] xor
                          D[2, A shr  8 and $FF] +

@@ -1204,11 +1204,11 @@ type
 
 implementation
 
-uses
-  DECData, DECDataHash, DECDataCipherBlowfish;
-
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
+
+uses
+  DECData, DECDataHash, DECDataCipherBlowfish;
 
 {$IFDEF X86ASM}
   {$DEFINE INCLUDED} // allows having the DECHash.inc in the IDE's project manager
@@ -4990,7 +4990,7 @@ begin
   if (FCost = 31) then
     rounds := MaxLongint
   else
-    rounds := (UInt32(1) shl cost) - 1;
+    rounds := (Int32(1) shl FCost) - 1;
 
   // Just copy the boxes into the context
   ExpandKey(FSalt, Password, PasswordSize);
@@ -5101,7 +5101,7 @@ end;
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
 var
   xl, xr : UInt32;
-  pp     : ^UInt32; //PLongInt;
+  pp     : ^UInt32;
   i      : integer;
 begin
   xl := SwapUInt32(TBF2Long(BI).L) xor FContext.PArray[0];
@@ -5111,6 +5111,8 @@ begin
   // 16 rounds = 8 double rounds without swapping
   for i := 1 to 8 do
   begin
+    {$IFOPT Q+}The following code requires overflow checks being off!{$ENDIF}
+
     xr := xr xor pp^ xor (FContext.SBox[0][xl shr 24        ] +
                           FContext.SBox[1][xl shr 16 and $ff] xor
                           FContext.SBox[2][xl shr 8  and $ff] +
@@ -5125,6 +5127,35 @@ begin
   TBF2Long(BO).R := SwapUInt32(xl);
   TBF2Long(BO).L := SwapUInt32(xr xor pp^);
 end;
+
+//var
+//  I, A, B: UInt32;
+//  P: PUInt32Array;
+//  D: PBlowfish;
+//begin
+//  Assert(Size = Context.BlockSize, 'Size of ' + IntToStr(Size) + ' does not equal '+
+//                                   'block size of ' + IntToStr(Context.BlockSize));
+//
+//  D := Pointer(FAdditionalBuffer);
+//  P := Pointer(PByte(FAdditionalBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
+//  A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
+//  B := SwapUInt32(PUInt32Array(Source)[1]);
+//  for I := 0 to 7 do
+//  begin
+//    B := B xor P[0] xor (D[0, A shr 24        ] +
+//                         D[1, A shr 16 and $FF] xor
+//                         D[2, A shr  8 and $FF] +
+//                         D[3, A        and $FF]);
+//
+//    A := A xor P[1] xor (D[0, B shr 24        ] +
+//                         D[1, B shr 16 and $FF] xor
+//                         D[2, B shr  8 and $FF] +
+//                         D[3, B        and $FF]);
+//    P := @P[2];
+//  end;
+//  PUInt32Array(Dest)[0] := SwapUInt32(B xor P[0]);
+//  PUInt32Array(Dest)[1] := SwapUInt32(A);
+//end;
 
 procedure THash_BCrypt.BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
 begin
@@ -5161,8 +5192,6 @@ end;
 procedure THash_BCrypt.DoInit;
 begin
   FillChar(FDigest, SizeOf(FDigest), 0);
-  FCost := 10;
-
   FillChar(FContext, sizeof(FContext), 0);
 
   FContext.SBox   := Blowfish_Data;
@@ -5192,6 +5221,9 @@ begin
   else
     raise EDECHashException.CreateFmt(sCostFactorInvalid, [4, 31]);
 end;
+
+{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
+{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
 initialization
   // Define the has returned by ValidHash if passing nil as parameter
