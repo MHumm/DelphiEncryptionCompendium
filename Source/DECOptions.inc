@@ -82,7 +82,7 @@
   {$ELSE}
     {$IFDEF WINDOWS}
       {.$DEFINE NO_ASM} (* default OFF *)
-    {$ELSE
+    {$ELSE}
       {$DEFINE NO_ASM} (* default ON *)
     {$ENDIF}
   {$ENDIF}
