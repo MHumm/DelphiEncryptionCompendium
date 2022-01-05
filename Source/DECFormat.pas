@@ -705,7 +705,6 @@ begin
   //  ' $()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13); // special and skipped chars
   SetLength(result, 85);
 
-  {$IF CompilerVersion >= 28.0}
   result := [$41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
              $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
              $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
@@ -713,101 +712,6 @@ begin
              $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $2B, $2F, $3D,
              $20, $24, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $5C, $2A, $22, $27, $09, $0A, $0D];
-  {$ELSE}
-  // Remove this initialisation variant as soon as XE7+ is the new minimum
-  // supported Delphi version
-  result[0 ]:=$41;
-  result[1 ]:=$42;
-  result[2 ]:=$43;
-  result[3 ]:=$44;
-  result[4 ]:=$45;
-  result[5 ]:=$46;
-  result[6 ]:=$47;
-  result[7 ]:=$48;
-  result[8 ]:=$49;
-  result[9 ]:=$4A;
-  result[10]:=$4B;
-  result[11]:=$4C;
-  result[12]:=$4D;
-
-  result[13]:=$4E;
-  result[14]:=$4F;
-  result[15]:=$50;
-  result[16]:=$51;
-  result[17]:=$52;
-  result[18]:=$53;
-  result[19]:=$54;
-  result[20]:=$55;
-  result[21]:=$56;
-  result[22]:=$57;
-  result[23]:=$58;
-  result[24]:=$59;
-  result[25]:=$5A;
-
-  result[26]:=$61;
-  result[27]:=$62;
-  result[28]:=$63;
-  result[29]:=$64;
-  result[30]:=$65;
-  result[31]:=$66;
-  result[32]:=$67;
-  result[33]:=$68;
-  result[34]:=$69;
-  result[35]:=$6A;
-  result[36]:=$6B;
-  result[37]:=$6C;
-  result[38]:=$6D;
-
-  result[39]:=$6E;
-  result[40]:=$6F;
-  result[41]:=$70;
-  result[42]:=$71;
-  result[43]:=$72;
-  result[44]:=$73;
-  result[45]:=$74;
-  result[46]:=$75;
-  result[47]:=$76;
-  result[48]:=$77;
-  result[49]:=$78;
-  result[50]:=$79;
-  result[51]:=$7A;
-
-  result[52]:=$30;
-  result[53]:=$31;
-  result[54]:=$32;
-  result[55]:=$33;
-  result[56]:=$34;
-  result[57]:=$35;
-  result[58]:=$36;
-  result[59]:=$37;
-  result[60]:=$38;
-  result[61]:=$39;
-  result[62]:=$2B;
-  result[63]:=$2F;
-  result[64]:=$3D;
-
-  result[65]:=$20;
-  result[66]:=$24;
-  result[67]:=$28;
-  result[68]:=$29;
-  result[69]:=$5B;
-  result[70]:=$5D;
-  result[71]:=$7B;
-  result[72]:=$7D;
-  result[73]:=$2C;
-  result[74]:=$3B;
-  result[75]:=$3A;
-  result[76]:=$2D;
-  result[77]:=$5F;
-
-  result[78]:=$5C;
-  result[79]:=$2A;
-  result[80]:=$22;
-  result[81]:=$27;
-  result[82]:=$09;
-  result[83]:=$0A;
-  result[84]:=$0D;
-  {$IFEND}
 end;
 
 class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);

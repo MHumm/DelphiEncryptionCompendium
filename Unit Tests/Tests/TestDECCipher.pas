@@ -4710,7 +4710,6 @@ end;
 
 procedure TestTCipher_AES192.SetUp;
 begin
-{ TODO : Change test data: remove wrong one for that algo }
   FCipher_AES := TCipher_AES192.Create;
 
   SetLength(FTestData, 1);
@@ -4822,7 +4821,6 @@ end;
 
 procedure TestTCipher_AES256.SetUp;
 begin
-{ TODO : Change test data: remove wrong one for that algo }
   FCipher_AES := TCipher_AES256.Create;
 
   SetLength(FTestData, 1);

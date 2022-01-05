@@ -1169,6 +1169,10 @@ type
     /// </summary>
     constructor Create; override;
     function MaxSaltLength:UInt8; override;
+    /// <summary>
+    ///   Returns the maximum length of a user supplied password given for the
+    ///   algorithm in byte
+    /// </summary>
     /// <remarks>
     ///   For BCrypt version "2a" it is specified that the password ends with a
     ///   null-terminator, which will be added internally in our implementation
@@ -4959,7 +4963,7 @@ var
   i       : Integer;
 begin
   if (DataSize > 55) then
-    raise EDECHashException.Create(sPasswordTooLong);
+    raise EDECHashException.CreateFmt(sPasswordTooLong, [MaxPasswordLength]);
 
   // This automatically "adds" the required #0 terminator at the end of the password
   SetLength(PwdData, DataSize + 1);
@@ -4968,7 +4972,7 @@ begin
   EksBlowfishSetup(PwdData, DataSize + 1);
 
   Move(ctext, FDigest[0], Length(ctext));
-//  digest := ctext;
+
   // Encrypt the magic initialisation text 64 times using ECB mode
   for i := 1 to 64 do
   begin
@@ -4998,7 +5002,7 @@ begin
   // This is the time consuming part
   for i := rounds downto 0 do
   begin
-    ExpandKey(zero, Password,  PasswordSIze);
+    ExpandKey(zero, Password,  PasswordSize);
     ExpandKey(zero, FSalt, 16);
   end;
 end;
@@ -5007,23 +5011,15 @@ procedure THash_BCrypt.Expandkey(Salt             : TBytes;
                                  var Password     : TBytes;
                                      PasswordSize : Integer);
 type
-  TByteArray72 = packed array[0..71] of byte;
+  TByteArray72 = packed array[0..71] of UInt8;
 
 var
   i,j,k,h : Integer;
   KL      : UInt32;
   tmp     : TBFBlock;
-  KBP: ^TByteArray72;
-//var
-//  KB: packed array[0..71] of byte absolute Password;
+  KBP     : ^TByteArray72;
 begin
   KBP := @Password[0];
-
-//  if (len<1) or (len > 56) then begin
-//    Expandkey := BF_Err_Invalid_Key_Size;
-//    exit;
-//  end
-//  else Expandkey := 0;
 
   {Text explanations and comments are from the N.Provos & D.Mazieres paper.}
 
@@ -5091,13 +5087,6 @@ begin
   end;
 end;
 
-{ TODO : Entfernen falls doch nicht benötigt, d.h. falls SwapUInt32 genau dasselbe tut }
-//function THash_BCrypt.RB(A: UInt32): UInt32;
-//  {-reverse byte order in longint}
-//begin
-//  RB := ((A and $FF) shl 24) or ((A and $FF00) shl 8) or ((A and $FF0000) shr 8) or ((A and longint($FF000000)) shr 24);
-//end;
-
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
 var
   xl, xr : UInt32;
@@ -5128,35 +5117,6 @@ begin
   TBF2Long(BO).L := SwapUInt32(xr xor pp^);
 end;
 
-//var
-//  I, A, B: UInt32;
-//  P: PUInt32Array;
-//  D: PBlowfish;
-//begin
-//  Assert(Size = Context.BlockSize, 'Size of ' + IntToStr(Size) + ' does not equal '+
-//                                   'block size of ' + IntToStr(Context.BlockSize));
-//
-//  D := Pointer(FAdditionalBuffer);
-//  P := Pointer(PByte(FAdditionalBuffer) + SizeOf(Blowfish_Data)); // for Pointer Math
-//  A := SwapUInt32(PUInt32Array(Source)[0]) xor P[0]; P := @P[1];
-//  B := SwapUInt32(PUInt32Array(Source)[1]);
-//  for I := 0 to 7 do
-//  begin
-//    B := B xor P[0] xor (D[0, A shr 24        ] +
-//                         D[1, A shr 16 and $FF] xor
-//                         D[2, A shr  8 and $FF] +
-//                         D[3, A        and $FF]);
-//
-//    A := A xor P[1] xor (D[0, B shr 24        ] +
-//                         D[1, B shr 16 and $FF] xor
-//                         D[2, B shr  8 and $FF] +
-//                         D[3, B        and $FF]);
-//    P := @P[2];
-//  end;
-//  PUInt32Array(Dest)[0] := SwapUInt32(B xor P[0]);
-//  PUInt32Array(Dest)[1] := SwapUInt32(A);
-//end;
-
 procedure THash_BCrypt.BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
 begin
   TBF2Long(B3).L := TBF2Long(B1).L xor TBF2Long(B2).L;
@@ -5185,14 +5145,17 @@ end;
 
 procedure THash_BCrypt.DoDone;
 begin
-{ TODO : Check if that is correct, do nothing on purpose }
-//  inherited;
+  ProtectBuffer(FContext.PArray, SizeOf(FContext.PArray));
+  ProtectBuffer(FContext.IV, SizeOf(FContext.IV));
+  ProtectBuffer(FContext.buf, SizeOf(FContext.buf));
+
+  inherited;
 end;
 
 procedure THash_BCrypt.DoInit;
 begin
-  FillChar(FDigest, SizeOf(FDigest), 0);
-  FillChar(FContext, sizeof(FContext), 0);
+  FillChar(FDigest,  SizeOf(FDigest), 0);
+  FillChar(FContext, SizeOf(FContext), 0);
 
   FContext.SBox   := Blowfish_Data;
   FContext.PArray := Blowfish_Key;
