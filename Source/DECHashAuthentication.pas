@@ -640,8 +640,6 @@ type
     ///   in binary form. Any Base64 encoded salt needs to be decoded before
     ///   passing.
     /// </summary>
-{ TODO : Prüfen, ob das mit dem Base64 so stimmt bzw. wie W. Erhardts Quellcode
-  damit umgeht }
     property Salt: TBytes
       read   GetSalt
       write  SetSalt;
