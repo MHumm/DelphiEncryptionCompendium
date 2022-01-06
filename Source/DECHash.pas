@@ -1178,6 +1178,14 @@ type
     ///   null-terminator, which will be added internally in our implementation
     /// </remarks>
     function MaxPasswordLength:UInt8; override;
+    /// <summary>
+    ///   Returns the minimum allowed value for the Cost property
+    /// </summary>
+    function MinCost:UInt8;
+    /// <summary>
+    ///   Returns the maximum allowed value for the Cost property
+    /// </summary>
+    function MaxCost:UInt8;
 
     /// <summary>
     ///   Processes one chunk of data to be hashed.
@@ -4962,7 +4970,7 @@ var
   PwdData : TBytes;
   i       : Integer;
 begin
-  if (DataSize > 55) then
+  if (DataSize > MaxPasswordLength) then
     raise EDECHashException.CreateFmt(sPasswordTooLong, [MaxPasswordLength]);
 
   // This automatically "adds" the required #0 terminator at the end of the password
@@ -5167,9 +5175,14 @@ begin
   // is done directly in CalcBuffer.
 end;
 
+function THash_BCrypt.MaxCost: UInt8;
+begin
+  Result := 31;
+end;
+
 function THash_BCrypt.MaxPasswordLength: UInt8;
 begin
-  Result := 55;
+  Result := 72;
 end;
 
 function THash_BCrypt.MaxSaltLength: UInt8;
@@ -5177,12 +5190,17 @@ begin
   Result := 16;
 end;
 
+function THash_BCrypt.MinCost: UInt8;
+begin
+  Result := 4;
+end;
+
 procedure THash_BCrypt.SetCost(const Value: UInt32);
 begin
-  if (Value in [4..31]) then
+  if (Value in [MinCost..MaxCost]) then
     FCost := Value
   else
-    raise EDECHashException.CreateFmt(sCostFactorInvalid, [4, 31]);
+    raise EDECHashException.CreateFmt(sCostFactorInvalid, [MinCost, MaxCost]);
 end;
 
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}

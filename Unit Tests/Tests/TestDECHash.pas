@@ -673,6 +673,8 @@ type
     procedure TestIdentity;
     procedure TestMaximumSaltLength;
     procedure TestMaximumPasswordLength;
+    procedure TestMinCost;
+    procedure TestMaxCost;
     procedure TestCostFactorTooShortException;
     procedure TestCostFactorTooLongException;
     procedure TestSetGetCostFactor;
@@ -6162,32 +6164,32 @@ begin
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '26f517fe5345ad575ba7dfb8144f01bfdb15f3d47c1e14';
-  lDataRow.ExpectedOutputUTFStrTest := '';
-  lDataRow.RunUnicodeTest           := false;
+  lDataRow.ExpectedOutputUTFStrTest := '56c059831b5311bacc275e1f6b5ff6855f6e6edc752e56';
+  lDataRow.RunUnicodeTest           := true;
   lDataRow.Cost                     := 6;
   lDataRow.Salt                     := [$85, $12, $ae, $0d, $0f, $ac, $4e, $c9, $a5, $97, $8f, $79, $b6, $17, $10, $28];
   lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'd51d7cdf839b91a25758b80141e42c9f896ae80fd6cd56';
-  lDataRow.ExpectedOutputUTFStrTest := '';
-  lDataRow.RunUnicodeTest           := false;
+  lDataRow.ExpectedOutputUTFStrTest := '4f019a19393508796b1ad5ecd4f344711e0d49e956e65d';
+  lDataRow.RunUnicodeTest           := true;
   lDataRow.Cost                     := 8;
   lDataRow.Salt                     := [$1a, $ce, $2d, $e8, $80, $7d, $f1, $8c, $79, $fc, $ed, $54, $67, $8f, $38, $8f];
   lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'db4fab24c1ff41c1e2c966f8b3d6381c76e86f52da9e15';
-  lDataRow.ExpectedOutputUTFStrTest := '';
-  lDataRow.RunUnicodeTest           := false;
+  lDataRow.ExpectedOutputUTFStrTest := 'b6efcca9da72b95671d5bc0a663ed6db745e89daed94ab';
+  lDataRow.RunUnicodeTest           := true;
   lDataRow.Cost                     := 10;
   lDataRow.Salt                     := [$36, $28, $5a, $62, $67, $75, $1b, $14, $ba, $2d, $c9, $89, $f6, $d4, $31, $26];
   lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
 
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'b7af3ca87144725e9df096b9199231873a3ae6e8348e21';
-  lDataRow.ExpectedOutputUTFStrTest := '';
-  lDataRow.RunUnicodeTest           := false;
+  lDataRow.ExpectedOutputUTFStrTest := '73ddc38d3e8f0b87b04f8bb1fe04bf728e507e78e2dcd0';
+  lDataRow.RunUnicodeTest           := true;
   lDataRow.Cost                     := 12;
   lDataRow.Salt                     := [$60, $2a, $f5, $a5, $64, $0b, $86, $61, $88, $52, $86, $93, $86, $99, $ad, $45];
   lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
@@ -6228,14 +6230,24 @@ begin
   CheckEquals(true, FHash.IsPasswordHash);
 end;
 
+procedure TestTHash_BCrypt.TestMaxCost;
+begin
+  CheckEquals(31, THash_BCrypt(FHash).MaxCost);
+end;
+
 procedure TestTHash_BCrypt.TestMaximumPasswordLength;
 begin
-  CheckEquals(55, TDECPasswordHash(FHash).MaxPasswordLength);
+  CheckEquals(72, TDECPasswordHash(FHash).MaxPasswordLength);
 end;
 
 procedure TestTHash_BCrypt.TestMaximumSaltLength;
 begin
   CheckEquals(16, TDECPasswordHash(FHash).MaxSaltLength);
+end;
+
+procedure TestTHash_BCrypt.TestMinCost;
+begin
+  CheckEquals(4, THash_BCrypt(FHash).MinCost);
 end;
 
 procedure TestTHash_BCrypt.TestSetGetCostFactor;
