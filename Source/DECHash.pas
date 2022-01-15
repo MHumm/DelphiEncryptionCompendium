@@ -1220,7 +1220,7 @@ implementation
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 uses
-  DECData, DECDataHash, DECDataCipherBlowfish;
+  DECData, DECDataHash;
 
 {$IFDEF X86ASM}
   {$DEFINE INCLUDED} // allows having the DECHash.inc in the IDE's project manager
@@ -5105,10 +5105,13 @@ begin
   xr := SwapUInt32(TBF2Long(BI).R);
   pp := @FContext.PArray[1];
 
+  {$Q-}
   // 16 rounds = 8 double rounds without swapping
   for i := 1 to 8 do
   begin
-    {$IFOPT Q+}The following code requires overflow checks being off!{$ENDIF}
+    {$IFOPT Q+}The following code requires overflow checks being off!
+               If the compiler complains do a clean on the main source project
+               and recompile it!{$ENDIF}
 
     xr := xr xor pp^ xor (FContext.SBox[0][xl shr 24        ] +
                           FContext.SBox[1][xl shr 16 and $ff] xor
@@ -5121,6 +5124,8 @@ begin
                           FContext.SBox[3][xr        and $ff]);
     inc(pp);
   end;
+
+  {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
   TBF2Long(BO).R := SwapUInt32(xl);
   TBF2Long(BO).L := SwapUInt32(xr xor pp^);
 end;

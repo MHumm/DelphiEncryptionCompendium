@@ -1016,7 +1016,7 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECData, DECDataCipher, DECDataCipherBlowfish;
+  DECData, DECDataCipher;
 
 { TCipher_Null }
 
