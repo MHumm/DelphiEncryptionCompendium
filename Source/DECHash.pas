@@ -75,6 +75,7 @@ type
   THash_Snefru128   = class;  // derived from the Xerox Secure Hash Function
   THash_Snefru256   = class;  // " - "
   THash_Sapphire    = class;
+  THash_SM3         = class;
 
   /// <summary>
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,
@@ -1034,6 +1035,51 @@ type
     property RequestedDigestSize: UInt8
       read   FDigestSize
       write  SetDigestSize;
+  end;
+
+  THash_SM3 = class(TDECHashExtended)
+  private
+//    FDigestSize: UInt8;
+
+//    /// <summary>
+//    ///   Set the length of the output hash value in byte.
+//    /// </summary>
+//    /// <param name="Value">
+//    ///   Minimum value is 1 byte, maximum value is 64 byte = 512 bit.
+//    ///   Sets the size to the default size returned by DigestSize otherwise.
+//    ///   is specified.
+//    /// </param>
+//    procedure SetDigestSize(Value: UInt8);
+  protected
+    procedure DoInit; override;
+    procedure DoDone; override;
+    procedure DoTransform(Buffer: PUInt32Array); override;
+  public
+    function Digest: PByteArray; override;
+    function DigestAsBytes: TBytes; override;
+    /// <summary>
+    ///   Returns the default digest/hash size in bit. If RequestedDigestSize is
+    ///   not set, the defauilt size returned here is being used.
+    /// </summary>
+    class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Returns on which block size this algorithm operates. Since the Sapphire
+    ///   hash originates from a Sapphire stream cipher algorithm this is always 1.
+    /// </summary>
+    class function BlockSize: UInt32; override;
+//    procedure Calc(const Data; DataSize: Integer); override;
+
+//    /// <summary>
+//    ///   This property defines the length of the output from the hash calculation
+//    ///   in byte. The maximum value is 64 byte = 512 bit. Values bigger 64 byte
+//    ///   and a value of 0 lead to the default size returned by DigestSize otherwise.
+//    ///   This setting is only respected by the DigestAsBytes method and all other
+//    ///   convenience methods using that one like CalcStream, CalcString,
+//    ///   DigestAsString or DigestAsRawString.
+//    /// </summary>
+//    property RequestedDigestSize: UInt8
+//      read   FDigestSize
+//      write  SetDigestSize;
   end;
 
   /// <summary>
@@ -5211,6 +5257,46 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+{ THash_SM3 }
+
+class function THash_SM3.BlockSize: UInt32;
+begin
+
+end;
+
+function THash_SM3.Digest: PByteArray;
+begin
+
+end;
+
+function THash_SM3.DigestAsBytes: TBytes;
+begin
+
+end;
+
+class function THash_SM3.DigestSize: UInt32;
+begin
+
+end;
+
+procedure THash_SM3.DoDone;
+begin
+  inherited;
+
+end;
+
+procedure THash_SM3.DoInit;
+begin
+  inherited;
+
+end;
+
+procedure THash_SM3.DoTransform(Buffer: PUInt32Array);
+begin
+  inherited;
+
+end;
+
 initialization
   // Define the has returned by ValidHash if passing nil as parameter
   SetDefaultHashClass(THash_SHA256);
@@ -5258,6 +5344,7 @@ initialization
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
   THash_Sapphire.RegisterClass(TDECHash.ClassList);
+  THash_SM3.RegisterClass(TDECHash.ClassList);
 
   THash_BCrypt.RegisterClass(TDECHash.ClassList);
 
