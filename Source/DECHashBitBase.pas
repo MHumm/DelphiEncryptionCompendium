@@ -35,6 +35,12 @@ uses
 
 type
   /// <summary>
+  ///   Meta class for the class containing the additional property for hashes
+  ///   supporting a last byte with less than 8 bit size.
+  /// </summary>
+  TDECHashBitClass = class of TDECHashBit;
+
+  /// <summary>
   ///   Base class for all hash algorithms which can operate on bit sized
   ///   messsages as well.
   /// </summary>

@@ -204,7 +204,7 @@ type
   TDECCipherCodeEvent = procedure(const Source; var Dest; DataSize: Integer) of object;
 
   /// <summary>
-  ///   Class type of the cipher base class
+  ///   Class type of the cipher base class, relevant for the class registration
   /// </summary>
   TDECCipherClass = class of TDECCipher;
 

@@ -34,10 +34,17 @@ uses
 
 type
   /// <summary>
-  ///   Meta class for all the hashing classes in order to support the
-  ///   registration mechanism
+  ///   Meta class for the class containing the authentication methods
   /// </summary>
   TDECHashAuthenticationClass = class of TDECHashAuthentication;
+  /// <summary>
+  ///   Meta class for the class containing the password hash specific properties
+  /// </summary>
+  TDECPasswordHashClass = class of TDECPasswordHash;
+  /// <summary>
+  ///   Meta class for the class containing the additional calculation methods
+  /// </summary>
+  TDECHashExtendedClass = class of TDECHashExtended;
 
   /// <summary>
   ///   Type of the KDF variant
@@ -476,7 +483,9 @@ type
 
   /// <summary>
   ///   Adds methods which shall not be found in the specialized password hash
-  ///   classes. Mainly the CalcStreamXXX and CalcFileXXX ones.
+  ///   classes. Mainly the CalcStreamXXX and CalcFileXXX ones. They shall not
+  ///   be contained there as those password hashes usually restrict the maximum
+  ///   length of the data which can be hashed.
   /// </summary>
   TDECHashExtended = class(TDECHashAuthentication, IDECHashExtended)
     /// <summary>

@@ -31,6 +31,12 @@ uses
 
 type
   /// <summary>
+  ///   Class type of the cipher base class which adds the additional Calc
+  ///   variants for additional data types.
+  /// </summary>
+  TDECFormattedCipherClass = class of TDECFormattedCipher;
+
+  /// <summary>
   ///   Class in which the various encode/decode variants provided have been
   ///   moved in order to keep the base cipher class small and clean.
   /// </summary>

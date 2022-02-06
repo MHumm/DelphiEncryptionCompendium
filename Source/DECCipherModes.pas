@@ -30,6 +30,12 @@ uses
 
 type
   /// <summary>
+  ///   Class type of the cipher base class implementing all block
+  ///   concatenation modes.
+  /// </summary>
+  TDECCipherModesClass = class of TDECCipherModes;
+
+  /// <summary>
   ///   Most ciphers are block oriented and thus work on blocks of a fixed size.
   ///   In order to not encrypt each block separately without any link to his
   ///   predecessor and sucessor, which would make attacks on the encrypted data
