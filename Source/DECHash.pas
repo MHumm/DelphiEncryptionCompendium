@@ -1168,7 +1168,7 @@ type
     ///   Initialize internal fields
     /// </summary>
     constructor Create; override;
-    function MaxSaltLength:UInt8; override;
+    class function MaxSaltLength:UInt8; override;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the
     ///   algorithm in byte
@@ -1177,7 +1177,7 @@ type
     ///   For BCrypt version "2a" it is specified that the password ends with a
     ///   null-terminator, which will be added internally in our implementation
     /// </remarks>
-    function MaxPasswordLength:UInt8; override;
+    class function MaxPasswordLength:UInt8; override;
     /// <summary>
     ///   Returns the minimum allowed value for the Cost property
     /// </summary>
@@ -5185,12 +5185,12 @@ begin
   Result := 31;
 end;
 
-function THash_BCrypt.MaxPasswordLength: UInt8;
+class function THash_BCrypt.MaxPasswordLength: UInt8;
 begin
   Result := 72;
 end;
 
-function THash_BCrypt.MaxSaltLength: UInt8;
+class function THash_BCrypt.MaxSaltLength: UInt8;
 begin
   Result := 16;
 end;
