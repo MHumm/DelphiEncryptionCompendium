@@ -3,7 +3,7 @@ object FormMain: TFormMain
   Top = 0
   BorderStyle = Single
   Caption = 'DEC hash demo'
-  ClientHeight = 790
+  ClientHeight = 970
   ClientWidth = 452
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -13,15 +13,15 @@ object FormMain: TFormMain
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 452.000000000000000000
-    Size.Height = 790.000000000000000000
+    Size.Height = 970.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 0
     OnCalcContentBounds = VertScrollBox1CalcContentBounds
     Viewport.Width = 436.000000000000000000
-    Viewport.Height = 790.000000000000000000
+    Viewport.Height = 970.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 520.000000000000000000
+      Position.Y = 700.000000000000000000
       Size.Width = 425.000000000000000000
       Size.Height = 450.000000000000000000
       Size.PlatformDefault = False
@@ -92,7 +92,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2021 by Team DEC V%0:s'
+        Text = #169' 2018-2022 by Team DEC V%0:s'
       end
     end
     object LayoutTop: TLayout
@@ -306,6 +306,60 @@ object FormMain: TFormMain
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
+      end
+    end
+    object LayoutSalt: TLayout
+      Position.Y = 520.000000000000000000
+      Size.Width = 425.000000000000000000
+      Size.Height = 180.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 14
+      object Label1: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 104.000000000000000000
+        Size.Width = 20.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Salt'
+        TabOrder = 0
+      end
+      object EditSalt: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akLeft, akTop, akRight]
+        StyleLookup = 'editstyle'
+        TabOrder = 3
+        Position.X = 16.000000000000000000
+        Position.Y = 128.000000000000000000
+        Size.Width = 399.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        OnChangeTracking = EditInputChangeTracking
+        OnKeyUp = EditInputKeyUp
+      end
+      object Label7: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 16.000000000000000000
+        Size.Width = 119.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Desired output format'
+        TabOrder = 4
+      end
+      object ComboBoxSaltFormatting: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 16.000000000000000000
+        Position.Y = 52.000000000000000000
+        Size.Width = 400.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'comboboxstyle'
+        TabOrder = 2
       end
     end
   end
