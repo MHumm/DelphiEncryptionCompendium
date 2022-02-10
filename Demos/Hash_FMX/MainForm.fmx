@@ -21,7 +21,7 @@ object FormMain: TFormMain
     Viewport.Width = 436.000000000000000000
     Viewport.Height = 970.000000000000000000
     object LayoutBottom: TLayout
-      Position.Y = 700.000000000000000000
+      Position.Y = 740.000000000000000000
       Size.Width = 425.000000000000000000
       Size.Height = 450.000000000000000000
       Size.PlatformDefault = False
@@ -311,7 +311,7 @@ object FormMain: TFormMain
     object LayoutSalt: TLayout
       Position.Y = 520.000000000000000000
       Size.Width = 425.000000000000000000
-      Size.Height = 180.000000000000000000
+      Size.Height = 220.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 14
       object Label1: TLabel
@@ -324,16 +324,16 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Salt'
-        TabOrder = 0
+        TabOrder = 1
       end
       object EditSalt: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
-        TabOrder = 3
+        TabOrder = 4
         Position.X = 16.000000000000000000
         Position.Y = 128.000000000000000000
-        Size.Width = 399.000000000000000000
+        Size.Width = 401.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         OnChangeTracking = EditInputChangeTracking
@@ -349,7 +349,7 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         Text = 'Desired output format'
-        TabOrder = 4
+        TabOrder = 5
       end
       object ComboBoxSaltFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
@@ -359,7 +359,35 @@ object FormMain: TFormMain
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
-        TabOrder = 2
+        TabOrder = 3
+      end
+      object Label8: TLabel
+        AutoSize = True
+        Position.X = 16.000000000000000000
+        Position.Y = 184.000000000000000000
+        Size.Width = 24.000000000000000000
+        Size.Height = 16.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'labelstyle'
+        TextSettings.WordWrap = False
+        Text = 'Cost'
+        TabOrder = 0
+      end
+      object EditCost: TEdit
+        Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akTop, akRight]
+        StyleLookup = 'editstyle'
+        TabOrder = 13
+        MaxLength = 4
+        FilterChar = '0123456789'
+        Text = '10'
+        TextSettings.HorzAlign = Trailing
+        Position.X = 317.000000000000000000
+        Position.Y = 180.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        OnChange = EditCostChange
       end
     end
   end

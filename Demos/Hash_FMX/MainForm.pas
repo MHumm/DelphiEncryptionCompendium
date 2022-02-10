@@ -58,6 +58,8 @@ type
     EditSalt: TEdit;
     Label7: TLabel;
     ComboBoxSaltFormatting: TComboBox;
+    Label8: TLabel;
+    EditCost: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
     procedure ComboBoxHashFunctionChange(Sender: TObject);
@@ -68,6 +70,7 @@ type
     procedure EditRoundsChange(Sender: TObject);
     procedure VertScrollBox1CalcContentBounds(Sender: TObject;
       var ContentBounds: TRectF);
+    procedure EditCostChange(Sender: TObject);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -127,6 +130,7 @@ uses
 procedure TFormMain.ButtonCalcClick(Sender: TObject);
 var
   Hash                 : TDECHash;
+  HashClass            : TDECHashClass;
   InputFormatting      : TDECFormatClass;
   OutputFormatting     : TDECFormatClass;
   SaltFormatting       : TDECFormatClass;
@@ -199,7 +203,8 @@ begin
       RoundsInterf := nil;
 
     // set the salt property
-    if IsSaltablePasswordHash(TDECHash.ClassByName(GetSelectedHashClassName)) then
+    HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
+    if IsSaltablePasswordHash(HashClass) then
     begin
       if EditSalt.Text.IsEmpty then
       begin
@@ -223,6 +228,11 @@ begin
       else
         ShowErrorMessage('Salt has wrong format');
     end;
+
+    // Set the BCrypt specific cost factor. Might be more generalized when
+    // further password hashes are added.
+    if (HashClass = THash_BCrypt) then
+      THash_BCrypt(Hash).Cost := EditCost.Text.ToInteger;
 
     try
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
@@ -291,6 +301,8 @@ begin
     if ComboBoxSaltFormatting.ItemIndex < 0 then
       ComboBoxSaltFormatting.ItemIndex := 0;
 
+    EditCost.Enabled := HashClass = THash_BCrypt;
+
     LayoutBottom.Position.Y := LayoutSalt.Position.Y + LayoutSalt.Height;
   end
   else
@@ -352,6 +364,20 @@ function TFormMain.IsSaltablePasswordHash(HashClass: TDECHashClass): Boolean;
 begin
   Result := (HashClass.IsPasswordHash and
              (TDECPasswordHashClass(HashClass).MaxSaltLength > 0));
+end;
+
+procedure TFormMain.EditCostChange(Sender: TObject);
+var
+  Cost      : Integer;
+  HashClass : TDECHashClass;
+begin
+  if ((Sender as TEdit).Text.Length > 0) then
+  begin
+    Cost := (Sender as TEdit).Text.ToInteger;
+    // Needs to be changed when further password hashes are added
+    HashCLass := TDECHash.ClassByName(GetSelectedHashClassName);
+//    if (Cost < THash_BCrypt(HashCLass).MinCost) then
+  end;
 end;
 
 procedure TFormMain.EditHashLengthChange(Sender: TObject);

@@ -83,7 +83,8 @@ type
     ///   Returns the new derrived key.
     /// </returns>
     class function KDFInternal(const Data; DataSize: Integer; const Seed;
-                               SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes; inline;
+                               SeedSize, MaskSize: Integer;
+                               KDFType: TKDFType): TBytes; inline;
   public
     /// <summary>
     ///   Detects whether the given hash class is one particularily suited
@@ -188,7 +189,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF1(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF1(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -237,7 +239,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF2(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -284,7 +287,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF3(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     // DEC's own KDF + MGF
 
@@ -314,7 +318,9 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function KDFx(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
@@ -338,7 +344,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function KDFx(const Data, Seed: TBytes; MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
@@ -369,7 +376,8 @@ type
     ///   Mask such that one cannot determine the data which had been given to
     ///   generate this mask from.
     /// </returns>
-    class function MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function MGFx(const Data; DataSize, MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
     ///   similar to a hash function but incontrast does not have a fixed output
@@ -396,7 +404,8 @@ type
     ///   Mask such that one cannot determine the data which had been given to
     ///   generate this mask from.
     /// </returns>
-    class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function MGFx(const Data: TBytes; MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
     ///   HMAC according to rfc2202: hash message authentication code allow to
@@ -456,7 +465,8 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
-    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer;
+                          KeyLength: Integer): TBytes; overload;
 
     /// <summary>
     ///   Password based key deviation function 2
@@ -478,7 +488,9 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
-    class function PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+    class function PBKDF2(const Password, Salt: RawByteString;
+                          Iterations: Integer;
+                          KeyLength: Integer): TBytes; overload;
   end;
 
   /// <summary>

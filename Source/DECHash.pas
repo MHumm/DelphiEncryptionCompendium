@@ -1181,11 +1181,11 @@ type
     /// <summary>
     ///   Returns the minimum allowed value for the Cost property
     /// </summary>
-    function MinCost:UInt8;
+    class function MinCost:UInt8;
     /// <summary>
     ///   Returns the maximum allowed value for the Cost property
     /// </summary>
-    function MaxCost:UInt8;
+    class function MaxCost:UInt8;
 
     /// <summary>
     ///   Processes one chunk of data to be hashed.
@@ -5180,7 +5180,7 @@ begin
   // is done directly in CalcBuffer.
 end;
 
-function THash_BCrypt.MaxCost: UInt8;
+class function THash_BCrypt.MaxCost: UInt8;
 begin
   Result := 31;
 end;
@@ -5195,7 +5195,7 @@ begin
   Result := 16;
 end;
 
-function THash_BCrypt.MinCost: UInt8;
+class function THash_BCrypt.MinCost: UInt8;
 begin
   Result := 4;
 end;
