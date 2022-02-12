@@ -280,6 +280,7 @@ procedure TFormMain.VertScrollBox1CalcContentBounds(Sender: TObject;
   var ContentBounds: TRectF);
 begin
   LayoutTop.Width    := VertScrollBox1.ClientWidth;
+  LayoutSalt.Width   := VertScrollBox1.ClientWidth;
   LayoutBottom.Width := VertScrollBox1.ClientWidth;
 end;
 
@@ -370,13 +371,28 @@ procedure TFormMain.EditCostChange(Sender: TObject);
 var
   Cost      : Integer;
   HashClass : TDECHashClass;
+
+  MinCost,
+  MaxCost   : Byte;
 begin
   if ((Sender as TEdit).Text.Length > 0) then
   begin
     Cost := (Sender as TEdit).Text.ToInteger;
     // Needs to be changed when further password hashes are added
-    HashCLass := TDECHash.ClassByName(GetSelectedHashClassName);
-//    if (Cost < THash_BCrypt(HashCLass).MinCost) then
+    HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
+    MinCost := THash_BCrypt(HashClass).MinCost;
+    MaxCost := THash_BCrypt(HashClass).MaxCost;
+
+    if (Cost < MinCost) or
+       (Cost > MaxCost) then
+      ShowErrorMessage(Format('Invalid input. Cost must be between %0:d and %1:d',
+                              [MinCost, MaxCost]));
+
+    if (Cost < MinCost) then
+      (Sender as TEdit).Text := MinCost.ToString;
+
+    if (Cost > MaxCost) then
+      (Sender as TEdit).Text := MaxCost.ToString;
   end;
 end;
 

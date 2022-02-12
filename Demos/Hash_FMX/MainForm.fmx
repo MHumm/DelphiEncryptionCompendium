@@ -378,7 +378,7 @@ object FormMain: TFormMain
         Anchors = [akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 13
-        MaxLength = 4
+        MaxLength = 3
         FilterChar = '0123456789'
         Text = '10'
         TextSettings.HorzAlign = Trailing
