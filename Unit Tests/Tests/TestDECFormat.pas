@@ -404,9 +404,12 @@ type
                                #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0);
          Output: 'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'));
 
-      cTestDataDecode : array[1..1] of TestRecRawByteString = (
+      cTestDataDecode : array[1..2] of TestRecRawByteString = (
         (Input:  '';
-         Output: RawByteString('')));
+         Output: RawByteString('')),
+        (Input:  'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.';
+         Output: RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
+                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0)));
   public
     procedure SetUp; override;
     procedure TearDown; override;
