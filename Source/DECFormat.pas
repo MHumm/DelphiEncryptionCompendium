@@ -37,38 +37,39 @@ type
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormat          = DECFormatBase.TDECFormat;
+  TDECFormat            = DECFormatBase.TDECFormat;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormatClass     = DECFormatBase.TDECFormatClass;
+  TDECFormatClass       = DECFormatBase.TDECFormatClass;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TFormat_Copy        = DECFormatBase.TFormat_Copy;
+  TFormat_Copy          = DECFormatBase.TFormat_Copy;
 
-  TFormat_HEX         = class;
-  TFormat_HEXL        = class;
+  TFormat_HEX           = class;
+  TFormat_HEXL          = class;
 
-  TFormat_Base16      = class;
-  TFormat_Base16L     = class;
+  TFormat_Base16        = class;
+  TFormat_Base16L       = class;
 
-  TFormat_DECMIME32   = class;
+  TFormat_DECMIME32     = class;
 
-  TFormat_Base32      = class;
+  TFormat_Base32        = class;
 
-  TFormat_Base64      = class;
-  TFormat_MIME64      = class;
+  TFormat_Base64        = class;
+  TFormat_MIME64        = class;
 
-  TFormat_Radix64     = class;
-  TFormat_PGP         = class;
+  TFormat_Radix64       = class;
+  TFormat_PGP           = class;
+  TFormat_BCryptBSD = class;
 
-  TFormat_UU          = class;
-  TFormat_XX          = class;
-  TFormat_ESCAPE      = class;
+  TFormat_UU            = class;
+  TFormat_XX            = class;
+  TFormat_ESCAPE        = class;
 
-  TFormat_BigEndian16 = class;
-  TFormat_BigEndian32 = class;
+  TFormat_BigEndian16   = class;
+  TFormat_BigEndian32   = class;
 
   /// <summary>
   ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
@@ -272,6 +273,58 @@ type
   /// </summary>
   TFormat_PGP = class(TFormat_Radix64)
   end deprecated 'Use TFormat_Radix64 instead';
+
+  /// <summary>
+  ///   BCrypt's Radix64 variant
+  /// </summary>
+  TFormat_BCryptBSD = class(TFormat_Base64)
+  protected
+    /// <summary>
+    /// Internal method for the actual format conversion. This method needs to
+    /// be overridden in all the child classes. Converts into the format.
+    /// </summary>
+    /// <param name="Source">
+    /// Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    /// Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from source which will get converted.
+    /// </param>
+    class procedure DoEncode(const Source; var Dest: TBytes;
+      Size: Integer); override;
+    /// <summary>
+    /// Internal method for the actual format conversion. This method needs to
+    /// be overridden in all the child classes. Converts from the format into
+    /// the format the data had before encoding it.
+    /// </summary>
+    /// <param name="Source">
+    /// Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    /// Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from source which will get converted.
+    /// </param>
+    class procedure DoDecode(const Source; var Dest: TBytes;
+      Size: Integer); override;
+    /// <summary>
+    /// Internal method for checking whether all bytes of the data to be
+    /// processed are valid for this particular formatting. This method needs
+    /// to be overridden in all the child classes.
+    /// </summary>
+    /// <param name="Data">
+    /// Data to be checked
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from data which will get checked.
+    /// </param>
+    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+
+    class function CharTableBinary: TBytes; override;
+  end;
 
   /// <summary>
   ///   Unix UU format
@@ -847,11 +900,9 @@ end;
 
 class function TFormat_Base64.DoIsValid(const Data; Size: Integer): Boolean;
 var
-  T: TBytes;
   S: PByte;
 begin
   Result := True;
-  T := CharTableBinary;
   S := @Data;
   while Result and (Size > 0) do
   begin
@@ -1848,16 +1899,109 @@ end;
 
 class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
 var
-  T: TBytes;
   S: PByte;
 begin
   Result := True;
-  T := CharTableBinary;
   S := @Data;
   while Result and (Size > 0) do
   begin
     // A-Z, 2-7
     if S^ in [$41..$5A, $32..$37, $3D] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
+end;
+
+{ TFormat_Radix64BCrypt }
+
+class function TFormat_BCryptBSD.CharTableBinary: TBytes;
+begin
+  // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+  SetLength(result, 64);
+
+  result := [$2E, $2F,
+             $41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
+             $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
+             $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
+             $6E, $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A,
+             $30, $31, $32, $33, $34, $35, $36, $37, $38, $39];
+end;
+
+class procedure TFormat_BCryptBSD.DoDecode(const Source; var Dest: TBytes;
+  Size: Integer);
+begin
+
+end;
+
+class procedure TFormat_BCryptBSD.DoEncode(const Source;
+                                           var Dest: TBytes;
+                                           Size: Integer);
+const
+  CT64: array[0..63] of AnsiChar = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+var
+//  CT64  : TBytes;
+  c1,c2 : UInt16;
+  bs    : RawByteString;
+  Src   : PByte;
+begin
+//  CT64 := CharTableBinary;
+  bs := '';
+  Src := @Source;
+  if (@Src <> nil) then
+  begin
+    while (Size > 0) do
+    begin
+      c1 := Src^;
+      inc(Src);
+      dec(Size);
+
+      bs := bs + CT64[(c1 shr 2) and $3f];
+      c1 := (c1 and $03) shl 4;
+      if (Size <= 0) then
+        bs := bs + CT64[c1 and $3f]
+      else
+      begin
+        c2 := Src^;
+        inc(Src);
+        dec(Size);
+
+        c1 := c1 or ((c2 shr 4) and $0f);
+        bs := bs + CT64[c1 and $3f];
+        c1 := (c2 and $0f) shl 2;
+
+        if (Size <= 0) then
+          bs := bs + CT64[c1 and $3f]
+        else
+        begin
+          c2 := Src^;
+          inc(Src);
+          dec(Size);
+
+          c1 := c1 or ((c2 shr 6) and $03);
+          bs := bs + CT64[c1 and $3f] + CT64[c2 and $3f];
+        end;
+      end;
+    end;
+  end;
+  SetLength(Dest, Length(bs));
+  Move(bs[Low(bs)], Dest[0], Length(Dest));
+end;
+
+class function TFormat_BCryptBSD.DoIsValid(const Data;
+  Size: Integer): Boolean;
+var
+  S: PByte;
+begin
+  Result := True;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+    if S^ in [$41..$5A, $61..$7A, $2E..$39] then
     begin
       Inc(S);
       Dec(Size);
@@ -1894,6 +2038,7 @@ initialization
     TFormat_Base32.RegisterClass(TDECFormat.ClassList);
     TFormat_Base64.RegisterClass(TDECFormat.ClassList);
     TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
+    TFormat_BCryptBSD.RegisterClass(TDECFormat.ClassList);
     TFormat_UU.RegisterClass(TDECFormat.ClassList);
     TFormat_XX.RegisterClass(TDECFormat.ClassList);
     TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);

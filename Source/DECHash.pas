@@ -1168,6 +1168,10 @@ type
     ///   Initialize internal fields
     /// </summary>
     constructor Create; override;
+    /// <summary>
+    ///   Returns the maximum supported length of the salt value
+    ///   in byte
+    /// </summary>
     class function MaxSaltLength:UInt8; override;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the

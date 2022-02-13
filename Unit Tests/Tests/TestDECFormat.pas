@@ -392,6 +392,41 @@ type
 
   // Test methods for class TFormat_UU
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_BCryptBSD = class(TFormatTestsBase)
+  strict private
+    FFormat_BCryptBSD: TFormat_BCryptBSD;
+
+    const
+      cTestDataEncode : array[1..2] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
+                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0);
+         Output: 'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'));
+
+      cTestDataDecode : array[1..1] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+
+  // Test methods for class TFormat_UU
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_UU = class(TFormatTestsBase)
   strict private
     FFormat_UU: TFormat_UU;
@@ -2398,6 +2433,111 @@ begin
   end;
 end;
 
+{ TestTFormat_BCryptBSD }
+
+procedure TestTFormat_BCryptBSD.SetUp;
+begin
+  FFormat_BCryptBSD := TFormat_BCryptBSD.Create;
+end;
+
+procedure TestTFormat_BCryptBSD.TearDown;
+begin
+  FFormat_BCryptBSD.Free;
+  FFormat_BCryptBSD := nil;
+end;
+
+procedure TestTFormat_BCryptBSD.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_BCryptBSD.ClassByName('TFormat_BCryptBSD');
+  CheckEquals(TFormat_BCryptBSD, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestIdentity;
+begin
+  CheckEquals($D2A9C077, FFormat_BCryptBSD.Identity);
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -2408,6 +2548,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_Base32);
   TDUnitX.RegisterTestFixture(TestTFormat_Base64);
   TDUnitX.RegisterTestFixture(TestTFormat_Radix64);
+  TDUnitX.RegisterTestFixture(TestTFormat_BCryptBSD);
   TDUnitX.RegisterTestFixture(TestTFormat_UU);
   TDUnitX.RegisterTestFixture(TestTFormat_XX);
   TDUnitX.RegisterTestFixture(TestTFormat_ESCAPE);
@@ -2422,6 +2563,7 @@ initialization
                               TestTFormat_Base32.Suite,
                               TestTFormat_Base64.Suite,
                               TestTFormat_Radix64.Suite,
+                              TestTFormat_BCryptBSD.Suite,
                               TestTFormat_UU.Suite,
                               TestTFormat_XX.Suite,
                               TestTFormat_ESCAPE.Suite,
