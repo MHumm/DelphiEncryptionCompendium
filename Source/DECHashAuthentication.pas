@@ -491,6 +491,27 @@ type
     class function PBKDF2(const Password, Salt: RawByteString;
                           Iterations: Integer;
                           KeyLength: Integer): TBytes; overload;
+
+    /// <summary>
+    ///   Calculates a passwort hash for the given password and returns it in
+    ///   a BSDCrypt compatible format. This method only works for those hash
+    ///   algorithms implementing the necessary GetBSDCryptID method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Entered password for which to calculate the hash. The caller is
+    ///   responsible to ensure the maximum password length is adhered to.
+    ///   Any exceptions raised due to too long passwords are not caught here!
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class used to format the calculated password. Different
+    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+    ///   which one to pass. See description of the hash class used.
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value in BSD crypt style format.
+    /// </returns>
+    class function GetDigestInCryptFormat(Password : RawByteString;
+                                          Format   : TDECFormat):RawByteString; virtual;
   end;
 
   /// <summary>
@@ -783,7 +804,8 @@ begin
   Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
 end;
 
-class function TDECHashAuthentication.KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF2(const Data, Seed: TBytes;
+                                           MaskSize: Integer): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF2)
@@ -791,13 +813,14 @@ begin
     Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF2);
 end;
 
-class function TDECHashAuthentication.KDF3(const Data; DataSize: Integer; const Seed;
-                             SeedSize, MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF3(const Data; DataSize: Integer;
+                                           const Seed; SeedSize, MaskSize: Integer): TBytes;
 begin
   Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
 end;
 
-class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes;
+                                           MaskSize: Integer): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)
@@ -805,7 +828,9 @@ begin
     Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF3);
 end;
 
-class function TDECHashAuthentication.KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.KDFx(const Data; DataSize: Integer;
+                                           const Seed; SeedSize, MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 // DEC's own KDF, even stronger
 var
   I, J         : Integer;
@@ -855,7 +880,9 @@ begin
   end;
 end;
 
-class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes;
+                                           MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
@@ -863,14 +890,23 @@ begin
     Result := KDFx(Data[0], Length(Data), NullStr, Length(Seed), MaskSize, Index)
 end;
 
-class function TDECHashAuthentication.MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.MGFx(const Data; DataSize, MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   Result := KDFx(Data, DataSize, NullStr, 0, MaskSize, Index);
 end;
 
-class function TDECHashAuthentication.MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.MGFx(const Data: TBytes;
+                                           MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
+end;
+
+class function TDECHashAuthentication.GetDigestInCryptFormat(Password : RawByteString;
+                                                             Format   : TDECFormat): RawByteString;
+begin
+
 end;
 
 class function TDECHashAuthentication.HMAC(const Key, Text: RawByteString): TBytes;
