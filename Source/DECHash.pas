@@ -1207,6 +1207,44 @@ type
     class function BlockSize: UInt32; override;
 
     /// <summary>
+    ///   Returns the ID code for Crypt/BSD like storing of passwords.
+    /// </summary>
+    /// <returns>
+    ///   A Crypt/BSD ID
+    /// </returns>
+    class function GetCryptID:RawByteString; override;
+
+    /// <summary>
+    ///   Returns the parameters required for the crypt-like password storing
+    ///   in that format.
+    /// </summary>
+    function GetCryptParams:RawByteString; override;
+    /// <summary>
+    ///   Returns the salt required for the crypt-like password storing
+    ///   in that format.
+    /// </summary>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    function GetCryptSalt(Format: TDECFormat):RawByteString; override;
+    /// <summary>
+    ///   Returns the hash required for the crypt-like password storing
+    ///   in that format. If a salt etc. is needed that needs to be scepcified
+    ///   before calling this method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password entered which shall be hashed.
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value
+    /// </returns>
+    function GetCryptHash(Password : RawByteString;
+                          Format   : TDECFormatClass):RawByteString; override;
+
+    /// <summary>
     ///   Defines the cost factor of the calculation. Real factor will be 2^Cost.
     ///   This is used to adapt to increasing CPU power and must be stored along
     ///   with the hash value and salt to be able to verify a password against it.
@@ -5097,6 +5135,27 @@ begin
       FContext.SBox[j, 2*i+1]:= SwapUInt32(TBF2Long(tmp).R);
     end;
   end;
+end;
+
+function THash_BCrypt.GetCryptHash(Password : RawByteString;
+                                   Format   : TDECFormatClass): RawByteString;
+begin
+  Result := CalcString(Password, Format);
+end;
+
+class function THash_BCrypt.GetCryptID: RawByteString;
+begin
+  Result := '$2a';
+end;
+
+function THash_BCrypt.GetCryptParams: RawByteString;
+begin
+  Result := '$' + RawByteString(FCost.ToString);
+end;
+
+function THash_BCrypt.GetCryptSalt(Format: TDECFormat): RawByteString;
+begin
+{ TODO : To be implemented }
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
