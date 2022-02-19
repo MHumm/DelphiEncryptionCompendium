@@ -5160,8 +5160,12 @@ begin
 end;
 
 function THash_BCrypt.GetCryptSalt(Format: TDECFormatClass): RawByteString;
+var
+  FormattedSalt : TBytes;
 begin
-{ TODO : To be implemented }
+  FormattedSalt := Format.Encode(FSalt);
+  SetLength(Result, Length(FormattedSalt));
+  Move(FormattedSalt[0], Result[Low(Result)], Length(FormattedSalt));
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);

@@ -38,6 +38,11 @@ type
   TDECClass = class of TDECObject;
 
   /// <summary>
+  ///   Type of a single entry in the class list.
+  /// </summary>
+  TClassListEntry = TPair<Int64, TDECClass>;
+
+  /// <summary>
   ///   Generic list of DEC classes with the identity as key
   /// </summary>
   TDECClassList = class(TDictionary<Int64, TDECClass>)

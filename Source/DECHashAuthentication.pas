@@ -28,7 +28,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes, Generics.Collections,
   {$ENDIF}
-  DECHashBase, DECHashInterface, DECTypes , DECFormatBase;
+  DECBaseClass, DECHashBase, DECHashInterface, DECTypes , DECFormatBase;
 
 {$INCLUDE DECOptions.inc}
 
@@ -654,9 +654,6 @@ type
     ///   If the algorithm on which this is being used is a Crypt/BSD compatible
     ///   password hash algorithm the ID is returned otherwise an empty string.
     /// </returns>
-{ TODO :
-One might extend the class registration mechanism with a search
-for crypt ID method }
     class function GetCryptID:RawByteString; virtual;
 
     /// <summary>
@@ -715,6 +712,20 @@ for crypt ID method }
 
     {$Region CryptFormatHandlingPublic}
     /// <summary>
+    ///   Tries to find a class type by its Crypt identification
+    ///   (e.g. 2a is Bcrypt).
+    /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for
+    /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given Crypt identity has been found
+    /// </returns>
+    class function ClassByCryptIdentity(Identity: string): TDECPasswordHashClass;
+
+    /// <summary>
     ///   Calculates a passwort hash for the given password and returns it in
     ///   a BSDCrypt compatible format. This method only works for those hash
     ///   algorithms implementing the necessary GetBSDCryptID method.
@@ -767,13 +778,18 @@ that crypt specifies UTF8. }
 implementation
 
 uses
-  DECUtil, DECBaseClass;
+  DECUtil;
 
 resourcestring
   /// <summary>
   ///   Exception message when specifying a salt value longer than allowed
   /// </summary>
-  sSaltValueTooLong = 'Maximum allowed salt length (%0:d byte) exceeded';
+  sSaltValueTooLong     = 'Maximum allowed salt length (%0:d byte) exceeded';
+  /// <summary>
+  ///   No class for the given crypt ID has been registered, so that ID is
+  ///   not supported.
+  /// </summary>
+  sCryptIDNotRegistered = 'No class for crypt ID %s registered';
 
 class function TDECHashAuthentication.IsPasswordHash: Boolean;
 begin
@@ -1368,6 +1384,26 @@ end;
 function TDECPasswordHash.GetCryptSalt(Format: TDECFormatCLass): RawByteString;
 begin
   Result := '';
+end;
+
+class function TDECPasswordHash.ClassByCryptIdentity(
+  Identity: string): TDECPasswordHashClass;
+var
+  ClassEntry : TClassListEntry;
+begin
+  Result := nil;
+
+  for ClassEntry in ClassList do
+  begin
+    if TDECHashClass(ClassEntry.Value).IsPasswordHash then
+    begin
+      Result := TDECPasswordHashClass(ClassEntry.Value);
+      Exit;
+    end;
+  end;
+
+  raise EDECClassNotRegisteredException.CreateResFmt(@sCryptIDNotRegistered,
+                                                     [Identity]);
 end;
 
 function TDECPasswordHash.GetCryptHash(Password : RawByteString;
