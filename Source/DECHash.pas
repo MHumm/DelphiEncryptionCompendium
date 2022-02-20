@@ -5151,12 +5151,16 @@ end;
 
 class function THash_BCrypt.GetCryptID: RawByteString;
 begin
-  Result := '$2a';           Format('%0:s', ['Hello']);
+  Result := '$2a';
 end;
 
 function THash_BCrypt.GetCryptParams(Format : TDECFormatClass): RawByteString;
 begin
-  Result := '$' + RawByteString(FCost.ToString);
+  Result := RawByteString(FCost.ToString);
+  if (Length(Result) < 2) then
+    Result := '0' + Result;
+
+  Result := '$' + Result;
 end;
 
 function THash_BCrypt.GetCryptSalt(Format: TDECFormatClass): RawByteString;
@@ -5164,8 +5168,9 @@ var
   FormattedSalt : TBytes;
 begin
   FormattedSalt := Format.Encode(FSalt);
-  SetLength(Result, Length(FormattedSalt));
-  Move(FormattedSalt[0], Result[Low(Result)], Length(FormattedSalt));
+  SetLength(Result, Length(FormattedSalt) + 1);
+  Move(FormattedSalt[0], Result[Low(Result) + 1], Length(FormattedSalt));
+  Result[Low(Result)] := '$';
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);

@@ -716,7 +716,7 @@ type
     ///   (e.g. 2a is Bcrypt).
     /// </summary>
     /// <param name="Identity">
-    ///   Identity to look for
+    ///   Identity to look for, with or without the starting $ delimiter sign.
     /// </param>
     /// <returns>
     ///   Returns the class type of the class with the specified identity value
@@ -1390,18 +1390,23 @@ class function TDECPasswordHash.ClassByCryptIdentity(
   Identity: string): TDECPasswordHashClass;
 var
   ClassEntry : TClassListEntry;
+  IDLower    : string;
 begin
-  Result := nil;
+  IDLower := Identity.ToLower;
+  if not IDLower.StartsWith('$') then
+    IDLower := '$' + IDLower;
 
   for ClassEntry in ClassList do
   begin
-    if TDECHashClass(ClassEntry.Value).IsPasswordHash then
+    if TDECHashClass(ClassEntry.Value).IsPasswordHash and
+       (string(TDECPasswordHashClass(ClassEntry.Value).GetCryptID).ToLower = IDLower)  then
     begin
       Result := TDECPasswordHashClass(ClassEntry.Value);
       Exit;
     end;
   end;
 
+  // If we got this far, we have not found any mathich class
   raise EDECClassNotRegisteredException.CreateResFmt(@sCryptIDNotRegistered,
                                                      [Identity]);
 end;
@@ -1414,8 +1419,6 @@ end;
 
 function TDECPasswordHash.GetDigestInCryptFormat(Password : RawByteString;
                                                  Format   : TDECFormatClass): RawByteString;
-var
-  PwdHash : TDECPasswordHash;
 begin
   // $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
 

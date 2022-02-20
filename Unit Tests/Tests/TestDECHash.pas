@@ -120,11 +120,14 @@ type
   protected
 //    procedure DoTestSalt0Exception;
     procedure DoTestSaltTooLongException;
+    procedure DoTestClassByCryptIdentityException;
   published
     procedure TestGetSalt;
     procedure TestSetSalt;
 //    procedure TestSalt0Exception;
     procedure TestSaltTooLongException;
+    procedure TestClassByCryptIdentitySuccess;
+    procedure TestClassByCryptIdentityException;
   end;
 
   /// <summary>
@@ -659,6 +662,13 @@ type
   // Test methods for class THash_BCrypt
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_BCrypt = class(THash_TestPasswordBase)
+  private
+    type
+      TBCryptBSDTestData = record
+        Password : string;
+        Salt     : RawByteString;
+        Cost     : UInt8;
+      end;
   protected
     procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
   public
@@ -678,6 +688,7 @@ type
     procedure TestCostFactorTooShortException;
     procedure TestCostFactorTooLongException;
     procedure TestSetGetCostFactor;
+    procedure TestCryptBSDFormat;
 //    procedure TestTooLongPasswordException;
   end;
 
@@ -6215,6 +6226,24 @@ begin
   CheckException(DoTestCostFactorTooShortException, EDECHashException);
 end;
 
+procedure TestTHash_BCrypt.TestCryptBSDFormat;
+var
+  BCrypt : THash_BCrypt;
+  Result : string;
+begin
+  BCrypt := THash_BCrypt(FHash);
+  BCrypt.Cost := 6;
+  BCrypt.Salt := TFormat_BCryptBSD.Decode(BytesOf('DCq7YPn5Rq63x1Lad4cll.'));
+
+  Result := string(BCrypt.GetDigestInCryptFormat('', TFormat_BCryptBSD));
+
+  CheckEquals('$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.', Result);
+
+
+//function TDECPasswordHash.GetDigestInCryptFormat(Password : RawByteString;
+//                                                 Format   : TDECFormatClass): RawByteString;
+end;
+
 procedure TestTHash_BCrypt.TestDigestSize;
 begin
   CheckEquals(23, FHash.DigestSize);
@@ -6269,6 +6298,11 @@ end;
 //  FHash.Salt := EmptySalt;
 //end;
 
+procedure THash_TestTDECPasswordHash.DoTestClassByCryptIdentityException;
+begin
+  TDECPasswordHash.ClassByCryptIdentity('nwrongID');
+end;
+
 procedure THash_TestTDECPasswordHash.DoTestSaltTooLongException;
 var
   EmptySalt : TBytes;
@@ -6291,6 +6325,28 @@ begin
   FHash.Free;
 
   inherited;
+end;
+
+procedure THash_TestTDECPasswordHash.TestClassByCryptIdentityException;
+begin
+  CheckException(DoTestClassByCryptIdentityException, EDECCLassNotRegisteredException);
+end;
+
+procedure THash_TestTDECPasswordHash.TestClassByCryptIdentitySuccess;
+var
+  HashClass : TDECPasswordHashClass;
+begin
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('2a');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('2A');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('$2a');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('$2A');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
 end;
 
 procedure THash_TestTDECPasswordHash.TestGetSalt;
