@@ -397,6 +397,7 @@ type
     FFormat_BCryptBSD: TFormat_BCryptBSD;
 
     const
+      // Source of test data: Wolfgang Erhardt's implementation
       cTestDataEncode : array[1..22] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: ''),
@@ -464,6 +465,7 @@ type
                                #$86#$93#$86#$99#$AD+'E');
          Output: 'WApznUOJfkEGSmYRfnkrPO'));
 
+      // Source of test data: Wolfgang Erhardt's implementation
       cTestDataDecode : array[1..22] of TestRecRawByteString = (
         (Input:  '';
          Output: RawByteString('')),
