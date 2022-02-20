@@ -397,19 +397,139 @@ type
     FFormat_BCryptBSD: TFormat_BCryptBSD;
 
     const
-      cTestDataEncode : array[1..2] of TestRecRawByteString = (
+      cTestDataEncode : array[1..22] of TestRecRawByteString = (
         (Input:  RawByteString('');
          Output: ''),
         (Input:  RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
                                #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0);
-         Output: 'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'));
+         Output: 'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+        (Input:  RawByteString(#$14+'K=i'+#$1A+'{N'+#$CF+'9'+#$CF+'s\'+#$7F#$A7+
+                               #$A7#$9C);
+         Output: 'DCq7YPn5Rq63x1Lad4cll.'),
+        (Input:  RawByteString(#$26#$C6+'03'+#$C0+'O'+#$8B#$CB#$A2#$FE#$24#$B5+
+                               't'+#$DB+'bt');
+         Output: 'HqWuK6/Ng6sg9gQzbLrgb.'),
+        (Input:  RawByteString(#$9B+'|'+#$9D+'*'+#$DA#$0F#$D0+'p'+
+                               #$91#$C9#$15#$D1+'Qw'+#$01#$D6);
+         Output: 'k1wbIrmNyFAPwPVPSVa/ze'),
+        (Input:  RawByteString(#$9B#$AE#$1B#$1C#$91#$D8#$B0+':'+
+                               #$F9#$C5#$89#$E4#$02#$92#$A9#$FB);
+         Output: 'k42ZFHFWqBp3vWli.nIn8u'),
+        (Input:  RawByteString(#$A3+'a-'+#$8C#$9A+'7'+
+                               #$DA#$C2#$F9#$9D#$94#$DA#$03#$BD+'E'+#$21);
+         Output: 'm0CrhHm10qJ3lXRY.5zDGO'),
+        (Input:  RawByteString('z'+#$17#$B1+']'+#$FE#$1C+'K'+
+                               #$E1#$0E#$C6#$A3#$AB+'G'+#$81#$83#$86);
+         Output: 'cfcvVd2aQ8CMvoMpP2EBfe'),
+        (Input:  RawByteString(#$9B#$EF+'M'+#$04#$E1#$F8#$F9+'/='+#$E5+'s'+
+                               #$23#$F8#$17#$91#$90);
+         Output: 'k87L/MF28Q673VKh8/cPi.'),
+        (Input:  RawByteString(#$F8#$F2#$C9#$E4#$DB#$91#$B4#$23#$D4#$BD#$7F+
+                               #$19#$BC+'7'+#$26#$12);
+         Output: '8NJH3LsPrANStV6XtBakCe'),
+        (Input:  RawByteString('*'+#$1F#$1D#$C7#$0A+'='+#$14+'yV'+#$A4+'o'+
+                               #$EB#$E3#$01+'`'+#$17);
+         Output: 'If6bvum7DFjUnE9p2uDeDu'),
+        (Input:  RawByteString('N'+#$AD#$84+'Z'+#$14+','+#$9B#$C7#$99#$18#$C8+
+                               'y'+#$7F+'G'+#$0E#$F5);
+         Output: 'Ro0CUfOqk6cXEKf3dyaM7O'),
+        (Input:  RawByteString('c'+#$1C+'UD'+#$93+'2|2'+#$F9#$C2+'m'+
+                               #$9B#$E7#$D1#$8E+'L');
+         Output: 'WvvTPHKwdBJ3uk0Z37EMR.'),
+        (Input:  RawByteString(#$19#$94#$E6#$86+'g'+#$E8+'f'+
+                               #$9E#$22#$D5#$FB#$B8+'QI/'+#$C0);
+         Output: 'EXRkfkdmXn2gzds2SSitu.'),
+        (Input:  RawByteString(#$02#$D1#$17+'mt'+#$15#$8E#$E2#$9C#$FF#$DA#$C6+
+                               #$15#$0C#$F1#$23);
+         Output: '.rCVZVOThsIa97pEDOxvGu'),
+        (Input:  RawByteString('q['+#$96#$CA#$ED+'*'+#$C9+',5N'+#$D1+'l'+
+                               #$1E#$19#$E3#$8A);
+         Output: 'aTsUwsyowQuzRrDqFflhge'),
+        (Input:  RawByteString(#$85+'r~'+#$83#$8F#$90+'I9'+#$7F#$BE#$C9#$05+'f'+
+                               #$ED#$E0#$DF);
+         Output: 'fVH8e28OQRj9tqiDXs1e1u'),
+        (Input:  RawByteString(#$17#$A2+';'+#$87#$7F#$AA#$F5#$C3#$8E#$87#$27+
+                               '.'+#$0C#$DF+'H'+#$AF);
+         Output: 'D4G5f18o7aMMfwasBL7Gpu'),
+        (Input:  RawByteString(#$85#$12#$AE#$0D#$0F#$AC+'N'+#$C9#$A5#$97#$8F+
+                               'y'+#$B6#$17#$10+'(');
+         Output: 'fPIsBO8qRqkjj273rfaOI.'),
+        (Input:  RawByteString(#$1A#$CE+'-'+#$E8#$80+'}'+#$F1#$8C+'y'+#$FC#$ED+
+                               'Tg'+#$8F+'8'+#$8F);
+         Output: 'Eq2r4G/76Wv39MzSX262hu'),
+        (Input:  RawByteString('6(Zbgu'+#$1B#$14#$BA+'-'+#$C9#$89#$F6#$D4+'1'+
+                               #$26);
+         Output: 'LgfYWkbzEvQ4JakH7rOvHe'),
+        (Input:  RawByteString('`*'+#$F5#$A5+'d'+#$0B#$86+'a'+#$88+'R'+
+                               #$86#$93#$86#$99#$AD+'E');
+         Output: 'WApznUOJfkEGSmYRfnkrPO'));
 
-      cTestDataDecode : array[1..2] of TestRecRawByteString = (
+      cTestDataDecode : array[1..22] of TestRecRawByteString = (
         (Input:  '';
          Output: RawByteString('')),
         (Input:  'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.';
          Output: RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
-                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0)));
+                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0)),
+        (Input:  'DCq7YPn5Rq63x1Lad4cll.';
+         Output: RawByteString(#$14+'K=i'+#$1A+'{N'+#$CF+'9'+#$CF+'s\'+
+                               #$7F#$A7#$A7#$9C)),
+        (Input:  'HqWuK6/Ng6sg9gQzbLrgb.';
+         Output: RawByteString(#$26#$C6+'03'+#$C0+'O'+#$8B#$CB#$A2#$FE#$24#$B5+
+                               't'+#$DB+'bt')),
+        (Input:  'k1wbIrmNyFAPwPVPSVa/ze';
+         Output: RawByteString(#$9B+'|'+#$9D+'*'+#$DA#$0F#$D0+'p'+#$91#$C9#$15+
+                               #$D1+'Qw'+#$01#$D6)),
+        (Input:  'k42ZFHFWqBp3vWli.nIn8u';
+         Output: RawByteString(#$9B#$AE#$1B#$1C#$91#$D8#$B0+':'+#$F9#$C5#$89+
+                               #$E4#$02#$92#$A9#$FB)),
+        (Input:  'm0CrhHm10qJ3lXRY.5zDGO';
+         Output: RawByteString(#$A3+'a-'+#$8C#$9A+'7'+#$DA#$C2#$F9#$9D#$94#$DA+
+                               #$03#$BD+'E'+#$21)),
+        (Input:  'cfcvVd2aQ8CMvoMpP2EBfe';
+         Output: RawByteString('z'+#$17#$B1+']'+#$FE#$1C+'K'+#$E1#$0E#$C6#$A3+
+                               #$AB+'G'+#$81#$83#$86)),
+        (Input:  'k87L/MF28Q673VKh8/cPi.';
+         Output: RawByteString(#$9B#$EF+'M'+#$04#$E1#$F8#$F9+'/='+#$E5+'s'+
+                               #$23#$F8#$17#$91#$90)),
+        (Input:  '8NJH3LsPrANStV6XtBakCe';
+         Output: RawByteString(#$F8#$F2#$C9#$E4#$DB#$91#$B4#$23#$D4#$BD#$7F#$19+
+                               #$BC+'7'+#$26#$12)),
+        (Input:  'If6bvum7DFjUnE9p2uDeDu';
+         Output: RawByteString('*'+#$1F#$1D#$C7#$0A+'='+#$14+'yV'+#$A4+'o'+
+                               #$EB#$E3#$01+'`'+#$17)),
+        (Input:  'Ro0CUfOqk6cXEKf3dyaM7O';
+         Output: RawByteString('N'+#$AD#$84+'Z'+#$14+','+#$9B#$C7#$99#$18#$C8+
+                               'y'+#$7F+'G'+#$0E#$F5)),
+        (Input:  'WvvTPHKwdBJ3uk0Z37EMR.';
+         Output: RawByteString('c'+#$1C+'UD'+#$93+'2|2'+#$F9#$C2+'m'+#$9B#$E7+
+                               #$D1#$8E+'L')),
+        (Input:  'EXRkfkdmXn2gzds2SSitu.';
+         Output: RawByteString(#$19#$94#$E6#$86+'g'+#$E8+'f'+#$9E#$22#$D5#$FB+
+                               #$B8+'QI/'+#$C0)),
+        (Input:  '.rCVZVOThsIa97pEDOxvGu';
+         Output: RawByteString(#$02#$D1#$17+'mt'+#$15#$8E#$E2#$9C#$FF#$DA#$C6+
+                               #$15#$0C#$F1#$23)),
+        (Input:  'aTsUwsyowQuzRrDqFflhge';
+         Output: RawByteString('q['+#$96#$CA#$ED+'*'+#$C9+',5N'+#$D1+'l'+
+                               #$1E#$19#$E3#$8A)),
+        (Input:  'fVH8e28OQRj9tqiDXs1e1u';
+         Output: RawByteString(#$85+'r~'+#$83#$8F#$90+'I9'+#$7F#$BE#$C9#$05+
+                               'f'+#$ED#$E0#$DF)),
+        (Input:  'D4G5f18o7aMMfwasBL7Gpu';
+         Output: RawByteString(#$17#$A2+';'+#$87#$7F#$AA#$F5#$C3#$8E#$87#$27+
+                               '.'+#$0C#$DF+'H'+#$AF)),
+        (Input:  'fPIsBO8qRqkjj273rfaOI.';
+         Output: RawByteString(#$85#$12#$AE#$0D#$0F#$AC+'N'+#$C9#$A5#$97#$8F+
+                               'y'+#$B6#$17#$10+'(')),
+        (Input:  'Eq2r4G/76Wv39MzSX262hu';
+         Output: RawByteString(#$1A#$CE+'-'+#$E8#$80+'}'+#$F1#$8C+'y'+#$FC#$ED+
+                               'Tg'+#$8F+'8'+#$8F)),
+        (Input:  'LgfYWkbzEvQ4JakH7rOvHe';
+         Output: RawByteString('6(Zbgu'+#$1B#$14#$BA+'-'+#$C9#$89#$F6#$D4+
+                               '1'+#$26)),
+        (Input:  'WApznUOJfkEGSmYRfnkrPO';
+         Output: RawByteString('`*'+#$F5#$A5+'d'+#$0B#$86+'a'+#$88+'R'+
+                               #$86#$93#$86#$99#$AD+'E')));
   public
     procedure SetUp; override;
     procedure TearDown; override;
