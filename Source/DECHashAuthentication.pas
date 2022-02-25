@@ -631,7 +631,7 @@ type
     function  GetSalt: TBytes;
   strict protected
     /// <summary>
-    ///   Most if not all password hashing algorithms (like bcrypt) have a salt
+    ///   Most, if not all password hashing algorithms (like bcrypt) have a salt
     ///   parameter to modify the entered password value.
     /// </summary>
     FSalt : TBytes;
@@ -717,6 +717,11 @@ type
     ///   in byte
     /// </summary>
     class function MaxSaltLength:UInt8; virtual; abstract;
+    /// <summary>
+    ///   Returns the minimum length of a salt value given for the algorithm
+    ///   in byte
+    /// </summary>
+    class function MinSaltLength:UInt8; virtual; abstract;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the
     ///   algorithm in byte
@@ -825,6 +830,10 @@ resourcestring
   ///   Exception message when specifying a salt value longer than allowed
   /// </summary>
   sSaltValueTooLong     = 'Maximum allowed salt length (%0:d byte) exceeded';
+  /// <summary>
+  ///   Exception message when specifying a salt value shorter than allowed
+  /// </summary>
+  sSaltValueTooShort    = 'Minumum allowed salt length (%0:d byte) exceeded';
   /// <summary>
   ///   No class for the given crypt ID has been registered, so that ID is
   ///   not supported.
@@ -1407,6 +1416,9 @@ procedure TDECPasswordHash.SetSalt(const Value: TBytes);
 begin
   if (Length(Value) > MaxSaltLength) then
     raise EDECHashException.CreateFmt(sSaltValueTooLong, [MaxSaltLength]);
+
+  if (Length(Value) < MinSaltLength) then
+    raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
 
   FSalt := Value;
 end;

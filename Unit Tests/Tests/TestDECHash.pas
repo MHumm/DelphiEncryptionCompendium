@@ -118,14 +118,14 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   protected
-//    procedure DoTestSalt0Exception;
     procedure DoTestSaltTooLongException;
+    procedure DoTestSaltTooShortException;
     procedure DoTestClassByCryptIdentityException;
   published
     procedure TestGetSalt;
     procedure TestSetSalt;
-//    procedure TestSalt0Exception;
     procedure TestSaltTooLongException;
+    procedure TestSaltTooShortException;
     procedure TestClassByCryptIdentitySuccess;
     procedure TestClassByCryptIdentityException;
   end;
@@ -677,6 +677,7 @@ type
     procedure SetUp; override;
     procedure DoTestCostFactorTooShortException;
     procedure DoTestCostFactorTooLongException;
+    procedure DoTestNoSaltSpecified;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -684,6 +685,7 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
     procedure TestMaximumSaltLength;
+    procedure TestMinimumSaltLength;
     procedure TestMaximumPasswordLength;
     procedure TestMinCost;
     procedure TestMaxCost;
@@ -691,6 +693,7 @@ type
     procedure TestCostFactorTooLongException;
     procedure TestSetGetCostFactor;
     procedure TestCryptBSDFormat;
+    procedure TestNoSaltSpecified;
 //    procedure TestTooLongPasswordException;
   end;
 
@@ -6055,6 +6058,20 @@ begin
   THash_BCrypt(FHash).Cost := 3;
 end;
 
+procedure TestTHash_BCrypt.DoTestNoSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
 procedure TestTHash_BCrypt.SetUp;
 var
   lDataRow:IHashTestDataRowSetup;
@@ -6326,6 +6343,16 @@ begin
   CheckEquals(4, THash_BCrypt(FHash).MinCost);
 end;
 
+procedure TestTHash_BCrypt.TestMinimumSaltLength;
+begin
+  CheckEquals(16, TDECPasswordHash(FHash).MinSaltLength);
+end;
+
+procedure TestTHash_BCrypt.TestNoSaltSpecified;
+begin
+  CheckException(DoTestNoSaltSpecified, EDECHashException);
+end;
+
 procedure TestTHash_BCrypt.TestSetGetCostFactor;
 begin
   THash_BCrypt(FHash).Cost := 4;
@@ -6336,14 +6363,6 @@ begin
 end;
 
 { THash_TestTDECPasswordHash }
-
-//procedure THash_TestTDECPasswordHash.DoTestSalt0Exception;
-//var
-//  EmptySalt : TBytes;
-//begin
-//  SetLength(EmptySalt, 0);
-//  FHash.Salt := EmptySalt;
-//end;
 
 procedure THash_TestTDECPasswordHash.DoTestClassByCryptIdentityException;
 begin
@@ -6359,6 +6378,14 @@ begin
   FHash.Salt := EmptySalt;
 end;
 
+procedure THash_TestTDECPasswordHash.DoTestSaltTooShortException;
+var
+  EmptySalt : TBytes;
+begin
+  SetLength(EmptySalt, FHash.MinSaltLength - 1);
+
+  FHash.Salt := EmptySalt;
+end;
 
 procedure THash_TestTDECPasswordHash.SetUp;
 begin
@@ -6403,17 +6430,12 @@ begin
   ActSalt := FHash.Salt;
   CheckEquals(0, Length(ActSalt));
 
-  SetSalt := [1, 2, 3, 4];
+  SetSalt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
   FHash.Salt := SetSalt;
 
   ActSalt := FHash.Salt;
   CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
 end;
-
-//procedure THash_TestTDECPasswordHash.TestSalt0Exception;
-//begin
-//  CheckException(DoTestSalt0Exception, EDECHashException);
-//end;
 
 procedure THash_TestTDECPasswordHash.TestSaltTooLongException;
 var
@@ -6428,11 +6450,24 @@ begin
   CheckEquals(0, Length(ActSalt));
 end;
 
+procedure THash_TestTDECPasswordHash.TestSaltTooShortException;
+var
+  ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  CheckException(DoTestSaltTooShortException, EDECHashException);
+
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+end;
+
 procedure THash_TestTDECPasswordHash.TestSetSalt;
 var
   SetSalt, ActSalt : TBytes;
 begin
-  SetSalt := [1, 2, 3, 4];
+  SetSalt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
   FHash.Salt := SetSalt;
 
   ActSalt := FHash.Salt;

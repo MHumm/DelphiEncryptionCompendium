@@ -1226,10 +1226,13 @@ type
     /// </summary>
     constructor Create; override;
     /// <summary>
-    ///   Returns the maximum supported length of the salt value
-    ///   in byte
+    ///   Returns the maximum supported length of the salt value in byte
     /// </summary>
     class function MaxSaltLength:UInt8; override;
+    /// <summary>
+    ///   Returns the minimum supported length of the salt value in byte
+    /// </summary>
+    class function MinSaltLength:UInt8; override;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the
     ///   algorithm in byte
@@ -1334,7 +1337,8 @@ resourcestring
   sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. '+
                        'Bits: %0:d, Squeezing: %1:s';
   /// <summary>
-  ///   Part of the failure message shown when setting HashSize of Shake algorithms to 0
+  ///   Part of the failure message shown when setting HashSize of Shake
+  ///   algorithms to 0.
   /// </summary>
   sHashOutputLength0 = 'HashSize must not be 0';
   /// <summary>
@@ -1347,6 +1351,12 @@ resourcestring
   ///   Exception message for password hashes when a too long password is specified
   /// </summary>
   sPasswordTooLong   = 'Password to be hashed is too long. Max. length: %0:d bytes';
+  /// <summary>
+  ///   Exception message for password hashes requiring a salt when a salt value
+  ///   which is either too short or too long has been specified
+  /// </summary>
+  sWrongSaltLength   = 'Length of specified salt value must be between %0:d '+
+                       'and %1:d bytes';
 
 { THash_MD2 }
 
@@ -5034,6 +5044,12 @@ begin
   if (DataSize > MaxPasswordLength) then
     raise EDECHashException.CreateFmt(sPasswordTooLong, [MaxPasswordLength]);
 
+  // While this should normally be caught on setting salt already it is there
+  // especially to catch cases where no salt has been specified yet.
+  if (Length(FSalt) < MinSaltLength) or (Length(FSalt) > MaxSaltLength) then
+    raise EDECHashException.CreateFmt(sWrongSaltLength,
+                                      [MinSaltLength, MaxSaltLength]);
+
   // This automatically "adds" the required #0 terminator at the end of the password
   SetLength(PwdData, DataSize + 1);
   Move(Data, PwdData[0], DataSize);
@@ -5299,6 +5315,11 @@ end;
 class function THash_BCrypt.MinCost: UInt8;
 begin
   Result := 4;
+end;
+
+class function THash_BCrypt.MinSaltLength: UInt8;
+begin
+  Result := 16;
 end;
 
 procedure THash_BCrypt.SetCost(const Value: UInt32);
