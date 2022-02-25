@@ -352,6 +352,9 @@ type
       write  SetHashSize;
   end;
 
+  /// <summary>
+  ///   Interface for all hash classes which have a rounds property.
+  /// </summary>
   IDECHashRounds = Interface(IDECHash)
   ['{22864693-0DC6-41AF-8188-192B770B4717}']
     /// <summary>
@@ -380,6 +383,28 @@ type
     property Rounds: UInt32
       read   GetRounds
       write  SetRounds;
+  end;
+
+  IDECHashPassword = Interface(IDECHash)
+  ['{B4D8A80C-1F42-46F8-9288-D71ECCFE6F02}']
+    /// <summary>
+    ///   Sets the salt value given. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength.
+    /// </summary>
+    procedure SetSalt(const Value: TBytes);
+    /// <summary>
+    ///   Returns the defined salt value
+    /// </summary>
+    function  GetSalt: TBytes;
+    /// <summary>
+    ///   Defines the salt value used. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength. The salt has to be passed
+    ///   in binary form. Any Base64 encoded salt needs to be decoded before
+    ///   passing.
+    /// </summary>
+    property Salt: TBytes
+      read   GetSalt
+      write  SetSalt;
   end;
 
 implementation

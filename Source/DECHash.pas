@@ -1177,25 +1177,35 @@ type
     ///   Returns the parameters required for the crypt-like password storing
     ///   in that format.
     /// </summary>
+    /// <param name="Params">
+    ///   In case of BCrypt this has to be the numeric integer value of "Cost".
+    ///   This method will ensure it is prefixed with 0 when having too few chars
+    /// </param>
     /// <param name="Format">
     ///   Format class for formatting the output
     /// </param>
-    function GetCryptParams(Format : TDECFormatClass):RawByteString; override;
-    /// <summary>
-    ///   Returns the salt required for the crypt-like password storing
-    ///   in that format.
-    /// </summary>
-    /// <param name="Format">
-    ///   Format class for formatting the output
-    /// </param>
-    function GetCryptSalt(Format: TDECFormatClass):RawByteString; override;
+    class function GetCryptParams(
+                     const Params : RawByteString;
+                     Format : TDECFormatClass):RawByteString; override;
     /// <summary>
     ///   Returns the hash required for the crypt-like password storing
-    ///   in that format. If a salt etc. is needed that needs to be scepcified
+    ///   in that format. If a salt etc. is needed that needs to be specified
     ///   before calling this method.
     /// </summary>
     /// <param name="Password">
     ///   Password entered which shall be hashed.
+    /// </param>
+    /// <param name="Params">
+    ///   In case of BCrypt this has to be the numeric integer value of "Cost"
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation. Depending on the
+    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+    ///   in the encoding used in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="SaltIsRaw">
+    ///   If true the passed salt value is a raw value. If false it is encoded
+    ///   like in the Crypt/BSD password storage string.
     /// </param>
     /// <param name="Format">
     ///   Format class for formatting the output
@@ -1203,8 +1213,12 @@ type
     /// <returns>
     ///   Calculated hash value
     /// </returns>
-    function GetCryptHash(Password : RawByteString;
-                          Format   : TDECFormatClass):RawByteString; override;
+    class function GetCryptHash(
+                     const Password : RawByteString;
+                     const Params   : RawByteString;
+                     const Salt     : RawByteString;
+                     SaltIsRaw      : Boolean;
+                     Format         : TDECFormatClass):RawByteString; override;
     {$EndRegion}
   public
     /// <summary>
@@ -5076,16 +5090,16 @@ var
 begin
   KBP := @Password[0];
 
-  {Text explanations and comments are from the N.Provos & D.Mazieres paper.}
+  // Text explanations and comments are from the N.Provos & D.Mazieres paper.
 
-  {ExpandKey(state,salt,key) modifies the P-Array and S-boxes based on the }
-  {value of the 128-bit salt and the variable length key. First XOR all the}
-  {subkeys in the P-array with the encryption key. The first 32 bits of the}
-  {key are XORed with P1, the next 32 bits with P2, and so on. The key is  }
-  {viewed as being cyclic; when the process reaches the end of the key, it }
-  {starts reusing bits from the beginning to XOR with subkeys.             }
+  // ExpandKey(state,salt,key) modifies the P-Array and S-boxes based on the
+  // value of the 128-bit salt and the variable length key. First XOR all the
+  // subkeys in the P-array with the encryption key. The first 32 bits of the
+  // key are XORed with P1, the next 32 bits with P2, and so on. The key is
+  // viewed as being cyclic; when the process reaches the end of the key, it
+  // starts reusing bits from the beginning to XOR with subkeys.
 
-  {WE: Same as standard key part except that PArray[i] is used for _bf_p[i]}
+  // WE: Same as standard key part except that PArray[i] is used for _bf_p[i]
   k := 0;
   for i := 0 to 17 do
   begin
@@ -5102,20 +5116,20 @@ begin
     FContext.PArray[i] := FContext.PArray[i] xor KL;
   end;
 
-  {Subsequently, ExpandKey blowfish-encrypts the first 64 bits of}
-  {its salt argument using the current state of the key schedule.}
+  // Subsequently, ExpandKey blowfish-encrypts the first 64 bits of
+  // its salt argument using the current state of the key schedule.
   BF_Encrypt(PBFBlock(@salt[0])^, tmp);
 
-  {The resulting ciphertext replaces subkeys P_1 and P_2.}
+  // The resulting ciphertext replaces subkeys P_1 and P_2.
   FContext.PArray[0] := SwapUInt32(TBF2Long(tmp).L);
   FContext.PArray[1] := SwapUInt32(TBF2Long(tmp).R);
 
-  {That same ciphertext is also XORed with the second 64-bits of }
-  {salt, and the result encrypted with the new state of the key  }
-  {schedule. The output of the second encryption replaces subkeys}
-  {P_3 and P_4. It is also XORed with the first 64-bits of salt  }
-  {and encrypted to replace P_5 and P_6. The process continues,  }
-  {alternating between the first and second 64 bits salt.        }
+  // That same ciphertext is also XORed with the second 64-bits of
+  // salt, and the result encrypted with the new state of the key
+  // schedule. The output of the second encryption replaces subkeys
+  // P_3 and P_4. It is also XORed with the first 64-bits of salt
+  // and encrypted to replace P_5 and P_6. The process continues,
+  // alternating between the first and second 64 bits salt.
   h := 8;
   for i := 1 to 8 do
   begin
@@ -5126,9 +5140,9 @@ begin
     FContext.PArray[2*i+1] := SwapUInt32(TBF2Long(tmp).R);
   end;
 
-  {When ExpandKey finishes replacing entries in the P-Array, it continues}
-  {on replacing S-box entries two at a time. After replacing the last two}
-  {entries of the last S-box, ExpandKey returns the new key schedule.    }
+  // When ExpandKey finishes replacing entries in the P-Array, it continues
+  // on replacing S-box entries two at a time. After replacing the last two
+  // entries of the last S-box, ExpandKey returns the new key schedule.
   for j := 0 to 3 do
   begin
     for i := 0 to 127 do
@@ -5136,17 +5150,34 @@ begin
       BF_XorBlock(tmp, PBFBlock(@Salt[h])^, tmp);
       h := h xor 8;
       BF_Encrypt(tmp, tmp);
-      FContext.SBox[j, 2*i]  := SwapUInt32(TBF2Long(tmp).L);
-      FContext.SBox[j, 2*i+1]:= SwapUInt32(TBF2Long(tmp).R);
+      FContext.SBox[j, 2*i]   := SwapUInt32(TBF2Long(tmp).L);
+      FContext.SBox[j, 2*i+1] := SwapUInt32(TBF2Long(tmp).R);
     end;
   end;
 end;
 
-function THash_BCrypt.GetCryptHash(Password : RawByteString;
-                                   Format   : TDECFormatClass): RawByteString;
+class function THash_BCrypt.GetCryptHash(
+                              const Password : RawByteString;
+                              const Params   : RawByteString;
+                              const Salt     : RawByteString;
+                              SaltIsRaw      : Boolean;
+                              Format         : TDECFormatClass): RawByteString;
+var
+  Hash : THash_BCrypt;
 begin
-  // BCrypt leaves off the $ in front of the actual password hash value
-  Result := CalcString(Password, Format);
+  Hash := THash_BCrypt.Create;
+  try
+    Hash.Cost := StrToInt(string(Params));
+    if SaltIsRaw then
+      Hash.Salt := BytesOf(Salt)
+    else
+      Hash.Salt := Format.Decode(BytesOf(Salt));
+
+    // BCrypt leaves off the $ in front of the actual password hash value
+    Result := Hash.CalcString(Password, Format);
+  finally
+    Hash.Free;
+  end;
 end;
 
 class function THash_BCrypt.GetCryptID: RawByteString;
@@ -5154,23 +5185,15 @@ begin
   Result := '$2a';
 end;
 
-function THash_BCrypt.GetCryptParams(Format : TDECFormatClass): RawByteString;
+class function THash_BCrypt.GetCryptParams(
+                              const Params : RawByteString;
+                              Format       : TDECFormatClass): RawByteString;
 begin
-  Result := RawByteString(FCost.ToString);
+  Result := Params;
   if (Length(Result) < 2) then
     Result := '0' + Result;
 
   Result := '$' + Result;
-end;
-
-function THash_BCrypt.GetCryptSalt(Format: TDECFormatClass): RawByteString;
-var
-  FormattedSalt : TBytes;
-begin
-  FormattedSalt := Format.Encode(FSalt);
-  SetLength(Result, Length(FormattedSalt) + 1);
-  Move(FormattedSalt[0], Result[Low(Result) + 1], Length(FormattedSalt));
-  Result[Low(Result)] := '$';
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);

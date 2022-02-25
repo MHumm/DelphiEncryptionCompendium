@@ -6214,7 +6214,7 @@ var
 begin
   Parts := Vector.Split(['$']);
   Result.Cost := Copy(Parts[2], Low(Parts[2]), Length(Parts[2])).ToInteger;
-  Result.Salt := Copy(Parts[3], Low(Parts[3]), 22);
+  Result.Salt := RawByteString(Copy(Parts[3], Low(Parts[3]), 22));
 end;
 
 procedure TestTHash_BCrypt.TestBlockSize;
@@ -6241,14 +6241,15 @@ procedure TestTHash_BCrypt.TestCryptBSDFormat;
 type
   TPair = record
             pn: byte;
-            bs: string[60];
+            bs: string;
           end;
 const
-  PW: array[0..4] of string[40] = ('', 'a', 'abc',
-         'abcdefghijklmnopqrstuvwxyz', '~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+  Passwords: array[0..4] of string = ('', 'a', 'abc',
+                                      'abcdefghijklmnopqrstuvwxyz',
+                                      '~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
 const
-  // Source of test data: Wolfgang Erhardt's implementation. pn is the index
-  // into PW
+  // Source of test data: Wolfgang Erhardt's implementation.
+  // pn is the index into Passwords
   TestData: array[1..20] of TPair = (
     (pn: 0; bs: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
     (pn: 0; bs: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
@@ -6272,21 +6273,19 @@ const
     (pn: 4; bs: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
 
 var
-  BCrypt : THash_BCrypt;
-  Result : string;
-  i      : Integer;
-  SplitData :TBCryptBSDTestData;
+  Result    : string;
+  i         : Integer;
+  SplitData : TBCryptBSDTestData;
 begin
-  BCrypt := THash_BCrypt(FHash);
-
   for i := Low(TestData) to High(TestData) do
   begin
     SplitData := SplitTestVector(TestData[i].bs);
-    BCrypt.Cost := SplitData.Cost;
-    BCrypt.Salt := TFormat_BCryptBSD.Decode(BytesOf(SplitData.Salt));
-
-    Result := string(BCrypt.GetDigestInCryptFormat(
-                RawByteString(PW[TestData[i].pn]), TFormat_BCryptBSD));
+    Result := string(THash_BCrypt.GetDigestInCryptFormat(
+                                    RawByteString(Passwords[TestData[i].pn]),
+                                    RawByteString(SplitData.Cost.ToString),
+                                    SplitData.Salt,
+                                    False,
+                                    TFormat_BCryptBSD));
 
     CheckEquals(TestData[i].bs, Result);
   end;
