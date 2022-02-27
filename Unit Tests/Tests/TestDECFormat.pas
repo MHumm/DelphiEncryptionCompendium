@@ -377,6 +377,7 @@ type
     procedure TearDown; override;
 
     procedure DoSetCharsPerLine0;
+    procedure DoTestCRCException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -391,6 +392,7 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
     procedure SetCharsPerLine0Exception;
+    procedure TestCRCException;
   end;
 
   // Test methods for class TFormat_UU
@@ -644,6 +646,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -656,6 +660,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_ESCAPE
@@ -745,6 +750,10 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  protected
+    procedure DoTestDecodeExceptionWrongChar;
+    procedure DoTestDecodeExceptionWrongChar2;
+    procedure DoTestDecodeExceptionWrongLength;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -757,6 +766,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_BigEndian16
@@ -1304,6 +1314,11 @@ begin
   FFormat_Radix64.SetCharsPerLine(0);
 end;
 
+procedure TestTFormat_Radix64.DoTestCRCException;
+begin
+  FFormat_Radix64.Decode('VGVzdAoJqlU=' + #13 + #10 +'=XtiN');
+end;
+
 procedure TestTFormat_Radix64.SetCharsPerLine0Exception;
 begin
   CheckException(DoSetCharsPerLine0, EArgumentOutOfRangeException);
@@ -1365,6 +1380,11 @@ var
 begin
   ReturnValue := FFormat_Radix64.ClassByName('TFormat_Radix64');
   CheckEquals(TFormat_Radix64, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_Radix64.TestCRCException;
+begin
+  CheckException(DoTestCRCException, EDECFormatException);
 end;
 
 procedure TestTFormat_Radix64.TestDecodeBytes;
@@ -1662,6 +1682,11 @@ begin
   end;
 end;
 
+procedure TestTFormat_XX.DoTestDecodeException;
+begin
+  FFormat_XX.Decode('ä');
+end;
+
 procedure TestTFormat_XX.SetUp;
 begin
   FFormat_XX := TFormat_XX.Create;
@@ -1684,6 +1709,11 @@ end;
 procedure TestTFormat_XX.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_XX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_XX.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_XX.TestDecodeRawByteString;
@@ -1837,6 +1867,21 @@ begin
   end;
 end;
 
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xä'));
+end;
+
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar2;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xaä'));
+end;
+
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongLength;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xaa\x'));
+end;
+
 procedure TestTFormat_ESCAPE.SetUp;
 begin
   FFormat_ESCAPE := TFormat_ESCAPE.Create;
@@ -1859,6 +1904,13 @@ end;
 procedure TestTFormat_ESCAPE.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_ESCAPE.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_ESCAPE.TestDecodeException;
+begin
+  CheckException(DoTestDecodeExceptionWrongChar, EDECFormatException);
+  CheckException(DoTestDecodeExceptionWrongChar2, EDECFormatException);
+  CheckException(DoTestDecodeExceptionWrongLength, EDECFormatException);
 end;
 
 procedure TestTFormat_ESCAPE.TestDecodeRawByteString;
