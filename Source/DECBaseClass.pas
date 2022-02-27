@@ -84,6 +84,9 @@ type
     ///   Returns the class type if found. if it could not be found a
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Name</c> is not found
+    /// </exception>
     function ClassByName(const Name: string): TDECClass;
 
     /// <summary>
@@ -99,6 +102,9 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
     function ClassByIdentity(Identity: Int64): TDECClass;
     /// <summary>
     ///   Returns a list of all classes registered in this list

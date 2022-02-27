@@ -391,6 +391,10 @@ type
     ///   Sets the salt value given. Throws an EDECHashException if a salt is
     ///   passed which is longer than MaxSaltLength.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of  <c>Value</c> is not in the range of
+    ///   <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
     procedure SetSalt(const Value: TBytes);
     /// <summary>
     ///   Returns the defined salt value
@@ -402,6 +406,10 @@ type
     ///   in binary form. Any Base64 encoded salt needs to be decoded before
     ///   passing.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if the length of the value assigned is not in the
+    ///   range of <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
     property Salt: TBytes
       read   GetSalt
       write  SetSalt;

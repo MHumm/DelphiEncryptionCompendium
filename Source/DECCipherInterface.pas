@@ -615,6 +615,10 @@ type
     ///   Data to be authenticated. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     function  GetDataToAuthenticate: TBytes;
     /// <summary>
     ///   Returns the length of the resulting authentication value if a
@@ -625,6 +629,10 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     function  GetAuthenticationResultBitLength: Integer;
     /// <summary>
     ///   Returns the value calculated over the data to be authenticated if a
@@ -636,6 +644,10 @@ type
     ///   Result of the authentication. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     function  GetCalcAuthenticatonResult: TBytes;
     /// <summary>
     ///   Defines the data which shall get authenticated when using a cipher
@@ -645,6 +657,10 @@ type
     ///   Data to be authenticated. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     procedure SetDataToAuthenticate(const Value: TBytes);
     /// <summary>
     ///   Sets the length of the resulting authentication value if a
@@ -655,6 +671,10 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     procedure SetAuthenticationResultBitLength(const Value: Integer);
 
     /// <summary>
@@ -673,6 +693,10 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     function GetExpectedAuthenticationResult: TBytes;
     /// <summary>
     ///   Sets the value used as expected authenthication value when decrypting
@@ -680,6 +704,10 @@ type
     ///   EDECCipherException if this is called for a cipher mode not supporting
     ///   authentication.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     procedure SetExpectedAuthenticationResult(const Value: TBytes);
 
     /// <summary>
@@ -708,6 +736,10 @@ type
     ///   authentication tag. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     property CalculatedAuthenticationResult  : TBytes
       read   GetCalcAuthenticatonResult;
 
@@ -716,6 +748,10 @@ type
     ///   when decryption finished. Raises an EDECCipherException if this is
     ///   called for a cipher mode not supporting authentication.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if called for a cipher mode not supporting
+    ///   authentication.
+    /// </exception>
     property ExpectedAuthenticationResult : TBytes
       read   GetExpectedAuthenticationResult
       write  SetExpectedAuthenticationResult;

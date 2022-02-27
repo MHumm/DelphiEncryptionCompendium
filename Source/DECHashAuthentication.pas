@@ -624,6 +624,10 @@ type
     ///   Sets the salt value given. Throws an EDECHashException if a salt is
     ///   passed which is longer than MaxSaltLength.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Value</c> is not in the range of
+    ///   <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
     procedure SetSalt(const Value: TBytes);
     /// <summary>
     ///   Returns the defined salt value
@@ -741,6 +745,9 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given Crypt identity has been found
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
     class function ClassByCryptIdentity(Identity: string): TDECPasswordHashClass;
 
     /// <summary>
@@ -775,16 +782,61 @@ type
     ///   Calculated hash value in BSD crypt style format. Returns an empty
     ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
     /// </returns>
-{ TODO :
-This will be needed with a unicode string as parameter as well, issue is
-that crypt specifies UTF8.  And mabye rework to have a "options" string parameter
-where the cost for bcrypt can be passed and then it can be made a class function?}
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Password</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
     class function GetDigestInCryptFormat(
                      const Password : RawByteString;
                      const Params   : RawByteString;
                      const Salt     : RawByteString;
                      SaltIsRaw      : Boolean;
                      Format         : TDECFormatClass):RawByteString; virtual;
+
+//    /// <summary>
+//    ///   Calculates a passwort hash for the given password and returns it in
+//    ///   a BSDCrypt compatible format. This method only works for those hash
+//    ///   algorithms implementing the necessary GetBSDCryptID method.
+//    /// </summary>
+//    /// <param name="Password">
+//    ///   Entered password for which to calculate the hash. The caller is
+//    ///   responsible to ensure the maximum password length is adhered to.
+//    ///   Any exceptions raised due to too long passwords are not caught here!
+//    /// </param>
+//    /// <param name="Params">
+//    ///   Algorithm specific parameters used for initialization. For details see
+//    ///   documentation of the concrete implementation in the algorithm.
+//    /// </param>
+//    /// <param name="Salt">
+//    ///   Salt value used by the password hash calculation. Depending on the
+//    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+//    ///   in the encoding used in the Crypt/BSD password storage string.
+//    /// </param>
+//    /// <param name="SaltIsRaw">
+//    ///   If true the passed salt value is a raw value. If false it is encoded
+//    ///   like in the Crypt/BSD password storage string.
+//    /// </param>
+//    /// <param name="Format">
+//    ///   Formatting class used to format the calculated password. Different
+//    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+//    ///   which one to pass. See description of the hash class used.
+//    /// </param>
+//    /// <returns>
+//    ///   Calculated hash value in BSD crypt style format. Returns an empty
+//    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+//    /// </returns>
+//    /// <exception cref="EDECHashException">
+//    ///   Exception raised if length of <c>Password</c> is higher than
+//    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+//    ///   128 bit has been specified.
+//    /// </exception>
+//    class function GetDigestInCryptFormat(
+//                     const Password : string;
+//                     const Params   : RawByteString;
+//                     const Salt     : RawByteString;
+//                     SaltIsRaw      : Boolean;
+//                     Format         : TDECFormatClass):RawByteString; virtual; overload;
     {$EndRegion}
 
     /// <summary>
@@ -793,6 +845,10 @@ where the cost for bcrypt can be passed and then it can be made a class function
     ///   in binary form. Any Base64 encoded salt needs to be decoded before
     ///   passing.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if the length of the value assigned is not in the
+    ///   range of <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
     property Salt: TBytes
       read   GetSalt
       write  SetSalt;

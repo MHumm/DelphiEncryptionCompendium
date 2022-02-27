@@ -367,6 +367,10 @@ type
     ///   Raises an EDECHashEception when DataBit len not divideable by 8 without
     ///   reminder or when already in squeezin state.
     /// </remarks>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if DataBit len not divideable by 8 without
+    ///   reminder or when already in squeezin state.
+    /// </exception>
     procedure Absorb(Data: PBABytes; DatabitLen: Int32);
 
     /// <summary>
@@ -455,6 +459,9 @@ type
     /// <returns>
     ///   0 if successful, 1 otherwise.
     /// </returns>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>OutputLength</c> is not a multiple of 8
+    /// </exception>
     procedure Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
     /// <summary>
     ///   The algorithm starts in the absorb phase (one puts data into the sponge)
@@ -527,6 +534,9 @@ type
     ///   xored with the message blocks and when extracting the resulting hash,
     ///   stays untouched.
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if invalid parameter values are specified.
+    /// </exception>
     procedure InitSponge(Rate, Capacity: UInt16);
 
     /// <summary>
@@ -625,6 +635,9 @@ type
     /// <param name="Value">
     ///   Length of the hash value to be returned in byte
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is 0.
+    /// </exception>
     procedure SetHashSize(const Value: UInt16);
   public
     /// <summary>
@@ -1113,6 +1126,10 @@ type
     ///   Sets the cost factor. Throws an EDECHashException when a value of 0
     ///   is to be set.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is lower than <c>MinCost</c> or
+    ///   higher than <c>MaxCost</c>.
+    /// </exception>
     procedure SetCost(const Value: UInt32);
     /// <summary>
     ///   Special setup for the bcrypt variant of the blowfish implementation.
@@ -1260,6 +1277,11 @@ type
     /// <param name="DataSize">
     ///   Size of the data in bytes
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>DataSize</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
     procedure Calc(const Data; DataSize: Integer); override;
 
     function Digest: PByteArray; override;
@@ -1273,6 +1295,9 @@ type
     ///   Value must be between 4 and 31, other values will raise a
     ///   EDECHashException
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if a value outside of the range 4..31 is given.
+    /// </exception>
     property Cost: UInt32
       read   FCost
       write  SetCost;

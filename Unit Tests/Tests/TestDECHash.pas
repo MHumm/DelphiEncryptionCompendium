@@ -6229,9 +6229,9 @@ function TestTHash_BCrypt.SplitTestVector(Vector: string): TBCryptBSDTestData;
 var
   Parts : TArray<string>;
 begin
-  Parts := Vector.Split(['$']);
-  Result.Cost := Copy(Parts[2], Low(Parts[2]), Length(Parts[2])).ToInteger;
-  Result.Salt := RawByteString(Copy(Parts[3], Low(Parts[3]), 22));
+  Parts := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
+  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1])).ToInteger;
+  Result.Salt := RawByteString(Copy(Parts[2], Low(Parts[2]), 22));
 end;
 
 procedure TestTHash_BCrypt.TestBlockSize;

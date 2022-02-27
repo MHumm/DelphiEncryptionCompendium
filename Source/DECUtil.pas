@@ -240,12 +240,7 @@ function IsEqual(const a, b : TBytes ):Boolean;
 
 implementation
 
-{$IFDEF FMXTranslateableExceptions}
 uses
-  FMX.Types,
-{$ELSE}
-uses
-{$ENDIF}
   DECUtilRawByteStringHelper, DECTypes;
 
 const

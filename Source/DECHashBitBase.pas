@@ -53,12 +53,18 @@ type
     /// <summary>
     ///   Sets the number of bits the final byte of the message consists of
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is higher than 7.
+    /// </exception>
     procedure SetFinalByteLength(const Value: UInt8);
   public
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is higher than 7.
+    /// </exception>
     property FinalByteLength : UInt8
       read   GetFinalByteLength
       write  SetFinalByteLength;

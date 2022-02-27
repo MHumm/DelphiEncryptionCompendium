@@ -56,6 +56,9 @@ type
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised unconditionally.
+    /// </exception>
     procedure RaiseHashNotInitialized;
 
     /// <summary>
@@ -130,10 +133,16 @@ type
     ///   Raises an EDECHashException overflow error if the last operation has
     ///   set the carry flag
     /// </remarks>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if the last operation has set the carry flag.
+    /// </exception>
     procedure Increment8(var Value; Add: UInt32);
     /// <summary>
     ///   Raises an EDECHashException overflow error
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised unconditionally.
+    /// </exception>
     procedure RaiseHashOverflowError;
 
     /// <summary>
@@ -246,6 +255,9 @@ type
     ///   Returns the class type if found. if it could not be found a
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Name</c> is not found
+    /// </exception>
     class function ClassByName(const Name: string): TDECHashClass;
 
     /// <summary>
@@ -261,6 +273,9 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
     class function ClassByIdentity(Identity: Int64): TDECHashClass;
 
     /// <summary>

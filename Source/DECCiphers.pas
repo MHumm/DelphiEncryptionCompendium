@@ -412,6 +412,9 @@ type
   ///   128 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 128 bit.
+  /// </exception>
   TCipher_AES128 = class(TCipher_AES)
   protected
     /// <summary>
@@ -432,6 +435,9 @@ type
   ///   192 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 192 bit.
+  /// </exception>
   TCipher_AES192 = class(TCipher_AES)
   protected
     /// <summary>
@@ -452,6 +458,9 @@ type
   ///   256 Bit variant of the algorithm. Specifying a longer key leads to a
   ///   EDECCipherException exception
   /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 256 bit.
+  /// </exception>
   TCipher_AES256 = class(TCipher_AES)
   protected
     /// <summary>

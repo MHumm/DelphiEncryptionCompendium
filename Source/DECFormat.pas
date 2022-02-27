@@ -77,6 +77,9 @@ type
   TFormat_HEX = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if there is a failure in the data format.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -175,6 +178,9 @@ type
     class procedure PrepareTable;
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -243,6 +249,10 @@ type
     /// </param>
     class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the calculated CRC value does not match the one
+    ///   given in <c>Source</c>.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
 
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
@@ -254,6 +264,9 @@ type
     ///   Maximum number of chars for a single line. Values < 1 result in an
     ///   EArgumentOutOfRangeException being raised
     /// </param>
+    /// <exception cref="EArgumentOutOfRangeException">
+    ///   Exception raised if <c>Value</c> is < 1.
+    /// </exception>
     class procedure SetCharsPerLine(const Value: UInt32);
     /// <summary>
     ///   Returns the number of chars after which a line break will be introduced
@@ -332,6 +345,9 @@ type
   TFormat_UU = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -352,6 +368,9 @@ type
   TFormat_ESCAPE = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -520,7 +539,7 @@ begin
     P := TableFindBinary(S^, T, 18);
     if P < 0 then P := TableFindBinary(UpCaseBinary(S^), T, 16);
     if P < 0 then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
     Inc(S);
     if P >= 0 then
       if P > 16 then
@@ -1254,7 +1273,7 @@ begin
   repeat
     Size := TableFindBinary(S^, T, 64);
     if (Size < 0) or (Size > 45) then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
     Inc(S);
     while Size > 0 do
     begin
