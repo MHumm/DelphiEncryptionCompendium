@@ -101,6 +101,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -113,6 +115,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_HEXL
@@ -587,6 +590,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -599,6 +604,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_XX
@@ -843,6 +849,11 @@ type
 
 implementation
 
+procedure TestTFormat_HEX.DoTestDecodeException;
+begin
+  FFormat_HEX.Decode('ä');
+end;
+
 procedure TestTFormat_HEX.SetUp;
 begin
   FFormat_HEX := TFormat_HEX.Create;
@@ -865,6 +876,11 @@ end;
 procedure TestTFormat_HEX.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_HEX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEX.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_HEX.TestDecodeRawByteString;
@@ -1484,6 +1500,11 @@ begin
               'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
 end;
 
+procedure TestTFormat_UU.DoTestDecodeException;
+begin
+  FFormat_UU.Decode('ä');
+end;
+
 procedure TestTFormat_UU.SetUp;
 begin
   FFormat_UU := TFormat_UU.Create;
@@ -1506,6 +1527,11 @@ end;
 procedure TestTFormat_UU.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_UU.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_UU.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_UU.TestDecodeRawByteString;
