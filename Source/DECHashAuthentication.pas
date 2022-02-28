@@ -640,6 +640,11 @@ type
     /// </summary>
     FSalt : TBytes;
 
+    /// <summary>
+    ///   Overwrite the salt value
+    /// </summary>
+    procedure DoDone; override;
+
     {$Region CryptFormatHandling}
     /// <summary>
     ///   Returns the ID code for Crypt/BSD like storing of passwords. The ID
@@ -650,7 +655,7 @@ type
     ///   If the algorithm on which this is being used is a Crypt/BSD compatible
     ///   password hash algorithm the ID is returned otherwise an empty string.
     /// </returns>
-    class function GetCryptID:RawByteString; virtual;
+    class function GetCryptID:string; virtual;
 
     /// <summary>
     ///   Returns the parameters required for the crypt-like password storing
@@ -667,8 +672,8 @@ type
     ///   Returns an empty string if the the algorithm on which this is being
     ///   used is not a Crypt/BSD compatible password hash algorithm
     /// </returns>
-    class function GetCryptParams(const Params : RawByteString;
-                                  Format       : TDECFormatClass):RawByteString; virtual;
+    class function GetCryptParams(const Params : string;
+                                  Format       : TDECFormatClass):string; virtual;
     /// <summary>
     ///   Returns the salt required for the crypt-like password storing
     ///   in that format.
@@ -679,8 +684,8 @@ type
     /// <param name="Format">
     ///   Format class for formatting the output
     /// </param>
-    class function GetCryptSalt(const Salt : RawByteString;
-                                Format     : TDECFormatClass):RawByteString; virtual;
+    class function GetCryptSalt(const Salt : TBytes;
+                                Format     : TDECFormatClass):string; virtual;
     /// <summary>
     ///   Returns the hash required for the crypt-like password storing
     ///   in that format. If a salt etc. is needed that needs to be scepcified
@@ -698,9 +703,9 @@ type
     ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
     ///   in the encoding used in the Crypt/BSD password storage string.
     /// </param>
-    /// <param name="SaltIsRaw">
-    ///   If true the passed salt value is a raw value. If false it is encoded
-    ///   like in the Crypt/BSD password storage string.
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation in binary raw format,
+    ///   means not Radix64 encoded or so.
     /// </param>
     /// <param name="Format">
     ///   Format class for formatting the output
@@ -709,11 +714,10 @@ type
     ///   Returns an empty string if the the algorithm on which this is being
     ///   used is not a Crypt/BSD compatible password hash algorithm.
     /// </returns>
-    class function GetCryptHash(const Password : RawByteString;
-                                const Params   : RawByteString;
-                                const Salt     : RawByteString;
-                                SaltIsRaw      : Boolean;
-                                Format         : TDECFormatClass):RawByteString; virtual;
+    class function GetCryptHash(const Password : string;
+                                const Params   : string;
+                                const Salt     : TBytes;
+                                Format         : TDECFormatClass):string; virtual;
     {$EndRegion}
   public
     /// <summary>
@@ -789,10 +793,10 @@ type
     /// </exception>
     class function GetDigestInCryptFormat(
                      const Password : RawByteString;
-                     const Params   : RawByteString;
-                     const Salt     : RawByteString;
+                     const Params   : string;
+                     const Salt     : string;
                      SaltIsRaw      : Boolean;
-                     Format         : TDECFormatClass):RawByteString; virtual;
+                     Format         : TDECFormatClass):string; virtual;
 
 //    /// <summary>
 //    ///   Calculates a passwort hash for the given password and returns it in
@@ -1479,27 +1483,29 @@ begin
   FSalt := Value;
 end;
 
-class function TDECPasswordHash.GetCryptID: RawByteString;
+class function TDECPasswordHash.GetCryptID: string;
 begin
   Result := '';
 end;
 
 class function TDECPasswordHash.GetCryptParams(
-                 const Params : RawByteString;
-                 Format       : TDECFormatClass): RawByteString;
+                 const Params : string;
+                 Format       : TDECFormatClass): string;
 begin
   Result := '';
 end;
 
-class function TDECPasswordHash.GetCryptSalt(const Salt : RawByteString;
-                                             Format     : TDECFormatCLass): RawByteString;
+class function TDECPasswordHash.GetCryptSalt(const Salt : TBytes;
+                                             Format     : TDECFormatCLass): string;
 var
   FormattedSalt : TBytes;
 begin
-  FormattedSalt := Format.Encode(BytesOf(Salt));
-  SetLength(Result, Length(FormattedSalt) + 1);
-  Move(FormattedSalt[0], Result[Low(Result) + 1], Length(FormattedSalt));
-  Result[Low(Result)] := '$';
+  FormattedSalt := Format.Encode(Salt);
+//  SetLength(Result, Length(FormattedSalt) + 1);
+//  Move(FormattedSalt[0], Result[Low(Result) + 1], Length(FormattedSalt));
+//  Result[Low(Result)] := '$';
+
+  Result := '$' + TEncoding.ASCII.GetString(FormattedSalt);
 end;
 
 class function TDECPasswordHash.ClassByCryptIdentity(
@@ -1527,24 +1533,31 @@ begin
                                                      [Identity]);
 end;
 
+procedure TDECPasswordHash.DoDone;
+begin
+  inherited;
+
+  ProtectBuffer(FSalt, SizeOf(FSalt));
+  SetLength(FSalt, 0);
+end;
+
 class function TDECPasswordHash.GetCryptHash(
-                                  const Password : RawByteString;
-                                  const Params   : RawByteString;
-                                  const Salt     : RawByteString;
-                                  SaltIsRaw      : Boolean;
-                                  Format         : TDECFormatClass): RawByteString;
+                                  const Password : string;
+                                  const Params   : string;
+                                  const Salt     : TBytes;
+                                  Format         : TDECFormatClass): string;
 begin
   Result := '';
 end;
 
 class function TDECPasswordHash.GetDigestInCryptFormat(
                                   const Password : RawByteString;
-                                  const Params   : RawByteString;
-                                  const Salt     : RawByteString;
+                                  const Params   : string;
+                                  const Salt     : string;
                                   SaltIsRaw      : Boolean;
-                                  Format         : TDECFormatClass): RawByteString;
+                                  Format         : TDECFormatClass): string;
 var
-  SaltStr : RawByteString;
+  SaltBytes : TBytes;
 begin
   // generic format used by Crypt, but not every algorithm sticks 100% to it
   // $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
@@ -1554,13 +1567,13 @@ begin
   if (Result <> '') then
   begin
     if SaltIsRaw then
-      SaltStr := Salt
+      SaltBytes := TEncoding.UTF8.GetBytes(Salt)
     else
-      SaltStr := Format.Decode(salt);
+      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
 
     Result := Result + GetCryptParams(Params, Format) +
-                       GetCryptSalt(SaltStr, Format) +
-                       GetCryptHash(Password, Params, Salt, SaltIsRaw, Format);
+                       GetCryptSalt(SaltBytes, Format) +
+                       GetCryptHash(Password, Params, SaltBytes, Format);
   end;
 end;
 

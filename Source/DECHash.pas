@@ -1060,7 +1060,6 @@ type
       TBFBlock   = packed array[0..7]  of UInt8;
       PBFBlock   = ^TBFBlock;
 
-      TBCSalt    = packed array[0..15] of byte;
       TBCDigest  = packed array[0..23] of byte;
 
       TBF2Long   = packed record
@@ -1121,7 +1120,7 @@ type
         ///   Cost factor which might be used to adapt the algorithm to increased
         ///   processing power.
         /// </summary>
-        FCost   : UInt32;
+        FCost   : UInt8;
     /// <summary>
     ///   Sets the cost factor. Throws an EDECHashException when a value of 0
     ///   is to be set.
@@ -1130,7 +1129,7 @@ type
     ///   Exception raised if <c>Value</c> is lower than <c>MinCost</c> or
     ///   higher than <c>MaxCost</c>.
     /// </exception>
-    procedure SetCost(const Value: UInt32);
+    procedure SetCost(const Value: UInt8);
     /// <summary>
     ///   Special setup for the bcrypt variant of the blowfish implementation.
     ///   Designed to be unavoidably slow.
@@ -1188,7 +1187,7 @@ type
     /// <returns>
     ///   A Crypt/BSD ID
     /// </returns>
-    class function GetCryptID:RawByteString; override;
+    class function GetCryptID:string; override;
 
     /// <summary>
     ///   Returns the parameters required for the crypt-like password storing
@@ -1202,8 +1201,8 @@ type
     ///   Format class for formatting the output
     /// </param>
     class function GetCryptParams(
-                     const Params : RawByteString;
-                     Format : TDECFormatClass):RawByteString; override;
+                     const Params : string;
+                     Format : TDECFormatClass):string; override;
     /// <summary>
     ///   Returns the hash required for the crypt-like password storing
     ///   in that format. If a salt etc. is needed that needs to be specified
@@ -1216,13 +1215,8 @@ type
     ///   In case of BCrypt this has to be the numeric integer value of "Cost"
     /// </param>
     /// <param name="Salt">
-    ///   Salt value used by the password hash calculation. Depending on the
-    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
-    ///   in the encoding used in the Crypt/BSD password storage string.
-    /// </param>
-    /// <param name="SaltIsRaw">
-    ///   If true the passed salt value is a raw value. If false it is encoded
-    ///   like in the Crypt/BSD password storage string.
+    ///   Salt value used by the password hash calculation in binary raw format,
+    ///   means not Radix64 encoded or so.
     /// </param>
     /// <param name="Format">
     ///   Format class for formatting the output
@@ -1231,11 +1225,10 @@ type
     ///   Calculated hash value
     /// </returns>
     class function GetCryptHash(
-                     const Password : RawByteString;
-                     const Params   : RawByteString;
-                     const Salt     : RawByteString;
-                     SaltIsRaw      : Boolean;
-                     Format         : TDECFormatClass):RawByteString; override;
+                     const Password : string;
+                     const Params   : string;
+                     const Salt     : TBytes;
+                     Format         : TDECFormatClass):string; override;
     {$EndRegion}
   public
     /// <summary>
@@ -1298,7 +1291,7 @@ type
     /// <exception cref="EDECHashException">
     ///   Exception raised if a value outside of the range 4..31 is given.
     /// </exception>
-    property Cost: UInt32
+    property Cost: UInt8
       read   FCost
       write  SetCost;
   end;
@@ -5198,37 +5191,34 @@ begin
 end;
 
 class function THash_BCrypt.GetCryptHash(
-                              const Password : RawByteString;
-                              const Params   : RawByteString;
-                              const Salt     : RawByteString;
-                              SaltIsRaw      : Boolean;
-                              Format         : TDECFormatClass): RawByteString;
+                              const Password : string;
+                              const Params   : string;
+                              const Salt     : TBytes;
+                              Format         : TDECFormatClass): string;
 var
   Hash : THash_BCrypt;
 begin
   Hash := THash_BCrypt.Create;
   try
     Hash.Cost := StrToInt(string(Params));
-    if SaltIsRaw then
-      Hash.Salt := BytesOf(Salt)
-    else
-      Hash.Salt := Format.Decode(BytesOf(Salt));
+    Hash.Salt := Salt;
 
     // BCrypt leaves off the $ in front of the actual password hash value
-    Result := Hash.CalcString(Password, Format);
+    Result := TEncoding.ASCII.GetString(
+                Format.Encode(Hash.CalcBytes(TEncoding.UTF8.GetBytes(Password))));
   finally
     Hash.Free;
   end;
 end;
 
-class function THash_BCrypt.GetCryptID: RawByteString;
+class function THash_BCrypt.GetCryptID: string;
 begin
   Result := '$2a';
 end;
 
 class function THash_BCrypt.GetCryptParams(
-                              const Params : RawByteString;
-                              Format       : TDECFormatClass): RawByteString;
+                              const Params : string;
+                              Format       : TDECFormatClass): string;
 begin
   Result := Params;
   if (Length(Result) < 2) then
@@ -5347,7 +5337,7 @@ begin
   Result := 16;
 end;
 
-procedure THash_BCrypt.SetCost(const Value: UInt32);
+procedure THash_BCrypt.SetCost(const Value: UInt8);
 begin
   if (Value in [MinCost..MaxCost]) then
     FCost := Value

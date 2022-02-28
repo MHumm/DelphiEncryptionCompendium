@@ -659,7 +659,13 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_BCrypt
+  /// <summary>
+  ///   Test methods for class THash_BCrypt
+  /// </summary>
+  /// <remarks>
+  ///   There is no test with the maximum possible cost value, as even a cost
+  ///   value of 20 already takes ages to calculate on a current i5 CPU.
+  /// </remarks>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTHash_BCrypt = class(THash_TestPasswordBase)
   private
@@ -678,6 +684,8 @@ type
     procedure DoTestCostFactorTooShortException;
     procedure DoTestCostFactorTooLongException;
     procedure DoTestNoSaltSpecified;
+    procedure DoTestTooShortSaltSpecified;
+    procedure DoTestTooLongSaltSpecified;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -694,6 +702,8 @@ type
     procedure TestSetGetCostFactor;
     procedure TestCryptBSDFormat;
     procedure TestNoSaltSpecified;
+    procedure TestTooShortSaltSpecified;
+    procedure TestTooLongSaltSpecified;
 //    procedure TestTooLongPasswordException;
   end;
 
@@ -5378,48 +5388,64 @@ procedure THash_TestBase.DoTestCalcBuffer(HashClass: TDECHash);
 var
   i   : Integer;
   Buf : TBytes;
+  RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
     ConfigHashClass(HashClass, i);
 
     Buf := BytesOf(RawByteString(FTestData[i].InputData));
-    if Length(Buf)>0 then
+    if Length(Buf) > 0 then
+    begin
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0],
+                                                Length(Buf))));
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
       CheckEquals(FTestData[i].ExpectedOutput,
-                  BytesToRawString(
-                    TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0],
-                                        Length(Buf)))),
+                  RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
                   string(BytesToRawString(
                     TFormat_HEXL.Encode(
-                      HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>')
-
+                      HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>');
+    end
     else
+    begin
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
+                                                                     Length(Buf))));
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
       CheckEquals(FTestData[i].ExpectedOutput,
-                  BytesToRawString(
-                    TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
-                                                             Length(Buf)))),
+                  RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
                   string(BytesToRawString(
                     TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
                                                              Length(Buf))))) + '>');
+    end;
   end;
 end;
 
 procedure THash_TestBase.DoTestCalcBytes(HashClass: TDECHash);
 var
-  i : Integer;
+  i                : Integer;
+  RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
     ConfigHashClass(HashClass, i);
 
-    CheckEquals(FTestData[i].ExpectedOutput,
-                BytesToRawString(TFormat_HEXL.Encode(
+    RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(
                   HashClass.CalcBytes(
-                    BytesOf(RawByteString(FTestData[i].InputData))))),
+                    BytesOf(RawByteString(FTestData[i].InputData)))));
+
+    // Configure again, as for password hashes DoDone would clear the salt
+    ConfigHashClass(HashClass, i);
+
+    CheckEquals(FTestData[i].ExpectedOutput,
+                RawByteStrResult,
                 'Index: ' + IntToStr(i) + ' - expected: <' +
                 string(FTestData[i].ExpectedOutput) + '> but was: <' +
                 string(BytesToRawString(TFormat_HEXL.Encode(
@@ -5430,8 +5456,9 @@ end;
 
 procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
 var
-  i      : Integer;
-  InpStr : string;
+  i                : Integer;
+  InpStr           : string;
+  RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
@@ -5440,10 +5467,15 @@ begin
       InpStr := string(FTestData[i].InputData);
       ConfigHashClass(HashClass, i);
 
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(
+                              System.SysUtils.BytesOf(HashClass.CalcString(InpStr))));
+
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
+
       CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
-                  BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
+                  RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
                   string(BytesToRawString(
@@ -5548,14 +5580,20 @@ end;
 
 procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
 var
-  i : Integer;
+  i                : Integer;
+  RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
     begin
       ConfigHashClass(HashClass, i);
 
+      RawByteStrResult := HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL);
+
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
+
       CheckEquals(FTestData[i].ExpectedOutput,
-                  HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL),
+                  RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
                   string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
@@ -6046,6 +6084,7 @@ procedure TestTHash_BCrypt.ConfigHashClass(aHashClass: TDECHash;
 begin
   inherited;
   THash_BCrypt(FHash).Cost := FTestData[aIdxTestData].Cost;
+  THash_BCrypt(FHash).Salt := FTestData[aIdxTestData].Salt;
 end;
 
 procedure TestTHash_BCrypt.DoTestCostFactorTooLongException;
@@ -6066,6 +6105,38 @@ begin
   try
     BCrypt.Init;
     BCrypt.Cost := 8;
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.DoTestTooLongSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    // One byte too long
+    BCrypt.Salt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.DoTestTooShortSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    // One byte too short
+    BCrypt.Salt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     BCrypt.CalcString('a');
   finally
     BCrypt.Free;
@@ -6299,7 +6370,7 @@ begin
     SplitData := SplitTestVector(TestData[i].bs);
     Result := string(THash_BCrypt.GetDigestInCryptFormat(
                                     RawByteString(Passwords[TestData[i].pn]),
-                                    RawByteString(SplitData.Cost.ToString),
+                                    SplitData.Cost.ToString,
                                     SplitData.Salt,
                                     False,
                                     TFormat_BCryptBSD));
@@ -6360,6 +6431,16 @@ begin
 
   THash_BCrypt(FHash).Cost := 31;
   CheckEquals(31, THash_BCrypt(FHash).Cost);
+end;
+
+procedure TestTHash_BCrypt.TestTooLongSaltSpecified;
+begin
+  CheckException(DoTestTooLongSaltSpecified, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestTooShortSaltSpecified;
+begin
+  CheckException(DoTestTooShortSaltSpecified, EDECHashException);
 end;
 
 { THash_TestTDECPasswordHash }
