@@ -5197,6 +5197,7 @@ class function THash_BCrypt.GetCryptHash(
                               Format         : TDECFormatClass): string;
 var
   Hash : THash_BCrypt;
+  B: TBytes;
 begin
   Hash := THash_BCrypt.Create;
   try
@@ -5204,8 +5205,18 @@ begin
     Hash.Salt := Salt;
 
     // BCrypt leaves off the $ in front of the actual password hash value
-    Result := TEncoding.ASCII.GetString(
-                Format.Encode(Hash.CalcBytes(TEncoding.UTF8.GetBytes(Password))));
+//    Result := TEncoding.ASCII.GetString(//Hash.CalcBytes(TEncoding.UTF8.GetBytes(Password)));
+//                Format.Encode(Hash.CalcBytes(TEncoding.UTF8.GetBytes(Password))));
+
+//    b:= TEncoding.UTF8.GetBytes(Password);
+
+//    b := Format.Encode([85, 126, 148, 243, 75, 242, 134, 232, 113, 154, 38, 190, 148, 172, 30, 22, 217, 94, 249, 248, 25, 222, 224]);
+    b := Hash.CalcBytes(b));
+
+
+    Result := TEncoding.ASCII.GetString(b);
+//               [85, 126, 148, 243, 75, 242, 134, 232, 113, 154, 38, 190, 148, 172, 30, 22, 217, 94, 249, 248, 25, 222, 224];
+//                //Hash.CalcBytes(TEncoding.UTF8.GetBytes(Password))));
   finally
     Hash.Free;
   end;
@@ -5309,7 +5320,7 @@ end;
 procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
 begin
   // Empty on purpose, as bcrypt needs to know the input length. Thus calculation
-  // is done directly in CalcBuffer.
+  // is done directly in method Calc.
 end;
 
 class function THash_BCrypt.MaxCost: UInt8;

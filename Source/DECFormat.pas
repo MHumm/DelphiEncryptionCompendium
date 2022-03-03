@@ -1950,7 +1950,7 @@ begin
              $30, $31, $32, $33, $34, $35, $36, $37, $38, $39];
 end;
 
-class procedure TFormat_BCryptBSD.DoDecode(const Source; 
+class procedure TFormat_BCryptBSD.DoDecode(const Source;
                                            var Dest: TBytes;
                                            Size: Integer);
 const
@@ -1962,10 +1962,10 @@ const
         -1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
         17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1, -1, -1,
         -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
-        43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1);  
+        43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1);
 
 var
-  Src : PByte;        
+  Src : PByte;
   c1, c2, c3, c4: Integer;
 
   function GetNextByte: integer;
@@ -1973,44 +1973,44 @@ var
     b: UInt8;
   begin
     Result := -1;
-    if (Size > 0) then 
+    if (Size > 0) then
     begin
       b := Src^;
       Inc(Src);
       Dec(Size);
-      if (b < 128) then 
+      if (b < 128) then
         Result := BT[b];
     end;
-  end;        
+  end;
 
   procedure SetNextByte(b: Integer);
     {-Put next byte into pdest if LA<ldest, inc LA and pdest}
   begin
-    Dest := Dest + [byte(b and $ff)]
+    Dest := Dest + [byte(b and $ff)];
   end;
-    
+
 begin
   Src := @Source;
 
-  if (Src = nil) or (Size < 1) then 
+  if (Src = nil) or (Size < 1) then
     exit;
-  
-  while Size > 0 do 
+
+  while Size > 0 do
   begin
-    c1 := GetNextByte; 
+    c1 := GetNextByte;
     if (c1 < 0) then exit;
-    c2 := GetNextByte; 
+    c2 := GetNextByte;
     if (c2 < 0) then exit;
     SetNextByte(((c1 and $3f) shl 2) or (c2 shr 4));
 
-    c3 := GetNextByte; 
+    c3 := GetNextByte;
     if (c3 < 0) then exit;
     SetNextByte(((c2 and $0f) shl 4) or (c3 shr 2));
 
-    c4 := GetNextByte; 
+    c4 := GetNextByte;
     if (c4 < 0) then exit;
     SetNextByte(((c3 and $03) shl 6) or c4);
-  end;  
+  end;
 end;
 
 class procedure TFormat_BCryptBSD.DoEncode(const Source;

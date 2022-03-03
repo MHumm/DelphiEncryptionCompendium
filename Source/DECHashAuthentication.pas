@@ -792,7 +792,7 @@ type
     ///   128 bit has been specified.
     /// </exception>
     class function GetDigestInCryptFormat(
-                     const Password : RawByteString;
+                     const Password : string;
                      const Params   : string;
                      const Salt     : string;
                      SaltIsRaw      : Boolean;
@@ -1480,6 +1480,10 @@ begin
   if (Length(Value) < MinSaltLength) then
     raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
 
+//// Angeblich verursacht das hier das Speicherleck?!
+//  SetLength(FSalt, Length(Value));
+//  if (Length(Value) > 0) then
+//    Move(Value[0], FSalt[0], Length(Value));
   FSalt := Value;
 end;
 
@@ -1551,7 +1555,7 @@ begin
 end;
 
 class function TDECPasswordHash.GetDigestInCryptFormat(
-                                  const Password : RawByteString;
+                                  const Password : string;
                                   const Params   : string;
                                   const Salt     : string;
                                   SaltIsRaw      : Boolean;
@@ -1569,12 +1573,19 @@ begin
     if SaltIsRaw then
       SaltBytes := TEncoding.UTF8.GetBytes(Salt)
     else
-      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
+      SaltBytes := [20, 75, 61, 105, 26, 123, 78, 207, 57, 207, 115, 92, 127, 167, 167, 156]; //Format.Decode(TEncoding.UTF8.GetBytes(Salt));
+
+// Mal noch mehr mocken um einzugrenzen welche Nutzung von Salt das Leck verursacht
+//    Result := Result + GetCryptParams(Params, Format) +
+//                       GetCryptSalt(SaltBytes, Format) +
+//                       GetCryptHash(Password, Params, SaltBytes, Format);
 
     Result := Result + GetCryptParams(Params, Format) +
                        GetCryptSalt(SaltBytes, Format) +
                        GetCryptHash(Password, Params, SaltBytes, Format);
   end;
+
+  SetLength(SaltBytes, 0);
 end;
 
 end.
