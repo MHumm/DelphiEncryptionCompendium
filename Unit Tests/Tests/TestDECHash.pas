@@ -676,7 +676,7 @@ type
         Cost     : UInt8;
       end;
 
-    function SplitTestVector(Vector: string):TBCryptBSDTestData;
+    function SplitTestVector(const Vector: string):TBCryptBSDTestData;
   protected
     procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
   public
@@ -6296,7 +6296,7 @@ begin
   lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
 end;
 
-function TestTHash_BCrypt.SplitTestVector(Vector: string): TBCryptBSDTestData;
+function TestTHash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDTestData;
 var
   Parts : TArray<string>;
 begin

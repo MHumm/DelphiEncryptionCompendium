@@ -798,6 +798,23 @@ type
                      SaltIsRaw      : Boolean;
                      Format         : TDECFormatClass):string; virtual;
 
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    class function IsValidPassword(const Password  : string;
+                                   const CryptData : string): Boolean; virtual;
+
 //    /// <summary>
 //    ///   Calculates a passwort hash for the given password and returns it in
 //    ///   a BSDCrypt compatible format. This method only works for those hash
@@ -1586,6 +1603,12 @@ begin
   end;
 
   SetLength(SaltBytes, 0);
+end;
+
+class function TDECPasswordHash.IsValidPassword(const Password  : string;
+                                                const CryptData : string): Boolean;
+begin
+  Result := false;
 end;
 
 end.

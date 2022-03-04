@@ -1102,6 +1102,24 @@ type
                      IncProc : TBFIncProc;
                    end;
 
+      /// <summary>
+      ///   Parts of the BSD/Crypt style password storage for BCrypt
+      /// </summary>
+      TBCryptBSDData = record
+        /// <summary>
+        ///   Algorithm ID
+        /// </summary>
+        ID       : string;
+        /// <summary>
+        ///   Salt in Crypt encoding
+        /// </summary>
+        Salt     : string;
+        /// <summary>
+        ///   Cost factor
+        /// </summary>
+        Cost     : UInt8;
+      end;
+
       var
         /// <summary>
         ///   The calculated hash value
@@ -1175,6 +1193,11 @@ type
     ///   Block to store the result in
     /// </param>
     procedure BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
+
+    /// <summary>
+    ///   Splits a given Crypt/BSD style password record into its parts
+    /// </summary>
+    function SplitTestVector(const Vector: string):TBCryptBSDData;
   strict protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -1260,6 +1283,23 @@ type
     ///   Returns the maximum allowed value for the Cost property
     /// </summary>
     class function MaxCost:UInt8;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    class function IsValidPassword(const Password  : string;
+                                   const CryptData : string): Boolean; override;
 
     /// <summary>
     ///   Processes one chunk of data to be hashed.
@@ -5238,6 +5278,12 @@ begin
   Result := '$' + Result;
 end;
 
+class function THash_BCrypt.IsValidPassword(const Password,
+                                                  CryptData: string): Boolean;
+begin
+
+end;
+
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
 var
   xl, xr : UInt32;
@@ -5354,6 +5400,16 @@ begin
     FCost := Value
   else
     raise EDECHashException.CreateFmt(sCostFactorInvalid, [MinCost, MaxCost]);
+end;
+
+function THash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDData;
+var
+  Parts : TArray<string>;
+begin
+  Parts := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
+  Result.ID   := Parts[0];
+  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1])).ToInteger;
+  Result.Salt := Copy(Parts[2], Low(Parts[2]), 22);
 end;
 
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
