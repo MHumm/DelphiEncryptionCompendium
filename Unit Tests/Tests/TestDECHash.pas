@@ -676,6 +676,39 @@ type
         Cost     : UInt8;
       end;
 
+      TPair = record
+                pn: byte;
+                bs: string;
+              end;
+    const
+      Passwords: array[0..4] of string = ('', 'a', 'abc',
+                                          'abcdefghijklmnopqrstuvwxyz',
+                                          '~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+      // Source of test data: Wolfgang Erhardt's implementation.
+      // pn is the index into Passwords
+      TestData: array[1..20] of TPair = (
+        (pn: 0; bs: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+        (pn: 0; bs: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
+        (pn: 0; bs: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
+        (pn: 0; bs: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
+        (pn: 1; bs: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
+        (pn: 1; bs: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
+        (pn: 1; bs: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
+        (pn: 1; bs: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
+        (pn: 2; bs: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
+        (pn: 2; bs: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
+        (pn: 2; bs: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
+        (pn: 2; bs: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
+        (pn: 3; bs: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
+        (pn: 3; bs: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
+        (pn: 3; bs: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
+        (pn: 3; bs: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
+        (pn: 4; bs: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
+        (pn: 4; bs: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
+        (pn: 4; bs: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
+        (pn: 4; bs: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
+
     function SplitTestVector(const Vector: string):TBCryptBSDTestData;
   protected
     procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
@@ -700,7 +733,9 @@ type
     procedure TestCostFactorTooShortException;
     procedure TestCostFactorTooLongException;
     procedure TestSetGetCostFactor;
-    procedure TestCryptBSDFormat;
+    procedure TestCreateCryptBSDFormat;
+    procedure TestIsValidPasswordOK;
+    procedure TestIsValidPasswordFalse;
     procedure TestNoSaltSpecified;
     procedure TestTooShortSaltSpecified;
     procedure TestTooLongSaltSpecified;
@@ -6325,41 +6360,7 @@ begin
   CheckException(DoTestCostFactorTooShortException, EDECHashException);
 end;
 
-procedure TestTHash_BCrypt.TestCryptBSDFormat;
-type
-  TPair = record
-            pn: byte;
-            bs: string;
-          end;
-const
-  Passwords: array[0..4] of string = ('', 'a', 'abc',
-                                      'abcdefghijklmnopqrstuvwxyz',
-                                      '~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
-const
-  // Source of test data: Wolfgang Erhardt's implementation.
-  // pn is the index into Passwords
-  TestData: array[1..20] of TPair = (
-    (pn: 0; bs: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
-    (pn: 0; bs: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
-    (pn: 0; bs: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
-    (pn: 0; bs: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
-    (pn: 1; bs: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
-    (pn: 1; bs: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
-    (pn: 1; bs: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
-    (pn: 1; bs: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
-    (pn: 2; bs: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
-    (pn: 2; bs: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
-    (pn: 2; bs: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
-    (pn: 2; bs: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
-    (pn: 3; bs: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
-    (pn: 3; bs: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
-    (pn: 3; bs: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
-    (pn: 3; bs: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
-    (pn: 4; bs: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
-    (pn: 4; bs: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
-    (pn: 4; bs: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
-    (pn: 4; bs: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
-
+procedure TestTHash_BCrypt.TestCreateCryptBSDFormat;
 var
   Result    : string;
   i         : Integer;
@@ -6371,11 +6372,11 @@ begin
     for i := Low(TestData) to High(TestData) do
     begin
       SplitData := SplitTestVector(TestData[i].bs);
-      Result := string(HashInst.GetDigestInCryptFormat(Passwords[TestData[i].pn],
-                                                       SplitData.Cost.ToString,
-                                                       SplitData.Salt,
-                                                       False,
-                                                       TFormat_BCryptBSD));
+      Result := HashInst.GetDigestInCryptFormat(Passwords[TestData[i].pn],
+                                                SplitData.Cost.ToString,
+                                                SplitData.Salt,
+                                                False,
+                                                TFormat_BCryptBSD);
 
       CheckEquals(TestData[i].bs, Result);
     end;
@@ -6397,6 +6398,96 @@ end;
 procedure TestTHash_BCrypt.TestIsPasswordHash;
 begin
   CheckEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_BCrypt.TestIsValidPasswordFalse;
+var
+  Result    : Boolean;
+  HashInst  : THash_BCrypt;
+begin
+  HashInst := THash_BCrypt.Create;
+  try
+    Result := HashInst.IsValidPassword('a',
+                                       '1234567890123456789012345678901234567' +
+                                       '8901234567890123456789',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failure at wrong CryptData length');
+
+    Result := HashInst.IsValidPassword('a',
+                                       TestData[1].bs,
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password for empty password');
+
+    Result := HashInst.IsValidPassword('ab',
+                                       TestData[5].bs,
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password for password a');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$3a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for ID');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
+                               'cost missing');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
+                               'salt missing');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06$n0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password with wrong '+
+                               'salt given');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxf',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password with wrong '+
+                               'password hash given');
+  finally
+    HashInst.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.TestIsValidPasswordOK;
+var
+  Result    : Boolean;
+  i         : Integer;
+  HashInst  : THash_BCrypt;
+begin
+  HashInst := THash_BCrypt.Create;
+  try
+    for i := Low(TestData) to High(TestData) do
+    begin
+      Result := HashInst.IsValidPassword(Passwords[TestData[i].pn],
+                                         TestData[i].bs,
+                                         TFormat_BCryptBSD);
+
+      CheckEquals(true, Result, 'Failure at test data index: ' + i.ToString);
+    end;
+  finally
+    HashInst.Free;
+  end;
 end;
 
 procedure TestTHash_BCrypt.TestMaxCost;
