@@ -1197,7 +1197,18 @@ type
     /// <summary>
     ///   Splits a given Crypt/BSD style password record into its parts
     /// </summary>
-    class function SplitTestVector(const Vector: string):TBCryptBSDData;
+    /// <param name="Vector">
+    ///   Data to split
+    /// </param>
+    /// <param name="SplittedData">
+    ///   Data splitted in ID, Cost and Salt
+    /// </param>
+    /// <returns>
+    ///   true if splitting resulted in the right number of parts,
+    ///   otherwise false
+    /// </returns>
+    function SplitTestVector(const Vector     : string;
+                             var SplittedData : TBCryptBSDData):Boolean;
   strict protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -5281,17 +5292,23 @@ var
 begin
   Result := false;
 
-  SplittedCryptData := SplitTestVector(CryptData);
-  // Is the CryptData for this algorithm?
-  if SplittedCryptData.ID <> GetCryptID then
-    exit;
+  if (Length(CryptData) = 60) then
+  begin
+    if SplitTestVector(CryptData, SplittedCryptData) then
+    begin
+      // Is the CryptData for this algorithm?
+      if '$' + SplittedCryptData.ID <> GetCryptID then
+        exit;
 
-  GetCryptHash(Password,
-               SplittedCryptData.Cost,
-               Format.Decode(TEncoding.UTF8.GetBytes(SplittedCryptData.Salt)),
-               Format);
+      Hash := GetDigestInCryptFormat(Password,
+                                     SplittedCryptData.Cost,
+                                     SplittedCryptData.Salt,
+                                     False,
+                                     Format);
 
-  Result := hash = CryptData;
+      Result := Hash = CryptData;
+    end;
+  end;
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
@@ -5412,14 +5429,22 @@ begin
     raise EDECHashException.CreateFmt(sCostFactorInvalid, [MinCost, MaxCost]);
 end;
 
-class function THash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDData;
+function THash_BCrypt.SplitTestVector(const Vector     : string;
+                                      var SplittedData : TBCryptBSDData): Boolean;
 var
   Parts : TArray<string>;
 begin
-  Parts := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
-  Result.ID   := Parts[0];
-  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1]));
-  Result.Salt := Copy(Parts[2], Low(Parts[2]), 22);
+  Result := false;
+
+  Parts             := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
+
+  if (Length(Parts) = 3) then
+  begin
+    SplittedData.ID   := Parts[0];
+    SplittedData.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1]));
+    SplittedData.Salt := Copy(Parts[2], Low(Parts[2]), 22);
+    Result := true;
+  end;
 end;
 
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}

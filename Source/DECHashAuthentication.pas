@@ -618,7 +618,7 @@ type
   ///   those from normal hash algorithms not really meant to be used for password
   ///   hashing.
   /// </summary>
-  TDECPasswordHash = class(TDECHashAuthentication)
+  TDECPasswordHash = class(TDECHashAuthentication, IDECHashPassword)
   strict private
     /// <summary>
     ///   Sets the salt value given. Throws an EDECHashException if a salt is
@@ -807,6 +807,7 @@ type
     /// <param name="CryptData">
     ///   The data needed to "compare" the password against in Crypt/BSD like
     ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    ///   The exact format depends on the algorithm used.
     /// </param>
     /// <param name="Format">
     ///   Must be the right type for the Crypt/BSD encoding used by the

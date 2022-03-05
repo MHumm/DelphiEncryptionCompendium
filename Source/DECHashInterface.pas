@@ -387,6 +387,73 @@ type
 
   IDECHashPassword = Interface(IDECHash)
   ['{B4D8A80C-1F42-46F8-9288-D71ECCFE6F02}']
+      /// <summary>
+    ///   Calculates a passwort hash for the given password and returns it in
+    ///   a BSDCrypt compatible format. This method only works for those hash
+    ///   algorithms implementing the necessary GetBSDCryptID method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Entered password for which to calculate the hash. The caller is
+    ///   responsible to ensure the maximum password length is adhered to.
+    ///   Any exceptions raised due to too long passwords are not caught here!
+    /// </param>
+    /// <param name="Params">
+    ///   Algorithm specific parameters used for initialization. For details see
+    ///   documentation of the concrete implementation in the algorithm.
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation. Depending on the
+    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+    ///   in the encoding used in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="SaltIsRaw">
+    ///   If true the passed salt value is a raw value. If false it is encoded
+    ///   like in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class used to format the calculated password. Different
+    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+    ///   which one to pass. See description of the hash class used.
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value in BSD crypt style format. Returns an empty
+    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+    /// </returns>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Password</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
+    function GetDigestInCryptFormat(const Password : string;
+                                    const Params   : string;
+                                    const Salt     : string;
+                                    SaltIsRaw      : Boolean;
+                                    Format         : TDECFormatClass):string;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]].
+    ///   The exact format depends on the algorithm used.
+    /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean;
     /// <summary>
     ///   Sets the salt value given. Throws an EDECHashException if a salt is
     ///   passed which is longer than MaxSaltLength.
