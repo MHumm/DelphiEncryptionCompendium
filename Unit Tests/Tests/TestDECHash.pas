@@ -6364,18 +6364,23 @@ var
   Result    : string;
   i         : Integer;
   SplitData : TBCryptBSDTestData;
+  HashInst  : THash_BCrypt;
 begin
-  for i := Low(TestData) to High(TestData) do
-  begin
-    SplitData := SplitTestVector(TestData[i].bs);
-    Result := string(THash_BCrypt.GetDigestInCryptFormat(
-                                    Passwords[TestData[i].pn],
-                                    SplitData.Cost.ToString,
-                                    SplitData.Salt,
-                                    False,
-                                    TFormat_BCryptBSD));
+  HashInst := THash_BCrypt.Create;
+  try
+    for i := Low(TestData) to High(TestData) do
+    begin
+      SplitData := SplitTestVector(TestData[i].bs);
+      Result := string(HashInst.GetDigestInCryptFormat(Passwords[TestData[i].pn],
+                                                       SplitData.Cost.ToString,
+                                                       SplitData.Salt,
+                                                       False,
+                                                       TFormat_BCryptBSD));
 
-    CheckEquals(TestData[i].bs, Result);
+      CheckEquals(TestData[i].bs, Result);
+    end;
+  finally
+    HashInst.Free;
   end;
 end;
 

@@ -672,8 +672,8 @@ type
     ///   Returns an empty string if the the algorithm on which this is being
     ///   used is not a Crypt/BSD compatible password hash algorithm
     /// </returns>
-    class function GetCryptParams(const Params : string;
-                                  Format       : TDECFormatClass):string; virtual;
+    function GetCryptParams(const Params : string;
+                            Format       : TDECFormatClass):string; virtual;
     /// <summary>
     ///   Returns the salt required for the crypt-like password storing
     ///   in that format.
@@ -736,7 +736,7 @@ type
     /// </summary>
     class function MaxPasswordLength:UInt8; virtual; abstract;
 
-    {$Region CryptFormatHandlingPublic}
+    {$Region CryptBSDFormatHandlingPublic}
     /// <summary>
     ///   Tries to find a class type by its Crypt identification
     ///   (e.g. 2a is Bcrypt).
@@ -791,12 +791,11 @@ type
     ///   <c>MaxPasswordLength</c> or if a salt with a different length than
     ///   128 bit has been specified.
     /// </exception>
-    class function GetDigestInCryptFormat(
-                     const Password : string;
-                     const Params   : string;
-                     const Salt     : string;
-                     SaltIsRaw      : Boolean;
-                     Format         : TDECFormatClass):string; virtual;
+    function GetDigestInCryptFormat(const Password : string;
+                                    const Params   : string;
+                                    const Salt     : string;
+                                    SaltIsRaw      : Boolean;
+                                    Format         : TDECFormatClass):string; virtual;
 
     /// <summary>
     ///   Checks whether a given password is the correct one for a password
@@ -809,55 +808,18 @@ type
     ///   The data needed to "compare" the password against in Crypt/BSD like
     ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
     /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
     /// <returns>
     ///    True if the password given is correct.
     /// </returns>
-    class function IsValidPassword(const Password  : string;
-                                   const CryptData : string): Boolean; virtual;
-
-//    /// <summary>
-//    ///   Calculates a passwort hash for the given password and returns it in
-//    ///   a BSDCrypt compatible format. This method only works for those hash
-//    ///   algorithms implementing the necessary GetBSDCryptID method.
-//    /// </summary>
-//    /// <param name="Password">
-//    ///   Entered password for which to calculate the hash. The caller is
-//    ///   responsible to ensure the maximum password length is adhered to.
-//    ///   Any exceptions raised due to too long passwords are not caught here!
-//    /// </param>
-//    /// <param name="Params">
-//    ///   Algorithm specific parameters used for initialization. For details see
-//    ///   documentation of the concrete implementation in the algorithm.
-//    /// </param>
-//    /// <param name="Salt">
-//    ///   Salt value used by the password hash calculation. Depending on the
-//    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
-//    ///   in the encoding used in the Crypt/BSD password storage string.
-//    /// </param>
-//    /// <param name="SaltIsRaw">
-//    ///   If true the passed salt value is a raw value. If false it is encoded
-//    ///   like in the Crypt/BSD password storage string.
-//    /// </param>
-//    /// <param name="Format">
-//    ///   Formatting class used to format the calculated password. Different
-//    ///   algorithms in BSDCrypt use different algorithms so one needs to know
-//    ///   which one to pass. See description of the hash class used.
-//    /// </param>
-//    /// <returns>
-//    ///   Calculated hash value in BSD crypt style format. Returns an empty
-//    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
-//    /// </returns>
-//    /// <exception cref="EDECHashException">
-//    ///   Exception raised if length of <c>Password</c> is higher than
-//    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
-//    ///   128 bit has been specified.
-//    /// </exception>
-//    class function GetDigestInCryptFormat(
-//                     const Password : string;
-//                     const Params   : RawByteString;
-//                     const Salt     : RawByteString;
-//                     SaltIsRaw      : Boolean;
-//                     Format         : TDECFormatClass):RawByteString; virtual; overload;
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean; virtual;
     {$EndRegion}
 
     /// <summary>
@@ -1509,9 +1471,8 @@ begin
   Result := '';
 end;
 
-class function TDECPasswordHash.GetCryptParams(
-                 const Params : string;
-                 Format       : TDECFormatClass): string;
+function TDECPasswordHash.GetCryptParams(const Params : string;
+                                         Format       : TDECFormatClass): string;
 begin
   Result := '';
 end;
@@ -1571,12 +1532,12 @@ begin
   Result := '';
 end;
 
-class function TDECPasswordHash.GetDigestInCryptFormat(
-                                  const Password : string;
-                                  const Params   : string;
-                                  const Salt     : string;
-                                  SaltIsRaw      : Boolean;
-                                  Format         : TDECFormatClass): string;
+function TDECPasswordHash.GetDigestInCryptFormat(
+                            const Password : string;
+                            const Params   : string;
+                            const Salt     : string;
+                            SaltIsRaw      : Boolean;
+                            Format         : TDECFormatClass): string;
 var
   SaltBytes : TBytes;
 begin
@@ -1598,8 +1559,9 @@ begin
   end;
 end;
 
-class function TDECPasswordHash.IsValidPassword(const Password  : string;
-                                                const CryptData : string): Boolean;
+function TDECPasswordHash.IsValidPassword(const Password  : string;
+                                          const CryptData : string;
+                                          Format          : TDECFormatClass): Boolean;
 begin
   Result := false;
 end;

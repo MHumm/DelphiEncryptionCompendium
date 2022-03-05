@@ -1117,7 +1117,7 @@ type
         /// <summary>
         ///   Cost factor
         /// </summary>
-        Cost     : UInt8;
+        Cost     : string;
       end;
 
       var
@@ -1197,7 +1197,7 @@ type
     /// <summary>
     ///   Splits a given Crypt/BSD style password record into its parts
     /// </summary>
-    function SplitTestVector(const Vector: string):TBCryptBSDData;
+    class function SplitTestVector(const Vector: string):TBCryptBSDData;
   strict protected
     procedure DoInit; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
@@ -1223,9 +1223,8 @@ type
     /// <param name="Format">
     ///   Format class for formatting the output
     /// </param>
-    class function GetCryptParams(
-                     const Params : string;
-                     Format : TDECFormatClass):string; override;
+    function GetCryptParams(const Params : string;
+                            Format : TDECFormatClass):string; override;
     /// <summary>
     ///   Returns the hash required for the crypt-like password storing
     ///   in that format. If a salt etc. is needed that needs to be specified
@@ -1295,11 +1294,18 @@ type
     ///   The data needed to "compare" the password against in Crypt/BSD like
     ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
     /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
     /// <returns>
     ///    True if the password given is correct.
     /// </returns>
-    class function IsValidPassword(const Password  : string;
-                                   const CryptData : string): Boolean; override;
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean; override;
 
     /// <summary>
     ///   Processes one chunk of data to be hashed.
@@ -5256,9 +5262,8 @@ begin
   Result := '$2a';
 end;
 
-class function THash_BCrypt.GetCryptParams(
-                              const Params : string;
-                              Format       : TDECFormatClass): string;
+function THash_BCrypt.GetCryptParams(const Params : string;
+                                     Format       : TDECFormatClass): string;
 begin
   Result := Params;
   if (Length(Result) < 2) then
@@ -5267,11 +5272,26 @@ begin
   Result := '$' + Result;
 end;
 
-class function THash_BCrypt.IsValidPassword(const Password,
-                                                  CryptData: string): Boolean;
+function THash_BCrypt.IsValidPassword(const Password  : string;
+                                      const CryptData : string;
+                                      Format          : TDECFormatClass): Boolean;
+var
+  SplittedCryptData : TBCryptBSDData;
+  Hash              : string;
 begin
-{ TODO : To be implemented }
   Result := false;
+
+  SplittedCryptData := SplitTestVector(CryptData);
+  // Is the CryptData for this algorithm?
+  if SplittedCryptData.ID <> GetCryptID then
+    exit;
+
+  GetCryptHash(Password,
+               SplittedCryptData.Cost,
+               Format.Decode(TEncoding.UTF8.GetBytes(SplittedCryptData.Salt)),
+               Format);
+
+  Result := hash = CryptData;
 end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
@@ -5392,13 +5412,13 @@ begin
     raise EDECHashException.CreateFmt(sCostFactorInvalid, [MinCost, MaxCost]);
 end;
 
-function THash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDData;
+class function THash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDData;
 var
   Parts : TArray<string>;
 begin
   Parts := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
   Result.ID   := Parts[0];
-  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1])).ToInteger;
+  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1]));
   Result.Salt := Copy(Parts[2], Low(Parts[2]), 22);
 end;
 

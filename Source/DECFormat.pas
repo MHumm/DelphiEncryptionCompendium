@@ -1984,8 +1984,8 @@ var
   end;
 
   procedure SetNextByte(b: Integer);
-    {-Put next byte into pdest if LA<ldest, inc LA and pdest}
   begin
+    // Put next byte into pdest if LA<ldest, inc LA and pdest
     Dest := Dest + [byte(b and $ff)];
   end;
 
@@ -2016,8 +2016,6 @@ end;
 class procedure TFormat_BCryptBSD.DoEncode(const Source;
                                            var Dest: TBytes;
                                            Size: Integer);
-//const
-//  CT64: array[0..63] of AnsiChar = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 var
   CT64  : TBytes;
   c1,c2 : UInt16;
