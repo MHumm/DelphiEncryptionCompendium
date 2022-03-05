@@ -1558,7 +1558,7 @@ procedure TDECPasswordHash.DoDone;
 begin
   inherited;
 
-  ProtectBuffer(FSalt, SizeOf(FSalt));
+  ProtectBuffer(FSalt[0], SizeOf(FSalt));
   SetLength(FSalt, 0);
 end;
 
@@ -1590,19 +1590,12 @@ begin
     if SaltIsRaw then
       SaltBytes := TEncoding.UTF8.GetBytes(Salt)
     else
-      SaltBytes := [20, 75, 61, 105, 26, 123, 78, 207, 57, 207, 115, 92, 127, 167, 167, 156]; //Format.Decode(TEncoding.UTF8.GetBytes(Salt));
-
-// Mal noch mehr mocken um einzugrenzen welche Nutzung von Salt das Leck verursacht
-//    Result := Result + GetCryptParams(Params, Format) +
-//                       GetCryptSalt(SaltBytes, Format) +
-//                       GetCryptHash(Password, Params, SaltBytes, Format);
+      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
 
     Result := Result + GetCryptParams(Params, Format) +
                        GetCryptSalt(SaltBytes, Format) +
                        GetCryptHash(Password, Params, SaltBytes, Format);
   end;
-
-  SetLength(SaltBytes, 0);
 end;
 
 class function TDECPasswordHash.IsValidPassword(const Password  : string;

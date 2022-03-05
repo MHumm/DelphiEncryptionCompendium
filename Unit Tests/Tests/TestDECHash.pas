@@ -6365,10 +6365,9 @@ var
   i         : Integer;
   SplitData : TBCryptBSDTestData;
 begin
-  for i := Low(TestData) to 1 do //High(TestData) do
+  for i := Low(TestData) to High(TestData) do
   begin
     SplitData := SplitTestVector(TestData[i].bs);
-// Fix memory leaks we get
     Result := string(THash_BCrypt.GetDigestInCryptFormat(
                                     Passwords[TestData[i].pn],
                                     SplitData.Cost.ToString,
