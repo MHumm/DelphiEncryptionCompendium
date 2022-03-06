@@ -2,7 +2,7 @@ DEC - Delphi Encryption Compendium
 Version 6.5
 
 Copyright (c) 2018 - 2020 Norman Gallery (ng931884 [at] gmx [dot] de)
-Copyright (c) 2016 - 2021 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
+Copyright (c) 2016 - 2022 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
 Copyright (c) 2008 - 2019 Frederik A. Winkelsdorf (winkelsdorf [at] gmail [dot] com)
 Copyright (c) 1999 - 2008 Hagen Reddmann (HaReddmann [at] T-Online [dot] de)
 
@@ -16,7 +16,7 @@ Andreas Hausladen
 Remy Lebeau
 himitsu
 NamenLozer
-jaenicke
+Sebastian Jänicke
 Kas Ob.
 jaclas
 mknox74
