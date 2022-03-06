@@ -216,6 +216,22 @@ type
   end;
 
   /// <summary>
+  ///   Type for test data specified for Crypt/BSD format tests. Not declared in
+  ///   THash_TestPasswordBase as the compiler couldn't find it there.
+  /// </summary>
+  TCryptTestData = record
+                     /// <summary>
+                     ///   Number of the password from the password array
+                     ///   to use for that test case
+                     /// </summary>
+                     PWNum: UInt8;
+                     /// <summary>
+                     ///   Crypt/BSD formatted password storage data
+                     /// </summary>
+                     CryptData: string;
+                   end;
+
+  /// <summary>
   ///   Adds test data initialization common for all password hash algorithms
   /// </summary>
   THash_TestPasswordBase = class(THash_TestBase)
@@ -676,10 +692,6 @@ type
         Cost     : UInt8;
       end;
 
-      TPair = record
-                pn: byte;
-                bs: string;
-              end;
     const
       Passwords: array[0..4] of string = ('', 'a', 'abc',
                                           'abcdefghijklmnopqrstuvwxyz',
@@ -687,27 +699,27 @@ type
 
       // Source of test data: Wolfgang Erhardt's implementation.
       // pn is the index into Passwords
-      TestData: array[1..20] of TPair = (
-        (pn: 0; bs: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
-        (pn: 0; bs: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
-        (pn: 0; bs: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
-        (pn: 0; bs: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
-        (pn: 1; bs: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
-        (pn: 1; bs: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
-        (pn: 1; bs: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
-        (pn: 1; bs: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
-        (pn: 2; bs: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
-        (pn: 2; bs: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
-        (pn: 2; bs: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
-        (pn: 2; bs: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
-        (pn: 3; bs: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
-        (pn: 3; bs: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
-        (pn: 3; bs: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
-        (pn: 3; bs: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
-        (pn: 4; bs: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
-        (pn: 4; bs: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
-        (pn: 4; bs: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
-        (pn: 4; bs: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
+      TestData: array[1..20] of TCryptTestData = (
+        (PWNum: 0; CryptData: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+        (PWNum: 0; CryptData: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
+        (PWNum: 0; CryptData: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
+        (PWNum: 0; CryptData: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
+        (PWNum: 1; CryptData: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
+        (PWNum: 1; CryptData: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
+        (PWNum: 1; CryptData: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
+        (PWNum: 1; CryptData: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
+        (PWNum: 2; CryptData: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
+        (PWNum: 2; CryptData: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
+        (PWNum: 2; CryptData: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
+        (PWNum: 2; CryptData: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
+        (PWNum: 3; CryptData: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
+        (PWNum: 3; CryptData: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
+        (PWNum: 3; CryptData: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
+        (PWNum: 3; CryptData: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
+        (PWNum: 4; CryptData: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
+        (PWNum: 4; CryptData: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
+        (PWNum: 4; CryptData: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
+        (PWNum: 4; CryptData: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
 
     function SplitTestVector(const Vector: string):TBCryptBSDTestData;
   protected
@@ -6371,14 +6383,14 @@ begin
   try
     for i := Low(TestData) to High(TestData) do
     begin
-      SplitData := SplitTestVector(TestData[i].bs);
-      Result := HashInst.GetDigestInCryptFormat(Passwords[TestData[i].pn],
+      SplitData := SplitTestVector(TestData[i].CryptData);
+      Result := HashInst.GetDigestInCryptFormat(Passwords[TestData[i].PWNum],
                                                 SplitData.Cost.ToString,
                                                 SplitData.Salt,
                                                 False,
                                                 TFormat_BCryptBSD);
 
-      CheckEquals(TestData[i].bs, Result);
+      CheckEquals(TestData[i].CryptData, Result);
     end;
   finally
     HashInst.Free;
@@ -6415,13 +6427,13 @@ begin
     CheckEquals(false, Result, 'Failure at wrong CryptData length');
 
     Result := HashInst.IsValidPassword('a',
-                                       TestData[1].bs,
+                                       TestData[1].CryptData,
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failed to detect wrong password for empty password');
 
     Result := HashInst.IsValidPassword('ab',
-                                       TestData[5].bs,
+                                       TestData[5].CryptData,
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failed to detect wrong password for password a');
@@ -6479,8 +6491,8 @@ begin
   try
     for i := Low(TestData) to High(TestData) do
     begin
-      Result := HashInst.IsValidPassword(Passwords[TestData[i].pn],
-                                         TestData[i].bs,
+      Result := HashInst.IsValidPassword(Passwords[TestData[i].PWNum],
+                                         TestData[i].CryptData,
                                          TFormat_BCryptBSD);
 
       CheckEquals(true, Result, 'Failure at test data index: ' + i.ToString);

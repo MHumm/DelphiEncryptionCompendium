@@ -684,8 +684,8 @@ type
     /// <param name="Format">
     ///   Format class for formatting the output
     /// </param>
-    class function GetCryptSalt(const Salt : TBytes;
-                                Format     : TDECFormatClass):string; virtual;
+    function GetCryptSalt(const Salt : TBytes;
+                          Format     : TDECFormatClass):string; virtual;
     /// <summary>
     ///   Returns the hash required for the crypt-like password storing
     ///   in that format. If a salt etc. is needed that needs to be scepcified
@@ -714,22 +714,22 @@ type
     ///   Returns an empty string if the the algorithm on which this is being
     ///   used is not a Crypt/BSD compatible password hash algorithm.
     /// </returns>
-    class function GetCryptHash(const Password : string;
-                                const Params   : string;
-                                const Salt     : TBytes;
-                                Format         : TDECFormatClass):string; virtual;
+    function GetCryptHash(const Password : string;
+                          const Params   : string;
+                          const Salt     : TBytes;
+                          Format         : TDECFormatClass):string; virtual;
     {$EndRegion}
   public
     /// <summary>
     ///   Returns the maximum length of a salt value given for the algorithm
     ///   in byte
     /// </summary>
-    class function MaxSaltLength:UInt8; virtual; abstract;
+    function MaxSaltLength:UInt8; virtual; abstract;
     /// <summary>
     ///   Returns the minimum length of a salt value given for the algorithm
     ///   in byte
     /// </summary>
-    class function MinSaltLength:UInt8; virtual; abstract;
+    function MinSaltLength:UInt8; virtual; abstract;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the
     ///   algorithm in byte
@@ -1460,10 +1460,6 @@ begin
   if (Length(Value) < MinSaltLength) then
     raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
 
-//// Angeblich verursacht das hier das Speicherleck?!
-//  SetLength(FSalt, Length(Value));
-//  if (Length(Value) > 0) then
-//    Move(Value[0], FSalt[0], Length(Value));
   FSalt := Value;
 end;
 
@@ -1478,15 +1474,12 @@ begin
   Result := '';
 end;
 
-class function TDECPasswordHash.GetCryptSalt(const Salt : TBytes;
-                                             Format     : TDECFormatCLass): string;
+function TDECPasswordHash.GetCryptSalt(const Salt : TBytes;
+                                       Format     : TDECFormatCLass): string;
 var
   FormattedSalt : TBytes;
 begin
   FormattedSalt := Format.Encode(Salt);
-//  SetLength(Result, Length(FormattedSalt) + 1);
-//  Move(FormattedSalt[0], Result[Low(Result) + 1], Length(FormattedSalt));
-//  Result[Low(Result)] := '$';
 
   Result := '$' + TEncoding.ASCII.GetString(FormattedSalt);
 end;
@@ -1524,11 +1517,10 @@ begin
   SetLength(FSalt, 0);
 end;
 
-class function TDECPasswordHash.GetCryptHash(
-                                  const Password : string;
-                                  const Params   : string;
-                                  const Salt     : TBytes;
-                                  Format         : TDECFormatClass): string;
+function TDECPasswordHash.GetCryptHash(const Password : string;
+                                       const Params   : string;
+                                       const Salt     : TBytes;
+                                       Format         : TDECFormatClass): string;
 begin
   Result := '';
 end;

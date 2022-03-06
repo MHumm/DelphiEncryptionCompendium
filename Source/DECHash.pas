@@ -1257,11 +1257,10 @@ type
     /// <returns>
     ///   Calculated hash value
     /// </returns>
-    class function GetCryptHash(
-                     const Password : string;
-                     const Params   : string;
-                     const Salt     : TBytes;
-                     Format         : TDECFormatClass):string; override;
+    function GetCryptHash(const Password : string;
+                          const Params   : string;
+                          const Salt     : TBytes;
+                          Format         : TDECFormatClass):string; override;
     {$EndRegion}
   public
     /// <summary>
@@ -1271,11 +1270,11 @@ type
     /// <summary>
     ///   Returns the maximum supported length of the salt value in byte
     /// </summary>
-    class function MaxSaltLength:UInt8; override;
+    function MaxSaltLength:UInt8; override;
     /// <summary>
     ///   Returns the minimum supported length of the salt value in byte
     /// </summary>
-    class function MinSaltLength:UInt8; override;
+    function MinSaltLength:UInt8; override;
     /// <summary>
     ///   Returns the maximum length of a user supplied password given for the
     ///   algorithm in byte
@@ -1288,11 +1287,11 @@ type
     /// <summary>
     ///   Returns the minimum allowed value for the Cost property
     /// </summary>
-    class function MinCost:UInt8;
+    function MinCost:UInt8;
     /// <summary>
     ///   Returns the maximum allowed value for the Cost property
     /// </summary>
-    class function MaxCost:UInt8;
+    function MaxCost:UInt8;
 
     /// <summary>
     ///   Checks whether a given password is the correct one for a password
@@ -5247,11 +5246,10 @@ begin
   end;
 end;
 
-class function THash_BCrypt.GetCryptHash(
-                              const Password : string;
-                              const Params   : string;
-                              const Salt     : TBytes;
-                              Format         : TDECFormatClass): string;
+function THash_BCrypt.GetCryptHash(const Password : string;
+                                   const Params   : string;
+                                   const Salt     : TBytes;
+                                   Format         : TDECFormatClass): string;
 var
   Hash : THash_BCrypt;
 begin
@@ -5396,7 +5394,7 @@ begin
   // is done directly in method Calc.
 end;
 
-class function THash_BCrypt.MaxCost: UInt8;
+function THash_BCrypt.MaxCost: UInt8;
 begin
   Result := 31;
 end;
@@ -5406,17 +5404,17 @@ begin
   Result := 72;
 end;
 
-class function THash_BCrypt.MaxSaltLength: UInt8;
+function THash_BCrypt.MaxSaltLength: UInt8;
 begin
   Result := 16;
 end;
 
-class function THash_BCrypt.MinCost: UInt8;
+function THash_BCrypt.MinCost: UInt8;
 begin
   Result := 4;
 end;
 
-class function THash_BCrypt.MinSaltLength: UInt8;
+function THash_BCrypt.MinSaltLength: UInt8;
 begin
   Result := 16;
 end;
