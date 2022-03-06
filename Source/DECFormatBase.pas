@@ -101,31 +101,37 @@ type
     class var ClassList: TDECClassList;
 
     /// <summary>
-    /// Tries to find a class type by its name in the list of registered
-    /// formatting classes
+    ///   Tries to find a class type by its name in the list of registered
+    ///   formatting classes
     /// </summary>
     /// <param name="Name">
-    /// Name to look for in the list
+    ///   Name to look for in the list
     /// </param>
     /// <returns>
-    /// Returns the class type if found. if it could not be found a
-    /// EDECClassNotRegisteredException will be thrown
+    ///   Returns the class type if found. if it could not be found a
+    ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Name</c> is not found
+    /// </exception>
     class function ClassByName(const Name: string): TDECFormatClass;
 
     /// <summary>
-    /// Tries to find a class type by its numeric identity DEC assigned to it.
-    /// Useful for file headers, so they can easily encode numerically which
-    /// cipher class was being used.
+    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+    ///   Useful for file headers, so they can easily encode numerically which
+    ///   cipher class was being used.
     /// </summary>
     /// <param name="Identity">
-    /// Identity to look for
+    ///   Identity to look for
     /// </param>
     /// <returns>
-    /// Returns the class type of the class with the specified identity value
-    /// or throws an EDECClassNotRegisteredException exception if no class
-    /// with the given identity has been found
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given identity has been found
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
     class function ClassByIdentity(Identity: Int64): TDECFormatClass;
 
     /// <summary>
@@ -355,31 +361,37 @@ type
 function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
 
 /// <summary>
-/// Searches a registered formatting class by name.
+///   Searches a registered formatting class by name.
 /// </summary>
 /// <param name="Name">
-/// Unique long (TFormat_HEXL) or short (HEXL) name of the class to be searched.
+///   Unique long (TFormat_HEXL) or short (HEXL) name of the class to be searched.
 /// </param>
 /// <returns>
-/// Class type, which can be used to create an object isntance from. Raises an
-/// EDECClassNotRegisteredException exception if the class cannot be found in
-/// the list of registered format classes.
+///   Class type, which can be used to create an object isntance from. Raises an
+///   EDECClassNotRegisteredException exception if the class cannot be found in
+///   the list of registered format classes.
 /// </returns>
+/// <exception cref="EDECClassNotRegisteredException">
+///   Exception raised if the class specified by <c>Name</c> is not found
+/// </exception>
 function FormatByName(const Name: string): TDECFormatClass;
 
 /// <summary>
-/// Searches a registered formatting class by identity. The identity is some
-/// integer value calculated on the basis of the class name, the length of the
-/// name and a fixed prefix and by calculating a CRC32 checksum of this.
+///   Searches a registered formatting class by identity. The identity is some
+///   integer value calculated on the basis of the class name, the length of the
+///   name and a fixed prefix and by calculating a CRC32 checksum of this.
 /// </summary>
 /// <param name="Identity">
-/// Unique identity of the class to be searched.
+///   Unique identity of the class to be searched.
 /// </param>
 /// <returns>
-/// Class type, which can be used to create an object isntance from. Raises an
-/// EDECClassNotRegisteredException exception if the class cannot be found in
-/// the list of registered format classes.
+///   Class type, which can be used to create an object isntance from. Raises an
+///   EDECClassNotRegisteredException exception if the class cannot be found in
+///   the list of registered format classes.
 /// </returns>
+/// <exception cref="EDECClassNotRegisteredException">
+///   Exception raised if the class specified by <c>Identity</c> is not found
+/// </exception>
 function FormatByIdentity(Identity: Int64): TDECFormatClass;
 
 implementation

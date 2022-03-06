@@ -303,6 +303,72 @@ type
     procedure TestClassByName;
   end;
 
+  // Testmethods for class TCipher_AES128
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_AES128 = class(TCipherBasis)
+  strict private
+    FCipher_AES: TCipher_AES128;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+    procedure DoTestTooLargeKey;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
+  // Testmethods for class TCipher_AES192
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_AES192 = class(TCipherBasis)
+  strict private
+    FCipher_AES: TCipher_AES192;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+    procedure DoTestTooLargeKey;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
+  // Testmethods for class TCipher_AES256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_AES256 = class(TCipherBasis)
+  strict private
+    FCipher_AES: TCipher_AES256;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+    procedure DoTestTooLargeKey;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestInitialization;
+    procedure TestInitializationTooLargeKey;
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
   // Testmethods for class TCipher_Rijndael which is an alias for AES as it's
   // the original name of that algorithm
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -4480,6 +4546,360 @@ begin
   CheckEquals($F8B830A5, FCipher_Rijndael.Identity);
 end;
 
+{ TestTCipher_AES128 }
+
+procedure TestTCipher_AES128.Done;
+begin
+  FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES128.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES128;
+begin
+  Cipher := TCipher_AES128.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEFa'),RawByteString('0000000000000000'), $FF);
+    CheckEquals(10, Cipher.Rounds, 'Wrong number of rounds for AES128');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES128.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_AES.Context.KeySize);
+
+  FCipher_AES.Mode := TestData.Mode;
+  FCipher_AES.Init(BytesOf(TestData.Key),
+                   BytesOf(TestData.InitVector),
+                   TestData.Filler);
+end;
+
+procedure TestTCipher_AES128.SetUp;
+begin
+  FCipher_AES := TCipher_AES128.Create;
+
+  SetLength(FTestData, 3);
+  FTestData[0].OutputData  := '946d2b5ee0ad1b5ca523a513958b3d2d9387f3374551f6589be7901b3687f9a9';
+  FTestData[0].InputData   := TFormat_ESCAPE.Decode('\x30\x44\xED\x6E\x45\xA4' +
+                                                    '\x96\xF5\xF6\x35\xA2\xEB' +
+                                                    '\x3D\x1A\x5D\xD6\xCB\x1D' +
+                                                    '\x09\x82\x2D\xBD\xF5\x60' +
+                                                    '\xC2\xB8\x58\xA1\x91\xF9' +
+                                                    '\x81\xB1');
+
+  FTestData[0].Key        := 'TCipher_Rijndael';
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmCTSx;
+
+  // Original test vectors from Nist FIPS 197 AES standard description
+  // AES 128
+  FTestData[1].OutputData  := '69c4e0d86a7b0430d8cdb78070b4c55a';
+  FTestData[1].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[1].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f');
+  FTestData[1].InitVector := '';
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
+
+  // CBC
+  FTestData[2].OutputData  := '8859653cb4c4e4ca3add490015ac8860fa59d1e233301563b184fcca95790c8c';
+  FTestData[2].InputData   := 'abcdefghijklmnopqrstuv0123456789';
+
+  FTestData[2].Key        := TFormat_HEXL.Decode('30313233343536373839303132333435');
+  FTestData[2].InitVector := TFormat_HEXL.Decode('30313233343536373839303132333435');
+  FTestData[2].Filler     := $FF;
+  FTestData[2].Mode       := cmCBCx;
+end;
+
+procedure TestTCipher_AES128.TearDown;
+begin
+  FCipher_AES.Free;
+  FCipher_AES := nil;
+end;
+
+procedure TestTCipher_AES128.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_AES.ClassByName('TCipher_AES128');
+  CheckEquals(TCipher_AES128, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_AES128.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_AES.Context;
+
+  CheckEquals(  16,  ReturnValue.KeySize);
+  CheckEquals(  16,  ReturnValue.BlockSize);
+  CheckEquals(  16,  ReturnValue.BufferSize);
+  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_AES128.TestDecode;
+begin
+  DoTestDecode(FCipher_AES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES128.TestEncode;
+begin
+  DoTestEncode(FCipher_AES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES128.TestIdentity;
+begin
+  CheckEquals($C8F90061, FCipher_AES.Identity);
+end;
+
+procedure TestTCipher_AES128.TestInitialization;
+var
+  Cipher: TCipher_AES128;
+begin
+  Cipher := TCipher_AES128.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF'),RawByteString('0000000000000000'), $FF);
+    CheckEquals(10, Cipher.Rounds, 'Wrong number of rounds for AES128');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES128.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
+{ TestTCipher_AES192 }
+
+procedure TestTCipher_AES192.Done;
+begin
+  FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES192.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES192;
+begin
+  Cipher := TCipher_AES192.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF01234567a'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(12, Cipher.Rounds, 'Wrong number of rounds for AES192');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES192.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_AES.Context.KeySize);
+
+  FCipher_AES.Mode := TestData.Mode;
+  FCipher_AES.Init(BytesOf(TestData.Key),
+                   BytesOf(TestData.InitVector),
+                   TestData.Filler);
+end;
+
+procedure TestTCipher_AES192.SetUp;
+begin
+  FCipher_AES := TCipher_AES192.Create;
+
+  SetLength(FTestData, 1);
+
+  // AES 192
+  FTestData[0].OutputData  := 'dda97ca4864cdfe06eaf70a0ec0d7191';
+  FTestData[0].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[0].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f1011121314151617');
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmECBx;
+end;
+
+procedure TestTCipher_AES192.TearDown;
+begin
+  FCipher_AES.Free;
+  FCipher_AES := nil;
+end;
+
+procedure TestTCipher_AES192.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_AES.ClassByName('TCipher_AES192');
+  CheckEquals(TCipher_AES192, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_AES192.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_AES.Context;
+
+  CheckEquals(  24,  ReturnValue.KeySize);
+  CheckEquals(  16,  ReturnValue.BlockSize);
+  CheckEquals(  16,  ReturnValue.BufferSize);
+  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_AES192.TestDecode;
+begin
+  DoTestDecode(FCipher_AES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES192.TestEncode;
+begin
+  DoTestEncode(FCipher_AES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES192.TestIdentity;
+begin
+  CheckEquals($CBD830B4, FCipher_AES.Identity);
+end;
+
+procedure TestTCipher_AES192.TestInitialization;
+var
+  Cipher: TCipher_AES192;
+begin
+  Cipher := TCipher_AES192.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF01234567'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(12, Cipher.Rounds, 'Wrong number of rounds for AES192');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES192.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
+{ TestTCipher_AES256 }
+
+procedure TestTCipher_AES256.Done;
+begin
+  FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES256.DoTestTooLargeKey;
+var
+  Cipher: TCipher_AES256;
+begin
+  Cipher := TCipher_AES256.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF0123456789ABCDEFa'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(14, Cipher.Rounds, 'Wrong number of rounds for AES256');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES256.Init(TestData: TCipherTestData);
+begin
+  LimitKeyLength(TestData.Key, FCipher_AES.Context.KeySize);
+
+  FCipher_AES.Mode := TestData.Mode;
+  FCipher_AES.Init(BytesOf(TestData.Key),
+                   BytesOf(TestData.InitVector),
+                   TestData.Filler);
+end;
+
+procedure TestTCipher_AES256.SetUp;
+begin
+  FCipher_AES := TCipher_AES256.Create;
+
+  SetLength(FTestData, 1);
+
+  // AES 256
+  FTestData[0].OutputData  := '8ea2b7ca516745bfeafc49904b496089';
+  FTestData[0].InputData   := TFormat_HEXL.Decode('00112233445566778899aabbccddeeff');
+
+  FTestData[0].Key        := TFormat_HEXL.Decode('000102030405060708090a0b0c0d0e0f'+
+                                                 '101112131415161718191a1b1c1d1e1f');
+  FTestData[0].InitVector := '';
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmECBx;
+end;
+
+procedure TestTCipher_AES256.TearDown;
+begin
+  FCipher_AES.Free;
+  FCipher_AES := nil;
+end;
+
+procedure TestTCipher_AES256.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_AES.ClassByName('TCipher_AES256');
+  CheckEquals(TCipher_AES256, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_AES256.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_AES.Context;
+
+  CheckEquals(  32,  ReturnValue.KeySize);
+  CheckEquals(  16,  ReturnValue.BlockSize);
+  CheckEquals(  16,  ReturnValue.BufferSize);
+  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_AES256.TestDecode;
+begin
+  DoTestDecode(FCipher_AES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256.TestEncode;
+begin
+  DoTestEncode(FCipher_AES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256.TestIdentity;
+begin
+  CheckEquals($624605F8, FCipher_AES.Identity);
+end;
+
+procedure TestTCipher_AES256.TestInitialization;
+var
+  Cipher: TCipher_AES256;
+begin
+  Cipher := TCipher_AES256.Create;
+  try
+    Cipher.Init(RawByteString('0123456789ABCDEF0123456789ABCDEF'),
+                RawByteString('0000000000000000'), $FF);
+    CheckEquals(14, Cipher.Rounds, 'Wrong number of rounds for AES256');
+  finally
+    Cipher.Free;
+  end;
+end;
+
+procedure TestTCipher_AES256.TestInitializationTooLargeKey;
+begin
+  CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
 initialization
   // Register all test classes
   {$IFDEF DUnitX}
@@ -4493,6 +4913,9 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_RC4);
   TDUnitX.RegisterTestFixture(TestTCipher_RC6);
   TDUnitX.RegisterTestFixture(TestTCipher_AES);
+  TDUnitX.RegisterTestFixture(TestTCipher_AES128);
+  TDUnitX.RegisterTestFixture(TestTCipher_AES192);
+  TDUnitX.RegisterTestFixture(TestTCipher_AES256);
   TDUnitX.RegisterTestFixture(TestTCipher_Rijndael);
   TDUnitX.RegisterTestFixture(TestTCipher_Square);
   TDUnitX.RegisterTestFixture(TestTCipher_SCOP);
@@ -4531,6 +4954,9 @@ initialization
                               TestTCipher_RC4.Suite,
                               TestTCipher_RC6.Suite,
                               TestTCipher_AES.Suite,
+                              TestTCipher_AES128.Suite,
+                              TestTCipher_AES192.Suite,
+                              TestTCipher_AES256.Suite,
                               TestTCipher_Rijndael.Suite,
                               TestTCipher_Square.Suite,
                               TestTCipher_SCOP.Suite,

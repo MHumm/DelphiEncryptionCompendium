@@ -367,6 +367,19 @@ type
   TCipher_Rijndael = class(TDECFormattedCipher)
   private
     FRounds: Integer;
+    /// <summary>
+    ///   Calculates the key used for encoding. Implemented is the "new AES
+    ///   conform key scheduling".
+    /// </summary>
+    /// <param name="KeySize">
+    ///   Length of the key in byte, but here the AES variant is relevant rather
+    /// </param>
+    procedure BuildEncodeKey(KeySize:Integer); inline;
+    /// <summary>
+    ///   Calculates the key used for decoding. Implemented is the "new AES
+    ///   conform key scheduling".
+    /// </summary>
+    procedure BuildDecodeKey; inline;
   protected
     /// <summary>
     ///   Initialize the key, based on the key passed in
@@ -389,7 +402,80 @@ type
     property Rounds: Integer read FRounds;
   end;
 
+  /// <summary>
+  ///   Generic implementation. The bit length one gets depends on the length
+  ///   of the key defined via Init.
+  /// </summary>
   TCipher_AES = class(TCipher_Rijndael);
+
+  /// <summary>
+  ///   128 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 128 bit.
+  /// </exception>
+  TCipher_AES128 = class(TCipher_AES)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <summary>
+  ///   192 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 192 bit.
+  /// </exception>
+  TCipher_AES192 = class(TCipher_AES)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
+  end;
+
+  /// <summary>
+  ///   256 Bit variant of the algorithm. Specifying a longer key leads to a
+  ///   EDECCipherException exception
+  /// </summary>
+  /// <exception cref="EDECCipherException">
+  ///   Exception raised if called with a key length longer than 256 bit.
+  /// </exception>
+  TCipher_AES256 = class(TCipher_AES)
+  protected
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes.
+    /// </param>
+    procedure DoInit(const Key; Size: Integer); override;
+  public
+    class function Context: TCipherContext; override;
+  end;
 
   TCipher_Square = class(TDECFormattedCipher)
   protected
@@ -974,10 +1060,6 @@ end;
 
 { TCipher_Blowfish }
 
-type
-  PBlowfish = ^TBlowfish;
-  TBlowfish = array[0..3, 0..255] of UInt32;
-
 class function TCipher_Blowfish.Context: TCipherContext;
 begin
   Result.KeySize                     := 56;
@@ -1095,6 +1177,8 @@ begin
   B := SwapUInt32(PUInt32Array(Source)[1]);
   for I := 0 to 7 do
   begin
+    {$IFOPT Q+}The following code requires overflow checks being off!{$ENDIF}
+
     B := B xor P[0] xor (D[0, A shr 24        ] +
                          D[1, A shr 16 and $FF] xor
                          D[2, A shr  8 and $FF] +
@@ -2769,97 +2853,6 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
   end; }
 {$ENDREGION}
 
-  // New AES conform Key Scheduling
-
-  procedure BuildEncodeKey;
-  const
-    RCon: array[0..9] of UInt32 = ($01, $02, $04, $08, $10, $20, $40, $80, $1b, $36);
-  var
-    I: Integer;
-    T: UInt32;
-    P: PUInt32Array;
-  begin
-    P := FAdditionalBuffer;
-    if Size <= 16 then
-    begin
-      for I := 0 to 9 do
-      begin
-        T := P[3];
-        P[4] := Rijndael_S[0, T shr  8 and $FF]        xor
-                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                Rijndael_S[0, T shr 24        ] shl 16 xor
-                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-        P[5] := P[1] xor P[4];
-        P[6] := P[2] xor P[5];
-        P[7] := P[3] xor P[6];
-        P    := @P[4];
-      end;
-    end
-    else
-      if Size <= 24 then
-      begin
-        for I := 0 to 7 do
-        begin
-          T := P[5];
-          P[6] := Rijndael_S[0, T shr  8 and $FF]        xor
-                  Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                  Rijndael_S[0, T shr 24        ] shl 16 xor
-                  Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-          P[7] := P[1] xor P[6];
-          P[8] := P[2] xor P[7];
-          P[9] := P[3] xor P[8];
-          if I = 7 then
-            Break;
-          P[10] := P[4] xor P[9];
-          P[11] := P[5] xor P[10];
-          P     := @P[6];
-        end;
-      end
-      else
-      begin
-        for I :=0 to 6 do
-        begin
-          T := P[7];
-          P[8] := Rijndael_S[0, T shr  8 and $FF]        xor
-                  Rijndael_S[0, T shr 16 and $FF] shl  8 xor
-                  Rijndael_S[0, T shr 24        ] shl 16 xor
-                  Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RCon[I];
-          P[9] := P[1] xor P[8];
-          P[10] := P[2] xor P[9];
-          P[11] := P[3] xor P[10];
-          if I = 6 then
-            Break;
-          T := P[11];
-          P[12] := Rijndael_S[0, T        and $FF]        xor
-                   Rijndael_S[0, T shr  8 and $FF] shl  8 xor
-                   Rijndael_S[0, T shr 16 and $FF] shl 16 xor
-                   Rijndael_S[0, T shr 24        ] shl 24 xor P[4];
-          P[13] := P[5] xor P[12];
-          P[14] := P[6] xor P[13];
-          P[15] := P[7] xor P[14];
-          P     := @P[8];
-        end;
-      end;
-  end;
-
-  procedure BuildDecodeKey;
-  var
-    P: PUInt32;
-    I: Integer;
-  begin
-    P := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1); // for Pointer Math
-    Move(FAdditionalBuffer^, P^, FAdditionalBufferSize shr 1);
-    Inc(P, 4);
-    for I := 0 to FRounds * 4 - 5 do
-    begin
-      P^ := Rijndael_T[4, Rijndael_S[0, P^        and $FF]] xor
-            Rijndael_T[5, Rijndael_S[0, P^ shr  8 and $FF]] xor
-            Rijndael_T[6, Rijndael_S[0, P^ shr 16 and $FF]] xor
-            Rijndael_T[7, Rijndael_S[0, P^ shr 24        ]];
-      Inc(P);
-    end;
-  end;
-
 begin
   if Size <= 16 then
     FRounds := 10
@@ -2870,10 +2863,97 @@ begin
     FRounds := 14;
   FillChar(FAdditionalBuffer^, 32, 0);
   Move(Key, FAdditionalBuffer^, Size);
-  BuildEncodeKey;
+  BuildEncodeKey(Size);
   BuildDecodeKey;
 
   inherited;
+end;
+
+procedure TCipher_Rijndael.BuildEncodeKey(KeySize:Integer);
+var
+  I: Integer;
+  T: UInt32;
+  P: PUInt32Array;
+begin
+  P := FAdditionalBuffer;
+  if KeySize <= 16 then
+  begin
+    for I := 0 to 9 do
+    begin
+      T := P[3];
+      P[4] := Rijndael_S[0, T shr  8 and $FF]        xor
+              Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+              Rijndael_S[0, T shr 24        ] shl 16 xor
+              Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+      P[5] := P[1] xor P[4];
+      P[6] := P[2] xor P[5];
+      P[7] := P[3] xor P[6];
+      P    := @P[4];
+    end;
+  end
+  else
+    if KeySize <= 24 then
+    begin
+      for I := 0 to 7 do
+      begin
+        T := P[5];
+        P[6] := Rijndael_S[0, T shr  8 and $FF]        xor
+                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+                Rijndael_S[0, T shr 24        ] shl 16 xor
+                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+        P[7] := P[1] xor P[6];
+        P[8] := P[2] xor P[7];
+        P[9] := P[3] xor P[8];
+        if I = 7 then
+          Break;
+        P[10] := P[4] xor P[9];
+        P[11] := P[5] xor P[10];
+        P     := @P[6];
+      end;
+    end
+    else
+    begin
+      for I :=0 to 6 do
+      begin
+        T := P[7];
+        P[8] := Rijndael_S[0, T shr  8 and $FF]        xor
+                Rijndael_S[0, T shr 16 and $FF] shl  8 xor
+                Rijndael_S[0, T shr 24        ] shl 16 xor
+                Rijndael_S[0, T        and $FF] shl 24 xor P[0] xor RijndaelEncryptionSheduleConst[I];
+        P[9] := P[1] xor P[8];
+        P[10] := P[2] xor P[9];
+        P[11] := P[3] xor P[10];
+        if I = 6 then
+          Break;
+        T := P[11];
+        P[12] := Rijndael_S[0, T        and $FF]        xor
+                 Rijndael_S[0, T shr  8 and $FF] shl  8 xor
+                 Rijndael_S[0, T shr 16 and $FF] shl 16 xor
+                 Rijndael_S[0, T shr 24        ] shl 24 xor P[4];
+        P[13] := P[5] xor P[12];
+        P[14] := P[6] xor P[13];
+        P[15] := P[7] xor P[14];
+        P     := @P[8];
+      end;
+    end;
+end;
+
+procedure TCipher_Rijndael.BuildDecodeKey;
+var
+  P: PUInt32;
+  I: Integer;
+begin
+  P := Pointer(PByte(FAdditionalBuffer) + FAdditionalBufferSize shr 1); // for Pointer Math
+  Move(FAdditionalBuffer^, P^, FAdditionalBufferSize shr 1);
+  Inc(P, 4);
+  for I := 0 to FRounds * 4 - 5 do
+  begin
+    P^ := Rijndael_T[4, Rijndael_S[0, P^        and $FF]] xor
+          Rijndael_T[5, Rijndael_S[0, P^ shr  8 and $FF]] xor
+          Rijndael_T[6, Rijndael_S[0, P^ shr 16 and $FF]] xor
+          Rijndael_T[7, Rijndael_S[0, P^ shr 24        ]];
+    Inc(P);
+  end;
 end;
 
 procedure TCipher_Rijndael.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -3006,6 +3086,105 @@ begin
                           Rijndael_S[1, C2 shr  8 and $FF] shl  8 or
                           Rijndael_S[1, B2 shr 16 and $FF] shl 16 or
                           Rijndael_S[1, A2 shr 24]         shl 24)    xor P[3];
+end;
+
+{ TCipher_AES128 }
+
+class function TCipher_AES128.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 16;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+procedure TCipher_AES128.DoInit(const Key; Size: Integer);
+begin
+  // number of rounds is fixed for 128 bit and if a size > 16 is given the
+  // inherited call should raise the "key material too large" exception.
+  // but that has still to be tested!
+  FRounds := 10;
+
+  FillChar(FAdditionalBuffer^, 32, 0);
+  Move(Key, FAdditionalBuffer^, Size);
+  BuildEncodeKey(Size);
+  BuildDecodeKey;
+
+  inherited;
+end;
+
+{ TCipher_AES192 }
+
+class function TCipher_AES192.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 24;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+procedure TCipher_AES192.DoInit(const Key; Size: Integer);
+begin
+  // number of rounds is fixed for 192 bit and if a size > 24 is given the
+  // inherited call should raise the "key material too large" exception.
+  // but that has still to be tested!
+  FRounds := 12;
+
+  FillChar(FAdditionalBuffer^, 32, 0);
+  Move(Key, FAdditionalBuffer^, Size);
+  BuildEncodeKey(Size);
+  BuildDecodeKey;
+
+  inherited;
+end;
+
+{ TCipher_AES256 }
+
+class function TCipher_AES256.Context: TCipherContext;
+const
+  // don't change this!
+  Rijndael_Blocks =  4;
+  Rijndael_Rounds = 14;
+begin
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := Rijndael_Blocks * 4;
+  Result.BufferSize                  := Rijndael_Blocks * 4;
+  Result.AdditionalBufferSize        := (Rijndael_Rounds + 1) * Rijndael_Blocks * SizeOf(UInt32) * 2;
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctBlock];
+end;
+
+procedure TCipher_AES256.DoInit(const Key; Size: Integer);
+begin
+  // number of rounds is fixed for 256 bit and if a size > 32 is given the
+  // inherited call should raise the "key material too large" exception.
+  // but that has still to be tested!
+  FRounds := 14;
+
+  FillChar(FAdditionalBuffer^, 32, 0);
+  Move(Key, FAdditionalBuffer^, Size);
+  BuildEncodeKey(Size);
+  BuildDecodeKey;
+
+  inherited;
 end;
 
 { TCipher_Square }
@@ -6621,6 +6800,9 @@ initialization
 // more common name
 //  TCipher_Rijndael.RegisterClass(TDECCipher.ClassList);
   TCipher_AES.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES128.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES192.RegisterClass(TDECCipher.ClassList);
+  TCipher_AES256.RegisterClass(TDECCipher.ClassList);
   TCipher_Square.RegisterClass(TDECCipher.ClassList);
   TCipher_SCOP.RegisterClass(TDECCipher.ClassList);
   TCipher_Sapphire.RegisterClass(TDECCipher.ClassList);

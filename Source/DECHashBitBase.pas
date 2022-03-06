@@ -35,10 +35,16 @@ uses
 
 type
   /// <summary>
+  ///   Meta class for the class containing the additional property for hashes
+  ///   supporting a last byte with less than 8 bit size.
+  /// </summary>
+  TDECHashBitClass = class of TDECHashBit;
+
+  /// <summary>
   ///   Base class for all hash algorithms which can operate on bit sized
   ///   messsages as well.
   /// </summary>
-  TDECHashBit = class(TDECHashAuthentication, IDECHashBitsized)
+  TDECHashBit = class(TDECHashExtended, IDECHashBitsized)
   strict private
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of
@@ -47,12 +53,18 @@ type
     /// <summary>
     ///   Sets the number of bits the final byte of the message consists of
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is higher than 7.
+    /// </exception>
     procedure SetFinalByteLength(const Value: UInt8);
   public
     /// <summary>
     ///   Setting this to a number of bits allows to process messages which have
     ///   a length which is not a exact multiple of bytes.
     /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is higher than 7.
+    /// </exception>
     property FinalByteLength : UInt8
       read   GetFinalByteLength
       write  SetFinalByteLength;

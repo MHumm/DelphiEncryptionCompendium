@@ -37,36 +37,39 @@ type
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormat          = DECFormatBase.TDECFormat;
+  TDECFormat            = DECFormatBase.TDECFormat;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TDECFormatClass     = DECFormatBase.TDECFormatClass;
+  TDECFormatClass       = DECFormatBase.TDECFormatClass;
   /// <summary>
   ///   wrapper (allows omitting DECFormatBase in user code)
   /// </summary>
-  TFormat_Copy        = DECFormatBase.TFormat_Copy;
+  TFormat_Copy          = DECFormatBase.TFormat_Copy;
 
-  TFormat_HEX         = class;
-  TFormat_HEXL        = class;
+  TFormat_HEX           = class;
+  TFormat_HEXL          = class;
 
-  TFormat_Base16      = class;
-  TFormat_Base16L     = class;
+  TFormat_Base16        = class;
+  TFormat_Base16L       = class;
 
-  TFormat_DECMIME32   = class;
+  TFormat_DECMIME32     = class;
 
-  TFormat_Base64      = class;
-  TFormat_MIME64      = class;
+  TFormat_Base32        = class;
 
-  TFormat_Radix64     = class;
-  TFormat_PGP         = class;
+  TFormat_Base64        = class;
+  TFormat_MIME64        = class;
 
-  TFormat_UU          = class;
-  TFormat_XX          = class;
-  TFormat_ESCAPE      = class;
+  TFormat_Radix64       = class;
+  TFormat_PGP           = class;
+  TFormat_BCryptBSD = class;
 
-  TFormat_BigEndian16 = class;
-  TFormat_BigEndian32 = class;
+  TFormat_UU            = class;
+  TFormat_XX            = class;
+  TFormat_ESCAPE        = class;
+
+  TFormat_BigEndian16   = class;
+  TFormat_BigEndian32   = class;
 
   /// <summary>
   ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
@@ -74,6 +77,9 @@ type
   TFormat_HEX = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if there is a failure in the data format.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -147,6 +153,40 @@ type
   end deprecated 'Use TFormat_DECMIME32 instead';
 
   /// <summary>
+  ///   Base32, see http://tools.ietf.org/html/rfc4648
+  /// </summary>
+  TFormat_Base32 = class(TFormat_HEX)
+  private const
+    /// <summary>
+    ///   The data will be encoded using only these chars
+    /// </summary>
+    cBase32 : RawByteString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    /// <summary>
+    ///   Char used to fill up the output when performing encoding
+    /// </summary>
+    cPaddingChar = '=';
+  private
+    /// <summary>
+    ///   Table used for decoding, initialized on first use
+    /// </summary>
+    class var FBase32DecodeTable : array [#0..'z'] of Byte;
+
+    /// <summary>
+    ///   Initializes the contents of FBase32DecodeTable, which is only required
+    ///   when DoDecode is called for the very first time.
+    /// </summary>
+    class procedure PrepareTable;
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  public
+  end;
+
+  /// <summary>
   ///   Base64 (without soft wraps), see http://tools.ietf.org/html/rfc4648
   /// </summary>
   TFormat_Base64 = class(TFormat_HEX)
@@ -209,6 +249,10 @@ type
     /// </param>
     class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the calculated CRC value does not match the one
+    ///   given in <c>Source</c>.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
 
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
@@ -220,6 +264,9 @@ type
     ///   Maximum number of chars for a single line. Values < 1 result in an
     ///   EArgumentOutOfRangeException being raised
     /// </param>
+    /// <exception cref="EArgumentOutOfRangeException">
+    ///   Exception raised if <c>Value</c> is < 1.
+    /// </exception>
     class procedure SetCharsPerLine(const Value: UInt32);
     /// <summary>
     ///   Returns the number of chars after which a line break will be introduced
@@ -241,11 +288,66 @@ type
   end deprecated 'Use TFormat_Radix64 instead';
 
   /// <summary>
+  ///   BCrypt's Radix64 variant
+  /// </summary>
+  TFormat_BCryptBSD = class(TFormat_Base64)
+  protected
+    /// <summary>
+    /// Internal method for the actual format conversion. This method needs to
+    /// be overridden in all the child classes. Converts into the format.
+    /// </summary>
+    /// <param name="Source">
+    /// Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    /// Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from source which will get converted.
+    /// </param>
+    class procedure DoEncode(const Source; var Dest: TBytes;
+      Size: Integer); override;
+    /// <summary>
+    /// Internal method for the actual format conversion. This method needs to
+    /// be overridden in all the child classes. Converts from the format into
+    /// the format the data had before encoding it.
+    /// </summary>
+    /// <param name="Source">
+    /// Data to be converted
+    /// </param>
+    /// <param name="Dest">
+    /// Into this parameter the converted data will be written into.
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from source which will get converted.
+    /// </param>
+    class procedure DoDecode(const Source; var Dest: TBytes;
+      Size: Integer); override;
+    /// <summary>
+    /// Internal method for checking whether all bytes of the data to be
+    /// processed are valid for this particular formatting. This method needs
+    /// to be overridden in all the child classes.
+    /// </summary>
+    /// <param name="Data">
+    /// Data to be checked
+    /// </param>
+    /// <param name="Size">
+    /// Number of bytes from data which will get checked.
+    /// </param>
+    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+  public  
+    class function CharTableBinary: TBytes; override;
+  end;
+
+  /// <summary>
   ///   Unix UU format
   /// </summary>
   TFormat_UU = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -266,6 +368,9 @@ type
   TFormat_ESCAPE = class(TDECFormat)
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    /// <exception cref="EDECFormatException">
+    ///   Exception raised if the format of <c>Source</c> contains invalid data.
+    /// </exception>
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
@@ -317,7 +422,8 @@ uses
   DECTypes, DECCRC; // needed by TFormat_Radix64
 
 resourcestring
-  sInvalidStringFormat  = 'Input is not an valid %s format';
+  sInvalidStringFormat   = 'Input is not an valid %s format';
+  sInvalidInputCharacter = 'Invalid character (#%d) in input';
 
 class function TFormat_HEX.CharTableBinary: TBytes;
 begin
@@ -433,7 +539,7 @@ begin
     P := TableFindBinary(S^, T, 18);
     if P < 0 then P := TableFindBinary(UpCaseBinary(S^), T, 16);
     if P < 0 then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
     Inc(S);
     if P >= 0 then
       if P > 16 then
@@ -555,71 +661,10 @@ begin
   // special and skipped chars
   // 'abcdefghijklnpqrstuwxyz123456789 =$()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13);
   SetLength(result, 53);
-  {$IF CompilerVersion >= 28.0}
   result := [$61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6E, $70,
              $71, $72, $73, $74, $75, $77, $78, $79, $7A, $31, $32, $33, $34, $35,
              $36, $37, $38, $39, $20, $3D, $24, $28, $29, $5B, $5D, $7B, $7D, $2C,
              $3B, $3A, $2D, $5F, $5C, $2A, $22, $27, $09, $0A, $0D];
-  {$ELSE}
-  // Remove this initialisation variant as soon as XE7+ is the new minimum
-  // supported Delphi version
-  result[ 0]:=$61;
-  result[ 1]:=$62;
-  result[ 2]:=$63;
-  result[ 3]:=$64;
-  result[ 4]:=$65;
-  result[ 5]:=$66;
-  result[ 6]:=$67;
-  result[ 7]:=$68;
-  result[ 8]:=$69;
-  result[ 9]:=$6A;
-  result[10]:=$6B;
-  result[11]:=$6C;
-  result[12]:=$6E;
-  result[13]:=$70;
-
-  result[14]:=$71;
-  result[15]:=$72;
-  result[16]:=$73;
-  result[17]:=$74;
-  result[18]:=$75;
-  result[19]:=$77;
-  result[20]:=$78;
-  result[21]:=$79;
-  result[22]:=$7A;
-  result[23]:=$31;
-  result[24]:=$32;
-  result[25]:=$33;
-  result[26]:=$34;
-  result[27]:=$35;
-
-  result[28]:=$36;
-  result[29]:=$37;
-  result[30]:=$38;
-  result[31]:=$39;
-  result[32]:=$20;
-  result[33]:=$3D;
-  result[34]:=$24;
-  result[35]:=$28;
-  result[36]:=$29;
-  result[37]:=$5B;
-  result[38]:=$5D;
-  result[39]:=$7B;
-  result[40]:=$7D;
-  result[41]:=$2C;
-
-  result[42]:=$3B;
-  result[43]:=$3A;
-  result[44]:=$2D;
-  result[45]:=$5F;
-  result[46]:=$5C;
-  result[47]:=$2A;
-  result[48]:=$22;
-  result[49]:=$27;
-  result[50]:=$09;
-  result[51]:=$0A;
-  result[52]:=$0D;
-  {$IFEND}
 end;
 
 class procedure TFormat_DECMIME32.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -732,7 +777,6 @@ begin
   //  ' $()[]{},;:-_\*"'''+CHR(9)+CHR(10)+CHR(13); // special and skipped chars
   SetLength(result, 85);
 
-  {$IF CompilerVersion >= 28.0}
   result := [$41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
              $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
              $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
@@ -740,101 +784,6 @@ begin
              $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $2B, $2F, $3D,
              $20, $24, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $5C, $2A, $22, $27, $09, $0A, $0D];
-  {$ELSE}
-  // Remove this initialisation variant as soon as XE7+ is the new minimum
-  // supported Delphi version
-  result[0 ]:=$41;
-  result[1 ]:=$42;
-  result[2 ]:=$43;
-  result[3 ]:=$44;
-  result[4 ]:=$45;
-  result[5 ]:=$46;
-  result[6 ]:=$47;
-  result[7 ]:=$48;
-  result[8 ]:=$49;
-  result[9 ]:=$4A;
-  result[10]:=$4B;
-  result[11]:=$4C;
-  result[12]:=$4D;
-
-  result[13]:=$4E;
-  result[14]:=$4F;
-  result[15]:=$50;
-  result[16]:=$51;
-  result[17]:=$52;
-  result[18]:=$53;
-  result[19]:=$54;
-  result[20]:=$55;
-  result[21]:=$56;
-  result[22]:=$57;
-  result[23]:=$58;
-  result[24]:=$59;
-  result[25]:=$5A;
-
-  result[26]:=$61;
-  result[27]:=$62;
-  result[28]:=$63;
-  result[29]:=$64;
-  result[30]:=$65;
-  result[31]:=$66;
-  result[32]:=$67;
-  result[33]:=$68;
-  result[34]:=$69;
-  result[35]:=$6A;
-  result[36]:=$6B;
-  result[37]:=$6C;
-  result[38]:=$6D;
-
-  result[39]:=$6E;
-  result[40]:=$6F;
-  result[41]:=$70;
-  result[42]:=$71;
-  result[43]:=$72;
-  result[44]:=$73;
-  result[45]:=$74;
-  result[46]:=$75;
-  result[47]:=$76;
-  result[48]:=$77;
-  result[49]:=$78;
-  result[50]:=$79;
-  result[51]:=$7A;
-
-  result[52]:=$30;
-  result[53]:=$31;
-  result[54]:=$32;
-  result[55]:=$33;
-  result[56]:=$34;
-  result[57]:=$35;
-  result[58]:=$36;
-  result[59]:=$37;
-  result[60]:=$38;
-  result[61]:=$39;
-  result[62]:=$2B;
-  result[63]:=$2F;
-  result[64]:=$3D;
-
-  result[65]:=$20;
-  result[66]:=$24;
-  result[67]:=$28;
-  result[68]:=$29;
-  result[69]:=$5B;
-  result[70]:=$5D;
-  result[71]:=$7B;
-  result[72]:=$7D;
-  result[73]:=$2C;
-  result[74]:=$3B;
-  result[75]:=$3A;
-  result[76]:=$2D;
-  result[77]:=$5F;
-
-  result[78]:=$5C;
-  result[79]:=$2A;
-  result[80]:=$22;
-  result[81]:=$27;
-  result[82]:=$09;
-  result[83]:=$0A;
-  result[84]:=$0D;
-  {$IFEND}
 end;
 
 class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -970,11 +919,9 @@ end;
 
 class function TFormat_Base64.DoIsValid(const Data; Size: Integer): Boolean;
 var
-  T: TBytes;
   S: PByte;
 begin
   Result := True;
-  T := CharTableBinary;
   S := @Data;
   while Result and (Size > 0) do
   begin
@@ -1326,7 +1273,7 @@ begin
   repeat
     Size := TableFindBinary(S^, T, 64);
     if (Size < 0) or (Size > 45) then
-      raise EDECException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
     Inc(S);
     while Size > 0 do
     begin
@@ -1759,26 +1706,29 @@ end;
 
 { TFormat_BigEndian32 }
 
-class procedure TFormat_BigEndian32.DoDecode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoDecode(const Source;
+                                             var Dest: TBytes;
+                                             Size: Integer);
 begin
   DoSawp(Source, Dest, Size);
 end;
 
-class procedure TFormat_BigEndian32.DoEncode(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoEncode(const Source;
+                                             var Dest: TBytes;
+                                             Size: Integer);
 begin
   DoSawp(Source, Dest, Size);
 end;
 
 class function TFormat_BigEndian32.DoIsValid(const Data;
-  Size: Integer): Boolean;
+                                             Size: Integer): Boolean;
 begin
   result := (Size mod 4) = 0;
 end;
 
-class procedure TFormat_BigEndian32.DoSawp(const Source; var Dest: TBytes;
-  Size: Integer);
+class procedure TFormat_BigEndian32.DoSawp(const Source;
+                                           var Dest: TBytes;
+                                           Size: Integer);
 var
   i       : Integer;
   SwapRes : UInt32;
@@ -1847,6 +1797,290 @@ begin
   end;
 end;
 
+{ TFormat_Base32 }
+
+class procedure TFormat_Base32.PrepareTable;
+var
+  c : Char;
+begin
+  for c := #0 to High(FBase32DecodeTable) do begin
+     case c of
+        'A'..'Z' : FBase32DecodeTable[c] := Ord(c)-Ord('A');
+        'a'..'z' : FBase32DecodeTable[c] := Ord(c)-Ord('a');
+        '2'..'7' : FBase32DecodeTable[c] := Ord(c)+(26-Ord('2'));
+        '0' : FBase32DecodeTable[c] := Ord('O')-Ord('A');
+     else
+        FBase32DecodeTable[c] := 255;
+     end;
+  end;
+end;
+
+class procedure TFormat_Base32.DoDecode(const Source;
+                                        var Dest: TBytes;
+                                        Size: Integer);
+var
+   c, b, i, n, d : Integer;
+   pIn : PByte;
+   pOut : PByte;
+begin
+  if (Pointer(Source) = nil) then
+  begin
+    SetLength(Dest, 0);
+    Exit;
+  end;
+
+  if (FBase32DecodeTable['z'] = 0) then
+    PrepareTable;
+
+  n := Size;
+  SetLength(Dest, ((n div 8)+1)*5);
+  pIn := @Source;
+  pOut := @Dest[0];
+  c := 0;
+  b := 0;
+  for i := 0 to n-1 do
+  begin
+    d := FBase32DecodeTable[Chr(pIn^)];
+    if d = 255 then
+    begin
+      if (Chr(pIn^) = '=') then break;
+      raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
+    end;
+
+    c := (c shl 5) or d;
+    Inc(b, 5);
+    if b >= 8 then
+    begin
+      Dec(b, 8);
+      pOut^ := Lo(c shr b);
+      Inc(pOut);
+    end;
+
+    Inc(pIn);
+  end;
+  n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
+  SetLength(Dest, n);
+end;
+
+class procedure TFormat_Base32.DoEncode(const Source;
+                                        var Dest: TBytes;
+                                        Size: Integer);
+var
+   i, n, c, b : Integer;
+   pIn : PByteArray;
+   pOut : PByte;
+   PadChars : UInt8;
+begin
+  if (Size = 0) or (Pointer(Source) = nil) then
+  begin
+    SetLength(Dest, 0);
+    Exit;
+  end;
+
+  SetLength(Dest, ((Size div 5)+1)*8);
+  c := 0;
+  b := 0;
+  pIn := @Source;
+  pOut := @Dest[0];
+  for i := 0 to Size-1 do
+  begin
+    c := (c shl 8) or pIn[i];
+    Inc(b, 8);
+    while b >= 5 do
+    begin
+      Dec(b, 5);
+      pOut^ := Byte(cBase32[((c shr b) and $1F)+Low(string)]);
+      Inc(pOut);
+    end;
+  end;
+
+  if b > 0 then
+  begin
+    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+Low(string)]);
+    Inc(pOut);
+  end;
+
+  // Calculate the length of chars needed to encode the data
+  n := (NativeUInt(pOut) - NativeUInt(@Dest[0]));
+
+  case Size mod 5 of
+    1: PadChars := 6;
+    2: PadChars := 4;
+    3: PadChars := 3;
+    4: PadChars := 1;
+  else
+    PadChars := 0;
+  end;
+
+  FillChar(Dest[n], PadChars, cPaddingChar);
+  SetLength(Dest, n+PadChars);
+end;
+
+class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  S: PByte;
+begin
+  Result := True;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // A-Z, 2-7
+    if S^ in [$41..$5A, $32..$37, $3D] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
+end;
+
+{ TFormat_Radix64BCrypt }
+
+class function TFormat_BCryptBSD.CharTableBinary: TBytes;
+begin
+  // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+  SetLength(result, 64);
+
+  result := [$2E, $2F,
+             $41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
+             $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
+             $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
+             $6E, $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A,
+             $30, $31, $32, $33, $34, $35, $36, $37, $38, $39];
+end;
+
+class procedure TFormat_BCryptBSD.DoDecode(const Source;
+                                           var Dest: TBytes;
+                                           Size: Integer);
+const
+  BT: array[0..127] of shortint = (
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0,  1,
+        54, 55, 56, 57, 58, 59, 60, 61, 62, 63, -1, -1, -1, -1, -1, -1,
+        -1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1, -1, -1,
+        -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+        43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1);
+
+var
+  Src : PByte;
+  c1, c2, c3, c4: Integer;
+
+  function GetNextByte: integer;
+  var
+    b: UInt8;
+  begin
+    Result := -1;
+    if (Size > 0) then
+    begin
+      b := Src^;
+      Inc(Src);
+      Dec(Size);
+      if (b < 128) then
+        Result := BT[b];
+    end;
+  end;
+
+  procedure SetNextByte(b: Integer);
+  begin
+    // Put next byte into pdest if LA<ldest, inc LA and pdest
+    Dest := Dest + [byte(b and $ff)];
+  end;
+
+begin
+  Src := @Source;
+
+  if (Src = nil) or (Size < 1) then
+    exit;
+
+  while Size > 0 do
+  begin
+    c1 := GetNextByte;
+    if (c1 < 0) then exit;
+    c2 := GetNextByte;
+    if (c2 < 0) then exit;
+    SetNextByte(((c1 and $3f) shl 2) or (c2 shr 4));
+
+    c3 := GetNextByte;
+    if (c3 < 0) then exit;
+    SetNextByte(((c2 and $0f) shl 4) or (c3 shr 2));
+
+    c4 := GetNextByte;
+    if (c4 < 0) then exit;
+    SetNextByte(((c3 and $03) shl 6) or c4);
+  end;
+end;
+
+class procedure TFormat_BCryptBSD.DoEncode(const Source;
+                                           var Dest: TBytes;
+                                           Size: Integer);
+var
+  CT64  : TBytes;
+  c1,c2 : UInt16;
+  Src   : PByte;
+begin
+  CT64 := CharTableBinary;
+  Src := @Source;
+  if (@Src <> nil) then
+  begin
+    while (Size > 0) do
+    begin
+      c1 := Src^;
+      inc(Src);
+      dec(Size);
+
+      Dest := Dest + [CT64[(c1 shr 2) and $3f]];
+      c1 := (c1 and $03) shl 4;
+      if (Size <= 0) then
+        Dest := Dest + [CT64[c1 and $3f]]
+      else
+      begin
+        c2 := Src^;
+        inc(Src);
+        dec(Size);
+
+        c1 := c1 or ((c2 shr 4) and $0f);
+        Dest := Dest + [CT64[c1 and $3f]];
+        c1 := (c2 and $0f) shl 2;
+
+        if (Size <= 0) then
+          Dest := Dest + [CT64[c1 and $3f]]
+        else
+        begin
+          c2 := Src^;
+          inc(Src);
+          dec(Size);
+
+          c1 := c1 or ((c2 shr 6) and $03);
+          Dest := Dest + [CT64[c1 and $3f]] + [CT64[c2 and $3f]];
+        end;
+      end;
+    end;
+  end;
+end;
+
+class function TFormat_BCryptBSD.DoIsValid(const Data;
+  Size: Integer): Boolean;
+var
+  S: PByte;
+begin
+  Result := True;
+  S := @Data;
+  while Result and (Size > 0) do
+  begin
+    // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+    if S^ in [$41..$5A, $61..$7A, $2E..$39] then
+    begin
+      Inc(S);
+      Dec(Size);
+    end
+    else
+      Result := False;
+  end;
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -1871,8 +2105,10 @@ initialization
     TFormat_HEX.RegisterClass(TDECFormat.ClassList);
     TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
     TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
+    TFormat_Base32.RegisterClass(TDECFormat.ClassList);
     TFormat_Base64.RegisterClass(TDECFormat.ClassList);
     TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
+    TFormat_BCryptBSD.RegisterClass(TDECFormat.ClassList);
     TFormat_UU.RegisterClass(TDECFormat.ClassList);
     TFormat_XX.RegisterClass(TDECFormat.ClassList);
     TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);

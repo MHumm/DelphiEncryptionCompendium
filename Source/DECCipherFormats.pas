@@ -31,6 +31,12 @@ uses
 
 type
   /// <summary>
+  ///   Class type of the cipher base class which adds the additional Calc
+  ///   variants for additional data types.
+  /// </summary>
+  TDECFormattedCipherClass = class of TDECFormattedCipher;
+
+  /// <summary>
   ///   Class in which the various encode/decode variants provided have been
   ///   moved in order to keep the base cipher class small and clean.
   /// </summary>
@@ -94,6 +100,10 @@ type
     /// <returns>
     ///   Byte array with encrypted data
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeBytes(const Source: TBytes): TBytes;
 
     /// <summary>
@@ -108,6 +118,10 @@ type
     /// <returns>
     ///   Byte array with decrypted data
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeBytes(const Source: TBytes): TBytes;
 
     /// <summary>
@@ -128,6 +142,10 @@ type
     /// <param name="OnProgress">
     ///   optional callback for reporting progress of the operation
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     procedure EncodeStream(const Source, Dest: TStream; DataSize: Int64;
                            const OnProgress: TDECProgressEvent = nil);
 
@@ -149,6 +167,10 @@ type
     /// <param name="OnProgress">
     ///   optional callback for reporting progress of the operation
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     procedure DecodeStream(const Source, Dest: TStream; DataSize: Int64;
                            const OnProgress: TDECProgressEvent = nil);
 
@@ -168,6 +190,10 @@ type
     ///   Optional event which can be passed to get information about the
     ///   progress of the encryption operation
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     procedure EncodeFile(const SourceFileName, DestFileName: string;
                          const OnProgress: TDECProgressEvent = nil);
 
@@ -187,6 +213,10 @@ type
     ///   Optional event which can be passed to get information about the
     ///   progress of the decryption operation
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     procedure DecodeFile(const SourceFileName, DestFileName: string;
                          const OnProgress: TDECProgressEvent = nil);
 
@@ -209,6 +239,10 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToBytes(const Source: string;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -231,6 +265,10 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToBytes(const Source: RawByteString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -260,6 +298,10 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToString(const Source: string;
                                   Format: TDECFormatClass = nil): string; overload;
 
@@ -289,6 +331,10 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToString(const Source: RawByteString;
                                   Format: TDECFormatClass = nil): RawByteString; overload;
 
@@ -311,6 +357,10 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToBytes(const Source: string;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -333,6 +383,10 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToBytes(const Source: RawByteString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -360,6 +414,10 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by Unicode string processing in some hafrmful way
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToString(const Source: string;
                                   Format: TDECFormatClass = nil): string; overload;
 
@@ -387,6 +445,10 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToString(const Source: RawByteString;
                                   Format: TDECFormatClass = nil): RawByteString; overload;
 
@@ -410,6 +472,10 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToBytes(const Source: AnsiString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -439,6 +505,10 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToString(const Source: AnsiString;
                                   Format: TDECFormatClass = nil): AnsiString; overload;
 
@@ -461,6 +531,10 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToBytes(const Source: AnsiString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -488,6 +562,10 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToString(const Source: AnsiString;
                                   Format: TDECFormatClass = nil): AnsiString; overload;
 {$ENDIF}
@@ -512,6 +590,10 @@ type
     /// <returns>
     ///   Encrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToBytes(const Source: WideString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -541,6 +623,10 @@ type
     ///   byte combinations in a destructive way, making the encrypted string
     ///   un-decryptable.
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeStringToString(const Source: WideString;
                                   Format: TDECFormatClass = nil): WideString; overload;
 
@@ -563,6 +649,10 @@ type
     /// <returns>
     ///   Decrypted string as a byte array
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToBytes(const Source: WideString;
                                  Format: TDECFormatClass = nil): TBytes; overload;
 
@@ -590,6 +680,10 @@ type
     ///   which uses an 7-bit ASCII compatible string as input so that it
     ///   didn't get altered by string processing in some hafrmful way
     /// </remarks>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeStringToString(const Source: WideString;
                                   Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}

@@ -80,7 +80,7 @@ type
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,
   ///   at least on paper.
   /// </summary>
-  THash_MD2 = class(TDECHashAuthentication)
+  THash_MD2 = class(TDECHashExtended)
   private
     FDigest: array[0..63] of Byte;
   protected
@@ -97,7 +97,7 @@ type
   ///   Base class for the MD4 hash alrogithm and for other hash-algorithms which
   ///   are close relatives to the MD4 algorithm like the RipeMD ones.
   /// </summary>
-  THashBaseMD4 = class(TDECHashAuthentication)
+  THashBaseMD4 = class(TDECHashExtended)
   private
     FDigest: array[0..9] of UInt32;
   protected
@@ -227,7 +227,7 @@ type
   /// <summary>
   ///   This algorithm is part of the SHA2 series of hash algorithms.
   /// </summary>
-  THash_SHA384 = class(TDECHashAuthentication)
+  THash_SHA384 = class(TDECHashExtended)
   private
     FDigest: array[0..7] of Int64;
   protected
@@ -367,6 +367,10 @@ type
     ///   Raises an EDECHashEception when DataBit len not divideable by 8 without
     ///   reminder or when already in squeezin state.
     /// </remarks>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if DataBit len not divideable by 8 without
+    ///   reminder or when already in squeezin state.
+    /// </exception>
     procedure Absorb(Data: PBABytes; DatabitLen: Int32);
 
     /// <summary>
@@ -455,6 +459,9 @@ type
     /// <returns>
     ///   0 if successful, 1 otherwise.
     /// </returns>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>OutputLength</c> is not a multiple of 8
+    /// </exception>
     procedure Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
     /// <summary>
     ///   The algorithm starts in the absorb phase (one puts data into the sponge)
@@ -527,6 +534,9 @@ type
     ///   xored with the message blocks and when extracting the resulting hash,
     ///   stays untouched.
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if invalid parameter values are specified.
+    /// </exception>
     procedure InitSponge(Rate, Capacity: UInt16);
 
     /// <summary>
@@ -625,6 +635,9 @@ type
     /// <param name="Value">
     ///   Length of the hash value to be returned in byte
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is 0.
+    /// </exception>
     procedure SetHashSize(const Value: UInt16);
   public
     /// <summary>
@@ -669,7 +682,7 @@ type
   /// <summary>
   ///   Base class for all Haval implementations
   /// </summary>
-  THashBaseHaval = class(TDECHashAuthentication, IDECHashRounds)
+  THashBaseHaval = class(TDECHashExtended, IDECHashRounds)
   private
     FDigest: array[0..7] of UInt32;
       /// <summary>
@@ -805,7 +818,7 @@ type
   ///   The Panama algorithm is being considered to be unsafe. Support is only
   ///   being provided for backward compatibility.
   /// </summary>
-  THash_Panama = class(TDECHashAuthentication)
+  THash_Panama = class(TDECHashExtended)
   private
     FLFSRBuffer: array[0..31, 0..7] of UInt32;
     FDigest: array[0..16] of UInt32;
@@ -821,7 +834,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THashBaseWhirlpool = class(TDECHashAuthentication)
+  THashBaseWhirlpool = class(TDECHashExtended)
   private
     FDigest: array[0..15] of UInt32;
     FTableC: Pointer;
@@ -903,7 +916,7 @@ type
   THash_Whirlpool1 = class(THash_Whirlpool1_);
   {$ENDIF}
 
-  THash_Square = class(TDECHashAuthentication)
+  THash_Square = class(TDECHashExtended)
   private
     FDigest: array[0..3] of UInt32;
   protected
@@ -920,7 +933,7 @@ type
   ///   This 1990 developed hash function was named after the Egyptian Pharaoh
   ///   Sneferu. Be sure to set SecurityLevel to at least 8. See remark there.
   /// </summary>
-  THashBaseSnefru = class(TDECHashAuthentication, IDECHashRounds)
+  THashBaseSnefru = class(TDECHashExtended, IDECHashRounds)
   private
     FDigest: array[0..23] of UInt32;
     /// <summary>
@@ -984,7 +997,7 @@ type
     class function BlockSize: UInt32; override; // 32
   end;
 
-  THash_Sapphire = class(TDECHashAuthentication)
+  THash_Sapphire = class(TDECHashExtended)
   private
     FCards: array[0..255] of UInt32;
     FDigest: array[0..15] of UInt32;
@@ -1036,13 +1049,316 @@ type
       write  SetDigestSize;
   end;
 
-implementation
+  /// <summary>
+  ///   Implementation of the bcrypt password hash algorithm. Maximum password
+  ///   length is 72 byte. When encoding typed in passwords in UTF8 that can mean
+  ///   18 chars in worst case of all typed chars being encoded in 4 byte each
+  /// </summary>
+  THash_BCrypt = class(TDECPasswordHash)
+  private
+    type
+      TBFBlock   = packed array[0..7]  of UInt8;
+      PBFBlock   = ^TBFBlock;
 
-uses
-  DECData, DECDataHash;
+      TBCDigest  = packed array[0..23] of byte;
+
+      TBF2Long   = packed record
+                     L,R: UInt32;
+                   end;
+
+      /// <summary>
+      ///   user supplied IncCTR proc
+      /// </summary>
+      TBFIncProc = procedure(var CTR: TBFBlock);
+
+      TBFContext = packed record
+                     /// <summary>
+                     ///   key dependend SBox: 0..3, 0..255
+                     /// </summary>
+                     SBox    : TBlowfishMatrix;
+                     /// <summary>
+                     ///   key dependend PArray
+                     /// </summary>
+                     PArray  : TBlowfishKey;
+                     /// <summary>
+                     ///   InitVector or CTR
+                     /// </summary>
+                     IV      : TBFBlock;
+                     /// <summary>
+                     ///  Working buffer
+                     /// </summary>
+                     buf     : TBFBlock;
+                     /// <summary>
+                     ///   Bytes used in buf
+                     /// </summary>
+                     bLen    : UInt16;
+                     /// <summary>
+                     ///   Bit 1: Short block
+                     /// </summary>
+                     Flag    : UInt16;
+                     /// <summary>
+                     ///   Increment proc CTR-Mode
+                     /// </summary>
+                     IncProc : TBFIncProc;
+                   end;
+
+      /// <summary>
+      ///   Parts of the BSD/Crypt style password storage for BCrypt
+      /// </summary>
+      TBCryptBSDData = record
+        /// <summary>
+        ///   Algorithm ID
+        /// </summary>
+        ID       : string;
+        /// <summary>
+        ///   Salt in Crypt encoding
+        /// </summary>
+        Salt     : string;
+        /// <summary>
+        ///   Cost factor
+        /// </summary>
+        Cost     : string;
+      end;
+
+      var
+        /// <summary>
+        ///   The calculated hash value
+        ///   Should have been 192 bit = 24 byte, but original author's
+        ///   imnplementation had a flaw not returning the last byte, which has
+        ///   been kept instead of fixing it. Thus DigestSize returns 23 instead
+        ///   of 24!
+        /// </summary>
+        FDigest  : array[0..23] of Byte;
+        /// <summary>
+        ///   Context with the working data used by all the initialization and
+        ///   calculation methods
+        /// </summary>
+        FContext : TBFContext;
+        /// <summary>
+        ///   Cost factor which might be used to adapt the algorithm to increased
+        ///   processing power.
+        /// </summary>
+        FCost   : UInt8;
+    /// <summary>
+    ///   Sets the cost factor. Throws an EDECHashException when a value of 0
+    ///   is to be set.
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>Value</c> is lower than <c>MinCost</c> or
+    ///   higher than <c>MaxCost</c>.
+    /// </exception>
+    procedure SetCost(const Value: UInt8);
+    /// <summary>
+    ///   Special setup for the bcrypt variant of the blowfish implementation.
+    ///   Designed to be unavoidably slow.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password from which the salt shall be calculated
+    /// </param>
+    /// <param name="PasswordSize">
+    ///    Length of the password in byte
+    /// </param>
+    procedure EksBlowfishSetup(var Password: TBytes;
+                               PasswordSize: Integer);
+    /// <summary>
+    ///   Expensive key setup for Blowfish
+    /// </summary>
+    /// <param name="Salt">
+    ///   Needed as parameter here as something else than FSalt has to be
+    ///   passed sometimes.
+    /// </param>
+    /// <param name="Password">
+    ///   Password from which the salt shall be calculated
+    /// </param>
+    /// <param name="PasswordSize">
+    ///    Length of the password in byte
+    /// </param>
+    procedure Expandkey(Salt         : TBytes;
+                        var Password : TBytes;
+                        PasswordSize : Integer);
+    /// <summary>
+    ///   Encrypt one block (in ECB mode)
+    /// </summary>
+    procedure BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
+    /// <summary>
+    ///   xors two blocks and returns the result in a 3rd one result in third
+    /// </summary>
+    /// <param name="B1">
+    ///   1st block to xor
+    /// </param>
+    /// <param name="B2">
+    ///   2nd block to xor
+    /// </param>
+    /// <param name="B3">
+    ///   Block to store the result in
+    /// </param>
+    procedure BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
+
+    /// <summary>
+    ///   Splits a given Crypt/BSD style password record into its parts
+    /// </summary>
+    /// <param name="Vector">
+    ///   Data to split
+    /// </param>
+    /// <param name="SplittedData">
+    ///   Data splitted in ID, Cost and Salt
+    /// </param>
+    /// <returns>
+    ///   true if splitting resulted in the right number of parts,
+    ///   otherwise false
+    /// </returns>
+    function SplitTestVector(const Vector     : string;
+                             var SplittedData : TBCryptBSDData):Boolean;
+  strict protected
+    procedure DoInit; override;
+    procedure DoTransform(Buffer: PUInt32Array); override;
+    procedure DoDone; override;
+
+    {$Region CryptFormat}
+    /// <summary>
+    ///   Returns the ID code for Crypt/BSD like storing of passwords.
+    /// </summary>
+    /// <returns>
+    ///   A Crypt/BSD ID
+    /// </returns>
+    class function GetCryptID:string; override;
+
+    /// <summary>
+    ///   Returns the parameters required for the crypt-like password storing
+    ///   in that format.
+    /// </summary>
+    /// <param name="Params">
+    ///   In case of BCrypt this has to be the numeric integer value of "Cost".
+    ///   This method will ensure it is prefixed with 0 when having too few chars
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    function GetCryptParams(const Params : string;
+                            Format : TDECFormatClass):string; override;
+    /// <summary>
+    ///   Returns the hash required for the crypt-like password storing
+    ///   in that format. If a salt etc. is needed that needs to be specified
+    ///   before calling this method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password entered which shall be hashed.
+    /// </param>
+    /// <param name="Params">
+    ///   In case of BCrypt this has to be the numeric integer value of "Cost"
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation in binary raw format,
+    ///   means not Radix64 encoded or so.
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value
+    /// </returns>
+    function GetCryptHash(const Password : string;
+                          const Params   : string;
+                          const Salt     : TBytes;
+                          Format         : TDECFormatClass):string; override;
+    {$EndRegion}
+  public
+    /// <summary>
+    ///   Initialize internal fields
+    /// </summary>
+    constructor Create; override;
+    /// <summary>
+    ///   Returns the maximum supported length of the salt value in byte
+    /// </summary>
+    function MaxSaltLength:UInt8; override;
+    /// <summary>
+    ///   Returns the minimum supported length of the salt value in byte
+    /// </summary>
+    function MinSaltLength:UInt8; override;
+    /// <summary>
+    ///   Returns the maximum length of a user supplied password given for the
+    ///   algorithm in byte
+    /// </summary>
+    /// <remarks>
+    ///   For BCrypt version "2a" it is specified that the password ends with a
+    ///   null-terminator, which will be added internally in our implementation
+    /// </remarks>
+    class function MaxPasswordLength:UInt8; override;
+    /// <summary>
+    ///   Returns the minimum allowed value for the Cost property
+    /// </summary>
+    function MinCost:UInt8;
+    /// <summary>
+    ///   Returns the maximum allowed value for the Cost property
+    /// </summary>
+    function MaxCost:UInt8;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean; override;
+
+    /// <summary>
+    ///   Processes one chunk of data to be hashed.
+    /// </summary>
+    /// <param name="Data">
+    ///   Data on which the hash value shall be calculated on
+    /// </param>
+    /// <param name="DataSize">
+    ///   Size of the data in bytes
+    /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if <c>DataSize</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
+    procedure Calc(const Data; DataSize: Integer); override;
+
+    function Digest: PByteArray; override;
+    class function DigestSize: UInt32; override;
+    class function BlockSize: UInt32; override;
+
+    /// <summary>
+    ///   Defines the cost factor of the calculation. Real factor will be 2^Cost.
+    ///   This is used to adapt to increasing CPU power and must be stored along
+    ///   with the hash value and salt to be able to verify a password against it.
+    ///   Value must be between 4 and 31, other values will raise a
+    ///   EDECHashException
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if a value outside of the range 4..31 is given.
+    /// </exception>
+    property Cost: UInt8
+      read   FCost
+      write  SetCost;
+  end;
+
+implementation
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
+
+uses
+  DECData, DECDataHash;
 
 {$IFDEF X86ASM}
   {$DEFINE INCLUDED} // allows having the DECHash.inc in the IDE's project manager
@@ -1086,17 +1402,35 @@ resourcestring
   /// <summary>
   ///   Failure message when a hash algorithm is initialized with wrong parameters
   /// </summary>
-  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters specified: %1:s';
+  sHashInitFailure   = 'Invalid %0:s algorithm initialization parameters '+
+                       'specified: %1:s';
   /// <summary>
   ///   Failure message when absorb is callt with a bitlength not divideable by 8
   ///   without reminder or when it is called while already in squeezing state
   /// </summary>
-  sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. Bits: %0:d, '+
-                       'Squeezing: %1:s';
+  sSHA3AbsorbFailure = 'Absorb: number of bits mod 8 <> 0 or squeezing active. '+
+                       'Bits: %0:d, Squeezing: %1:s';
   /// <summary>
-  ///   Part of the failure message shown when setting HashSize of Shake algorithms to 0
+  ///   Part of the failure message shown when setting HashSize of Shake
+  ///   algorithms to 0.
   /// </summary>
   sHashOutputLength0 = 'HashSize must not be 0';
+  /// <summary>
+  ///   Some password hash algorithms have a cost factor to be able to adopt
+  ///   them to increasing CPU power. This text is the exception message when
+  ///   the user specifies 0 for this.
+  /// </summary>
+  sCostFactorInvalid = 'Specified cost factor must be in the range of %0:d-%1:d';
+  /// <summary>
+  ///   Exception message for password hashes when a too long password is specified
+  /// </summary>
+  sPasswordTooLong   = 'Password to be hashed is too long. Max. length: %0:d bytes';
+  /// <summary>
+  ///   Exception message for password hashes requiring a salt when a salt value
+  ///   which is either too short or too long has been specified
+  /// </summary>
+  sWrongSaltLength   = 'Length of specified salt value must be between %0:d '+
+                       'and %1:d bytes';
 
 { THash_MD2 }
 
@@ -4765,6 +5099,355 @@ begin
     Move(Digest^, Result[0], Length(Result));
 end;
 
+{ THash_BCrypt }
+
+class function THash_BCrypt.BlockSize: UInt32;
+begin
+  Result := 8;
+end;
+
+procedure THash_BCrypt.Calc(const Data; DataSize: Integer);
+const
+  ctext: TBCDigest = ($4F,$72,$70,$68,$65,$61,$6E,$42, {'OrpheanBeholderScryDoubt'}
+                      $65,$68,$6F,$6C,$64,$65,$72,$53,
+                      $63,$72,$79,$44,$6F,$75,$62,$74);
+var
+  PwdData : TBytes;
+  i       : Integer;
+begin
+  if (DataSize > MaxPasswordLength) then
+    raise EDECHashException.CreateFmt(sPasswordTooLong, [MaxPasswordLength]);
+
+  // While this should normally be caught on setting salt already it is there
+  // especially to catch cases where no salt has been specified yet.
+  if (Length(FSalt) < MinSaltLength) or (Length(FSalt) > MaxSaltLength) then
+    raise EDECHashException.CreateFmt(sWrongSaltLength,
+                                      [MinSaltLength, MaxSaltLength]);
+
+  // This automatically "adds" the required #0 terminator at the end of the password
+  SetLength(PwdData, DataSize + 1);
+  Move(Data, PwdData[0], DataSize);
+
+  EksBlowfishSetup(PwdData, DataSize + 1);
+
+  Move(ctext, FDigest[0], Length(ctext));
+
+  // Encrypt the magic initialisation text 64 times using ECB mode
+  for i := 1 to 64 do
+  begin
+    BF_Encrypt(PBFBlock(@FDigest[ 0])^, PBFBlock(@FDigest[ 0])^);
+    BF_Encrypt(PBFBlock(@FDigest[ 8])^, PBFBlock(@FDigest[ 8])^);
+    BF_Encrypt(PBFBlock(@FDigest[16])^, PBFBlock(@FDigest[16])^);
+  end;
+
+end;
+
+procedure THash_BCrypt.EksBlowfishSetup(var Password : TBytes;
+                                        PasswordSize : Integer);
+var
+  i, rounds: UInt32;
+const
+  zero: TBytes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+begin
+  // number of rounds = 2^cost, loop includes 0
+  if (FCost = 31) then
+    rounds := MaxLongint
+  else
+    rounds := (Int32(1) shl FCost) - 1;
+
+  // Just copy the boxes into the context
+  ExpandKey(FSalt, Password, PasswordSize);
+
+  // This is the time consuming part
+  for i := rounds downto 0 do
+  begin
+    ExpandKey(zero, Password,  PasswordSize);
+    ExpandKey(zero, FSalt, 16);
+  end;
+end;
+
+procedure THash_BCrypt.Expandkey(Salt             : TBytes;
+                                 var Password     : TBytes;
+                                     PasswordSize : Integer);
+type
+  TByteArray72 = packed array[0..71] of UInt8;
+
+var
+  i,j,k,h : Integer;
+  KL      : UInt32;
+  tmp     : TBFBlock;
+  KBP     : ^TByteArray72;
+begin
+  KBP := @Password[0];
+
+  // Text explanations and comments are from the N.Provos & D.Mazieres paper.
+
+  // ExpandKey(state,salt,key) modifies the P-Array and S-boxes based on the
+  // value of the 128-bit salt and the variable length key. First XOR all the
+  // subkeys in the P-array with the encryption key. The first 32 bits of the
+  // key are XORed with P1, the next 32 bits with P2, and so on. The key is
+  // viewed as being cyclic; when the process reaches the end of the key, it
+  // starts reusing bits from the beginning to XOR with subkeys.
+
+  // WE: Same as standard key part except that PArray[i] is used for _bf_p[i]
+  k := 0;
+  for i := 0 to 17 do
+  begin
+    KL := 0;
+    for j:=0 to 3 do
+    begin
+      KL := (KL shl 8) or KBP^[k];
+      inc(k);
+
+      if (k = PasswordSize) then
+        k := 0;
+    end;
+
+    FContext.PArray[i] := FContext.PArray[i] xor KL;
+  end;
+
+  // Subsequently, ExpandKey blowfish-encrypts the first 64 bits of
+  // its salt argument using the current state of the key schedule.
+  BF_Encrypt(PBFBlock(@salt[0])^, tmp);
+
+  // The resulting ciphertext replaces subkeys P_1 and P_2.
+  FContext.PArray[0] := SwapUInt32(TBF2Long(tmp).L);
+  FContext.PArray[1] := SwapUInt32(TBF2Long(tmp).R);
+
+  // That same ciphertext is also XORed with the second 64-bits of
+  // salt, and the result encrypted with the new state of the key
+  // schedule. The output of the second encryption replaces subkeys
+  // P_3 and P_4. It is also XORed with the first 64-bits of salt
+  // and encrypted to replace P_5 and P_6. The process continues,
+  // alternating between the first and second 64 bits salt.
+  h := 8;
+  for i := 1 to 8 do
+  begin
+    BF_XorBlock(tmp, PBFBlock(@Salt[h])^, tmp);
+    h := h xor 8;
+    BF_Encrypt(tmp, tmp);
+    FContext.PArray[2*i]   := SwapUInt32(TBF2Long(tmp).L);
+    FContext.PArray[2*i+1] := SwapUInt32(TBF2Long(tmp).R);
+  end;
+
+  // When ExpandKey finishes replacing entries in the P-Array, it continues
+  // on replacing S-box entries two at a time. After replacing the last two
+  // entries of the last S-box, ExpandKey returns the new key schedule.
+  for j := 0 to 3 do
+  begin
+    for i := 0 to 127 do
+    begin
+      BF_XorBlock(tmp, PBFBlock(@Salt[h])^, tmp);
+      h := h xor 8;
+      BF_Encrypt(tmp, tmp);
+      FContext.SBox[j, 2*i]   := SwapUInt32(TBF2Long(tmp).L);
+      FContext.SBox[j, 2*i+1] := SwapUInt32(TBF2Long(tmp).R);
+    end;
+  end;
+end;
+
+function THash_BCrypt.GetCryptHash(const Password : string;
+                                   const Params   : string;
+                                   const Salt     : TBytes;
+                                   Format         : TDECFormatClass): string;
+var
+  Hash : THash_BCrypt;
+begin
+  Hash := THash_BCrypt.Create;
+  try
+    Hash.Cost := StrToInt(string(Params));
+    Hash.Salt := Salt;
+
+    // BCrypt leaves off the $ in front of the actual password hash value
+    Result := TEncoding.ASCII.GetString(Format.Encode(Hash.CalcBytes(
+                TEncoding.UTF8.GetBytes(Password))));
+  finally
+    Hash.Free;
+  end;
+end;
+
+class function THash_BCrypt.GetCryptID: string;
+begin
+  Result := '$2a';
+end;
+
+function THash_BCrypt.GetCryptParams(const Params : string;
+                                     Format       : TDECFormatClass): string;
+begin
+  Result := Params;
+  if (Length(Result) < 2) then
+    Result := '0' + Result;
+
+  Result := '$' + Result;
+end;
+
+function THash_BCrypt.IsValidPassword(const Password  : string;
+                                      const CryptData : string;
+                                      Format          : TDECFormatClass): Boolean;
+var
+  SplittedCryptData : TBCryptBSDData;
+  Hash              : string;
+begin
+  Result := false;
+
+  if (Length(CryptData) = 60) then
+  begin
+    if SplitTestVector(CryptData, SplittedCryptData) then
+    begin
+      // Is the CryptData for this algorithm?
+      if '$' + SplittedCryptData.ID <> GetCryptID then
+        exit;
+
+      Hash := GetDigestInCryptFormat(Password,
+                                     SplittedCryptData.Cost,
+                                     SplittedCryptData.Salt,
+                                     False,
+                                     Format);
+
+      Result := Hash = CryptData;
+    end;
+  end;
+end;
+
+procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
+var
+  xl, xr : UInt32;
+  pp     : ^UInt32;
+  i      : integer;
+begin
+  xl := SwapUInt32(TBF2Long(BI).L) xor FContext.PArray[0];
+  xr := SwapUInt32(TBF2Long(BI).R);
+  pp := @FContext.PArray[1];
+
+  {$Q-}
+  // 16 rounds = 8 double rounds without swapping
+  for i := 1 to 8 do
+  begin
+    {$IFOPT Q+}The following code requires overflow checks being off!
+               If the compiler complains do a clean on the main source project
+               and recompile it!{$ENDIF}
+
+    xr := xr xor pp^ xor (FContext.SBox[0][xl shr 24        ] +
+                          FContext.SBox[1][xl shr 16 and $ff] xor
+                          FContext.SBox[2][xl shr 8  and $ff] +
+                          FContext.SBox[3][xl        and $ff]);
+    inc(pp);
+    xl := xl xor pp^ xor (FContext.SBox[0][xr shr 24        ] +
+                          FContext.SBox[1][xr shr 16 and $ff] xor
+                          FContext.SBox[2][xr shr 8  and $ff] +
+                          FContext.SBox[3][xr        and $ff]);
+    inc(pp);
+  end;
+
+  {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
+  TBF2Long(BO).R := SwapUInt32(xl);
+  TBF2Long(BO).L := SwapUInt32(xr xor pp^);
+end;
+
+procedure THash_BCrypt.BF_XorBlock(const B1, B2: TBFBlock; var B3: TBFBlock);
+begin
+  TBF2Long(B3).L := TBF2Long(B1).L xor TBF2Long(B2).L;
+  TBF2Long(B3).R := TBF2Long(B1).R xor TBF2Long(B2).R;
+end;
+
+constructor THash_BCrypt.Create;
+begin
+  inherited;
+
+  FCost := 10; // must be specified by the user, but better init with a
+               // fixed value instead of no initialization at all.
+end;
+
+function THash_BCrypt.Digest: PByteArray;
+begin
+  Result := @FDigest;
+end;
+
+class function THash_BCrypt.DigestSize: UInt32;
+begin
+  // Should have been 192 bit = 24 byte, but original imnplementation had a flaw
+  // not returning the last byte which has been kept instead of fixing it.
+  Result := 23;
+end;
+
+procedure THash_BCrypt.DoDone;
+begin
+  ProtectBuffer(FContext.PArray, SizeOf(FContext.PArray));
+  ProtectBuffer(FContext.IV, SizeOf(FContext.IV));
+  ProtectBuffer(FContext.buf, SizeOf(FContext.buf));
+
+  inherited;
+end;
+
+procedure THash_BCrypt.DoInit;
+begin
+  FillChar(FDigest,  SizeOf(FDigest), 0);
+  FillChar(FContext, SizeOf(FContext), 0);
+
+  FContext.SBox   := Blowfish_Data;
+  FContext.PArray := Blowfish_Key;
+end;
+
+procedure THash_BCrypt.DoTransform(Buffer: PUInt32Array);
+begin
+  // Empty on purpose, as bcrypt needs to know the input length. Thus calculation
+  // is done directly in method Calc.
+end;
+
+function THash_BCrypt.MaxCost: UInt8;
+begin
+  Result := 31;
+end;
+
+class function THash_BCrypt.MaxPasswordLength: UInt8;
+begin
+  Result := 72;
+end;
+
+function THash_BCrypt.MaxSaltLength: UInt8;
+begin
+  Result := 16;
+end;
+
+function THash_BCrypt.MinCost: UInt8;
+begin
+  Result := 4;
+end;
+
+function THash_BCrypt.MinSaltLength: UInt8;
+begin
+  Result := 16;
+end;
+
+procedure THash_BCrypt.SetCost(const Value: UInt8);
+begin
+  if (Value in [MinCost..MaxCost]) then
+    FCost := Value
+  else
+    raise EDECHashException.CreateFmt(sCostFactorInvalid, [MinCost, MaxCost]);
+end;
+
+function THash_BCrypt.SplitTestVector(const Vector     : string;
+                                      var SplittedData : TBCryptBSDData): Boolean;
+var
+  Parts : TArray<string>;
+begin
+  Result := false;
+
+  Parts             := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
+
+  if (Length(Parts) = 3) then
+  begin
+    SplittedData.ID   := Parts[0];
+    SplittedData.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1]));
+    SplittedData.Salt := Copy(Parts[2], Low(Parts[2]), 22);
+    Result := true;
+  end;
+end;
+
+{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
+{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
+
 initialization
   // Define the has returned by ValidHash if passing nil as parameter
   SetDefaultHashClass(THash_SHA256);
@@ -4812,6 +5495,8 @@ initialization
   THash_Snefru128.RegisterClass(TDECHash.ClassList);
   THash_Snefru256.RegisterClass(TDECHash.ClassList);
   THash_Sapphire.RegisterClass(TDECHash.ClassList);
+
+  THash_BCrypt.RegisterClass(TDECHash.ClassList);
 
     {$IFDEF OLD_SHA_NAME}
     THash_SHA.RegisterClass(TDECHash.ClassList);

@@ -56,6 +56,13 @@ type
   TUInt64Array = array[0..1023] of UInt64;
 
   /// <summary>
+  ///   Declared here because it is used by Blowfish cipher and BCrypt hash
+  /// </summary>
+  PBlowfish       = ^TBlowfishMatrix;
+  TBlowfishMatrix = array[0..3, 0..255] of UInt32;
+  TBlowfishKey    = array[0..17] of UInt32;
+
+  /// <summary>
   ///   List of standard bit lengths defined in the official standard for some
   ///  algorithm property which allows a variable bit length.
   /// </summary>

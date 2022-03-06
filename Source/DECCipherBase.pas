@@ -204,7 +204,7 @@ type
   TDECCipherCodeEvent = procedure(const Source; var Dest; DataSize: Integer) of object;
 
   /// <summary>
-  ///   Class type of the cipher base class
+  ///   Class type of the cipher base class, relevant for the class registration
   /// </summary>
   TDECCipherClass = class of TDECCipher;
 
@@ -308,6 +308,10 @@ type
     /// <param name="States">
     ///   List of states the state machine should be at currently
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the state machine is not in one of the states
+    ///   specified by the <c>States</c> parameter.
+    /// </exception>
     procedure CheckState(States: TCipherStates);
 
     /// <summary>
@@ -399,6 +403,9 @@ type
     ///   Returns the class type if found. if it could not be found a
     ///   EDECClassNotRegisteredException will be thrown
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Name</c> is not found
+    /// </exception>
     class function ClassByName(const Name: string): TDECCipherClass;
 
     /// <summary>
@@ -414,6 +421,9 @@ type
     ///   or throws an EDECClassNotRegisteredException exception if no class
     ///   with the given identity has been found
     /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
     class function ClassByIdentity(Identity: Int64): TDECCipherClass;
 
     /// <summary>
@@ -600,6 +610,10 @@ type
     /// <returns>
     ///   Encrypted data. Init must have been called previously.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeRawByteString(const Source: RawByteString;
                                  Format: TDECFormatClass = nil): RawByteString;
                                  deprecated; // please use EncodeBytes functions now
@@ -629,6 +643,10 @@ type
     /// <returns>
     ///   Decrypted data. Init must have been called previously.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeRawByteString(const Source: RawByteString;
                                  Format: TDECFormatClass = nil): RawByteString; deprecated; // please use DecodeBytes functions now
 
@@ -649,6 +667,10 @@ type
     /// <returns>
     ///   Encrypted data. Init must have been called previously.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function EncodeBytes(const Source: TBytes; Format: TDECFormatClass = nil): TBytes;
     /// <summary>
     ///   Decrypts the contents of a ByteArray.
@@ -669,6 +691,10 @@ type
     /// <returns>
     ///   Decrypted data. Init must have been called previously.
     /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the length of the data passed as <c>Source</c>
+    ///   is not a multiple of the algorithm's block size.
+    /// </exception>
     function DecodeBytes(const Source: TBytes; Format: TDECFormatClass): TBytes;
 
     // CalcMACBytes deferred since the current implementation would neither be

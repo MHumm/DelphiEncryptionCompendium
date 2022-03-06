@@ -95,13 +95,17 @@ implementation
 
 uses
   Generics.Collections,
-  DECBaseClass, DECHashBase, DECHash;
+  DECBaseClass, DECHashBase, DECHashAUthentication, DECHash;
 
 const
   /// <summary>
   ///   Number of times the buffer will be calculated a hash over
   /// </summary>
   cIterations = 10;
+  /// <summary>
+  ///   Size of the buffer for one single calculation pass of one algorithm
+  /// </summary>
+  cBufferSize = 1024 * 1024;
 
 {$R *.fmx}
 
@@ -152,7 +156,7 @@ begin
   b_CopyToClipboard.Enabled := false;
   sg_Results.RowCount := 0;
   // Create 1 MB Buffer
-  SetLength(FBenchmarkBuffer, 1024*1024);
+  SetLength(FBenchmarkBuffer, cBufferSize);
 
   n := 0;
   for i := 0 to Length(FBenchmarkBuffer)-1 do
@@ -209,23 +213,61 @@ procedure TFormMain.RunBenchmark(ClassName: string; RowIndex: Integer);
 var
   Hash       : TDECHash;
   HashResult : TBytes;
-  i          : Integer;
+  i, n       : Integer;
+  Iterations : UInt32;
+  BufferSize : UInt32;
+  Salt       : TBytes;
 begin
   Hash := TDECHash.ClassByName(ClassName).Create;
 
   try
+    Iterations := cIterations;
+    BufferSize := cBufferSize;
+
+    // Some special password hash algorithms only allow for a low number of
+    // bytes to be hashed. If such an algorithm is to be tested we adjust the
+    // parameters in order to not run into exceptions but still test the aprox.
+    // same amount of data
+    if Hash.IsPasswordHash and
+       (TDECPasswordHash(Hash).MaxPasswordLength < BufferSize) then
+    begin
+      BufferSize := TDECPasswordHash(Hash).MaxPasswordLength;
+
+      // Since password hashes take quite long time to calculate limit that time
+      // by limiting the number of iterations calculated but in such a way that
+      // all special password hashes calculate aprox. the same amount of data
+      Iterations := (cIterations * cBufferSize);
+      if (Iterations > 18000) then
+        Iterations := 18000;
+      Iterations := Iterations div BufferSize;
+
+      SetLength(Salt, TDECPasswordHash(Hash).MaxSaltLength);
+      n := 0;
+
+      for i := 0 to length(Salt)-1 do
+      begin
+        Salt[i] := n;
+        inc(n);
+        if (n > 255) then
+          n := 0;
+      end;
+
+      TDECPasswordHash(Hash).Salt := Salt;
+    end;
+
     FStopwatch.Reset;
     FStopwatch.Start;
 
-    for i := 0 to cIterations - 1 do
+    for i := 0 to Iterations - 1 do
     begin
-      HashResult := Hash.CalcBytes(FBenchmarkBuffer);
+//      HashResult := Hash.CalcBytes(FBenchmarkBuffer);
+      HashResult := Hash.CalcBuffer(@FBenchmarkBuffer[0], BufferSize);
     end;
 
     FStopwatch.Stop;
 
     sg_Results.Cells[1, RowIndex] :=
-      Format('%0:f', [cIterations / (FStopwatch.ElapsedMilliseconds/1000)]);
+      Format('%0:f', [Iterations / (FStopwatch.ElapsedMilliseconds/1000)]);
     sg_Results.Cells[2, RowIndex] := FStopwatch.Elapsed;
   finally
     Hash.Free;

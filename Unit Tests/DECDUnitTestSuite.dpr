@@ -16,6 +16,7 @@ program DECDUnitTestSuite;
 {$ENDIF}
 
 uses
+//  FastMM4,
   Vcl.Forms,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,

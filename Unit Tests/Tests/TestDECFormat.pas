@@ -30,7 +30,7 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  DECBaseClass, DECUtil, DECFormat, DECFormatBase;
+  DECBaseClass, DECTypes, DECUtil, DECFormat, DECFormatBase;
 
 type
   /// <summary>
@@ -101,6 +101,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -113,6 +115,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_HEXL
@@ -202,6 +205,64 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
   end;
+
+  // Test methods for class TFormat_Base64
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_Base32 = class(TFormatTestsBase)
+  strict private
+    FFormat_Base32: TFormat_Base32;
+    const
+      cTestDataEncode : array[1..7] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('f');
+         Output: 'MY======'),
+        (Input:  RawByteString('fo');
+         Output: 'MZXQ===='),
+        (Input:  RawByteString('foo');
+         Output: 'MZXW6==='),
+        (Input:  RawByteString('foob');
+         Output: 'MZXW6YQ='),
+        (Input:  RawByteString('fooba');
+         Output: 'MZXW6YTB'),
+        (Input:  RawByteString('foobar');
+         Output: 'MZXW6YTBOI======'));
+
+      cTestDataDecode : array[1..7] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  'MY======';
+         Output: RawByteString('f')),
+        (Input:  'MZXQ====';
+         Output:  RawByteString('fo')),
+        (Input:  'MZXW6===';
+         Output: RawByteString('foo')),
+        (Input:  'MZXW6YQ=';
+         Output: RawByteString('foob')),
+        (Input:  'MZXW6YTB';
+         Output: RawByteString('fooba')),
+        (Input:  'MZXW6YTBOI======';
+         Output: RawByteString('foobar')));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestDecodeException;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 
   // Test methods for class TFormat_Base64
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -316,6 +377,7 @@ type
     procedure TearDown; override;
 
     procedure DoSetCharsPerLine0;
+    procedure DoTestCRCException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -330,7 +392,168 @@ type
     procedure TestClassByName;
     procedure TestIdentity;
     procedure SetCharsPerLine0Exception;
+    procedure TestCRCException;
   end;
+
+  // Test methods for class TFormat_UU
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_BCryptBSD = class(TFormatTestsBase)
+  strict private
+    FFormat_BCryptBSD: TFormat_BCryptBSD;
+
+    const
+      // Source of test data: Wolfgang Erhardt's implementation
+      cTestDataEncode : array[1..22] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
+                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0);
+         Output: 'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+        (Input:  RawByteString(#$14+'K=i'+#$1A+'{N'+#$CF+'9'+#$CF+'s\'+#$7F#$A7+
+                               #$A7#$9C);
+         Output: 'DCq7YPn5Rq63x1Lad4cll.'),
+        (Input:  RawByteString(#$26#$C6+'03'+#$C0+'O'+#$8B#$CB#$A2#$FE#$24#$B5+
+                               't'+#$DB+'bt');
+         Output: 'HqWuK6/Ng6sg9gQzbLrgb.'),
+        (Input:  RawByteString(#$9B+'|'+#$9D+'*'+#$DA#$0F#$D0+'p'+
+                               #$91#$C9#$15#$D1+'Qw'+#$01#$D6);
+         Output: 'k1wbIrmNyFAPwPVPSVa/ze'),
+        (Input:  RawByteString(#$9B#$AE#$1B#$1C#$91#$D8#$B0+':'+
+                               #$F9#$C5#$89#$E4#$02#$92#$A9#$FB);
+         Output: 'k42ZFHFWqBp3vWli.nIn8u'),
+        (Input:  RawByteString(#$A3+'a-'+#$8C#$9A+'7'+
+                               #$DA#$C2#$F9#$9D#$94#$DA#$03#$BD+'E'+#$21);
+         Output: 'm0CrhHm10qJ3lXRY.5zDGO'),
+        (Input:  RawByteString('z'+#$17#$B1+']'+#$FE#$1C+'K'+
+                               #$E1#$0E#$C6#$A3#$AB+'G'+#$81#$83#$86);
+         Output: 'cfcvVd2aQ8CMvoMpP2EBfe'),
+        (Input:  RawByteString(#$9B#$EF+'M'+#$04#$E1#$F8#$F9+'/='+#$E5+'s'+
+                               #$23#$F8#$17#$91#$90);
+         Output: 'k87L/MF28Q673VKh8/cPi.'),
+        (Input:  RawByteString(#$F8#$F2#$C9#$E4#$DB#$91#$B4#$23#$D4#$BD#$7F+
+                               #$19#$BC+'7'+#$26#$12);
+         Output: '8NJH3LsPrANStV6XtBakCe'),
+        (Input:  RawByteString('*'+#$1F#$1D#$C7#$0A+'='+#$14+'yV'+#$A4+'o'+
+                               #$EB#$E3#$01+'`'+#$17);
+         Output: 'If6bvum7DFjUnE9p2uDeDu'),
+        (Input:  RawByteString('N'+#$AD#$84+'Z'+#$14+','+#$9B#$C7#$99#$18#$C8+
+                               'y'+#$7F+'G'+#$0E#$F5);
+         Output: 'Ro0CUfOqk6cXEKf3dyaM7O'),
+        (Input:  RawByteString('c'+#$1C+'UD'+#$93+'2|2'+#$F9#$C2+'m'+
+                               #$9B#$E7#$D1#$8E+'L');
+         Output: 'WvvTPHKwdBJ3uk0Z37EMR.'),
+        (Input:  RawByteString(#$19#$94#$E6#$86+'g'+#$E8+'f'+
+                               #$9E#$22#$D5#$FB#$B8+'QI/'+#$C0);
+         Output: 'EXRkfkdmXn2gzds2SSitu.'),
+        (Input:  RawByteString(#$02#$D1#$17+'mt'+#$15#$8E#$E2#$9C#$FF#$DA#$C6+
+                               #$15#$0C#$F1#$23);
+         Output: '.rCVZVOThsIa97pEDOxvGu'),
+        (Input:  RawByteString('q['+#$96#$CA#$ED+'*'+#$C9+',5N'+#$D1+'l'+
+                               #$1E#$19#$E3#$8A);
+         Output: 'aTsUwsyowQuzRrDqFflhge'),
+        (Input:  RawByteString(#$85+'r~'+#$83#$8F#$90+'I9'+#$7F#$BE#$C9#$05+'f'+
+                               #$ED#$E0#$DF);
+         Output: 'fVH8e28OQRj9tqiDXs1e1u'),
+        (Input:  RawByteString(#$17#$A2+';'+#$87#$7F#$AA#$F5#$C3#$8E#$87#$27+
+                               '.'+#$0C#$DF+'H'+#$AF);
+         Output: 'D4G5f18o7aMMfwasBL7Gpu'),
+        (Input:  RawByteString(#$85#$12#$AE#$0D#$0F#$AC+'N'+#$C9#$A5#$97#$8F+
+                               'y'+#$B6#$17#$10+'(');
+         Output: 'fPIsBO8qRqkjj273rfaOI.'),
+        (Input:  RawByteString(#$1A#$CE+'-'+#$E8#$80+'}'+#$F1#$8C+'y'+#$FC#$ED+
+                               'Tg'+#$8F+'8'+#$8F);
+         Output: 'Eq2r4G/76Wv39MzSX262hu'),
+        (Input:  RawByteString('6(Zbgu'+#$1B#$14#$BA+'-'+#$C9#$89#$F6#$D4+'1'+
+                               #$26);
+         Output: 'LgfYWkbzEvQ4JakH7rOvHe'),
+        (Input:  RawByteString('`*'+#$F5#$A5+'d'+#$0B#$86+'a'+#$88+'R'+
+                               #$86#$93#$86#$99#$AD+'E');
+         Output: 'WApznUOJfkEGSmYRfnkrPO'));
+
+      // Source of test data: Wolfgang Erhardt's implementation
+      cTestDataDecode : array[1..22] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  'TV4S6ytwfsfvkgY8jIucDrjc8deX1s.';
+         Output: RawByteString(#$55#$7e#$94#$f3#$4b#$f2#$86#$e8#$71#$9a#$26#$be+
+                               #$94#$ac#$1e#$16#$d9#$5e#$f9#$f8#$19#$de#$e0)),
+        (Input:  'DCq7YPn5Rq63x1Lad4cll.';
+         Output: RawByteString(#$14+'K=i'+#$1A+'{N'+#$CF+'9'+#$CF+'s\'+
+                               #$7F#$A7#$A7#$9C)),
+        (Input:  'HqWuK6/Ng6sg9gQzbLrgb.';
+         Output: RawByteString(#$26#$C6+'03'+#$C0+'O'+#$8B#$CB#$A2#$FE#$24#$B5+
+                               't'+#$DB+'bt')),
+        (Input:  'k1wbIrmNyFAPwPVPSVa/ze';
+         Output: RawByteString(#$9B+'|'+#$9D+'*'+#$DA#$0F#$D0+'p'+#$91#$C9#$15+
+                               #$D1+'Qw'+#$01#$D6)),
+        (Input:  'k42ZFHFWqBp3vWli.nIn8u';
+         Output: RawByteString(#$9B#$AE#$1B#$1C#$91#$D8#$B0+':'+#$F9#$C5#$89+
+                               #$E4#$02#$92#$A9#$FB)),
+        (Input:  'm0CrhHm10qJ3lXRY.5zDGO';
+         Output: RawByteString(#$A3+'a-'+#$8C#$9A+'7'+#$DA#$C2#$F9#$9D#$94#$DA+
+                               #$03#$BD+'E'+#$21)),
+        (Input:  'cfcvVd2aQ8CMvoMpP2EBfe';
+         Output: RawByteString('z'+#$17#$B1+']'+#$FE#$1C+'K'+#$E1#$0E#$C6#$A3+
+                               #$AB+'G'+#$81#$83#$86)),
+        (Input:  'k87L/MF28Q673VKh8/cPi.';
+         Output: RawByteString(#$9B#$EF+'M'+#$04#$E1#$F8#$F9+'/='+#$E5+'s'+
+                               #$23#$F8#$17#$91#$90)),
+        (Input:  '8NJH3LsPrANStV6XtBakCe';
+         Output: RawByteString(#$F8#$F2#$C9#$E4#$DB#$91#$B4#$23#$D4#$BD#$7F#$19+
+                               #$BC+'7'+#$26#$12)),
+        (Input:  'If6bvum7DFjUnE9p2uDeDu';
+         Output: RawByteString('*'+#$1F#$1D#$C7#$0A+'='+#$14+'yV'+#$A4+'o'+
+                               #$EB#$E3#$01+'`'+#$17)),
+        (Input:  'Ro0CUfOqk6cXEKf3dyaM7O';
+         Output: RawByteString('N'+#$AD#$84+'Z'+#$14+','+#$9B#$C7#$99#$18#$C8+
+                               'y'+#$7F+'G'+#$0E#$F5)),
+        (Input:  'WvvTPHKwdBJ3uk0Z37EMR.';
+         Output: RawByteString('c'+#$1C+'UD'+#$93+'2|2'+#$F9#$C2+'m'+#$9B#$E7+
+                               #$D1#$8E+'L')),
+        (Input:  'EXRkfkdmXn2gzds2SSitu.';
+         Output: RawByteString(#$19#$94#$E6#$86+'g'+#$E8+'f'+#$9E#$22#$D5#$FB+
+                               #$B8+'QI/'+#$C0)),
+        (Input:  '.rCVZVOThsIa97pEDOxvGu';
+         Output: RawByteString(#$02#$D1#$17+'mt'+#$15#$8E#$E2#$9C#$FF#$DA#$C6+
+                               #$15#$0C#$F1#$23)),
+        (Input:  'aTsUwsyowQuzRrDqFflhge';
+         Output: RawByteString('q['+#$96#$CA#$ED+'*'+#$C9+',5N'+#$D1+'l'+
+                               #$1E#$19#$E3#$8A)),
+        (Input:  'fVH8e28OQRj9tqiDXs1e1u';
+         Output: RawByteString(#$85+'r~'+#$83#$8F#$90+'I9'+#$7F#$BE#$C9#$05+
+                               'f'+#$ED#$E0#$DF)),
+        (Input:  'D4G5f18o7aMMfwasBL7Gpu';
+         Output: RawByteString(#$17#$A2+';'+#$87#$7F#$AA#$F5#$C3#$8E#$87#$27+
+                               '.'+#$0C#$DF+'H'+#$AF)),
+        (Input:  'fPIsBO8qRqkjj273rfaOI.';
+         Output: RawByteString(#$85#$12#$AE#$0D#$0F#$AC+'N'+#$C9#$A5#$97#$8F+
+                               'y'+#$B6#$17#$10+'(')),
+        (Input:  'Eq2r4G/76Wv39MzSX262hu';
+         Output: RawByteString(#$1A#$CE+'-'+#$E8#$80+'}'+#$F1#$8C+'y'+#$FC#$ED+
+                               'Tg'+#$8F+'8'+#$8F)),
+        (Input:  'LgfYWkbzEvQ4JakH7rOvHe';
+         Output: RawByteString('6(Zbgu'+#$1B#$14#$BA+'-'+#$C9#$89#$F6#$D4+
+                               '1'+#$26)),
+        (Input:  'WApznUOJfkEGSmYRfnkrPO';
+         Output: RawByteString('`*'+#$F5#$A5+'d'+#$0B#$86+'a'+#$88+'R'+
+                               #$86#$93#$86#$99#$AD+'E')));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
 
   // Test methods for class TFormat_UU
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -369,6 +592,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -381,6 +606,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_XX
@@ -420,6 +646,8 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  private
+    procedure DoTestDecodeException;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -432,6 +660,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_ESCAPE
@@ -521,6 +750,10 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+  protected
+    procedure DoTestDecodeExceptionWrongChar;
+    procedure DoTestDecodeExceptionWrongChar2;
+    procedure DoTestDecodeExceptionWrongLength;
   published
     procedure TestEncodeBytes;
     procedure TestEncodeRawByteString;
@@ -533,6 +766,7 @@ type
     procedure TestIsValidRawByteString;
     procedure TestClassByName;
     procedure TestIdentity;
+    procedure TestDecodeException;
   end;
 
   // Test methods for class TFormat_BigEndian16
@@ -625,6 +859,11 @@ type
 
 implementation
 
+procedure TestTFormat_HEX.DoTestDecodeException;
+begin
+  FFormat_HEX.Decode('ä');
+end;
+
 procedure TestTFormat_HEX.SetUp;
 begin
   FFormat_HEX := TFormat_HEX.Create;
@@ -647,6 +886,11 @@ end;
 procedure TestTFormat_HEX.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_HEX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_HEX.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_HEX.TestDecodeRawByteString;
@@ -1070,6 +1314,11 @@ begin
   FFormat_Radix64.SetCharsPerLine(0);
 end;
 
+procedure TestTFormat_Radix64.DoTestCRCException;
+begin
+  FFormat_Radix64.Decode('VGVzdAoJqlU=' + #13 + #10 +'=XtiN');
+end;
+
 procedure TestTFormat_Radix64.SetCharsPerLine0Exception;
 begin
   CheckException(DoSetCharsPerLine0, EArgumentOutOfRangeException);
@@ -1131,6 +1380,11 @@ var
 begin
   ReturnValue := FFormat_Radix64.ClassByName('TFormat_Radix64');
   CheckEquals(TFormat_Radix64, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_Radix64.TestCRCException;
+begin
+  CheckException(DoTestCRCException, EDECFormatException);
 end;
 
 procedure TestTFormat_Radix64.TestDecodeBytes;
@@ -1266,6 +1520,11 @@ begin
               'CRC not present not detected on ' + 'VGVzdAoJqlU=' + #13 + #10 +'==XtiM' + ' ');
 end;
 
+procedure TestTFormat_UU.DoTestDecodeException;
+begin
+  FFormat_UU.Decode('ä');
+end;
+
 procedure TestTFormat_UU.SetUp;
 begin
   FFormat_UU := TFormat_UU.Create;
@@ -1288,6 +1547,11 @@ end;
 procedure TestTFormat_UU.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_UU.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_UU.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_UU.TestDecodeRawByteString;
@@ -1418,6 +1682,11 @@ begin
   end;
 end;
 
+procedure TestTFormat_XX.DoTestDecodeException;
+begin
+  FFormat_XX.Decode('ä');
+end;
+
 procedure TestTFormat_XX.SetUp;
 begin
   FFormat_XX := TFormat_XX.Create;
@@ -1440,6 +1709,11 @@ end;
 procedure TestTFormat_XX.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_XX.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_XX.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
 end;
 
 procedure TestTFormat_XX.TestDecodeRawByteString;
@@ -1593,6 +1867,21 @@ begin
   end;
 end;
 
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xä'));
+end;
+
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar2;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xaä'));
+end;
+
+procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongLength;
+begin
+  FFormat_ESCAPE.Decode(RawByteString('\xaa\x'));
+end;
+
 procedure TestTFormat_ESCAPE.SetUp;
 begin
   FFormat_ESCAPE := TFormat_ESCAPE.Create;
@@ -1615,6 +1904,13 @@ end;
 procedure TestTFormat_ESCAPE.TestDecodeBytes;
 begin
   DoTestEncodeDecode(FFormat_ESCAPE.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_ESCAPE.TestDecodeException;
+begin
+  CheckException(DoTestDecodeExceptionWrongChar, EDECFormatException);
+  CheckException(DoTestDecodeExceptionWrongChar2, EDECFormatException);
+  CheckException(DoTestDecodeExceptionWrongLength, EDECFormatException);
 end;
 
 procedure TestTFormat_ESCAPE.TestDecodeRawByteString;
@@ -2167,6 +2463,284 @@ begin
   CheckEquals(true, TFormat_BigEndian64.IsValid(Bytes, length(Bytes)),'Failure on 16-byte data');
 end;
 
+{ TestTFormat_Base32 }
+
+procedure TestTFormat_Base32.DoTestDecodeException;
+begin
+  FFormat_Base32.Decode('A'#47);
+end;
+
+procedure TestTFormat_Base32.SetUp;
+begin
+  FFormat_Base32 := TFormat_Base32.Create;
+end;
+
+procedure TestTFormat_Base32.TearDown;
+begin
+  FFormat_Base32.Free;
+  FFormat_Base32 := nil;
+end;
+
+procedure TestTFormat_Base32.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_Base32.ClassByName('TFormat_Base32');
+  CheckEquals(TFormat_Base32, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_Base32.TestDecodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_Base32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base32.TestDecodeException;
+begin
+  CheckException(DoTestDecodeException, EDECFormatException);
+end;
+
+procedure TestTFormat_Base32.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base32.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base32.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_Base32.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_Base32.TestIdentity;
+begin
+  CheckEquals($C60FF021, FFormat_Base32.Identity);
+end;
+
+procedure TestTFormat_Base32.TestIsValidRawByteString;
+var
+  i : Integer;
+begin
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('')));
+
+  CheckEquals(true, TFormat_Base64.IsValid(
+    BytesOf('ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=')));
+  CheckEquals(false, TFormat_Base64.IsValid(BytesOf('ABC"')));
+  CheckEquals(true, TFormat_Base64.IsValid(BytesOf('6')));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_Base64.IsValid(RawByteString(cTestDataDecode[i].Input)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_Base32.TestIsValidTBytes;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base32.IsValid(SrcBuf),
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
+  end;
+
+  SrcBuf := BytesOf('ABC"');
+  CheckEquals(false, TFormat_Base32.IsValid(SrcBuf), 'Data: ABC" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base32.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_Base32.TestIsValidTypeless;
+const
+  Data = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=';
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  SrcBuf := BytesOf(RawByteString(''));
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf, 0));
+
+  SetLength(SrcBuf, 1);
+  for i := 0 to 255 do
+  begin
+    SrcBuf[0] := i;
+
+    if (pos(chr(i), Data) > 0) then
+      CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char: ' + Chr(i) + ' ')
+    else
+      CheckEquals(false, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                  'Failure at char nr: ' + IntToHex(i, 8) + ' ');
+  end;
+
+
+  SrcBuf := BytesOf('ABC"');
+  CheckEquals(false, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)), 'Data: ABC" ');
+
+  SrcBuf := BytesOf(cTestDataDecode[3].Input);
+  CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+              'Data: ' + string(cTestDataDecode[3].Input));
+
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_Base32.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+{ TestTFormat_BCryptBSD }
+
+procedure TestTFormat_BCryptBSD.SetUp;
+begin
+  FFormat_BCryptBSD := TFormat_BCryptBSD.Create;
+end;
+
+procedure TestTFormat_BCryptBSD.TearDown;
+begin
+  FFormat_BCryptBSD.Free;
+  FFormat_BCryptBSD := nil;
+end;
+
+procedure TestTFormat_BCryptBSD.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_BCryptBSD.ClassByName('TFormat_BCryptBSD');
+  CheckEquals(TFormat_BCryptBSD, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestDecodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BCryptBSD.Decode, cTestDataDecode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeBytes;
+begin
+  DoTestEncodeDecode(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeRawByteString;
+begin
+  DoTestEncodeDecodeRawByteString(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestEncodeTypeless;
+begin
+  DoTestEncodeDecodeTypeless(FFormat_BCryptBSD.Encode, cTestDataEncode);
+end;
+
+procedure TestTFormat_BCryptBSD.TestIdentity;
+begin
+  CheckEquals($D2A9C077, FFormat_BCryptBSD.Identity);
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidRawByteString;
+var
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(cTestDataDecode[i].Input),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidTBytes;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(SrcBuf),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
+procedure TestTFormat_BCryptBSD.TestIsValidTypeless;
+var
+  SrcBuf: TBytes;
+  i     : Integer;
+begin
+  for i := low(cTestDataDecode) to high(cTestDataDecode) do
+  begin
+    // skip empty test data
+    if (cTestDataDecode[i].Input = '') then
+      Continue;
+
+    SrcBuf := BytesOf(RawByteString(cTestDataDecode[i].Input));
+    CheckEquals(true, TFormat_BCryptBSD.IsValid(SrcBuf[0], length(SrcBuf)),
+                'Failure on ' + string(cTestDataDecode[i].Input) + ' ');
+  end;
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -2174,8 +2748,10 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_HEX);
   TDUnitX.RegisterTestFixture(TestTFormat_HEXL);
   TDUnitX.RegisterTestFixture(TestTFormat_DECMIME32);
+  TDUnitX.RegisterTestFixture(TestTFormat_Base32);
   TDUnitX.RegisterTestFixture(TestTFormat_Base64);
   TDUnitX.RegisterTestFixture(TestTFormat_Radix64);
+  TDUnitX.RegisterTestFixture(TestTFormat_BCryptBSD);
   TDUnitX.RegisterTestFixture(TestTFormat_UU);
   TDUnitX.RegisterTestFixture(TestTFormat_XX);
   TDUnitX.RegisterTestFixture(TestTFormat_ESCAPE);
@@ -2185,9 +2761,14 @@ initialization
   {$ELSE}
   RegisterTests('DECFormat', [//TestTFormat,
                               TestTFormat_HEX.Suite,
-                              TestTFormat_HEXL.Suite,   TestTFormat_DECMIME32.Suite,
-                              TestTFormat_Base64.Suite, TestTFormat_Radix64.Suite,
-                              TestTFormat_UU.Suite,     TestTFormat_XX.Suite,
+                              TestTFormat_HEXL.Suite,
+                              TestTFormat_DECMIME32.Suite,
+                              TestTFormat_Base32.Suite,
+                              TestTFormat_Base64.Suite,
+                              TestTFormat_Radix64.Suite,
+                              TestTFormat_BCryptBSD.Suite,
+                              TestTFormat_UU.Suite,
+                              TestTFormat_XX.Suite,
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,

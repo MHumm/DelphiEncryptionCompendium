@@ -23,21 +23,25 @@ unit DECHashAuthentication;
 interface
 
 uses
-  System.SysUtils, DECHashBase;
+  {$IFDEF FPC}
+  SysUtils, Classes,
+  {$ELSE}
+  System.SysUtils, System.Classes, Generics.Collections,
+  {$ENDIF}
+  DECBaseClass, DECHashBase, DECHashInterface, DECTypes , DECFormatBase;
 
 {$INCLUDE DECOptions.inc}
 
 type
   /// <summary>
-  ///   Meta class for all the hashing classes in order to support the
-  ///   registration mechanism
-  /// </summary>
-  TDECHashAuthenticationClass = class of TDECHashAuthentication;
-
-  /// <summary>
   ///   Type of the KDF variant
   /// </summary>
   TKDFType = (ktKDF1, ktKDF2, ktKDF3);
+
+  /// <summary>
+  ///   Meta class for the class containing the password hash specific properties
+  /// </summary>
+  TDECPasswordHashClass = class of TDECPasswordHash;
 
   /// <summary>
   ///   Class containing all the KDF, MGF, HMAC and PBKDF2 algorithms
@@ -71,7 +75,8 @@ type
     ///   Returns the new derrived key.
     /// </returns>
     class function KDFInternal(const Data; DataSize: Integer; const Seed;
-                               SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes; inline;
+                               SeedSize, MaskSize: Integer;
+                               KDFType: TKDFType): TBytes; inline;
   public
     /// <summary>
     ///   Detects whether the given hash class is one particularily suited
@@ -176,7 +181,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF1(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF1(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -225,7 +231,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF2(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
@@ -272,7 +279,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes; overload;
+    class function KDF3(const Data, Seed: TBytes;
+                        MaskSize: Integer): TBytes; overload;
 
     // DEC's own KDF + MGF
 
@@ -302,7 +310,9 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function KDFx(const Data; DataSize: Integer; const Seed;
+                        SeedSize, MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
     /// <summary>
     ///   Key deviation algorithm to derrive keys from other keys.
     /// </summary>
@@ -326,7 +336,8 @@ type
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
-    class function KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function KDFx(const Data, Seed: TBytes; MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
@@ -357,7 +368,8 @@ type
     ///   Mask such that one cannot determine the data which had been given to
     ///   generate this mask from.
     /// </returns>
-    class function MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function MGFx(const Data; DataSize, MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
     ///   similar to a hash function but incontrast does not have a fixed output
@@ -384,7 +396,8 @@ type
     ///   Mask such that one cannot determine the data which had been given to
     ///   generate this mask from.
     /// </returns>
-    class function MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes; overload;
+    class function MGFx(const Data: TBytes; MaskSize: Integer;
+                        Index: UInt32 = 1): TBytes; overload;
 
     /// <summary>
     ///   HMAC according to rfc2202: hash message authentication code allow to
@@ -444,7 +457,8 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
-    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer;
+                          KeyLength: Integer): TBytes; overload;
 
     /// <summary>
     ///   Password based key deviation function 2
@@ -466,7 +480,136 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
-    class function PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes; overload;
+    class function PBKDF2(const Password, Salt: RawByteString;
+                          Iterations: Integer;
+                          KeyLength: Integer): TBytes; overload;
+  end;
+
+  /// <summary>
+  ///   Adds methods which shall not be found in the specialized password hash
+  ///   classes. Mainly the CalcStreamXXX and CalcFileXXX ones. They shall not
+  ///   be contained there as those password hashes usually restrict the maximum
+  ///   length of the data which can be hashed.
+  /// </summary>
+  TDECHashExtended = class(TDECHashAuthentication, IDECHashExtended)
+    /// <summary>
+    ///   Calculates the hash value over a given stream of bytes
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="HashResult">
+    ///   In this byte array the calculated hash value will be returned
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes;
+                         const OnProgress:TDECProgressEvent = nil); overload;
+    /// <summary>
+    ///   Calculates the hash value over a givens stream of bytes
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="Format">
+    ///   Optional formatting class. The formatting of that will be applied to
+    ///   the returned hash value.
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    /// <returns>
+    ///   Hash value over the bytes in the stream, formatted with the formatting
+    ///   passed as format parameter, if used.
+    /// </returns>
+    function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil;
+                        const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
+
+    /// <summary>
+    ///   Calculates the hash value over a given stream of bytes. The calculated
+    ///   hash value can be retrieved with one of the DigestAsXXX methods.
+    /// </summary>
+    /// <param name="Stream">
+    ///   Memory or file stream over which the hash value shall be calculated.
+    ///   The stream must be assigned. The hash value will always be calculated
+    ///   from the current position of the stream.
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes within the stream over which to calculate the hash value
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback routine. It can be used to display the progress of
+    ///   the operation.
+    /// </param>
+    /// <param name="DoFinalize">
+    ///   Optinal parameter: if true this call is the last one and the
+    ///   finalization of the hash calculation, including calling done, will be
+    ///   carried out in this method call as well.
+    /// </param>
+    /// <remarks>
+    ///   Before calling this method for the first time after creation of the
+    ///   hash instance or after calling Done Init needs to be called.
+    ///   After calling this method Done needs to be called and in case of
+    ///   algorithms (like SHA3) with a message size in bits and not whole bytes
+    ///   the contents of the last byte needs to be assigned to PaddingByte before
+    ///   calling Done!
+    /// </remarks>
+    procedure CalcStream(const Stream: TStream; Size: Int64;
+                         const OnProgress:TDECProgressEvent = nil;
+                         DoFinalize: Boolean = false); overload;
+
+    /// <summary>
+    ///   Calculates the hash value over the contents of a given file
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to be processed
+    /// </param>
+    /// <param name="HashResult">
+    ///   Here the resulting hash value is being returned as byte array
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback. If being used the hash calculation will call it from
+    ///   time to time to return the current progress of the operation
+    /// </param>
+    procedure CalcFile(const FileName: string; var HashResult: TBytes;
+                       const OnProgress:TDECProgressEvent = nil); overload;
+    /// <summary>
+    ///   Calculates the hash value over the contents of a given file
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to be processed
+    /// </param>
+    /// <param name="Format">
+    ///   Optional parameter: Formatting class. If being used the formatting is
+    ///   being applied to the returned string with the calculated hash value
+    /// </param>
+    /// <param name="OnProgress">
+    ///   Optional callback. If being used the hash calculation will call it from
+    ///   time to time to return the current progress of the operation
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value as RawByteString.
+    /// </returns>
+    /// <remarks>
+    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+    ///   being returned, otherwise the conversion into the RawByteString might
+    ///   result in strange characters in the returned result.
+    /// </remarks>
+    function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
+                      const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
   end;
 
   /// <summary>
@@ -475,7 +618,225 @@ type
   ///   those from normal hash algorithms not really meant to be used for password
   ///   hashing.
   /// </summary>
-  TDECPasswordHash = class(TDECHashAuthentication);
+  TDECPasswordHash = class(TDECHashAuthentication, IDECHashPassword)
+  strict private
+    /// <summary>
+    ///   Sets the salt value given. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength.
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Value</c> is not in the range of
+    ///   <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
+    procedure SetSalt(const Value: TBytes);
+    /// <summary>
+    ///   Returns the defined salt value
+    /// </summary>
+    function  GetSalt: TBytes;
+  strict protected
+    /// <summary>
+    ///   Most, if not all password hashing algorithms (like bcrypt) have a salt
+    ///   parameter to modify the entered password value.
+    /// </summary>
+    FSalt : TBytes;
+
+    /// <summary>
+    ///   Overwrite the salt value
+    /// </summary>
+    procedure DoDone; override;
+
+    {$Region CryptFormatHandling}
+    /// <summary>
+    ///   Returns the ID code for Crypt/BSD like storing of passwords. The ID
+    ///   has to start with the $ at the beginning and does not contain a
+    ///   trailing $.
+    /// </summary>
+    /// <returns>
+    ///   If the algorithm on which this is being used is a Crypt/BSD compatible
+    ///   password hash algorithm the ID is returned otherwise an empty string.
+    /// </returns>
+    class function GetCryptID:string; virtual;
+
+    /// <summary>
+    ///   Returns the parameters required for the crypt-like password storing
+    ///   in that format.
+    /// </summary>
+    /// <param name="Params">
+    ///   Algorithm specific parameters used for initialization. For details see
+    ///   documentation of the concrete implementation in the algorithm.
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    /// <returns>
+    ///   Returns an empty string if the the algorithm on which this is being
+    ///   used is not a Crypt/BSD compatible password hash algorithm
+    /// </returns>
+    function GetCryptParams(const Params : string;
+                            Format       : TDECFormatClass):string; virtual;
+    /// <summary>
+    ///   Returns the salt required for the crypt-like password storing
+    ///   in that format.
+    /// </summary>
+    /// <param name="Salt">
+    ///   The raw salt value
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    function GetCryptSalt(const Salt : TBytes;
+                          Format     : TDECFormatClass):string; virtual;
+    /// <summary>
+    ///   Returns the hash required for the crypt-like password storing
+    ///   in that format. If a salt etc. is needed that needs to be scepcified
+    ///   before calling this method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password entered which shall be hashed.
+    /// </param>
+    /// <param name="Params">
+    ///   Algorithm specific parameters used for initialization. For details see
+    ///   documentation of the concrete implementation in the algorithm.
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation. Depending on the
+    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+    ///   in the encoding used in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation in binary raw format,
+    ///   means not Radix64 encoded or so.
+    /// </param>
+    /// <param name="Format">
+    ///   Format class for formatting the output
+    /// </param>
+    /// <returns>
+    ///   Returns an empty string if the the algorithm on which this is being
+    ///   used is not a Crypt/BSD compatible password hash algorithm.
+    /// </returns>
+    function GetCryptHash(const Password : string;
+                          const Params   : string;
+                          const Salt     : TBytes;
+                          Format         : TDECFormatClass):string; virtual;
+    {$EndRegion}
+  public
+    /// <summary>
+    ///   Returns the maximum length of a salt value given for the algorithm
+    ///   in byte
+    /// </summary>
+    function MaxSaltLength:UInt8; virtual; abstract;
+    /// <summary>
+    ///   Returns the minimum length of a salt value given for the algorithm
+    ///   in byte
+    /// </summary>
+    function MinSaltLength:UInt8; virtual; abstract;
+    /// <summary>
+    ///   Returns the maximum length of a user supplied password given for the
+    ///   algorithm in byte
+    /// </summary>
+    class function MaxPasswordLength:UInt8; virtual; abstract;
+
+    {$Region CryptBSDFormatHandlingPublic}
+    /// <summary>
+    ///   Tries to find a class type by its Crypt identification
+    ///   (e.g. 2a is Bcrypt).
+    /// </summary>
+    /// <param name="Identity">
+    ///   Identity to look for, with or without the starting $ delimiter sign.
+    /// </param>
+    /// <returns>
+    ///   Returns the class type of the class with the specified identity value
+    ///   or throws an EDECClassNotRegisteredException exception if no class
+    ///   with the given Crypt identity has been found
+    /// </returns>
+    /// <exception cref="EDECClassNotRegisteredException">
+    ///   Exception raised if the class specified by <c>Identity</c> is not found
+    /// </exception>
+    class function ClassByCryptIdentity(Identity: string): TDECPasswordHashClass;
+
+    /// <summary>
+    ///   Calculates a passwort hash for the given password and returns it in
+    ///   a BSDCrypt compatible format. This method only works for those hash
+    ///   algorithms implementing the necessary GetBSDCryptID method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Entered password for which to calculate the hash. The caller is
+    ///   responsible to ensure the maximum password length is adhered to.
+    ///   Any exceptions raised due to too long passwords are not caught here!
+    /// </param>
+    /// <param name="Params">
+    ///   Algorithm specific parameters used for initialization. For details see
+    ///   documentation of the concrete implementation in the algorithm.
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation. Depending on the
+    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+    ///   in the encoding used in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="SaltIsRaw">
+    ///   If true the passed salt value is a raw value. If false it is encoded
+    ///   like in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class used to format the calculated password. Different
+    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+    ///   which one to pass. See description of the hash class used.
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value in BSD crypt style format. Returns an empty
+    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+    /// </returns>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Password</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
+    function GetDigestInCryptFormat(const Password : string;
+                                    const Params   : string;
+                                    const Salt     : string;
+                                    SaltIsRaw      : Boolean;
+                                    Format         : TDECFormatClass):string; virtual;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    ///   The exact format depends on the algorithm used.
+    /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean; virtual;
+    {$EndRegion}
+
+    /// <summary>
+    ///   Defines the salt value used. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength. The salt has to be passed
+    ///   in binary form. Any Base64 encoded salt needs to be decoded before
+    ///   passing.
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if the length of the value assigned is not in the
+    ///   range of <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
+    property Salt: TBytes
+      read   GetSalt
+      write  SetSalt;
+  end;
 
   {$IF CompilerVersion < 28.0}
   /// <summary>
@@ -483,17 +844,41 @@ type
   ///   in Delphi XE6 or lower.
   /// </summary>
   /// <remarks>
-  ///   SHall be removed as soon as the minimum supported version is XE7 or higher.
+  ///   Shall be removed as soon as the minimum supported version is XE7 or higher.
   /// </remarks>
   TArrHelper = class
     class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
   end;
   {$IFEND}
 
+  /// <summary>
+  ///   Meta class for the class containing the authentication methods
+  /// </summary>
+  TDECHashAuthenticationClass = class of TDECHashAuthentication;
+  /// <summary>
+  ///   Meta class for the class containing the additional calculation methods
+  /// </summary>
+  TDECHashExtendedClass = class of TDECHashExtended;
+
 implementation
 
 uses
   DECUtil;
+
+resourcestring
+  /// <summary>
+  ///   Exception message when specifying a salt value longer than allowed
+  /// </summary>
+  sSaltValueTooLong     = 'Maximum allowed salt length (%0:d byte) exceeded';
+  /// <summary>
+  ///   Exception message when specifying a salt value shorter than allowed
+  /// </summary>
+  sSaltValueTooShort    = 'Minumum allowed salt length (%0:d byte) exceeded';
+  /// <summary>
+  ///   No class for the given crypt ID has been registered, so that ID is
+  ///   not supported.
+  /// </summary>
+  sCryptIDNotRegistered = 'No class for crypt ID %s registered';
 
 class function TDECHashAuthentication.IsPasswordHash: Boolean;
 begin
@@ -588,7 +973,8 @@ begin
   Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
 end;
 
-class function TDECHashAuthentication.KDF2(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF2(const Data, Seed: TBytes;
+                                           MaskSize: Integer): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF2)
@@ -596,13 +982,14 @@ begin
     Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF2);
 end;
 
-class function TDECHashAuthentication.KDF3(const Data; DataSize: Integer; const Seed;
-                             SeedSize, MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF3(const Data; DataSize: Integer;
+                                           const Seed; SeedSize, MaskSize: Integer): TBytes;
 begin
   Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
 end;
 
-class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes; MaskSize: Integer): TBytes;
+class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes;
+                                           MaskSize: Integer): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)
@@ -610,7 +997,9 @@ begin
     Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF3);
 end;
 
-class function TDECHashAuthentication.KDFx(const Data; DataSize: Integer; const Seed; SeedSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.KDFx(const Data; DataSize: Integer;
+                                           const Seed; SeedSize, MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 // DEC's own KDF, even stronger
 var
   I, J         : Integer;
@@ -660,7 +1049,9 @@ begin
   end;
 end;
 
-class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes;
+                                           MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   if (length(Seed) > 0) then
     Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
@@ -668,12 +1059,15 @@ begin
     Result := KDFx(Data[0], Length(Data), NullStr, Length(Seed), MaskSize, Index)
 end;
 
-class function TDECHashAuthentication.MGFx(const Data; DataSize, MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.MGFx(const Data; DataSize, MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   Result := KDFx(Data, DataSize, NullStr, 0, MaskSize, Index);
 end;
 
-class function TDECHashAuthentication.MGFx(const Data: TBytes; MaskSize: Integer; Index: UInt32 = 1): TBytes;
+class function TDECHashAuthentication.MGFx(const Data: TBytes;
+                                           MaskSize: Integer;
+                                           Index: UInt32 = 1): TBytes;
 begin
   Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
 end;
@@ -864,6 +1258,179 @@ begin
   result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
 end;
 
+{ TDECHashExtended }
+
+procedure TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+  var HashResult: TBytes; const OnProgress:TDECProgressEvent);
+var
+  Buffer: TBytes;
+  Bytes: Integer;
+  Max, Pos: Int64;
+begin
+  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+
+  Max := 0;
+  SetLength(HashResult, 0);
+  try
+    Init;
+
+    if StreamBufferSize <= 0 then
+      StreamBufferSize := 8192;
+
+    Pos := Stream.Position;
+
+    if Size < 0 then
+      Size := Stream.Size - Pos;
+
+    // Last byte is incomplete so it mustn't be processed
+    if (FFinalByteLength > 0) then
+      Dec(Size);
+
+    Max      := Pos + Size;
+
+    if Assigned(OnProgress) then
+      OnProgress(Max, 0, Started);
+
+    Bytes := StreamBufferSize mod FBufferSize;
+
+    if Bytes = 0 then
+      Bytes := StreamBufferSize
+    else
+      Bytes := StreamBufferSize + FBufferSize - Bytes;
+
+    if Bytes > Size then
+      SetLength(Buffer, Size)
+    else
+      SetLength(Buffer, Bytes);
+
+    while Size > 0 do
+    begin
+      Bytes := Length(Buffer);
+      if Bytes > Size then
+        Bytes := Size;
+      Stream.ReadBuffer(Buffer[0], Bytes);
+      Calc(Buffer[0], Bytes);
+      Dec(Size, Bytes);
+      Inc(Pos, Bytes);
+
+      if Assigned(OnProgress) then
+        OnProgress(Max, Pos, Processing);
+    end;
+
+    // Last byte is incomplete but algorithm may need its value for padding
+    if (FFinalByteLength > 0) then
+      Stream.ReadBuffer(FPaddingByte, 1);
+
+    Done;
+    HashResult := DigestAsBytes;
+  finally
+    ProtectBytes(Buffer);
+    if Assigned(OnProgress) then
+      OnProgress(Max, Max, Finished);
+  end;
+end;
+
+function TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+  Format: TDECFormatClass; const OnProgress:TDECProgressEvent): RawByteString;
+var
+  Hash: TBytes;
+begin
+  CalcStream(Stream, Size, Hash, OnProgress);
+  Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
+end;
+
+procedure TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+                              const OnProgress:TDECProgressEvent;
+                              DoFinalize: Boolean);
+var
+  Buffer: TBytes;
+  Bytes: Integer;
+  Max, Pos: Int64;
+begin
+  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+
+  Max := 0;
+  try
+    if StreamBufferSize <= 0 then
+      StreamBufferSize := 8192;
+
+    Pos := Stream.Position;
+
+    if Size < 0 then
+      Size := Stream.Size - Pos;
+
+    // Last byte is incomplete so it mustn't be processed
+    if DoFinalize and (FFinalByteLength > 0) then
+      Dec(Size);
+
+    Max      := Pos + Size;
+
+    if Assigned(OnProgress) then
+      OnProgress(Max, 0, Started);
+
+    Bytes := StreamBufferSize mod FBufferSize;
+
+    if Bytes = 0 then
+      Bytes := StreamBufferSize
+    else
+      Bytes := StreamBufferSize + FBufferSize - Bytes;
+
+    if Bytes > Size then
+      SetLength(Buffer, Size)
+    else
+      SetLength(Buffer, Bytes);
+
+    while Size > 0 do
+    begin
+      Bytes := Length(Buffer);
+      if Bytes > Size then
+        Bytes := Size;
+      Stream.ReadBuffer(Buffer[0], Bytes);
+      Calc(Buffer[0], Bytes);
+      Dec(Size, Bytes);
+      Inc(Pos, Bytes);
+
+      if Assigned(OnProgress) then
+        OnProgress(Max, Pos, Processing);
+    end;
+
+    // Last byte is incomplete but algorithm may need its value for padding
+    if DoFinalize then
+    begin
+      if (FFinalByteLength > 0) then
+        Stream.ReadBuffer(FPaddingByte, 1);
+      Done;
+    end;
+  finally
+    ProtectBytes(Buffer);
+    if Assigned(OnProgress) then
+      OnProgress(Max, Max, Finished);
+  end;
+end;
+
+procedure TDECHashExtended.CalcFile(const FileName: string; var HashResult: TBytes;
+                            const OnProgress:TDECProgressEvent);
+var
+  S: TFileStream;
+begin
+  SetLength(HashResult, 0);
+  S := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    CalcStream(S, S.Size, HashResult, OnProgress);
+  finally
+    S.Free;
+  end;
+end;
+
+function TDECHashExtended.CalcFile(const FileName: string; Format: TDECFormatClass;
+                           const OnProgress:TDECProgressEvent): RawByteString;
+var
+  Hash: TBytes;
+begin
+  CalcFile(FileName, Hash, OnProgress);
+  Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
+end;
+
 { TArrHelper }
 
 {$IF CompilerVersion < 28.0}
@@ -877,5 +1444,119 @@ begin
     A[L + i] := B[i];
 end;
 {$IFEND}
+
+{ TDECPasswordHash }
+
+function TDECPasswordHash.GetSalt: TBytes;
+begin
+  Result := FSalt;
+end;
+
+procedure TDECPasswordHash.SetSalt(const Value: TBytes);
+begin
+  if (Length(Value) > MaxSaltLength) then
+    raise EDECHashException.CreateFmt(sSaltValueTooLong, [MaxSaltLength]);
+
+  if (Length(Value) < MinSaltLength) then
+    raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
+
+  FSalt := Value;
+end;
+
+class function TDECPasswordHash.GetCryptID: string;
+begin
+  Result := '';
+end;
+
+function TDECPasswordHash.GetCryptParams(const Params : string;
+                                         Format       : TDECFormatClass): string;
+begin
+  Result := '';
+end;
+
+function TDECPasswordHash.GetCryptSalt(const Salt : TBytes;
+                                       Format     : TDECFormatCLass): string;
+var
+  FormattedSalt : TBytes;
+begin
+  FormattedSalt := Format.Encode(Salt);
+
+  Result := '$' + TEncoding.ASCII.GetString(FormattedSalt);
+end;
+
+class function TDECPasswordHash.ClassByCryptIdentity(
+  Identity: string): TDECPasswordHashClass;
+var
+  ClassEntry : TClassListEntry;
+  IDLower    : string;
+begin
+  IDLower := Identity.ToLower;
+  if not IDLower.StartsWith('$') then
+    IDLower := '$' + IDLower;
+
+  for ClassEntry in ClassList do
+  begin
+    if TDECHashClass(ClassEntry.Value).IsPasswordHash and
+       (string(TDECPasswordHashClass(ClassEntry.Value).GetCryptID).ToLower = IDLower)  then
+    begin
+      Result := TDECPasswordHashClass(ClassEntry.Value);
+      Exit;
+    end;
+  end;
+
+  // If we got this far, we have not found any mathich class
+  raise EDECClassNotRegisteredException.CreateResFmt(@sCryptIDNotRegistered,
+                                                     [Identity]);
+end;
+
+procedure TDECPasswordHash.DoDone;
+begin
+  inherited;
+
+  ProtectBuffer(FSalt[0], SizeOf(FSalt));
+  SetLength(FSalt, 0);
+end;
+
+function TDECPasswordHash.GetCryptHash(const Password : string;
+                                       const Params   : string;
+                                       const Salt     : TBytes;
+                                       Format         : TDECFormatClass): string;
+begin
+  Result := '';
+end;
+
+function TDECPasswordHash.GetDigestInCryptFormat(
+                            const Password : string;
+                            const Params   : string;
+                            const Salt     : string;
+                            SaltIsRaw      : Boolean;
+                            Format         : TDECFormatClass): string;
+var
+  SaltBytes : TBytes;
+begin
+  // generic format used by Crypt, but not every algorithm sticks 100% to it
+  // $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+
+  // if no ID is delivered the algorithm is none of the Crypt/BSD algorithms
+  Result := GetCryptID;
+  if (Result <> '') then
+  begin
+    if SaltIsRaw then
+      SaltBytes := TEncoding.UTF8.GetBytes(Salt)
+    else
+      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
+
+    Result := Result + GetCryptParams(Params, Format) +
+                       GetCryptSalt(SaltBytes, Format) +
+                       GetCryptHash(Password, Params, SaltBytes, Format);
+  end;
+end;
+
+function TDECPasswordHash.IsValidPassword(const Password  : string;
+                                          const CryptData : string;
+                                          Format          : TDECFormatClass): Boolean;
+begin
+  Result := false;
+end;
 
 end.

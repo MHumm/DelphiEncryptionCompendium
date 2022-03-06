@@ -107,6 +107,32 @@ type
     procedure TestDigestSizeException;
   end;
 
+<<<<<<< HEAD
+=======
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  // class for checking all general methods etc. for the password hash base class
+  // Testing needs to be done on a concrete derrived class, as that needs to
+  // implement the abstract methods as they're used for the basic functionality.
+  THash_TestTDECPasswordHash = class(TTestCase)
+  private
+    FHash : THash_BCrypt;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  protected
+    procedure DoTestSaltTooLongException;
+    procedure DoTestSaltTooShortException;
+    procedure DoTestClassByCryptIdentityException;
+  published
+    procedure TestGetSalt;
+    procedure TestSetSalt;
+    procedure TestSaltTooLongException;
+    procedure TestSaltTooShortException;
+    procedure TestClassByCryptIdentitySuccess;
+    procedure TestClassByCryptIdentityException;
+  end;
+
+>>>>>>> origin/development
   /// <summary>
   ///   Base class for all hash tests, provides generalized test methods so that
   ///   concrete classes only need to provide the actual test data.
@@ -142,6 +168,7 @@ type
 
     procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
     procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
+<<<<<<< HEAD
     procedure DoTestCalcStream(HashClass:TDECHash); virtual;
     // variant for the overload which doesn't return the calculated hash
     procedure DoTestCalcStreamNoDone(HashClass: TDECHash); virtual;
@@ -149,6 +176,8 @@ type
     // tries to splitt the input data into multiple calls
     procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHash); virtual;
     procedure DoTestCalcStreamRawByteString(HashClass: TDECHash); virtual;
+=======
+>>>>>>> origin/development
     procedure DoTestCalcUnicodeString(HashClass:TDECHash); virtual;
     procedure DoTestCalcRawByteString(HashClass:TDECHash); virtual;
 
@@ -168,8 +197,6 @@ type
     procedure Test52;
     procedure TestCalcBuffer;
     procedure TestCalcBytes;
-    procedure TestCalcStream;
-    procedure TestCalcStreamRawByteString;
     procedure TestCalcRawByteString;
     procedure TestCalcStreamNoDone;
     procedure TestCalcStreamNoDoneMulti;
@@ -179,6 +206,52 @@ type
     procedure TestIsPasswordHashBase;
     procedure TestClassByIdentity;
     procedure TestUninitializedException;
+  end;
+
+  /// <summary>
+  ///   Base class for all non password hash tests, adds the CalcStream/CalcFile
+  ///   test methods which are not implemented by the password hash classes.
+  ///   Provides generalized test methods so that concrete classes only need to
+  ///   provide the actual test data.
+  /// </summary>
+  THash_TestBaseExtended = class(THash_TestBase)
+  strict protected
+    procedure DoTestCalcStream(HashClass:TDECHashExtended); virtual;
+    // variant for the overload which doesn't return the calculated hash
+    procedure DoTestCalcStreamNoDone(HashClass: TDECHashExtended); virtual;
+    // variant for the overload which doesn't return the calculated hash and which
+    // tries to splitt the input data into multiple calls
+    procedure DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended); virtual;
+    procedure DoTestCalcStreamRawByteString(HashClass: TDECHashExtended); virtual;
+  published
+    procedure TestCalcStream;
+    procedure TestCalcStreamRawByteString;
+    procedure TestCalcStreamNoDone;
+    procedure TestCalcStreamNoDoneMulti;
+  end;
+
+  /// <summary>
+  ///   Type for test data specified for Crypt/BSD format tests. Not declared in
+  ///   THash_TestPasswordBase as the compiler couldn't find it there.
+  /// </summary>
+  TCryptTestData = record
+                     /// <summary>
+                     ///   Number of the password from the password array
+                     ///   to use for that test case
+                     /// </summary>
+                     PWNum: UInt8;
+                     /// <summary>
+                     ///   Crypt/BSD formatted password storage data
+                     /// </summary>
+                     CryptData: string;
+                   end;
+
+  /// <summary>
+  ///   Adds test data initialization common for all password hash algorithms
+  /// </summary>
+  THash_TestPasswordBase = class(THash_TestBase)
+  protected
+    procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
   end;
 
   // Test methods for base class for all hash classes
@@ -191,7 +264,7 @@ type
 
   // Test methods for class THash_MD2
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD2 = class(THash_TestBase)
+  TestTHash_MD2 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -204,7 +277,7 @@ type
 
   // Test methods for class THash_MD4
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD4 = class(THash_TestBase)
+  TestTHash_MD4 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -217,7 +290,7 @@ type
 
   // Test methods for class THash_MD5
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_MD5 = class(THash_TestBase)
+  TestTHash_MD5 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -230,7 +303,7 @@ type
 
   // Test methods for class THash_RipeMD128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD128 = class(THash_TestBase)
+  TestTHash_RipeMD128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -243,7 +316,7 @@ type
 
   // Test methods for class THash_RipeMD160
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD160 = class(THash_TestBase)
+  TestTHash_RipeMD160 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -256,7 +329,7 @@ type
 
   // Test methods for class THash_RipeMD256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD256 = class(THash_TestBase)
+  TestTHash_RipeMD256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -269,7 +342,7 @@ type
 
   // Test methods for class THash_RipeMD320
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_RipeMD320 = class(THash_TestBase)
+  TestTHash_RipeMD320 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -282,7 +355,7 @@ type
 
   // Test methods for class THash_SHA0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA0 = class(THash_TestBase)
+  TestTHash_SHA0 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -308,7 +381,7 @@ type
 
   // Test methods for class THash_SHA1
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA1 = class(THash_TestBase)
+  TestTHash_SHA1 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -321,7 +394,7 @@ type
 
   // Test methods for class THash_SHA256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA256 = class(THash_TestBase)
+  TestTHash_SHA256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -334,7 +407,7 @@ type
 
   // Test methods for class THash_SHA224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA224 = class(THash_TestBase)
+  TestTHash_SHA224 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -347,7 +420,7 @@ type
 
   // Test methods for class THash_SHA384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA384 = class(THash_TestBase)
+  TestTHash_SHA384 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -360,7 +433,7 @@ type
 
   // Test methods for class THash_SHA512
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_SHA512 = class(THash_TestBase)
+  TestTHash_SHA512 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -373,7 +446,7 @@ type
 
   // Test methods for class THash_Haval128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval128 = class(THash_TestBase)
+  TestTHash_Haval128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -390,7 +463,7 @@ type
 
   // Test methods for class THash_Haval160
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval160 = class(THash_TestBase)
+  TestTHash_Haval160 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -407,7 +480,7 @@ type
 
   // Test methods for class THash_Haval192
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval192 = class(THash_TestBase)
+  TestTHash_Haval192 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -424,7 +497,7 @@ type
 
   // Test methods for class THash_Haval224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval224 = class(THash_TestBase)
+  TestTHash_Haval224 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -441,7 +514,7 @@ type
 
   // Test methods for class THash_Haval256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Haval256 = class(THash_TestBase)
+  TestTHash_Haval256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -458,7 +531,7 @@ type
 
   // Test methods for class THash_Tiger
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Tiger_3Rounds = class(THash_TestBase)
+  TestTHash_Tiger_3Rounds = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -479,7 +552,7 @@ type
 
   // Test methods for class THash_Panama
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Panama = class(THash_TestBase)
+  TestTHash_Panama = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -492,7 +565,7 @@ type
 
   // Test methods for class THash_Whirlpool0
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool0 = class(THash_TestBase)
+  TestTHash_Whirlpool0 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -517,7 +590,7 @@ type
 
   // Test methods for class THash_WhirlpoolT
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_WhirlpoolT = class(THash_TestBase)
+  TestTHash_WhirlpoolT = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -543,7 +616,7 @@ type
   {$IFNDEF OLD_WHIRLPOOL_NAMES}
   // Test methods for class THash_Whirlpool1
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Whirlpool1 = class(THash_TestBase)
+  TestTHash_Whirlpool1 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -557,7 +630,7 @@ type
 
   // Test methods for class THash_Square
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Square = class(THash_TestBase)
+  TestTHash_Square = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -570,7 +643,7 @@ type
 
   // Test methods for class THash_Snefru128
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Snefru128 = class(THash_TestBase)
+  TestTHash_Snefru128 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -587,7 +660,7 @@ type
 
   // Test methods for class THash_Snefru256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Snefru256 = class(THash_TestBase)
+  TestTHash_Snefru256 = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   published
@@ -604,7 +677,7 @@ type
 
   // Test methods for class THash_Sapphire
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Sapphire = class(THash_TestBase)
+  TestTHash_Sapphire = class(THash_TestBaseExtended)
   public
     procedure SetUp; override;
   protected
@@ -615,6 +688,85 @@ type
     procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
+  end;
+
+  /// <summary>
+  ///   Test methods for class THash_BCrypt
+  /// </summary>
+  /// <remarks>
+  ///   There is no test with the maximum possible cost value, as even a cost
+  ///   value of 20 already takes ages to calculate on a current i5 CPU.
+  /// </remarks>
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTHash_BCrypt = class(THash_TestPasswordBase)
+  private
+    type
+      // Extract only the interesting parts
+      TBCryptBSDTestData = record
+        Salt     : string;
+        Cost     : UInt8;
+      end;
+
+    const
+      Passwords: array[0..4] of string = ('', 'a', 'abc',
+                                          'abcdefghijklmnopqrstuvwxyz',
+                                          '~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+      // Source of test data: Wolfgang Erhardt's implementation.
+      // pn is the index into Passwords
+      TestData: array[1..20] of TCryptTestData = (
+        (PWNum: 0; CryptData: '$2a$06$DCq7YPn5Rq63x1Lad4cll.TV4S6ytwfsfvkgY8jIucDrjc8deX1s.'),
+        (PWNum: 0; CryptData: '$2a$08$HqWuK6/Ng6sg9gQzbLrgb.Tl.ZHfXLhvt/SgVyWhQqgqcZ7ZuUtye'),
+        (PWNum: 0; CryptData: '$2a$10$k1wbIrmNyFAPwPVPSVa/zecw2BCEnBwVS2GbrmgzxFUOqW9dk4TCW'),
+        (PWNum: 0; CryptData: '$2a$12$k42ZFHFWqBp3vWli.nIn8uYyIkbvYRvodzbfbK18SSsY.CsIQPlxO'),
+        (PWNum: 1; CryptData: '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2KdeeWLuGmsfGlMfOxih58VYVfxe'),
+        (PWNum: 1; CryptData: '$2a$08$cfcvVd2aQ8CMvoMpP2EBfeodLEkkFJ9umNEfPD18.hUF62qqlC/V.'),
+        (PWNum: 1; CryptData: '$2a$10$k87L/MF28Q673VKh8/cPi.SUl7MU/rWuSiIDDFayrKk/1tBsSQu4u'),
+        (PWNum: 1; CryptData: '$2a$12$8NJH3LsPrANStV6XtBakCez0cKHXVxmvxIlcz785vxAIZrihHZpeS'),
+        (PWNum: 2; CryptData: '$2a$06$If6bvum7DFjUnE9p2uDeDu0YHzrHM6tf.iqN8.yx.jNN1ILEf7h0i'),
+        (PWNum: 2; CryptData: '$2a$08$Ro0CUfOqk6cXEKf3dyaM7OhSCvnwM9s4wIX9JeLapehKK5YdLxKcm'),
+        (PWNum: 2; CryptData: '$2a$10$WvvTPHKwdBJ3uk0Z37EMR.hLA2W6N9AEBhEgrAOljy2Ae5MtaSIUi'),
+        (PWNum: 2; CryptData: '$2a$12$EXRkfkdmXn2gzds2SSitu.MW9.gAVqa9eLS1//RYtYCmB1eLHg.9q'),
+        (PWNum: 3; CryptData: '$2a$06$.rCVZVOThsIa97pEDOxvGuRRgzG64bvtJ0938xuqzv18d3ZpQhstC'),
+        (PWNum: 3; CryptData: '$2a$08$aTsUwsyowQuzRrDqFflhgekJ8d9/7Z3GV3UcgvzQW3J5zMyrTvlz.'),
+        (PWNum: 3; CryptData: '$2a$10$fVH8e28OQRj9tqiDXs1e1uxpsjN0c7II7YPKXua2NAKYvM6iQk7dq'),
+        (PWNum: 3; CryptData: '$2a$12$D4G5f18o7aMMfwasBL7GpuQWuP3pkrZrOAnqP.bmezbMng.QwJ/pG'),
+        (PWNum: 4; CryptData: '$2a$06$fPIsBO8qRqkjj273rfaOI.HtSV9jLDpTbZn782DC6/t7qT67P6FfO'),
+        (PWNum: 4; CryptData: '$2a$08$Eq2r4G/76Wv39MzSX262huzPz612MZiYHVUJe/OcOql2jo4.9UxTW'),
+        (PWNum: 4; CryptData: '$2a$10$LgfYWkbzEvQ4JakH7rOvHe0y8pHKF9OaFgwUZ2q7W2FFZmZzJYlfS'),
+        (PWNum: 4; CryptData: '$2a$12$WApznUOJfkEGSmYRfnkrPOr466oFDCaj4b6HY3EXGvfxm43seyhgC'));
+
+    function SplitTestVector(const Vector: string):TBCryptBSDTestData;
+  protected
+    procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
+  public
+    procedure SetUp; override;
+    procedure DoTestCostFactorTooShortException;
+    procedure DoTestCostFactorTooLongException;
+    procedure DoTestNoSaltSpecified;
+    procedure DoTestTooShortSaltSpecified;
+    procedure DoTestTooLongSaltSpecified;
+  published
+    procedure TestDigestSize;
+    procedure TestBlockSize;
+    procedure TestIsPasswordHash;
+    procedure TestClassByName;
+    procedure TestIdentity;
+    procedure TestMaximumSaltLength;
+    procedure TestMinimumSaltLength;
+    procedure TestMaximumPasswordLength;
+    procedure TestMinCost;
+    procedure TestMaxCost;
+    procedure TestCostFactorTooShortException;
+    procedure TestCostFactorTooLongException;
+    procedure TestSetGetCostFactor;
+    procedure TestCreateCryptBSDFormat;
+    procedure TestIsValidPasswordOK;
+    procedure TestIsValidPasswordFalse;
+    procedure TestNoSaltSpecified;
+    procedure TestTooShortSaltSpecified;
+    procedure TestTooLongSaltSpecified;
+//    procedure TestTooLongPasswordException;
   end;
 
 implementation
@@ -5298,54 +5450,44 @@ procedure THash_TestBase.DoTestCalcBuffer(HashClass: TDECHash);
 var
   i   : Integer;
   Buf : TBytes;
+  RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
+  begin
+    ConfigHashClass(HashClass, i);
+
+    Buf := BytesOf(RawByteString(FTestData[i].InputData));
+    if Length(Buf) > 0 then
     begin
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0],
+                                                Length(Buf))));
+      // Configure again, as for password hashes DoDone would clear the salt
       ConfigHashClass(HashClass, i);
-
-      Buf := BytesOf(RawByteString(FTestData[i].InputData));
-      if Length(Buf)>0 then
-        CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(
-                      TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0],
-                                          Length(Buf)))),
-                    'Index: ' + IntToStr(i) + ' - expected: <' +
-                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(
-                      TFormat_HEXL.Encode(
-                        HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>')
-
-      else
-        CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(
-                      TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
-                                                               Length(Buf)))),
-                    'Index: ' + IntToStr(i) + ' - expected: <' +
-                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(
-                      TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
-                                                               Length(Buf))))) + '>');
-    end;
-end;
-
-procedure THash_TestBase.DoTestCalcBytes(HashClass: TDECHash);
-var
-  i : Integer;
-begin
-  for i := 0 to FTestData.Count-1 do
-    begin
-      ConfigHashClass(HashClass, i);
-
       CheckEquals(FTestData[i].ExpectedOutput,
-                  BytesToRawString(TFormat_HEXL.Encode(
-                    HashClass.CalcBytes(
-                      BytesOf(RawByteString(FTestData[i].InputData))))),
+                  RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(BytesToRawString(TFormat_HEXL.Encode(
-                    HashClass.CalcBytes(
-                      BytesOf(RawByteString(FTestData[i].InputData)))))) + '>');
+                  string(BytesToRawString(
+                    TFormat_HEXL.Encode(
+                      HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>');
+    end
+    else
+    begin
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
+                                                                     Length(Buf))));
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
+      CheckEquals(FTestData[i].ExpectedOutput,
+                  RawByteStrResult,
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                  string(BytesToRawString(
+                    TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
+                                                             Length(Buf))))) + '>');
     end;
+<<<<<<< HEAD
 end;
 
 procedure THash_TestBase.DoTestCalcStream(HashClass: TDECHash);
@@ -5597,10 +5739,462 @@ begin
       end;
   finally
     Stream.Free;
+=======
+>>>>>>> origin/development
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcStreamRawByteString(HashClass: TDECHash);
+procedure THash_TestBase.DoTestCalcBytes(HashClass: TDECHash);
+var
+  i                : Integer;
+  RawByteStrResult : RawByteString;
+begin
+  for i := 0 to FTestData.Count-1 do
+  begin
+    ConfigHashClass(HashClass, i);
+
+    RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(
+                  HashClass.CalcBytes(
+                    BytesOf(RawByteString(FTestData[i].InputData)))));
+
+    // Configure again, as for password hashes DoDone would clear the salt
+    ConfigHashClass(HashClass, i);
+
+    CheckEquals(FTestData[i].ExpectedOutput,
+                RawByteStrResult,
+                'Index: ' + IntToStr(i) + ' - expected: <' +
+                string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                string(BytesToRawString(TFormat_HEXL.Encode(
+                  HashClass.CalcBytes(
+                    BytesOf(RawByteString(FTestData[i].InputData)))))) + '>');
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
+var
+  i                : Integer;
+  InpStr           : string;
+  RawByteStrResult : RawByteString;
+begin
+  for i := 0 to FTestData.Count-1 do
+  begin
+    if FTestData[i].RunUnicodeTest then
+    begin
+      InpStr := string(FTestData[i].InputData);
+      ConfigHashClass(HashClass, i);
+
+      RawByteStrResult := BytesToRawString(
+                            TFormat_HEXL.Encode(
+                              System.SysUtils.BytesOf(HashClass.CalcString(InpStr))));
+
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
+
+      CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
+                  RawByteStrResult,
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
+                  string(BytesToRawString(
+                    TFormat_HEXL.Encode(
+                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
+    end;
+  end;
+end;
+
+procedure THash_TestBase.DoTestClassByName(ExpectedClassName: String; ExpectedClass: TClass);
+var
+  ReturnValue : TDECHashClass;
+begin
+  ReturnValue := FHash.ClassByName(ExpectedClassName);
+  CheckEquals(ExpectedClass, ReturnValue, 'unexpected class');
+end;
+
+procedure THash_TestBase.Setup;
+begin
+  inherited;
+  FTestData  := CreateTestDataContainer as IHashTestDataContainer;
+end;
+
+procedure THash_TestBase.TearDown;
+begin
+  inherited;
+  FHash.Free;
+  FTestData := nil;
+end;
+
+procedure THash_TestBase.Test52;
+begin
+  DoTest52(FHash);
+end;
+
+procedure THash_TestBase.TestCalcBuffer;
+begin
+  DoTestCalcBuffer(FHash);
+end;
+
+procedure THash_TestBase.TestCalcBytes;
+begin
+  DoTestCalcBytes(FHash);
+end;
+
+procedure THash_TestBase.TestCalcRawByteString;
+begin
+  DoTestCalcRawByteString(FHash);
+end;
+
+<<<<<<< HEAD
+procedure THash_TestBase.TestCalcStream;
+begin
+  DoTestCalcStream(FHash);
+end;
+
+procedure THash_TestBase.TestCalcStreamNoDone;
+
+begin
+  DoTestCalcStreamNoDone(FHash);
+end;
+
+procedure THash_TestBase.TestCalcStreamNoDoneMulti;
+begin
+  DoTestCalcStreamNoDoneMulti(FHash);
+end;
+
+procedure THash_TestBase.TestCalcStreamRawByteString;
+begin
+  DoTestCalcStreamRawByteString(FHash);
+end;
+
+=======
+>>>>>>> origin/development
+procedure THash_TestBase.TestCalcUnicodeString;
+begin
+  DoTestCalcUnicodeString(FHash);
+end;
+
+procedure THash_TestBase.TestGetPaddingByte;
+begin
+  CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
+end;
+
+procedure THash_TestBase.TestIsPasswordHash;
+begin
+  CheckEquals(false, FHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestIsPasswordHashBase;
+begin
+  CheckEquals(false, TDECHash.IsPasswordHash);
+end;
+
+procedure THash_TestBase.TestClassByIdentity;
+var
+  ReturnValue: TDECClass;
+begin
+  ReturnValue := TDECHash.ClassByIdentity(THash_MD5.Identity);
+  CheckEquals(ReturnValue, THash_MD5);
+
+  ReturnValue := TDECHash.ClassByIdentity(THash_SHA256.Identity);
+  CheckEquals(ReturnValue, THash_SHA256);
+end;
+
+procedure THash_TestBase.TestUninitializedException;
+begin
+  CheckException(DoTestUninitializedException, EDECHashException,
+                 'Uninitialized hash not detected');
+end;
+
+procedure THash_TestBase.DoTestUninitializedException;
+var
+  Hash : THash_MD5;
+  Buf  : TBytes;
+begin
+  Hash := THash_MD5.Create;
+  try
+    SetLength(Buf, 3);
+    FillChar(Buf[0], 3, 33);
+    Hash.Calc(Buf[0], 3);
+  finally
+    Hash.Free;
+  end;
+end;
+
+procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
+var
+  i                : Integer;
+  RawByteStrResult : RawByteString;
+begin
+  for i := 0 to FTestData.Count-1 do
+    begin
+      ConfigHashClass(HashClass, i);
+
+      RawByteStrResult := HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL);
+
+      // Configure again, as for password hashes DoDone would clear the salt
+      ConfigHashClass(HashClass, i);
+
+      CheckEquals(FTestData[i].ExpectedOutput,
+                  RawByteStrResult,
+                  'Index: ' + IntToStr(i) + ' - expected: <' +
+                  string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                  string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
+    end;
+end;
+
+{ THash_TestBaseExtended }
+
+procedure THash_TestBaseExtended.DoTestCalcStream(HashClass: TDECHashExtended);
+var
+  Stream : TMemoryStream;
+  i      : Integer;
+  Buf    : TBytes;
+  Hash   : TBytes;
+  ProgressCalled : Boolean;
+
+  BufSize: Integer;
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        Stream.Clear;
+        {$IF CompilerVersion >= 25.0}
+        Stream.Write(Buf, Length(Buf));
+        {$ELSE}
+        if Length(Buf) > 0 then
+          Stream.Write(Buf[0], Length(Buf));
+        {$IFEND}
+        Stream.Position := 0;
+
+        ConfigHashClass(HashClass, i);
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        ProgressCalled := false;
+        HashClass.CalcStream(Stream, Length(Buf), Hash,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
+
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+
+        ProgressCalled := false;
+        Stream.Seek(0, TSeekOrigin.soBeginning);
+        HashClass.CalcStream(Stream, -1, Hash,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end);
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDone(HashClass: TDECHashExtended);
+var
+  Stream         : TMemoryStream;
+  i              : Integer;
+  Buf            : TBytes;
+  Hash           : TBytes;
+  ProgressCalled : Boolean;
+  BufSize        : Integer;
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        Stream.Clear;
+        {$IF CompilerVersion >= 25.0}
+        Stream.Write(Buf, Length(Buf));
+        {$ELSE}
+        if Length(Buf) > 0 then
+          Stream.Write(Buf[0], Length(Buf));
+        {$IFEND}
+        Stream.Position := 0;
+
+        ConfigHashClass(HashClass, i);
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        ProgressCalled := false;
+        HashClass.Init;
+        HashClass.CalcStream(Stream, Length(Buf),
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end, true);
+
+        Hash := HashClass.DigestAsBytes;
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+
+        ProgressCalled := false;
+        Stream.Seek(0, TSeekOrigin.soBeginning);
+        HashClass.Init;
+        HashClass.CalcStream(Stream, -1,
+                              procedure(Size, Pos: Int64; State: TDECProgressState)
+                              begin
+                                ProgressCalled := true;
+                              end, true);
+
+        Hash := HashClass.DigestAsBytes;
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBaseExtended.DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended);
+var
+  Stream         : TMemoryStream;
+  i, n           : Integer;
+  Buf            : TBytes;
+  Hash           : TBytes;
+  ProgressCalled : Boolean;
+  BufSize        : Integer;
+  Count          : Integer;
+  IsLastByte     : Boolean;
+  Idx, CopyCount : Integer;
+begin
+  Stream  := TMemoryStream.Create;
+  BufSize := 0;
+
+  try
+    for i := 0 to FTestData.Count-1 do
+      begin
+        Buf := BytesOf(FTestData[i].InputData);
+        ConfigHashClass(HashClass, i);
+        HashClass.Init;
+
+        // for the last test do set a negative value for the stream buffer size
+        // in order to test that the default set within CalcStream works
+        if (i = FTestData.Count-1) then
+        begin
+          BufSize          := StreamBufferSize;
+          StreamBufferSize := -1;
+        end;
+
+        Count := Length(Buf);
+        Stream.Clear;
+
+        n := 0;
+        idx := 0;
+        CopyCount := 1;
+        while (n <= Count - 1) do
+        begin
+          Stream.Write(Buf[idx], CopyCount);
+          Stream.Seek(-CopyCount, TSeekOrigin.soCurrent);
+
+          IsLastByte := not (Count-n > 1);
+
+          ProgressCalled := false;
+          HashClass.CalcStream(Stream, CopyCount,
+                                procedure(Size, Pos: Int64; State: TDECProgressState)
+                                begin
+                                  ProgressCalled := true;
+                                end, IsLastByte);
+
+          inc(idx, CopyCount);
+
+          if ((n + 4) <= (Count - 1)) then
+          begin
+            inc(n, 4);
+            CopyCount := 4;
+          end
+          else
+          begin
+            inc(n, 1);
+            CopyCount := 1;
+          end;
+        end;
+
+        // if we have empty input something still might be needed to be done
+        if (Count = 0) then
+          HashClass.CalcStream(Stream, 0,
+                                procedure(Size, Pos: Int64; State: TDECProgressState)
+                                begin
+                                  ProgressCalled := true;
+                                end, true);
+
+        Hash := HashClass.DigestAsBytes;
+
+        if (i = FTestData.Count-1) then
+          StreamBufferSize := BufSize;
+
+        CheckEquals(FTestData[i].ExpectedOutput,
+                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    'Index: ' + IntToStr(i) + ' - expected: <' +
+                    string(FTestData[i].ExpectedOutput) + '> but was: <' +
+                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+
+        CheckEquals(true, ProgressCalled, 'Progress event not called');
+      end;
+  finally
+    Stream.Free;
+  end;
+end;
+
+procedure THash_TestBaseExtended.DoTestCalcStreamRawByteString(HashClass: TDECHashExtended);
 var
   Stream : TMemoryStream;
   i      : Integer;
@@ -5660,156 +6254,25 @@ begin
   end;
 end;
 
-procedure THash_TestBase.DoTestCalcUnicodeString(HashClass: TDECHash);
-var
-  i      : Integer;
-  InpStr : string;
+procedure THash_TestBaseExtended.TestCalcStream;
 begin
-  for i := 0 to FTestData.Count-1 do
-    begin
-      InpStr := string(FTestData[i].InputData);
-      ConfigHashClass(HashClass, i);
-
-      CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
-                  BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr)))),
-                  'Index: ' + IntToStr(i) + ' - expected: <' +
-                  string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
-                  string(BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
-    end;
+  DoTestCalcStream(FHash as TDECHashExtended);
 end;
 
-procedure THash_TestBase.DoTestClassByName(ExpectedClassName: String; ExpectedClass: TClass);
-var
-  ReturnValue : TDECHashClass;
+procedure THash_TestBaseExtended.TestCalcStreamNoDone;
+
 begin
-  ReturnValue := FHash.ClassByName(ExpectedClassName);
-  CheckEquals(ExpectedClass, ReturnValue, 'unexpected class');
+  DoTestCalcStreamNoDone(FHash  as TDECHashExtended);
 end;
 
-procedure THash_TestBase.Setup;
+procedure THash_TestBaseExtended.TestCalcStreamNoDoneMulti;
 begin
-  inherited;
-  FTestData  := CreateTestDataContainer as IHashTestDataContainer;
+  DoTestCalcStreamNoDoneMulti(FHash as TDECHashExtended);
 end;
 
-procedure THash_TestBase.TearDown;
+procedure THash_TestBaseExtended.TestCalcStreamRawByteString;
 begin
-  inherited;
-  FHash.Free;
-  FTestData := nil;
-end;
-
-procedure THash_TestBase.Test52;
-begin
-  DoTest52(FHash);
-end;
-
-procedure THash_TestBase.TestCalcBuffer;
-begin
-  DoTestCalcBuffer(FHash);
-end;
-
-procedure THash_TestBase.TestCalcBytes;
-begin
-  DoTestCalcBytes(FHash);
-end;
-
-procedure THash_TestBase.TestCalcRawByteString;
-begin
-  DoTestCalcRawByteString(FHash);
-end;
-
-procedure THash_TestBase.TestCalcStream;
-begin
-  DoTestCalcStream(FHash);
-end;
-
-procedure THash_TestBase.TestCalcStreamNoDone;
-
-begin
-  DoTestCalcStreamNoDone(FHash);
-end;
-
-procedure THash_TestBase.TestCalcStreamNoDoneMulti;
-begin
-  DoTestCalcStreamNoDoneMulti(FHash);
-end;
-
-procedure THash_TestBase.TestCalcStreamRawByteString;
-begin
-  DoTestCalcStreamRawByteString(FHash);
-end;
-
-procedure THash_TestBase.TestCalcUnicodeString;
-begin
-  DoTestCalcUnicodeString(FHash);
-end;
-
-procedure THash_TestBase.TestGetPaddingByte;
-begin
-  CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
-end;
-
-procedure THash_TestBase.TestIsPasswordHash;
-begin
-  CheckEquals(false, FHash.IsPasswordHash);
-end;
-
-procedure THash_TestBase.TestIsPasswordHashBase;
-begin
-  CheckEquals(false, TDECHash.IsPasswordHash);
-end;
-
-procedure THash_TestBase.TestClassByIdentity;
-var
-  ReturnValue: TDECClass;
-begin
-  ReturnValue := TDECHash.ClassByIdentity(THash_MD5.Identity);
-  CheckEquals(ReturnValue, THash_MD5);
-
-  ReturnValue := TDECHash.ClassByIdentity(THash_SHA256.Identity);
-  CheckEquals(ReturnValue, THash_SHA256);
-end;
-
-procedure THash_TestBase.TestUninitializedException;
-begin
-  CheckException(DoTestUninitializedException, EDECHashException,
-                 'Uninitialized hash not detected');
-end;
-
-procedure THash_TestBase.DoTestUninitializedException;
-var
-  Hash : THash_MD5;
-  Buf  : TBytes;
-begin
-  Hash := THash_MD5.Create;
-  try
-    SetLength(Buf, 3);
-    FillChar(Buf[0], 3, 33);
-    Hash.Calc(Buf[0], 3);
-  finally
-    Hash.Free;
-  end;
-end;
-
-procedure THash_TestBase.DoTestCalcRawByteString(HashClass: TDECHash);
-var
-  i : Integer;
-begin
-  for i := 0 to FTestData.Count-1 do
-    begin
-      ConfigHashClass(HashClass, i);
-
-      CheckEquals(FTestData[i].ExpectedOutput,
-                  HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL),
-                  'Index: ' + IntToStr(i) + ' - expected: <' +
-                  string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
-    end;
+  DoTestCalcStreamRawByteString(FHash  as TDECHashExtended);
 end;
 
 { TestTDECHash }
@@ -5954,11 +6417,607 @@ begin
                  'Abstract error raised for C++ Builder not detected');
 end;
 
+{ TestTHash_BCrypt }
+
+procedure TestTHash_BCrypt.ConfigHashClass(aHashClass: TDECHash;
+  aIdxTestData: Integer);
+begin
+  inherited;
+  THash_BCrypt(FHash).Cost := FTestData[aIdxTestData].Cost;
+  THash_BCrypt(FHash).Salt := FTestData[aIdxTestData].Salt;
+end;
+
+procedure TestTHash_BCrypt.DoTestCostFactorTooLongException;
+begin
+  THash_BCrypt(FHash).Cost := 32;
+end;
+
+procedure TestTHash_BCrypt.DoTestCostFactorTooShortException;
+begin
+  THash_BCrypt(FHash).Cost := 3;
+end;
+
+procedure TestTHash_BCrypt.DoTestNoSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.DoTestTooLongSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    // One byte too long
+    BCrypt.Salt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.DoTestTooShortSaltSpecified;
+var
+  BCrypt : THash_BCrypt;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    // One byte too short
+    BCrypt.Salt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+    BCrypt.CalcString('a');
+  finally
+    BCrypt.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.SetUp;
+var
+  lDataRow:IHashTestDataRowSetup;
+begin
+  inherited;
+
+  FHash := THash_BCrypt.Create;
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '557e94f34bf286e8719a26be94ac1e16d95ef9f819dee0';
+  lDataRow.ExpectedOutputUTFStrTest := '557e94f34bf286e8719a26be94ac1e16d95ef9f819dee0';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [$14, $4b, $3d, $69, $1a, $7b, $4e, $cf, $39, $cf, $73, $5c, $7f, $a7, $a7, $9c];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '56701b26164d8f1bc15225f46234ac8ac79bf5bc16bf48';
+  lDataRow.ExpectedOutputUTFStrTest := '56701b26164d8f1bc15225f46234ac8ac79bf5bc16bf48';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [$26, $c6, $30, $33, $c0, $4f, $8b, $cb, $a2, $fe, $24, $b5, $74, $db, $62, $74];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '7b2e03106a43c9753821db688b5cc7590b18fdf9ba5446';
+  lDataRow.ExpectedOutputUTFStrTest := '7b2e03106a43c9753821db688b5cc7590b18fdf9ba5446';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [$9b, $7c, $9d, $2a, $da, $0f, $d0, $70, $91, $c9, $15, $d1, $51, $77, $01, $d6];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '6b42a6771693c6a7f576174cdfe514b9a004b8a4919f34';
+  lDataRow.ExpectedOutputUTFStrTest := '6b42a6771693c6a7f576174cdfe514b9a004b8a4919f34';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [$9b, $ae, $1b, $1c, $91, $d8, $b0, $3a, $f9, $c5, $89, $e4, $02, $92, $a9, $fb];
+  lDataRow.AddInputVector('');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'e6d53831f82060dc08a2e8489ce850ce48fbf976978738';
+  lDataRow.ExpectedOutputUTFStrTest := 'f3ebc852f57e9a750eef2a7f69722cdb0ffd7c6128387a';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [$a3, $61, $2d, $8c, $9a, $37, $da, $c2, $f9, $9d, $94, $da, $03, $bd, $45, $21];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'a9f3469a61cbff0a0f1a1445dfe023587f38b2c9c40570';
+  lDataRow.ExpectedOutputUTFStrTest := 'c5f17162d049b91005ae47f279507acc1f11776e9ee509';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [$7a, $17, $b1, $5d, $fe, $1c, $4b, $e1, $0e, $c6, $a3, $ab, $47, $81, $83, $86];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '5169fd39606d630524285147734b4c981def0ee512c3ac';
+  lDataRow.ExpectedOutputUTFStrTest := '06132df02bcfdcce8a69a03eee7d3b7aafbc8d49161936';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [$9b, $ef, $4d, $04, $e1, $f8, $f9, $2f, $3d, $e5, $73, $23, $f8, $17, $91, $90];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd7678c2595f3a31cca9ded7dfbbc7308a6ed92325bae05';
+  lDataRow.ExpectedOutputUTFStrTest := '816480f1d2e7aa106f4ab04387e5ce1e3864da8e1b2223';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [$f8, $f2, $c9, $e4, $db, $91, $b4, $23, $d4, $bd, $7f, $19, $bc, $37, $26, $12];
+  lDataRow.AddInputVector('a');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd9a275b493bcbe1024b0ff80d330253cfdca34687d8f69';
+  lDataRow.ExpectedOutputUTFStrTest := '1dff5b90e45ba4579b988de2cf39711b98345884ef7fba';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [$2a, $1f, $1d, $c7, $0a, $3d, $14, $79, $56, $a4, $6f, $eb, $e3, $01, $60, $17];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '8d4131a723bfbbac8a67f2e035cae08cc33b69f37331ea';
+  lDataRow.ExpectedOutputUTFStrTest := '69b48ee000e242c13a38e577dc64f07781fc9f71443618';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [$4e, $ad, $84, $5a, $14, $2c, $9b, $c7, $99, $18, $c8, $79, $7f, $47, $0e, $f5];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '8cd0b863c3ff0860e31a2b42427974e0283b3af7142969';
+  lDataRow.ExpectedOutputUTFStrTest := '2eb7349e00af01d911e0b21b3a0688210fe455ac920563';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [$63, $1c, $55, $44, $93, $32, $7c, $32, $f9, $c2, $6d, $9b, $e7, $d1, $8e, $4c];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '398fc08825ec73f80d5370414dabda1280f780d26203fb';
+  lDataRow.ExpectedOutputUTFStrTest := '4636ae292eb20a6a1c52f1c2b175078504b41c631611ed';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [$19, $94, $e6, $86, $67, $e8, $66, $9e, $22, $d5, $fb, $b8, $51, $49, $2f, $c0];
+  lDataRow.AddInputVector('abc');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '4d38b523ce9dc6f2f6ff9fb3c2cd71dfe7f96eb4a3baf1';
+  lDataRow.ExpectedOutputUTFStrTest := 'f0cb2b9fe94c95761ec9526131b8f9dd25441454e49466';
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [$02, $d1, $17, $6d, $74, $15, $8e, $e2, $9c, $ff, $da, $c6, $15, $0c, $f1, $23];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '98bf9ffc1f5be485f959e8b1d526392fbd4ed2d5719f50';
+  lDataRow.ExpectedOutputUTFStrTest := 'f909cb8d2e60537b7932ad6d0863b55a8d0a2fc3cdf254';
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [$71, $5b, $96, $ca, $ed, $2a, $c9, $2c, $35, $4e, $d1, $6c, $1e, $19, $e3, $8a];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'cebba53f67bd28af5a44c6707383c231ac4ef244a6f5fb';
+  lDataRow.ExpectedOutputUTFStrTest := 'd66afd696bfc0ebb2a8ca33b708c834f602789d4a801e4';
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [$85, $72, $7e, $83, $8f, $90, $49, $39, $7f, $be, $c9, $05, $66, $ed, $e0, $df];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '498c11e6b9ad6ed402a6c44076883574ea62012c8b06b2';
+  lDataRow.ExpectedOutputUTFStrTest := '906c4fb134790125e3b9963318fc684c9d43c28fe814d3';
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [$17, $a2, $3b, $87, $7f, $aa, $f5, $c3, $8e, $87, $27, $2e, $0c, $df, $48, $af];
+  lDataRow.AddInputVector('abcdefghijklmnopqrstuvwxyz');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '26f517fe5345ad575ba7dfb8144f01bfdb15f3d47c1e14';
+  lDataRow.ExpectedOutputUTFStrTest := '56c059831b5311bacc275e1f6b5ff6855f6e6edc752e56';
+  lDataRow.RunUnicodeTest           := true;
+  lDataRow.Cost                     := 6;
+  lDataRow.Salt                     := [$85, $12, $ae, $0d, $0f, $ac, $4e, $c9, $a5, $97, $8f, $79, $b6, $17, $10, $28];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'd51d7cdf839b91a25758b80141e42c9f896ae80fd6cd56';
+  lDataRow.ExpectedOutputUTFStrTest := '4f019a19393508796b1ad5ecd4f344711e0d49e956e65d';
+  lDataRow.RunUnicodeTest           := true;
+  lDataRow.Cost                     := 8;
+  lDataRow.Salt                     := [$1a, $ce, $2d, $e8, $80, $7d, $f1, $8c, $79, $fc, $ed, $54, $67, $8f, $38, $8f];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'db4fab24c1ff41c1e2c966f8b3d6381c76e86f52da9e15';
+  lDataRow.ExpectedOutputUTFStrTest := 'b6efcca9da72b95671d5bc0a663ed6db745e89daed94ab';
+  lDataRow.RunUnicodeTest           := true;
+  lDataRow.Cost                     := 10;
+  lDataRow.Salt                     := [$36, $28, $5a, $62, $67, $75, $1b, $14, $ba, $2d, $c9, $89, $f6, $d4, $31, $26];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := 'b7af3ca87144725e9df096b9199231873a3ae6e8348e21';
+  lDataRow.ExpectedOutputUTFStrTest := '73ddc38d3e8f0b87b04f8bb1fe04bf728e507e78e2dcd0';
+  lDataRow.RunUnicodeTest           := true;
+  lDataRow.Cost                     := 12;
+  lDataRow.Salt                     := [$60, $2a, $f5, $a5, $64, $0b, $86, $61, $88, $52, $86, $93, $86, $99, $ad, $45];
+  lDataRow.AddInputVector('~!@#$%^&*()      ~!@#$%^&*()PNBFRD');
+end;
+
+function TestTHash_BCrypt.SplitTestVector(const Vector: string): TBCryptBSDTestData;
+var
+  Parts : TArray<string>;
+begin
+  Parts := Vector.Split(['$'], TStringSplitOptions.ExcludeEmpty);
+  Result.Cost := Copy(Parts[1], Low(Parts[1]), Length(Parts[1])).ToInteger;
+  Result.Salt := Copy(Parts[2], Low(Parts[2]), 22);
+end;
+
+procedure TestTHash_BCrypt.TestBlockSize;
+begin
+  CheckEquals(8, FHash.BlockSize);
+end;
+
+procedure TestTHash_BCrypt.TestClassByName;
+begin
+  DoTestClassByName('THash_BCrypt', THash_BCrypt);
+end;
+
+procedure TestTHash_BCrypt.TestCostFactorTooLongException;
+begin
+  CheckException(DoTestCostFactorTooLongException, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestCostFactorTooShortException;
+begin
+  CheckException(DoTestCostFactorTooShortException, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestCreateCryptBSDFormat;
+var
+  Result    : string;
+  i         : Integer;
+  SplitData : TBCryptBSDTestData;
+  HashInst  : THash_BCrypt;
+begin
+  HashInst := THash_BCrypt.Create;
+  try
+    for i := Low(TestData) to High(TestData) do
+    begin
+      SplitData := SplitTestVector(TestData[i].CryptData);
+      Result := HashInst.GetDigestInCryptFormat(Passwords[TestData[i].PWNum],
+                                                SplitData.Cost.ToString,
+                                                SplitData.Salt,
+                                                False,
+                                                TFormat_BCryptBSD);
+
+      CheckEquals(TestData[i].CryptData, Result);
+    end;
+  finally
+    HashInst.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.TestDigestSize;
+begin
+  CheckEquals(23, FHash.DigestSize);
+end;
+
+procedure TestTHash_BCrypt.TestIdentity;
+begin
+  CheckEquals($9CA55338, FHash.Identity);
+end;
+
+procedure TestTHash_BCrypt.TestIsPasswordHash;
+begin
+  CheckEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_BCrypt.TestIsValidPasswordFalse;
+var
+  Result    : Boolean;
+  HashInst  : THash_BCrypt;
+begin
+  HashInst := THash_BCrypt.Create;
+  try
+    Result := HashInst.IsValidPassword('a',
+                                       '1234567890123456789012345678901234567' +
+                                       '8901234567890123456789',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failure at wrong CryptData length');
+
+    Result := HashInst.IsValidPassword('a',
+                                       TestData[1].CryptData,
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password for empty password');
+
+    Result := HashInst.IsValidPassword('ab',
+                                       TestData[5].CryptData,
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password for password a');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$3a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for ID');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
+                               'cost missing');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
+                               'salt missing');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06$n0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxe',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password with wrong '+
+                               'salt given');
+
+    Result := HashInst.IsValidPassword('a',
+                                       '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
+                                       'WLuGmsfGlMfOxih58VYVfxf',
+                                       TFormat_BCryptBSD);
+
+    CheckEquals(false, Result, 'Failed to detect wrong password with wrong '+
+                               'password hash given');
+  finally
+    HashInst.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.TestIsValidPasswordOK;
+var
+  Result    : Boolean;
+  i         : Integer;
+  HashInst  : THash_BCrypt;
+begin
+  HashInst := THash_BCrypt.Create;
+  try
+    for i := Low(TestData) to High(TestData) do
+    begin
+      Result := HashInst.IsValidPassword(Passwords[TestData[i].PWNum],
+                                         TestData[i].CryptData,
+                                         TFormat_BCryptBSD);
+
+      CheckEquals(true, Result, 'Failure at test data index: ' + i.ToString);
+    end;
+  finally
+    HashInst.Free;
+  end;
+end;
+
+procedure TestTHash_BCrypt.TestMaxCost;
+begin
+  CheckEquals(31, THash_BCrypt(FHash).MaxCost);
+end;
+
+procedure TestTHash_BCrypt.TestMaximumPasswordLength;
+begin
+  CheckEquals(72, TDECPasswordHash(FHash).MaxPasswordLength);
+end;
+
+procedure TestTHash_BCrypt.TestMaximumSaltLength;
+begin
+  CheckEquals(16, TDECPasswordHash(FHash).MaxSaltLength);
+end;
+
+procedure TestTHash_BCrypt.TestMinCost;
+begin
+  CheckEquals(4, THash_BCrypt(FHash).MinCost);
+end;
+
+procedure TestTHash_BCrypt.TestMinimumSaltLength;
+begin
+  CheckEquals(16, TDECPasswordHash(FHash).MinSaltLength);
+end;
+
+procedure TestTHash_BCrypt.TestNoSaltSpecified;
+begin
+  CheckException(DoTestNoSaltSpecified, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestSetGetCostFactor;
+begin
+  THash_BCrypt(FHash).Cost := 4;
+  CheckEquals(4, THash_BCrypt(FHash).Cost);
+
+  THash_BCrypt(FHash).Cost := 31;
+  CheckEquals(31, THash_BCrypt(FHash).Cost);
+end;
+
+procedure TestTHash_BCrypt.TestTooLongSaltSpecified;
+begin
+  CheckException(DoTestTooLongSaltSpecified, EDECHashException);
+end;
+
+procedure TestTHash_BCrypt.TestTooShortSaltSpecified;
+begin
+  CheckException(DoTestTooShortSaltSpecified, EDECHashException);
+end;
+
+{ THash_TestTDECPasswordHash }
+
+procedure THash_TestTDECPasswordHash.DoTestClassByCryptIdentityException;
+begin
+  TDECPasswordHash.ClassByCryptIdentity('nwrongID');
+end;
+
+procedure THash_TestTDECPasswordHash.DoTestSaltTooLongException;
+var
+  EmptySalt : TBytes;
+begin
+  SetLength(EmptySalt, FHash.MaxSaltLength + 1);
+
+  FHash.Salt := EmptySalt;
+end;
+
+procedure THash_TestTDECPasswordHash.DoTestSaltTooShortException;
+var
+  EmptySalt : TBytes;
+begin
+  SetLength(EmptySalt, FHash.MinSaltLength - 1);
+
+  FHash.Salt := EmptySalt;
+end;
+
+procedure THash_TestTDECPasswordHash.SetUp;
+begin
+  inherited;
+
+  FHash := THash_BCrypt.Create;
+end;
+
+procedure THash_TestTDECPasswordHash.TearDown;
+begin
+  FHash.Free;
+
+  inherited;
+end;
+
+procedure THash_TestTDECPasswordHash.TestClassByCryptIdentityException;
+begin
+  CheckException(DoTestClassByCryptIdentityException, EDECCLassNotRegisteredException);
+end;
+
+procedure THash_TestTDECPasswordHash.TestClassByCryptIdentitySuccess;
+var
+  HashClass : TDECPasswordHashClass;
+begin
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('2a');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('2A');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('$2a');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+
+  HashClass := TDECPasswordHash.ClassByCryptIdentity('$2A');
+  CheckEquals('THash_BCrypt', HashClass.ClassName);
+end;
+
+procedure THash_TestTDECPasswordHash.TestGetSalt;
+var
+  SetSalt, ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  SetSalt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+  FHash.Salt := SetSalt;
+
+  ActSalt := FHash.Salt;
+  CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
+end;
+
+procedure THash_TestTDECPasswordHash.TestSaltTooLongException;
+var
+  ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  CheckException(DoTestSaltTooLongException, EDECHashException);
+
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+end;
+
+procedure THash_TestTDECPasswordHash.TestSaltTooShortException;
+var
+  ActSalt : TBytes;
+begin
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+
+  CheckException(DoTestSaltTooShortException, EDECHashException);
+
+  ActSalt := FHash.Salt;
+  CheckEquals(0, Length(ActSalt));
+end;
+
+procedure THash_TestTDECPasswordHash.TestSetSalt;
+var
+  SetSalt, ActSalt : TBytes;
+begin
+  SetSalt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+  FHash.Salt := SetSalt;
+
+  ActSalt := FHash.Salt;
+  CheckEquals(true, System.SysUtils.CompareMem(@SetSalt[0], @ActSalt[0], Length(ActSalt)));
+end;
+
+{ THash_TestPasswordBase }
+
+procedure THash_TestPasswordBase.ConfigHashClass(aHashClass: TDECHash;
+  aIdxTestData: Integer);
+begin
+  inherited;
+  TDECPasswordHash(FHash).Salt := FTestData[aIdxTestData].Salt;
+end;
+
+{ THash_TestCPPBuilderExceptions }
+
+procedure THash_TestCPPBuilderExceptions.DoTestBlockSizeException;
+var
+  Result : UInt32;
+begin
+  Result := TDECHash.BlockSize;
+  CheckEquals(0, Result, 'Dummy check which should never get reached due to ' +
+                         'the exception being raised before');
+end;
+
+procedure THash_TestCPPBuilderExceptions.DoTestDigestSizeException;
+var
+  Result : UInt32;
+begin
+  Result := TDECHash.DigestSize;
+  CheckEquals(0, Result, 'Dummy check which should never get reached due to ' +
+                         'the exception being raised before');
+end;
+
+procedure THash_TestCPPBuilderExceptions.SetUp;
+begin
+  // Empty on purpose as only class functions are tested
+  inherited;
+end;
+
+procedure THash_TestCPPBuilderExceptions.TearDown;
+begin
+  // Empty on purpose as only class functions are tested
+  inherited;
+end;
+
+procedure THash_TestCPPBuilderExceptions.TestBlockSizeException;
+begin
+  CheckException(DoTestBlockSizeException, EDECAbstractError,
+                 'Abstract error raised for C++ Builder not detected');
+end;
+
+procedure THash_TestCPPBuilderExceptions.TestDigestSizeException;
+begin
+  CheckException(DoTestDigestSizeException, EDECAbstractError,
+                 'Abstract error raised for C++ Builder not detected');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(THash_TestIncrement8);
   TDUnitX.RegisterTestFixture(THash_TestCPPBuilderExceptions);
+<<<<<<< HEAD
+=======
+  TDUnitX.RegisterTestFixture(THash_TestTDECPasswordHash);
+>>>>>>> origin/development
   TDUnitX.RegisterTestFixture(TestTDECHash);
   TDUnitX.RegisterTestFixture(TestTHash_MD2);
   TDUnitX.RegisterTestFixture(TestTHash_MD4);
@@ -5998,9 +7057,14 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_Snefru128);
   TDUnitX.RegisterTestFixture(TestTHash_Snefru256);
   TDUnitX.RegisterTestFixture(TestTHash_Sapphire);
+  TDUnitX.RegisterTestFixture(TestTHash_BCrypt);
   {$ELSE}
   RegisterTests('DECHash', [THash_TestIncrement8.Suite,
                             THash_TestCPPBuilderExceptions.Suite,
+<<<<<<< HEAD
+=======
+                            THash_TestTDECPasswordHash.Suite,
+>>>>>>> origin/development
                             TestTDECHash.Suite,
                             TestTHash_MD2.Suite,
                             TestTHash_MD4.Suite,
@@ -6037,7 +7101,9 @@ initialization
                             TestTHash_Square.Suite,
                             TestTHash_Snefru128.Suite,
                             TestTHash_Snefru256.Suite,
-                            TestTHash_Sapphire.Suite
+                            TestTHash_Sapphire.Suite,
+
+                            TestTHash_BCrypt.Suite
                            ]);
   {$ENDIF}
 end.

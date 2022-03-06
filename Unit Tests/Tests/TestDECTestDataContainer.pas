@@ -18,6 +18,9 @@ unit TestDECTestDataContainer;
 
 interface
 
+uses
+  System.SysUtils;
+
 type
   ITestDataInputVector = interface
   ['{CEC7AE49-DA2D-438A-BE8B-2BC2FA1DBCD0}']
@@ -147,6 +150,27 @@ type
     ///   these algorithms.
     /// </param>
     procedure SetRounds(const aValue: UInt32);
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Set this to false to disable unicode test with this data
+    /// </param>
+    procedure SetRunUnicodeTest(const aValue:Boolean);
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    procedure SetCost(const aValue: UInt32);
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    /// <returns>
+    ///   Binary value of the salt, may be an empty TBytes value if none is defined
+    /// </returns>
+    procedure SetSalt(const aValue: TBytes);
 
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
@@ -187,6 +211,29 @@ type
     /// </summary>
     property Rounds               : UInt32
       write  SetRounds;
+
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding. Set this to false
+    ///   to disable unicode test with this data.
+    /// </summary>
+    property RunUnicodeTest       : Boolean
+      write  SetRunUnicodeTest;
+
+    // Properties for password hash implementations ----------------------------
+
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    property Cost                : UInt32
+      write  SetCost;
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user. This is the binary value of this salt.
+    /// </summary>
+    property Salt                : TBytes
+      write  SetSalt;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
@@ -237,6 +284,25 @@ type
     ///   Number of rounds to test
     /// </returns>
     function GetRounds:UInt32;
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    function GetRunUnicodeTest:Boolean;
+
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    function GetCost : UInt32;
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    /// <returns>
+    ///   Binary value of the salt, may be an empty TBytes value if none is defined
+    /// </returns>
+    function GetSalt : TBytes;
 
     /// <summary>
     ///   Gets the length in bytes of the hash value generated for those
@@ -281,6 +347,31 @@ type
     /// </summary>
     property Rounds               : UInt32
       read   GetRounds;
+
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    property RunUnicodeTest       : Boolean
+      read   GetRunUnicodeTest;
+
+    // Properties for password hash implementations ----------------------------
+
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    property Cost                 : UInt32
+      read   GetCost;
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    /// <returns>
+    ///   Binary value of the salt, may be an empty TBytes value if none is defined
+    /// </returns>
+    property Salt                 : TBytes
+      read   GetSalt;
   end;
 
   IHashTestDataContainer = interface(ITestDataContainer)
@@ -401,6 +492,22 @@ type
     ///   the algorithm loops over the data
     /// </summary>
     FRounds               : UInt32;
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    FRunUnicodeTest       : Boolean;
+
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    FCost                 : UInt32;
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    FSalt                 : TBytes;
   protected // ITestDataRow
     function GetInputData:RawByteString;
     function GetInputVectors:ITestDataInputVectorList;
@@ -453,6 +560,24 @@ type
     ///   Number of rounds to test
     /// </returns>
     function GetRounds:UInt32;
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    function GetRunUnicodeTest:Boolean;
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    function GetCost : UInt32;
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    /// <returns>
+    ///   Binary value of the salt, may be an empty TBytes value if none is defined
+    /// </returns>
+    function GetSalt : TBytes;
   protected // IHashTestDataRowSetup
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
@@ -507,6 +632,27 @@ type
     ///   these algorithms.
     /// </param>
     procedure SetRounds(const aValue: UInt32);
+    /// <summary>
+    ///   Can be used to suppress certain unicode tests, which sometimes would
+    ///   lead to too long input data due to unicode encoding.
+    /// </summary>
+    /// <param name="aValue">
+    ///   Set this to false to disable unicode test with this data
+    /// </param>
+    procedure SetRunUnicodeTest(const aValue:Boolean);
+    /// <summary>
+    ///   Some password hash algorithms have a cost factor so one can change
+    ///   calculation effort when CPU power increses. BCrypt is such an algorithm.
+    /// </summary>
+    procedure SetCost(const aValue: UInt32);
+    /// <summary>
+    ///   Most password hash algorithms contain a salt applied to the password
+    ///   entered by the user.
+    /// </summary>
+    /// <returns>
+    ///   Binary value of the salt, may be an empty TBytes value if none is defined
+    /// </returns>
+    procedure SetSalt(const aValue: TBytes);
   public
     constructor Create;
     destructor Destroy; override;
@@ -597,13 +743,20 @@ end;
 constructor THashTestDataRow.Create;
 begin
   inherited Create;
-  FInputVectors := TTestDataInputVectorList.Create;
+  FInputVectors   := TTestDataInputVectorList.Create;
+  FRunUnicodeTest := true;
+  SetLength(FSalt, 0);
 end;
 
 destructor THashTestDataRow.Destroy;
 begin
   FInputVectors := NIL;
   inherited;
+end;
+
+function THashTestDataRow.GetCost: UInt32;
+begin
+  result := FCost;
 end;
 
 function THashTestDataRow.GetFinalByteBitLength: UInt16;
@@ -651,6 +804,21 @@ begin
   Result := FRounds;
 end;
 
+function THashTestDataRow.GetRunUnicodeTest: Boolean;
+begin
+  result := FRunUnicodeTest;
+end;
+
+function THashTestDataRow.GetSalt: TBytes;
+begin
+  result := FSalt;
+end;
+
+procedure THashTestDataRow.SetCost(const aValue: UInt32);
+begin
+  FCost := aValue;
+end;
+
 procedure THashTestDataRow.SetExpectedOutput(const aValue: RawByteString);
 begin
   FOutputData := aValue;
@@ -684,6 +852,16 @@ end;
 procedure THashTestDataRow.SetRounds(const aValue: UInt32);
 begin
   FRounds := aValue;
+end;
+
+procedure THashTestDataRow.SetRunUnicodeTest(const aValue: Boolean);
+begin
+  FRunUnicodeTest := aValue;
+end;
+
+procedure THashTestDataRow.SetSalt(const aValue: TBytes);
+begin
+  FSalt := aValue;
 end;
 
 { TTestDataInputVectorContainer }

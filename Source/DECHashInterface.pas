@@ -155,6 +155,34 @@ type
                         Format: TDECFormatClass): RawByteString; overload;
 
     /// <summary>
+    ///   Returns the current value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    function GetPaddingByte: Byte;
+    /// <summary>
+    ///   Changes the value of the padding byte used to fill up data
+    ///   if necessary
+    /// </summary>
+    /// <param name="Value">
+    ///   New value for the padding byte
+    /// </param>
+    procedure SetPaddingByte(Value: Byte);
+
+    /// <summary>
+    ///   Defines the byte used in the KDF methods to padd the end of the data
+    ///   if the length of the data cannot be divided by required size for the
+    ///   hash algorithm without reminder
+    /// </summary>
+    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
+  end;
+
+  /// <summary>
+  ///   Adds all methods which shall not be present in the specialized password
+  ///   hash classes. Mostly the CalcStreamXX and CalcFileXXX ones.
+  /// </summary>
+  IDECHashExtended = Interface(IDECHash)
+  ['{FCC6C79E-C32C-4520-967A-FD1E60572E0F}']
+    /// <summary>
     ///   Calculates the hash value over a givens stream of bytes
     /// </summary>
     /// <param name="Stream">
@@ -272,34 +300,13 @@ type
     /// </remarks>
     function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
                       const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
-
-    /// <summary>
-    ///   Returns the current value of the padding byte used to fill up data
-    ///   if necessary
-    /// </summary>
-    function GetPaddingByte: Byte;
-    /// <summary>
-    ///   Changes the value of the padding byte used to fill up data
-    ///   if necessary
-    /// </summary>
-    /// <param name="Value">
-    ///   New value for the padding byte
-    /// </param>
-    procedure SetPaddingByte(Value: Byte);
-
-    /// <summary>
-    ///   Defines the byte used in the KDF methods to padd the end of the data
-    ///   if the length of the data cannot be divided by required size for the
-    ///   hash algorithm without reminder
-    /// </summary>
-    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
   end;
 
   /// <summary>
   ///   Interface for all hash classes which are able to operate on bit sized
   ///   message lengths instead of byte sized ones only.
   /// </summary>
-  IDECHashBitsized = Interface(IDECHash)
+  IDECHashBitsized = Interface(IDECHashExtended)
   ['{7F2232CB-C3A7-4A14-858B-D98AB61E04E4}']
     /// <summary>
     ///   Returns the number of bits the final byte of the message consists of
@@ -345,6 +352,9 @@ type
       write  SetHashSize;
   end;
 
+  /// <summary>
+  ///   Interface for all hash classes which have a rounds property.
+  /// </summary>
   IDECHashRounds = Interface(IDECHash)
   ['{22864693-0DC6-41AF-8188-192B770B4717}']
     /// <summary>
@@ -373,6 +383,103 @@ type
     property Rounds: UInt32
       read   GetRounds
       write  SetRounds;
+  end;
+
+  IDECHashPassword = Interface(IDECHash)
+  ['{B4D8A80C-1F42-46F8-9288-D71ECCFE6F02}']
+      /// <summary>
+    ///   Calculates a passwort hash for the given password and returns it in
+    ///   a BSDCrypt compatible format. This method only works for those hash
+    ///   algorithms implementing the necessary GetBSDCryptID method.
+    /// </summary>
+    /// <param name="Password">
+    ///   Entered password for which to calculate the hash. The caller is
+    ///   responsible to ensure the maximum password length is adhered to.
+    ///   Any exceptions raised due to too long passwords are not caught here!
+    /// </param>
+    /// <param name="Params">
+    ///   Algorithm specific parameters used for initialization. For details see
+    ///   documentation of the concrete implementation in the algorithm.
+    /// </param>
+    /// <param name="Salt">
+    ///   Salt value used by the password hash calculation. Depending on the
+    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+    ///   in the encoding used in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="SaltIsRaw">
+    ///   If true the passed salt value is a raw value. If false it is encoded
+    ///   like in the Crypt/BSD password storage string.
+    /// </param>
+    /// <param name="Format">
+    ///   Formatting class used to format the calculated password. Different
+    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+    ///   which one to pass. See description of the hash class used.
+    /// </param>
+    /// <returns>
+    ///   Calculated hash value in BSD crypt style format. Returns an empty
+    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+    /// </returns>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of <c>Password</c> is higher than
+    ///   <c>MaxPasswordLength</c> or if a salt with a different length than
+    ///   128 bit has been specified.
+    /// </exception>
+    function GetDigestInCryptFormat(const Password : string;
+                                    const Params   : string;
+                                    const Salt     : string;
+                                    SaltIsRaw      : Boolean;
+                                    Format         : TDECFormatClass):string;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]].
+    ///   The exact format depends on the algorithm used.
+    /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean;
+    /// <summary>
+    ///   Sets the salt value given. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength.
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if length of  <c>Value</c> is not in the range of
+    ///   <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
+    procedure SetSalt(const Value: TBytes);
+    /// <summary>
+    ///   Returns the defined salt value
+    /// </summary>
+    function  GetSalt: TBytes;
+    /// <summary>
+    ///   Defines the salt value used. Throws an EDECHashException if a salt is
+    ///   passed which is longer than MaxSaltLength. The salt has to be passed
+    ///   in binary form. Any Base64 encoded salt needs to be decoded before
+    ///   passing.
+    /// </summary>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if the length of the value assigned is not in the
+    ///   range of <c>MinSaltLength</c> and <c>MaxSaltLength</c>
+    /// </exception>
+    property Salt: TBytes
+      read   GetSalt
+      write  SetSalt;
   end;
 
 implementation

@@ -23,7 +23,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.Layouts, FMX.ListBox,
-  FMX.Edit, DECFormatBase;
+  FMX.Edit, DECHashBase, DECFormatBase;
 
 type
   TFormMain = class(TForm)
@@ -53,6 +53,13 @@ type
     CheckBoxLastByteBitSize: TCheckBox;
     LabelLastByteBits: TLabel;
     EditLastByteBits: TEdit;
+    LayoutSalt: TLayout;
+    Label1: TLabel;
+    EditSalt: TEdit;
+    Label7: TLabel;
+    ComboBoxSaltFormatting: TComboBox;
+    Label8: TLabel;
+    EditCost: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure ButtonCalcClick(Sender: TObject);
     procedure ComboBoxHashFunctionChange(Sender: TObject);
@@ -63,6 +70,7 @@ type
     procedure EditRoundsChange(Sender: TObject);
     procedure VertScrollBox1CalcContentBounds(Sender: TObject;
       var ContentBounds: TRectF);
+    procedure EditCostChange(Sender: TObject);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -92,6 +100,12 @@ type
     ///   Determine and return the selected class for input format treatment
     /// </summary>
     function GetSelectedInputFormattingClass:TDECFormatClass;
+    /// <summary>
+    ///   Determines whether the selected hash algorithm is a password hash
+    ///   algorithm which requires a salt to be defined in addition to the
+    ///   text to be hashed.
+    /// </summary>
+    function IsSaltablePasswordHash(HashClass: TDECHashClass): Boolean;
   public
   end;
 
@@ -101,7 +115,7 @@ var
 implementation
 
 uses
-  DECBaseClass, DECHashBase, DECHash, DECHashAuthentication, DECHashInterface,
+  DECBaseClass, DECHash, DECHashAuthentication, DECHashInterface,
   DECFormat, DECUtil,
   Generics.Collections, FMX.Platform
   {$IFDEF Android}
@@ -116,8 +130,10 @@ uses
 procedure TFormMain.ButtonCalcClick(Sender: TObject);
 var
   Hash                 : TDECHash;
+  HashClass            : TDECHashClass;
   InputFormatting      : TDECFormatClass;
   OutputFormatting     : TDECFormatClass;
+  SaltFormatting       : TDECFormatClass;
   InputBuffer          : TBytes;
   OutputBuffer         : TBytes;
   ExtensibleInterf     : IDECHashExtensibleOutput;
@@ -186,6 +202,38 @@ begin
     else
       RoundsInterf := nil;
 
+    // set the salt property
+    HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
+    if IsSaltablePasswordHash(HashClass) then
+    begin
+      if EditSalt.Text.IsEmpty then
+      begin
+        ShowErrorMessage('No salt value entered');
+        exit;
+      end;
+
+      if (ComboBoxSaltFormatting.ItemIndex >= 0) then
+        // Find the class type of the selected formatting class
+        SaltFormatting := TDECFormat.ClassByName(
+          ComboBoxSaltFormatting.Items[ComboBoxSaltFormatting.ItemIndex])
+      else
+      begin
+        ShowErrorMessage('No salt format selected');
+        exit;
+      end;
+
+      InputBuffer  := System.SysUtils.BytesOf(EditSalt.Text);
+      if InputFormatting.IsValid(InputBuffer) then
+        TDECPasswordHash(Hash).Salt := SaltFormatting.Decode(InputBuffer)
+      else
+        ShowErrorMessage('Salt has wrong format');
+    end;
+
+    // Set the BCrypt specific cost factor. Might be more generalized when
+    // further password hashes are added.
+    if (HashClass = THash_BCrypt) then
+      THash_BCrypt(Hash).Cost := EditCost.Text.ToInteger;
+
     try
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
 
@@ -232,15 +280,36 @@ procedure TFormMain.VertScrollBox1CalcContentBounds(Sender: TObject;
   var ContentBounds: TRectF);
 begin
   LayoutTop.Width    := VertScrollBox1.ClientWidth;
+  LayoutSalt.Width   := VertScrollBox1.ClientWidth;
   LayoutBottom.Width := VertScrollBox1.ClientWidth;
 end;
 
 procedure TFormMain.ComboBoxHashFunctionChange(Sender: TObject);
+var
+  HashClass    : TDECHashClass;
+  LayoutHeight : Single;
 begin
-  CheckBoxIsPasswordHash.IsChecked :=
-    TDECHash.ClassByName(GetSelectedHashClassName).IsPasswordHash;
+  HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
 
-  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashExtensibleOutput) then
+  CheckBoxIsPasswordHash.IsChecked :=
+    HashClass.IsPasswordHash;
+
+  // Make the salt fields visible only when a password hash algorithm supporting
+  // a salt value has been selected.
+  LayoutSalt.Visible := IsSaltablePasswordHash(HashClass);
+  if LayoutSalt.Visible then
+  begin
+    if ComboBoxSaltFormatting.ItemIndex < 0 then
+      ComboBoxSaltFormatting.ItemIndex := 0;
+
+    EditCost.Enabled := HashClass = THash_BCrypt;
+
+    LayoutBottom.Position.Y := LayoutSalt.Position.Y + LayoutSalt.Height;
+  end
+  else
+    LayoutBottom.Position.Y := LayoutTop.Opacity + LayoutTop.Height;
+
+  if Supports(HashClass, IDECHashExtensibleOutput) then
   begin
     CheckBoxIsExtensibleOutputHash.IsChecked := true;
     EditHashLength.Enabled                   := true;
@@ -253,7 +322,7 @@ begin
     LabelHashLength.Enabled                  := false;
   end;
 
-  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashRounds) then
+  if Supports(HashClass, IDECHashRounds) then
   begin
     CheckBoxHasRounds.IsChecked := true;
     LabelRounds.Enabled         := true;
@@ -266,7 +335,7 @@ begin
     EditRounds.Enabled          := false;
   end;
 
-  if Supports(TDECHash.ClassByName(GetSelectedHashClassName), IDECHashBitsized) then
+  if Supports(HashClass, IDECHashBitsized) then
   begin
     CheckBoxLastByteBitSize.IsChecked := true;
     LabelLastByteBits.Enabled         := true;
@@ -277,6 +346,53 @@ begin
     CheckBoxLastByteBitSize.IsChecked := false;
     LabelLastByteBits.Enabled         := false;
     EditLastByteBits.Enabled          := false;
+  end;
+
+  LayoutHeight := LayoutTop.Height + LayoutBottom.Height;
+  if LayoutSalt.Visible then
+    LayoutHeight := LayoutHeight + LayoutSalt.Height;
+
+  if (Height > Screen.Height) then
+    Height := trunc(Screen.Height)
+  else
+    if (ClientHeight < LayoutHeight) and (LayoutHeight < Screen.Height) then
+      ClientHeight := trunc(LayoutHeight)
+    else
+      Height := trunc(Screen.Height);
+end;
+
+function TFormMain.IsSaltablePasswordHash(HashClass: TDECHashClass): Boolean;
+begin
+  Result := (HashClass.IsPasswordHash and
+             (TDECPasswordHashClass(HashClass).MaxSaltLength > 0));
+end;
+
+procedure TFormMain.EditCostChange(Sender: TObject);
+var
+  Cost      : Integer;
+  HashClass : TDECHashClass;
+
+  MinCost,
+  MaxCost   : Byte;
+begin
+  if ((Sender as TEdit).Text.Length > 0) then
+  begin
+    Cost := (Sender as TEdit).Text.ToInteger;
+    // Needs to be changed when further password hashes are added
+    HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
+    MinCost := THash_BCrypt(HashClass).MinCost;
+    MaxCost := THash_BCrypt(HashClass).MaxCost;
+
+    if (Cost < MinCost) or
+       (Cost > MaxCost) then
+      ShowErrorMessage(Format('Invalid input. Cost must be between %0:d and %1:d',
+                              [MinCost, MaxCost]));
+
+    if (Cost < MinCost) then
+      (Sender as TEdit).Text := MinCost.ToString;
+
+    if (Cost > MaxCost) then
+      (Sender as TEdit).Text := MaxCost.ToString;
   end;
 end;
 
@@ -356,6 +472,7 @@ begin
     Formats.Sort;
     ComboBoxInputFormatting.Items.AddStrings(Formats);
     ComboBoxOutputFormatting.Items.AddStrings(Formats);
+    ComboBoxSaltFormatting.Items.AddStrings(Formats);
 
     if Formats.Count > 0 then
     begin
