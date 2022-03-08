@@ -1257,10 +1257,10 @@ type
     /// <returns>
     ///   Calculated hash value
     /// </returns>
-    function GetCryptHash(const Password : string;
-                          const Params   : string;
-                          const Salt     : TBytes;
-                          Format         : TDECFormatClass):string; override;
+    function GetCryptHash(Password     : TBytes;
+                          const Params : string;
+                          const Salt   : TBytes;
+                          Format       : TDECFormatClass):string; override;
     {$EndRegion}
   public
     /// <summary>
@@ -1314,6 +1314,30 @@ type
     ///    True if the password given is correct.
     /// </returns>
     function IsValidPassword(const Password  : string;
+                             const CryptData : string;
+                             Format          : TDECFormatClass): Boolean; override;
+
+    /// <summary>
+    ///   Checks whether a given password is the correct one for a password
+    ///   storage "record"/entry in Crypt/BSD format.
+    /// </summary>
+    /// <param name="Password">
+    ///   Password to check for validity
+    /// </param>
+    /// <param name="CryptData">
+    ///   The data needed to "compare" the password against in Crypt/BSD like
+    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+    /// </param>
+    /// <param name="Format">
+    ///   Must be the right type for the Crypt/BSD encoding used by the
+    ///   algorithm used. This was implemented this way to avoid making the
+    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+    ///   otherwise.
+    /// </param>
+    /// <returns>
+    ///    True if the password given is correct.
+    /// </returns>
+    function IsValidPassword(Password        : TBytes;
                              const CryptData : string;
                              Format          : TDECFormatClass): Boolean; override;
 
@@ -5246,10 +5270,10 @@ begin
   end;
 end;
 
-function THash_BCrypt.GetCryptHash(const Password : string;
-                                   const Params   : string;
-                                   const Salt     : TBytes;
-                                   Format         : TDECFormatClass): string;
+function THash_BCrypt.GetCryptHash(Password     : TBytes;
+                                   const Params : string;
+                                   const Salt   : TBytes;
+                                   Format       : TDECFormatClass): string;
 var
   Hash : THash_BCrypt;
 begin
@@ -5259,8 +5283,7 @@ begin
     Hash.Salt := Salt;
 
     // BCrypt leaves off the $ in front of the actual password hash value
-    Result := TEncoding.ASCII.GetString(Format.Encode(Hash.CalcBytes(
-                TEncoding.UTF8.GetBytes(Password))));
+    Result := TEncoding.ASCII.GetString(Format.Encode(Hash.CalcBytes(Password)));
   finally
     Hash.Free;
   end;
@@ -5279,6 +5302,34 @@ begin
     Result := '0' + Result;
 
   Result := '$' + Result;
+end;
+
+function THash_BCrypt.IsValidPassword(Password        : TBytes;
+                                      const CryptData : string;
+                                      Format: TDECFormatClass): Boolean;
+var
+  SplittedCryptData : TBCryptBSDData;
+  Hash              : string;
+begin
+  Result := false;
+
+  if (Length(CryptData) = 60) then
+  begin
+    if SplitTestVector(CryptData, SplittedCryptData) then
+    begin
+      // Is the CryptData for this algorithm?
+      if '$' + SplittedCryptData.ID <> GetCryptID then
+        exit;
+
+      Hash := GetDigestInCryptFormat(Password,
+                                     SplittedCryptData.Cost,
+                                     SplittedCryptData.Salt,
+                                     False,
+                                     Format);
+
+      Result := Hash = CryptData;
+    end;
+  end;
 end;
 
 function THash_BCrypt.IsValidPassword(const Password  : string;
