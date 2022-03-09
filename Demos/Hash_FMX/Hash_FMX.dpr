@@ -1,9 +1,10 @@
 program Hash_FMX;
 
 uses
+  FastMM4,
   System.StartUpCopy,
   FMX.Forms,
-  MainForm in 'MainForm.pas' {FormMain};
+  MainForm in 'MainForm.pas' {Form1};
 
 {$R *.res}
 
