@@ -240,7 +240,10 @@ begin
       if (Iterations > 18000) then
         Iterations := 18000;
       Iterations := Iterations div BufferSize;
+    end;
 
+    if Hash.IsPasswordHash then
+    begin
       SetLength(Salt, TDECPasswordHash(Hash).MaxSaltLength);
       n := 0;
 
@@ -251,8 +254,6 @@ begin
         if (n > 255) then
           n := 0;
       end;
-
-      TDECPasswordHash(Hash).Salt := Salt;
     end;
 
     FStopwatch.Reset;
@@ -260,7 +261,9 @@ begin
 
     for i := 0 to Iterations - 1 do
     begin
-//      HashResult := Hash.CalcBytes(FBenchmarkBuffer);
+      if Hash.IsPasswordHash then
+        TDECPasswordHash(Hash).Salt := Salt;
+
       HashResult := Hash.CalcBuffer(@FBenchmarkBuffer[0], BufferSize);
     end;
 
