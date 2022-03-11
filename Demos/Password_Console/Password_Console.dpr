@@ -28,12 +28,15 @@ uses
   System.SysUtils,
   DECHashAuthentication,
   DECHash,
+  DECTypes,
   DECFormat;
 
 var
-  HashInst : THash_BCrypt;
-  Result   : Boolean;
-  Password : string;
+  HashInst  : THash_BCrypt;
+  HashInst2 : TDECPasswordHash;
+  HashRef   : TDECPasswordHashClass;
+  Result    : Boolean;
+  Password  : string;
 
 begin
   HashInst := THash_BCrypt.Create;
@@ -84,6 +87,27 @@ begin
       until Result;
 
       WriteLn('Entered password is correct!');
+      WriteLn;
+
+      // find the class reference of the BCrypt inplementation and create an
+      // object from it
+      try
+        HashRef := TDECPasswordHash.ClassByCryptIdentity('$2a');
+        HashInst2 := HashRef.Create;
+        try
+          WriteLn('Class created: ' + HashInst2.ClassName);
+          Result := HashInst.IsValidPassword('GoOn!',
+                                             '$2a$06$If6bvum7DFjUnE9p2uDeDuJZX' +
+                                             '1LXp30kMOn/QEnf4laWZvcLxd0iK',
+                                             TFormat_BCryptBSD);
+          WriteLn('Is right password: ' + BoolToStr(Result, true));
+        finally
+          HashInst2.Free;
+        end;
+      except
+        on e:EDECClassNotRegisteredException do
+          WriteLn('Algorithm implementation not found');
+      end;
     except
       on E: Exception do
         Writeln(E.ClassName, ': ', E.Message);
