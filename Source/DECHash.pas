@@ -1293,29 +1293,29 @@ type
     /// </summary>
     function MaxCost:UInt8;
 
-    /// <summary>
-    ///   Checks whether a given password is the correct one for a password
-    ///   storage "record"/entry in Crypt/BSD format.
-    /// </summary>
-    /// <param name="Password">
-    ///   Password to check for validity
-    /// </param>
-    /// <param name="CryptData">
-    ///   The data needed to "compare" the password against in Crypt/BSD like
-    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
-    /// </param>
-    /// <param name="Format">
-    ///   Must be the right type for the Crypt/BSD encoding used by the
-    ///   algorithm used. This was implemented this way to avoid making the
-    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
-    ///   otherwise.
-    /// </param>
-    /// <returns>
-    ///    True if the password given is correct.
-    /// </returns>
-    function IsValidPassword(const Password  : string;
-                             const CryptData : string;
-                             Format          : TDECFormatClass): Boolean; override;
+//    /// <summary>
+//    ///   Checks whether a given password is the correct one for a password
+//    ///   storage "record"/entry in Crypt/BSD format.
+//    /// </summary>
+//    /// <param name="Password">
+//    ///   Password to check for validity
+//    /// </param>
+//    /// <param name="CryptData">
+//    ///   The data needed to "compare" the password against in Crypt/BSD like
+//    ///   format: $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
+//    /// </param>
+//    /// <param name="Format">
+//    ///   Must be the right type for the Crypt/BSD encoding used by the
+//    ///   algorithm used. This was implemented this way to avoid making the
+//    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+//    ///   otherwise.
+//    /// </param>
+//    /// <returns>
+//    ///    True if the password given is correct.
+//    /// </returns>
+//    function IsValidPassword(const Password  : string;
+//                             const CryptData : string;
+//                             Format          : TDECFormatClass): Boolean; override;
 
     /// <summary>
     ///   Checks whether a given password is the correct one for a password
@@ -5332,33 +5332,33 @@ begin
   end;
 end;
 
-function THash_BCrypt.IsValidPassword(const Password  : string;
-                                      const CryptData : string;
-                                      Format          : TDECFormatClass): Boolean;
-var
-  SplittedCryptData : TBCryptBSDData;
-  Hash              : string;
-begin
-  Result := false;
-
-  if (Length(CryptData) = 60) then
-  begin
-    if SplitTestVector(CryptData, SplittedCryptData) then
-    begin
-      // Is the CryptData for this algorithm?
-      if '$' + SplittedCryptData.ID <> GetCryptID then
-        exit;
-
-      Hash := GetDigestInCryptFormat(Password,
-                                     SplittedCryptData.Cost,
-                                     SplittedCryptData.Salt,
-                                     False,
-                                     Format);
-
-      Result := Hash = CryptData;
-    end;
-  end;
-end;
+//function THash_BCrypt.IsValidPassword(const Password  : string;
+//                                      const CryptData : string;
+//                                      Format          : TDECFormatClass): Boolean;
+//var
+//  SplittedCryptData : TBCryptBSDData;
+//  Hash              : string;
+//begin
+//  Result := false;
+//
+//  if (Length(CryptData) = 60) then
+//  begin
+//    if SplitTestVector(CryptData, SplittedCryptData) then
+//    begin
+//      // Is the CryptData for this algorithm?
+//      if '$' + SplittedCryptData.ID <> GetCryptID then
+//        exit;
+//
+//      Hash := GetDigestInCryptFormat(Password,
+//                                     SplittedCryptData.Cost,
+//                                     SplittedCryptData.Salt,
+//                                     False,
+//                                     Format);
+//
+//      Result := Hash = CryptData;
+//    end;
+//  end;
+//end;
 
 procedure THash_BCrypt.BF_Encrypt(const BI: TBFBlock; var BO: TBFBlock);
 var

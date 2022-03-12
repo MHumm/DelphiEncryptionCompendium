@@ -795,7 +795,7 @@ type
                                     const Params   : string;
                                     const Salt     : string;
                                     SaltIsRaw      : Boolean;
-                                    Format         : TDECFormatClass):string; overload; virtual;
+                                    Format         : TDECFormatClass):string; overload;
 
     /// <summary>
     ///   Calculates a passwort hash for the given password and returns it in
@@ -863,7 +863,7 @@ type
     /// </returns>
     function IsValidPassword(const Password  : string;
                              const CryptData : string;
-                             Format          : TDECFormatClass): Boolean; overload; virtual;
+                             Format          : TDECFormatClass): Boolean; overload;
 
     /// <summary>
     ///   Checks whether a given password is the correct one for a password
@@ -1638,7 +1638,9 @@ function TDECPasswordHash.IsValidPassword(const Password  : string;
                                           const CryptData : string;
                                           Format          : TDECFormatClass): Boolean;
 begin
-  Result := false;
+  Result := IsValidPassword(TEncoding.UTF8.GetBytes(Password),
+                            CryptData,
+                            Format);
 end;
 
 function TDECPasswordHash.IsValidPassword(Password        : TBytes;
