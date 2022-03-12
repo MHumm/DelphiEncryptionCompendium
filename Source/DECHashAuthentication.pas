@@ -1599,26 +1599,12 @@ function TDECPasswordHash.GetDigestInCryptFormat(
                             const Salt     : string;
                             SaltIsRaw      : Boolean;
                             Format         : TDECFormatClass): string;
-var
-  SaltBytes : TBytes;
 begin
-  // generic format used by Crypt, but not every algorithm sticks 100% to it
-  // $<id>[$<param>=<value>(,<param>=<value>)*][$<salt>[$<hash>]]
-
-  // if no ID is delivered the algorithm is none of the Crypt/BSD algorithms
-  Result := GetCryptID;
-  if (Result <> '') then
-  begin
-    if SaltIsRaw then
-      SaltBytes := TEncoding.UTF8.GetBytes(Salt)
-    else
-      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
-
-    Result := Result + GetCryptParams(Params, Format) +
-                       GetCryptSalt(SaltBytes, Format) +
-                       GetCryptHash(TEncoding.UTF8.GetBytes(Password),
-                                    Params, SaltBytes, Format);
-  end;
+  Result := GetDigestInCryptFormat(TEncoding.UTF8.GetBytes(Password),
+                                   Params,
+                                   Salt,
+                                   SaltIsRaw,
+                                   Format);
 end;
 
 function TDECPasswordHash.GetDigestInCryptFormat(
