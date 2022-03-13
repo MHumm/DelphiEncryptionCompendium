@@ -731,6 +731,7 @@ type
     procedure DoTestNoSaltSpecified;
     procedure DoTestTooShortSaltSpecified;
     procedure DoTestTooLongSaltSpecified;
+    procedure DoTestTooLongPasswordSpecified;
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
@@ -754,7 +755,7 @@ type
     procedure TestNoSaltSpecified;
     procedure TestTooShortSaltSpecified;
     procedure TestTooLongSaltSpecified;
-//    procedure TestTooLongPasswordException;
+    procedure TestTooLongPasswordException;
   end;
 
 implementation
@@ -6161,6 +6162,28 @@ begin
   end;
 end;
 
+procedure TestTHash_BCrypt.DoTestTooLongPasswordSpecified;
+var
+  BCrypt   : THash_BCrypt;
+  Password : TBytes;
+  i        : Integer;
+begin
+  BCrypt := THash_BCrypt.Create;
+  try
+    BCrypt.Init;
+    BCrypt.Cost := 8;
+    BCrypt.Salt := [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+
+    SetLength(Password, BCrypt.MaxPasswordLength + 1);
+    for i := Low(Password) to High(Password) do
+      Password[i] := i;
+
+    BCrypt.CalcBytes(Password);
+  finally
+    BCrypt.Free;
+  end;
+end;
+
 procedure TestTHash_BCrypt.DoTestTooLongSaltSpecified;
 var
   BCrypt : THash_BCrypt;
@@ -6659,6 +6682,11 @@ begin
 
   THash_BCrypt(FHash).Cost := 31;
   CheckEquals(31, THash_BCrypt(FHash).Cost);
+end;
+
+procedure TestTHash_BCrypt.TestTooLongPasswordException;
+begin
+  CheckException(DoTestTooLongPasswordSpecified, EDECHashException);
 end;
 
 procedure TestTHash_BCrypt.TestTooLongSaltSpecified;
