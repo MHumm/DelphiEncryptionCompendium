@@ -49,6 +49,8 @@ type
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
+  THash_Keccack_224 = class;
+  THash_Keccack_256 = class;
   THash_SHA3_224    = class;
   THash_SHA3_256    = class;
   THash_SHA3_384    = class;
@@ -272,11 +274,6 @@ type
       ///   KeccakMaximumRate converted into bytes instead of bits
       /// </summary>
       KeccakMaximumRateInBytes     = KeccakMaximumRate div 8;
-
-      /// <summary>
-      ///   Number of times to run the algorithm on the data
-      /// </summary>
-      cKeccakNumberOfRounds        = 24;
 
       /// <summary>
       ///   Precalculated values for the 24 rounds of the algorithm
@@ -574,6 +571,28 @@ type
     ///   Size of the data in bytes
     /// </param>
     procedure Calc(const Data; DataSize: Integer); override;
+  end;
+
+  /// <summary>
+  ///   224 bit Keccack variant, the predecessor of SHA3_224
+  /// </summary>
+  THash_Keccack_224 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   256 bit Keccack variant, the predecessor of SHA3_224
+  /// </summary>
+  THash_Keccack_256 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -4518,6 +4537,46 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+{ THash_Keccack_224 }
+
+class function THash_Keccack_224.BlockSize: UInt32;
+begin
+  Result := 144;
+end;
+
+class function THash_Keccack_224.DigestSize: UInt32;
+begin
+  Result := 28;
+end;
+
+procedure THash_Keccack_224.DoInit;
+begin
+  inherited;
+
+  InitSponge(1152,  448);
+  FSpongeState.FixedOutputLength := 224;
+end;
+
+{ THash_Keccack_256 }
+
+class function THash_Keccack_256.BlockSize: UInt32;
+begin
+  Result := 136;
+end;
+
+class function THash_Keccack_256.DigestSize: UInt32;
+begin
+  Result := 32;
+end;
+
+procedure THash_Keccack_256.DoInit;
+begin
+  inherited;
+
+  InitSponge(1088,  512);
+  FSpongeState.fixedOutputLength := 256;
+end;
+
 { THash_SHA3_224 }
 
 class function THash_SHA3_224.BlockSize: UInt32;
@@ -4691,7 +4750,8 @@ var
 
 begin
    A := PUInt64Array(@state);
-   for i := 0 to 23 do begin
+   for i := 0 to 23 do
+   begin
       C0 := A[00] xor A[05] xor A[10] xor A[15] xor A[20];
       C1 := A[01] xor A[06] xor A[11] xor A[16] xor A[21];
       C2 := A[02] xor A[07] xor A[12] xor A[17] xor A[22];
@@ -4790,9 +4850,10 @@ var
 
 begin
    A := PUInt64Array(@state);
-   for i:=0 to 23 do begin
-      KeccakPermutationKernel(@B, A, @C);
-      A[00] := A[00] xor cRoundConstants[i];
+   for i:=0 to 23 do
+   begin
+     KeccakPermutationKernel(@B, A, @C);
+     A[00] := A[00] xor cRoundConstants[i];
    end;
 
    {$IFDEF X86ASM}
@@ -5030,9 +5091,9 @@ begin
    pS := @state[0];
    for i := laneCount - 1 downto 0 do
    begin
-      pI^ := pS^;
-      Inc(pI);
-      Inc(pS);
+     pI^ := pS^;
+     Inc(pI);
+     Inc(pS);
    end;
 end;
 
