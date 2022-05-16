@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{F90DC8C6-DC04-46FE-8D5C-2260589FBEF1}</ProjectGuid>
-        <ProjectVersion>19.3</ProjectVersion>
+        <ProjectVersion>19.4</ProjectVersion>
         <FrameworkType>FMX</FrameworkType>
         <MainSource>Cipher_FMX.dpr</MainSource>
         <Base>True</Base>
@@ -288,67 +288,21 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="Crypto_960_720.png" Configuration="Debug" Class="Android_SplashImage960">
+                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_24x24.png" Configuration="Debug" Class="Android_NotificationIcon24">
                     <Platform Name="Android">
-                        <RemoteName>splash_image.png</RemoteName>
+                        <RemoteName>ic_notification.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Crypto_426_320.png" Configuration="Debug" Class="Android_SplashImage426">
+                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_36x36.png" Configuration="Debug" Class="Android_NotificationIcon36">
                     <Platform Name="Android">
-                        <RemoteName>splash_image.png</RemoteName>
+                        <RemoteName>ic_notification.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\strings.xml" Configuration="Release" Class="Android_Strings">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Release" Class="Android_LauncherIcon144">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\strings.xml" Configuration="Debug" Class="Android_Strings">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Debug" Class="Android_LauncherIcon144">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_426_320.png" Configuration="Release" Class="Android_SplashImage426">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\styles-v21.xml" Configuration="Debug" Class="AndroidSplashStylesV21">
+                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_48x48.png" Configuration="Debug" Class="Android_NotificationIcon48">
                     <Platform Name="Android">
-                        <RemoteName>styles.xml</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_426_320.png" Configuration="Debug" Class="Android_SplashImage426">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libCipher_FMX.so" Configuration="Release" Class="ProjectOutput">
-                    <Platform Name="Android64">
-                        <RemoteName>libCipher_FMX.so</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libCipher_FMX.so" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Android64">
-                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <RemoteName>ic_notification.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -358,30 +312,26 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\AndroidManifest.xml" Configuration="Debug" Class="ProjectAndroidManifest">
+                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_96x96.png" Configuration="Debug" Class="Android_NotificationIcon96">
                     <Platform Name="Android">
+                        <RemoteName>ic_notification.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles.xml" Configuration="Release" Class="AndroidSplashStyles">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_470_320.png" Configuration="Debug" Class="Android_SplashImage470">
+                <DeployFile LocalName="$(BDS)\lib\android\debug\armeabi\libnative-activity.so" Configuration="Debug" Class="AndroidLibnativeArmeabiFile">
                     <Platform Name="Android">
-                        <RemoteName>splash_image.png</RemoteName>
+                        <RemoteName>libCipher_FMX.so</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles-v21.xml" Configuration="Release" Class="AndroidSplashStylesV21">
-                    <Platform Name="Android64">
-                        <RemoteName>styles.xml</RemoteName>
+                <DeployFile LocalName="$(BDS)\lib\android\debug\mips\libnative-activity.so" Configuration="Debug" Class="AndroidLibnativeMipsFile">
+                    <Platform Name="Android">
+                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -390,14 +340,72 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule">
+                    <Platform Name="OSX64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\AndroidManifest.xml" Configuration="Debug" Class="ProjectAndroidManifest">
                     <Platform Name="Android64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Crypto_640_480.png" Configuration="Release" Class="Android_SplashImage640">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\AndroidManifest.xml" Configuration="Release" Class="ProjectAndroidManifest">
                     <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\Cipher_FMX.classes" Configuration="Debug" Class="AndroidClasses">
+                    <Platform Name="Android64">
+                        <Operation>64</Operation>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\classes.dex" Configuration="Release" Class="AndroidClassesDexFile">
+                    <Platform Name="Android64">
+                        <RemoteName>classes.dex</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\colors.xml" Configuration="Debug" Class="Android_Colors">
+                    <Platform Name="Android64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\colors.xml" Configuration="Release" Class="Android_Colors">
+                    <Platform Name="Android64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libCipher_FMX.so" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Android64">
+                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libCipher_FMX.so" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Android64">
+                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
+                    <Platform Name="Android64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -406,13 +414,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Release" Class="Android_LauncherIcon192">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\strings.xml" Configuration="Debug" Class="Android_Strings">
                     <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\strings.xml" Configuration="Release" Class="Android_Strings">
                     <Platform Name="Android64">
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -423,15 +430,24 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Debug" Class="Android_LauncherIcon192">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles-v21.xml" Configuration="Release" Class="AndroidSplashStylesV21">
                     <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
+                        <RemoteName>styles.xml</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Win32__Demos\Cipher_FMX.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>Cipher_FMX.exe</RemoteName>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
+                    <Platform Name="Android64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\styles.xml" Configuration="Release" Class="AndroidSplashStyles">
+                    <Platform Name="Android64">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\AndroidManifest.xml" Configuration="Debug" Class="ProjectAndroidManifest">
+                    <Platform Name="Android">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -441,182 +457,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Crypto_640_480.png" Configuration="Debug" Class="Android_SplashImage640">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Release" Class="Android_LauncherIcon72">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Debug" Class="Android_LauncherIcon72">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Debug" Class="Android_LauncherIcon72">
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\classes.dex" Configuration="Debug" Class="AndroidClassesDexFile">
                     <Platform Name="Android">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_960_720.png" Configuration="Release" Class="Android_SplashImage960">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_960_720.png" Configuration="Debug" Class="Android_SplashImage960">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_640_480.png" Configuration="Debug" Class="Android_SplashImage640">
-                    <Platform Name="Android">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Debug" Class="Android_LauncherIcon192">
-                    <Platform Name="Android">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\libCipher_FMX.so" Configuration="Debug" Class="ProjectOutput_Android32">
-                    <Platform Name="Android64">
-                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <RemoteName>classes.dex</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\colors.xml" Configuration="Debug" Class="Android_Colors">
                     <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_48x48.png" Configuration="Debug" Class="Android_NotificationIcon48">
-                    <Platform Name="Android">
-                        <RemoteName>ic_notification.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Release" Class="Android_LauncherIcon36">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Debug" Class="Android_LauncherIcon36">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Debug" Class="Android_LauncherIcon36">
-                    <Platform Name="Android">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\lib\android\debug\armeabi\libnative-activity.so" Configuration="Debug" Class="AndroidLibnativeArmeabiFile">
-                    <Platform Name="Android">
-                        <RemoteName>libCipher_FMX.so</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_470_320.png" Configuration="Release" Class="Android_SplashImage470">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\lib\android\debug\mips\libnative-activity.so" Configuration="Debug" Class="AndroidLibnativeMipsFile">
-                    <Platform Name="Android">
-                        <RemoteName>libCipher_FMX.so</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_24x24.png" Configuration="Debug" Class="Android_NotificationIcon24">
-                    <Platform Name="Android">
-                        <RemoteName>ic_notification.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
-                    <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Release" Class="Android_LauncherIcon48">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Android\Debug\classes.dex" Configuration="Debug" Class="AndroidClassesDexFile">
-                    <Platform Name="Android">
-                        <RemoteName>classes.dex</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\strings.xml" Configuration="Debug" Class="Android_Strings">
-                    <Platform Name="Android">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Debug" Class="Android_LauncherIcon48">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_36x36.png" Configuration="Debug" Class="Android_NotificationIcon36">
-                    <Platform Name="Android">
-                        <RemoteName>ic_notification.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\Cipher_FMX.classes" Configuration="Debug" Class="AndroidClasses">
-                    <Platform Name="Android64">
-                        <Operation>64</Operation>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Crypto_470_320.png" Configuration="Debug" Class="Android_SplashImage470">
-                    <Platform Name="Android64">
-                        <RemoteName>splash_image.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\classes.dex" Configuration="Debug" Class="AndroidClassesDexFile">
-                    <Platform Name="Android">
-                        <RemoteName>classes.dex</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -626,8 +474,143 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\libCipher_FMX.so" Configuration="Debug" Class="ProjectOutput_Android32">
+                    <Platform Name="Android64">
+                        <RemoteName>libCipher_FMX.so</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\splash_image_def.xml" Configuration="Debug" Class="AndroidSplashImageDef">
+                    <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\strings.xml" Configuration="Debug" Class="Android_Strings">
+                    <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\styles-v21.xml" Configuration="Debug" Class="AndroidSplashStylesV21">
+                    <Platform Name="Android">
+                        <RemoteName>styles.xml</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
+                    <Platform Name="Android">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Win32__Demos\Cipher_FMX.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>Cipher_FMX.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Android\Debug\classes.dex" Configuration="Debug" Class="AndroidClassesDexFile">
+                    <Platform Name="Android">
+                        <RemoteName>classes.dex</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Debug" Class="Android_LauncherIcon144">
+                    <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Debug" Class="Android_LauncherIcon144">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Release" Class="Android_LauncherIcon144">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Debug" Class="Android_LauncherIcon192">
+                    <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Debug" Class="Android_LauncherIcon192">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_192.png" Configuration="Release" Class="Android_LauncherIcon192">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Debug" Class="Android_LauncherIcon36">
+                    <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Debug" Class="Android_LauncherIcon36">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_36.png" Configuration="Release" Class="Android_LauncherIcon36">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Debug" Class="Android_LauncherIcon48">
+                    <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Debug" Class="Android_LauncherIcon48">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Release" Class="Android_LauncherIcon48">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Debug" Class="Android_LauncherIcon72">
+                    <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Debug" Class="Android_LauncherIcon72">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_72.png" Configuration="Release" Class="Android_LauncherIcon72">
+                    <Platform Name="Android64">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="CryptoIcon_96.png" Configuration="Debug" Class="Android_LauncherIcon96">
                     <Platform Name="Android">
+                        <RemoteName>ic_launcher.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="CryptoIcon_96.png" Configuration="Debug" Class="Android_LauncherIcon96">
+                    <Platform Name="Android64">
                         <RemoteName>ic_launcher.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -638,58 +621,75 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\colors.xml" Configuration="Release" Class="Android_Colors">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\colors.xml" Configuration="Debug" Class="Android_Colors">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="CryptoIcon_96.png" Configuration="Debug" Class="Android_LauncherIcon96">
-                    <Platform Name="Android64">
-                        <RemoteName>ic_launcher.png</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\AndroidManifest.xml" Configuration="Release" Class="ProjectAndroidManifest">
-                    <Platform Name="Android64">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android__Demos\styles.xml" Configuration="Debug" Class="AndroidSplashStyles">
+                <DeployFile LocalName="Crypto_426_320.png" Configuration="Debug" Class="Android_SplashImage426">
                     <Platform Name="Android">
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\AndroidManifest.xml" Configuration="Debug" Class="ProjectAndroidManifest">
+                <DeployFile LocalName="Crypto_426_320.png" Configuration="Debug" Class="Android_SplashImage426">
                     <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Compiled\BIN_IDExx.x_Android64__Demos\classes.dex" Configuration="Release" Class="AndroidClassesDexFile">
+                <DeployFile LocalName="Crypto_426_320.png" Configuration="Release" Class="Android_SplashImage426">
                     <Platform Name="Android64">
-                        <RemoteName>classes.dex</RemoteName>
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="CryptoIcon_48.png" Configuration="Debug" Class="Android_LauncherIcon48">
+                <DeployFile LocalName="Crypto_470_320.png" Configuration="Debug" Class="Android_SplashImage470">
                     <Platform Name="Android">
-                        <RemoteName>ic_launcher.png</RemoteName>
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_96x96.png" Configuration="Debug" Class="Android_NotificationIcon96">
-                    <Platform Name="Android">
-                        <RemoteName>ic_notification.png</RemoteName>
+                <DeployFile LocalName="Crypto_470_320.png" Configuration="Debug" Class="Android_SplashImage470">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="CryptoIcon_144.png" Configuration="Debug" Class="Android_LauncherIcon144">
+                <DeployFile LocalName="Crypto_470_320.png" Configuration="Release" Class="Android_SplashImage470">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_640_480.png" Configuration="Debug" Class="Android_SplashImage640">
                     <Platform Name="Android">
-                        <RemoteName>ic_launcher.png</RemoteName>
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_640_480.png" Configuration="Debug" Class="Android_SplashImage640">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_640_480.png" Configuration="Release" Class="Android_SplashImage640">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_960_720.png" Configuration="Debug" Class="Android_SplashImage960">
+                    <Platform Name="Android">
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_960_720.png" Configuration="Debug" Class="Android_SplashImage960">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Crypto_960_720.png" Configuration="Release" Class="Android_SplashImage960">
+                    <Platform Name="Android64">
+                        <RemoteName>splash_image.png</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1818,17 +1818,17 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
                 <Platform value="Android">True</Platform>

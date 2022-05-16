@@ -925,7 +925,7 @@ begin
   S := @Data;
   while Result and (Size > 0) do
   begin
-    // A-Z, a-z, 0-9, + and / and CR/LF
+    // A-Z, a-z, 0-9, +, = and / and CR/LF
     if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D, $0D, $0A] then
     begin
       Inc(S);

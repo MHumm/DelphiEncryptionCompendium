@@ -5,7 +5,7 @@
     </ProjectExtensions>
     <PropertyGroup>
         <DeviceId Condition="'$(Platform)'=='Android'">CB512EA59X</DeviceId>
-        <DeviceId Condition="'$(Platform)'=='Android64'"/>
+        <DeviceId Condition="'$(Platform)'=='Android64'">CB512EA59X</DeviceId>
     </PropertyGroup>
     <ItemGroup Condition="'$(Platform)'=='Win64'"/>
     <ItemGroup Condition="'$(Platform)'=='Win32'">
@@ -31,7 +31,7 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Android64'">
-        <DeployFile Include="Hash72.png" Condition="'$(Config)'=='Debug'">
+        <DeployFile Include="Hash72.png" Condition="'$(Config)'=='Release'">
             <RemoteDir>Hash_FMX\res\drawable-hdpi\</RemoteDir>
             <RemoteName>ic_launcher.png</RemoteName>
             <DeployClass>Android_LauncherIcon72</DeployClass>
@@ -166,6 +166,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="Crypto_960_720.png" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Hash_FMX\res\drawable-xlarge\</RemoteDir>
+            <RemoteName>splash_image.png</RemoteName>
+            <DeployClass>Android_SplashImage960</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android64__Demos\libHash_FMX.so" Condition="'$(Config)'=='Debug'">
             <RemoteDir>Hash_FMX\library\lib\arm64-v8a\</RemoteDir>
             <RemoteName>libHash_FMX.so</RemoteName>
@@ -185,15 +194,6 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
             <Required>True</Required>
-        </DeployFile>
-        <DeployFile Include="Crypto_960_720.png" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\res\drawable-xlarge\</RemoteDir>
-            <RemoteName>splash_image.png</RemoteName>
-            <DeployClass>Android_SplashImage960</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
         </DeployFile>
         <DeployFile Include="Hash192.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>Hash_FMX\res\drawable-xxxhdpi\</RemoteDir>
@@ -366,16 +366,7 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android__Demos\libHash_FMX.so" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
-            <RemoteName>libHash_FMX.so</RemoteName>
-            <DeployClass>ProjectOutput_Android32</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="Hash72.png" Condition="'$(Config)'=='Release'">
+        <DeployFile Include="Hash72.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>Hash_FMX\res\drawable-hdpi\</RemoteDir>
             <RemoteName>ic_launcher.png</RemoteName>
             <DeployClass>Android_LauncherIcon72</DeployClass>
@@ -386,15 +377,14 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='Android'">
-        <DeployFile Include="Android\Release\libHash_FMX.so" Condition="'$(Config)'=='Release'">
-            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
-            <RemoteName>libHash_FMX.so</RemoteName>
-            <DeployClass>ProjectOutput</DeployClass>
+        <DeployFile Include="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_96x96.png" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Hash_FMX\res\drawable-xxxhdpi\</RemoteDir>
+            <RemoteName>ic_notification.png</RemoteName>
+            <DeployClass>Android_NotificationIcon96</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
-            <Required>True</Required>
         </DeployFile>
         <DeployFile Include="Crypto_960_720.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>Hash_FMX\res\drawable-xlarge\</RemoteDir>
@@ -535,15 +525,6 @@
             <RemoteDir>Hash_FMX\res\drawable-normal\</RemoteDir>
             <RemoteName>splash_image.png</RemoteName>
             <DeployClass>Android_SplashImage470</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-        <DeployFile Include="Hash192.png" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\res\drawable-xxxhdpi\</RemoteDir>
-            <RemoteName>ic_launcher.png</RemoteName>
-            <DeployClass>Android_LauncherIcon192</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
@@ -703,6 +684,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
+        <DeployFile Include="Hash192.png" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>Hash_FMX\res\drawable-xxxhdpi\</RemoteDir>
+            <RemoteName>ic_launcher.png</RemoteName>
+            <DeployClass>Android_LauncherIcon192</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
         <DeployFile Include="..\..\Compiled\BIN_IDExx.x_Android__Demos\classes.dex" Condition="'$(Config)'=='Debug'">
             <RemoteDir>Hash_FMX\classes\</RemoteDir>
             <RemoteName>classes.dex</RemoteName>
@@ -757,14 +747,15 @@
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
         </DeployFile>
-        <DeployFile Include="$(BDS)\bin\Artwork\Android\FM_NotificationIcon_96x96.png" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>Hash_FMX\res\drawable-xxxhdpi\</RemoteDir>
-            <RemoteName>ic_notification.png</RemoteName>
-            <DeployClass>Android_NotificationIcon96</DeployClass>
+        <DeployFile Include="Android\Release\libHash_FMX.so" Condition="'$(Config)'=='Release'">
+            <RemoteDir>Hash_FMX\library\lib\armeabi-v7a\</RemoteDir>
+            <RemoteName>libHash_FMX.so</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
             <Operation>1</Operation>
             <LocalCommand/>
             <RemoteCommand/>
             <Overwrite>True</Overwrite>
+            <Required>True</Required>
         </DeployFile>
     </ItemGroup>
 </Project>
