@@ -51,7 +51,7 @@ begin
 
       s := 'The quick brown fox jumps over the lazy dog';
 
-      WriteLn('RipeMD160 digest (hash value) of ' + s + ' is ' + sLineBreak +
+      WriteLn('Whirlpool1 digest (hash value) of ' + s + ' is ' + sLineBreak +
               W.CalcString(s, TFormat_HEX));
       W.Free;
     except
