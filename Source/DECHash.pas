@@ -460,6 +460,23 @@ type
     ///   Exception raised if <c>OutputLength</c> is not a multiple of 8
     /// </exception>
     procedure Squeeze(var Output: TSHA3Digest; OutputLength: Int32);
+
+    /// <summary>
+    ///   Update final bits in LSB format, pad them, and compute the hash value
+    /// </summary>
+    /// <param name="Bits">
+    ///   Value used for padding if the length of the message to be hashed
+    ///   is not a multiple of 8 bit bytes.
+    /// </param>
+    /// <param name="BitLen">
+    ///   Number of needed padding bits?
+    /// </param>
+    /// <param name="HashValue">
+    ///   The hash value which shall be updated by this method
+    /// </param>
+    procedure FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
+                            var HashValue: TSHA3Digest);
+
     /// <summary>
     ///   The algorithm starts in the absorb phase (one puts data into the sponge)
     ///   and ends with the squeze phase (one squeezes the sponge) and this method
@@ -480,22 +497,6 @@ type
     ///   Number of iterations
     /// </param>
     procedure ExtractFromState(Outp: Pointer; const State: TState_L; LaneCount: Integer);
-
-    /// <summary>
-    ///   Update final bits in LSB format, pad them, and compute the hash value
-    /// </summary>
-    /// <param name="Bits">
-    ///   Value used for padding if the length of the message to be hashed
-    ///   is not a multiple of 8 bit bytes.
-    /// </param>
-    /// <param name="BitLen">
-    ///   Number of needed padding bits?
-    /// </param>
-    /// <param name="HashValue">
-    ///   The hash value which shall be updated by this method
-    /// </param>
-    procedure FinalBit_LSB(Bits: Byte; Bitlen: UInt16;
-                            var HashValue: TSHA3Digest);
   strict protected
     /// <summary>
     ///   Contains the current state of the algorithms sponge part
@@ -513,6 +514,12 @@ type
     ///   in InitSponge
     /// </summary>
     FOutpLengSet : Boolean;
+
+    /// <summary>
+    ///   If true the implementation is Keccack instead of SHA3. This changes
+    ///   how the padding at the end is handled.
+    /// </summary>
+    FIsKeccack   : Boolean;
 
     /// <summary>
     ///   Initializes the state of the Keccak/SHA3 sponge function. It is set to
@@ -574,28 +581,6 @@ type
   end;
 
   /// <summary>
-  ///   224 bit Keccack variant, the predecessor of SHA3_224
-  /// </summary>
-  THash_Keccack_224 = class(THash_SHA3Base)
-  protected
-    procedure DoInit; override;
-  public
-    class function BlockSize: UInt32; override;
-    class function DigestSize: UInt32; override;
-  end;
-
-  /// <summary>
-  ///   256 bit Keccack variant, the predecessor of SHA3_224
-  /// </summary>
-  THash_Keccack_256 = class(THash_SHA3Base)
-  protected
-    procedure DoInit; override;
-  public
-    class function BlockSize: UInt32; override;
-    class function DigestSize: UInt32; override;
-  end;
-
-  /// <summary>
   ///   224 bit SHA3 variant
   /// </summary>
   THash_SHA3_224 = class(THash_SHA3Base)
@@ -637,6 +622,38 @@ type
   public
     class function BlockSize: UInt32; override;
     class function DigestSize: UInt32; override;
+  end;
+
+  /// <summary>
+  ///   224 bit Keccack variant, the predecessor of SHA3_224
+  /// </summary>
+  THash_Keccack_224 = class(THash_SHA3Base)
+  protected
+    procedure DoInit; override;
+  end;
+
+  /// <summary>
+  ///   256 bit Keccack variant, the predecessor of SHA3_256
+  /// </summary>
+  THash_Keccack_256 = class(THash_SHA3_256)
+  protected
+    procedure DoInit; override;
+  end;
+
+  /// <summary>
+  ///   384 bit Keccack variant, the predecessor of SHA3_384
+  /// </summary>
+  THash_Keccack_384 = class(THash_SHA3_384)
+  protected
+    procedure DoInit; override;
+  end;
+
+  /// <summary>
+  ///   512 bit Keccack variant, the predecessor of SHA3_512
+  /// </summary>
+  THash_Keccack_512 = class(THash_SHA3_512)
+  protected
+    procedure DoInit; override;
   end;
 
   /// <summary>
@@ -4539,42 +4556,38 @@ end;
 
 { THash_Keccack_224 }
 
-class function THash_Keccack_224.BlockSize: UInt32;
-begin
-  Result := 144;
-end;
-
-class function THash_Keccack_224.DigestSize: UInt32;
-begin
-  Result := 28;
-end;
-
 procedure THash_Keccack_224.DoInit;
 begin
   inherited;
 
-  InitSponge(1152,  448);
-  FSpongeState.FixedOutputLength := 224;
+  FIsKeccack := true;
 end;
 
 { THash_Keccack_256 }
-
-class function THash_Keccack_256.BlockSize: UInt32;
-begin
-  Result := 136;
-end;
-
-class function THash_Keccack_256.DigestSize: UInt32;
-begin
-  Result := 32;
-end;
 
 procedure THash_Keccack_256.DoInit;
 begin
   inherited;
 
-  InitSponge(1088,  512);
-  FSpongeState.fixedOutputLength := 256;
+  FIsKeccack := true;
+end;
+
+{ THash_Keccack_384 }
+
+procedure THash_Keccack_384.DoInit;
+begin
+  inherited;
+
+  FIsKeccack := true;
+end;
+
+{ THash_Keccack_512 }
+
+procedure THash_Keccack_512.DoInit;
+begin
+  inherited;
+
+  FIsKeccack := true;
 end;
 
 { THash_SHA3_224 }
@@ -5060,6 +5073,7 @@ procedure THash_SHA3Base.DoInit;
 begin
   inherited;
 
+  FIsKeccack := false;
   FillChar(FDIgest[0], Length(FDigest), 0);
 end;
 
@@ -5115,13 +5129,17 @@ begin
   if self.ClassParent = THash_ShakeBase then
   begin
     lw := lw or (word($F) shl Bitlen);
-    WorkingBitLen := Bitlen+4;
+    WorkingBitLen := Bitlen + 4;
   end
   else
   begin
     // SHA3: append two bits 01
     lw := lw or (word($2) shl Bitlen);
-    WorkingBitLen := Bitlen+2;
+
+    if not FIsKeccack then
+      WorkingBitLen := Bitlen + 2
+    else
+      WorkingBitLen := Bitlen;
   end;
 
   // update state with final bits
@@ -5582,6 +5600,10 @@ initialization
   THash_SHA3_256.RegisterClass(TDECHash.ClassList);
   THash_SHA3_384.RegisterClass(TDECHash.ClassList);
   THash_SHA3_512.RegisterClass(TDECHash.ClassList);
+  THash_Keccack_224.RegisterClass(TDECHash.ClassList);
+  THash_Keccack_256.RegisterClass(TDECHash.ClassList);
+  THash_Keccack_384.RegisterClass(TDECHash.ClassList);
+  THash_Keccack_512.RegisterClass(TDECHash.ClassList);
   THash_Shake128.RegisterClass(TDECHash.ClassList);
   THash_Shake256.RegisterClass(TDECHash.ClassList);
   THash_Haval128.RegisterClass(TDECHash.ClassList);

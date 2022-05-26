@@ -36,6 +36,7 @@ var
   W: THash_Whirlpool1;
 begin
   Hash := THash_RipeMD160.Create;
+  W    := THash_Whirlpool1.Create;
   try
     try
       // Calculate a hash value in accordance to the original author's test data
@@ -47,13 +48,10 @@ begin
 
       ReadLn;
 
-      W := THash_Whirlpool1.Create;
-
       s := 'The quick brown fox jumps over the lazy dog';
 
       WriteLn('Whirlpool1 digest (hash value) of ' + s + ' is ' + sLineBreak +
               W.CalcString(s, TFormat_HEX));
-      W.Free;
     except
       on E: Exception do
         Writeln(E.ClassName, ': ', E.Message);
@@ -62,5 +60,6 @@ begin
     ReadLn;
   finally
     Hash.Free;
+    W.Free;
   end;
 end.
