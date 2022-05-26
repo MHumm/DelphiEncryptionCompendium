@@ -627,9 +627,12 @@ type
   /// <summary>
   ///   224 bit Keccack variant, the predecessor of SHA3_224
   /// </summary>
-  THash_Keccack_224 = class(THash_SHA3Base)
+  THash_Keccack_224 = class(THash_SHA3_224)
   protected
     procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -638,6 +641,9 @@ type
   THash_Keccack_256 = class(THash_SHA3_256)
   protected
     procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -646,6 +652,9 @@ type
   THash_Keccack_384 = class(THash_SHA3_384)
   protected
     procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -654,6 +663,9 @@ type
   THash_Keccack_512 = class(THash_SHA3_512)
   protected
     procedure DoInit; override;
+  public
+    class function BlockSize: UInt32; override;
+    class function DigestSize: UInt32; override;
   end;
 
   /// <summary>
@@ -4556,6 +4568,16 @@ end;
 
 { THash_Keccack_224 }
 
+class function THash_Keccack_224.BlockSize: UInt32;
+begin
+  Result := 144;
+end;
+
+class function THash_Keccack_224.DigestSize: UInt32;
+begin
+  Result := 28;
+end;
+
 procedure THash_Keccack_224.DoInit;
 begin
   inherited;
@@ -4564,6 +4586,16 @@ begin
 end;
 
 { THash_Keccack_256 }
+
+class function THash_Keccack_256.BlockSize: UInt32;
+begin
+  Result := 136;
+end;
+
+class function THash_Keccack_256.DigestSize: UInt32;
+begin
+  Result := 32;
+end;
 
 procedure THash_Keccack_256.DoInit;
 begin
@@ -4574,6 +4606,16 @@ end;
 
 { THash_Keccack_384 }
 
+class function THash_Keccack_384.BlockSize: UInt32;
+begin
+  Result := 104;
+end;
+
+class function THash_Keccack_384.DigestSize: UInt32;
+begin
+  Result := 48;
+end;
+
 procedure THash_Keccack_384.DoInit;
 begin
   inherited;
@@ -4582,6 +4624,16 @@ begin
 end;
 
 { THash_Keccack_512 }
+
+class function THash_Keccack_512.BlockSize: UInt32;
+begin
+  Result := 72;
+end;
+
+class function THash_Keccack_512.DigestSize: UInt32;
+begin
+  Result := 64;
+end;
 
 procedure THash_Keccack_512.DoInit;
 begin
