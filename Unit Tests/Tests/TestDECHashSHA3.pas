@@ -429,6 +429,10 @@ begin
     begin
       FileRowTrim := LowerCase(Trim(FileRow));
 
+      // # denotes comments
+      if FileRow.StartsWith('#') then
+        Continue;
+
       if (Pos('len', FileRowTrim) = 1) then
       begin
         lDataRow := FTestData.AddRow;
@@ -1621,9 +1625,12 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\Keccack_224_ShortMsg.txt');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\LongMsgKAT_224.txt');
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
 //  // SourceEnd
+
+exit;
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
