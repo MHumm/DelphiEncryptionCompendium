@@ -175,7 +175,7 @@ begin
     else
       ExtensibleInterf := nil;
 
-    if Supports(Hash.ClassType, IDECHashExtensibleOutput) then
+    if Supports(Hash.ClassType, IDECHashBitsized) then
     begin
       LastByteLengthInterf := (Hash as IDECHashBitsized);
       LastByteLengthInterf.FinalBitLength := EditLastByteBits.Text.ToInteger;
