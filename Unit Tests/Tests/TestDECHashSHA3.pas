@@ -257,9 +257,9 @@ type
     procedure TestLength0;
   end;
 
-  // Test methods for class THash_Keccack_224
+  // Test methods for class THash_Keccak_224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccack_224 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_224 = class(TestTHash_SHA3_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -279,9 +279,9 @@ type
     procedure TestFinalByteLengthOverflow;
   end;
 
-  // Test methods for class THash_Keccack_256
+  // Test methods for class THash_Keccak_256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccack_256 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_256 = class(TestTHash_SHA3_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -298,9 +298,9 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_Keccack_384
+  // Test methods for class THash_Keccak_384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccack_384 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_384 = class(TestTHash_SHA3_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -317,9 +317,9 @@ type
     procedure TestIdentity;
   end;
 
-  // Test methods for class THash_Keccack_512
+  // Test methods for class THash_Keccak_512
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccack_512 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_512 = class(TestTHash_SHA3_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -1603,17 +1603,17 @@ begin
   CheckException(SetLength0Test, EDECHashException);
 end;
 
-{ TestTHash_Keccack_224 }
+{ TestTHash_Keccak_224 }
 
-procedure TestTHash_Keccack_224.ConfigHashClass(HashClass: TDECHash;
+procedure TestTHash_Keccak_224.ConfigHashClass(HashClass: TDECHash;
   IdxTestData: Integer);
 begin
   inherited;
 
-  THash_Keccack_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
+  THash_Keccak_224(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
 end;
 
-procedure TestTHash_Keccack_224.SetUp;
+procedure TestTHash_Keccak_224.SetUp;
 var
   lDataRow : IHashTestDataRowSetup;
   i        : Integer;
@@ -1621,7 +1621,7 @@ var
 begin
   // All specified data sources are for the non unicode expected outputs
   inherited;
-  FHash := THash_Keccack_224.Create;
+  FHash := THash_Keccak_224.Create;
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
@@ -1767,32 +1767,32 @@ exit;
   lDataRow.FinalBitLength := 6;
 end;
 
-procedure TestTHash_Keccack_224.TestBlockSize;
+procedure TestTHash_Keccak_224.TestBlockSize;
 begin
   CheckEquals(144, FHash.BlockSize);
 end;
 
-procedure TestTHash_Keccack_224.TestClassByName;
+procedure TestTHash_Keccak_224.TestClassByName;
 begin
-  DoTestClassByName('THash_Keccack_224', THash_Keccack_224);
+  DoTestClassByName('THash_Keccak_224', THash_Keccak_224);
 end;
 
-procedure TestTHash_Keccack_224.TestDigestSize;
+procedure TestTHash_Keccak_224.TestDigestSize;
 begin
   CheckEquals(28, FHash.DigestSize);
 end;
 
-procedure TestTHash_Keccack_224.TestIdentity;
+procedure TestTHash_Keccak_224.TestIdentity;
 begin
   CheckEquals($2CF0B2F7, FHash.Identity);
 end;
 
-procedure TestTHash_Keccack_224.TestFinalByteLength;
+procedure TestTHash_Keccak_224.TestFinalByteLength;
 var
-  Hash_Keccack_224 : THash_Keccack_224;
+  Hash_Keccack_224 : THash_Keccak_224;
   i                : Integer;
 begin
-  Hash_Keccack_224 := THash_Keccack_224.Create;
+  Hash_Keccack_224 := THash_Keccak_224.Create;
   try
     for i := 0 to 7 do
     begin
@@ -1804,16 +1804,16 @@ begin
   end;
 end;
 
-procedure TestTHash_Keccack_224.TestFinalByteLengthOverflow;
+procedure TestTHash_Keccak_224.TestFinalByteLengthOverflow;
 begin
   CheckException(TestFinalByteLengthOverflowHelper, EDECHashException);
 end;
 
-procedure TestTHash_Keccack_224.TestFinalByteLengthOverflowHelper;
+procedure TestTHash_Keccak_224.TestFinalByteLengthOverflowHelper;
 var
-  Hash_Keccack_224 : THash_Keccack_224;
+  Hash_Keccack_224 : THash_Keccak_224;
 begin
-  Hash_Keccack_224 := THash_Keccack_224.Create;
+  Hash_Keccack_224 := THash_Keccak_224.Create;
   try
     Hash_Keccack_224.FinalByteLength := 8;
     CheckEquals(8, Hash_Keccack_224.FinalByteLength);
@@ -1822,28 +1822,28 @@ begin
   end;
 end;
 
-procedure TestTHash_Keccack_224.TestIsPasswordHash;
+procedure TestTHash_Keccak_224.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
-{ TestTHash_Keccack_256 }
+{ TestTHash_Keccak_256 }
 
-procedure TestTHash_Keccack_256.ConfigHashClass(HashClass: TDECHash;
+procedure TestTHash_Keccak_256.ConfigHashClass(HashClass: TDECHash;
   IdxTestData: Integer);
 begin
   inherited;
 
-  THash_Keccack_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
+  THash_Keccak_256(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
 end;
 
-procedure TestTHash_Keccack_256.SetUp;
+procedure TestTHash_Keccak_256.SetUp;
 var
   lDataRow:IHashTestDataRowSetup;
 begin
   // All specified data sources are for the non unicode expected outputs
   inherited;
-  FHash := THash_Keccack_256.Create;
+  FHash := THash_Keccak_256.Create;
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
@@ -1953,47 +1953,47 @@ begin
   lDataRow.FinalBitLength := 6;
 end;
 
-procedure TestTHash_Keccack_256.TestBlockSize;
+procedure TestTHash_Keccak_256.TestBlockSize;
 begin
   CheckEquals(136, FHash.BlockSize);
 end;
 
-procedure TestTHash_Keccack_256.TestClassByName;
+procedure TestTHash_Keccak_256.TestClassByName;
 begin
-  DoTestClassByName('THash_Keccack_256', THash_Keccack_256);
+  DoTestClassByName('THash_Keccak_256', THash_Keccak_256);
 end;
 
-procedure TestTHash_Keccack_256.TestDigestSize;
+procedure TestTHash_Keccak_256.TestDigestSize;
 begin
   CheckEquals(32, FHash.DigestSize);
 end;
 
-procedure TestTHash_Keccack_256.TestIdentity;
+procedure TestTHash_Keccak_256.TestIdentity;
 begin
   CheckEquals($8DBF451C, FHash.Identity);
 end;
 
-procedure TestTHash_Keccack_256.TestIsPasswordHash;
+procedure TestTHash_Keccak_256.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
-{ TestTHash_Keccack_384 }
+{ TestTHash_Keccak_384 }
 
-procedure TestTHash_Keccack_384.ConfigHashClass(HashClass: TDECHash;
+procedure TestTHash_Keccak_384.ConfigHashClass(HashClass: TDECHash;
   IdxTestData: Integer);
 begin
   inherited;
 
-  THash_Keccack_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
+  THash_Keccak_384(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
 end;
 
-procedure TestTHash_Keccack_384.SetUp;
+procedure TestTHash_Keccak_384.SetUp;
 var
   lDataRow:IHashTestDataRowSetup;
 begin
   inherited;
-  FHash := THash_Keccack_384.Create;
+  FHash := THash_Keccak_384.Create;
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
@@ -2114,47 +2114,47 @@ begin
   lDataRow.FinalBitLength := 6;
 end;
 
-procedure TestTHash_Keccack_384.TestBlockSize;
+procedure TestTHash_Keccak_384.TestBlockSize;
 begin
   CheckEquals(104, FHash.BlockSize);
 end;
 
-procedure TestTHash_Keccack_384.TestClassByName;
+procedure TestTHash_Keccak_384.TestClassByName;
 begin
-  DoTestClassByName('THash_Keccack_384', THash_Keccack_384);
+  DoTestClassByName('THash_Keccak_384', THash_Keccak_384);
 end;
 
-procedure TestTHash_Keccack_384.TestDigestSize;
+procedure TestTHash_Keccak_384.TestDigestSize;
 begin
   CheckEquals(48, FHash.DigestSize);
 end;
 
-procedure TestTHash_Keccack_384.TestIdentity;
+procedure TestTHash_Keccak_384.TestIdentity;
 begin
   CheckEquals($D7DD304A, FHash.Identity);
 end;
 
-procedure TestTHash_Keccack_384.TestIsPasswordHash;
+procedure TestTHash_Keccak_384.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
 
-{ TestTHash_Keccack_512 }
+{ TestTHash_Keccak_512 }
 
-procedure TestTHash_Keccack_512.ConfigHashClass(HashClass: TDECHash;
+procedure TestTHash_Keccak_512.ConfigHashClass(HashClass: TDECHash;
   IdxTestData: Integer);
 begin
   inherited;
 
-  THash_Keccack_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
+  THash_Keccak_512(FHash).FinalByteLength := FTestData[IdxTestData].FinalByteBitLength;
 end;
 
-procedure TestTHash_Keccack_512.SetUp;
+procedure TestTHash_Keccak_512.SetUp;
 var
   lDataRow : IHashTestDataRowSetup;
 begin
   inherited;
-  FHash := THash_Keccack_512.Create;
+  FHash := THash_Keccak_512.Create;
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
@@ -2274,27 +2274,27 @@ begin
   lDataRow.FinalBitLength := 6;
 end;
 
-procedure TestTHash_Keccack_512.TestBlockSize;
+procedure TestTHash_Keccak_512.TestBlockSize;
 begin
   CheckEquals(72, FHash.BlockSize);
 end;
 
-procedure TestTHash_Keccack_512.TestClassByName;
+procedure TestTHash_Keccak_512.TestClassByName;
 begin
-  DoTestClassByName('THash_Keccack_512', THash_Keccack_512);
+  DoTestClassByName('THash_Keccak_512', THash_Keccak_512);
 end;
 
-procedure TestTHash_Keccack_512.TestDigestSize;
+procedure TestTHash_Keccak_512.TestDigestSize;
 begin
   CheckEquals(64, FHash.DigestSize);
 end;
 
-procedure TestTHash_Keccack_512.TestIdentity;
+procedure TestTHash_Keccak_512.TestIdentity;
 begin
   CheckEquals($EBF15284, FHash.Identity);
 end;
 
-procedure TestTHash_Keccack_512.TestIsPasswordHash;
+procedure TestTHash_Keccak_512.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
 end;
@@ -2308,10 +2308,10 @@ initialization
   TDUnitX.RegisterTestFixture(TestTHash_SHA3_512);
   TDUnitX.RegisterTestFixture(TestTHash_Shake128);
   TDUnitX.RegisterTestFixture(TestTHash_Shake256);
-  TDUnitX.RegisterTestFixture(TestTHash_Keccack_224);
-  TDUnitX.RegisterTestFixture(TestTHash_Keccack_256);
-  TDUnitX.RegisterTestFixture(TestTHash_Keccack_384);
-  TDUnitX.RegisterTestFixture(TestTHash_Keccack_512);
+  TDUnitX.RegisterTestFixture(TestTHash_Keccak_224);
+  TDUnitX.RegisterTestFixture(TestTHash_Keccak_256);
+  TDUnitX.RegisterTestFixture(TestTHash_Keccak_384);
+  TDUnitX.RegisterTestFixture(TestTHash_Keccak_512);
   {$ELSE}
   RegisterTests('DECHash', [TestTHash_SHA3_224.Suite,
                             TestTHash_SHA3_256.Suite,
@@ -2319,10 +2319,10 @@ initialization
                             TestTHash_SHA3_512.Suite,
                             TestTHash_Shake128.Suite,
                             TestTHash_Shake256.Suite,
-                            TestTHash_Keccack_224.Suite,
-                            TestTHash_Keccack_256.Suite,
-                            TestTHash_Keccack_384.Suite,
-                            TestTHash_Keccack_512.Suite]);
+                            TestTHash_Keccak_224.Suite,
+                            TestTHash_Keccak_256.Suite,
+                            TestTHash_Keccak_384.Suite,
+                            TestTHash_Keccak_512.Suite]);
   {$ENDIF}
 
 {$ELSE}

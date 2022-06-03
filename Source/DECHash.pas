@@ -49,8 +49,10 @@ type
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
-  THash_Keccack_224 = class;
-  THash_Keccack_256 = class;
+  THash_Keccak_224  = class;
+  THash_Keccak_256  = class;
+  THash_Keccak_384  = class;
+  THash_Keccak_512  = class;
   THash_SHA3_224    = class;
   THash_SHA3_256    = class;
   THash_SHA3_384    = class;
@@ -627,7 +629,7 @@ type
   /// <summary>
   ///   224 bit Keccack variant, the predecessor of SHA3_224
   /// </summary>
-  THash_Keccack_224 = class(THash_SHA3_224)
+  THash_Keccak_224 = class(THash_SHA3_224)
   protected
     procedure DoInit; override;
   public
@@ -638,7 +640,7 @@ type
   /// <summary>
   ///   256 bit Keccack variant, the predecessor of SHA3_256
   /// </summary>
-  THash_Keccack_256 = class(THash_SHA3_256)
+  THash_Keccak_256 = class(THash_SHA3_256)
   protected
     procedure DoInit; override;
   public
@@ -649,7 +651,7 @@ type
   /// <summary>
   ///   384 bit Keccack variant, the predecessor of SHA3_384
   /// </summary>
-  THash_Keccack_384 = class(THash_SHA3_384)
+  THash_Keccak_384 = class(THash_SHA3_384)
   protected
     procedure DoInit; override;
   public
@@ -660,7 +662,7 @@ type
   /// <summary>
   ///   512 bit Keccack variant, the predecessor of SHA3_512
   /// </summary>
-  THash_Keccack_512 = class(THash_SHA3_512)
+  THash_Keccak_512 = class(THash_SHA3_512)
   protected
     procedure DoInit; override;
   public
@@ -4566,76 +4568,76 @@ end;
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
-{ THash_Keccack_224 }
+{ THash_Keccak_224 }
 
-class function THash_Keccack_224.BlockSize: UInt32;
+class function THash_Keccak_224.BlockSize: UInt32;
 begin
   Result := 144;
 end;
 
-class function THash_Keccack_224.DigestSize: UInt32;
+class function THash_Keccak_224.DigestSize: UInt32;
 begin
   Result := 28;
 end;
 
-procedure THash_Keccack_224.DoInit;
+procedure THash_Keccak_224.DoInit;
 begin
   inherited;
 
   FIsKeccack := true;
 end;
 
-{ THash_Keccack_256 }
+{ THash_Keccak_256 }
 
-class function THash_Keccack_256.BlockSize: UInt32;
+class function THash_Keccak_256.BlockSize: UInt32;
 begin
   Result := 136;
 end;
 
-class function THash_Keccack_256.DigestSize: UInt32;
+class function THash_Keccak_256.DigestSize: UInt32;
 begin
   Result := 32;
 end;
 
-procedure THash_Keccack_256.DoInit;
+procedure THash_Keccak_256.DoInit;
 begin
   inherited;
 
   FIsKeccack := true;
 end;
 
-{ THash_Keccack_384 }
+{ THash_Keccak_384 }
 
-class function THash_Keccack_384.BlockSize: UInt32;
+class function THash_Keccak_384.BlockSize: UInt32;
 begin
   Result := 104;
 end;
 
-class function THash_Keccack_384.DigestSize: UInt32;
+class function THash_Keccak_384.DigestSize: UInt32;
 begin
   Result := 48;
 end;
 
-procedure THash_Keccack_384.DoInit;
+procedure THash_Keccak_384.DoInit;
 begin
   inherited;
 
   FIsKeccack := true;
 end;
 
-{ THash_Keccack_512 }
+{ THash_Keccak_512 }
 
-class function THash_Keccack_512.BlockSize: UInt32;
+class function THash_Keccak_512.BlockSize: UInt32;
 begin
   Result := 72;
 end;
 
-class function THash_Keccack_512.DigestSize: UInt32;
+class function THash_Keccak_512.DigestSize: UInt32;
 begin
   Result := 64;
 end;
 
-procedure THash_Keccack_512.DoInit;
+procedure THash_Keccak_512.DoInit;
 begin
   inherited;
 
@@ -5185,11 +5187,13 @@ begin
   end
   else
   begin
-    // SHA3: append two bits 01
-    lw := lw or (word($2) shl Bitlen);
-
     if not FIsKeccack then
-      WorkingBitLen := Bitlen + 2
+    begin
+      // SHA3: append two bits 01
+      lw := lw or (word($2) shl Bitlen);
+
+      WorkingBitLen := Bitlen + 2;
+    end
     else
       WorkingBitLen := Bitlen;
   end;
@@ -5652,10 +5656,10 @@ initialization
   THash_SHA3_256.RegisterClass(TDECHash.ClassList);
   THash_SHA3_384.RegisterClass(TDECHash.ClassList);
   THash_SHA3_512.RegisterClass(TDECHash.ClassList);
-  THash_Keccack_224.RegisterClass(TDECHash.ClassList);
-  THash_Keccack_256.RegisterClass(TDECHash.ClassList);
-  THash_Keccack_384.RegisterClass(TDECHash.ClassList);
-  THash_Keccack_512.RegisterClass(TDECHash.ClassList);
+  THash_Keccak_224.RegisterClass(TDECHash.ClassList);
+  THash_Keccak_256.RegisterClass(TDECHash.ClassList);
+  THash_Keccak_384.RegisterClass(TDECHash.ClassList);
+  THash_Keccak_512.RegisterClass(TDECHash.ClassList);
   THash_Shake128.RegisterClass(TDECHash.ClassList);
   THash_Shake256.RegisterClass(TDECHash.ClassList);
   THash_Haval128.RegisterClass(TDECHash.ClassList);
