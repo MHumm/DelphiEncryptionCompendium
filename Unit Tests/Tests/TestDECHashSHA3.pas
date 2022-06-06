@@ -1784,7 +1784,7 @@ end;
 
 procedure TestTHash_Keccak_224.TestIdentity;
 begin
-  CheckEquals($2CF0B2F7, FHash.Identity);
+  CheckEquals($5F9A1BC1, FHash.Identity);
 end;
 
 procedure TestTHash_Keccak_224.TestFinalByteLength;
@@ -1970,7 +1970,7 @@ end;
 
 procedure TestTHash_Keccak_256.TestIdentity;
 begin
-  CheckEquals($8DBF451C, FHash.Identity);
+  CheckEquals($FED5EC2A, FHash.Identity);
 end;
 
 procedure TestTHash_Keccak_256.TestIsPasswordHash;
@@ -2131,7 +2131,7 @@ end;
 
 procedure TestTHash_Keccak_384.TestIdentity;
 begin
-  CheckEquals($D7DD304A, FHash.Identity);
+  CheckEquals($A4B7997C, FHash.Identity);
 end;
 
 procedure TestTHash_Keccak_384.TestIsPasswordHash;
@@ -2291,7 +2291,7 @@ end;
 
 procedure TestTHash_Keccak_512.TestIdentity;
 begin
-  CheckEquals($EBF15284, FHash.Identity);
+  CheckEquals($989BFBB2, FHash.Identity);
 end;
 
 procedure TestTHash_Keccak_512.TestIsPasswordHash;
