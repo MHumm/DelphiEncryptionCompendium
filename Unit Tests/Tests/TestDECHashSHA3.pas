@@ -24,7 +24,6 @@ interface
 {$INCLUDE TestDefines.inc}
 {$INCLUDE ..\..\Source\DECOptions.inc}
 
-{$IF CompilerVersion >= 24.0} // Too many local constants for Delphi XE2 and older
 uses
   System.SysUtils, System.Classes, Generics.Collections,
   {$IFDEF DUnitX}
@@ -120,6 +119,25 @@ type
     procedure LoadTestDataFile(FileName : string;
                                TestData : IHashTestDataContainer;
                                HashInst : TDECHashAuthentication);
+
+    /// <summary>
+    ///   Adds the SHA3 padding sheme to an input vector so that calculating
+    ///   the hash using Keccak instead of SHA3 provides the same result.
+    ///   Deliberately empty here as only implemented in class TestTHash_Keccak_Base.
+    /// </summary>
+    /// <param name="SHA3InputVector">
+    ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
+    ///   the padding appended.
+    /// </param>
+    /// <param name="LastByteLength">
+    ///   Number of bits used in the last byte. In the keccak override this will
+    ///   be adjusted inside so it's a var param.
+    /// </param>
+    /// <returns>
+    ///   The input vector with added padding
+    /// </returns>
+    function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
+                                      var LastByteLength : UInt8): RawByteString; virtual;
   public
     /// <summary>
     ///   Create test file list
@@ -257,9 +275,35 @@ type
     procedure TestLength0;
   end;
 
+  /// <summary>
+  ///   Base class for all Keccak test. This adds the necessary padding to the
+  ///   input data when loading that.
+  /// </summary>
+  TestTHash_Keccak_Base = class(TestTHash_SHA3_Base)
+  strict protected
+    /// <summary>
+    ///   Adds the SHA3 padding sheme to an input vector so that calculating
+    ///   the hash using Keccak instead of SHA3 provides the same result.
+    ///   Deliberately empty here as only implemented in class TestTHash_Keccak_Base.
+    /// </summary>
+    /// <param name="SHA3InputVector">
+    ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
+    ///   the padding appended.
+    /// </param>
+    /// <param name="LastByteLength">
+    ///   Number of bits used in the last byte. In the keccak override this will
+    ///   be adjusted inside so it's a var param.
+    /// </param>
+    /// <returns>
+    ///   The input vector with added padding
+    /// </returns>
+    function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
+                                      var LastByteLength : UInt8): RawByteString; override;
+  end;
+
   // Test methods for class THash_Keccak_224
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccak_224 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_224 = class(TestTHash_Keccak_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -281,7 +325,7 @@ type
 
   // Test methods for class THash_Keccak_256
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccak_256 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_256 = class(TestTHash_Keccak_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -300,7 +344,7 @@ type
 
   // Test methods for class THash_Keccak_384
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccak_384 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_384 = class(TestTHash_Keccak_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -319,7 +363,7 @@ type
 
   // Test methods for class THash_Keccak_512
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTHash_Keccak_512 = class(TestTHash_SHA3_Base)
+  TestTHash_Keccak_512 = class(TestTHash_Keccak_Base)
   strict protected
     /// <summary>
     ///   Some tests need to set the SHA3 specific padding byte and final bit length
@@ -339,6 +383,7 @@ type
 implementation
 
 uses
+  Winapi.Windows,
   DECFormat;
 
 { TestTHash_SHA3_Base }
@@ -416,9 +461,12 @@ var
   FileRowTrim,
   s1, msg      : string;
   Len          : Int32;
-  FinalByteLen : Int16;
+  FinalByteLen : UInt8;
   HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
+
+  s2: RawByteString;
+  fbLen: UInt8;
 begin
   Len      := 0;
   Contents := TStringList.Create;
@@ -433,6 +481,7 @@ begin
       if FileRow.StartsWith('#') then
         Continue;
 
+      // length in bit
       if (Pos('len', FileRowTrim) = 1) then
       begin
         lDataRow := FTestData.AddRow;
@@ -447,6 +496,7 @@ begin
         Continue;
       end;
 
+      // the message to be hashed = test data input
       if (Pos('msg', FileRowTrim) = 1) then
       begin
         msg := FileRowTrim;
@@ -454,20 +504,37 @@ begin
 
         if (Len > 0) then
         begin
-          lDataRow.AddInputVector(TFormat_HexL.Decode(RawByteString(msg)));
+//          fblen := FinalByteLen;
+//          s2 := AddLastByteForKeccakTest(RawByteString(msg), FinalByteLen);
+//          OutputDebugString(PWideChar('msg: ' + msg + ' len: ' + fblen.ToString + ' s2: ' + s2));
+//
+//          lDataRow.AddInputVector(TFormat_HexL.Decode(s2));
+
+          lDataRow.AddInputVector(AddLastByteForKeccakTest(
+                                    TFormat_HexL.Decode(RawByteString(msg)),
+                                    FinalByteLen));
+
+          lDataRow.FinalBitLength := FinalByteLen;
+          THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
+
           // For Shake variants this will be overwritten once we know the output
           // hash length
           lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(msg, HashInst);
         end
         else
         begin
-          lDataRow.AddInputVector('');
+          FinalByteLen := 0;
+          lDataRow.AddInputVector(AddLastByteForKeccakTest('', FinalByteLen));
+          lDataRow.FinalBitLength := FinalByteLen;
+          THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
+
           lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash('', HashInst);
         end;
 
         Continue;
       end;
 
+      // the expected output
       if (Pos('md', FileRowTrim) = 1) or (Pos('squeezed ', FileRowTrim) = 1) then
       begin
         s1 := FileRowTrim;
@@ -499,6 +566,12 @@ begin
   finally
     Contents.Free;
   end;
+end;
+
+function TestTHash_SHA3_Base.AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
+                                                      var LastByteLength : UInt8): RawByteString;
+begin
+  Result := SHA3InputVector;
 end;
 
 function TestTHash_SHA3_Base.CalcUnicodeHash(TestData : string;
@@ -1603,6 +1676,47 @@ begin
   CheckException(SetLength0Test, EDECHashException);
 end;
 
+{ TestTHash_Keccak_Base }
+
+function TestTHash_Keccak_Base.AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
+                                                        var LastByteLength : UInt8): RawByteString;
+var
+  lastbyte : UInt8;
+begin
+  case LastByteLength of
+  0 : begin // ist ok
+        SHA3InputVector := SHA3InputVector + chr($02);
+        LastByteLength := 2;
+      end;
+  1..6 :
+      begin
+        lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
+        // in lastbyte 0 an stelle fblSHA3 einfügen:
+        lastbyte := lastbyte and (( 1 shl LastByteLength ) xor $FF);
+        // in lastbyte 1 an stelle fblSHA3+1 einfügen:
+        lastbyte := lastbyte or BYTE( 1 shl (LastByteLength + 1));
+        SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
+        if LastByteLength < 6 then
+          inc(LastByteLength,2)
+        else
+          LastByteLength := 0;
+      end;
+  7 : begin // ist ok
+        // 0 anhängen - es könnte sein, dass in mSHA3 eine 1 steht
+        // wenn man sicher ist, dass dies nie der Fall ist, dann kann
+        // man auf die vier Zeilen verzichten
+        lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
+        lastbyte := lastbyte and $7F; // evt vorhandene 1 an vorderster Stelle löschen
+        SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
+
+        SHA3InputVector := SHA3InputVector + chr($01);
+        LastByteLength := 1;
+      end;
+  end;
+
+  Result := SHA3InputVector;
+end;
+
 { TestTHash_Keccak_224 }
 
 procedure TestTHash_Keccak_224.ConfigHashClass(HashClass: TDECHash;
@@ -1625,11 +1739,11 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\Keccack_224_ShortMsg.txt');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\LongMsgKAT_224.txt');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
 //  // SourceEnd
 
+// mann muss da weiter unten die AddLastByteForKeccakTest einbauen
 exit;
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
@@ -1845,11 +1959,14 @@ begin
   inherited;
   FHash := THash_Keccak_256.Create;
 
-//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
-//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_256ShortMsg.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_256LongMsg.rsp');
-//  // SourceEnd
+  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_256ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_256LongMsg.rsp');
+  // SourceEnd
+
+// mann muss da weiter unten die AddLastByteForKeccakTest einbauen
+exit;
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-256_Msg0.pdf
@@ -1995,11 +2112,14 @@ begin
   inherited;
   FHash := THash_Keccak_384.Create;
 
-//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
-//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_384ShortMsg.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_384LongMsg.rsp');
-//  // SourceEnd
+  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_384ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_384LongMsg.rsp');
+  // SourceEnd
+
+// mann muss da weiter unten die AddLastByteForKeccakTest einbauen
+exit;
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-384_Msg0.pdf
@@ -2156,11 +2276,14 @@ begin
   inherited;
   FHash := THash_Keccak_512.Create;
 
-//  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
-//  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
-//  // SourceEnd
+  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
+  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_512LongMsg.rsp');
+  // SourceEnd
+
+// mann muss da weiter unten die AddLastByteForKeccakTest einbauen
+exit;
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-512_1600.pdf
@@ -2324,9 +2447,5 @@ initialization
                             TestTHash_Keccak_384.Suite,
                             TestTHash_Keccak_512.Suite]);
   {$ENDIF}
-
-{$ELSE}
-implementation
-{$IFEND}
 
 end.
