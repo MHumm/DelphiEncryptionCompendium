@@ -460,6 +460,7 @@ var
   FileRow,
   FileRowTrim,
   s1, msg      : string;
+  MsgWithFixup : RawByteString; // if necessary msg with added padding for Keccak
   Len          : Int32;
   FinalByteLen : UInt8;
   HashLength   : Int16;
@@ -510,16 +511,19 @@ begin
 //
 //          lDataRow.AddInputVector(TFormat_HexL.Decode(s2));
 
-          lDataRow.AddInputVector(AddLastByteForKeccakTest(
+          MsgWithFixup := AddLastByteForKeccakTest(
                                     TFormat_HexL.Decode(RawByteString(msg)),
-                                    FinalByteLen));
+                                    FinalByteLen);
+          lDataRow.AddInputVector(MsgWithFixup);
 
           lDataRow.FinalBitLength := FinalByteLen;
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
 
           // For Shake variants this will be overwritten once we know the output
           // hash length
-          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(msg, HashInst);
+//          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(msg, HashInst);
+          lDataRow.ExpectedOutputUTFStrTest :=
+            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end
         else
         begin
@@ -528,7 +532,11 @@ begin
           lDataRow.FinalBitLength := FinalByteLen;
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
 
-          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash('', HashInst);
+          FinalByteLen := 0;
+          lDataRow.ExpectedOutputUTFStrTest :=
+            CalcUnicodeHash(string(TFormat_HexL.Encode(AddLastByteForKeccakTest('', FinalByteLen))),
+                            HashInst);
+//          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash('', HashInst);
         end;
 
         Continue;
@@ -1739,8 +1747,10 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
-  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\Keccack_224_ShortMsg.txt');
+
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
 //  // SourceEnd
 
 // mann muss da weiter unten die AddLastByteForKeccakTest einbauen
