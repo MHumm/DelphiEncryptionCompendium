@@ -362,9 +362,22 @@ begin
 end;
 
 function TFormMain.IsSaltablePasswordHash(HashClass: TDECHashClass): Boolean;
+var
+  Hash : TDECHash;
 begin
-  Result := (HashClass.IsPasswordHash and
-             (TDECPasswordHashClass(HashClass).MaxSaltLength > 0));
+  Result := false;
+
+  if HashClass.IsPasswordHash then
+  begin
+    Hash := HashClass.Create;
+
+    try
+      if Supports(Hash.ClassType, IDECHashPassword) then
+        Result := (TDECPasswordHash(Hash).MaxSaltLength > 0);
+    finally
+      Hash.Free;
+    end;
+  end;
 end;
 
 procedure TFormMain.EditCostChange(Sender: TObject);
