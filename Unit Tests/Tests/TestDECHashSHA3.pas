@@ -69,12 +69,22 @@ type
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
+    procedure DoTest52(HashClass:TDECHash); override;
+    /// <summary>
+    ///   Overridden so that loading of the test data file only happens here
+    ///   and not also for the metadata etc. tests as well
+    /// </summary>
     procedure DoTestCalcBuffer(HashClass:TDECHash); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
     /// </summary>
     procedure DoTestCalcBytes(HashClass:TDECHash); override;
+    /// <summary>
+    ///   Overridden so that loading of the test data file only happens here
+    ///   and not also for the metadata etc. tests as well
+    /// </summary>
+    procedure DoTestCalcStreamRawByteString(HashClass: TDECHashExtended); override;
     /// <summary>
     ///   Overridden so that loading of the test data file only happens here
     ///   and not also for the metadata etc. tests as well
@@ -410,6 +420,12 @@ begin
     LoadTestDataFile(FileName, FTestData, FHash);
 end;
 
+procedure TestTHash_SHA3_Base.DoTest52(HashClass: TDECHash);
+begin
+  LoadTestFiles;
+  inherited;
+end;
+
 procedure TestTHash_SHA3_Base.DoTestCalcBuffer(HashClass:TDECHash);
 begin
   LoadTestFiles;
@@ -440,6 +456,13 @@ begin
   inherited;
 end;
 
+procedure TestTHash_SHA3_Base.DoTestCalcStreamRawByteString(
+  HashClass: TDECHashExtended);
+begin
+  LoadTestFiles;
+  inherited;
+end;
+
 procedure TestTHash_SHA3_Base.DoTestCalcUnicodeString(HashClass:TDECHash);
 begin
   LoadTestFiles;
@@ -465,9 +488,6 @@ var
   FinalByteLen : UInt8;
   HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
-
-  s2: RawByteString;
-  fbLen: UInt8;
 begin
   Len      := 0;
   Contents := TStringList.Create;
@@ -505,12 +525,6 @@ begin
 
         if (Len > 0) then
         begin
-//          fblen := FinalByteLen;
-//          s2 := AddLastByteForKeccakTest(RawByteString(msg), FinalByteLen);
-//          OutputDebugString(PWideChar('msg: ' + msg + ' len: ' + fblen.ToString + ' s2: ' + s2));
-//
-//          lDataRow.AddInputVector(TFormat_HexL.Decode(s2));
-
           MsgWithFixup := AddLastByteForKeccakTest(
                                     TFormat_HexL.Decode(RawByteString(msg)),
                                     FinalByteLen);
@@ -521,7 +535,6 @@ begin
 
           // For Shake variants this will be overwritten once we know the output
           // hash length
-//          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash(msg, HashInst);
           lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end
@@ -536,7 +549,6 @@ begin
           lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(AddLastByteForKeccakTest('', FinalByteLen))),
                             HashInst);
-//          lDataRow.ExpectedOutputUTFStrTest := CalcUnicodeHash('', HashInst);
         end;
 
         Continue;
@@ -1747,7 +1759,9 @@ begin
 
 //  //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
 //  //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\Keccack_224_ShortMsg.txt');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\Keccack_224_ShortMsg.txt');
 
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');

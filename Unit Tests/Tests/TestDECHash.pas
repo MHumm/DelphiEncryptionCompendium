@@ -161,7 +161,7 @@ type
     function SetPropertyValue(aInstance: TObject; const PropertyName, Value: string):Boolean;
 
     // kind of "low-level" test, close to the original test used in DEC5.2
-    procedure DoTest52(HashClass:TDECHash);
+    procedure DoTest52(HashClass:TDECHash); virtual;
 
     procedure DoTestCalcBuffer(HashClass:TDECHash); virtual;
     procedure DoTestCalcBytes(HashClass:TDECHash); virtual;
