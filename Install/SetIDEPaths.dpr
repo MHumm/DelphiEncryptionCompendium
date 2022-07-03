@@ -178,6 +178,6 @@ begin
   end;
 
   WriteLn('');
-  WriteLn('Press enter to quit and restart IDE');
+  WriteLn('Press enter to quit and then restart IDE');
   ReadLn;
 end.
