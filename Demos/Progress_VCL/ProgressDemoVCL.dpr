@@ -2,7 +2,7 @@ program ProgressDemoVCL;
 
 uses
   Vcl.Forms,
-  MainForm in 'MainForm.pas' {Form1},
+  MainForm in 'MainForm.pas' {FormMain},
   DECBaseClass in '..\..\Source\DECBaseClass.pas',
   DECCipherBase in '..\..\Source\DECCipherBase.pas',
   DECCipherFormats in '..\..\Source\DECCipherFormats.pas',
