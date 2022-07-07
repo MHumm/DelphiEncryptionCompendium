@@ -5510,6 +5510,7 @@ var
   i                : Integer;
   InpStr           : string;
   RawByteStrResult : RawByteString;
+  StrResult        : string;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
@@ -5518,9 +5519,10 @@ begin
       InpStr := string(FTestData[i].InputData);
       ConfigHashClass(HashClass, i);
 
+      StrResult := HashClass.CalcString(InpStr);
       RawByteStrResult := BytesToRawString(
                             TFormat_HEXL.Encode(
-                              System.SysUtils.BytesOf(HashClass.CalcString(InpStr))));
+                              System.SysUtils.BytesOf(StrResult)));
 
       // Configure again, as for password hashes DoDone would clear the salt
       ConfigHashClass(HashClass, i);
@@ -5531,7 +5533,7 @@ begin
                   string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
                   string(BytesToRawString(
                     TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(HashClass.CalcString(InpStr))))) + '>');
+                      System.SysUtils.BytesOf(StrResult)))) + '>');
     end;
   end;
 end;
