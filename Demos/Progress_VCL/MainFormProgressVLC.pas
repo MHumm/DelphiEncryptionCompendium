@@ -19,7 +19,7 @@
 ///   Simple demonstration of using the IDECProgress interface for displaying
 ///   progress of an operation
 /// </summary>
-unit MainForm;
+unit MainFormProgressVLC;
 
 interface
 

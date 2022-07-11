@@ -3,7 +3,7 @@ program Hash_FMX;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MainForm in 'MainForm.pas' {FormMain};
+  MainForm in 'MainFormHashFMX.pas' {FormMain};
 
 {$R *.res}
 
