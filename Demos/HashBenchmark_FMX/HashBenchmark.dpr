@@ -3,7 +3,7 @@ program HashBenchmark;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  MainForm in 'MainForm.pas' {FormMain};
+  MainFormHashBenchmark in 'MainFormHashBenchmark.pas' {FormMain};
 
 {$R *.res}
 

@@ -5394,7 +5394,8 @@ begin
       Buf := BytesOf(RawByteString(InputDataVectors[IdxVector].Data));
       BufLen := Length(Buf);
 
-      // Last part of the test data are bits (relevant for SHA3)
+      // Last part of the test data are bits (relevant for SHA3) and this old
+      // style test variant does not know how to handle this.
       if FTestData[i].FinalByteBitLength > 0 then
         Break;
 
@@ -5410,6 +5411,8 @@ begin
       end;
     end;
 
+      // Last part of the test data are bits (relevant for SHA3) and this old
+      // style test variant does not know how to handle this.
     if FTestData[i].FinalByteBitLength > 0 then
       Continue;
 
@@ -5437,8 +5440,9 @@ end;
 
 procedure THash_TestBase.DoTestCalcBuffer(HashClass: TDECHash);
 var
-  i   : Integer;
-  Buf : TBytes;
+  i                : Integer;
+  Buf              : TBytes;
+  ResultBuf        : TBytes;
   RawByteStrResult : RawByteString;
 begin
   for i := 0 to FTestData.Count-1 do
@@ -5448,33 +5452,27 @@ begin
     Buf := BytesOf(RawByteString(FTestData[i].InputData));
     if Length(Buf) > 0 then
     begin
-      RawByteStrResult := BytesToRawString(
-                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0],
-                                                Length(Buf))));
+      ResultBuf := TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)));
+      RawByteStrResult := BytesToRawString(ResultBuf);
       // Configure again, as for password hashes DoDone would clear the salt
       ConfigHashClass(HashClass, i);
       CheckEquals(FTestData[i].ExpectedOutput,
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      HashClass.CalcBuffer(Buf[0], Length(Buf))))) + '>');
+                  string(BytesToRawString(ResultBuf)) + '>');
     end
     else
     begin
-      RawByteStrResult := BytesToRawString(
-                            TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
-                                                                     Length(Buf))));
+      ResultBuf := TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)));
+      RawByteStrResult := BytesToRawString(ResultBuf);
       // Configure again, as for password hashes DoDone would clear the salt
       ConfigHashClass(HashClass, i);
       CheckEquals(FTestData[i].ExpectedOutput,
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(BytesToRawString(
-                    TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf,
-                                                             Length(Buf))))) + '>');
+                  string(BytesToRawString(ResultBuf)) + '>');
     end;
   end;
 end;
@@ -5483,14 +5481,14 @@ procedure THash_TestBase.DoTestCalcBytes(HashClass: TDECHash);
 var
   i                : Integer;
   RawByteStrResult : RawByteString;
+  ResultBuf        : TBytes;
 begin
   for i := 0 to FTestData.Count-1 do
   begin
     ConfigHashClass(HashClass, i);
 
-    RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(
-                  HashClass.CalcBytes(
-                    BytesOf(RawByteString(FTestData[i].InputData)))));
+    ResultBuf := HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].InputData)));
+    RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(ResultBuf));
 
     // Configure again, as for password hashes DoDone would clear the salt
     ConfigHashClass(HashClass, i);
@@ -5499,9 +5497,7 @@ begin
                 RawByteStrResult,
                 'Index: ' + IntToStr(i) + ' - expected: <' +
                 string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                string(BytesToRawString(TFormat_HEXL.Encode(
-                  HashClass.CalcBytes(
-                    BytesOf(RawByteString(FTestData[i].InputData)))))) + '>');
+                string(BytesToRawString(TFormat_HEXL.Encode(ResultBuf))) + '>');
   end;
 end;
 
@@ -5531,9 +5527,7 @@ begin
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
-                  string(BytesToRawString(
-                    TFormat_HEXL.Encode(
-                      System.SysUtils.BytesOf(StrResult)))) + '>');
+                  string(RawByteStrResult) + '>');
     end;
   end;
 end;
@@ -5649,7 +5643,7 @@ begin
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL)) + '>');
+                  string(RawByteStrResult) + '>');
     end;
 end;
 

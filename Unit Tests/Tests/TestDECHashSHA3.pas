@@ -610,6 +610,7 @@ end;
 function TestTHash_SHA3_Base.AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
                                                       var LastByteLength : UInt8): RawByteString;
 begin
+  // For non Keccak use do rather nothing
   Result := SHA3InputVector;
 end;
 

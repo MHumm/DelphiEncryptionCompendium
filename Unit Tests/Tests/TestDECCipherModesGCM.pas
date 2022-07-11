@@ -549,6 +549,7 @@ var
   TestDataSet : TGCMTestSetEntry;
   i           : Integer;
   EncryptData : TBytes;
+  EncrDataStr : string;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
@@ -572,15 +573,16 @@ begin
                          BytesOf(TestDataSet.TestData[i].PT)));
       FCipherAES.Done;
 
+      EncrDataStr := StringOf(TFormat_HexL.Encode(EncryptData));
       CheckEquals(string(TestDataSet.TestData[i].CT),
-                  StringOf(TFormat_HexL.Encode(EncryptData)),
+                  EncrDataStr,
                   'Cipher text wrong for Key ' +
                   string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
                   string(TestDataSet.TestData[i].InitVector) + ' PT ' +
                   string(TestDataSet.TestData[i].PT) + ' AAD ' +
                   string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
-                  StringOf(TFormat_HexL.Encode(EncryptData)));
+                  EncrDataStr);
 
       // Additional Authentication Data prüfen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),

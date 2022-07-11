@@ -15,7 +15,7 @@
   under the License.
 *****************************************************************************}
 
-unit MainForm;
+unit MainFormHashFMX;
 
 interface
 
