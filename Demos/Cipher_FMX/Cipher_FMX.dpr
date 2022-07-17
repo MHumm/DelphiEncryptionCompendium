@@ -3,11 +3,7 @@ program Cipher_FMX;
 uses
   System.StartUpCopy,
   FMX.Forms,
-<<<<<<< HEAD
   MainFormCipherFMX in 'MainFormCipherFMX.pas' {FormMain};
-=======
-  MainForm in 'MainFormCipherFMX.pas' {FormMain};
->>>>>>> development
 
 {$R *.res}
 
