@@ -5454,25 +5454,23 @@ begin
     begin
       ResultBuf := TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf[0], Length(Buf)));
       RawByteStrResult := BytesToRawString(ResultBuf);
-      // Configure again, as for password hashes DoDone would clear the salt
-      ConfigHashClass(HashClass, i);
+
       CheckEquals(FTestData[i].ExpectedOutput,
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(BytesToRawString(ResultBuf)) + '>');
+                  string(RawByteStrResult) + '>');
     end
     else
     begin
       ResultBuf := TFormat_HEXL.Encode(HashClass.CalcBuffer(Buf, Length(Buf)));
       RawByteStrResult := BytesToRawString(ResultBuf);
-      // Configure again, as for password hashes DoDone would clear the salt
-      ConfigHashClass(HashClass, i);
+
       CheckEquals(FTestData[i].ExpectedOutput,
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                  string(BytesToRawString(ResultBuf)) + '>');
+                  string(RawByteStrResult) + '>');
     end;
   end;
 end;
@@ -5490,14 +5488,11 @@ begin
     ResultBuf := HashClass.CalcBytes(BytesOf(RawByteString(FTestData[i].InputData)));
     RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(ResultBuf));
 
-    // Configure again, as for password hashes DoDone would clear the salt
-    ConfigHashClass(HashClass, i);
-
     CheckEquals(FTestData[i].ExpectedOutput,
                 RawByteStrResult,
                 'Index: ' + IntToStr(i) + ' - expected: <' +
                 string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                string(BytesToRawString(TFormat_HEXL.Encode(ResultBuf))) + '>');
+                string(RawByteStrResult) + '>');
   end;
 end;
 
@@ -5519,9 +5514,6 @@ begin
       RawByteStrResult := BytesToRawString(
                             TFormat_HEXL.Encode(
                               System.SysUtils.BytesOf(StrResult)));
-
-      // Configure again, as for password hashes DoDone would clear the salt
-      ConfigHashClass(HashClass, i);
 
       CheckEquals(FTestData[i].ExpectedOutputUTFStrTest,
                   RawByteStrResult,
@@ -5636,9 +5628,6 @@ begin
 
       RawByteStrResult := HashClass.CalcString(FTestData[i].InputData, TFormat_HEXL);
 
-      // Configure again, as for password hashes DoDone would clear the salt
-      ConfigHashClass(HashClass, i);
-
       CheckEquals(FTestData[i].ExpectedOutput,
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
@@ -5651,13 +5640,13 @@ end;
 
 procedure THash_TestBaseExtended.DoTestCalcStream(HashClass: TDECHashExtended);
 var
-  Stream : TMemoryStream;
-  i      : Integer;
-  Buf    : TBytes;
-  Hash   : TBytes;
-  ProgressCalled : Boolean;
-
-  BufSize: Integer;
+  Stream           : TMemoryStream;
+  i                : Integer;
+  Buf              : TBytes;
+  Hash             : TBytes;
+  ProgressCalled   : Boolean;
+  RawByteStrResult : RawByteString;
+  BufSize          : Integer;
 begin
   Stream  := TMemoryStream.Create;
   BufSize := 0;
@@ -5696,11 +5685,13 @@ begin
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
 
+        RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(Hash));
+
         CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    RawByteStrResult,
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+                    string(RawByteStrResult) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
 
@@ -5715,11 +5706,12 @@ begin
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
 
+        RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(Hash));
         CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    RawByteStrResult,
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+                    string(RawByteStrResult) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
@@ -5730,12 +5722,13 @@ end;
 
 procedure THash_TestBaseExtended.DoTestCalcStreamNoDone(HashClass: TDECHashExtended);
 var
-  Stream         : TMemoryStream;
-  i              : Integer;
-  Buf            : TBytes;
-  Hash           : TBytes;
-  ProgressCalled : Boolean;
-  BufSize        : Integer;
+  Stream           : TMemoryStream;
+  i                : Integer;
+  Buf              : TBytes;
+  Hash             : TBytes;
+  ProgressCalled   : Boolean;
+  RawByteStrResult : RawByteString;
+  BufSize          : Integer;
 begin
   Stream  := TMemoryStream.Create;
   BufSize := 0;
@@ -5776,11 +5769,12 @@ begin
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
 
+        RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(Hash));
         CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    RawByteStrResult,
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+                    string(RawByteStrResult) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
 
@@ -5798,11 +5792,12 @@ begin
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
 
+        RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(Hash));
         CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    RawByteStrResult,
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+                    string(RawByteStrResult) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
@@ -5813,15 +5808,16 @@ end;
 
 procedure THash_TestBaseExtended.DoTestCalcStreamNoDoneMulti(HashClass: TDECHashExtended);
 var
-  Stream         : TMemoryStream;
-  i, n           : Integer;
-  Buf            : TBytes;
-  Hash           : TBytes;
-  ProgressCalled : Boolean;
-  BufSize        : Integer;
-  Count          : Integer;
-  IsLastByte     : Boolean;
-  Idx, CopyCount : Integer;
+  Stream           : TMemoryStream;
+  i, n             : Integer;
+  Buf              : TBytes;
+  Hash             : TBytes;
+  ProgressCalled   : Boolean;
+  BufSize          : Integer;
+  Count            : Integer;
+  IsLastByte       : Boolean;
+  Idx, CopyCount   : Integer;
+  RawByteStrResult : RawByteString;
 begin
   Stream  := TMemoryStream.Create;
   BufSize := 0;
@@ -5888,11 +5884,12 @@ begin
         if (i = FTestData.Count-1) then
           StreamBufferSize := BufSize;
 
+        RawByteStrResult := BytesToRawString(TFormat_HEXL.Encode(Hash));
         CheckEquals(FTestData[i].ExpectedOutput,
-                    BytesToRawString(TFormat_HEXL.Encode(Hash)),
+                    RawByteStrResult,
                     'Index: ' + IntToStr(i) + ' - expected: <' +
                     string(FTestData[i].ExpectedOutput) + '> but was: <' +
-                    string(BytesToRawString(TFormat_HEXL.Encode(Hash))) + '>');
+                    string(RawByteStrResult) + '>');
 
         CheckEquals(true, ProgressCalled, 'Progress event not called');
       end;
