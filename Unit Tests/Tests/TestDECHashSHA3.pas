@@ -508,12 +508,12 @@ var
   HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
 
-NewContents: TStringList;
+//NewContents: TStringList;
 U : RawByteString;
 begin
   Len      := 0;
   Contents := TStringList.Create;
-NewContents := TStringList.Create;
+//NewContents := TStringList.Create;
   try
     Contents.LoadFromFile(FileName);
 
@@ -565,8 +565,8 @@ NewContents := TStringList.Create;
           // hash length
 //U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
 //NewContents.Add('MDuni = ' + string(U));
-          lDataRow.ExpectedOutputUTFStrTest :=
-            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+//          lDataRow.ExpectedOutputUTFStrTest :=
+//            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end
         else
         begin
@@ -575,13 +575,13 @@ NewContents := TStringList.Create;
           lDataRow.AddInputVector(MsgWithFixup);
           lDataRow.FinalBitLength := FinalByteLen;
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
-
+//
           FinalByteLen := 0;
-//U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
 //NewContents.Add('MDuni = ' + string(U));
 
-          lDataRow.ExpectedOutputUTFStrTest :=
-            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+          lDataRow.ExpectedOutputUTFStrTest := U;
+//            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end;
 
         Continue;
@@ -600,14 +600,17 @@ NewContents := TStringList.Create;
           lDataRow.ExpectedOutput            := RawByteString(s1);
           HashLength                         := Length(RawByteString(s1)) div 2;
           lDataRow.HashResultByteLength      := HashLength;
-
-          // Shake can caculate unicode test data only after hash length is known
-          THash_ShakeBase(HashInst).HashSize := HashLength;
-
-          if (Len > 0) then
-            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(msg, HashInst)
-          else
-            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash('', HashInst);
+//
+//          // Shake can caculate unicode test data only after hash length is known
+//          THash_ShakeBase(HashInst).HashSize := HashLength;
+////
+//          if (Len > 0) then
+////U := CalcUnicodeHash(msg, HashInst)
+//////            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(msg, HashInst)
+//          else
+////U := CalcUnicodeHash('', HashInst);
+//////            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash('', HashInst);
+////NewContents.Add('MDuni = ' + string(U));
         end
         else
           // md from the SHA3 ones
@@ -627,7 +630,7 @@ NewContents := TStringList.Create;
   finally
     Contents.Free;
 //NewContents.SaveToFile(FileName + ' 2');
-NewContents.Free;
+//NewContents.Free;
   end;
 end;
 
