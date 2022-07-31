@@ -49,10 +49,10 @@ type
   THash_SHA256      = class;  // SHA-2, SHA-256
   THash_SHA384      = class;  // SHA-2, SHA-384
   THash_SHA512      = class;  // SHA-2, SHA-512
-  THash_Keccak_224  = class;
-  THash_Keccak_256  = class;
-  THash_Keccak_384  = class;
-  THash_Keccak_512  = class;
+  THash_Keccak_224  = class;  // version of THash_SHA3_224 before that became the final standard
+  THash_Keccak_256  = class;  // version of THash_SHA3_256 before that became the final standard
+  THash_Keccak_384  = class;  // version of THash_SHA3_384 before that became the final standard
+  THash_Keccak_512  = class;  // version of THash_SHA3_512 before that became the final standard
   THash_SHA3_224    = class;
   THash_SHA3_256    = class;
   THash_SHA3_384    = class;
