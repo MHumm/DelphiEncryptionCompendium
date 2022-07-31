@@ -507,14 +507,23 @@ var
   FinalByteLen : UInt8;
   HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
+
+NewContents: TStringList;
+U : RawByteString;
 begin
   Len      := 0;
   Contents := TStringList.Create;
+NewContents := TStringList.Create;
   try
     Contents.LoadFromFile(FileName);
 
     for FileRow in Contents do
     begin
+//if FileRow.StartsWith('MDuni') then
+//  Continue
+//else
+//  NewContents.Add(FileRow);
+
       FileRowTrim := LowerCase(Trim(FileRow));
 
       // # denotes comments
@@ -554,6 +563,8 @@ begin
 
           // For Shake variants this will be overwritten once we know the output
           // hash length
+//U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+//NewContents.Add('MDuni = ' + string(U));
           lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end
@@ -566,6 +577,9 @@ begin
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
 
           FinalByteLen := 0;
+//U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+//NewContents.Add('MDuni = ' + string(U));
+
           lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end;
@@ -574,7 +588,7 @@ begin
       end;
 
       // the expected output
-      if (Pos('md', FileRowTrim) = 1) or (Pos('squeezed ', FileRowTrim) = 1) then
+      if (Pos('md =', FileRowTrim) = 1) or (Pos('squeezed ', FileRowTrim) = 1) then
       begin
         s1 := FileRowTrim;
         Delete(s1, 1, 5);
@@ -601,9 +615,19 @@ begin
 
         Continue;
       end;
+
+      if (Pos('mduni', FileRowTrim) = 1) then
+      begin
+        s1 := FileRowTrim;
+        Delete(s1, 1, 8);
+
+        lDataRow.ExpectedOutputUTFStrTest := RawByteString(s1);
+      end;
     end;
   finally
     Contents.Free;
+//NewContents.SaveToFile(FileName + ' 2');
+NewContents.Free;
   end;
 end;
 
