@@ -738,6 +738,7 @@ begin
   StartPos := Pos;
 
   if DataSize > 0 then
+  begin
     try
       if Assigned(OnProgress) then
         OnProgress(Max, 0, Started);
@@ -780,6 +781,13 @@ begin
         ProtectBytes(outBuffer);
       if Assigned(OnProgress) then
         OnProgress(Max, Max, Finished);
+    end;
+  end
+  else
+    if (FMode = cmGCM) then
+    begin
+      Buffer := nil;
+      CipherProc(Buffer, Buffer, 0);
     end;
 end;
 

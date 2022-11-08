@@ -654,10 +654,6 @@ begin
     begin
       ctBytes := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].CT));
 
-      // FIXME: Auth tag does not generate for empty CT
-      if Length(ctBytes) = 0 then
-        continue;
-
       try
 
 
@@ -734,10 +730,6 @@ begin
     for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
     begin
       ptBytes := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].PT));
-
-      // FIXME: Auth tag does not generate for empty PT
-      if Length(ptBytes) = 0 then
-        continue;
 
       FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
                       BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
