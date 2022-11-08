@@ -726,6 +726,7 @@ procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
                                                    const OnProgress: TDECProgressEvent);
 var
   Buffer: TBytes;
+  outBuffer: TBytes;
   BufferSize, Bytes: Integer;
   Max, StartPos, Pos: Int64;
 begin
@@ -752,6 +753,11 @@ begin
         SetLength(Buffer, BufferSize)
       else
         SetLength(Buffer, DataSize);
+
+      outBuffer := Buffer;
+      if (FMode = cmGCM) then
+        SetLength(outBuffer, Length(Buffer));
+
       while DataSize > 0 do
       begin
         Bytes := BufferSize;
@@ -760,8 +766,8 @@ begin
         Source.ReadBuffer(Buffer[0], Bytes);
 
         // The real encryption or decryption routine
-        CipherProc(Buffer[0], Buffer[0], Bytes);
-        Dest.WriteBuffer(Buffer[0], Bytes);
+        CipherProc(Buffer[0], outBuffer[0], Bytes);
+        Dest.WriteBuffer(outBuffer[0], Bytes);
         Dec(DataSize, Bytes);
         Inc(Pos, Bytes);
 
@@ -770,6 +776,8 @@ begin
       end;
     finally
       ProtectBytes(Buffer);
+      if (FMode = cmGCM) then
+        ProtectBytes(outBuffer);
       if Assigned(OnProgress) then
         OnProgress(Max, Max, Finished);
     end;
