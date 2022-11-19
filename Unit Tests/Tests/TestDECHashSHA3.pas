@@ -576,11 +576,11 @@ begin
           lDataRow.FinalBitLength := FinalByteLen;
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
 //
-          FinalByteLen := 0;
-U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
-//NewContents.Add('MDuni = ' + string(U));
+//          FinalByteLen := 0;
+//U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
+////NewContents.Add('MDuni = ' + string(U));
 
-          lDataRow.ExpectedOutputUTFStrTest := U;
+//          lDataRow.ExpectedOutputUTFStrTest := U;
 //            CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
         end;
 
