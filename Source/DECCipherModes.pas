@@ -517,7 +517,7 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   FGCM.EncodeGCM(TBytes(@Source), TBytes(@Dest), DataSize);
+    cmGCM :   EncodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -899,7 +899,7 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   FGCM.DecodeGCM(TBytes(@Source), TBytes(@Dest), DataSize);
+    cmGCM :   DecodeGCM(@Source, @Dest, DataSize);
   end;
 end;
 
