@@ -334,6 +334,10 @@ type
 
 implementation
 
+type
+  T16ByteArray = array[0..15] of Byte;
+  P16ByteArray = ^T16ByteArray;
+
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
   Result[0] := x[0] xor y[0];
@@ -405,11 +409,11 @@ procedure TGCM.GenerateTableM8Bit(const H : T128);
 var
   hbit, hbyte, i, j : integer;
   HP : T128;
-  { TODO : change to a pointer to HP[0], to get rid of the absolute? }
-  bHP : array[0..15] of byte absolute HP[0];
+  bHP : P16ByteArray;
   mask : byte;
 begin
   HP := H;
+  bHP := @HP[0];
   for hbyte := 0 to 15 do
   begin
     mask := 128;
@@ -464,9 +468,10 @@ end;
 
 procedure TGCM.INCR(var Y : T128);
 var
-  { TODO : change to a pointer to Y[0], to get rid of the absolute? }
-  bY : array[0..15] of byte absolute Y[0];
+  bY : P16ByteArray;
 begin
+  bY := @Y[0];
+
   {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
   {$Q-}
   inc(bY[15]);
@@ -541,15 +546,10 @@ var
       div_d := len_d div 16;
       if div_d > 0 then
       begin
-        { TODO : When 6.5 is started the while should be replaced by the for loop again }
-//      for i := 0 to div_d-1 do
-        i := 0;
-        while (i <= div_d-1) do
+        for i := 0 to div_d-1 do
         begin
           x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
           inc(n, 16);
-          { TODO : Remove the inc when 6.5 implementation starts }
-          inc(i);
         end;
       end;
 
@@ -580,16 +580,11 @@ begin
   i := 0;
   BlockCount := Size div 16;
 
-  { TODO : When 6.5 is started the while should be replaced by the for loop again }
-//  for j := 1 to BlockCount do
-  j := 1;
-  while (j <= BlockCount) do
+  for j := 1 to BlockCount do
   begin
     INCR(FY);
     P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
     inc(i, 16);
-    { TODO : Remove the inc when 6.5 implementation starts }
-    inc(j);
   end;
 
   if i < Size then
@@ -622,18 +617,13 @@ begin
   i := 0;
   div_len_plain := Size div 16;
 
-  { TODO : When 6.5 is started the while should be replaced by the for loop again }
-//  for j := 1 to div_len_plain do
-  j := 1;
-  while (j <= div_len_plain) do
+  for j := 1 to div_len_plain do
   begin
     INCR(FY);
 
     P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
 
     inc(i,16);
-    { TODO : Remove the inc when 6.5 implementation starts }
-    inc(j);
   end;
 
   if i < Size then
