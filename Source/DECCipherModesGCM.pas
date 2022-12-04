@@ -39,6 +39,15 @@ type
   P128 = ^T128;
 
   /// <summary>
+  ///   Array of 16 bytes
+  /// </summary>
+  T16ByteArray = array[0..15] of Byte;
+  /// <summary>
+  ///   Pointer to an array of 16 bytes
+  /// </summary>
+  P16ByteArray = ^T16ByteArray;
+
+  /// <summary>
   ///   A methopd of this type needs to be supplied for encrypting or decrypting
   ///   a block via this GCM algorithm. The method is implemented as a parameter,
   ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
@@ -334,10 +343,6 @@ type
 
 implementation
 
-type
-  T16ByteArray = array[0..15] of Byte;
-  P16ByteArray = ^T16ByteArray;
-
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
   Result[0] := x[0] xor y[0];
@@ -353,9 +358,9 @@ end;
 procedure TGCM.XOR_ArrayWithT128(const x: TBytes; XIndex, Count: UInt64; y: T128; var Result: TBytes);
 var
   i  : integer;
-  { TODO : change to a pointer to y[0], to get rid of the absolute? }
-  by : array[0..15] of byte absolute y[0];
+  by : P16ByteArray;
 begin
+  by := @y[0];
   for i := 0 to Count-1 do
   begin
     Result[XIndex] := x[XIndex] xor by[i];
@@ -366,9 +371,9 @@ end;
 function TGCM.poly_mult_H(const hx : T128): T128;
 var
   i : integer;
-  { TODO : change to a pointer to hx[0], to get rid of the absolute? }
-  x : array[0..15] of byte absolute hx[0];
+  x : P16ByteArray;
 begin
+  x := @hx[0];
   Result := FM[0, x[0]];
 
   for i := 1 to 15 do
@@ -382,9 +387,9 @@ procedure TGCM.SetAuthenticationCipherLength(var x : T128;
                                              AuthDataLength, CipherTextLength : UInt64);
 var
   i  : integer;
-  { TODO : change to a pointer to x[0], to get rid of the absolute? }
-  hx : array[0..15] of byte absolute x[0];
+  hx : P16ByteArray;
 begin
+  hx := @x[0];
   // al:
   x := nullbytes;
   i := 7;
@@ -450,10 +455,11 @@ end;
 
 procedure TGCM.ShiftRight(var rx : T128);
 var
-  { TODO : change to a pointer to rx[0], to get rid of the absolute? }
-  x : array[0..15] of byte absolute rx[0];
+  x : P16ByteArray;
   i : integer;
 begin
+  x := @rx[0];
+
   for i := 15 downto 1 do
     x[i] := (x[i] shr 1) or ((x[i-1] and 1) shl 7);
 
@@ -648,16 +654,11 @@ begin
 end;
 
 function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
-const
-  BitLengths : array[0..4] of Uint16 = (96, 104, 112, 120, 128);
 var
   i : integer;
 begin
   SetLength(Result, 5);
-  { TODO: When 6.5 is started the array can be assigned directly again }
-  //  Result := [96, 104, 112, 120, 128];
-  for i := 0 to high(BitLengths) do
-    result[i] := BitLengths[i];
+  Result := [96, 104, 112, 120, 128];
 end;
 
 //
