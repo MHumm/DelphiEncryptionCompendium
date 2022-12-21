@@ -30,6 +30,7 @@ uses
   TestFramework,
   {$ENDIF}
   System.SysUtils, Generics.Collections, System.Math,
+  DECBaseClass,
   DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
 
 type
@@ -200,7 +201,11 @@ type
     ///   List in which to store the test data loaded. The list must exist but
     ///   will not be cleared, so newly loaded data will be appended.
     /// </param>
-    procedure LoadFile(const FileName: string; TestData : TGCMTestDataList);
+    /// <param name="AllowIncompleteEntries">
+    ///   Use when loading data set with incomplete entries.
+    /// </param>
+    procedure LoadFile(const FileName: string; TestData : TGCMTestDataList;
+        AllowIncompleteEntries: Boolean = False);
   end;
 
   // Testmethods for class TDECCipher
@@ -229,6 +234,7 @@ type
     procedure TestDecodeStream;
     procedure TestDecodeAuthenticationFailure;
     procedure TestEncodeStream;
+    procedure TestEncodeLargeStream;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
@@ -305,7 +311,8 @@ begin
   Result := StrToInt(s);
 end;
 
-procedure TGCMTestDataLoader.LoadFile(const FileName: string; TestData : TGCMTestDataList);
+procedure TGCMTestDataLoader.LoadFile(const FileName: string;
+  TestData : TGCMTestDataList; AllowIncompleteEntries: Boolean = False);
 var
   Reader : TStreamReader;
   Line   : string;
@@ -353,6 +360,9 @@ begin
   finally
     Reader.Free;
   end;
+
+  if AllowIncompleteEntries and (Index < Length(Entry.TestData) - 1) then
+    TestData.Add(Entry);
 end;
 
 procedure TGCMTestDataLoader.ReadBlockMetaDataLine(const Line : string;
@@ -740,6 +750,19 @@ begin
       DoTestEncodeStream_TestSingleSet(curSetIndex, i, aMaxChunkSize);
     end;
   end;
+end;
+
+procedure TestTDECGCM.TestEncodeLargeStream;
+begin
+  // There is only one record in test data set atm, so need to allow
+  // incomplete load
+  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256_large.rsp',
+    FTestDataList, True);
+  Status('Encode large stream using chunking');
+  Assert(StreamBufferSize = 8192, 'Might need to update data set to have enough data!');
+  DoTestEncodeStream_TestSingleSet(0, 0, StreamBufferSize);
+  Status('Encode large stream without chunking');
+  DoTestEncodeStream_TestSingleSet(0, 0, -1);
 end;
 
 procedure TestTDECGCM.DoTestEncodeStream_TestSingleSet(const aSetIndex,
