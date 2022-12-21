@@ -29,7 +29,7 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  System.SysUtils, Generics.Collections,
+  System.SysUtils, Generics.Collections, System.Math,
   DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
 
 type
@@ -217,6 +217,9 @@ type
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestDecodeFailure;
+    procedure DoTestEncodeStream_LoadAndTestCAVSData(const aMaxChunkSize: Int64);
+    procedure DoTestEncodeStream_TestSingleSet(const aSetIndex, aDataIndex:
+        Integer; const aMaxChunkSize: Int64 = -1);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -713,73 +716,100 @@ begin
 end;
 
 procedure TestTDECGCM.TestEncodeStream;
+begin
+  // -1 to disable chunking
+  DoTestEncodeStream_LoadAndTestCAVSData(-1);
+end;
+
+procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
+    aMaxChunkSize: Int64);
 var
-  ctbStream: TBytesStream;
-  ptBytes: TBytes;
-  TestDataSet : TGCMTestSetEntry;
   i           : Integer;
-  EncryptData : TBytes;
-  ptbStream: TBytesStream;
+  TestDataSet : TGCMTestSetEntry;
+  curSetIndex: Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
-  for TestDataSet in FTestDataList do
+  for curSetIndex := 0 to FTestDataList.Count - 1 do
   begin
+    TestDataSet := FTestDataList[curSetIndex];
     for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
     begin
-      ptBytes := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[i].PT));
-
-      FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].CryptKey)),
-                      BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[i].InitVector)),
-                      $FF);
-
-      FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
-      FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
-                                                    BytesOf(
-                                                      TestDataSet.TestData[i].AAD));
-
-      ptbStream := TBytesStream.Create(ptBytes);
-      ctbStream := TBytesStream.Create;
-      try
-        FCipherAES.EncodeStream(ptbStream, ctbStream, ptbStream.Size);
-
-        FCipherAES.Done;
-
-        EncryptData := ctbStream.Bytes;
-        SetLength(EncryptData, ctbStream.Size);
-      except
-        on E: Exception do
-          Status('CryptKey ' + string(TestDataSet.TestData[i].CryptKey) +
-            ' ' + E.ClassName + ': ' + E.Message);
-      end;
-
-      FreeAndNil(ptbStream);
-      FreeAndNil(ctbStream);
-
-      CheckEquals(string(TestDataSet.TestData[i].CT),
-                  StringOf(TFormat_HexL.Encode(EncryptData)),
-                  'Cipher text wrong for Key ' +
-                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
-                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
-                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
-                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
-                  string(TestDataSet.TestData[i].CT) + ' Act.: ' +
-                  StringOf(TFormat_HexL.Encode(EncryptData)));
-
-      // Additional Authentication Data prüfen
-      CheckEquals(string(TestDataSet.TestData[i].TagResult),
-                         StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
-                  'Authentication tag wrong for Key ' +
-                  string(TestDataSet.TestData[i].CryptKey) + ' IV ' +
-                  string(TestDataSet.TestData[i].InitVector) + ' PT ' +
-                  string(TestDataSet.TestData[i].PT) + ' AAD ' +
-                  string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
-                  string(TestDataSet.TestData[i].TagResult) + ' Act.: ' +
-                  StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
+      DoTestEncodeStream_TestSingleSet(curSetIndex, i, aMaxChunkSize);
     end;
   end;
+end;
+
+procedure TestTDECGCM.DoTestEncodeStream_TestSingleSet(const aSetIndex,
+    aDataIndex: Integer; const aMaxChunkSize: Int64 = -1);
+var
+  ctbStream: TBytesStream;
+  curChunkSize: Int64;
+  dataLeftToEncode: Int64;
+  ptBytes: TBytes;
+  TestDataSet : TGCMTestSetEntry;
+  EncryptData : TBytes;
+  ptbStream: TBytesStream;
+begin
+  TestDataSet := FTestDataList[aSetIndex];
+
+  ptBytes := TFormat_HexL.Decode(BytesOf(TestDataSet.TestData[aDataIndex].PT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[aDataIndex].CryptKey)),
+                  BytesOf(TFormat_HexL.Decode(TestDataSet.TestData[aDataIndex].InitVector)),
+                  $FF);
+
+  FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
+  FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
+                                                BytesOf(
+                                                  TestDataSet.TestData[aDataIndex].AAD));
+
+  ptbStream := TBytesStream.Create(ptBytes);
+  ctbStream := TBytesStream.Create;
+  try
+    dataLeftToEncode := ptbStream.Size;
+    curChunkSize := dataLeftToEncode;
+    repeat
+      // Apply chunking if needed
+      if aMaxChunkSize > 0 then
+        curChunkSize := Min(dataLeftToEncode, aMaxChunkSize);
+      FCipherAES.EncodeStream(ptbStream, ctbStream, curChunkSize);
+      Dec(dataLeftToEncode, curChunkSize);
+    until (dataLeftToEncode = 0);
+
+    FCipherAES.Done;
+
+    EncryptData := ctbStream.Bytes;
+    SetLength(EncryptData, ctbStream.Size);
+  except
+    on E: Exception do
+      Status('CryptKey ' + string(TestDataSet.TestData[aDataIndex].CryptKey) +
+        ' ' + E.ClassName + ': ' + E.Message);
+  end;
+
+  FreeAndNil(ptbStream);
+  FreeAndNil(ctbStream);
+
+  CheckEquals(string(TestDataSet.TestData[aDataIndex].CT),
+              StringOf(TFormat_HexL.Encode(EncryptData)),
+              'Cipher text wrong for Key ' +
+              string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
+              string(TestDataSet.TestData[aDataIndex].InitVector) + ' PT ' +
+              string(TestDataSet.TestData[aDataIndex].PT) + ' AAD Exp.: ' +
+              string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
+              StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
+
+  // Additional Authentication Data prüfen
+  CheckEquals(string(TestDataSet.TestData[aDataIndex].TagResult),
+                     StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag wrong for Key ' +
+              string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
+              string(TestDataSet.TestData[aDataIndex].InitVector) + ' PT ' +
+              string(TestDataSet.TestData[aDataIndex].PT) + ' AAD Exp.: ' +
+              string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
+              StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 end;
 
 procedure TestTDECGCM.TestGetStandardAuthenticationTagBitLengths;
