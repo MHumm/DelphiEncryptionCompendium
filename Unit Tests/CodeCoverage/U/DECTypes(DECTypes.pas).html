@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+table {border-spacing:0; border-collapse:collapse;}
+table, td, th {border: 1px solid black;}
+td, th {background: white; margin: 0; padding: 2px 0.5em 2px 0.5em}
+td {border-width: 0 1px 0 0;}
+th {border-width: 1px 1px 1px 0;}
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: courier,monospace; font-size: 10pt;}
+th {background: #CCCCCC;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: 100%;}
+table.s tr td {padding: 0 0.25em 0 0.25em;}
+table.s tr td:first-child {text-align: right; font-weight: bold;}
+table.s tr.notcovered td {background: #DDDDFF;}
+table.s tr.nocodegen td {background: #FFFFEE;}
+table.s tr.covered td {background: #CCFFCC;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum tr td {border-width: 1px;}
+table.sum tr th {text-align:right;}
+table.sum tr th:first-child {text-align:center;}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+</style>
+</head>
+<body>
+<p>Coverage report for <strong>DECTypes (D:\Projekte\DECGitMaster\Source\DECTypes.pas)</strong>.</p>
+<p> Generated at 29.10.2021 18:49:30 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Statistics for D:\Projekte\DECGitMaster\Source\DECTypes.pas </p>
+<table  class="o"><tr><td>Number of lines covered</td><td>0</td></tr><tr><td>Number of lines with code gen</td><td>3</td></tr><tr><td>Line coverage</td><td>0%</td></tr></table>
+<br /><br />
+<table  class="s">
+<tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
+<tr class="nocodegen"><td>2</td><td><pre style="display:inline;"> &nbsp;The DEC team (see file NOTICE.txt) licenses this file</pre></td></tr>
+<tr class="nocodegen"><td>3</td><td><pre style="display:inline;"> &nbsp;to you under the Apache License, Version 2.0 (the</pre></td></tr>
+<tr class="nocodegen"><td>4</td><td><pre style="display:inline;"> &nbsp;&quot;License&quot;); you may not use this file except in compliance</pre></td></tr>
+<tr class="nocodegen"><td>5</td><td><pre style="display:inline;"> &nbsp;with the License. A copy of this licence is found in the root directory</pre></td></tr>
+<tr class="nocodegen"><td>6</td><td><pre style="display:inline;"> &nbsp;of this project in the file LICENCE.txt or alternatively at</pre></td></tr>
+<tr class="nocodegen"><td>7</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>8</td><td><pre style="display:inline;"> &nbsp; &nbsp;http://www.apache.org/licenses/LICENSE-2.0</pre></td></tr>
+<tr class="nocodegen"><td>9</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>10</td><td><pre style="display:inline;"> &nbsp;Unless required by applicable law or agreed to in writing,</pre></td></tr>
+<tr class="nocodegen"><td>11</td><td><pre style="display:inline;"> &nbsp;software distributed under the License is distributed on an</pre></td></tr>
+<tr class="nocodegen"><td>12</td><td><pre style="display:inline;"> &nbsp;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</pre></td></tr>
+<tr class="nocodegen"><td>13</td><td><pre style="display:inline;"> &nbsp;KIND, either express or implied. &nbsp;See the License for the</pre></td></tr>
+<tr class="nocodegen"><td>14</td><td><pre style="display:inline;"> &nbsp;specific language governing permissions and limitations</pre></td></tr>
+<tr class="nocodegen"><td>15</td><td><pre style="display:inline;"> &nbsp;under the License.</pre></td></tr>
+<tr class="nocodegen"><td>16</td><td><pre style="display:inline;">*****************************************************************************}</pre></td></tr>
+<tr class="nocodegen"><td>17</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>18</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>19</td><td><pre style="display:inline;">/// &nbsp; Declarations of various datatypes, some of those have not been</pre></td></tr>
+<tr class="nocodegen"><td>20</td><td><pre style="display:inline;">/// &nbsp; declared for certain platforms but are used in DEC and some do change</pre></td></tr>
+<tr class="nocodegen"><td>21</td><td><pre style="display:inline;">/// &nbsp; meanings between platforms like PLongWord where LongWord is 32 bit on</pre></td></tr>
+<tr class="nocodegen"><td>22</td><td><pre style="display:inline;">/// &nbsp; Windows and Android but 64 bit on iOS for instance</pre></td></tr>
+<tr class="nocodegen"><td>23</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>24</td><td><pre style="display:inline;">unit DECTypes;</pre></td></tr>
+<tr class="nocodegen"><td>25</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>26</td><td><pre style="display:inline;">interface</pre></td></tr>
+<tr class="nocodegen"><td>27</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>28</td><td><pre style="display:inline;">{$INCLUDE DECOptions.inc}</pre></td></tr>
+<tr class="nocodegen"><td>29</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>30</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>31</td><td><pre style="display:inline;"> &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>32</td><td><pre style="display:inline;"> &nbsp;SysUtils;</pre></td></tr>
+<tr class="nocodegen"><td>33</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>34</td><td><pre style="display:inline;"> &nbsp;System.SysUtils;</pre></td></tr>
+<tr class="nocodegen"><td>35</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>36</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>37</td><td><pre style="display:inline;">type</pre></td></tr>
+<tr class="nocodegen"><td>38</td><td><pre style="display:inline;"> &nbsp;{$IFNDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>39</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &lt;= 20}</pre></td></tr>
+<tr class="nocodegen"><td>40</td><td><pre style="display:inline;"> &nbsp; &nbsp;// In D2009 NativeInt was not properly treated by the compiler under certain</pre></td></tr>
+<tr class="nocodegen"><td>41</td><td><pre style="display:inline;"> &nbsp; &nbsp;// conditions. See: http://qc.embarcadero.com/wc/qcmain.aspx?d=71292</pre></td></tr>
+<tr class="nocodegen"><td>42</td><td><pre style="display:inline;"> &nbsp; &nbsp;NativeInt = Integer;</pre></td></tr>
+<tr class="nocodegen"><td>43</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>44</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>45</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>46</td><td><pre style="display:inline;"> &nbsp;PUInt32Array = ^TUInt32Array;</pre></td></tr>
+<tr class="nocodegen"><td>47</td><td><pre style="display:inline;"> &nbsp;TUInt32Array = array[0..1023] of UInt32;</pre></td></tr>
+<tr class="nocodegen"><td>48</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>49</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>50</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Replacement for PLongWord, as LongWord changes between platforms from</pre></td></tr>
+<tr class="nocodegen"><td>51</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; 32 to 64 bit</pre></td></tr>
+<tr class="nocodegen"><td>52</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>53</td><td><pre style="display:inline;"> &nbsp;PUInt32 = ^UINT32;</pre></td></tr>
+<tr class="nocodegen"><td>54</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>55</td><td><pre style="display:inline;"> &nbsp;PUInt64Array = ^TUInt64Array;</pre></td></tr>
+<tr class="nocodegen"><td>56</td><td><pre style="display:inline;"> &nbsp;TUInt64Array = array[0..1023] of UInt64;</pre></td></tr>
+<tr class="nocodegen"><td>57</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>58</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>59</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; List of standard bit lengths defined in the official standard for some</pre></td></tr>
+<tr class="nocodegen"><td>60</td><td><pre style="display:inline;"> &nbsp;/// &nbsp;algorithm property which allows a variable bit length.</pre></td></tr>
+<tr class="nocodegen"><td>61</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>62</td><td><pre style="display:inline;"> &nbsp;TStandardBitLengths = array of UInt16;</pre></td></tr>
+<tr class="nocodegen"><td>63</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>64</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Reason for calling the progress event</pre></td></tr>
+<tr class="nocodegen"><td>66</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>67</td><td><pre style="display:inline;"> &nbsp;TDECProgressState = (Started, Processing, Finished);</pre></td></tr>
+<tr class="nocodegen"><td>68</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>69</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>70</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Event type used by several hash- and cipher methods to display their</pre></td></tr>
+<tr class="nocodegen"><td>71</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; progress. It can be implemented as regular method, procedure and as</pre></td></tr>
+<tr class="nocodegen"><td>72</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; anonymous method, means: in place.</pre></td></tr>
+<tr class="nocodegen"><td>73</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>74</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>75</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Number of bytes to process. For files this is usually the file size. For</pre></td></tr>
+<tr class="nocodegen"><td>76</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; streams this can be less than the stream size if the stream is not being</pre></td></tr>
+<tr class="nocodegen"><td>77</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; processed from the beginning.</pre></td></tr>
+<tr class="nocodegen"><td>78</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>79</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Pos&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>80</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Position within size in byte. For streams this may be a position</pre></td></tr>
+<tr class="nocodegen"><td>81</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; relative to the starting position for processing.</pre></td></tr>
+<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>83</td><td><pre style="display:inline;"> &nbsp;TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);</pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>85</td><td><pre style="display:inline;"> &nbsp;// Exception Classes</pre></td></tr>
+<tr class="nocodegen"><td>86</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>87</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>88</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Base exception class for all DEC specific exceptions,</pre></td></tr>
+<tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>90</td><td><pre style="display:inline;"> &nbsp;EDECException &nbsp; &nbsp; &nbsp; = class(Exception)</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
+<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
+<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
+<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(const Msg: string); reintroduce; overload;</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Creates the exception instance and makes the exception message translateable</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; via Firemonkey&apos;s TLang translation mechanism. Normal ressource strings</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; are not translated in the same way on mobile platforms as they are on</pre></td></tr>
+<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Win32/Win64.</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Msg&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; String with a failure message to be output or logged</pre></td></tr>
+<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Args&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Array with values for the parameters specified in the format string</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor CreateFmt(const Msg: string;</pre></td></tr>
+<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const); reintroduce; overload;</pre></td></tr>
+<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>120</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class used when reporting that a class searched in a list is</pre></td></tr>
+<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; not contained in that list, e.g. when searching for a non existant</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; formatting class.</pre></td></tr>
+<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp;EDECClassNotRegisteredException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting formatting related exceptions</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp;EDECFormatException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting exceptions related to hash functions</pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp;EDECHashException &nbsp; = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting encryption/decryption caused exceptions</pre></td></tr>
+<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp;EDECCipherException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting calculation of a wrong authentication</pre></td></tr>
+<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; value when decrypting using a cipher supporting authentication</pre></td></tr>
+<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp;EDECCipherAuthenticationException = class(EDECException);</pre></td></tr>
+<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Exception class for reporting the use of abstract things which cannot</pre></td></tr>
+<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; be called directly</pre></td></tr>
+<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp;EDECAbstractError = class(EDECException)</pre></td></tr>
+<tr class="nocodegen"><td>149</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>150</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Create the exception using a meaningfull error message</pre></td></tr>
+<tr class="nocodegen"><td>151</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create(ClassName: string); overload;</pre></td></tr>
+<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>155</td><td><pre style="display:inline;">const</pre></td></tr>
+<tr class="nocodegen"><td>156</td><td><pre style="display:inline;">{ TODO : Check why this is a constant, which is immediately used by the</pre></td></tr>
+<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; resource string. Is this because of the lack of resource string support</pre></td></tr>
+<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; of FMX on some platforms?}</pre></td></tr>
+<tr class="nocodegen"><td>159</td><td><pre style="display:inline;"> &nbsp;cAbstractError = &apos;Abstract Error: %s is not implemented&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>161</td><td><pre style="display:inline;">resourcestring</pre></td></tr>
+<tr class="nocodegen"><td>162</td><td><pre style="display:inline;"> &nbsp;sAbstractError = cAbstractError;</pre></td></tr>
+<tr class="nocodegen"><td>163</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>164</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>165</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>166</td><td><pre style="display:inline;">{ EDECException }</pre></td></tr>
+<tr class="nocodegen"><td>167</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>168</td><td><pre style="display:inline;">{$IFDEF FMXTranslateableExceptions}</pre></td></tr>
+<tr class="nocodegen"><td>169</td><td><pre style="display:inline;">constructor EDECException.Create(const Msg: string);</pre></td></tr>
+<tr class="nocodegen"><td>170</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp;inherited Create(Translate(msg));</pre></td></tr>
+<tr class="nocodegen"><td>172</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>173</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>174</td><td><pre style="display:inline;">constructor EDECException.CreateFmt(const Msg: string;</pre></td></tr>
+<tr class="nocodegen"><td>175</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const Args: array of const);</pre></td></tr>
+<tr class="nocodegen"><td>176</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(Msg), Args));</pre></td></tr>
+<tr class="nocodegen"><td>178</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>180</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
+<tr class="nocodegen"><td>181</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>182</td><td><pre style="display:inline;"> &nbsp;inherited Create(Format(Translate(sAbstractError), [ClassName]));</pre></td></tr>
+<tr class="nocodegen"><td>183</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>184</td><td><pre style="display:inline;">{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>185</td><td><pre style="display:inline;">constructor EDECAbstractError.Create(ClassName: string);</pre></td></tr>
+<tr class="notcovered"><td>186</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="notcovered"><td>187</td><td><pre style="display:inline;"> &nbsp;inherited CreateResFmt(@sAbstractError, [ClassName]);</pre></td></tr>
+<tr class="notcovered"><td>188</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>189</td><td><pre style="display:inline;">{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>190</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>191</td><td><pre style="display:inline;">end.</pre></td></tr>
+</table>
+</body>
+</html>

@@ -457,6 +457,9 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
+    /// <returns>
+    ///   The calculated PBKDF2 value
+    /// </returns>
     class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer;
                           KeyLength: Integer): TBytes; overload;
 
@@ -480,6 +483,9 @@ type
     /// <param name="KeyLength">
     ///   Length of the resulting key in byte
     /// </param>
+    /// <returns>
+    ///   The calculated PBKDF2 value
+    /// </returns>
     class function PBKDF2(const Password, Salt: RawByteString;
                           Iterations: Integer;
                           KeyLength: Integer): TBytes; overload;
@@ -1307,11 +1313,7 @@ begin
         end;
       end;
 
-      {$IF CompilerVersion >= 28.0}
       Result := Result + T;                       // DK += F    , DK = DK || Ti
-      {$ELSE}
-      TArrHelper.AppendArrays<Byte>(Result, T);
-      {$IFEND}
     end;
   finally
     Hash.Free;

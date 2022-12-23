@@ -1,0 +1,1265 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECCipherFormats (..\..\Source\DECCipherFormats.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECCipherFormats.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>151<td rowspan=3 style="background: conic-gradient(#9fe098 88%, #eee 88%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>171<tr><td>Line coverage<td>88<small>.3</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>unit DECCipherFormats;
+<tr class="nocodegen"><td>18<td>
+<tr class="nocodegen"><td>19<td>interface
+<tr class="nocodegen"><td>20<td>
+<tr class="nocodegen"><td>21<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>uses
+<tr class="nocodegen"><td>24<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>25<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>26<td>  {$ELSE}
+<tr class="nocodegen"><td>27<td>  System.SysUtils, System.Classes,
+<tr class="nocodegen"><td>28<td>  {$ENDIF}
+<tr class="nocodegen"><td>29<td>  DECCipherBase, DECCipherModes,
+<tr class="nocodegen"><td>30<td>  DECUtil, DECTypes, DECFormatBase, DECCipherInterface;
+<tr class="nocodegen"><td>31<td>
+<tr class="nocodegen"><td>32<td>type
+<tr class="nocodegen"><td>33<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>34<td>  ///   Class type of the cipher base class which adds the additional Calc
+<tr class="nocodegen"><td>35<td>  ///   variants for additional data types.
+<tr class="nocodegen"><td>36<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>37<td>  TDECFormattedCipherClass = class of TDECFormattedCipher;
+<tr class="nocodegen"><td>38<td>
+<tr class="nocodegen"><td>39<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>40<td>  ///   Class in which the various encode/decode variants provided have been
+<tr class="nocodegen"><td>41<td>  ///   moved in order to keep the base cipher class small and clean.
+<tr class="nocodegen"><td>42<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>43<td>  TDECFormattedCipher = class(TDECCipherModes, IDECCipher)
+<tr class="nocodegen"><td>44<td>  private
+<tr class="nocodegen"><td>45<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>46<td>    ///   Encrypts or decrypts the data contained in a given stream
+<tr class="nocodegen"><td>47<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>48<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>49<td>    ///   Source stream containing the data to encrypt or to decrypt
+<tr class="nocodegen"><td>50<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>51<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>52<td>    ///   Destination stream, where the encrypted or decrypted data shall be put in
+<tr class="nocodegen"><td>53<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>54<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>55<td>    ///   Number of bytes of Source to be encrypted or decrypted
+<tr class="nocodegen"><td>56<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>57<td>    /// &lt;param name=&quot;CipherProc&quot;&gt;
+<tr class="nocodegen"><td>58<td>    ///   Callback which either encrypts or decrypts the stream, depending on
+<tr class="nocodegen"><td>59<td>    ///   which one is being passed
+<tr class="nocodegen"><td>60<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>61<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>62<td>    ///   optional callback for reporting progress of the operation
+<tr class="nocodegen"><td>63<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>64<td>    procedure DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
+<tr class="nocodegen"><td>65<td>                                   const CipherProc: TDECCipherCodeEvent;
+<tr class="nocodegen"><td>66<td>                                   const OnProgress: TDECProgressEvent);
+<tr class="nocodegen"><td>67<td>
+<tr class="nocodegen"><td>68<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>69<td>    ///   Encrypts or decrypts a file and stores the result in another file
+<tr class="nocodegen"><td>70<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>71<td>    /// &lt;param name=&quot;SourceFileName&quot;&gt;
+<tr class="nocodegen"><td>72<td>    ///   Path and name of the file to encrypt
+<tr class="nocodegen"><td>73<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>74<td>    /// &lt;param name=&quot;DestFileName&quot;&gt;
+<tr class="nocodegen"><td>75<td>    ///   Path and name of the file the encrypted data shall be stored in
+<tr class="nocodegen"><td>76<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>77<td>    /// &lt;param name=&quot;Proc&quot;&gt;
+<tr class="nocodegen"><td>78<td>    ///   This method does the actual encrypting or decrypting of the data.
+<tr class="nocodegen"><td>79<td>    ///   Usually the Encode or Decode method is being passed here which is
+<tr class="nocodegen"><td>80<td>    ///   declared in TDECCipherBase as virtual abstract method and
+<tr class="nocodegen"><td>81<td>    ///   implemented in the individual cipher class inheriting from this one
+<tr class="nocodegen"><td>82<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>83<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>84<td>    ///   Optional event which can be passed to get information about the
+<tr class="nocodegen"><td>85<td>    ///   progress of the encryption operation
+<tr class="nocodegen"><td>86<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>87<td>    procedure DoEncodeDecodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>88<td>                                 const Proc: TDECCipherCodeEvent;
+<tr class="nocodegen"><td>89<td>                                 const OnProgress: TDECProgressEvent);
+<tr class="nocodegen"><td>90<td>  public
+<tr class="nocodegen"><td>91<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>92<td>    ///   Encrypts the contents of a given byte array
+<tr class="nocodegen"><td>93<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>94<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>95<td>    ///   Byte array with data to be encrypted. When block chaining mode ECBx
+<tr class="nocodegen"><td>96<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>97<td>    ///   parameter needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>98<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>99<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>100<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>101<td>    ///   Byte array with encrypted data
+<tr class="nocodegen"><td>102<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>103<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>104<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>105<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>106<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>107<td>    function EncodeBytes(const Source: TBytes): TBytes;
+<tr class="nocodegen"><td>108<td>
+<tr class="nocodegen"><td>109<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>110<td>    ///   Decrypts the contents of a given byte array
+<tr class="nocodegen"><td>111<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>112<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>113<td>    ///   Byte array with data to be decrypted. When block chaining mode ECBx
+<tr class="nocodegen"><td>114<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>115<td>    ///   parameter needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>116<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>117<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>118<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>119<td>    ///   Byte array with decrypted data
+<tr class="nocodegen"><td>120<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>121<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>122<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>123<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>124<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>125<td>    function DecodeBytes(const Source: TBytes): TBytes;
+<tr class="nocodegen"><td>126<td>
+<tr class="nocodegen"><td>127<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>128<td>    ///   Encrypts the data contained in a given stream
+<tr class="nocodegen"><td>129<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>130<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>131<td>    ///   Source stream containing the data to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>132<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>133<td>    ///   parameter needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>134<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>135<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>136<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>137<td>    ///   Destination stream, where the encrypted data shall be put in
+<tr class="nocodegen"><td>138<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>139<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>140<td>    ///   Number of bytes of Source to be encrypted
+<tr class="nocodegen"><td>141<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>142<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>143<td>    ///   optional callback for reporting progress of the operation
+<tr class="nocodegen"><td>144<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>145<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>146<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>147<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>148<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>149<td>    procedure EncodeStream(const Source, Dest: TStream; DataSize: Int64;
+<tr class="nocodegen"><td>150<td>                           const OnProgress: TDECProgressEvent = nil);
+<tr class="nocodegen"><td>151<td>
+<tr class="nocodegen"><td>152<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>153<td>    ///   Decrypts the data contained in a given stream
+<tr class="nocodegen"><td>154<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>155<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>156<td>    ///   Source stream containing the data to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>157<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>158<td>    ///   parameter needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>159<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>160<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>161<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>162<td>    ///   Destination stream, where the decrypted data shall be put in
+<tr class="nocodegen"><td>163<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>164<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>165<td>    ///   Number of bytes of Source to be decrypted
+<tr class="nocodegen"><td>166<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>167<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>168<td>    ///   optional callback for reporting progress of the operation
+<tr class="nocodegen"><td>169<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>170<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>171<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>172<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>173<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>174<td>    procedure DecodeStream(const Source, Dest: TStream; DataSize: Int64;
+<tr class="nocodegen"><td>175<td>                           const OnProgress: TDECProgressEvent = nil);
+<tr class="nocodegen"><td>176<td>
+<tr class="nocodegen"><td>177<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>178<td>    ///   Reads the contents of one file, encrypts it and stores it in another file
+<tr class="nocodegen"><td>179<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>180<td>    /// &lt;param name=&quot;SourceFileName&quot;&gt;
+<tr class="nocodegen"><td>181<td>    ///   Path and name of the file to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>182<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>183<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>184<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>185<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>186<td>    /// &lt;param name=&quot;DestFileName&quot;&gt;
+<tr class="nocodegen"><td>187<td>    ///   Path and name of the file the encrypted data shall be stored in
+<tr class="nocodegen"><td>188<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>189<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>190<td>    ///   Optional event which can be passed to get information about the
+<tr class="nocodegen"><td>191<td>    ///   progress of the encryption operation
+<tr class="nocodegen"><td>192<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>193<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>194<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>195<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>196<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>197<td>    procedure EncodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>198<td>                         const OnProgress: TDECProgressEvent = nil);
+<tr class="nocodegen"><td>199<td>
+<tr class="nocodegen"><td>200<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>201<td>    ///   Reads the contents of one file, decrypts it and stores it in another file
+<tr class="nocodegen"><td>202<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>203<td>    /// &lt;param name=&quot;SourceFileName&quot;&gt;
+<tr class="nocodegen"><td>204<td>    ///   Path and name of the file to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>205<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>206<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>207<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>208<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>209<td>    /// &lt;param name=&quot;DestFileName&quot;&gt;
+<tr class="nocodegen"><td>210<td>    ///   Path and name of the file the decrypted data shall be stored in
+<tr class="nocodegen"><td>211<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>212<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>213<td>    ///   Optional event which can be passed to get information about the
+<tr class="nocodegen"><td>214<td>    ///   progress of the decryption operation
+<tr class="nocodegen"><td>215<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>216<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>217<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>218<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>219<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>220<td>    procedure DecodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>221<td>                         const OnProgress: TDECProgressEvent = nil);
+<tr class="nocodegen"><td>222<td>
+<tr class="nocodegen"><td>223<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>224<td>    ///   Encrypts the contents of the passed unicode string
+<tr class="nocodegen"><td>225<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>226<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>227<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>228<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>229<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>230<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>231<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>232<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>233<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>234<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>235<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>236<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>237<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>238<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>239<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>240<td>    ///   Encrypted string as a byte array
+<tr class="nocodegen"><td>241<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>242<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>243<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>244<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>245<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>246<td>    function EncodeStringToBytes(const Source: string;
+<tr class="nocodegen"><td>247<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>248<td>
+<tr class="nocodegen"><td>249<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>250<td>    ///   Encrypts the contents of the passed RawByteString
+<tr class="nocodegen"><td>251<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>252<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>253<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>254<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>255<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>256<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>257<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>258<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>259<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>260<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>261<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>262<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>263<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>264<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>265<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>266<td>    ///   Encrypted string as a byte array
+<tr class="nocodegen"><td>267<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>268<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>269<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>270<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>271<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>272<td>    function EncodeStringToBytes(const Source: RawByteString;
+<tr class="nocodegen"><td>273<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>274<td>
+<tr class="nocodegen"><td>275<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>276<td>    ///   Encrypts the contents of the passed unicode string
+<tr class="nocodegen"><td>277<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>278<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>279<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>280<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>281<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>282<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>283<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>284<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>285<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>286<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>287<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>288<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>289<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>290<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>291<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>292<td>    ///   Encrypted string
+<tr class="nocodegen"><td>293<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>294<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>295<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>296<td>    ///   which will result in an 7-bit ASCII compatible string as we cannot
+<tr class="nocodegen"><td>297<td>    ///   ensure that Unicode string processing will not alter/interpret some
+<tr class="nocodegen"><td>298<td>    ///   byte combinations in a destructive way, making the encrypted string
+<tr class="nocodegen"><td>299<td>    ///   un-decryptable.
+<tr class="nocodegen"><td>300<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>301<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>302<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>303<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>304<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>305<td>    function EncodeStringToString(const Source: string;
+<tr class="nocodegen"><td>306<td>                                  Format: TDECFormatClass = nil): string; overload;
+<tr class="nocodegen"><td>307<td>
+<tr class="nocodegen"><td>308<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>309<td>    ///   Encrypts the contents of the passed unicode string
+<tr class="nocodegen"><td>310<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>311<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>312<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>313<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>314<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>315<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>316<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>317<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>318<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>319<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>320<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>321<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>322<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>323<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>324<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>325<td>    ///   Encrypted string
+<tr class="nocodegen"><td>326<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>327<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>328<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>329<td>    ///   which will result in an 7-bit ASCII compatible string as we cannot
+<tr class="nocodegen"><td>330<td>    ///   ensure that string processing will not alter/interpret some
+<tr class="nocodegen"><td>331<td>    ///   byte combinations in a destructive way, making the encrypted string
+<tr class="nocodegen"><td>332<td>    ///   un-decryptable.
+<tr class="nocodegen"><td>333<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>334<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>335<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>336<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>337<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>338<td>    function EncodeStringToString(const Source: RawByteString;
+<tr class="nocodegen"><td>339<td>                                  Format: TDECFormatClass = nil): RawByteString; overload;
+<tr class="nocodegen"><td>340<td>
+<tr class="nocodegen"><td>341<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>342<td>    ///   Decrypts the contents of the passed encrypted unicode string
+<tr class="nocodegen"><td>343<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>344<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>345<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>346<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>347<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>348<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>349<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>350<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>351<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>352<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>353<td>    ///   to convert the data. Decoded will be the still encrypted data, not the
+<tr class="nocodegen"><td>354<td>    ///   encrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>355<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>356<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>357<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>358<td>    ///   Decrypted string as a byte array
+<tr class="nocodegen"><td>359<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>360<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>361<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>362<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>363<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>364<td>    function DecodeStringToBytes(const Source: string;
+<tr class="nocodegen"><td>365<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>366<td>
+<tr class="nocodegen"><td>367<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>368<td>    ///   Decrypts the contents of the passed encrypted RawByteString
+<tr class="nocodegen"><td>369<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>370<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>371<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>372<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>373<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>374<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>375<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>376<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>377<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>378<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>379<td>    ///   to convert the data. Decoded will be the still encrypted data, not the
+<tr class="nocodegen"><td>380<td>    ///   encrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>381<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>382<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>383<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>384<td>    ///   Decrypted string as a byte array
+<tr class="nocodegen"><td>385<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>386<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>387<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>388<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>389<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>390<td>    function DecodeStringToBytes(const Source: RawByteString;
+<tr class="nocodegen"><td>391<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>392<td>
+<tr class="nocodegen"><td>393<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>394<td>    ///   Decrypts the contents of the passed Unicode string
+<tr class="nocodegen"><td>395<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>396<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>397<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>398<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>399<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>400<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>401<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>402<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>403<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>404<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>405<td>    ///   to convert the data. Decoded will be the encrypted data, not the
+<tr class="nocodegen"><td>406<td>    ///   decrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>407<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>408<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>409<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>410<td>    ///   Decrypted string
+<tr class="nocodegen"><td>411<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>412<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>413<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>414<td>    ///   which uses an 7-bit ASCII compatible string as input so that it
+<tr class="nocodegen"><td>415<td>    ///   didn't get altered by Unicode string processing in some hafrmful way
+<tr class="nocodegen"><td>416<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>417<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>418<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>419<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>420<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>421<td>    function DecodeStringToString(const Source: string;
+<tr class="nocodegen"><td>422<td>                                  Format: TDECFormatClass = nil): string; overload;
+<tr class="nocodegen"><td>423<td>
+<tr class="nocodegen"><td>424<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>425<td>    ///   Decrypts the contents of the passed RawByteString string
+<tr class="nocodegen"><td>426<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>427<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>428<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>429<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>430<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>431<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>432<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>433<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>434<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>435<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>436<td>    ///   to convert the data. Decoded will be the encrypted data, not the
+<tr class="nocodegen"><td>437<td>    ///   decrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>438<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>439<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>440<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>441<td>    ///   Decrypted string
+<tr class="nocodegen"><td>442<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>443<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>444<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>445<td>    ///   which uses an 7-bit ASCII compatible string as input so that it
+<tr class="nocodegen"><td>446<td>    ///   didn't get altered by string processing in some hafrmful way
+<tr class="nocodegen"><td>447<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>448<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>449<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>450<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>451<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>452<td>    function DecodeStringToString(const Source: RawByteString;
+<tr class="nocodegen"><td>453<td>                                  Format: TDECFormatClass = nil): RawByteString; overload;
+<tr class="nocodegen"><td>454<td>
+<tr class="nocodegen"><td>455<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>456<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>457<td>    ///   Encrypts the contents of the passed Ansistring
+<tr class="nocodegen"><td>458<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>459<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>460<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>461<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>462<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>463<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>464<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>465<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>466<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>467<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>468<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>469<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>470<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>471<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>472<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>473<td>    ///   Encrypted string as a byte array
+<tr class="nocodegen"><td>474<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>475<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>476<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>477<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>478<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>479<td>    function EncodeStringToBytes(const Source: AnsiString;
+<tr class="nocodegen"><td>480<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>481<td>
+<tr class="nocodegen"><td>482<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>483<td>    ///   Encrypts the contents of the passed Ansistring
+<tr class="nocodegen"><td>484<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>485<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>486<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>487<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>488<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>489<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>490<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>491<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>492<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>493<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>494<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>495<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>496<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>497<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>498<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>499<td>    ///   Encrypted string as an AnsiString
+<tr class="nocodegen"><td>500<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>501<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>502<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>503<td>    ///   which will result in an 7-bit ASCII compatible string as we cannot
+<tr class="nocodegen"><td>504<td>    ///   ensure that string processing will not alter/interpret some
+<tr class="nocodegen"><td>505<td>    ///   byte combinations in a destructive way, making the encrypted string
+<tr class="nocodegen"><td>506<td>    ///   un-decryptable.
+<tr class="nocodegen"><td>507<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>508<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>509<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>510<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>511<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>512<td>    function EncodeStringToString(const Source: AnsiString;
+<tr class="nocodegen"><td>513<td>                                  Format: TDECFormatClass = nil): AnsiString; overload;
+<tr class="nocodegen"><td>514<td>
+<tr class="nocodegen"><td>515<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>516<td>    ///   Decrypts the contents of the passed encrypted Ansistring
+<tr class="nocodegen"><td>517<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>518<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>519<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>520<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>521<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>522<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>523<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>524<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>525<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>526<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>527<td>    ///   to convert the data. Decoded will be the still encrypted data, not the
+<tr class="nocodegen"><td>528<td>    ///   encrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>529<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>530<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>531<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>532<td>    ///   Decrypted string as a byte array
+<tr class="nocodegen"><td>533<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>534<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>535<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>536<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>537<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>538<td>    function DecodeStringToBytes(const Source: AnsiString;
+<tr class="nocodegen"><td>539<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>540<td>
+<tr class="nocodegen"><td>541<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>542<td>    ///   Decrypts the contents of the passed AnsiString string
+<tr class="nocodegen"><td>543<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>544<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>545<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>546<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>547<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>548<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>549<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>550<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>551<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>552<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>553<td>    ///   to convert the data. Decoded will be the encrypted data, not the
+<tr class="nocodegen"><td>554<td>    ///   decrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>555<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>556<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>557<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>558<td>    ///   Decrypted string
+<tr class="nocodegen"><td>559<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>560<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>561<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>562<td>    ///   which uses an 7-bit ASCII compatible string as input so that it
+<tr class="nocodegen"><td>563<td>    ///   didn't get altered by string processing in some hafrmful way
+<tr class="nocodegen"><td>564<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>565<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>566<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>567<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>568<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>569<td>    function DecodeStringToString(const Source: AnsiString;
+<tr class="nocodegen"><td>570<td>                                  Format: TDECFormatClass = nil): AnsiString; overload;
+<tr class="nocodegen"><td>571<td>{$ENDIF}
+<tr class="nocodegen"><td>572<td>
+<tr class="nocodegen"><td>573<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>574<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>575<td>    ///   Encrypts the contents of the passed Widestring
+<tr class="nocodegen"><td>576<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>577<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>578<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>579<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>580<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>581<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>582<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>583<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>584<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>585<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>586<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>587<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>588<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>589<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>590<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>591<td>    ///   Encrypted string as a byte array
+<tr class="nocodegen"><td>592<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>593<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>594<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>595<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>596<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>597<td>    function EncodeStringToBytes(const Source: WideString;
+<tr class="nocodegen"><td>598<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>599<td>
+<tr class="nocodegen"><td>600<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>601<td>    ///   Encrypts the contents of the passed Widestring
+<tr class="nocodegen"><td>602<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>603<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>604<td>    ///   String to encrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>605<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>606<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>607<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>608<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>609<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>610<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>611<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>612<td>    ///   to convert the data. Encoded will be the encrypted data, not the
+<tr class="nocodegen"><td>613<td>    ///   source data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>614<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>615<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>616<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>617<td>    ///   Encrypted string as an WideString
+<tr class="nocodegen"><td>618<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>619<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>620<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>621<td>    ///   which will result in an 7-bit ASCII compatible string as we cannot
+<tr class="nocodegen"><td>622<td>    ///   ensure that string processing will not alter/interpret some
+<tr class="nocodegen"><td>623<td>    ///   byte combinations in a destructive way, making the encrypted string
+<tr class="nocodegen"><td>624<td>    ///   un-decryptable.
+<tr class="nocodegen"><td>625<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>626<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>627<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>628<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>629<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>630<td>    function EncodeStringToString(const Source: WideString;
+<tr class="nocodegen"><td>631<td>                                  Format: TDECFormatClass = nil): WideString; overload;
+<tr class="nocodegen"><td>632<td>
+<tr class="nocodegen"><td>633<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>634<td>    ///   Decrypts the contents of the passed encrypted Widestring
+<tr class="nocodegen"><td>635<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>636<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>637<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>638<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>639<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>640<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>641<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>642<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>643<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>644<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>645<td>    ///   to convert the data. Decoded will be the still encrypted data, not the
+<tr class="nocodegen"><td>646<td>    ///   encrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>647<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>648<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>649<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>650<td>    ///   Decrypted string as a byte array
+<tr class="nocodegen"><td>651<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>652<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>653<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>654<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>655<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>656<td>    function DecodeStringToBytes(const Source: WideString;
+<tr class="nocodegen"><td>657<td>                                 Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>658<td>
+<tr class="nocodegen"><td>659<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>660<td>    ///   Decrypts the contents of the passed WideString string
+<tr class="nocodegen"><td>661<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>662<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>663<td>    ///   String to decrypt. When block chaining mode ECBx
+<tr class="nocodegen"><td>664<td>    ///   is used (not recommended!), the size of the data passed via this
+<tr class="nocodegen"><td>665<td>    ///   parameter needs to be a multiple of the block size of the algorithm
+<tr class="nocodegen"><td>666<td>    ///   used, otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>667<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>668<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>669<td>    ///   Optional parameter. One can pass a class reference of one of the
+<tr class="nocodegen"><td>670<td>    ///   concrete data formatting classes here which will be internally used
+<tr class="nocodegen"><td>671<td>    ///   to convert the data. Decoded will be the encrypted data, not the
+<tr class="nocodegen"><td>672<td>    ///   decrypted data. Formattings can be used to convert data into a format
+<tr class="nocodegen"><td>673<td>    ///   suitable for the transport medium the data shall be transported with.
+<tr class="nocodegen"><td>674<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>675<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>676<td>    ///   Decrypted string
+<tr class="nocodegen"><td>677<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>678<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>679<td>    ///   The use of this method is only recommended if a formatting is passed
+<tr class="nocodegen"><td>680<td>    ///   which uses an 7-bit ASCII compatible string as input so that it
+<tr class="nocodegen"><td>681<td>    ///   didn't get altered by string processing in some hafrmful way
+<tr class="nocodegen"><td>682<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>683<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>684<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>685<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>686<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>687<td>    function DecodeStringToString(const Source: WideString;
+<tr class="nocodegen"><td>688<td>                                  Format: TDECFormatClass = nil): WideString; overload;
+<tr class="nocodegen"><td>689<td>{$ENDIF}
+<tr class="nocodegen"><td>690<td>  end;
+<tr class="nocodegen"><td>691<td>
+<tr class="nocodegen"><td>692<td>implementation
+<tr class="nocodegen"><td>693<td>
+<tr class="nocodegen"><td>694<td>uses
+<tr class="nocodegen"><td>695<td>  DECBaseClass;
+<tr class="nocodegen"><td>696<td>
+<tr class="nocodegen"><td>697<td>function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
+<tr class="covered"><td>698<td>begin
+<tr class="covered"><td>699<td>  SetLength(Result, Length(Source));
+<tr class="covered"><td>700<td>  if Length(Result) &gt; 0 then
+<tr class="covered"><td>701<td>    Encode(Source[0], Result[0], Length(Source))
+<tr class="nocodegen"><td>702<td>  else
+<tr class="covered"><td>703<td>    if (FMode = cmGCM) then
+<tr class="covered"><td>704<td>      EncodeGCM(@Source, @Result, 0);
+<tr class="covered"><td>705<td>end;
+<tr class="nocodegen"><td>706<td>
+<tr class="nocodegen"><td>707<td>function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
+<tr class="covered"><td>708<td>begin
+<tr class="covered"><td>709<td>  Result := Source;
+<tr class="nocodegen"><td>710<td>
+<tr class="covered"><td>711<td>  if Length(Result) &gt; 0 then
+<tr class="nocodegen"><td>712<td>  begin
+<tr class="covered"><td>713<td>    if (FMode = cmGCM) then
+<tr class="covered"><td>714<td>      SetLength(Result, Length(Source));
+<tr class="nocodegen"><td>715<td>
+<tr class="covered"><td>716<td>    Decode(Source[0], Result[0], Length(Source));
+<tr class="nocodegen"><td>717<td>  end
+<tr class="nocodegen"><td>718<td>  else
+<tr class="covered"><td>719<td>    if (FMode = cmGCM) then
+<tr class="covered"><td>720<td>      DecodeGCM(@Source, @Result, 0);
+<tr class="covered"><td>721<td>end;
+<tr class="nocodegen"><td>722<td>
+<tr class="nocodegen"><td>723<td>procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
+<tr class="nocodegen"><td>724<td>                                                   DataSize: Int64;
+<tr class="nocodegen"><td>725<td>                                                   const CipherProc: TDECCipherCodeEvent;
+<tr class="nocodegen"><td>726<td>                                                   const OnProgress: TDECProgressEvent);
+<tr class="nocodegen"><td>727<td>var
+<tr class="nocodegen"><td>728<td>  Buffer: TBytes;
+<tr class="nocodegen"><td>729<td>  outBuffer: TBytes;
+<tr class="nocodegen"><td>730<td>  BufferSize, Bytes: Integer;
+<tr class="nocodegen"><td>731<td>  Max, StartPos, Pos: Int64;
+<tr class="covered"><td>732<td>begin
+<tr class="covered"><td>733<td>  Pos := Source.Position;
+<tr class="covered"><td>734<td>  if DataSize &lt; 0 then
+<tr class="notcovered"><td>735<td>    DataSize := Source.Size - Pos;
+<tr class="nocodegen"><td>736<td>
+<tr class="covered"><td>737<td>  Max      := Pos + DataSize;
+<tr class="covered"><td>738<td>  StartPos := Pos;
+<tr class="nocodegen"><td>739<td>
+<tr class="covered"><td>740<td>  if DataSize &gt; 0 then
+<tr class="nocodegen"><td>741<td>  begin
+<tr class="covered"><td>742<td>    try
+<tr class="covered"><td>743<td>      if Assigned(OnProgress) then
+<tr class="covered"><td>744<td>        OnProgress(Max, 0, Started);
+<tr class="nocodegen"><td>745<td>
+<tr class="covered"><td>746<td>      if StreamBufferSize &lt;= 0 then
+<tr class="notcovered"><td>747<td>        StreamBufferSize := 8192;
+<tr class="covered"><td>748<td>      BufferSize := StreamBufferSize mod Context.BlockSize;
+<tr class="covered"><td>749<td>      if BufferSize = 0 then
+<tr class="covered"><td>750<td>        BufferSize := StreamBufferSize
+<tr class="nocodegen"><td>751<td>      else
+<tr class="notcovered"><td>752<td>        BufferSize := StreamBufferSize + Context.BlockSize - BufferSize;
+<tr class="covered"><td>753<td>      if DataSize &gt; BufferSize then
+<tr class="notcovered"><td>754<td>        SetLength(Buffer, BufferSize)
+<tr class="nocodegen"><td>755<td>      else
+<tr class="covered"><td>756<td>        SetLength(Buffer, DataSize);
+<tr class="nocodegen"><td>757<td>
+<tr class="covered"><td>758<td>      outBuffer := Buffer;
+<tr class="covered"><td>759<td>      if (FMode = cmGCM) then
+<tr class="covered"><td>760<td>        SetLength(outBuffer, Length(Buffer));
+<tr class="nocodegen"><td>761<td>
+<tr class="covered"><td>762<td>      while DataSize &gt; 0 do
+<tr class="nocodegen"><td>763<td>      begin
+<tr class="covered"><td>764<td>        Bytes := BufferSize;
+<tr class="covered"><td>765<td>        if Bytes &gt; DataSize then
+<tr class="covered"><td>766<td>          Bytes := DataSize;
+<tr class="covered"><td>767<td>        Source.ReadBuffer(Buffer[0], Bytes);
+<tr class="nocodegen"><td>768<td>
+<tr class="nocodegen"><td>769<td>        // The real encryption or decryption routine
+<tr class="covered"><td>770<td>        CipherProc(Buffer[0], outBuffer[0], Bytes);
+<tr class="covered"><td>771<td>        Dest.WriteBuffer(outBuffer[0], Bytes);
+<tr class="covered"><td>772<td>        Dec(DataSize, Bytes);
+<tr class="covered"><td>773<td>        Inc(Pos, Bytes);
+<tr class="nocodegen"><td>774<td>
+<tr class="covered"><td>775<td>        if Assigned(OnProgress) then
+<tr class="covered"><td>776<td>          OnProgress(Max, Pos - StartPos, Processing);
+<tr class="nocodegen"><td>777<td>      end;
+<tr class="nocodegen"><td>778<td>    finally
+<tr class="covered"><td>779<td>      ProtectBytes(Buffer);
+<tr class="covered"><td>780<td>      if (FMode = cmGCM) then
+<tr class="covered"><td>781<td>        ProtectBytes(outBuffer);
+<tr class="covered"><td>782<td>      if Assigned(OnProgress) then
+<tr class="covered"><td>783<td>        OnProgress(Max, Max, Finished);
+<tr class="nocodegen"><td>784<td>    end;
+<tr class="nocodegen"><td>785<td>  end
+<tr class="nocodegen"><td>786<td>  else
+<tr class="covered"><td>787<td>    if (FMode = cmGCM) then
+<tr class="nocodegen"><td>788<td>    begin
+<tr class="covered"><td>789<td>      Buffer := nil;
+<tr class="covered"><td>790<td>      CipherProc(Buffer, Buffer, 0);
+<tr class="nocodegen"><td>791<td>    end;
+<tr class="covered"><td>792<td>end;
+<tr class="nocodegen"><td>793<td>
+<tr class="nocodegen"><td>794<td>procedure TDECFormattedCipher.EncodeStream(const Source, Dest: TStream; DataSize: Int64;
+<tr class="nocodegen"><td>795<td>                                           const OnProgress: TDECProgressEvent);
+<tr class="covered"><td>796<td>begin
+<tr class="covered"><td>797<td>  DoEncodeDecodeStream(Source, Dest, DataSize,
+<tr class="nocodegen"><td>798<td>                       Encode, OnProgress);
+<tr class="covered"><td>799<td>end;
+<tr class="nocodegen"><td>800<td>
+<tr class="nocodegen"><td>801<td>procedure TDECFormattedCipher.DecodeStream(const Source, Dest: TStream; DataSize: Int64;
+<tr class="nocodegen"><td>802<td>                                           const OnProgress: TDECProgressEvent);
+<tr class="covered"><td>803<td>begin
+<tr class="covered"><td>804<td>  DoEncodeDecodeStream(Source, Dest, DataSize,
+<tr class="nocodegen"><td>805<td>                       Decode, OnProgress);
+<tr class="covered"><td>806<td>end;
+<tr class="nocodegen"><td>807<td>
+<tr class="nocodegen"><td>808<td>procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>809<td>                                                 const Proc: TDECCipherCodeEvent;
+<tr class="nocodegen"><td>810<td>                                                 const OnProgress: TDECProgressEvent);
+<tr class="nocodegen"><td>811<td>var
+<tr class="nocodegen"><td>812<td>  S, D: TStream;
+<tr class="notcovered"><td>813<td>begin
+<tr class="notcovered"><td>814<td>  Assert(SourceFileName &lt;&gt; DestFileName, 'Source and Dest file name may not be equal');
+<tr class="nocodegen"><td>815<td>
+<tr class="notcovered"><td>816<td>  S := TFileStream.Create(SourceFileName, fmOpenRead or fmShareDenyNone);
+<tr class="notcovered"><td>817<td>  try
+<tr class="notcovered"><td>818<td>    D := TFileStream.Create(DestFileName, fmCreate);
+<tr class="notcovered"><td>819<td>    try
+<tr class="notcovered"><td>820<td>      DoEncodeDecodeStream(S, D, S.Size, Proc, OnProgress);
+<tr class="nocodegen"><td>821<td>    finally
+<tr class="notcovered"><td>822<td>      D.Free;
+<tr class="nocodegen"><td>823<td>    end;
+<tr class="nocodegen"><td>824<td>  finally
+<tr class="notcovered"><td>825<td>    S.Free;
+<tr class="nocodegen"><td>826<td>  end;
+<tr class="notcovered"><td>827<td>end;
+<tr class="nocodegen"><td>828<td>
+<tr class="nocodegen"><td>829<td>procedure TDECFormattedCipher.EncodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>830<td>                                         const OnProgress: TDECProgressEvent);
+<tr class="notcovered"><td>831<td>begin
+<tr class="notcovered"><td>832<td>  DoEncodeDecodeFile(SourceFileName, DestFileName, Encode, OnProgress);
+<tr class="notcovered"><td>833<td>end;
+<tr class="nocodegen"><td>834<td>
+<tr class="nocodegen"><td>835<td>procedure TDECFormattedCipher.DecodeFile(const SourceFileName, DestFileName: string;
+<tr class="nocodegen"><td>836<td>                                         const OnProgress: TDECProgressEvent);
+<tr class="notcovered"><td>837<td>begin
+<tr class="notcovered"><td>838<td>  DoEncodeDecodeFile(SourceFileName, DestFileName, Decode, OnProgress);
+<tr class="notcovered"><td>839<td>end;
+<tr class="nocodegen"><td>840<td>
+<tr class="nocodegen"><td>841<td>function TDECFormattedCipher.EncodeStringToBytes(const Source: string;
+<tr class="nocodegen"><td>842<td>                                                 Format: TDECFormatClass = nil): TBytes;
+<tr class="nocodegen"><td>843<td>var
+<tr class="nocodegen"><td>844<td>  Len: Integer;
+<tr class="covered"><td>845<td>begin
+<tr class="covered"><td>846<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>847<td>  begin
+<tr class="nocodegen"><td>848<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>849<td>    Len := Length(Source) * SizeOf(Source[low(Source)]);
+<tr class="covered"><td>850<td>    SetLength(Result, Len);
+<tr class="covered"><td>851<td>    Encode(Source[low(Source)], Result[0], Len);
+<tr class="nocodegen"><td>852<td>    {$ELSE}
+<tr class="nocodegen"><td>853<td>    Len := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>854<td>    SetLength(Result, Len);
+<tr class="nocodegen"><td>855<td>    Encode(Source[1], Result[0], Len);
+<tr class="nocodegen"><td>856<td>    {$IFEND}
+<tr class="nocodegen"><td>857<td>
+<tr class="covered"><td>858<td>    Result := ValidFormat(Format).Encode(Result);
+<tr class="nocodegen"><td>859<td>  end
+<tr class="nocodegen"><td>860<td>  else
+<tr class="covered"><td>861<td>    SetLength(Result, 0);
+<tr class="covered"><td>862<td>end;
+<tr class="nocodegen"><td>863<td>
+<tr class="nocodegen"><td>864<td>function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>865<td>var
+<tr class="nocodegen"><td>866<td>  Len: Integer;
+<tr class="covered"><td>867<td>begin
+<tr class="covered"><td>868<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>869<td>  begin
+<tr class="nocodegen"><td>870<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>871<td>    Len := Length(Source) * SizeOf(Source[low(Source)]);
+<tr class="covered"><td>872<td>    SetLength(Result, Len);
+<tr class="covered"><td>873<td>    Encode(Source[low(Source)], Result[0], Len);
+<tr class="nocodegen"><td>874<td>    {$ELSE}
+<tr class="nocodegen"><td>875<td>    Len := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>876<td>    SetLength(Result, Len);
+<tr class="nocodegen"><td>877<td>    Encode(Source[1], Result[0], Len);
+<tr class="nocodegen"><td>878<td>    {$IFEND}
+<tr class="nocodegen"><td>879<td>
+<tr class="covered"><td>880<td>    Result := ValidFormat(Format).Encode(Result);
+<tr class="nocodegen"><td>881<td>  end
+<tr class="nocodegen"><td>882<td>  else
+<tr class="covered"><td>883<td>    SetLength(Result, 0);
+<tr class="covered"><td>884<td>end;
+<tr class="nocodegen"><td>885<td>
+<tr class="nocodegen"><td>886<td>function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>887<td>var
+<tr class="nocodegen"><td>888<td>  Len: Integer;
+<tr class="nocodegen"><td>889<td>  Src: TBytes;
+<tr class="covered"><td>890<td>begin
+<tr class="covered"><td>891<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>892<td>  begin
+<tr class="covered"><td>893<td>    Src := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>894<td>
+<tr class="covered"><td>895<td>    Len := Length(Src);
+<tr class="covered"><td>896<td>    Result := Src;
+<tr class="covered"><td>897<td>    Decode(Result[0], Result[0], Len);
+<tr class="nocodegen"><td>898<td>  end
+<tr class="nocodegen"><td>899<td>  else
+<tr class="covered"><td>900<td>    SetLength(Result, 0);
+<tr class="covered"><td>901<td>end;
+<tr class="nocodegen"><td>902<td>
+<tr class="nocodegen"><td>903<td>function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>904<td>var
+<tr class="nocodegen"><td>905<td>  Len: Integer;
+<tr class="nocodegen"><td>906<td>  Src: TBytes;
+<tr class="covered"><td>907<td>begin
+<tr class="covered"><td>908<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>909<td>  begin
+<tr class="covered"><td>910<td>    Src := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>911<td>
+<tr class="covered"><td>912<td>    Len := Length(Src);
+<tr class="covered"><td>913<td>    Result := Src;
+<tr class="covered"><td>914<td>    Decode(Result[0], Result[0], Len);
+<tr class="nocodegen"><td>915<td>  end
+<tr class="nocodegen"><td>916<td>  else
+<tr class="covered"><td>917<td>    SetLength(Result, 0);
+<tr class="covered"><td>918<td>end;
+<tr class="nocodegen"><td>919<td>
+<tr class="nocodegen"><td>920<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>921<td>function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>922<td>var
+<tr class="nocodegen"><td>923<td>  Len: Integer;
+<tr class="nocodegen"><td>924<td>begin
+<tr class="nocodegen"><td>925<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>926<td>  begin
+<tr class="nocodegen"><td>927<td>    Len := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>928<td>    SetLength(Result, Len);
+<tr class="nocodegen"><td>929<td>    Encode(Source[1], Result[0], Len);
+<tr class="nocodegen"><td>930<td>
+<tr class="nocodegen"><td>931<td>    Result := ValidFormat(Format).Encode(Result);
+<tr class="nocodegen"><td>932<td>  end
+<tr class="nocodegen"><td>933<td>  else
+<tr class="nocodegen"><td>934<td>    SetLength(Result, 0);
+<tr class="nocodegen"><td>935<td>end;
+<tr class="nocodegen"><td>936<td>{$ENDIF}
+<tr class="nocodegen"><td>937<td>
+<tr class="nocodegen"><td>938<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>939<td>function TDECFormattedCipher.DecodeStringToBytes(const Source: AnsiString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>940<td>var
+<tr class="nocodegen"><td>941<td>  Len: Integer;
+<tr class="nocodegen"><td>942<td>  Src: TBytes;
+<tr class="nocodegen"><td>943<td>begin
+<tr class="nocodegen"><td>944<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>945<td>  begin
+<tr class="nocodegen"><td>946<td>    Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));
+<tr class="nocodegen"><td>947<td>
+<tr class="nocodegen"><td>948<td>    Len := Length(Src);
+<tr class="nocodegen"><td>949<td>    SetLength(Result, Len);
+<tr class="nocodegen"><td>950<td>    Decode(Src[0], Result[0], Len);
+<tr class="nocodegen"><td>951<td>  end
+<tr class="nocodegen"><td>952<td>  else
+<tr class="nocodegen"><td>953<td>    SetLength(Result, 0);
+<tr class="nocodegen"><td>954<td>end;
+<tr class="nocodegen"><td>955<td>{$ENDIF}
+<tr class="nocodegen"><td>956<td>
+<tr class="nocodegen"><td>957<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>958<td>function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>959<td>var
+<tr class="nocodegen"><td>960<td>  Len: Integer;
+<tr class="covered"><td>961<td>begin
+<tr class="covered"><td>962<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>963<td>  begin
+<tr class="covered"><td>964<td>    Len := Length(Source) * SizeOf(Source[1]);
+<tr class="covered"><td>965<td>    SetLength(Result, Len);
+<tr class="covered"><td>966<td>    Encode(Source[1], Result[0], Len);
+<tr class="nocodegen"><td>967<td>
+<tr class="covered"><td>968<td>    Result := ValidFormat(Format).Encode(Result);
+<tr class="nocodegen"><td>969<td>  end
+<tr class="nocodegen"><td>970<td>  else
+<tr class="covered"><td>971<td>    SetLength(Result, 0);
+<tr class="covered"><td>972<td>end;
+<tr class="nocodegen"><td>973<td>
+<tr class="nocodegen"><td>974<td>function TDECFormattedCipher.EncodeStringToString(const Source: WideString;
+<tr class="nocodegen"><td>975<td>  Format: TDECFormatClass): WideString;
+<tr class="covered"><td>976<td>begin
+<tr class="covered"><td>977<td>  result := WideString(EncodeStringToString(string(Source), Format));
+<tr class="covered"><td>978<td>end;
+<tr class="nocodegen"><td>979<td>{$ENDIF}
+<tr class="nocodegen"><td>980<td>
+<tr class="nocodegen"><td>981<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>982<td>function TDECFormattedCipher.EncodeStringToString(const Source: AnsiString;
+<tr class="nocodegen"><td>983<td>  Format: TDECFormatClass): AnsiString;
+<tr class="nocodegen"><td>984<td>var
+<tr class="nocodegen"><td>985<td>  Len             : Integer;
+<tr class="nocodegen"><td>986<td>  EncryptedBuffer : TBytes;
+<tr class="nocodegen"><td>987<td>  Temp            : TBytes;
+<tr class="nocodegen"><td>988<td>begin
+<tr class="nocodegen"><td>989<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>990<td>  begin
+<tr class="nocodegen"><td>991<td>    Len := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>992<td>    SetLength(EncryptedBuffer, Len);
+<tr class="nocodegen"><td>993<td>    Encode(Source[1], EncryptedBuffer[0], Len);
+<tr class="nocodegen"><td>994<td>
+<tr class="nocodegen"><td>995<td>    Temp := ValidFormat(Format).Encode(EncryptedBuffer);
+<tr class="nocodegen"><td>996<td>    SetLength(Result, length(Temp));
+<tr class="nocodegen"><td>997<td>    Move(Temp[0], Result[1], length(Temp));
+<tr class="nocodegen"><td>998<td>  end
+<tr class="nocodegen"><td>999<td>  else
+<tr class="nocodegen"><td>1000<td>    SetLength(Result, 0);
+<tr class="nocodegen"><td>1001<td>end;
+<tr class="nocodegen"><td>1002<td>{$ENDIF}
+<tr class="nocodegen"><td>1003<td>
+<tr class="nocodegen"><td>1004<td>function TDECFormattedCipher.EncodeStringToString(const Source: string;
+<tr class="nocodegen"><td>1005<td>  Format: TDECFormatClass): string;
+<tr class="nocodegen"><td>1006<td>var
+<tr class="nocodegen"><td>1007<td>  SourceSize      : Integer;
+<tr class="nocodegen"><td>1008<td>  EncryptedBuffer : TBytes;
+<tr class="covered"><td>1009<td>begin
+<tr class="covered"><td>1010<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1011<td>  begin
+<tr class="nocodegen"><td>1012<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1013<td>    SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
+<tr class="covered"><td>1014<td>    SetLength(EncryptedBuffer, SourceSize);
+<tr class="covered"><td>1015<td>    Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
+<tr class="nocodegen"><td>1016<td>    {$ELSE}
+<tr class="nocodegen"><td>1017<td>    SourceSize := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>1018<td>    SetLength(EncryptedBuffer, SourceSize);
+<tr class="nocodegen"><td>1019<td>    Encode(Source[1], EncryptedBuffer[0], SourceSize);
+<tr class="nocodegen"><td>1020<td>    {$IFEND}
+<tr class="nocodegen"><td>1021<td>
+<tr class="covered"><td>1022<td>    Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
+<tr class="nocodegen"><td>1023<td>  end
+<tr class="nocodegen"><td>1024<td>  else
+<tr class="covered"><td>1025<td>    Result := '';
+<tr class="covered"><td>1026<td>end;
+<tr class="nocodegen"><td>1027<td>
+<tr class="nocodegen"><td>1028<td>function TDECFormattedCipher.EncodeStringToString(const Source: RawByteString;
+<tr class="nocodegen"><td>1029<td>  Format: TDECFormatClass): RawByteString;
+<tr class="nocodegen"><td>1030<td>var
+<tr class="nocodegen"><td>1031<td>  SourceSize      : Integer;
+<tr class="nocodegen"><td>1032<td>  EncryptedBuffer : TBytes;
+<tr class="nocodegen"><td>1033<td>  Temp            : TBytes;
+<tr class="covered"><td>1034<td>begin
+<tr class="covered"><td>1035<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1036<td>  begin
+<tr class="nocodegen"><td>1037<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1038<td>    SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
+<tr class="covered"><td>1039<td>    SetLength(EncryptedBuffer, SourceSize);
+<tr class="covered"><td>1040<td>    Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
+<tr class="nocodegen"><td>1041<td>    {$ELSE}
+<tr class="nocodegen"><td>1042<td>    SourceSize := Length(Source) * SizeOf(Source[1]);
+<tr class="nocodegen"><td>1043<td>    SetLength(EncryptedBuffer, SourceSize);
+<tr class="nocodegen"><td>1044<td>    Encode(Source[1], EncryptedBuffer[0], SourceSize);
+<tr class="nocodegen"><td>1045<td>    {$IFEND}
+<tr class="nocodegen"><td>1046<td>
+<tr class="covered"><td>1047<td>    Temp   := ValidFormat(Format).Encode(EncryptedBuffer);
+<tr class="covered"><td>1048<td>    SetLength(Result, length(Temp));
+<tr class="nocodegen"><td>1049<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1050<td>    Move(Temp[0], Result[low(Result)], length(Temp))
+<tr class="nocodegen"><td>1051<td>    {$ELSE}
+<tr class="nocodegen"><td>1052<td>    Move(Temp[0], Result[1], length(Temp))
+<tr class="nocodegen"><td>1053<td>    {$IFEND}
+<tr class="nocodegen"><td>1054<td>  end
+<tr class="nocodegen"><td>1055<td>  else
+<tr class="covered"><td>1056<td>    Result := '';
+<tr class="covered"><td>1057<td>end;
+<tr class="nocodegen"><td>1058<td>
+<tr class="nocodegen"><td>1059<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>1060<td>function TDECFormattedCipher.DecodeStringToBytes(const Source: WideString; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>1061<td>var
+<tr class="nocodegen"><td>1062<td>  Len: Integer;
+<tr class="nocodegen"><td>1063<td>  Src: TBytes;
+<tr class="covered"><td>1064<td>begin
+<tr class="covered"><td>1065<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1066<td>  begin
+<tr class="covered"><td>1067<td>    Src := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>1068<td>
+<tr class="covered"><td>1069<td>    Len := Length(Src);
+<tr class="covered"><td>1070<td>    SetLength(Result, Len);
+<tr class="covered"><td>1071<td>    Decode(Src[0], Result[0], Len);
+<tr class="nocodegen"><td>1072<td>  end
+<tr class="nocodegen"><td>1073<td>  else
+<tr class="covered"><td>1074<td>    SetLength(Result, 0);
+<tr class="covered"><td>1075<td>end;
+<tr class="nocodegen"><td>1076<td>{$ENDIF}
+<tr class="nocodegen"><td>1077<td>
+<tr class="nocodegen"><td>1078<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>1079<td>function TDECFormattedCipher.DecodeStringToString(const Source: AnsiString;
+<tr class="nocodegen"><td>1080<td>  Format: TDECFormatClass): AnsiString;
+<tr class="nocodegen"><td>1081<td>var
+<tr class="nocodegen"><td>1082<td>  Len : Integer;
+<tr class="nocodegen"><td>1083<td>  Src : TBytes;
+<tr class="nocodegen"><td>1084<td>  Tmp : TBytes;
+<tr class="nocodegen"><td>1085<td>begin
+<tr class="nocodegen"><td>1086<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1087<td>  begin
+<tr class="nocodegen"><td>1088<td>    Src := ValidFormat(Format).Decode(SysUtils.BytesOf(Source));
+<tr class="nocodegen"><td>1089<td>
+<tr class="nocodegen"><td>1090<td>    Len := Length(Src);
+<tr class="nocodegen"><td>1091<td>    SetLength(Tmp, Len);
+<tr class="nocodegen"><td>1092<td>    Decode(Src[0], Tmp[0], Len);
+<tr class="nocodegen"><td>1093<td>
+<tr class="nocodegen"><td>1094<td>    SetLength(Result, length(Tmp));
+<tr class="nocodegen"><td>1095<td>
+<tr class="nocodegen"><td>1096<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="nocodegen"><td>1097<td>    Move(Tmp[0], Result[low(Result)], length(Tmp))
+<tr class="nocodegen"><td>1098<td>    {$ELSE}
+<tr class="nocodegen"><td>1099<td>    Move(Tmp[0], Result[1], length(Tmp))
+<tr class="nocodegen"><td>1100<td>    {$IFEND}
+<tr class="nocodegen"><td>1101<td>  end
+<tr class="nocodegen"><td>1102<td>  else
+<tr class="nocodegen"><td>1103<td>    SetLength(Result, 0);
+<tr class="nocodegen"><td>1104<td>end;
+<tr class="nocodegen"><td>1105<td>{$ENDIF}
+<tr class="nocodegen"><td>1106<td>
+<tr class="nocodegen"><td>1107<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>1108<td>function TDECFormattedCipher.DecodeStringToString(const Source: WideString;
+<tr class="nocodegen"><td>1109<td>  Format: TDECFormatClass): WideString;
+<tr class="covered"><td>1110<td>begin
+<tr class="covered"><td>1111<td>  Result := WideString(DecodeStringToString(string(Source), Format));
+<tr class="covered"><td>1112<td>end;
+<tr class="nocodegen"><td>1113<td>{$ENDIF}
+<tr class="nocodegen"><td>1114<td>
+<tr class="nocodegen"><td>1115<td>function TDECFormattedCipher.DecodeStringToString(const Source: RawByteString;
+<tr class="nocodegen"><td>1116<td>  Format: TDECFormatClass): RawByteString;
+<tr class="nocodegen"><td>1117<td>var
+<tr class="nocodegen"><td>1118<td>  Len : Integer;
+<tr class="nocodegen"><td>1119<td>  Src : TBytes;
+<tr class="nocodegen"><td>1120<td>  Tmp : TBytes;
+<tr class="covered"><td>1121<td>begin
+<tr class="covered"><td>1122<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1123<td>  begin
+<tr class="covered"><td>1124<td>    Src := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>1125<td>
+<tr class="covered"><td>1126<td>    Len := Length(Src);
+<tr class="covered"><td>1127<td>    SetLength(Tmp, Len);
+<tr class="covered"><td>1128<td>    Decode(Src[0], Tmp[0], Len);
+<tr class="nocodegen"><td>1129<td>
+<tr class="covered"><td>1130<td>    SetLength(Result, length(Tmp));
+<tr class="nocodegen"><td>1131<td>
+<tr class="nocodegen"><td>1132<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1133<td>    Move(Tmp[0], Result[low(Result)], length(Tmp))
+<tr class="nocodegen"><td>1134<td>    {$ELSE}
+<tr class="nocodegen"><td>1135<td>    Move(Tmp[0], Result[1], length(Tmp))
+<tr class="nocodegen"><td>1136<td>    {$IFEND}
+<tr class="nocodegen"><td>1137<td>  end
+<tr class="nocodegen"><td>1138<td>  else
+<tr class="covered"><td>1139<td>    SetLength(Result, 0);
+<tr class="covered"><td>1140<td>end;
+<tr class="nocodegen"><td>1141<td>
+<tr class="nocodegen"><td>1142<td>function TDECFormattedCipher.DecodeStringToString(const Source: string;
+<tr class="nocodegen"><td>1143<td>  Format: TDECFormatClass): string;
+<tr class="nocodegen"><td>1144<td>var
+<tr class="nocodegen"><td>1145<td>  Len : Integer;
+<tr class="nocodegen"><td>1146<td>  Src : TBytes;
+<tr class="nocodegen"><td>1147<td>  Tmp : TBytes;
+<tr class="covered"><td>1148<td>begin
+<tr class="covered"><td>1149<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1150<td>  begin
+<tr class="covered"><td>1151<td>    Src := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>1152<td>
+<tr class="covered"><td>1153<td>    Len := Length(Src);
+<tr class="covered"><td>1154<td>    SetLength(Tmp, Len);
+<tr class="covered"><td>1155<td>    Decode(Src[0], Tmp[0], Len);
+<tr class="covered"><td>1156<td>    Result := WideStringOf(Tmp);
+<tr class="nocodegen"><td>1157<td>  end
+<tr class="nocodegen"><td>1158<td>  else
+<tr class="covered"><td>1159<td>    SetLength(Result, 0);
+<tr class="covered"><td>1160<td>end;
+<tr class="nocodegen"><td>1161<td>
+<tr class="nocodegen"><td>1162<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

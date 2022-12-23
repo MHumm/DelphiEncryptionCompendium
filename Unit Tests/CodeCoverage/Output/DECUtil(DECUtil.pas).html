@@ -1,0 +1,736 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECUtil (..\..\Source\DECUtil.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECUtil.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>116<td rowspan=3 style="background: conic-gradient(#9fe098 100%, #eee 100%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>116<tr><td>Line coverage<td>100<small>.0</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>///   Utility functions
+<tr class="nocodegen"><td>20<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>21<td>unit DECUtil;
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>interface
+<tr class="nocodegen"><td>24<td>
+<tr class="nocodegen"><td>25<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>26<td>
+<tr class="nocodegen"><td>27<td>uses
+<tr class="nocodegen"><td>28<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>29<td>  SysUtils, Classes;
+<tr class="nocodegen"><td>30<td>  {$ELSE}
+<tr class="nocodegen"><td>31<td>  System.SysUtils, System.Classes;
+<tr class="nocodegen"><td>32<td>  {$ENDIF}
+<tr class="nocodegen"><td>33<td>
+<tr class="nocodegen"><td>34<td>// Byte Ordering
+<tr class="nocodegen"><td>35<td>
+<tr class="nocodegen"><td>36<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>37<td>///   Reverses all bits in the passed value, 1111 0000 will be 0000 1111 afterwards
+<tr class="nocodegen"><td>38<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>39<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>40<td>///   Value who's bits are to be reversed
+<tr class="nocodegen"><td>41<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>42<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>43<td>///   Representation of Source but with all bits reversed
+<tr class="nocodegen"><td>44<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>45<td>function ReverseBits(Source: UInt32): UInt32; overload;
+<tr class="nocodegen"><td>46<td>
+<tr class="nocodegen"><td>47<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>48<td>///   Reverses all bits in the passed value, 1111 0000 will be 0000 1111 afterwards
+<tr class="nocodegen"><td>49<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>50<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>51<td>///   Value who's bits are to be reversed
+<tr class="nocodegen"><td>52<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>53<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>54<td>///   Representation of Source but with all bits reversed
+<tr class="nocodegen"><td>55<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>56<td>function ReverseBits(Source: UInt8): UInt8; overload;
+<tr class="nocodegen"><td>57<td>
+<tr class="nocodegen"><td>58<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>59<td>///   Reverses the order of the bytes contained in the buffer passed in.
+<tr class="nocodegen"><td>60<td>///   e.g. 1 2 3 will be 3 2 1 afterwards
+<tr class="nocodegen"><td>61<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>62<td>/// &lt;param name=&quot;Buffer&quot;&gt;
+<tr class="nocodegen"><td>63<td>///   Buffer who's contents is to be reversed.
+<tr class="nocodegen"><td>64<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>65<td>/// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>66<td>///   Size of the passed buffer in byte
+<tr class="nocodegen"><td>67<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>68<td>procedure SwapBytes(var Buffer; Size: Integer);
+<tr class="nocodegen"><td>69<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>70<td>///   Reverses the byte order of the passed variable
+<tr class="nocodegen"><td>71<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>72<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>73<td>///   value who's byte order shall be reversed
+<tr class="nocodegen"><td>74<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>75<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>76<td>///   value of the passed vallue with reversed byte order
+<tr class="nocodegen"><td>77<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>78<td>function  SwapUInt32(Source: UInt32): UInt32;
+<tr class="nocodegen"><td>79<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>80<td>///   Reverses the byte order for all entries of a passed array of UInt32 values
+<tr class="nocodegen"><td>81<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>82<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>83<td>///   Data with a layout like an array of UInt32 values for which the byte order
+<tr class="nocodegen"><td>84<td>///   of all entries shall be reversed
+<tr class="nocodegen"><td>85<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>86<td>/// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>87<td>///   In this variable the reversed values will be stored. Layout is like an
+<tr class="nocodegen"><td>88<td>///   array of UInt32 values
+<tr class="nocodegen"><td>89<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>90<td>/// &lt;param name=&quot;Count&quot;&gt;
+<tr class="nocodegen"><td>91<td>///   Number of values to be reversed
+<tr class="nocodegen"><td>92<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>93<td>procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
+<tr class="nocodegen"><td>94<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>95<td>///   Reverses the byte order of an Int64 value
+<tr class="nocodegen"><td>96<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>97<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>98<td>///   Value who's byte order shall be reversed
+<tr class="nocodegen"><td>99<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>100<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>101<td>///   Representation of the passed value after reversing its byte order
+<tr class="nocodegen"><td>102<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>103<td>function  SwapInt64(Source: Int64): Int64;
+<tr class="nocodegen"><td>104<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>105<td>///   Reverses the byte order for all entries of a passed array of Int64 values
+<tr class="nocodegen"><td>106<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>107<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>108<td>///   Data with a layout like an array of Int64 values for which the byte order
+<tr class="nocodegen"><td>109<td>///   of all entries shall be reversed
+<tr class="nocodegen"><td>110<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>111<td>/// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>112<td>///   In this variable the reversed values will be stored. Layout is like an
+<tr class="nocodegen"><td>113<td>///   array of Int64 values
+<tr class="nocodegen"><td>114<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>115<td>/// &lt;param name=&quot;Count&quot;&gt;
+<tr class="nocodegen"><td>116<td>///   Number of values to be reversed
+<tr class="nocodegen"><td>117<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>118<td>procedure SwapInt64Buffer(const Source; var Dest; Count: Integer);
+<tr class="nocodegen"><td>119<td>
+<tr class="nocodegen"><td>120<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>121<td>///   XORs the contents of two passed buffers and stores the result into a 3rd one
+<tr class="nocodegen"><td>122<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>123<td>/// &lt;param name=&quot;Left&quot;&gt;
+<tr class="nocodegen"><td>124<td>///   One source buffer of bytes to be XORed
+<tr class="nocodegen"><td>125<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>126<td>/// &lt;param name=&quot;Right&quot;&gt;
+<tr class="nocodegen"><td>127<td>///   The other source buffer of bytes to be XORed. Buffer size must be equal
+<tr class="nocodegen"><td>128<td>///   or bigger than Left
+<tr class="nocodegen"><td>129<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>130<td>/// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>131<td>///   Buffer size in byte.
+<tr class="nocodegen"><td>132<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>133<td>/// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>134<td>///   Buffer where the result is to be stored in. Must be of equal or bigger
+<tr class="nocodegen"><td>135<td>///   size than Left
+<tr class="nocodegen"><td>136<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>137<td>procedure XORBuffers(const Left, Right; Size: Integer; var Dest);
+<tr class="nocodegen"><td>138<td>
+<tr class="nocodegen"><td>139<td>// Buffer and Data Protection
+<tr class="nocodegen"><td>140<td>
+<tr class="nocodegen"><td>141<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>142<td>///   Fills a given buffer with zeros in a secure way
+<tr class="nocodegen"><td>143<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>144<td>/// &lt;param name=&quot;Buffer&quot;&gt;
+<tr class="nocodegen"><td>145<td>///   Buffer to be zeroed. In case of TBytes to be passed as Buf[0]
+<tr class="nocodegen"><td>146<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>147<td>/// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>148<td>///   Buffer size in byte
+<tr class="nocodegen"><td>149<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>150<td>procedure ProtectBuffer(var Buffer; Size: NativeUInt);
+<tr class="nocodegen"><td>151<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>152<td>///   Fills a given stream with zeros in a secure way
+<tr class="nocodegen"><td>153<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>154<td>/// &lt;param name=&quot;Stream&quot;&gt;
+<tr class="nocodegen"><td>155<td>///   Stream to be zeroed.
+<tr class="nocodegen"><td>156<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>157<td>/// &lt;param name=&quot;SizeToProtect&quot;&gt;
+<tr class="nocodegen"><td>158<td>///   Number of bytes of that stream to be zeroed. Starting point is Stream.Position
+<tr class="nocodegen"><td>159<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>160<td>procedure ProtectStream(Stream: TStream; SizeToProtect: Int64 = 0);
+<tr class="nocodegen"><td>161<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>162<td>///   Fills a given byte array with zeros in a secure way and then empties the
+<tr class="nocodegen"><td>163<td>///   buffer.
+<tr class="nocodegen"><td>164<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>165<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>166<td>///   Byte array to be zeroed. The length of the passed buffer is 0 afterwards!
+<tr class="nocodegen"><td>167<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>168<td>procedure ProtectBytes(var Source: TBytes);
+<tr class="nocodegen"><td>169<td>
+<tr class="nocodegen"><td>170<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>171<td>///   Overwrites the string's contents in a secure way and returns an empty string.
+<tr class="nocodegen"><td>172<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>173<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>174<td>///   String to be safely overwritten
+<tr class="nocodegen"><td>175<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>176<td>procedure ProtectString(var Source: string); overload;
+<tr class="nocodegen"><td>177<td>
+<tr class="nocodegen"><td>178<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>179<td>///   Overwrites the string's contents in a secure way and returns an empty string.
+<tr class="nocodegen"><td>180<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>181<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>182<td>///   String to be safely overwritten
+<tr class="nocodegen"><td>183<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>184<td>procedure ProtectString(var Source: RawByteString); overload;
+<tr class="nocodegen"><td>185<td>
+<tr class="nocodegen"><td>186<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>187<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>188<td>///   Overwrites the string's contents in a secure way and returns an empty string.
+<tr class="nocodegen"><td>189<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>190<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>191<td>///   String to be safely overwritten
+<tr class="nocodegen"><td>192<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>193<td>procedure ProtectString(var Source: AnsiString); overload;
+<tr class="nocodegen"><td>194<td>{$ENDIF}
+<tr class="nocodegen"><td>195<td>
+<tr class="nocodegen"><td>196<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>197<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>198<td>///   Overwrites the string's contents in a secure way and returns an empty string.
+<tr class="nocodegen"><td>199<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>200<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>201<td>///   String to be safely overwritten
+<tr class="nocodegen"><td>202<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>203<td>procedure ProtectString(var Source: WideString); overload;
+<tr class="nocodegen"><td>204<td>{$ENDIF}
+<tr class="nocodegen"><td>205<td>
+<tr class="nocodegen"><td>206<td>// Byte/String conversion
+<tr class="nocodegen"><td>207<td>
+<tr class="nocodegen"><td>208<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>209<td>///   Converts a byte array to a RawByteString
+<tr class="nocodegen"><td>210<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>211<td>/// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>212<td>///   Byte array to be converted into a string. An empty byte array is allowed
+<tr class="nocodegen"><td>213<td>///   and results in an empty string.
+<tr class="nocodegen"><td>214<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>215<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>216<td>///   RawByteString with the same length as Source and all bytes copied over.
+<tr class="nocodegen"><td>217<td>///   No conversion of any sort is being applied to the bytes.
+<tr class="nocodegen"><td>218<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>219<td>/// &lt;remarks&gt;
+<tr class="nocodegen"><td>220<td>///   Not easily replaced by some RTL function as none for TBytes to RawByteString
+<tr class="nocodegen"><td>221<td>///   seems to exist
+<tr class="nocodegen"><td>222<td>/// &lt;/remarks&gt;
+<tr class="nocodegen"><td>223<td>function BytesToRawString(const Source: TBytes): RawByteString;
+<tr class="nocodegen"><td>224<td>
+<tr class="nocodegen"><td>225<td>// Buffer comparison
+<tr class="nocodegen"><td>226<td>
+<tr class="nocodegen"><td>227<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>228<td>///   Checks whether two TBytes values contain the same data
+<tr class="nocodegen"><td>229<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>230<td>/// &lt;param name=&quot;a&quot;&gt;
+<tr class="nocodegen"><td>231<td>///   First value for the comparison
+<tr class="nocodegen"><td>232<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>233<td>/// &lt;param name=&quot;b&quot;&gt;
+<tr class="nocodegen"><td>234<td>///   Second value for the comparison
+<tr class="nocodegen"><td>235<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>236<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>237<td>///   true, if both contain exactly the same data
+<tr class="nocodegen"><td>238<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>239<td>function IsEqual(const a, b : TBytes ):Boolean;
+<tr class="nocodegen"><td>240<td>
+<tr class="nocodegen"><td>241<td>implementation
+<tr class="nocodegen"><td>242<td>
+<tr class="nocodegen"><td>243<td>uses
+<tr class="nocodegen"><td>244<td>  DECUtilRawByteStringHelper, DECTypes;
+<tr class="nocodegen"><td>245<td>
+<tr class="nocodegen"><td>246<td>const
+<tr class="nocodegen"><td>247<td>  // Bit Lookup Table - see 'Bit Twiddling Hacks' by Sean Eron Anderson
+<tr class="nocodegen"><td>248<td>  // http://graphics.stanford.edu/~seander/bithacks.html
+<tr class="nocodegen"><td>249<td>  ReverseBitLookupTable256: array[0..255] of Byte = ($00, $80, $40, $C0,
+<tr class="nocodegen"><td>250<td>   $20, $A0, $60, $E0, $10, $90, $50, $D0, $30, $B0, $70, $F0, $08, $88,
+<tr class="nocodegen"><td>251<td>   $48, $C8, $28, $A8, $68, $E8, $18, $98, $58, $D8, $38, $B8, $78, $F8,
+<tr class="nocodegen"><td>252<td>   $04, $84, $44, $C4, $24, $A4, $64, $E4, $14, $94, $54, $D4, $34, $B4,
+<tr class="nocodegen"><td>253<td>   $74, $F4, $0C, $8C, $4C, $CC, $2C, $AC, $6C, $EC, $1C, $9C, $5C, $DC,
+<tr class="nocodegen"><td>254<td>   $3C, $BC, $7C, $FC, $02, $82, $42, $C2, $22, $A2, $62, $E2, $12, $92,
+<tr class="nocodegen"><td>255<td>   $52, $D2, $32, $B2, $72, $F2, $0A, $8A, $4A, $CA, $2A, $AA, $6A, $EA,
+<tr class="nocodegen"><td>256<td>   $1A, $9A, $5A, $DA, $3A, $BA, $7A, $FA, $06, $86, $46, $C6, $26, $A6,
+<tr class="nocodegen"><td>257<td>   $66, $E6, $16, $96, $56, $D6, $36, $B6, $76, $F6, $0E, $8E, $4E, $CE,
+<tr class="nocodegen"><td>258<td>   $2E, $AE, $6E, $EE, $1E, $9E, $5E, $DE, $3E, $BE, $7E, $FE, $01, $81,
+<tr class="nocodegen"><td>259<td>   $41, $C1, $21, $A1, $61, $E1, $11, $91, $51, $D1, $31, $B1, $71, $F1,
+<tr class="nocodegen"><td>260<td>   $09, $89, $49, $C9, $29, $A9, $69, $E9, $19, $99, $59, $D9, $39, $B9,
+<tr class="nocodegen"><td>261<td>   $79, $F9, $05, $85, $45, $C5, $25, $A5, $65, $E5, $15, $95, $55, $D5,
+<tr class="nocodegen"><td>262<td>   $35, $B5, $75, $F5, $0D, $8D, $4D, $CD, $2D, $AD, $6D, $ED, $1D, $9D,
+<tr class="nocodegen"><td>263<td>   $5D, $DD, $3D, $BD, $7D, $FD, $03, $83, $43, $C3, $23, $A3, $63, $E3,
+<tr class="nocodegen"><td>264<td>   $13, $93, $53, $D3, $33, $B3, $73, $F3, $0B, $8B, $4B, $CB, $2B, $AB,
+<tr class="nocodegen"><td>265<td>   $6B, $EB, $1B, $9B, $5B, $DB, $3B, $BB, $7B, $FB, $07, $87, $47, $C7,
+<tr class="nocodegen"><td>266<td>   $27, $A7, $67, $E7, $17, $97, $57, $D7, $37, $B7, $77, $F7, $0F, $8F,
+<tr class="nocodegen"><td>267<td>   $4F, $CF, $2F, $AF, $6F, $EF, $1F, $9F, $5F, $DF, $3F, $BF, $7F, $FF);
+<tr class="nocodegen"><td>268<td>
+<tr class="nocodegen"><td>269<td>function ReverseBits(Source: UInt32): UInt32;
+<tr class="covered"><td>270<td>begin
+<tr class="covered"><td>271<td>  Result := (ReverseBitLookupTable256[Source and $FF] shl 24) or
+<tr class="nocodegen"><td>272<td>            (ReverseBitLookupTable256[(Source shr 8) and $FF] shl 16) or
+<tr class="nocodegen"><td>273<td>            (ReverseBitLookupTable256[(Source shr 16) and $FF] shl 8) or
+<tr class="nocodegen"><td>274<td>            (ReverseBitLookupTable256[(Source shr 24) and $FF]);
+<tr class="covered"><td>275<td>end;
+<tr class="nocodegen"><td>276<td>
+<tr class="nocodegen"><td>277<td>function ReverseBits(Source: UInt8): UInt8;
+<tr class="covered"><td>278<td>begin
+<tr class="covered"><td>279<td>  Result := ReverseBitLookupTable256[Source];
+<tr class="covered"><td>280<td>end;
+<tr class="nocodegen"><td>281<td>
+<tr class="nocodegen"><td>282<td>procedure SwapBytes(var Buffer; Size: Integer);
+<tr class="nocodegen"><td>283<td>{$IFDEF X86ASM}
+<tr class="nocodegen"><td>284<td>asm
+<tr class="nocodegen"><td>285<td>      CMP     EDX,1
+<tr class="nocodegen"><td>286<td>      JLE     @@3
+<tr class="nocodegen"><td>287<td>      AND     EAX,EAX
+<tr class="nocodegen"><td>288<td>      JZ      @@3
+<tr class="nocodegen"><td>289<td>      PUSH    EBX
+<tr class="nocodegen"><td>290<td>      MOV     ECX,EDX
+<tr class="nocodegen"><td>291<td>      LEA     EDX,[EAX + ECX - 1]
+<tr class="nocodegen"><td>292<td>      SHR     ECX,1
+<tr class="nocodegen"><td>293<td>@@1:  MOV     BL,[EAX]
+<tr class="nocodegen"><td>294<td>      XCHG    BL,[EDX]
+<tr class="nocodegen"><td>295<td>      DEC     EDX
+<tr class="nocodegen"><td>296<td>      MOV     [EAX],BL
+<tr class="nocodegen"><td>297<td>      INC     EAX
+<tr class="nocodegen"><td>298<td>      DEC     ECX
+<tr class="nocodegen"><td>299<td>      JNZ     @@1
+<tr class="nocodegen"><td>300<td>@@2:  POP     EBX
+<tr class="nocodegen"><td>301<td>@@3:
+<tr class="nocodegen"><td>302<td>end;
+<tr class="nocodegen"><td>303<td>{$ELSE !X86ASM}
+<tr class="nocodegen"><td>304<td>var
+<tr class="nocodegen"><td>305<td>  T: Byte;
+<tr class="nocodegen"><td>306<td>  P, Q: PByte;
+<tr class="nocodegen"><td>307<td>  i: Integer;
+<tr class="covered"><td>308<td>begin
+<tr class="covered"><td>309<td>  P := @Buffer;
+<tr class="covered"><td>310<td>  Inc(P, Size - 1);
+<tr class="covered"><td>311<td>  Q := @Buffer;
+<tr class="covered"><td>312<td>  for i := 0 to Size div 2 - 1 do // using P/Q comparison with 'while' breaks some compilers
+<tr class="nocodegen"><td>313<td>  begin
+<tr class="covered"><td>314<td>    T := Q^;
+<tr class="covered"><td>315<td>    Q^ := P^;
+<tr class="covered"><td>316<td>    P^ := T;
+<tr class="covered"><td>317<td>    Dec(P);
+<tr class="covered"><td>318<td>    Inc(Q);
+<tr class="covered"><td>319<td>  end;
+<tr class="covered"><td>320<td>end;
+<tr class="nocodegen"><td>321<td>{$ENDIF !X86ASM}
+<tr class="nocodegen"><td>322<td>
+<tr class="nocodegen"><td>323<td>function SwapUInt32(Source: UInt32): UInt32;
+<tr class="nocodegen"><td>324<td>{$IF defined(X86ASM) or defined(X64ASM)}
+<tr class="nocodegen"><td>325<td>  asm
+<tr class="nocodegen"><td>326<td>  {$IFDEF X64ASM}
+<tr class="nocodegen"><td>327<td>    MOV   EAX, ECX
+<tr class="nocodegen"><td>328<td>  {$ENDIF X64ASM}
+<tr class="nocodegen"><td>329<td>    BSWAP EAX
+<tr class="nocodegen"><td>330<td>  end;
+<tr class="nocodegen"><td>331<td>{$ELSE PUREPASCAL}
+<tr class="covered"><td>332<td>begin
+<tr class="covered"><td>333<td>  Result := Source shl 24 or
+<tr class="nocodegen"><td>334<td>            Source shr 24 or
+<tr class="nocodegen"><td>335<td>            Source shl 8 and $00FF0000 or
+<tr class="nocodegen"><td>336<td>            Source shr 8 and $0000FF00;
+<tr class="covered"><td>337<td>end;
+<tr class="nocodegen"><td>338<td>{$IFEND PUREPASCAL}
+<tr class="nocodegen"><td>339<td>
+<tr class="nocodegen"><td>340<td>procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
+<tr class="nocodegen"><td>341<td>{$IFDEF X86ASM}
+<tr class="nocodegen"><td>342<td>asm
+<tr class="nocodegen"><td>343<td>      TEST    ECX,ECX
+<tr class="nocodegen"><td>344<td>      JLE     @Exit
+<tr class="nocodegen"><td>345<td>      PUSH    EDI
+<tr class="nocodegen"><td>346<td>      SUB     EAX,4
+<tr class="nocodegen"><td>347<td>      SUB     EDX,4
+<tr class="nocodegen"><td>348<td>@@1:  MOV     EDI,[EAX + ECX * 4]
+<tr class="nocodegen"><td>349<td>      BSWAP   EDI
+<tr class="nocodegen"><td>350<td>      MOV     [EDX + ECX * 4],EDI
+<tr class="nocodegen"><td>351<td>      DEC     ECX
+<tr class="nocodegen"><td>352<td>      JNZ     @@1
+<tr class="nocodegen"><td>353<td>      POP     EDI
+<tr class="nocodegen"><td>354<td>@Exit:
+<tr class="nocodegen"><td>355<td>end;
+<tr class="nocodegen"><td>356<td>{$ELSE !X86ASM}
+<tr class="nocodegen"><td>357<td>var
+<tr class="nocodegen"><td>358<td>  i: Integer;
+<tr class="nocodegen"><td>359<td>  T: UInt32;
+<tr class="covered"><td>360<td>begin
+<tr class="covered"><td>361<td>  for i := 0 to Count - 1 do
+<tr class="nocodegen"><td>362<td>  begin
+<tr class="covered"><td>363<td>    T := TUInt32Array(Source)[i];
+<tr class="covered"><td>364<td>    TUInt32Array(Dest)[i] := (T shl 24) or (T shr 24) or
+<tr class="nocodegen"><td>365<td>                           ((T shl 8) and $00FF0000) or ((T shr 8) and $0000FF00);
+<tr class="covered"><td>366<td>  end;
+<tr class="covered"><td>367<td>end;
+<tr class="nocodegen"><td>368<td>{$ENDIF !X86ASM}
+<tr class="nocodegen"><td>369<td>
+<tr class="nocodegen"><td>370<td>function SwapInt64(Source: Int64): Int64;
+<tr class="nocodegen"><td>371<td>{$IFDEF X86ASM}
+<tr class="nocodegen"><td>372<td>asm
+<tr class="nocodegen"><td>373<td>      MOV     EDX,Source.DWord[0]
+<tr class="nocodegen"><td>374<td>      MOV     EAX,Source.DWord[4]
+<tr class="nocodegen"><td>375<td>      BSWAP   EDX
+<tr class="nocodegen"><td>376<td>      BSWAP   EAX
+<tr class="nocodegen"><td>377<td>end;
+<tr class="nocodegen"><td>378<td>{$ELSE !X86ASM}
+<tr class="nocodegen"><td>379<td>var
+<tr class="nocodegen"><td>380<td>  L, H: Cardinal;
+<tr class="covered"><td>381<td>begin
+<tr class="covered"><td>382<td>  L := Int64Rec(Source).Lo;
+<tr class="covered"><td>383<td>  H := Int64Rec(Source).Hi;
+<tr class="covered"><td>384<td>  L := L shl 24 or L shr 24 or L shl 8 and $00FF0000 or L shr 8 and $0000FF00;
+<tr class="covered"><td>385<td>  H := H shl 24 or H shr 24 or H shl 8 and $00FF0000 or H shr 8 and $0000FF00;
+<tr class="covered"><td>386<td>  Int64Rec(Result).Hi := L;
+<tr class="covered"><td>387<td>  Int64Rec(Result).Lo := H;
+<tr class="covered"><td>388<td>end;
+<tr class="nocodegen"><td>389<td>{$ENDIF !X86ASM}
+<tr class="nocodegen"><td>390<td>
+<tr class="nocodegen"><td>391<td>procedure SwapInt64Buffer(const Source; var Dest; Count: Integer);
+<tr class="nocodegen"><td>392<td>{$IFDEF X86ASM}
+<tr class="nocodegen"><td>393<td>asm
+<tr class="nocodegen"><td>394<td>      TEST    ECX,ECX
+<tr class="nocodegen"><td>395<td>      JLE     @Exit
+<tr class="nocodegen"><td>396<td>      PUSH    ESI
+<tr class="nocodegen"><td>397<td>      PUSH    EDI
+<tr class="nocodegen"><td>398<td>      LEA     ESI,[EAX + ECX * 8]
+<tr class="nocodegen"><td>399<td>      LEA     EDI,[EDX + ECX * 8]
+<tr class="nocodegen"><td>400<td>      NEG     ECX
+<tr class="nocodegen"><td>401<td>@@1:  MOV     EAX,[ESI + ECX * 8]
+<tr class="nocodegen"><td>402<td>      MOV     EDX,[ESI + ECX * 8 + 4]
+<tr class="nocodegen"><td>403<td>      BSWAP   EAX
+<tr class="nocodegen"><td>404<td>      BSWAP   EDX
+<tr class="nocodegen"><td>405<td>      MOV     [EDI + ECX * 8 + 4],EAX
+<tr class="nocodegen"><td>406<td>      MOV     [EDI + ECX * 8],EDX
+<tr class="nocodegen"><td>407<td>      INC     ECX
+<tr class="nocodegen"><td>408<td>      JNZ     @@1
+<tr class="nocodegen"><td>409<td>      POP     EDI
+<tr class="nocodegen"><td>410<td>      POP     ESI
+<tr class="nocodegen"><td>411<td>@Exit:
+<tr class="nocodegen"><td>412<td>end;
+<tr class="nocodegen"><td>413<td>{$ELSE !X86ASM}
+<tr class="nocodegen"><td>414<td>var
+<tr class="nocodegen"><td>415<td>  H, L: Cardinal;
+<tr class="nocodegen"><td>416<td>  i: Integer;
+<tr class="covered"><td>417<td>begin
+<tr class="covered"><td>418<td>  for i := 0 to Count - 1 do
+<tr class="nocodegen"><td>419<td>  begin
+<tr class="covered"><td>420<td>    H := TUInt32Array(Source)[i * 2    ];
+<tr class="covered"><td>421<td>    L := TUInt32Array(Source)[i * 2 + 1];
+<tr class="covered"><td>422<td>    TUInt32Array(Dest)[i * 2    ] := L shl 24 or L shr 24 or L shl 8 and $00FF0000 or L shr 8 and $0000FF00;
+<tr class="covered"><td>423<td>    TUInt32Array(Dest)[i * 2 + 1] := H shl 24 or H shr 24 or H shl 8 and $00FF0000 or H shr 8 and $0000FF00;
+<tr class="covered"><td>424<td>  end;
+<tr class="covered"><td>425<td>end;
+<tr class="nocodegen"><td>426<td>{$ENDIF !X86ASM}
+<tr class="nocodegen"><td>427<td>
+<tr class="nocodegen"><td>428<td>procedure XORBuffers(const Left, Right; Size: Integer; var Dest);
+<tr class="nocodegen"><td>429<td>// Dest^ = Source1^ xor Source2^
+<tr class="nocodegen"><td>430<td>// Buffers must have the same size!
+<tr class="nocodegen"><td>431<td>{$IFDEF X86ASM}
+<tr class="nocodegen"><td>432<td>asm
+<tr class="nocodegen"><td>433<td>      AND     ECX,ECX
+<tr class="nocodegen"><td>434<td>      JZ      @@5
+<tr class="nocodegen"><td>435<td>      PUSH    ESI
+<tr class="nocodegen"><td>436<td>      PUSH    EDI
+<tr class="nocodegen"><td>437<td>      MOV     ESI,EAX
+<tr class="nocodegen"><td>438<td>      MOV     EDI,Dest
+<tr class="nocodegen"><td>439<td>@@1:  TEST    ECX,3
+<tr class="nocodegen"><td>440<td>      JNZ     @@3
+<tr class="nocodegen"><td>441<td>@@2:  SUB     ECX,4
+<tr class="nocodegen"><td>442<td>      JL      @@4
+<tr class="nocodegen"><td>443<td>      MOV     EAX,[ESI + ECX]
+<tr class="nocodegen"><td>444<td>      XOR     EAX,[EDX + ECX]
+<tr class="nocodegen"><td>445<td>      MOV     [EDI + ECX],EAX
+<tr class="nocodegen"><td>446<td>      JMP     @@2
+<tr class="nocodegen"><td>447<td>@@3:  DEC     ECX
+<tr class="nocodegen"><td>448<td>      MOV     AL,[ESI + ECX]
+<tr class="nocodegen"><td>449<td>      XOR     AL,[EDX + ECX]
+<tr class="nocodegen"><td>450<td>      MOV     [EDI + ECX],AL
+<tr class="nocodegen"><td>451<td>      JMP     @@1
+<tr class="nocodegen"><td>452<td>@@4:  POP     EDI
+<tr class="nocodegen"><td>453<td>      POP     ESI
+<tr class="nocodegen"><td>454<td>@@5:
+<tr class="nocodegen"><td>455<td>end;
+<tr class="nocodegen"><td>456<td>{$ELSE !X86ASM}
+<tr class="nocodegen"><td>457<td>var
+<tr class="nocodegen"><td>458<td>  P, Q, D: PByte;
+<tr class="nocodegen"><td>459<td>  i: Integer;
+<tr class="covered"><td>460<td>begin
+<tr class="covered"><td>461<td>  P := @Left;
+<tr class="covered"><td>462<td>  Q := @Right;
+<tr class="covered"><td>463<td>  D := @Dest;
+<tr class="covered"><td>464<td>  for i := 0 to Size - 1 do
+<tr class="nocodegen"><td>465<td>  begin
+<tr class="covered"><td>466<td>    D^ := P^ xor Q^;
+<tr class="covered"><td>467<td>    Inc(P);
+<tr class="covered"><td>468<td>    Inc(Q);
+<tr class="covered"><td>469<td>    Inc(D);
+<tr class="covered"><td>470<td>  end;
+<tr class="covered"><td>471<td>end;
+<tr class="nocodegen"><td>472<td>{$ENDIF !X86ASM}
+<tr class="nocodegen"><td>473<td>
+<tr class="nocodegen"><td>474<td>const
+<tr class="nocodegen"><td>475<td>  WipeCount = 4;
+<tr class="nocodegen"><td>476<td>  WipeBytes: array[0..WipeCount - 1] of Byte = (
+<tr class="nocodegen"><td>477<td>    $55, // 0101 0101
+<tr class="nocodegen"><td>478<td>    $AA, // 1010 1010
+<tr class="nocodegen"><td>479<td>    $FF, // 1111 1111
+<tr class="nocodegen"><td>480<td>    $00  // 0000 0000
+<tr class="nocodegen"><td>481<td>  );
+<tr class="nocodegen"><td>482<td>
+<tr class="nocodegen"><td>483<td>procedure ProtectBuffer(var Buffer; Size: NativeUInt);
+<tr class="nocodegen"><td>484<td>var
+<tr class="nocodegen"><td>485<td>  Count: Integer;
+<tr class="covered"><td>486<td>begin
+<tr class="covered"><td>487<td>  if Size &gt; 0 then
+<tr class="nocodegen"><td>488<td>  begin
+<tr class="covered"><td>489<td>    for Count := 0 to WipeCount - 1 do
+<tr class="covered"><td>490<td>      FillChar(Buffer, Size, WipeBytes[Count]);
+<tr class="nocodegen"><td>491<td>  end;
+<tr class="covered"><td>492<td>end;
+<tr class="nocodegen"><td>493<td>
+<tr class="nocodegen"><td>494<td>procedure ProtectStream(Stream: TStream; SizeToProtect: Int64 = 0);
+<tr class="nocodegen"><td>495<td>const
+<tr class="nocodegen"><td>496<td>  BufferSize = 512;
+<tr class="nocodegen"><td>497<td>var
+<tr class="nocodegen"><td>498<td>  Buffer: string;
+<tr class="nocodegen"><td>499<td>  Count, Bytes, Size: Integer;
+<tr class="nocodegen"><td>500<td>  Position: Integer;
+<tr class="covered"><td>501<td>begin
+<tr class="covered"><td>502<td>  Position := Stream.Position;
+<tr class="covered"><td>503<td>  Size := Stream.Size;
+<tr class="covered"><td>504<td>  if SizeToProtect &lt;= 0 then
+<tr class="nocodegen"><td>505<td>  begin
+<tr class="covered"><td>506<td>    SizeToProtect := Size;
+<tr class="covered"><td>507<td>    Position := 0;
+<tr class="nocodegen"><td>508<td>  end else
+<tr class="nocodegen"><td>509<td>  begin
+<tr class="covered"><td>510<td>    Dec(Size, Position);
+<tr class="covered"><td>511<td>    if SizeToProtect &gt; Size then
+<tr class="covered"><td>512<td>      SizeToProtect := Size;
+<tr class="nocodegen"><td>513<td>  end;
+<tr class="covered"><td>514<td>  SetLength(Buffer, BufferSize);
+<tr class="covered"><td>515<td>  for Count := 0 to WipeCount -1 do
+<tr class="nocodegen"><td>516<td>  begin
+<tr class="covered"><td>517<td>    Stream.Position := Position;
+<tr class="covered"><td>518<td>    Size := SizeToProtect;
+<tr class="nocodegen"><td>519<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>520<td>    FillChar(Buffer[Low(Buffer)], BufferSize, WipeBytes[Count]);
+<tr class="nocodegen"><td>521<td>    {$ELSE}
+<tr class="nocodegen"><td>522<td>    FillChar(Buffer[1], BufferSize, WipeBytes[Count]);
+<tr class="nocodegen"><td>523<td>    {$IFEND}
+<tr class="covered"><td>524<td>    while Size &gt; 0 do
+<tr class="nocodegen"><td>525<td>    begin
+<tr class="covered"><td>526<td>      Bytes := Size;
+<tr class="covered"><td>527<td>      if Bytes &gt; BufferSize then
+<tr class="covered"><td>528<td>        Bytes := BufferSize;
+<tr class="nocodegen"><td>529<td>      {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>530<td>      Stream.Write(Buffer[Low(Buffer)], Bytes);
+<tr class="nocodegen"><td>531<td>      {$ELSE}
+<tr class="nocodegen"><td>532<td>      Stream.Write(Buffer[1], Bytes);
+<tr class="nocodegen"><td>533<td>      {$IFEND}
+<tr class="covered"><td>534<td>      Dec(Size, Bytes);
+<tr class="nocodegen"><td>535<td>    end;
+<tr class="covered"><td>536<td>  end;
+<tr class="covered"><td>537<td>end;
+<tr class="nocodegen"><td>538<td>
+<tr class="nocodegen"><td>539<td>procedure ProtectBytes(var Source: TBytes);
+<tr class="covered"><td>540<td>begin
+<tr class="covered"><td>541<td>  if (Source &lt;&gt; nil) and (Length(Source) &gt; 0) then
+<tr class="nocodegen"><td>542<td>  begin
+<tr class="covered"><td>543<td>    ProtectBuffer(Source[0], Length(Source));
+<tr class="covered"><td>544<td>    SetLength(Source, 0);
+<tr class="nocodegen"><td>545<td>  end;
+<tr class="covered"><td>546<td>end;
+<tr class="nocodegen"><td>547<td>
+<tr class="nocodegen"><td>548<td>procedure ProtectString(var Source: string);
+<tr class="covered"><td>549<td>begin
+<tr class="covered"><td>550<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>551<td>  begin
+<tr class="covered"><td>552<td>    System.UniqueString(Source);
+<tr class="nocodegen"><td>553<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>554<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
+<tr class="nocodegen"><td>555<td>    {$ELSE}
+<tr class="nocodegen"><td>556<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>557<td>    {$IFEND}
+<tr class="covered"><td>558<td>    Source := '';
+<tr class="nocodegen"><td>559<td>  end;
+<tr class="covered"><td>560<td>end;
+<tr class="nocodegen"><td>561<td>
+<tr class="nocodegen"><td>562<td>procedure ProtectString(var Source: RawByteString);
+<tr class="covered"><td>563<td>begin
+<tr class="covered"><td>564<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>565<td>  begin
+<tr class="nocodegen"><td>566<td>    // UniqueString(Source); cannot be called with a RawByteString as there is
+<tr class="nocodegen"><td>567<td>    // no overload for it, so we need to call our own one.
+<tr class="covered"><td>568<td>    DECUtilRawByteStringHelper.UniqueString(Source);
+<tr class="nocodegen"><td>569<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>570<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
+<tr class="nocodegen"><td>571<td>    {$ELSE}
+<tr class="nocodegen"><td>572<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>573<td>    {$IFEND}
+<tr class="covered"><td>574<td>    Source := '';
+<tr class="nocodegen"><td>575<td>  end;
+<tr class="covered"><td>576<td>end;
+<tr class="nocodegen"><td>577<td>
+<tr class="nocodegen"><td>578<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>579<td>procedure ProtectString(var Source: AnsiString); overload;
+<tr class="nocodegen"><td>580<td>begin
+<tr class="nocodegen"><td>581<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>582<td>  begin
+<tr class="nocodegen"><td>583<td>    System.UniqueString(Source);
+<tr class="nocodegen"><td>584<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="nocodegen"><td>585<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
+<tr class="nocodegen"><td>586<td>    {$ELSE}
+<tr class="nocodegen"><td>587<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>588<td>    {$IFEND}
+<tr class="nocodegen"><td>589<td>    Source := '';
+<tr class="nocodegen"><td>590<td>  end;
+<tr class="nocodegen"><td>591<td>end;
+<tr class="nocodegen"><td>592<td>
+<tr class="nocodegen"><td>593<td>procedure ProtectString(var Source: WideString); overload;
+<tr class="covered"><td>594<td>begin
+<tr class="covered"><td>595<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>596<td>  begin
+<tr class="covered"><td>597<td>    System.UniqueString(Source); // for OS &lt;&gt; Win, WideString is not RefCounted on Win
+<tr class="nocodegen"><td>598<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>599<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
+<tr class="nocodegen"><td>600<td>    {$ELSE}
+<tr class="nocodegen"><td>601<td>    ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>602<td>    {$IFEND}
+<tr class="covered"><td>603<td>    Source := '';
+<tr class="nocodegen"><td>604<td>  end;
+<tr class="covered"><td>605<td>end;
+<tr class="nocodegen"><td>606<td>{$ENDIF}
+<tr class="nocodegen"><td>607<td>
+<tr class="nocodegen"><td>608<td>function BytesToRawString(const Source: TBytes): RawByteString;
+<tr class="covered"><td>609<td>begin
+<tr class="covered"><td>610<td>  SetLength(Result, Length(Source));
+<tr class="covered"><td>611<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>612<td>  begin
+<tr class="nocodegen"><td>613<td>    // determine lowest string index for handling of ZeroBasedStrings
+<tr class="nocodegen"><td>614<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>615<td>    Move(Source[0], Result[Low(result)], Length(Source));
+<tr class="nocodegen"><td>616<td>    {$ELSE}
+<tr class="nocodegen"><td>617<td>    Move(Source[0], Result[1], Length(Source));
+<tr class="nocodegen"><td>618<td>    {$IFEND}
+<tr class="nocodegen"><td>619<td>  end;
+<tr class="covered"><td>620<td>end;
+<tr class="nocodegen"><td>621<td>
+<tr class="nocodegen"><td>622<td>function IsEqual(const a, b : TBytes):Boolean;
+<tr class="covered"><td>623<td>begin
+<tr class="covered"><td>624<td>  if (length(a) &lt;&gt; length(b)) then
+<tr class="covered"><td>625<td>    Result := false
+<tr class="nocodegen"><td>626<td>  else
+<tr class="covered"><td>627<td>    if (Length(a) &gt; 0) then
+<tr class="covered"><td>628<td>      Result := CompareMem(@a[0], @b[0], length(a))
+<tr class="nocodegen"><td>629<td>    else
+<tr class="covered"><td>630<td>      Result := true;
+<tr class="covered"><td>631<td>end;
+<tr class="nocodegen"><td>632<td>
+<tr class="nocodegen"><td>633<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

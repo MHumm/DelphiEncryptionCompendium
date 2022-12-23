@@ -1,0 +1,59 @@
+<DCCProject xmlns="">
+  <VersionInfo>
+    <ApplicationVersion>V2.0.0 build 4</ApplicationVersion>
+    <FileFormatVersion>1</FileFormatVersion>
+  </VersionInfo>
+  <SourceCodeFiles>
+    <SourceBasePath>D:\Projekte\DECGitMaster\Source\</SourceBasePath>
+    <SourceFile Selected="True">DEC60Lazarus.pas</SourceFile>
+    <SourceFile Selected="True">DECBaseClass.pas</SourceFile>
+    <SourceFile Selected="True">DECCipherBase.pas</SourceFile>
+    <SourceFile Selected="True">DECCipherFormats.pas</SourceFile>
+    <SourceFile Selected="True">DECCipherInterface.pas</SourceFile>
+    <SourceFile Selected="True">DECCipherModes.pas</SourceFile>
+    <SourceFile Selected="True">DECCipherModesGCM.pas</SourceFile>
+    <SourceFile Selected="True">DECCiphers.pas</SourceFile>
+    <SourceFile Selected="True">DECCRC.pas</SourceFile>
+    <SourceFile Selected="True">DECData.pas</SourceFile>
+    <SourceFile Selected="True">DECDataCipher.pas</SourceFile>
+    <SourceFile Selected="True">DECDataHash.pas</SourceFile>
+    <SourceFile Selected="True">DECFormat.pas</SourceFile>
+    <SourceFile Selected="True">DECFormatBase.pas</SourceFile>
+    <SourceFile Selected="True">DECHash.pas</SourceFile>
+    <SourceFile Selected="True">DECHashAuthentication.pas</SourceFile>
+    <SourceFile Selected="True">DECHashBase.pas</SourceFile>
+    <SourceFile Selected="True">DECHashBitBase.pas</SourceFile>
+    <SourceFile Selected="True">DECHashInterface.pas</SourceFile>
+    <SourceFile Selected="True">DECRandom.pas</SourceFile>
+    <SourceFile Selected="True">DECTypes.pas</SourceFile>
+    <SourceFile Selected="True">DECUtil.pas</SourceFile>
+    <SourceFile Selected="True">DECUtilRawByteStringHelper.pas</SourceFile>
+    <CodePage>0</CodePage>
+  </SourceCodeFiles>
+  <OutputSettings>
+    <ReportOutputFormats>ofHTML</ReportOutputFormats>
+    <ScriptOutputPath>D:\Projekte\DECGitMaster\Unit Tests\CodeCoverage</ScriptOutputPath>
+    <ReportOutputPath>D:\Projekte\DECGitMaster\Unit Tests\CodeCoverage\Output</ReportOutputPath>
+    <DisplayEMMAExternally>False</DisplayEMMAExternally>
+    <DisplayXMLExternally>False</DisplayXMLExternally>
+    <DisplayHTMLExternally>False</DisplayHTMLExternally>
+    <XMLLineNumbers>False</XMLLineNumbers>
+    <XMLCombineLines>False</XMLCombineLines>
+    <XMLJacocoFormat>False</XMLJacocoFormat>
+  </OutputSettings>
+  <UnitTestFiles>
+    <ExecutableToAnalyze>D:\Projekte\DECGitMaster\Compiled\BIN_IDE22.0_Win32_Debug\DECDUnitTestSuite.exe</ExecutableToAnalyze>
+    <CommandLineParams></CommandLineParams>
+    <UseExeDirAsWorkingDir>False</UseExeDirAsWorkingDir>
+    <MapFile>D:\Projekte\DECGitMaster\Compiled\BIN_IDE22.0_Win32_Debug\DECDUnitTestSuite.map</MapFile>
+    <CodeCoverageExe>D:\Projekte\DelphiCodeCoverageWizardNew\Binaries\CodeCoverage.exe</CodeCoverageExe>
+  </UnitTestFiles>
+  <MiscSettings>
+    <UseRelativePaths>True</UseRelativePaths>
+    <AdditionalParams></AdditionalParams>
+    <AdditionalParamsIndex>0</AdditionalParamsIndex>
+    <LogToTextFile>True</LogToTextFile>
+    <LogToOutputDebugString>False</LogToOutputDebugString>
+    <PassThroughExitCode>False</PassThroughExitCode>
+  </MiscSettings>
+</DCCProject>

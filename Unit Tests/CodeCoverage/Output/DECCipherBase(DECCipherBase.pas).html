@@ -1,0 +1,1326 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECCipherBase (..\..\Source\DECCipherBase.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECCipherBase.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>133<td rowspan=3 style="background: conic-gradient(#9fe098 75%, #eee 75%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>177<tr><td>Line coverage<td>75<small>.1</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>unit DECCipherBase;
+<tr class="nocodegen"><td>18<td>
+<tr class="nocodegen"><td>19<td>interface
+<tr class="nocodegen"><td>20<td>
+<tr class="nocodegen"><td>21<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>uses
+<tr class="nocodegen"><td>24<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>25<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>26<td>  {$ELSE}
+<tr class="nocodegen"><td>27<td>  System.SysUtils, System.Classes, Generics.Collections,
+<tr class="nocodegen"><td>28<td>  {$ENDIF}
+<tr class="nocodegen"><td>29<td>  DECBaseClass, DECFormatBase;
+<tr class="nocodegen"><td>30<td>
+<tr class="nocodegen"><td>31<td>type
+<tr class="nocodegen"><td>32<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>33<td>  ///   Possible kindes of cipher algorithms independent of any block
+<tr class="nocodegen"><td>34<td>  ///   concatenation mode etc.
+<tr class="nocodegen"><td>35<td>  ///   &lt;para&gt;
+<tr class="nocodegen"><td>36<td>  ///     ctNull = special &quot;do nothing cipher&quot;
+<tr class="nocodegen"><td>37<td>  ///    &lt;/para&gt;
+<tr class="nocodegen"><td>38<td>  ///   &lt;para&gt;
+<tr class="nocodegen"><td>39<td>  ///     ctStream = cipher operating on a stream of bytes instead of blocks
+<tr class="nocodegen"><td>40<td>  ///    &lt;/para&gt;
+<tr class="nocodegen"><td>41<td>  ///   &lt;para&gt;
+<tr class="nocodegen"><td>42<td>  ///     ctBlock = cipher operating on blocks of bytes with a fixed size
+<tr class="nocodegen"><td>43<td>  ///    &lt;/para&gt;
+<tr class="nocodegen"><td>44<td>  ///   &lt;para&gt;
+<tr class="nocodegen"><td>45<td>  ///     ctSymmetric = cipher where the same key encrypts and decrypts
+<tr class="nocodegen"><td>46<td>  ///    &lt;/para&gt;
+<tr class="nocodegen"><td>47<td>  ///   &lt;para&gt;
+<tr class="nocodegen"><td>48<td>  ///     ctAsymetric = cipher where encryption and decryption requires
+<tr class="nocodegen"><td>49<td>  ///                   different keys
+<tr class="nocodegen"><td>50<td>  ///    &lt;/para&gt;
+<tr class="nocodegen"><td>51<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>52<td>  TCipherTypes = (ctNull, ctStream, ctBlock, ctSymmetric, ctAsymmetric);
+<tr class="nocodegen"><td>53<td>
+<tr class="nocodegen"><td>54<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>55<td>  ///   Actual kind of cipher algorithm
+<tr class="nocodegen"><td>56<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>57<td>  TCipherType = set of TCipherTypes;
+<tr class="nocodegen"><td>58<td>
+<tr class="nocodegen"><td>59<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>60<td>  ///   Padding used to fill the last incomplete block of a block encryption
+<tr class="nocodegen"><td>61<td>  ///   algorithm. To be expanded in a future version
+<tr class="nocodegen"><td>62<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>63<td>  TBlockFillMode = (fmByte);
+<tr class="nocodegen"><td>64<td>
+<tr class="nocodegen"><td>65<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>66<td>  ///   Record containing meta data about a certain cipher
+<tr class="nocodegen"><td>67<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>68<td>  TCipherContext = packed record
+<tr class="nocodegen"><td>69<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>70<td>    ///   maximal key size in bytes
+<tr class="nocodegen"><td>71<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>72<td>    KeySize    : Integer;
+<tr class="nocodegen"><td>73<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>74<td>    ///   mininmal block size in bytes, e.g. 1 = Streamcipher
+<tr class="nocodegen"><td>75<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>76<td>    BlockSize  : Integer;
+<tr class="nocodegen"><td>77<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>78<td>    ///   internal buffersize in bytes
+<tr class="nocodegen"><td>79<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>80<td>    BufferSize : Integer;
+<tr class="nocodegen"><td>81<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>82<td>    ///   Size in bytes of the FAdditionalBuffer used by some of the cipher algorithms
+<tr class="nocodegen"><td>83<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>84<td>    AdditionalBufferSize   : Integer;
+<tr class="nocodegen"><td>85<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>86<td>    ///   When true the memory a certain internal pointer (FAdditionalBuffer)
+<tr class="nocodegen"><td>87<td>    ///   points to needs to be backuped during key initialization if no init
+<tr class="nocodegen"><td>88<td>    ///   vector is specified and restored at the end of that init method.
+<tr class="nocodegen"><td>89<td>    ///   Same in Done method as well.
+<tr class="nocodegen"><td>90<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>91<td>    NeedsAdditionalBufferBackup : Boolean;
+<tr class="nocodegen"><td>92<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>93<td>    ///   Minimum number of rounds allowed for any block cipher having a rounds
+<tr class="nocodegen"><td>94<td>    ///   property. In all other cases it will be set to 1.
+<tr class="nocodegen"><td>95<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>96<td>    MinRounds : UInt16;
+<tr class="nocodegen"><td>97<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>98<td>    ///   Maximum number of rounds allowed for any block cipher having a rounds
+<tr class="nocodegen"><td>99<td>    ///   property. In all other cases it will be set to 1.
+<tr class="nocodegen"><td>100<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>101<td>    MaxRounds : UInt16;
+<tr class="nocodegen"><td>102<td>
+<tr class="nocodegen"><td>103<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>104<td>    ///   Specifies the kind of cipher
+<tr class="nocodegen"><td>105<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>106<td>    CipherType : TCipherType;
+<tr class="nocodegen"><td>107<td>  end;
+<tr class="nocodegen"><td>108<td>
+<tr class="nocodegen"><td>109<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>110<td>  ///   TCipher.State represents the internal state of processing
+<tr class="nocodegen"><td>111<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>112<td>  ///   csNew : cipher isn't initialized, .Init() must be called before en/decode
+<tr class="nocodegen"><td>113<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>114<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>115<td>  ///   csNew : cipher isn't initialized, .Init() must be called before en/decode
+<tr class="nocodegen"><td>116<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>117<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>118<td>  ///   csInitialized : cipher is initialized by .Init(), i.e. Keysetup was processed
+<tr class="nocodegen"><td>119<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>120<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>121<td>  ///   csEncode : Encoding was started, and more chunks can be encoded, but not decoded
+<tr class="nocodegen"><td>122<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>123<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>124<td>  ///   csDecode : Decoding was started, and more chunks can be decoded, but not encoded
+<tr class="nocodegen"><td>125<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>126<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>127<td>  ///   csPadded : trough En/Decoding the messagechunks are padded, no more chunks can
+<tr class="nocodegen"><td>128<td>  ///                   be processed, the cipher is blocked
+<tr class="nocodegen"><td>129<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>130<td>  /// &lt;para&gt;
+<tr class="nocodegen"><td>131<td>  ///   csDone : Processing is finished and Cipher.Done was called. Now new En/Decoding
+<tr class="nocodegen"><td>132<td>  ///            can be started without calling .Init() before. csDone is basically
+<tr class="nocodegen"><td>133<td>  ///            identical to csInitialized, except Cipher.Buffer holds the encrypted
+<tr class="nocodegen"><td>134<td>  ///            last state of Cipher.Feedback, thus Cipher.Buffer can be used as C-MAC.
+<tr class="nocodegen"><td>135<td>  /// &lt;/para&gt;
+<tr class="nocodegen"><td>136<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>137<td>  TCipherState = (csNew, csInitialized, csEncode, csDecode, csPadded, csDone);
+<tr class="nocodegen"><td>138<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>139<td>  ///   Set of cipher states, representing the internal state of processing
+<tr class="nocodegen"><td>140<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>141<td>  TCipherStates = set of TCipherState;
+<tr class="nocodegen"><td>142<td>
+<tr class="nocodegen"><td>143<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>144<td>  ///   This defines how the individual blocks of the data to be processed are
+<tr class="nocodegen"><td>145<td>  ///   linked with each other.
+<tr class="nocodegen"><td>146<td>  ///
+<tr class="nocodegen"><td>147<td>  ///   Modes cmCBCx, cmCTSx, cmCTSxx, cmCFBx, cmOFBx, cmCFSx, cmECBx are working
+<tr class="nocodegen"><td>148<td>  ///   on Blocks of Cipher.BufferSize bytes, when using a Blockcipher that's equal
+<tr class="nocodegen"><td>149<td>  ///   to Cipher.BlockSize.
+<tr class="nocodegen"><td>150<td>  ///
+<tr class="nocodegen"><td>151<td>  ///   Modes cmCFB8, cmOFB8, cmCFS8 work on 8 bit Feedback Shift Registers.
+<tr class="nocodegen"><td>152<td>  ///
+<tr class="nocodegen"><td>153<td>  ///   Modes cmCTSx, cmCFSx, cmCFS8 are proprietary modes developed by Hagen
+<tr class="nocodegen"><td>154<td>  ///   Reddmann. These modes work like cmCBCx, cmCFBx, cmCFB8 but with double
+<tr class="nocodegen"><td>155<td>  ///   XOR'ing of the inputstream into the feedback register.
+<tr class="nocodegen"><td>156<td>  ///
+<tr class="nocodegen"><td>157<td>  ///   Mode cmECBx needs message padding to be a multiple of Cipher.BlockSize and
+<tr class="nocodegen"><td>158<td>  ///   should be used only in 1-byte Streamciphers.
+<tr class="nocodegen"><td>159<td>  ///
+<tr class="nocodegen"><td>160<td>  ///   Modes cmCFB8, cmCFBx, cmOFB8, cmOFBx, cmCFS8 and cmCFSx need no padding.
+<tr class="nocodegen"><td>161<td>  ///
+<tr class="nocodegen"><td>162<td>  ///   Modes cmCTSx, cmCBCx need no external padding, because internally the last
+<tr class="nocodegen"><td>163<td>  ///   truncated block is padded by cmCFS8 or cmCFB8. After padding these Modes
+<tr class="nocodegen"><td>164<td>  ///   cannot be used to process any more data. If needed to process chunks of
+<tr class="nocodegen"><td>165<td>  ///   data then each chunk must be algined to Cipher.BufferSize bytes.
+<tr class="nocodegen"><td>166<td>  ///
+<tr class="nocodegen"><td>167<td>  ///   Mode cmCTS3 is a proprietary mode developed by Frederik Winkelsdorf. It
+<tr class="nocodegen"><td>168<td>  ///   replaces the CFS8 padding of the truncated final block with a CFSx padding.
+<tr class="nocodegen"><td>169<td>  ///   Useful when converting projects that previously used the old DEC v3.0. It
+<tr class="nocodegen"><td>170<td>  ///   has the same restrictions for external padding and chunk processing as
+<tr class="nocodegen"><td>171<td>  ///   cmCTSx has.
+<tr class="nocodegen"><td>172<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>173<td>  TCipherMode = (
+<tr class="nocodegen"><td>174<td>    cmCTSx,   // double CBC, with CFS8 padding of truncated final block
+<tr class="nocodegen"><td>175<td>    cmCBCx,   // Cipher Block Chaining, with CFB8 padding of truncated final block
+<tr class="nocodegen"><td>176<td>    cmCFB8,   // 8bit Cipher Feedback mode
+<tr class="nocodegen"><td>177<td>    cmCFBx,   // CFB on Blocksize of Cipher
+<tr class="nocodegen"><td>178<td>    cmOFB8,   // 8bit Output Feedback mode
+<tr class="nocodegen"><td>179<td>    cmOFBx,   // OFB on Blocksize bytes
+<tr class="nocodegen"><td>180<td>    cmCFS8,   // 8Bit CFS, double CFB
+<tr class="nocodegen"><td>181<td>    cmCFSx,   // CFS on Blocksize bytes
+<tr class="nocodegen"><td>182<td>    cmECBx,   // Electronic Code Book
+<tr class="nocodegen"><td>183<td>    cmGCM     // Galois Counter Mode
+<tr class="nocodegen"><td>184<td>    {$IFDEF DEC3_CMCTS}
+<tr class="nocodegen"><td>185<td>    ,cmCTS3   // double CBC, with less secure padding of truncated final block
+<tr class="nocodegen"><td>186<td>              // for DEC 3.0 compatibility only (see DECOptions.inc)
+<tr class="nocodegen"><td>187<td>    {$ENDIF DEC3_CMCTS}
+<tr class="nocodegen"><td>188<td>  );
+<tr class="nocodegen"><td>189<td>
+<tr class="nocodegen"><td>190<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>191<td>  ///   Each cipher algorithm has to implement a Encode and a Decode method which
+<tr class="nocodegen"><td>192<td>  ///   has the same signature as this type. The CipherFormats get these
+<tr class="nocodegen"><td>193<td>  ///   encode/decode methods passed to do their work.
+<tr class="nocodegen"><td>194<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>195<td>  /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>196<td>  ///   Contains the data to be encoded or decoded
+<tr class="nocodegen"><td>197<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>198<td>  /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>199<td>  ///   Contains the data after encoding or decoding
+<tr class="nocodegen"><td>200<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>201<td>  /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>202<td>  ///   Number of bytes to encode or decode
+<tr class="nocodegen"><td>203<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>204<td>  TDECCipherCodeEvent = procedure(const Source; var Dest; DataSize: Integer) of object;
+<tr class="nocodegen"><td>205<td>
+<tr class="nocodegen"><td>206<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>207<td>  ///   Class type of the cipher base class, relevant for the class registration
+<tr class="nocodegen"><td>208<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>209<td>  TDECCipherClass = class of TDECCipher;
+<tr class="nocodegen"><td>210<td>
+<tr class="nocodegen"><td>211<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>212<td>  ///   Base class for all implemented cipher algorithms
+<tr class="nocodegen"><td>213<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>214<td>  /// &lt;remarks&gt;
+<tr class="nocodegen"><td>215<td>  ///   When adding new block ciphers do never directly inherit from this class!
+<tr class="nocodegen"><td>216<td>  ///   Inherit from TDECCipherFormats.
+<tr class="nocodegen"><td>217<td>  /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>218<td>  TDECCipher = class(TDECObject)
+<tr class="nocodegen"><td>219<td>  strict private
+<tr class="nocodegen"><td>220<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>221<td>    ///   This is the complete memory block containing FInitializationVector,
+<tr class="nocodegen"><td>222<td>    ///   FFeedback, FBuffer and FAdditionalBuffer
+<tr class="nocodegen"><td>223<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>224<td>    FData     : PByteArray;
+<tr class="nocodegen"><td>225<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>226<td>    ///   This is the size of FData in byte
+<tr class="nocodegen"><td>227<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>228<td>    FDataSize : Integer;
+<tr class="nocodegen"><td>229<td>  strict protected
+<tr class="nocodegen"><td>230<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>231<td>    ///   Padding mode used to concatenate/connect blocks in a block cipher
+<tr class="nocodegen"><td>232<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>233<td>    FMode     : TCipherMode;
+<tr class="nocodegen"><td>234<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>235<td>    ///   Mode used for filling up an incomplete last block in a block cipher
+<tr class="nocodegen"><td>236<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>237<td>    FFillMode : TBlockFillMode;
+<tr class="nocodegen"><td>238<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>239<td>    ///   Current processing state
+<tr class="nocodegen"><td>240<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>241<td>    FState: TCipherState;
+<tr class="nocodegen"><td>242<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>243<td>    ///   Size of the internally used processing buffer in byte
+<tr class="nocodegen"><td>244<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>245<td>    FBufferSize: Integer;
+<tr class="nocodegen"><td>246<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>247<td>    ///   At which position of the buffer are we currently operating?
+<tr class="nocodegen"><td>248<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>249<td>    FBufferIndex: Integer;
+<tr class="nocodegen"><td>250<td>
+<tr class="nocodegen"><td>251<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>252<td>    ///   Some algorithms, mostly the cipher mode ones, need a temporary buffer
+<tr class="nocodegen"><td>253<td>    ///   to work with. Some other methods like Done or Valid cipher need to pass
+<tr class="nocodegen"><td>254<td>    ///   a buffer as parameter as that is ecpected by the called method.
+<tr class="nocodegen"><td>255<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>256<td>    FBuffer: PByteArray;
+<tr class="nocodegen"><td>257<td>
+<tr class="nocodegen"><td>258<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>259<td>    ///   Initialization vector. When using cipher modes to derive a stream
+<tr class="nocodegen"><td>260<td>    ///   cipher from a block cipher algorithm some data from each encrypted block
+<tr class="nocodegen"><td>261<td>    ///   is fed into the encryption of the next block. For the first block there
+<tr class="nocodegen"><td>262<td>    ///   is no such encrypted data yet, so this initialization vector fills this
+<tr class="nocodegen"><td>263<td>    ///   &quot;gap&quot;.
+<tr class="nocodegen"><td>264<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>265<td>    FInitializationVector: PByteArray;
+<tr class="nocodegen"><td>266<td>
+<tr class="nocodegen"><td>267<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>268<td>    ///   Size of the initialization vector in byte. Required for algorithms
+<tr class="nocodegen"><td>269<td>    ///   like GCM.
+<tr class="nocodegen"><td>270<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>271<td>    FInitVectorSize: Integer;
+<tr class="nocodegen"><td>272<td>
+<tr class="nocodegen"><td>273<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>274<td>    ///   Cipher modes are used to derive a stream cipher from block cipher
+<tr class="nocodegen"><td>275<td>    ///   algorithms. For this something from the last entrypted block (or for
+<tr class="nocodegen"><td>276<td>    ///   the first block from the vector) is used in the encryption of the next
+<tr class="nocodegen"><td>277<td>    ///   block. It may be XORed with the next block cipher text for isntance.
+<tr class="nocodegen"><td>278<td>    ///   That data &quot;going into the next block encryption&quot; is this feedback array
+<tr class="nocodegen"><td>279<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>280<td>    FFeedback: PByteArray;
+<tr class="nocodegen"><td>281<td>
+<tr class="nocodegen"><td>282<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>283<td>    ///   Size of FAdditionalBuffer in Byte
+<tr class="nocodegen"><td>284<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>285<td>    FAdditionalBufferSize: Integer;
+<tr class="nocodegen"><td>286<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>287<td>    ///   A buffer some of the cipher algorithms need to operate on. It is
+<tr class="nocodegen"><td>288<td>    ///   some part of FBuffer like FInitializationVector and FFeedback as well.
+<tr class="nocodegen"><td>289<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>290<td>    FAdditionalBuffer: Pointer;
+<tr class="nocodegen"><td>291<td>
+<tr class="nocodegen"><td>292<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>293<td>    ///   If a user does not specify an init vector (IV) during key setup
+<tr class="nocodegen"><td>294<td>    ///   (IV length = 0) the init method generates an IV by encrypting the
+<tr class="nocodegen"><td>295<td>    ///   complete memory reserved for IV. Within this memory block is the memory
+<tr class="nocodegen"><td>296<td>    ///   FAdditionalBuffer points to as well, and for some algorithms this part
+<tr class="nocodegen"><td>297<td>    ///   of the memory may not be altered during initialization so it is
+<tr class="nocodegen"><td>298<td>    ///   backupped to this memory location and restored after the IV got encrypted.
+<tr class="nocodegen"><td>299<td>    ///   In DoDone it needs to be restored as well to prevent any unwanted
+<tr class="nocodegen"><td>300<td>    ///   leftovers which might pose a security issue.
+<tr class="nocodegen"><td>301<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>302<td>    FAdditionalBufferBackup: Pointer;
+<tr class="nocodegen"><td>303<td>
+<tr class="nocodegen"><td>304<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>305<td>    ///   Checks whether the state machine is in one of the states specified as
+<tr class="nocodegen"><td>306<td>    ///   parameter. If not a EDECCipherException will be raised.
+<tr class="nocodegen"><td>307<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>308<td>    /// &lt;param name=&quot;States&quot;&gt;
+<tr class="nocodegen"><td>309<td>    ///   List of states the state machine should be at currently
+<tr class="nocodegen"><td>310<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>311<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>312<td>    ///   Exception raised if the state machine is not in one of the states
+<tr class="nocodegen"><td>313<td>    ///   specified by the &lt;c&gt;States&lt;/c&gt; parameter.
+<tr class="nocodegen"><td>314<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>315<td>    procedure CheckState(States: TCipherStates);
+<tr class="nocodegen"><td>316<td>
+<tr class="nocodegen"><td>317<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>318<td>    ///   Initialize the key, based on the key passed in. This is called before
+<tr class="nocodegen"><td>319<td>    ///   OnAfterInitVectorInitialization is called.
+<tr class="nocodegen"><td>320<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>321<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>322<td>    ///   Encryption/Decryption key to be used
+<tr class="nocodegen"><td>323<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>324<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>325<td>    ///   Size of the key passed in bytes.
+<tr class="nocodegen"><td>326<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>327<td>    procedure DoInit(const Key; Size: Integer); virtual; abstract;
+<tr class="nocodegen"><td>328<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>329<td>    ///   Allows to run code after the initialization vector has been initialized
+<tr class="nocodegen"><td>330<td>    ///   inside the Init call, which is after DoInit has been called.
+<tr class="nocodegen"><td>331<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>332<td>    /// &lt;param name=&quot;OriginalInitVector&quot;&gt;
+<tr class="nocodegen"><td>333<td>    ///   Value of the init vector as originally passed to the Init call without
+<tr class="nocodegen"><td>334<td>    ///   any initialization steps done to/on it
+<tr class="nocodegen"><td>335<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>336<td>    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); virtual; abstract;
+<tr class="nocodegen"><td>337<td>
+<tr class="nocodegen"><td>338<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>339<td>    ///   This abstract method needs to be overwritten by each concrete encryption
+<tr class="nocodegen"><td>340<td>    ///   algorithm as this is the routine used internally to encrypt a single
+<tr class="nocodegen"><td>341<td>    ///   block of data.
+<tr class="nocodegen"><td>342<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>343<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>344<td>    ///   Data to be encrypted
+<tr class="nocodegen"><td>345<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>346<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>347<td>    ///   In this memory the encrypted result will be written
+<tr class="nocodegen"><td>348<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>349<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>350<td>    ///   Size of source in byte
+<tr class="nocodegen"><td>351<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>352<td>    procedure DoEncode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
+<tr class="nocodegen"><td>353<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>354<td>    ///   This abstract method needs to be overwritten by each concrete encryption
+<tr class="nocodegen"><td>355<td>    ///   algorithm as this is the routine used internally to decrypt a single
+<tr class="nocodegen"><td>356<td>    ///   block of data.
+<tr class="nocodegen"><td>357<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>358<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>359<td>    ///   Data to be decrypted
+<tr class="nocodegen"><td>360<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>361<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>362<td>    ///   In this memory the decrypted result will be written
+<tr class="nocodegen"><td>363<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>364<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>365<td>    ///   Size of source in byte
+<tr class="nocodegen"><td>366<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>367<td>    procedure DoDecode(Source, Dest: Pointer; Size: Integer); virtual; abstract;
+<tr class="nocodegen"><td>368<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>369<td>    ///   Securely fills the processing buffer with zeroes to make stealing data
+<tr class="nocodegen"><td>370<td>    ///   from memory harder.
+<tr class="nocodegen"><td>371<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>372<td>    procedure SecureErase; virtual;
+<tr class="nocodegen"><td>373<td>
+<tr class="nocodegen"><td>374<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>375<td>    ///   Returns the currently set cipher block mode, means how blocks are
+<tr class="nocodegen"><td>376<td>    ///   linked to each other in order to avoid certain attacks.
+<tr class="nocodegen"><td>377<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>378<td>    function GetMode: TCipherMode;
+<tr class="nocodegen"><td>379<td>
+<tr class="nocodegen"><td>380<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>381<td>    ///   Sets the cipher mode, means how each block is being linked with his
+<tr class="nocodegen"><td>382<td>    ///   predecessor to avoid certain attacks
+<tr class="nocodegen"><td>383<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>384<td>    procedure SetMode(Value: TCipherMode);
+<tr class="nocodegen"><td>385<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>386<td>    ///   When setting a mode it might need to be initialized and that can
+<tr class="nocodegen"><td>387<td>    ///   usually only be done in a child class.
+<tr class="nocodegen"><td>388<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>389<td>    procedure InitMode; virtual; abstract;
+<tr class="nocodegen"><td>390<td>  public
+<tr class="nocodegen"><td>391<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>392<td>    ///   List of registered DEC classes. Key is the Identity of the class.
+<tr class="nocodegen"><td>393<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>394<td>    class var ClassList : TDECClassList;
+<tr class="nocodegen"><td>395<td>
+<tr class="nocodegen"><td>396<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>397<td>    ///   Tries to find a class type by its name
+<tr class="nocodegen"><td>398<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>399<td>    /// &lt;param name=&quot;Name&quot;&gt;
+<tr class="nocodegen"><td>400<td>    ///   Name to look for in the list
+<tr class="nocodegen"><td>401<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>402<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>403<td>    ///   Returns the class type if found. if it could not be found a
+<tr class="nocodegen"><td>404<td>    ///   EDECClassNotRegisteredException will be thrown
+<tr class="nocodegen"><td>405<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>406<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>407<td>    ///   Exception raised if the class specified by &lt;c&gt;Name&lt;/c&gt; is not found
+<tr class="nocodegen"><td>408<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>409<td>    class function ClassByName(const Name: string): TDECCipherClass;
+<tr class="nocodegen"><td>410<td>
+<tr class="nocodegen"><td>411<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>412<td>    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+<tr class="nocodegen"><td>413<td>    ///   Useful for file headers, so they can easily encode numerically which
+<tr class="nocodegen"><td>414<td>    ///   cipher class was being used.
+<tr class="nocodegen"><td>415<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>416<td>    /// &lt;param name=&quot;Identity&quot;&gt;
+<tr class="nocodegen"><td>417<td>    ///   Identity to look for
+<tr class="nocodegen"><td>418<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>419<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>420<td>    ///   Returns the class type of the class with the specified identity value
+<tr class="nocodegen"><td>421<td>    ///   or throws an EDECClassNotRegisteredException exception if no class
+<tr class="nocodegen"><td>422<td>    ///   with the given identity has been found
+<tr class="nocodegen"><td>423<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>424<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>425<td>    ///   Exception raised if the class specified by &lt;c&gt;Identity&lt;/c&gt; is not found
+<tr class="nocodegen"><td>426<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>427<td>    class function ClassByIdentity(Identity: Int64): TDECCipherClass;
+<tr class="nocodegen"><td>428<td>
+<tr class="nocodegen"><td>429<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>430<td>    ///   Provides meta data about the cipher algorithm used like key size.
+<tr class="nocodegen"><td>431<td>    ///   To be overidden in the concrete cipher classes.
+<tr class="nocodegen"><td>432<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>433<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>434<td>    ///   C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>435<td>    ///   marked 'abstract'. Calling this version of the method will lead to an
+<tr class="nocodegen"><td>436<td>    ///   EDECAbstractError
+<tr class="nocodegen"><td>437<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>438<td>    class function Context: TCipherContext; virtual;
+<tr class="nocodegen"><td>439<td>
+<tr class="nocodegen"><td>440<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>441<td>    ///   Initializes the instance. Relies in parts on information given by the
+<tr class="nocodegen"><td>442<td>    ///   Context class function.
+<tr class="nocodegen"><td>443<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>444<td>    constructor Create; override;
+<tr class="nocodegen"><td>445<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>446<td>    ///   Frees internal structures and where necessary does so in a save way so
+<tr class="nocodegen"><td>447<td>    ///   that data in those structures cannot be &quot;stolen&quot;.
+<tr class="nocodegen"><td>448<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>449<td>    destructor Destroy; override;
+<tr class="nocodegen"><td>450<td>
+<tr class="nocodegen"><td>451<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>452<td>    ///   Provides information whether the selected block concatenation mode
+<tr class="nocodegen"><td>453<td>    ///   provides authentication functionality or not.
+<tr class="nocodegen"><td>454<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>455<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>456<td>    ///   true if the selected block mode is one providing authentication features
+<tr class="nocodegen"><td>457<td>    ///   as well
+<tr class="nocodegen"><td>458<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>459<td>    function IsAuthenticated: Boolean;
+<tr class="nocodegen"><td>460<td>
+<tr class="nocodegen"><td>461<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>462<td>    ///   Initializes the cipher with the necessary encryption/decryption key
+<tr class="nocodegen"><td>463<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>464<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>465<td>    ///   Encryption/decryption key. Recommended/required key length is dependant
+<tr class="nocodegen"><td>466<td>    ///   on the concrete algorithm.
+<tr class="nocodegen"><td>467<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>468<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>469<td>    ///   Size of the key in bytes
+<tr class="nocodegen"><td>470<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>471<td>    /// &lt;param name=&quot;IVector&quot;&gt;
+<tr class="nocodegen"><td>472<td>    ///   Initialization vector. This contains the values the first block of
+<tr class="nocodegen"><td>473<td>    ///   data to be processed is linked with. This is being done the same way
+<tr class="nocodegen"><td>474<td>    ///   as the 2nd block of the data to be processed will be linked with the
+<tr class="nocodegen"><td>475<td>    ///   first block and so on and this is dependant on the cypher mode set via
+<tr class="nocodegen"><td>476<td>    ///   Mode property
+<tr class="nocodegen"><td>477<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>478<td>    /// &lt;param name=&quot;IVectorSize&quot;&gt;
+<tr class="nocodegen"><td>479<td>    ///   Size of the initialization vector in bytes
+<tr class="nocodegen"><td>480<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>481<td>    /// &lt;param name=&quot;IFiller&quot;&gt;
+<tr class="nocodegen"><td>482<td>    ///   optional parameter defining the value with which the last block will
+<tr class="nocodegen"><td>483<td>    ///   be filled up if the size of the data to be processed cannot be divided
+<tr class="nocodegen"><td>484<td>    ///   by block size without reminder. Means: if the last block is not
+<tr class="nocodegen"><td>485<td>    ///   completely filled with data.
+<tr class="nocodegen"><td>486<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>487<td>    procedure Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte = $FF); overload;
+<tr class="nocodegen"><td>488<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>489<td>    ///   Initializes the cipher with the necessary encryption/decryption key
+<tr class="nocodegen"><td>490<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>491<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>492<td>    ///   Encryption/decryption key. Recommended/required key length is dependant
+<tr class="nocodegen"><td>493<td>    ///   on the concrete algorithm.
+<tr class="nocodegen"><td>494<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>495<td>    /// &lt;param name=&quot;IVector&quot;&gt;
+<tr class="nocodegen"><td>496<td>    ///   Initialization vector. This contains the values the first block of
+<tr class="nocodegen"><td>497<td>    ///   data to be processed is linked with. This is being done the same way
+<tr class="nocodegen"><td>498<td>    ///   as the 2nd block of the data to be processed will be linked with the
+<tr class="nocodegen"><td>499<td>    ///   first block and so on and this is dependant on the cypher mode set via
+<tr class="nocodegen"><td>500<td>    ///   Mode property
+<tr class="nocodegen"><td>501<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>502<td>    /// &lt;param name=&quot;IFiller&quot;&gt;
+<tr class="nocodegen"><td>503<td>    ///   optional parameter defining the value with which the last block will
+<tr class="nocodegen"><td>504<td>    ///   be filled up if the size of the data to be processed cannot be divided
+<tr class="nocodegen"><td>505<td>    ///   by block size without reminder. Means: if the last block is not
+<tr class="nocodegen"><td>506<td>    ///   completely filled with data.
+<tr class="nocodegen"><td>507<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>508<td>    procedure Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF); overload;
+<tr class="nocodegen"><td>509<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>510<td>    ///   Initializes the cipher with the necessary encryption/decryption key
+<tr class="nocodegen"><td>511<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>512<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>513<td>    ///   Encryption/decryption key. Recommended/required key length is dependant
+<tr class="nocodegen"><td>514<td>    ///   on the concrete algorithm.
+<tr class="nocodegen"><td>515<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>516<td>    /// &lt;param name=&quot;IVector&quot;&gt;
+<tr class="nocodegen"><td>517<td>    ///   Initialization vector. This contains the values the first block of
+<tr class="nocodegen"><td>518<td>    ///   data to be processed is linked with. This is being done the same way
+<tr class="nocodegen"><td>519<td>    ///   as the 2nd block of the data to be processed will be linked with the
+<tr class="nocodegen"><td>520<td>    ///   first block and so on and this is dependant on the cypher mode set via
+<tr class="nocodegen"><td>521<td>    ///   Mode property
+<tr class="nocodegen"><td>522<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>523<td>    /// &lt;param name=&quot;IFiller&quot;&gt;
+<tr class="nocodegen"><td>524<td>    ///   optional parameter defining the value with which the last block will
+<tr class="nocodegen"><td>525<td>    ///   be filled up if the size of the data to be processed cannot be divided
+<tr class="nocodegen"><td>526<td>    ///   by block size without reminder. Means: if the last block is not
+<tr class="nocodegen"><td>527<td>    ///   completely filled with data.
+<tr class="nocodegen"><td>528<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>529<td>    procedure Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF); overload;
+<tr class="nocodegen"><td>530<td>    {$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>531<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>532<td>    ///   Initializes the cipher with the necessary encryption/decryption key.
+<tr class="nocodegen"><td>533<td>    ///   Only for use with the classic desktop compilers.
+<tr class="nocodegen"><td>534<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>535<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>536<td>    ///   Encryption/decryption key. Recommended/required key length is dependant
+<tr class="nocodegen"><td>537<td>    ///   on the concrete algorithm.
+<tr class="nocodegen"><td>538<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>539<td>    /// &lt;param name=&quot;IVector&quot;&gt;
+<tr class="nocodegen"><td>540<td>    ///   Initialization vector. This contains the values the first block of
+<tr class="nocodegen"><td>541<td>    ///   data to be processed is linked with. This is being done the same way
+<tr class="nocodegen"><td>542<td>    ///   as the 2nd block of the data to be processed will be linked with the
+<tr class="nocodegen"><td>543<td>    ///   first block and so on and this is dependant on the cypher mode set via
+<tr class="nocodegen"><td>544<td>    ///   Mode property
+<tr class="nocodegen"><td>545<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>546<td>    /// &lt;param name=&quot;IFiller&quot;&gt;
+<tr class="nocodegen"><td>547<td>    ///   optional parameter defining the value with which the last block will
+<tr class="nocodegen"><td>548<td>    ///   be filled up if the size of the data to be processed cannot be divided
+<tr class="nocodegen"><td>549<td>    ///   by block size without reminder. Means: if the last block is not
+<tr class="nocodegen"><td>550<td>    ///   completely filled with data.
+<tr class="nocodegen"><td>551<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>552<td>    procedure Init(const Key: AnsiString; const IVector: AnsiString = ''; IFiller: Byte = $FF); overload;
+<tr class="nocodegen"><td>553<td>    {$ENDIF}
+<tr class="nocodegen"><td>554<td>    {$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>555<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>556<td>    ///   Initializes the cipher with the necessary encryption/decryption key.
+<tr class="nocodegen"><td>557<td>    ///   Only for use with the classic desktop compilers.
+<tr class="nocodegen"><td>558<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>559<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>560<td>    ///   Encryption/decryption key. Recommended/required key length is dependant
+<tr class="nocodegen"><td>561<td>    ///   on the concrete algorithm.
+<tr class="nocodegen"><td>562<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>563<td>    /// &lt;param name=&quot;IVector&quot;&gt;
+<tr class="nocodegen"><td>564<td>    ///   Initialization vector. This contains the values the first block of
+<tr class="nocodegen"><td>565<td>    ///   data to be processed is linked with. This is being done the same way
+<tr class="nocodegen"><td>566<td>    ///   as the 2nd block of the data to be processed will be linked with the
+<tr class="nocodegen"><td>567<td>    ///   first block and so on and this is dependant on the cypher mode set via
+<tr class="nocodegen"><td>568<td>    ///   Mode property
+<tr class="nocodegen"><td>569<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>570<td>    /// &lt;param name=&quot;IFiller&quot;&gt;
+<tr class="nocodegen"><td>571<td>    ///   optional parameter defining the value with which the last block will
+<tr class="nocodegen"><td>572<td>    ///   be filled up if the size of the data to be processed cannot be divided
+<tr class="nocodegen"><td>573<td>    ///   by block size without reminder. Means: if the last block is not
+<tr class="nocodegen"><td>574<td>    ///   completely filled with data.
+<tr class="nocodegen"><td>575<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>576<td>    procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF); overload;
+<tr class="nocodegen"><td>577<td>    {$ENDIF}
+<tr class="nocodegen"><td>578<td>
+<tr class="nocodegen"><td>579<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>580<td>    ///   Properly finishes the cryptographic operation. It needs to be called
+<tr class="nocodegen"><td>581<td>    ///   at the end of encrypting or decrypting data, otherwise the last block
+<tr class="nocodegen"><td>582<td>    ///   or last byte of the data will not be properly processed.
+<tr class="nocodegen"><td>583<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>584<td>    procedure Done; virtual;
+<tr class="nocodegen"><td>585<td>
+<tr class="nocodegen"><td>586<td>    // Encoding / Decoding Routines
+<tr class="nocodegen"><td>587<td>    // Do not add further methods of that kind here! If needed add them to
+<tr class="nocodegen"><td>588<td>    // TDECFormattedCipher in DECCipherFormats or inherit from that one.
+<tr class="nocodegen"><td>589<td>
+<tr class="nocodegen"><td>590<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>591<td>    ///   Encrypts the contents of a RawByteString. This method is deprecated
+<tr class="nocodegen"><td>592<td>    ///   and should be replaced by a variant expecting TBytes as source in
+<tr class="nocodegen"><td>593<td>    ///   order to not support mistreating strings as binary buffers.
+<tr class="nocodegen"><td>594<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>595<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>596<td>    ///   This is the direct successor of the EncodeBinary method from DEC 5.2.
+<tr class="nocodegen"><td>597<td>    ///   When block chaining mode ECBx is used
+<tr class="nocodegen"><td>598<td>    ///   (not recommended!), the size of the data passed via this parameter
+<tr class="nocodegen"><td>599<td>    ///   needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>600<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>601<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>602<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>603<td>    ///   The data to be encrypted
+<tr class="nocodegen"><td>604<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>605<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>606<td>    ///   Optional parameter. Here a formatting method can be passed. The
+<tr class="nocodegen"><td>607<td>    ///   resulting encrypted data will be formatted with this function, if one
+<tr class="nocodegen"><td>608<td>    ///   has been passed. Examples are hex or base 64 formatting.
+<tr class="nocodegen"><td>609<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>610<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>611<td>    ///   Encrypted data. Init must have been called previously.
+<tr class="nocodegen"><td>612<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>613<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>614<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>615<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>616<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>617<td>    function EncodeRawByteString(const Source: RawByteString;
+<tr class="nocodegen"><td>618<td>                                 Format: TDECFormatClass = nil): RawByteString;
+<tr class="nocodegen"><td>619<td>                                 deprecated; // please use EncodeBytes functions now
+<tr class="nocodegen"><td>620<td>                                             // or TCipherFormats.EncodeStringToString
+<tr class="nocodegen"><td>621<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>622<td>    ///   Decrypts the contents of a RawByteString. This method is deprecated
+<tr class="nocodegen"><td>623<td>    ///   and should be replaced by a variant expecting TBytes as source in
+<tr class="nocodegen"><td>624<td>    ///   order to not support mistreating strings as binary buffers.
+<tr class="nocodegen"><td>625<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>626<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>627<td>    ///   This is the direct successor of the DecodeBinary method from DEC 5.2
+<tr class="nocodegen"><td>628<td>    ///   When block chaining mode ECBx is used
+<tr class="nocodegen"><td>629<td>    ///   (not recommended!), the size of the data passed via this parameter
+<tr class="nocodegen"><td>630<td>    ///   needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>631<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>632<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>633<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>634<td>    ///   The data to be decrypted
+<tr class="nocodegen"><td>635<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>636<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>637<td>    ///   Optional parameter. Here a formatting method can be passed. The
+<tr class="nocodegen"><td>638<td>    ///   data to be decrypted will be formatted with this function, if one
+<tr class="nocodegen"><td>639<td>    ///   has been passed. Examples are hex or base 64 formatting.
+<tr class="nocodegen"><td>640<td>    ///   This is used for removing a formatting applied by the EncodeRawByteString
+<tr class="nocodegen"><td>641<td>    ///   method.
+<tr class="nocodegen"><td>642<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>643<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>644<td>    ///   Decrypted data. Init must have been called previously.
+<tr class="nocodegen"><td>645<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>646<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>647<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>648<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>649<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>650<td>    function DecodeRawByteString(const Source: RawByteString;
+<tr class="nocodegen"><td>651<td>                                 Format: TDECFormatClass = nil): RawByteString; deprecated; // please use DecodeBytes functions now
+<tr class="nocodegen"><td>652<td>
+<tr class="nocodegen"><td>653<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>654<td>    ///   Encrypts the contents of a ByteArray.
+<tr class="nocodegen"><td>655<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>656<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>657<td>    ///   The data to be encrypted. When block chaining mode ECBx is used
+<tr class="nocodegen"><td>658<td>    ///   (not recommended!), the size of the data passed via this parameter
+<tr class="nocodegen"><td>659<td>    ///   needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>660<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>661<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>662<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>663<td>    ///   Optional parameter. Here a formatting method can be passed. The
+<tr class="nocodegen"><td>664<td>    ///   resulting encrypted data will be formatted with this function, if one
+<tr class="nocodegen"><td>665<td>    ///   has been passed. Examples are hex or base 64 formatting.
+<tr class="nocodegen"><td>666<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>667<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>668<td>    ///   Encrypted data. Init must have been called previously.
+<tr class="nocodegen"><td>669<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>670<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>671<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>672<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>673<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>674<td>    function EncodeBytes(const Source: TBytes; Format: TDECFormatClass = nil): TBytes;
+<tr class="nocodegen"><td>675<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>676<td>    ///   Decrypts the contents of a ByteArray.
+<tr class="nocodegen"><td>677<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>678<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>679<td>    ///   The data to be decrypted. When block chaining mode ECBx is used
+<tr class="nocodegen"><td>680<td>    ///   (not recommended!), the size of the data passed via this parameter
+<tr class="nocodegen"><td>681<td>    ///   needs to be a multiple of the block size of the algorithm used,
+<tr class="nocodegen"><td>682<td>    ///   otherwise a EDECCipherException exception will be raised!
+<tr class="nocodegen"><td>683<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>684<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>685<td>    ///   Optional parameter. Here a formatting method can be passed. The
+<tr class="nocodegen"><td>686<td>    ///   data to be decrypted will be formatted with this function, if one
+<tr class="nocodegen"><td>687<td>    ///   has been passed. Examples are hex or base 64 formatting.
+<tr class="nocodegen"><td>688<td>    ///   This is used for removing a formatting applied by the EncodeRawByteString
+<tr class="nocodegen"><td>689<td>    ///   method.
+<tr class="nocodegen"><td>690<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>691<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>692<td>    ///   Decrypted data. Init must have been called previously.
+<tr class="nocodegen"><td>693<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>694<td>    /// &lt;exception cref=&quot;EDECCipherException&quot;&gt;
+<tr class="nocodegen"><td>695<td>    ///   Exception raised if the length of the data passed as &lt;c&gt;Source&lt;/c&gt;
+<tr class="nocodegen"><td>696<td>    ///   is not a multiple of the algorithm's block size.
+<tr class="nocodegen"><td>697<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>698<td>    function DecodeBytes(const Source: TBytes; Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>699<td>
+<tr class="nocodegen"><td>700<td>    // CalcMACBytes deferred since the current implementation would neither be
+<tr class="nocodegen"><td>701<td>    // performant (that would require another TFormatBase.Encode variant from
+<tr class="nocodegen"><td>702<td>    // pointer to TBytes and that would require a new method name as overloads
+<tr class="nocodegen"><td>703<td>    // may not differ in return values only and it would require a lot of unit
+<tr class="nocodegen"><td>704<td>    // tests to get implemented. Deferred in particular also due to not yet
+<tr class="nocodegen"><td>705<td>    // really understanding the purpose of CalcMAC
+<tr class="nocodegen"><td>706<td>//    function CalcMACByte(Format: TDECFormatClass = nil): TBytes; overload;
+<tr class="nocodegen"><td>707<td>
+<tr class="nocodegen"><td>708<td>    // Deprecated directive commented out, as replacement CalcMACByte has not
+<tr class="nocodegen"><td>709<td>    // been implemented yet, see remark above. Use case for CalcMAC is not clear
+<tr class="nocodegen"><td>710<td>    // yet either.
+<tr class="nocodegen"><td>711<td>    function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; //deprecated; // please use the TBytes based overload;
+<tr class="nocodegen"><td>712<td>
+<tr class="nocodegen"><td>713<td>    // properties
+<tr class="nocodegen"><td>714<td>
+<tr class="nocodegen"><td>715<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>716<td>    ///   Provides the size of the initialization vector in bytes.
+<tr class="nocodegen"><td>717<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>718<td>    property InitVectorSize: Integer
+<tr class="nocodegen"><td>719<td>      read   FBufferSize;
+<tr class="nocodegen"><td>720<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>721<td>    ///   Provides access to the contents of the initialization vector
+<tr class="nocodegen"><td>722<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>723<td>    property InitVector: PByteArray
+<tr class="nocodegen"><td>724<td>      read   FInitializationVector;
+<tr class="nocodegen"><td>725<td>
+<tr class="nocodegen"><td>726<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>727<td>    ///   Cipher modes are used to derive a stream cipher from block cipher
+<tr class="nocodegen"><td>728<td>    ///   algorithms. For this something from the last entrypted block (or for
+<tr class="nocodegen"><td>729<td>    ///   the first block from the vector) is used in the encryption of the next
+<tr class="nocodegen"><td>730<td>    ///   block. It may be XORed with the next block cipher text for instance.
+<tr class="nocodegen"><td>731<td>    ///   That data &quot;going into the next block encryption&quot; is stored in this
+<tr class="nocodegen"><td>732<td>    ///   feedback array. The size usually depends on the block size of the
+<tr class="nocodegen"><td>733<td>    ///   cipher algorithm.
+<tr class="nocodegen"><td>734<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>735<td>    property Feedback: PByteArray
+<tr class="nocodegen"><td>736<td>      read   FFeedback;
+<tr class="nocodegen"><td>737<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>738<td>    ///   Allows to query the current internal processing state
+<tr class="nocodegen"><td>739<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>740<td>    property State: TCipherState
+<tr class="nocodegen"><td>741<td>      read   FState;
+<tr class="nocodegen"><td>742<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>743<td>    ///   Mode used for padding data to be encrypted/decrypted. See TCipherMode.
+<tr class="nocodegen"><td>744<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>745<td>    property Mode: TCipherMode
+<tr class="nocodegen"><td>746<td>      read   GetMode
+<tr class="nocodegen"><td>747<td>      write  SetMode;
+<tr class="nocodegen"><td>748<td>
+<tr class="nocodegen"><td>749<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>750<td>    ///   Mode used for filling up an incomplete last block in a block cipher
+<tr class="nocodegen"><td>751<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>752<td>    property FillMode: TBlockFillMode
+<tr class="nocodegen"><td>753<td>      read   FFillMode
+<tr class="nocodegen"><td>754<td>      write  FFillMode;
+<tr class="nocodegen"><td>755<td>  end;
+<tr class="nocodegen"><td>756<td>
+<tr class="nocodegen"><td>757<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>758<td>///   Returns the passed cipher class type if it is not nil. Otherwise the
+<tr class="nocodegen"><td>759<td>///   class type class set per SetDefaultCipherClass is being returned. If using
+<tr class="nocodegen"><td>760<td>///   the DECCiphers unit that one registers TCipher_Null in the initialization
+<tr class="nocodegen"><td>761<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>762<td>/// &lt;param name=&quot;CipherClass&quot;&gt;
+<tr class="nocodegen"><td>763<td>///   Class type of a cipher class like TCipher_Blowfish or nil, if no
+<tr class="nocodegen"><td>764<td>///   encryption/decryption is desired.
+<tr class="nocodegen"><td>765<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>766<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>767<td>///   Passed class type or defined default cipher class type, depending on
+<tr class="nocodegen"><td>768<td>///   CipherClass parameter value.
+<tr class="nocodegen"><td>769<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>770<td>function ValidCipher(CipherClass: TDECCipherClass = nil): TDECCipherClass;
+<tr class="nocodegen"><td>771<td>
+<tr class="nocodegen"><td>772<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>773<td>///   Defines which cipher class to return by ValidCipher if passing nil to that
+<tr class="nocodegen"><td>774<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>775<td>/// &lt;param name=&quot;CipherClass&quot;&gt;
+<tr class="nocodegen"><td>776<td>///   Class type of a cipher class to return by ValidCipher if passing nil to
+<tr class="nocodegen"><td>777<td>///   that one. This parameter should not be nil!
+<tr class="nocodegen"><td>778<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>779<td>procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
+<tr class="nocodegen"><td>780<td>
+<tr class="nocodegen"><td>781<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>782<td>///   Provides information whether a certain block concatenation mode
+<tr class="nocodegen"><td>783<td>///   provides authentication functionality or not.
+<tr class="nocodegen"><td>784<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>785<td>/// &lt;param name=&quot;BlockMode&quot;&gt;
+<tr class="nocodegen"><td>786<td>///   Block mode to check fo authentication features
+<tr class="nocodegen"><td>787<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>788<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>789<td>///   true if the selected block mode is one providing authentication features
+<tr class="nocodegen"><td>790<td>///   as well
+<tr class="nocodegen"><td>791<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>792<td>function IsAuthenticatedBlockMode(BlockMode: TCipherMode): Boolean;
+<tr class="nocodegen"><td>793<td>
+<tr class="nocodegen"><td>794<td>implementation
+<tr class="nocodegen"><td>795<td>
+<tr class="nocodegen"><td>796<td>uses
+<tr class="nocodegen"><td>797<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>798<td>  TypInfo,
+<tr class="nocodegen"><td>799<td>  {$ELSE}
+<tr class="nocodegen"><td>800<td>  System.TypInfo,
+<tr class="nocodegen"><td>801<td>  {$ENDIF}
+<tr class="nocodegen"><td>802<td>  DECTypes, DECUtil;
+<tr class="nocodegen"><td>803<td>
+<tr class="nocodegen"><td>804<td>{$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
+<tr class="nocodegen"><td>805<td>{$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
+<tr class="nocodegen"><td>806<td>
+<tr class="nocodegen"><td>807<td>resourcestring
+<tr class="nocodegen"><td>808<td>  sAlreadyPadded        = 'Cipher has already been padded, cannot process message';
+<tr class="nocodegen"><td>809<td>  sInvalidState         = 'Cipher is not in valid state for this action';
+<tr class="nocodegen"><td>810<td>  sNoKeyMaterialGiven   = 'No Keymaterial given (Security Issue)';
+<tr class="nocodegen"><td>811<td>  sKeyMaterialTooLarge  = 'Keymaterial is too large for use (Security Issue)';
+<tr class="nocodegen"><td>812<td>  sIVMaterialTooLarge   = 'Initvector is too large for use (Security Issue)';
+<tr class="nocodegen"><td>813<td>  sInvalidMACMode       = 'Invalid Cipher mode to compute MAC';
+<tr class="nocodegen"><td>814<td>  sCipherNoDefault      = 'No default cipher has been registered';
+<tr class="nocodegen"><td>815<td>
+<tr class="nocodegen"><td>816<td>var
+<tr class="nocodegen"><td>817<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>818<td>  ///   Cipher class returned by ValidCipher if nil is passed as parameter to it
+<tr class="nocodegen"><td>819<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>820<td>  FDefaultCipherClass: TDECCipherClass = nil;
+<tr class="nocodegen"><td>821<td>
+<tr class="nocodegen"><td>822<td>function ValidCipher(CipherClass: TDECCipherClass): TDECCipherClass;
+<tr class="covered"><td>823<td>begin
+<tr class="covered"><td>824<td>  if CipherClass &lt;&gt; nil then
+<tr class="covered"><td>825<td>    Result := CipherClass
+<tr class="nocodegen"><td>826<td>  else
+<tr class="covered"><td>827<td>    Result := FDefaultCipherClass;
+<tr class="nocodegen"><td>828<td>
+<tr class="covered"><td>829<td>  if Result = nil then
+<tr class="notcovered"><td>830<td>    raise EDECCipherException.CreateRes(@sCipherNoDefault);
+<tr class="covered"><td>831<td>end;
+<tr class="nocodegen"><td>832<td>
+<tr class="nocodegen"><td>833<td>procedure SetDefaultCipherClass(CipherClass: TDECCipherClass);
+<tr class="covered"><td>834<td>begin
+<tr class="covered"><td>835<td>  Assert(Assigned(CipherClass), 'Do not set a nil default cipher class!');
+<tr class="nocodegen"><td>836<td>
+<tr class="covered"><td>837<td>  FDefaultCipherClass := CipherClass;
+<tr class="covered"><td>838<td>end;
+<tr class="nocodegen"><td>839<td>
+<tr class="nocodegen"><td>840<td>function IsAuthenticatedBlockMode(BlockMode: TCipherMode): Boolean;
+<tr class="covered"><td>841<td>begin
+<tr class="covered"><td>842<td>  Result := BlockMode = cmGCM;
+<tr class="covered"><td>843<td>end;
+<tr class="nocodegen"><td>844<td>
+<tr class="nocodegen"><td>845<td>{ TDECCipher }
+<tr class="nocodegen"><td>846<td>
+<tr class="nocodegen"><td>847<td>constructor TDECCipher.Create;
+<tr class="nocodegen"><td>848<td>var
+<tr class="nocodegen"><td>849<td>  MustAdditionalBufferSave: Boolean;
+<tr class="covered"><td>850<td>begin
+<tr class="covered"><td>851<td>  inherited Create;
+<tr class="nocodegen"><td>852<td>
+<tr class="covered"><td>853<td>  FBufferSize              := Context.BufferSize;
+<tr class="covered"><td>854<td>  FAdditionalBufferSize    := Context.AdditionalBufferSize;
+<tr class="covered"><td>855<td>  MustAdditionalBufferSave := Context.NeedsAdditionalBufferBackup;
+<tr class="nocodegen"><td>856<td>
+<tr class="nocodegen"><td>857<td>  // Initialization vector, feedback, buffer, additional buffer
+<tr class="covered"><td>858<td>  FDataSize := FBufferSize * 3 + FAdditionalBufferSize;
+<tr class="nocodegen"><td>859<td>
+<tr class="covered"><td>860<td>  if MustAdditionalBufferSave then
+<tr class="nocodegen"><td>861<td>    // if contents of the FAdditionalBuffer needs to be saved increase buffer size
+<tr class="nocodegen"><td>862<td>    // by FAdditionalBufferSize so FAdditionalBuffer and then FAdditionalBufferBackup
+<tr class="nocodegen"><td>863<td>    // fit in the buffer
+<tr class="covered"><td>864<td>    Inc(FDataSize, FAdditionalBufferSize);
+<tr class="nocodegen"><td>865<td>
+<tr class="nocodegen"><td>866<td>  // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+<tr class="covered"><td>867<td>  FData                 := ReallocMemory(FData, FDataSize);
+<tr class="covered"><td>868<td>  FInitializationVector := @FData[0];
+<tr class="covered"><td>869<td>  FInitVectorSize       := 0;
+<tr class="covered"><td>870<td>  FFeedback             := @FInitializationVector[FBufferSize];
+<tr class="covered"><td>871<td>  FBuffer               := @FFeedback[FBufferSize];
+<tr class="covered"><td>872<td>  FAdditionalBuffer     := @FBuffer[FBufferSize];
+<tr class="nocodegen"><td>873<td>
+<tr class="covered"><td>874<td>  if MustAdditionalBufferSave then
+<tr class="nocodegen"><td>875<td>    // buffer contents: FData, then FFeedback, then FBuffer then FAdditionalBuffer
+<tr class="covered"><td>876<td>    FAdditionalBufferBackup := @PByteArray(FAdditionalBuffer)[FAdditionalBufferSize]
+<tr class="nocodegen"><td>877<td>  else
+<tr class="covered"><td>878<td>    FAdditionalBufferBackup := nil;
+<tr class="nocodegen"><td>879<td>
+<tr class="covered"><td>880<td>  FFillMode := fmByte;
+<tr class="covered"><td>881<td>  FState    := csNew;
+<tr class="nocodegen"><td>882<td>
+<tr class="covered"><td>883<td>  SecureErase;
+<tr class="covered"><td>884<td>end;
+<tr class="nocodegen"><td>885<td>
+<tr class="nocodegen"><td>886<td>destructor TDECCipher.Destroy;
+<tr class="covered"><td>887<td>begin
+<tr class="covered"><td>888<td>  SecureErase;
+<tr class="nocodegen"><td>889<td>  // FreeMem instead of ReallocMemory which produced a memory leak. ReallocMemory
+<tr class="nocodegen"><td>890<td>  // was used instead of ReallocMem due to C++ compatibility as per 10.1 help
+<tr class="covered"><td>891<td>  FreeMem(FData, FDataSize);
+<tr class="covered"><td>892<td>  FInitializationVector   := nil;
+<tr class="covered"><td>893<td>  FFeedback               := nil;
+<tr class="covered"><td>894<td>  FBuffer                 := nil;
+<tr class="covered"><td>895<td>  FAdditionalBuffer       := nil;
+<tr class="covered"><td>896<td>  FAdditionalBufferBackup := nil;
+<tr class="covered"><td>897<td>  inherited Destroy;
+<tr class="covered"><td>898<td>end;
+<tr class="nocodegen"><td>899<td>
+<tr class="nocodegen"><td>900<td>procedure TDECCipher.SetMode(Value: TCipherMode);
+<tr class="covered"><td>901<td>begin
+<tr class="covered"><td>902<td>  if Value &lt;&gt; FMode then
+<tr class="nocodegen"><td>903<td>  begin
+<tr class="covered"><td>904<td>    if not (FState in [csNew, csInitialized, csDone]) then
+<tr class="notcovered"><td>905<td>      Done;
+<tr class="nocodegen"><td>906<td>
+<tr class="covered"><td>907<td>    FMode := Value;
+<tr class="covered"><td>908<td>    InitMode;
+<tr class="nocodegen"><td>909<td>  end;
+<tr class="covered"><td>910<td>end;
+<tr class="nocodegen"><td>911<td>
+<tr class="nocodegen"><td>912<td>procedure TDECCipher.CheckState(States: TCipherStates);
+<tr class="covered"><td>913<td>begin
+<tr class="covered"><td>914<td>  if not (FState in States) then
+<tr class="nocodegen"><td>915<td>  begin
+<tr class="notcovered"><td>916<td>    if FState = csPadded then
+<tr class="notcovered"><td>917<td>      raise EDECCipherException.CreateRes(@sAlreadyPadded)
+<tr class="nocodegen"><td>918<td>    else
+<tr class="notcovered"><td>919<td>      raise EDECCipherException.CreateRes(@sInvalidState);
+<tr class="nocodegen"><td>920<td>  end;
+<tr class="covered"><td>921<td>end;
+<tr class="nocodegen"><td>922<td>
+<tr class="nocodegen"><td>923<td>class function TDECCipher.ClassByIdentity(Identity: Int64): TDECCipherClass;
+<tr class="covered"><td>924<td>begin
+<tr class="covered"><td>925<td>  result := TDECCipherClass(ClassList.ClassByIdentity(Identity));
+<tr class="covered"><td>926<td>end;
+<tr class="nocodegen"><td>927<td>
+<tr class="nocodegen"><td>928<td>class function TDECCipher.ClassByName(const Name: string): TDECCipherClass;
+<tr class="covered"><td>929<td>begin
+<tr class="covered"><td>930<td>  result := TDECCipherClass(ClassList.ClassByName(Name));
+<tr class="covered"><td>931<td>end;
+<tr class="nocodegen"><td>932<td>
+<tr class="nocodegen"><td>933<td>class function TDECCipher.Context: TCipherContext;
+<tr class="notcovered"><td>934<td>begin
+<tr class="nocodegen"><td>935<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>936<td>  // marked 'abstract'. This is our workaround:
+<tr class="notcovered"><td>937<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>938<td>end;
+<tr class="nocodegen"><td>939<td>
+<tr class="nocodegen"><td>940<td>procedure TDECCipher.Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte);
+<tr class="nocodegen"><td>941<td>var
+<tr class="nocodegen"><td>942<td>  OriginalInitVector : TBytes;
+<tr class="covered"><td>943<td>begin
+<tr class="covered"><td>944<td>  FState          := csNew;
+<tr class="covered"><td>945<td>  FInitVectorSize := IVectorSize;
+<tr class="covered"><td>946<td>  SecureErase;
+<tr class="nocodegen"><td>947<td>
+<tr class="covered"><td>948<td>  if (Size &gt; Context.KeySize) and (not (ctNull in Context.CipherType)) then
+<tr class="covered"><td>949<td>    raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
+<tr class="nocodegen"><td>950<td>
+<tr class="covered"><td>951<td>  if (FInitVectorSize &gt; FBufferSize) and (not (FMode = cmGCM)) then
+<tr class="covered"><td>952<td>    raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
+<tr class="nocodegen"><td>953<td>
+<tr class="covered"><td>954<td>  DoInit(Key, Size);
+<tr class="covered"><td>955<td>  if FAdditionalBufferBackup &lt;&gt; nil then
+<tr class="nocodegen"><td>956<td>    // create backup of FBuffer
+<tr class="covered"><td>957<td>    Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
+<tr class="nocodegen"><td>958<td>
+<tr class="covered"><td>959<td>  FillChar(FInitializationVector^, FBufferSize, IFiller);
+<tr class="nocodegen"><td>960<td>
+<tr class="covered"><td>961<td>  SetLength(OriginalInitVector, IVectorSize);
+<tr class="covered"><td>962<td>  if (IVectorSize &gt; 0) then
+<tr class="covered"><td>963<td>    Move(IVector, OriginalInitVector[0], IVectorSize);
+<tr class="nocodegen"><td>964<td>
+<tr class="nocodegen"><td>965<td>  // GCM needs same treatment as empty IV even if IV specified
+<tr class="covered"><td>966<td>  if (IVectorSize = 0) or (FMode = cmGCM) then
+<tr class="nocodegen"><td>967<td>  begin
+<tr class="covered"><td>968<td>    DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
+<tr class="covered"><td>969<td>    if FAdditionalBufferBackup &lt;&gt; nil then
+<tr class="nocodegen"><td>970<td>      // Restore backup fo FBuffer
+<tr class="covered"><td>971<td>      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
+<tr class="nocodegen"><td>972<td>  end
+<tr class="nocodegen"><td>973<td>  else
+<tr class="covered"><td>974<td>    Move(IVector, FInitializationVector^, IVectorSize);
+<tr class="nocodegen"><td>975<td>
+<tr class="covered"><td>976<td>  OnAfterInitVectorInitialization(OriginalInitVector);
+<tr class="nocodegen"><td>977<td>
+<tr class="covered"><td>978<td>  Move(FInitializationVector^, FFeedback^, FBufferSize);
+<tr class="nocodegen"><td>979<td>
+<tr class="covered"><td>980<td>  FState := csInitialized;
+<tr class="covered"><td>981<td>end;
+<tr class="nocodegen"><td>982<td>
+<tr class="nocodegen"><td>983<td>procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF);
+<tr class="covered"><td>984<td>begin
+<tr class="nocodegen"><td>985<td>  // GCM allows empty key as the authentication still works
+<tr class="covered"><td>986<td>  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+<tr class="nocodegen"><td>987<td>     (not (FMode = cmGCM)) then
+<tr class="covered"><td>988<td>    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+<tr class="nocodegen"><td>989<td>
+<tr class="covered"><td>990<td>  if IVector &lt;&gt; nil then
+<tr class="covered"><td>991<td>    Init(Key[0], Length(Key), IVector[0], Length(IVector), IFiller)
+<tr class="nocodegen"><td>992<td>  else
+<tr class="covered"><td>993<td>    Init(Key[0], Length(Key), NullStr, 0, IFiller);
+<tr class="covered"><td>994<td>end;
+<tr class="nocodegen"><td>995<td>
+<tr class="nocodegen"><td>996<td>procedure TDECCipher.Init(const Key     : RawByteString;
+<tr class="nocodegen"><td>997<td>                          const IVector : RawByteString = '';
+<tr class="nocodegen"><td>998<td>                          IFiller       : Byte = $FF);
+<tr class="covered"><td>999<td>begin
+<tr class="nocodegen"><td>1000<td>  // GCM allows empty key as the authentication still works
+<tr class="covered"><td>1001<td>  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+<tr class="nocodegen"><td>1002<td>     (not (FMode = cmGCM)) then
+<tr class="covered"><td>1003<td>    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+<tr class="nocodegen"><td>1004<td>
+<tr class="covered"><td>1005<td>  if Length(IVector) &gt; 0 then
+<tr class="nocodegen"><td>1006<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1007<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
+<tr class="nocodegen"><td>1008<td>         IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
+<tr class="nocodegen"><td>1009<td>    {$ELSE}
+<tr class="nocodegen"><td>1010<td>    Init(Key[1], Length(Key) * SizeOf(Key[1]),
+<tr class="nocodegen"><td>1011<td>         IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
+<tr class="nocodegen"><td>1012<td>    {$IFEND}
+<tr class="nocodegen"><td>1013<td>  else
+<tr class="nocodegen"><td>1014<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1015<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1016<td>    {$ELSE}
+<tr class="nocodegen"><td>1017<td>    Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1018<td>    {$IFEND}
+<tr class="covered"><td>1019<td>end;
+<tr class="nocodegen"><td>1020<td>
+<tr class="nocodegen"><td>1021<td>
+<tr class="nocodegen"><td>1022<td>{$IFDEF ANSISTRINGSUPPORTED}
+<tr class="nocodegen"><td>1023<td>procedure TDECCipher.Init(const Key, IVector: AnsiString; IFiller: Byte);
+<tr class="nocodegen"><td>1024<td>begin
+<tr class="nocodegen"><td>1025<td>  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
+<tr class="nocodegen"><td>1026<td>    raise EDECCipherException.Create(sNoKeyMaterialGiven);
+<tr class="nocodegen"><td>1027<td>
+<tr class="nocodegen"><td>1028<td>  if Length(IVector) &gt; 0 then
+<tr class="nocodegen"><td>1029<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="nocodegen"><td>1030<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
+<tr class="nocodegen"><td>1031<td>         IVector[Low(IVector)], Length(IVector) * SizeOf(Low(IVector)), IFiller)
+<tr class="nocodegen"><td>1032<td>    {$ELSE}
+<tr class="nocodegen"><td>1033<td>    Init(Key[1], Length(Key) * SizeOf(Key[Low(Key)]),
+<tr class="nocodegen"><td>1034<td>         IVector[IVector[1]], Length(IVector) * SizeOf(IVector[1]), IFiller)
+<tr class="nocodegen"><td>1035<td>    {$IFEND}
+<tr class="nocodegen"><td>1036<td>  else
+<tr class="nocodegen"><td>1037<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="nocodegen"><td>1038<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1039<td>    {$ELSE}
+<tr class="nocodegen"><td>1040<td>    Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1041<td>    {$IFEND}
+<tr class="nocodegen"><td>1042<td>end;
+<tr class="nocodegen"><td>1043<td>{$ENDIF}
+<tr class="nocodegen"><td>1044<td>
+<tr class="nocodegen"><td>1045<td>
+<tr class="nocodegen"><td>1046<td>{$IFNDEF NEXTGEN}
+<tr class="nocodegen"><td>1047<td>procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
+<tr class="covered"><td>1048<td>begin
+<tr class="nocodegen"><td>1049<td>  // GCM allows empty key as the authentication still works
+<tr class="covered"><td>1050<td>  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+<tr class="nocodegen"><td>1051<td>     (not (FMode = cmGCM)) then
+<tr class="covered"><td>1052<td>    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
+<tr class="nocodegen"><td>1053<td>
+<tr class="covered"><td>1054<td>  if Length(IVector) &gt; 0 then
+<tr class="nocodegen"><td>1055<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1056<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
+<tr class="nocodegen"><td>1057<td>         IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
+<tr class="nocodegen"><td>1058<td>    {$ELSE}
+<tr class="nocodegen"><td>1059<td>    Init(Key[1], Length(Key) * SizeOf(Key[1]),
+<tr class="nocodegen"><td>1060<td>         IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
+<tr class="nocodegen"><td>1061<td>    {$IFEND}
+<tr class="nocodegen"><td>1062<td>  else
+<tr class="nocodegen"><td>1063<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>1064<td>    Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1065<td>    {$ELSE}
+<tr class="nocodegen"><td>1066<td>    Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
+<tr class="nocodegen"><td>1067<td>    {$IFEND}
+<tr class="covered"><td>1068<td>end;
+<tr class="nocodegen"><td>1069<td>{$ENDIF}
+<tr class="nocodegen"><td>1070<td>
+<tr class="nocodegen"><td>1071<td>function TDECCipher.IsAuthenticated: Boolean;
+<tr class="covered"><td>1072<td>begin
+<tr class="covered"><td>1073<td>  Result := IsAuthenticatedBlockMode(FMode);
+<tr class="covered"><td>1074<td>end;
+<tr class="nocodegen"><td>1075<td>
+<tr class="nocodegen"><td>1076<td>procedure TDECCipher.Done;
+<tr class="covered"><td>1077<td>begin
+<tr class="covered"><td>1078<td>  if FState &lt;&gt; csDone then
+<tr class="nocodegen"><td>1079<td>  begin
+<tr class="covered"><td>1080<td>    FState := csDone;
+<tr class="covered"><td>1081<td>    FBufferIndex := 0;
+<tr class="covered"><td>1082<td>    DoEncode(FFeedback, FBuffer, FBufferSize);
+<tr class="covered"><td>1083<td>    Move(FInitializationVector^, FFeedback^, FBufferSize);
+<tr class="covered"><td>1084<td>    if FAdditionalBufferBackup &lt;&gt; nil then
+<tr class="covered"><td>1085<td>      Move(FAdditionalBufferBackup^, FAdditionalBuffer^, FAdditionalBufferSize);
+<tr class="nocodegen"><td>1086<td>  end;
+<tr class="covered"><td>1087<td>end;
+<tr class="nocodegen"><td>1088<td>
+<tr class="nocodegen"><td>1089<td>procedure TDECCipher.SecureErase;
+<tr class="covered"><td>1090<td>begin
+<tr class="covered"><td>1091<td>  ProtectBuffer(FData[0], FDataSize);
+<tr class="covered"><td>1092<td>end;
+<tr class="nocodegen"><td>1093<td>
+<tr class="nocodegen"><td>1094<td>function TDECCipher.EncodeRawByteString(const Source: RawByteString; Format: TDECFormatClass): RawByteString;
+<tr class="nocodegen"><td>1095<td>var
+<tr class="nocodegen"><td>1096<td>  b : TBytes;
+<tr class="notcovered"><td>1097<td>begin
+<tr class="notcovered"><td>1098<td>  SetLength(b, 0);
+<tr class="notcovered"><td>1099<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1100<td>  begin
+<tr class="nocodegen"><td>1101<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="notcovered"><td>1102<td>    SetLength(b, Length(Source) * SizeOf(Source[Low(Source)]));
+<tr class="notcovered"><td>1103<td>    DoEncode(@Source[low(Source)], @b[0], Length(Source) * SizeOf(Source[low(Source)]));
+<tr class="nocodegen"><td>1104<td>    {$ELSE}
+<tr class="nocodegen"><td>1105<td>    SetLength(b, Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>1106<td>    DoEncode(@Source[1], @b[0], Length(Source) * SizeOf(Source[1]));
+<tr class="nocodegen"><td>1107<td>    {$IFEND}
+<tr class="notcovered"><td>1108<td>    Result := BytesToRawString(ValidFormat(Format).Encode(b));
+<tr class="nocodegen"><td>1109<td>  end;
+<tr class="notcovered"><td>1110<td>end;
+<tr class="nocodegen"><td>1111<td>
+<tr class="nocodegen"><td>1112<td>function TDECCipher.GetMode: TCipherMode;
+<tr class="covered"><td>1113<td>begin
+<tr class="covered"><td>1114<td>  Result := FMode;
+<tr class="covered"><td>1115<td>end;
+<tr class="nocodegen"><td>1116<td>
+<tr class="nocodegen"><td>1117<td>function TDECCipher.EncodeBytes(const Source: TBytes; Format: TDECFormatClass = nil): TBytes;
+<tr class="notcovered"><td>1118<td>begin
+<tr class="notcovered"><td>1119<td>  SetLength(Result, 0);
+<tr class="notcovered"><td>1120<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1121<td>  begin
+<tr class="notcovered"><td>1122<td>    SetLength(Result, Length(Source) * SizeOf(Source[0]));
+<tr class="notcovered"><td>1123<td>    DoEncode(@Source[0], @Result[0], Length(Source) * SizeOf(Source[0]));
+<tr class="notcovered"><td>1124<td>    Result := ValidFormat(Format).Encode(Result);
+<tr class="nocodegen"><td>1125<td>  end;
+<tr class="notcovered"><td>1126<td>end;
+<tr class="nocodegen"><td>1127<td>
+<tr class="nocodegen"><td>1128<td>function TDECCipher.DecodeRawByteString(const Source: RawByteString; Format: TDECFormatClass): RawByteString;
+<tr class="nocodegen"><td>1129<td>var
+<tr class="nocodegen"><td>1130<td>  b : TBytes;
+<tr class="notcovered"><td>1131<td>begin
+<tr class="notcovered"><td>1132<td>  SetLength(Result, 0);
+<tr class="notcovered"><td>1133<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1134<td>  begin
+<tr class="nocodegen"><td>1135<td>    // Delphi 10.1 Berlin and 10.2 Tokyo will issue a W1057 implicit string
+<tr class="nocodegen"><td>1136<td>    // conversion warning here because the RawByteString BytesOf function is by
+<tr class="nocodegen"><td>1137<td>    // mistake in a $IFNDEF NEXTGEN block. See QP report:
+<tr class="nocodegen"><td>1138<td>    // https://quality.embarcadero.com/browse/RSP-20574
+<tr class="nocodegen"><td>1139<td>    // This has been fixed in 10.3.0 Rio
+<tr class="notcovered"><td>1140<td>    b := ValidFormat(Format).Decode(BytesOf(Source));
+<tr class="nocodegen"><td>1141<td>
+<tr class="nocodegen"><td>1142<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="notcovered"><td>1143<td>    DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));
+<tr class="nocodegen"><td>1144<td>    {$ELSE}
+<tr class="nocodegen"><td>1145<td>    DoDecode(@b[0], @Result[1], Length(Result) * SizeOf(Result[1]));
+<tr class="nocodegen"><td>1146<td>    {$IFEND}
+<tr class="nocodegen"><td>1147<td>  end;
+<tr class="notcovered"><td>1148<td>end;
+<tr class="nocodegen"><td>1149<td>
+<tr class="nocodegen"><td>1150<td>function TDECCipher.DecodeBytes(const Source: TBytes; Format: TDECFormatClass): TBytes;
+<tr class="notcovered"><td>1151<td>begin
+<tr class="notcovered"><td>1152<td>  SetLength(Result, 0);
+<tr class="notcovered"><td>1153<td>  if Length(Source) &gt; 0 then
+<tr class="nocodegen"><td>1154<td>  begin
+<tr class="notcovered"><td>1155<td>    Result := ValidFormat(Format).Decode(Source);
+<tr class="notcovered"><td>1156<td>    DoDecode(@Result[0], @Result[0], Length(Result) * SizeOf(Result[0]));
+<tr class="nocodegen"><td>1157<td>  end;
+<tr class="notcovered"><td>1158<td>end;
+<tr class="nocodegen"><td>1159<td>
+<tr class="nocodegen"><td>1160<td>
+<tr class="nocodegen"><td>1161<td>function TDECCipher.CalcMAC(Format: TDECFormatClass): RawByteString;
+<tr class="covered"><td>1162<td>begin
+<tr class="covered"><td>1163<td>  Done;
+<tr class="covered"><td>1164<td>  if FMode in [cmECBx] then
+<tr class="covered"><td>1165<td>    raise EDECException.CreateRes(@sInvalidMACMode)
+<tr class="nocodegen"><td>1166<td>  else
+<tr class="notcovered"><td>1167<td>    Result := ValidFormat(Format).Encode(FBuffer^, FBufferSize);
+<tr class="nocodegen"><td>1168<td>  { TODO : How to rewrite? EncodeBytes cannot be called directly like that }
+<tr class="notcovered"><td>1169<td>end;
+<tr class="nocodegen"><td>1170<td>
+<tr class="nocodegen"><td>1171<td>//function TDECCipher.CalcMACByte(Format: TDECFormatClass): TBytes;
+<tr class="nocodegen"><td>1172<td>//begin
+<tr class="nocodegen"><td>1173<td>//  Done;
+<tr class="nocodegen"><td>1174<td>//  if FMode in [cmECBx] then
+<tr class="nocodegen"><td>1175<td>//    raise EDECCipherException.Create(sInvalidMACMode)
+<tr class="nocodegen"><td>1176<td>//  else
+<tr class="nocodegen"><td>1177<td>//  begin
+<tr class="nocodegen"><td>1178<td>//    Result := System.SysUtils.BytesOf(ValidFormat(Format).Encode(FBuffer^, FBufferSize));
+<tr class="nocodegen"><td>1179<td>//  end;
+<tr class="nocodegen"><td>1180<td>//end;
+<tr class="nocodegen"><td>1181<td>
+<tr class="nocodegen"><td>1182<td>{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
+<tr class="nocodegen"><td>1183<td>{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
+<tr class="nocodegen"><td>1184<td>
+<tr class="nocodegen"><td>1185<td>{$IFDEF DELPHIORBCB}
+<tr class="nocodegen"><td>1186<td>procedure ModuleUnload(Instance: NativeUInt);
+<tr class="nocodegen"><td>1187<td>var // automaticaly deregistration/releasing
+<tr class="nocodegen"><td>1188<td>  i: Integer;
+<tr class="nocodegen"><td>1189<td>  Items: TArray&lt;TPair&lt;Int64, TDECCLass&gt;&gt;;
+<tr class="notcovered"><td>1190<td>begin
+<tr class="nocodegen"><td>1191<td>  // C++Builder calls this function for our own module, but we destroy the ClassList
+<tr class="nocodegen"><td>1192<td>  // in that case in the finalization section anyway.
+<tr class="notcovered"><td>1193<td>  if (Instance &lt;&gt; HInstance) and
+<tr class="nocodegen"><td>1194<td>     (TDECCipher.ClassList &lt;&gt; nil) and (TDECCipher.ClassList.Count &gt; 0) then
+<tr class="nocodegen"><td>1195<td>  begin
+<tr class="notcovered"><td>1196<td>    Items := TDECCipher.ClassList.ToArray;
+<tr class="notcovered"><td>1197<td>    for i := Length(Items) - 1 downto 0 do
+<tr class="nocodegen"><td>1198<td>    begin
+<tr class="notcovered"><td>1199<td>      if FindClassHInstance(Items[i].Value) = HINST(HInstance) then
+<tr class="notcovered"><td>1200<td>        TDECCipher.ClassList.Remove(Items[i].Key);
+<tr class="notcovered"><td>1201<td>    end;
+<tr class="nocodegen"><td>1202<td>  end;
+<tr class="notcovered"><td>1203<td>end;
+<tr class="nocodegen"><td>1204<td>{$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>1205<td>
+<tr class="covered"><td>1206<td>initialization
+<tr class="nocodegen"><td>1207<td>  // Code for packages and dynamic extension of the class registration list
+<tr class="nocodegen"><td>1208<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>1209<td>  AddModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>1210<td>  {$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>1211<td>
+<tr class="covered"><td>1212<td>  TDECCipher.ClassList := TDECClassList.Create;
+<tr class="nocodegen"><td>1213<td>
+<tr class="covered"><td>1214<td>finalization
+<tr class="nocodegen"><td>1215<td>  // Ensure no further instances of classes registered in the registraiotn list
+<tr class="nocodegen"><td>1216<td>  // are possible through the list after this unit has been unloaded by unloding
+<tr class="nocodegen"><td>1217<td>  // the package this unit is in
+<tr class="nocodegen"><td>1218<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>1219<td>  RemoveModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>1220<td>  {$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>1221<td>
+<tr class="covered"><td>1222<td>  TDECCipher.ClassList.Free;
+<tr class="covered"><td>1223<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

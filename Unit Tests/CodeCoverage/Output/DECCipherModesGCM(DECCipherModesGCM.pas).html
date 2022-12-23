@@ -1,0 +1,833 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECCipherModesGCM (..\..\Source\DECCipherModesGCM.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECCipherModesGCM.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>123<td rowspan=3 style="background: conic-gradient(#9fe098 97%, #eee 97%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>126<tr><td>Line coverage<td>97<small>.6</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>unit DECCipherModesGCM;
+<tr class="nocodegen"><td>18<td>
+<tr class="nocodegen"><td>19<td>interface
+<tr class="nocodegen"><td>20<td>
+<tr class="nocodegen"><td>21<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>uses
+<tr class="nocodegen"><td>24<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>25<td>  SysUtils,
+<tr class="nocodegen"><td>26<td>  {$ELSE}
+<tr class="nocodegen"><td>27<td>  System.SysUtils,
+<tr class="nocodegen"><td>28<td>  {$ENDIF}
+<tr class="nocodegen"><td>29<td>  DECTypes;
+<tr class="nocodegen"><td>30<td>
+<tr class="nocodegen"><td>31<td>type
+<tr class="nocodegen"><td>32<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>33<td>  ///   128 bit unsigned integer
+<tr class="nocodegen"><td>34<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>35<td>  T128 = array[0..1] of UInt64;
+<tr class="nocodegen"><td>36<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>37<td>  ///   pointer to an 128 bit unsigned integer
+<tr class="nocodegen"><td>38<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>39<td>  P128 = ^T128;
+<tr class="nocodegen"><td>40<td>
+<tr class="nocodegen"><td>41<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>42<td>  ///   A methopd of this type needs to be supplied for encrypting or decrypting
+<tr class="nocodegen"><td>43<td>  ///   a block via this GCM algorithm. The method is implemented as a parameter,
+<tr class="nocodegen"><td>44<td>  ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
+<tr class="nocodegen"><td>45<td>  ///   be used for composition instead of inheritance.
+<tr class="nocodegen"><td>46<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>47<td>  /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>48<td>  ///   Data to be encrypted
+<tr class="nocodegen"><td>49<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>50<td>  /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>51<td>  ///   In this memory the encrypted result will be written
+<tr class="nocodegen"><td>52<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>53<td>  /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>54<td>  ///   Size of source in byte
+<tr class="nocodegen"><td>55<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>56<td>  TEncodeDecodeMethod = procedure(Source, Dest: Pointer; Size: Integer) of Object;
+<tr class="nocodegen"><td>57<td>
+<tr class="nocodegen"><td>58<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>59<td>  ///   Galois Counter Mode specific methods
+<tr class="nocodegen"><td>60<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>61<td>  TGCM = class(TObject)
+<tr class="nocodegen"><td>62<td>  private
+<tr class="nocodegen"><td>63<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>64<td>    ///   Empty value?
+<tr class="nocodegen"><td>65<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>66<td>    nullbytes : T128;
+<tr class="nocodegen"><td>67<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>68<td>    ///   Table with precalculated values
+<tr class="nocodegen"><td>69<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>70<td>    FM        : array[0..15,0..255] of T128;
+<tr class="nocodegen"><td>71<td>
+<tr class="nocodegen"><td>72<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>73<td>    ///   Required for creating the table and encryption at least
+<tr class="nocodegen"><td>74<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>75<td>    FH        : T128;
+<tr class="nocodegen"><td>76<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>77<td>    ///   Calculated in initialization
+<tr class="nocodegen"><td>78<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>79<td>    FY        : T128;
+<tr class="nocodegen"><td>80<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>81<td>    ///   Calculated in initialization
+<tr class="nocodegen"><td>82<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>83<td>    FE_K_Y0   : T128;
+<tr class="nocodegen"><td>84<td>
+<tr class="nocodegen"><td>85<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>86<td>    ///   The data which shall be authenticated in parallel to the encryption
+<tr class="nocodegen"><td>87<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>88<td>    FDataToAuthenticate      : TBytes;
+<tr class="nocodegen"><td>89<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>90<td>    ///   Length of the authentication tag to generate in byte
+<tr class="nocodegen"><td>91<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>92<td>    FCalcAuthenticationTagLength : UInt32;
+<tr class="nocodegen"><td>93<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>94<td>    ///   Generated authentication tag
+<tr class="nocodegen"><td>95<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>96<td>    FCalcAuthenticationTag       : TBytes;
+<tr class="nocodegen"><td>97<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>98<td>    ///   Expected authentication tag value, will be compared with actual value
+<tr class="nocodegen"><td>99<td>    ///   when decryption finished.
+<tr class="nocodegen"><td>100<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>101<td>    FExpectedAuthenticationTag   : TBytes;
+<tr class="nocodegen"><td>102<td>
+<tr class="nocodegen"><td>103<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>104<td>    ///   Reference to the encode method of the actual cipher used
+<tr class="nocodegen"><td>105<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>106<td>    FEncryptionMethod        : TEncodeDecodeMethod;
+<tr class="nocodegen"><td>107<td>
+<tr class="nocodegen"><td>108<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>109<td>    ///   XOR implementation for unsigned 128 bit numbers
+<tr class="nocodegen"><td>110<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>111<td>    /// &lt;param name=&quot;x&quot;&gt;
+<tr class="nocodegen"><td>112<td>    ///   First number to xor
+<tr class="nocodegen"><td>113<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>114<td>    /// &lt;param name=&quot;y&quot;&gt;
+<tr class="nocodegen"><td>115<td>    ///   Second number to xor the first with
+<tr class="nocodegen"><td>116<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>117<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>118<td>    ///   x xor y
+<tr class="nocodegen"><td>119<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>120<td>    function XOR_T128(const x, y: T128): T128; inline;
+<tr class="nocodegen"><td>121<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>122<td>    ///   XOR implementation for a pointer and an unsigned 128 bit number
+<tr class="nocodegen"><td>123<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>124<td>    /// &lt;param name=&quot;x&quot;&gt;
+<tr class="nocodegen"><td>125<td>    ///   Pointer on a T128 typed number to xor with y
+<tr class="nocodegen"><td>126<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>127<td>    /// &lt;param name=&quot;y&quot;&gt;
+<tr class="nocodegen"><td>128<td>    ///   Second number to xor the first with
+<tr class="nocodegen"><td>129<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>130<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>131<td>    ///   x xor y
+<tr class="nocodegen"><td>132<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>133<td>    function XOR_PointerWithT128(const x: Pointer; y: T128 ): T128; inline;
+<tr class="nocodegen"><td>134<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>135<td>    ///   XORs the bytes given in a byte array with a T128 number given
+<tr class="nocodegen"><td>136<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>137<td>    /// &lt;param name=&quot;x&quot;&gt;
+<tr class="nocodegen"><td>138<td>    ///   Bytes which shall be XORed with the T128 number
+<tr class="nocodegen"><td>139<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>140<td>    /// &lt;param name=&quot;XIndex&quot;&gt;
+<tr class="nocodegen"><td>141<td>    ///   Starting index within x from which onwards to XOR
+<tr class="nocodegen"><td>142<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>143<td>    /// &lt;param name=&quot;Count&quot;&gt;
+<tr class="nocodegen"><td>144<td>    ///   Number of bytes from x beginning at XIndex to XOR
+<tr class="nocodegen"><td>145<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>146<td>    /// &lt;param name=&quot;y&quot;&gt;
+<tr class="nocodegen"><td>147<td>    ///   Value to XOR the bytes from y with. XOR is done bytewise for each
+<tr class="nocodegen"><td>148<td>    ///   byte of y
+<tr class="nocodegen"><td>149<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>150<td>    /// &lt;param name=&quot;Result&quot;&gt;
+<tr class="nocodegen"><td>151<td>    ///   Result of the XOR operation
+<tr class="nocodegen"><td>152<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>153<td>    procedure XOR_ArrayWithT128(const x: TBytes; XIndex, Count: UInt64; y: T128; var Result: TBytes); inline;
+<tr class="nocodegen"><td>154<td>
+<tr class="nocodegen"><td>155<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>156<td>    ///   XORs all elements of the precalculated matrix with the value passed
+<tr class="nocodegen"><td>157<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>158<td>    /// &lt;param name=&quot;hx&quot;&gt;
+<tr class="nocodegen"><td>159<td>    ///   Value who's two parts shall be XORed with the two parts of the
+<tr class="nocodegen"><td>160<td>    ///   matrix each.
+<tr class="nocodegen"><td>161<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>162<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>163<td>    ///   result of the XOR Operation
+<tr class="nocodegen"><td>164<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>165<td>    function poly_mult_H(const hx: T128) : T128; inline;
+<tr class="nocodegen"><td>166<td>
+<tr class="nocodegen"><td>167<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>168<td>    ///   Encodes the 64 bit lengths of DataToAuthenticate and of the cipher
+<tr class="nocodegen"><td>169<td>    ///   text into a T128 value, swapping the bytes in the process.
+<tr class="nocodegen"><td>170<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>171<td>    /// &lt;param name=&quot;x&quot;&gt;
+<tr class="nocodegen"><td>172<td>    ///   Result of the operation
+<tr class="nocodegen"><td>173<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>174<td>    /// &lt;param name=&quot;AuthDataLength&quot;&gt;
+<tr class="nocodegen"><td>175<td>    ///   Length of the data to authenticate in byte
+<tr class="nocodegen"><td>176<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>177<td>    /// &lt;param name=&quot;CipherTextLength&quot;&gt;
+<tr class="nocodegen"><td>178<td>    ///   Length of the ciphertext in byte
+<tr class="nocodegen"><td>179<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>180<td>    procedure SetAuthenticationCipherLength(var x : T128;
+<tr class="nocodegen"><td>181<td>                                            AuthDataLength, CipherTextLength : UInt64); inline;
+<tr class="nocodegen"><td>182<td>
+<tr class="nocodegen"><td>183<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>184<td>    ///   Calculates a table with precalculated values which speeds up
+<tr class="nocodegen"><td>185<td>    ///   operations later. The initialized table is the FM field.
+<tr class="nocodegen"><td>186<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>187<td>    /// &lt;param name=&quot;H&quot;&gt;
+<tr class="nocodegen"><td>188<td>    ///   Start value for the precalculation
+<tr class="nocodegen"><td>189<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>190<td>    procedure GenerateTableM8Bit(const H: T128); //inline;
+<tr class="nocodegen"><td>191<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>192<td>    ///   Performs a right shift of 1 of all bytes in an 128 bit variable
+<tr class="nocodegen"><td>193<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>194<td>    /// &lt;param name=&quot;rx&quot;&gt;
+<tr class="nocodegen"><td>195<td>    ///   Variable on which the right shift is being performed
+<tr class="nocodegen"><td>196<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>197<td>    procedure ShiftRight(var rx: T128); //inline;
+<tr class="nocodegen"><td>198<td>
+<tr class="nocodegen"><td>199<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>200<td>    ///   Incremepts the last 4 bytes of the index 0 part
+<tr class="nocodegen"><td>201<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>202<td>    /// &lt;param name=&quot;Y&quot;&gt;
+<tr class="nocodegen"><td>203<td>    ///   Value to increment, this is the return value as well.
+<tr class="nocodegen"><td>204<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>205<td>    procedure INCR(var Y : T128);
+<tr class="nocodegen"><td>206<td>
+<tr class="nocodegen"><td>207<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>208<td>    ///   Defines the length of the resulting authentication value in bit.
+<tr class="nocodegen"><td>209<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>210<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>211<td>    ///   Sets the length of Authenticaton_tag in bit, values as per specification
+<tr class="nocodegen"><td>212<td>    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
+<tr class="nocodegen"><td>213<td>    ///   may be 64 or 32 as well, but the use of these two tag lengths
+<tr class="nocodegen"><td>214<td>    ///   constrains the length of the input data and the lifetime of the key.
+<tr class="nocodegen"><td>215<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>216<td>    procedure SetAuthenticationTagLength(const Value: UInt32);
+<tr class="nocodegen"><td>217<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>218<td>    ///   Returns the length of the calculated authehtication value in bit
+<tr class="nocodegen"><td>219<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>220<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>221<td>    ///   Length of the calculated authentication value in bit
+<tr class="nocodegen"><td>222<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>223<td>    function GetAuthenticationTagBitLength: UInt32;
+<tr class="nocodegen"><td>224<td>
+<tr class="nocodegen"><td>225<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>226<td>    ///   Calculates the hash value
+<tr class="nocodegen"><td>227<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>228<td>    /// &lt;param name=&quot;AuthenticatedData&quot;&gt;
+<tr class="nocodegen"><td>229<td>    ///   Specifys the data for which an authentication value shall be
+<tr class="nocodegen"><td>230<td>    ///   calculated. It is allowed to be nil.
+<tr class="nocodegen"><td>231<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>232<td>    /// &lt;param name=&quot;Ciphertext&quot;&gt;
+<tr class="nocodegen"><td>233<td>    ///   Encrypted data used in the calculation
+<tr class="nocodegen"><td>234<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>235<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>236<td>    ///   Calculated raw hash value which will later get returned as AuthenticatedTag
+<tr class="nocodegen"><td>237<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>238<td>    function CalcGaloisHash(AuthenticatedData, Ciphertext: TBytes): T128;
+<tr class="nocodegen"><td>239<td>
+<tr class="nocodegen"><td>240<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>241<td>    ///   Encrypts a T128 value using the encryption method specified on init
+<tr class="nocodegen"><td>242<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>243<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>244<td>    ///   Value to be encrypted
+<tr class="nocodegen"><td>245<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>246<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>247<td>    ///   Encrypted value
+<tr class="nocodegen"><td>248<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>249<td>    function EncodeT128(Value: T128): T128;
+<tr class="nocodegen"><td>250<td>  public
+<tr class="nocodegen"><td>251<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>252<td>    ///   Should be called when starting encryption/decryption in order to
+<tr class="nocodegen"><td>253<td>    ///   initialize internal tables etc.
+<tr class="nocodegen"><td>254<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>255<td>    /// &lt;param name=&quot;EncryptionMethod&quot;&gt;
+<tr class="nocodegen"><td>256<td>    ///   Encryption method of the cypher used
+<tr class="nocodegen"><td>257<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>258<td>    /// &lt;param name=&quot;InitVector&quot;&gt;
+<tr class="nocodegen"><td>259<td>    ///   Initialization vector
+<tr class="nocodegen"><td>260<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>261<td>    procedure Init(EncryptionMethod : TEncodeDecodeMethod;
+<tr class="nocodegen"><td>262<td>                   InitVector       : TBytes);
+<tr class="nocodegen"><td>263<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>264<td>    ///   Encodes a block of data using the supplied cipher
+<tr class="nocodegen"><td>265<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>266<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>267<td>    ///   Plain text to encrypt
+<tr class="nocodegen"><td>268<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>269<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>270<td>    ///   Ciphertext after encryption
+<tr class="nocodegen"><td>271<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>272<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>273<td>    ///   Number of bytes to encrypt
+<tr class="nocodegen"><td>274<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>275<td>    procedure EncodeGCM(Source,
+<tr class="nocodegen"><td>276<td>                        Dest   : TBytes;
+<tr class="nocodegen"><td>277<td>                        Size   : Integer);
+<tr class="nocodegen"><td>278<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>279<td>    ///   Decodes a block of data using the supplied cipher
+<tr class="nocodegen"><td>280<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>281<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>282<td>    ///   Encrypted ciphertext to decrypt
+<tr class="nocodegen"><td>283<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>284<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>285<td>    ///   Plaintext after decryption
+<tr class="nocodegen"><td>286<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>287<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>288<td>    ///   Number of bytes to decrypt
+<tr class="nocodegen"><td>289<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>290<td>    procedure DecodeGCM(Source,
+<tr class="nocodegen"><td>291<td>                        Dest   : TBytes;
+<tr class="nocodegen"><td>292<td>                        Size   : Integer);
+<tr class="nocodegen"><td>293<td>
+<tr class="nocodegen"><td>294<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>295<td>    ///   Returns a list of authentication tag lengs explicitely specified by
+<tr class="nocodegen"><td>296<td>    ///   the official specification of the standard.
+<tr class="nocodegen"><td>297<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>298<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>299<td>    ///   List of bit lengths
+<tr class="nocodegen"><td>300<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>301<td>    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+<tr class="nocodegen"><td>302<td>
+<tr class="nocodegen"><td>303<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>304<td>    ///   The data which shall be authenticated in parallel to the encryption
+<tr class="nocodegen"><td>305<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>306<td>    property DataToAuthenticate : TBytes
+<tr class="nocodegen"><td>307<td>      read   FDataToAuthenticate
+<tr class="nocodegen"><td>308<td>      write  FDataToAuthenticate;
+<tr class="nocodegen"><td>309<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>310<td>    ///   Sets the length of AuthenticatonTag in bit, values as per official
+<tr class="nocodegen"><td>311<td>    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain
+<tr class="nocodegen"><td>312<td>    ///   applications, they may be 64 or 32 as well, but the use of these two
+<tr class="nocodegen"><td>313<td>    ///   tag lengths constrains the length of the input data and the lifetime
+<tr class="nocodegen"><td>314<td>    ///   of the key.
+<tr class="nocodegen"><td>315<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>316<td>    property AuthenticationTagBitLength : UInt32
+<tr class="nocodegen"><td>317<td>      read   GetAuthenticationTagBitLength
+<tr class="nocodegen"><td>318<td>      write  SetAuthenticationTagLength;
+<tr class="nocodegen"><td>319<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>320<td>    ///   Calculated authentication value
+<tr class="nocodegen"><td>321<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>322<td>    property CalculatedAuthenticationTag : TBytes
+<tr class="nocodegen"><td>323<td>      read   FCalcAuthenticationTag
+<tr class="nocodegen"><td>324<td>      write  FCalcAuthenticationTag;
+<tr class="nocodegen"><td>325<td>
+<tr class="nocodegen"><td>326<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>327<td>    ///   Expected authentication tag value, will be compared with actual value
+<tr class="nocodegen"><td>328<td>    ///   when decryption finished.
+<tr class="nocodegen"><td>329<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>330<td>    property ExpectedAuthenticationTag : TBytes
+<tr class="nocodegen"><td>331<td>      read   FExpectedAuthenticationTag
+<tr class="nocodegen"><td>332<td>      write  FExpectedAuthenticationTag;
+<tr class="nocodegen"><td>333<td>  end;
+<tr class="nocodegen"><td>334<td>
+<tr class="nocodegen"><td>335<td>implementation
+<tr class="nocodegen"><td>336<td>
+<tr class="nocodegen"><td>337<td>function TGCM.XOR_T128(const x, y : T128): T128;
+<tr class="nocodegen"><td>338<td>begin
+<tr class="nocodegen"><td>339<td>  Result[0] := x[0] xor y[0];
+<tr class="nocodegen"><td>340<td>  Result[1] := x[1] xor y[1];
+<tr class="nocodegen"><td>341<td>end;
+<tr class="nocodegen"><td>342<td>
+<tr class="nocodegen"><td>343<td>function TGCM.XOR_PointerWithT128(const x : Pointer; y : T128): T128;
+<tr class="nocodegen"><td>344<td>begin
+<tr class="nocodegen"><td>345<td>  Result[0] := P128(x)^[0] xor y[0];
+<tr class="nocodegen"><td>346<td>  Result[1] := P128(x)^[1] xor y[1];
+<tr class="nocodegen"><td>347<td>end;
+<tr class="nocodegen"><td>348<td>
+<tr class="nocodegen"><td>349<td>procedure TGCM.XOR_ArrayWithT128(const x: TBytes; XIndex, Count: UInt64; y: T128; var Result: TBytes);
+<tr class="nocodegen"><td>350<td>var
+<tr class="nocodegen"><td>351<td>  i  : integer;
+<tr class="nocodegen"><td>352<td>  { TODO : change to a pointer to y[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>353<td>  by : array[0..15] of byte absolute y[0];
+<tr class="nocodegen"><td>354<td>begin
+<tr class="nocodegen"><td>355<td>  for i := 0 to Count-1 do
+<tr class="nocodegen"><td>356<td>  begin
+<tr class="nocodegen"><td>357<td>    Result[XIndex] := x[XIndex] xor by[i];
+<tr class="nocodegen"><td>358<td>    inc(XIndex);
+<tr class="nocodegen"><td>359<td>  end;
+<tr class="nocodegen"><td>360<td>end;
+<tr class="nocodegen"><td>361<td>
+<tr class="nocodegen"><td>362<td>function TGCM.poly_mult_H(const hx : T128): T128;
+<tr class="nocodegen"><td>363<td>var
+<tr class="nocodegen"><td>364<td>  i : integer;
+<tr class="nocodegen"><td>365<td>  { TODO : change to a pointer to hx[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>366<td>  x : array[0..15] of byte absolute hx[0];
+<tr class="nocodegen"><td>367<td>begin
+<tr class="nocodegen"><td>368<td>  Result := FM[0, x[0]];
+<tr class="nocodegen"><td>369<td>
+<tr class="nocodegen"><td>370<td>  for i := 1 to 15 do
+<tr class="nocodegen"><td>371<td>  begin
+<tr class="nocodegen"><td>372<td>    Result[0] := Result[0] xor FM[i, x[i]][0];
+<tr class="nocodegen"><td>373<td>    Result[1] := Result[1] xor FM[i, x[i]][1];
+<tr class="nocodegen"><td>374<td>  end;
+<tr class="nocodegen"><td>375<td>end;
+<tr class="nocodegen"><td>376<td>
+<tr class="nocodegen"><td>377<td>procedure TGCM.SetAuthenticationCipherLength(var x : T128;
+<tr class="nocodegen"><td>378<td>                                             AuthDataLength, CipherTextLength : UInt64);
+<tr class="nocodegen"><td>379<td>var
+<tr class="nocodegen"><td>380<td>  i  : integer;
+<tr class="nocodegen"><td>381<td>  { TODO : change to a pointer to x[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>382<td>  hx : array[0..15] of byte absolute x[0];
+<tr class="nocodegen"><td>383<td>begin
+<tr class="nocodegen"><td>384<td>  // al:
+<tr class="nocodegen"><td>385<td>  x := nullbytes;
+<tr class="nocodegen"><td>386<td>  i := 7;
+<tr class="nocodegen"><td>387<td>
+<tr class="nocodegen"><td>388<td>  repeat
+<tr class="nocodegen"><td>389<td>    hx[i] := AuthDataLength mod 256;
+<tr class="nocodegen"><td>390<td>    AuthDataLength := AuthDataLength shr 8;
+<tr class="nocodegen"><td>391<td>    dec(i);
+<tr class="nocodegen"><td>392<td>  until AuthDataLength = 0;
+<tr class="nocodegen"><td>393<td>
+<tr class="nocodegen"><td>394<td>  // cl:
+<tr class="nocodegen"><td>395<td>  i := 15;
+<tr class="nocodegen"><td>396<td>
+<tr class="nocodegen"><td>397<td>  repeat
+<tr class="nocodegen"><td>398<td>    hx[i] := CipherTextLength mod 256;
+<tr class="nocodegen"><td>399<td>    CipherTextLength := CipherTextLength shr 8;
+<tr class="nocodegen"><td>400<td>    dec(i);
+<tr class="nocodegen"><td>401<td>  until CipherTextLength = 0;
+<tr class="nocodegen"><td>402<td>end;
+<tr class="nocodegen"><td>403<td>
+<tr class="nocodegen"><td>404<td>procedure TGCM.GenerateTableM8Bit(const H : T128);
+<tr class="nocodegen"><td>405<td>var
+<tr class="nocodegen"><td>406<td>  hbit, hbyte, i, j : integer;
+<tr class="nocodegen"><td>407<td>  HP : T128;
+<tr class="nocodegen"><td>408<td>  { TODO : change to a pointer to HP[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>409<td>  bHP : array[0..15] of byte absolute HP[0];
+<tr class="nocodegen"><td>410<td>  mask : byte;
+<tr class="covered"><td>411<td>begin
+<tr class="covered"><td>412<td>  HP := H;
+<tr class="covered"><td>413<td>  for hbyte := 0 to 15 do
+<tr class="nocodegen"><td>414<td>  begin
+<tr class="covered"><td>415<td>    mask := 128;
+<tr class="covered"><td>416<td>    for hbit := 0 to 7 do
+<tr class="nocodegen"><td>417<td>    begin
+<tr class="covered"><td>418<td>      FM[hbyte, mask] := HP;
+<tr class="nocodegen"><td>419<td>
+<tr class="covered"><td>420<td>      if (bHP[15] and 1 = 0) then
+<tr class="covered"><td>421<td>        ShiftRight(HP)
+<tr class="nocodegen"><td>422<td>      else
+<tr class="nocodegen"><td>423<td>      begin
+<tr class="covered"><td>424<td>        ShiftRight(HP);
+<tr class="covered"><td>425<td>        bHP[0] := bHP[0] xor $e1;
+<tr class="nocodegen"><td>426<td>      end;
+<tr class="nocodegen"><td>427<td>
+<tr class="covered"><td>428<td>      mask := mask shr 1;
+<tr class="covered"><td>429<td>    end;
+<tr class="covered"><td>430<td>  end;
+<tr class="nocodegen"><td>431<td>
+<tr class="covered"><td>432<td>  for hbyte := 0 to 15 do
+<tr class="nocodegen"><td>433<td>  begin
+<tr class="covered"><td>434<td>    i := 2;
+<tr class="nocodegen"><td>435<td>
+<tr class="covered"><td>436<td>    while i &lt;= 128 do
+<tr class="nocodegen"><td>437<td>    begin
+<tr class="covered"><td>438<td>      for j := 1 to i-1 do
+<tr class="covered"><td>439<td>        FM[hbyte, i+j] := XOR_T128(FM[hbyte, i], FM[hbyte, j]);
+<tr class="covered"><td>440<td>      i := i*2;
+<tr class="nocodegen"><td>441<td>    end;
+<tr class="nocodegen"><td>442<td>
+<tr class="covered"><td>443<td>    FM[hbyte, 0] := nullbytes;
+<tr class="covered"><td>444<td>  end;
+<tr class="covered"><td>445<td>end;
+<tr class="nocodegen"><td>446<td>
+<tr class="nocodegen"><td>447<td>procedure TGCM.ShiftRight(var rx : T128);
+<tr class="nocodegen"><td>448<td>var
+<tr class="nocodegen"><td>449<td>  { TODO : change to a pointer to rx[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>450<td>  x : array[0..15] of byte absolute rx[0];
+<tr class="nocodegen"><td>451<td>  i : integer;
+<tr class="covered"><td>452<td>begin
+<tr class="covered"><td>453<td>  for i := 15 downto 1 do
+<tr class="covered"><td>454<td>    x[i] := (x[i] shr 1) or ((x[i-1] and 1) shl 7);
+<tr class="nocodegen"><td>455<td>
+<tr class="covered"><td>456<td>  x[0] := x[0] shr 1;
+<tr class="covered"><td>457<td>end;
+<tr class="nocodegen"><td>458<td>
+<tr class="nocodegen"><td>459<td>procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
+<tr class="covered"><td>460<td>begin
+<tr class="covered"><td>461<td>  FCalcAuthenticationTagLength := Value shr 3;
+<tr class="covered"><td>462<td>  SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+<tr class="covered"><td>463<td>end;
+<tr class="nocodegen"><td>464<td>
+<tr class="nocodegen"><td>465<td>procedure TGCM.INCR(var Y : T128);
+<tr class="nocodegen"><td>466<td>var
+<tr class="nocodegen"><td>467<td>  { TODO : change to a pointer to Y[0], to get rid of the absolute? }
+<tr class="nocodegen"><td>468<td>  bY : array[0..15] of byte absolute Y[0];
+<tr class="covered"><td>469<td>begin
+<tr class="nocodegen"><td>470<td>  {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
+<tr class="nocodegen"><td>471<td>  {$Q-}
+<tr class="covered"><td>472<td>  inc(bY[15]);
+<tr class="covered"><td>473<td>  if bY[15] = 0 then
+<tr class="nocodegen"><td>474<td>  begin
+<tr class="covered"><td>475<td>    inc(bY[14]);
+<tr class="nocodegen"><td>476<td>
+<tr class="covered"><td>477<td>    if bY[14] = 0 then
+<tr class="nocodegen"><td>478<td>    begin
+<tr class="notcovered"><td>479<td>      inc(bY[13]);
+<tr class="nocodegen"><td>480<td>
+<tr class="notcovered"><td>481<td>      if bY[13] = 0 then
+<tr class="notcovered"><td>482<td>        inc(bY[12]);
+<tr class="nocodegen"><td>483<td>    end;
+<tr class="nocodegen"><td>484<td>  end;
+<tr class="nocodegen"><td>485<td>  {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
+<tr class="covered"><td>486<td>end;
+<tr class="nocodegen"><td>487<td>
+<tr class="nocodegen"><td>488<td>procedure TGCM.Init(EncryptionMethod : TEncodeDecodeMethod;
+<tr class="nocodegen"><td>489<td>                    InitVector       : TBytes);
+<tr class="nocodegen"><td>490<td>var
+<tr class="nocodegen"><td>491<td>  b    : ^Byte;
+<tr class="nocodegen"><td>492<td>  OldH : T128;
+<tr class="covered"><td>493<td>begin
+<tr class="covered"><td>494<td>  Assert(Assigned(EncryptionMethod), 'No encryption method specified');
+<tr class="nocodegen"><td>495<td>
+<tr class="nocodegen"><td>496<td>  // Clear calculated authentication value
+<tr class="covered"><td>497<td>  if (Length(FCalcAuthenticationTag) &gt; 0) then
+<tr class="covered"><td>498<td>    FillChar(FCalcAuthenticationTag[0], Length(FCalcAuthenticationTag), #0);
+<tr class="nocodegen"><td>499<td>
+<tr class="covered"><td>500<td>  FEncryptionMethod := EncryptionMethod;
+<tr class="nocodegen"><td>501<td>
+<tr class="covered"><td>502<td>  Nullbytes[0] := 0;
+<tr class="covered"><td>503<td>  Nullbytes[1] := 0;
+<tr class="nocodegen"><td>504<td>
+<tr class="covered"><td>505<td>  OldH := FH;
+<tr class="covered"><td>506<td>  EncryptionMethod(@Nullbytes[0], @FH[0], 16);
+<tr class="nocodegen"><td>507<td>
+<tr class="nocodegen"><td>508<td>  // Only generate the table when not already generated
+<tr class="covered"><td>509<td>  if (OldH[0] &lt;&gt; FH[0]) or (OldH[1] &lt;&gt; FH[1]) then
+<tr class="covered"><td>510<td>    GenerateTableM8Bit(FH);
+<tr class="nocodegen"><td>511<td>
+<tr class="covered"><td>512<td>  if length(InitVector) = 12 then
+<tr class="nocodegen"><td>513<td>  begin
+<tr class="covered"><td>514<td>     FY[1] := 0;
+<tr class="covered"><td>515<td>     Move(InitVector[0], FY[0], 12);
+<tr class="covered"><td>516<td>     b := @FY[0];
+<tr class="covered"><td>517<td>     inc(b, 15);
+<tr class="covered"><td>518<td>     b^ := 1;
+<tr class="nocodegen"><td>519<td>  end
+<tr class="nocodegen"><td>520<td>  else
+<tr class="covered"><td>521<td>     FY := CalcGaloisHash(nil, InitVector);
+<tr class="nocodegen"><td>522<td>
+<tr class="covered"><td>523<td>  FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
+<tr class="covered"><td>524<td>end;
+<tr class="nocodegen"><td>525<td>
+<tr class="nocodegen"><td>526<td>function TGCM.CalcGaloisHash(AuthenticatedData, Ciphertext : TBytes): T128;
+<tr class="nocodegen"><td>527<td>var
+<tr class="nocodegen"><td>528<td>  AuthCipherLength : T128;
+<tr class="nocodegen"><td>529<td>  x : T128;
+<tr class="nocodegen"><td>530<td>  n : Uint64;
+<tr class="nocodegen"><td>531<td>
+<tr class="nocodegen"><td>532<td>  procedure encode(data : TBytes);
+<tr class="nocodegen"><td>533<td>  var
+<tr class="nocodegen"><td>534<td>    i, mod_d, div_d, len_d : UInt64;
+<tr class="nocodegen"><td>535<td>    hdata : T128;
+<tr class="covered"><td>536<td>  begin
+<tr class="covered"><td>537<td>    len_d := length(data);
+<tr class="covered"><td>538<td>    if (len_d &gt; 0) then
+<tr class="nocodegen"><td>539<td>    begin
+<tr class="covered"><td>540<td>      n := 0;
+<tr class="covered"><td>541<td>      div_d := len_d div 16;
+<tr class="covered"><td>542<td>      if div_d &gt; 0 then
+<tr class="nocodegen"><td>543<td>      begin
+<tr class="nocodegen"><td>544<td>        { TODO : When 6.5 is started the while should be replaced by the for loop again }
+<tr class="nocodegen"><td>545<td>//      for i := 0 to div_d-1 do
+<tr class="covered"><td>546<td>        i := 0;
+<tr class="covered"><td>547<td>        while (i &lt;= div_d-1) do
+<tr class="nocodegen"><td>548<td>        begin
+<tr class="covered"><td>549<td>          x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
+<tr class="covered"><td>550<td>          inc(n, 16);
+<tr class="nocodegen"><td>551<td>          { TODO : Remove the inc when 6.5 implementation starts }
+<tr class="covered"><td>552<td>          inc(i);
+<tr class="nocodegen"><td>553<td>        end;
+<tr class="nocodegen"><td>554<td>      end;
+<tr class="nocodegen"><td>555<td>
+<tr class="covered"><td>556<td>      mod_d := len_d mod 16;
+<tr class="covered"><td>557<td>      if mod_d &gt; 0 then
+<tr class="nocodegen"><td>558<td>      begin
+<tr class="covered"><td>559<td>        hdata := nullbytes;
+<tr class="covered"><td>560<td>        Move(data[n], hdata[0], mod_d);
+<tr class="covered"><td>561<td>        x := poly_mult_H(XOR_T128(hdata, x));
+<tr class="nocodegen"><td>562<td>      end;
+<tr class="nocodegen"><td>563<td>    end;
+<tr class="covered"><td>564<td>  end;
+<tr class="nocodegen"><td>565<td>
+<tr class="covered"><td>566<td>begin
+<tr class="covered"><td>567<td>  x := nullbytes;
+<tr class="covered"><td>568<td>  encode(AuthenticatedData);
+<tr class="covered"><td>569<td>  encode(Ciphertext);
+<tr class="covered"><td>570<td>  SetAuthenticationCipherLength(AuthCipherLength, length(AuthenticatedData) shl 3, length(ciphertext) shl 3);
+<tr class="nocodegen"><td>571<td>
+<tr class="covered"><td>572<td>  Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
+<tr class="covered"><td>573<td>end;
+<tr class="nocodegen"><td>574<td>
+<tr class="nocodegen"><td>575<td>procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>576<td>var
+<tr class="nocodegen"><td>577<td>  i, j, BlockCount : UInt64;
+<tr class="nocodegen"><td>578<td>  a_tag : T128;
+<tr class="covered"><td>579<td>begin
+<tr class="covered"><td>580<td>  i := 0;
+<tr class="covered"><td>581<td>  BlockCount := Size div 16;
+<tr class="nocodegen"><td>582<td>
+<tr class="covered"><td>583<td>  for j := 1 to BlockCount do
+<tr class="nocodegen"><td>584<td>  begin
+<tr class="covered"><td>585<td>    INCR(FY);
+<tr class="covered"><td>586<td>    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
+<tr class="covered"><td>587<td>    inc(i, 16);
+<tr class="covered"><td>588<td>  end;
+<tr class="nocodegen"><td>589<td>
+<tr class="covered"><td>590<td>  if i &lt; Size then
+<tr class="nocodegen"><td>591<td>  begin
+<tr class="covered"><td>592<td>    INCR(FY);
+<tr class="covered"><td>593<td>    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
+<tr class="nocodegen"><td>594<td>  end;
+<tr class="nocodegen"><td>595<td>
+<tr class="covered"><td>596<td>  a_tag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Source), FE_K_Y0);
+<tr class="nocodegen"><td>597<td>
+<tr class="covered"><td>598<td>  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+<tr class="covered"><td>599<td>  Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+<tr class="nocodegen"><td>600<td>
+<tr class="nocodegen"><td>601<td>  // Check for correct authentication result is in Done of DECCipherModes
+<tr class="nocodegen"><td>602<td>  //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
+<tr class="nocodegen"><td>603<td>  //    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+<tr class="nocodegen"><td>604<td>
+<tr class="nocodegen"><td>605<td>  // In difference to the NIST recommendation we do not discard plaintext if
+<tr class="nocodegen"><td>606<td>  // authentication failed to make data recovery possible. But since we throw
+<tr class="nocodegen"><td>607<td>  // an exception the user will get notified that there's something wrong
+<tr class="nocodegen"><td>608<td>  //  if not IsEqual(authenticaton_tag, ba_tag) then
+<tr class="nocodegen"><td>609<td>  //    SetLength(plaintext, 0); // NIST FAIL =&gt; pt=''
+<tr class="covered"><td>610<td>end;
+<tr class="nocodegen"><td>611<td>
+<tr class="nocodegen"><td>612<td>procedure TGCM.EncodeGCM(Source, Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>613<td>var
+<tr class="nocodegen"><td>614<td>  i, j, div_len_plain : UInt64;
+<tr class="nocodegen"><td>615<td>  AuthTag : T128;
+<tr class="covered"><td>616<td>begin
+<tr class="covered"><td>617<td>  i := 0;
+<tr class="covered"><td>618<td>  div_len_plain := Size div 16;
+<tr class="nocodegen"><td>619<td>
+<tr class="nocodegen"><td>620<td>  { TODO : When 6.5 is started the while should be replaced by the for loop again }
+<tr class="nocodegen"><td>621<td>//  for j := 1 to div_len_plain do
+<tr class="covered"><td>622<td>  j := 1;
+<tr class="covered"><td>623<td>  while (j &lt;= div_len_plain) do
+<tr class="nocodegen"><td>624<td>  begin
+<tr class="covered"><td>625<td>    INCR(FY);
+<tr class="nocodegen"><td>626<td>
+<tr class="covered"><td>627<td>    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
+<tr class="nocodegen"><td>628<td>
+<tr class="covered"><td>629<td>    inc(i,16);
+<tr class="nocodegen"><td>630<td>    { TODO : Remove the inc when 6.5 implementation starts }
+<tr class="covered"><td>631<td>    inc(j);
+<tr class="nocodegen"><td>632<td>  end;
+<tr class="nocodegen"><td>633<td>
+<tr class="covered"><td>634<td>  if i &lt; Size then
+<tr class="nocodegen"><td>635<td>  begin
+<tr class="covered"><td>636<td>    INCR(FY);
+<tr class="covered"><td>637<td>    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
+<tr class="nocodegen"><td>638<td>  end;
+<tr class="nocodegen"><td>639<td>
+<tr class="covered"><td>640<td>  AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest), FE_K_Y0);
+<tr class="covered"><td>641<td>  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+<tr class="covered"><td>642<td>  Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+<tr class="covered"><td>643<td>end;
+<tr class="nocodegen"><td>644<td>
+<tr class="nocodegen"><td>645<td>function TGCM.EncodeT128(Value: T128): T128;
+<tr class="covered"><td>646<td>begin
+<tr class="covered"><td>647<td>  FEncryptionMethod(@Value[0], @Result[0], 16);
+<tr class="covered"><td>648<td>end;
+<tr class="nocodegen"><td>649<td>
+<tr class="nocodegen"><td>650<td>function TGCM.GetAuthenticationTagBitLength: UInt32;
+<tr class="covered"><td>651<td>begin
+<tr class="covered"><td>652<td>  Result := FCalcAuthenticationTagLength shl 3;
+<tr class="covered"><td>653<td>end;
+<tr class="nocodegen"><td>654<td>
+<tr class="nocodegen"><td>655<td>function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
+<tr class="nocodegen"><td>656<td>const
+<tr class="nocodegen"><td>657<td>  BitLengths : array[0..4] of Uint16 = (96, 104, 112, 120, 128);
+<tr class="nocodegen"><td>658<td>var
+<tr class="nocodegen"><td>659<td>  i : integer;
+<tr class="covered"><td>660<td>begin
+<tr class="covered"><td>661<td>  SetLength(Result, 5);
+<tr class="nocodegen"><td>662<td>  { TODO: When 6.5 is started the array can be assigned directly again }
+<tr class="nocodegen"><td>663<td>  //  Result := [96, 104, 112, 120, 128];
+<tr class="covered"><td>664<td>  for i := 0 to high(BitLengths) do
+<tr class="covered"><td>665<td>    result[i] := BitLengths[i];
+<tr class="covered"><td>666<td>end;
+<tr class="nocodegen"><td>667<td>
+<tr class="nocodegen"><td>668<td>//
+<tr class="nocodegen"><td>669<td>//function decrypt( const key, IV : TBytes; out plaintext : TBytes; const authenticated_data,
+<tr class="nocodegen"><td>670<td>//ciphertext : TBytes; len_auth_tag : integer; const authenticaton_tag : TBytes ) : boolean;
+<tr class="nocodegen"><td>671<td>//var
+<tr class="nocodegen"><td>672<td>//    i, j, div_len_ciph, len_ciph : Uint64;
+<tr class="nocodegen"><td>673<td>//    a_tag, E_K_Y0, Y, H : T128;
+<tr class="nocodegen"><td>674<td>//    bY : array[0..15] of byte absolute Y[0];
+<tr class="nocodegen"><td>675<td>//    ba_Tag : TBytes;
+<tr class="nocodegen"><td>676<td>//
+<tr class="nocodegen"><td>677<td>//    function equal( const a, b : TBytes ):boolean;
+<tr class="nocodegen"><td>678<td>//    begin
+<tr class="nocodegen"><td>679<td>//      if length(a) &lt;&gt; length(b) then Result := false
+<tr class="nocodegen"><td>680<td>//      else
+<tr class="nocodegen"><td>681<td>//      Result := CompareMem( @a[0], @b[0], length(a) );
+<tr class="nocodegen"><td>682<td>//    end;
+<tr class="nocodegen"><td>683<td>//
+<tr class="nocodegen"><td>684<td>//begin
+<tr class="nocodegen"><td>685<td>//    len_auth_tag := len_auth_tag shr 3;
+<tr class="nocodegen"><td>686<td>//
+<tr class="nocodegen"><td>687<td>//    E_Init( key );
+<tr class="nocodegen"><td>688<td>//    H := E_Cipher( nullbytes );
+<tr class="nocodegen"><td>689<td>//    Table_M_8Bit(H);
+<tr class="nocodegen"><td>690<td>//
+<tr class="nocodegen"><td>691<td>//    len_ciph := length( ciphertext );
+<tr class="nocodegen"><td>692<td>//    SetLength( plaintext, len_ciph );
+<tr class="nocodegen"><td>693<td>//
+<tr class="nocodegen"><td>694<td>//    if length(IV) = 12 then
+<tr class="nocodegen"><td>695<td>//    begin
+<tr class="nocodegen"><td>696<td>//       Y[1] := 0;
+<tr class="nocodegen"><td>697<td>//       Move( IV[0], Y[0], 12 );
+<tr class="nocodegen"><td>698<td>//       bY[15] := 1;
+<tr class="nocodegen"><td>699<td>//    end
+<tr class="nocodegen"><td>700<td>//    else
+<tr class="nocodegen"><td>701<td>//       Y := CalcGaloisHash( H, nil, IV );
+<tr class="nocodegen"><td>702<td>//
+<tr class="nocodegen"><td>703<td>//    E_K_Y0 := E_Cipher( y );
+<tr class="nocodegen"><td>704<td>//
+<tr class="nocodegen"><td>705<td>//    i := 0;
+<tr class="nocodegen"><td>706<td>//    div_len_ciph := len_ciph div 16;
+<tr class="nocodegen"><td>707<td>//    for j := 1 to div_len_ciph do
+<tr class="nocodegen"><td>708<td>//    begin
+<tr class="nocodegen"><td>709<td>//      INCR( Y );
+<tr class="nocodegen"><td>710<td>//      P128(@plaintext[i])^ := XOR_128_n( @ciphertext[i], E_cipher( Y ) );
+<tr class="nocodegen"><td>711<td>//      inc(i,16);
+<tr class="nocodegen"><td>712<td>//    end;
+<tr class="nocodegen"><td>713<td>//
+<tr class="nocodegen"><td>714<td>//    if i &lt; len_ciph then
+<tr class="nocodegen"><td>715<td>//    begin
+<tr class="nocodegen"><td>716<td>//      INCR( Y );
+<tr class="nocodegen"><td>717<td>//      XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );
+<tr class="nocodegen"><td>718<td>//    end;
+<tr class="nocodegen"><td>719<td>//
+<tr class="nocodegen"><td>720<td>//    a_tag := XOR_128( CalcGaloisHash( H, authenticated_data, ciphertext ), E_K_Y0 );
+<tr class="nocodegen"><td>721<td>//
+<tr class="nocodegen"><td>722<td>//    Setlength( ba_tag, len_auth_tag );
+<tr class="nocodegen"><td>723<td>//    Move( a_tag[0], ba_tag[0], len_auth_tag );
+<tr class="nocodegen"><td>724<td>//
+<tr class="nocodegen"><td>725<td>//    Result := equal( authenticaton_tag, ba_tag );
+<tr class="nocodegen"><td>726<td>//    if not Result then SetLength( plaintext, 0 ); // NIST FAIL =&gt; pt=''
+<tr class="nocodegen"><td>727<td>//end;
+<tr class="nocodegen"><td>728<td>//
+<tr class="nocodegen"><td>729<td>
+<tr class="nocodegen"><td>730<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

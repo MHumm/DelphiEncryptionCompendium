@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+table {border-spacing:0; border-collapse:collapse;}
+table, td, th {border: 1px solid black;}
+td, th {background: white; margin: 0; padding: 2px 0.5em 2px 0.5em}
+td {border-width: 0 1px 0 0;}
+th {border-width: 1px 1px 1px 0;}
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: courier,monospace; font-size: 10pt;}
+th {background: #CCCCCC;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: 100%;}
+table.s tr td {padding: 0 0.25em 0 0.25em;}
+table.s tr td:first-child {text-align: right; font-weight: bold;}
+table.s tr.notcovered td {background: #DDDDFF;}
+table.s tr.nocodegen td {background: #FFFFEE;}
+table.s tr.covered td {background: #CCFFCC;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum tr td {border-width: 1px;}
+table.sum tr th {text-align:right;}
+table.sum tr th:first-child {text-align:center;}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+</style>
+</head>
+<body>
+<p>Coverage report for <strong>DECUtilRawByteStringHelper (D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas)</strong>.</p>
+<p> Generated at 29.10.2021 18:49:30 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Statistics for D:\Projekte\DECGitMaster\Source\DECUtilRawByteStringHelper.pas </p>
+<table  class="o"><tr><td>Number of lines covered</td><td>34</td></tr><tr><td>Number of lines with code gen</td><td>38</td></tr><tr><td>Line coverage</td><td>89%</td></tr></table>
+<br /><br />
+<table  class="s">
+<tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
+<tr class="nocodegen"><td>2</td><td><pre style="display:inline;"> &nbsp;The DEC team (see file NOTICE.txt) licenses this file</pre></td></tr>
+<tr class="nocodegen"><td>3</td><td><pre style="display:inline;"> &nbsp;to you under the Apache License, Version 2.0 (the</pre></td></tr>
+<tr class="nocodegen"><td>4</td><td><pre style="display:inline;"> &nbsp;&quot;License&quot;); you may not use this file except in compliance</pre></td></tr>
+<tr class="nocodegen"><td>5</td><td><pre style="display:inline;"> &nbsp;with the License. A copy of this licence is found in the root directory of</pre></td></tr>
+<tr class="nocodegen"><td>6</td><td><pre style="display:inline;"> &nbsp;this project in the file LICENCE.txt or alternatively at</pre></td></tr>
+<tr class="nocodegen"><td>7</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>8</td><td><pre style="display:inline;"> &nbsp; &nbsp;http://www.apache.org/licenses/LICENSE-2.0</pre></td></tr>
+<tr class="nocodegen"><td>9</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>10</td><td><pre style="display:inline;"> &nbsp;Unless required by applicable law or agreed to in writing,</pre></td></tr>
+<tr class="nocodegen"><td>11</td><td><pre style="display:inline;"> &nbsp;software distributed under the License is distributed on an</pre></td></tr>
+<tr class="nocodegen"><td>12</td><td><pre style="display:inline;"> &nbsp;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</pre></td></tr>
+<tr class="nocodegen"><td>13</td><td><pre style="display:inline;"> &nbsp;KIND, either express or implied. &nbsp;See the License for the</pre></td></tr>
+<tr class="nocodegen"><td>14</td><td><pre style="display:inline;"> &nbsp;specific language governing permissions and limitations</pre></td></tr>
+<tr class="nocodegen"><td>15</td><td><pre style="display:inline;"> &nbsp;under the License.</pre></td></tr>
+<tr class="nocodegen"><td>16</td><td><pre style="display:inline;">*****************************************************************************}</pre></td></tr>
+<tr class="nocodegen"><td>17</td><td><pre style="display:inline;">unit DECUtilRawByteStringHelper;</pre></td></tr>
+<tr class="nocodegen"><td>18</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>19</td><td><pre style="display:inline;">interface</pre></td></tr>
+<tr class="nocodegen"><td>20</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>21</td><td><pre style="display:inline;">{$INCLUDE DECOptions.inc}</pre></td></tr>
+<tr class="nocodegen"><td>22</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>23</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>24</td><td><pre style="display:inline;">/// &nbsp; System.pas does not contain a RawByteString compatible version of this</pre></td></tr>
+<tr class="nocodegen"><td>25</td><td><pre style="display:inline;">/// &nbsp; routine so we created our own, copying and adapting code from system.pas</pre></td></tr>
+<tr class="nocodegen"><td>26</td><td><pre style="display:inline;">/// &nbsp; for the NextGen compiler and using a solution from Remy Lebeau for the</pre></td></tr>
+<tr class="nocodegen"><td>27</td><td><pre style="display:inline;">/// &nbsp; Win32/Win64 compiler.</pre></td></tr>
+<tr class="nocodegen"><td>28</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>29</td><td><pre style="display:inline;">/// &lt;param name=&quot;str&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>30</td><td><pre style="display:inline;">/// &nbsp; String to be processed</pre></td></tr>
+<tr class="nocodegen"><td>31</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>32</td><td><pre style="display:inline;">procedure UniqueString(var Str: RawByteString);</pre></td></tr>
+<tr class="nocodegen"><td>33</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>34</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>35</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>36</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>37</td><td><pre style="display:inline;"> &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>38</td><td><pre style="display:inline;"> &nbsp;SysUtils;</pre></td></tr>
+<tr class="nocodegen"><td>39</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>40</td><td><pre style="display:inline;"> &nbsp;System.SysUtils;</pre></td></tr>
+<tr class="nocodegen"><td>41</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>42</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>43</td><td><pre style="display:inline;">type</pre></td></tr>
+<tr class="nocodegen"><td>44</td><td><pre style="display:inline;"> &nbsp;// Duplicate of the System.pas internal declaration. Needs to be kept in sync.</pre></td></tr>
+<tr class="nocodegen"><td>45</td><td><pre style="display:inline;"> &nbsp;PStrRec = ^StrRec;</pre></td></tr>
+<tr class="nocodegen"><td>46</td><td><pre style="display:inline;"> &nbsp;StrRec = packed record</pre></td></tr>
+<tr class="nocodegen"><td>47</td><td><pre style="display:inline;"> &nbsp;{$IFDEF CPU64BITS}</pre></td></tr>
+<tr class="nocodegen"><td>48</td><td><pre style="display:inline;"> &nbsp; &nbsp;_Padding: Integer; // Make 16 byte align for payload..</pre></td></tr>
+<tr class="nocodegen"><td>49</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>50</td><td><pre style="display:inline;"> &nbsp; &nbsp;codePage: Word;</pre></td></tr>
+<tr class="nocodegen"><td>51</td><td><pre style="display:inline;"> &nbsp; &nbsp;elemSize: Word;</pre></td></tr>
+<tr class="nocodegen"><td>52</td><td><pre style="display:inline;"> &nbsp; &nbsp;refCnt: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>53</td><td><pre style="display:inline;"> &nbsp; &nbsp;length: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>54</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>55</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>56</td><td><pre style="display:inline;">function _NewAnsiString(CharLength: Integer; CodePage: Word): Pointer;</pre></td></tr>
+<tr class="nocodegen"><td>57</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>58</td><td><pre style="display:inline;"> &nbsp;P: PStrRec;</pre></td></tr>
+<tr class="covered"><td>59</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>60</td><td><pre style="display:inline;"> &nbsp;Result := nil;</pre></td></tr>
+<tr class="covered"><td>61</td><td><pre style="display:inline;"> &nbsp;if CharLength &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>62</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>63</td><td><pre style="display:inline;"> &nbsp; &nbsp;// Alloc an extra null for strings with even length. &nbsp;This has no actual</pre></td></tr>
+<tr class="nocodegen"><td>64</td><td><pre style="display:inline;"> &nbsp; &nbsp;// cost since the allocator will round up the request to an even size</pre></td></tr>
+<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"> &nbsp; &nbsp;// anyway. All _WideStr allocations have even length, and need a double</pre></td></tr>
+<tr class="nocodegen"><td>66</td><td><pre style="display:inline;"> &nbsp; &nbsp;// null terminator.</pre></td></tr>
+<tr class="covered"><td>67</td><td><pre style="display:inline;"> &nbsp; &nbsp;if CharLength &gt;= MaxInt - SizeOf(StrRec) then</pre></td></tr>
+<tr class="notcovered"><td>68</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EIntOverflow.Create(</pre></td></tr>
+<tr class="nocodegen"><td>69</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;&apos;IntOverflow in _NewAnsiString. CharLength: &apos; + IntToStr(CharLength));</pre></td></tr>
+<tr class="nocodegen"><td>70</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>71</td><td><pre style="display:inline;"> &nbsp; &nbsp;GetMem(P, CharLength + SizeOf(StrRec) + 1 + ((CharLength + 1) and 1));</pre></td></tr>
+<tr class="covered"><td>72</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Pointer(PByte(P) + SizeOf(StrRec));</pre></td></tr>
+<tr class="covered"><td>73</td><td><pre style="display:inline;"> &nbsp; &nbsp;P.length := CharLength;</pre></td></tr>
+<tr class="covered"><td>74</td><td><pre style="display:inline;"> &nbsp; &nbsp;P.refcnt := 1;</pre></td></tr>
+<tr class="covered"><td>75</td><td><pre style="display:inline;"> &nbsp; &nbsp;if CodePage = 0 then</pre></td></tr>
+<tr class="nocodegen"><td>76</td><td><pre style="display:inline;">{$IFDEF NEXTGEN}</pre></td></tr>
+<tr class="nocodegen"><td>77</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;CodePage := Word(CP_UTF8);</pre></td></tr>
+<tr class="nocodegen"><td>78</td><td><pre style="display:inline;">{$ELSE &nbsp;NEXTGEN}</pre></td></tr>
+<tr class="notcovered"><td>79</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;CodePage := Word(DefaultSystemCodePage);</pre></td></tr>
+<tr class="nocodegen"><td>80</td><td><pre style="display:inline;">{$ENDIF NEXTGEN}</pre></td></tr>
+<tr class="covered"><td>81</td><td><pre style="display:inline;"> &nbsp; &nbsp;P.codePage := CodePage;</pre></td></tr>
+<tr class="covered"><td>82</td><td><pre style="display:inline;"> &nbsp; &nbsp;P.elemSize := 1;</pre></td></tr>
+<tr class="covered"><td>83</td><td><pre style="display:inline;"> &nbsp; &nbsp;PWideChar(Result)[CharLength div 2] := #0; &nbsp;// length guaranteed &gt;= 2</pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>85</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>86</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>87</td><td><pre style="display:inline;">function _LStrClr(var S): Pointer;</pre></td></tr>
+<tr class="nocodegen"><td>88</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp;P: PStrRec;</pre></td></tr>
+<tr class="covered"><td>90</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>91</td><td><pre style="display:inline;"> &nbsp;if Pointer(S) &lt;&gt; nil then</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;P := Pointer(PByte(S) - SizeOf(StrRec));</pre></td></tr>
+<tr class="covered"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;Pointer(S) := nil;</pre></td></tr>
+<tr class="covered"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;if P.refCnt &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if InterlockedDecrement(P.refCnt) = 0 then</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="notcovered"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if AtomicDecrement(P.refCnt) = 0 then</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(P.refCnt);</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if (P.refCnt = 0) then</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="notcovered"><td>107</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;FreeMem(P);</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>110</td><td><pre style="display:inline;"> &nbsp;Result := @S;</pre></td></tr>
+<tr class="covered"><td>111</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;">function InternalUniqueStringA(var Str: RawByteString): Pointer;</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp;P: PStrRec;</pre></td></tr>
+<tr class="covered"><td>116</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>117</td><td><pre style="display:inline;"> &nbsp;Result := Pointer(Str);</pre></td></tr>
+<tr class="covered"><td>118</td><td><pre style="display:inline;"> &nbsp;if Result &lt;&gt; nil then</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>120</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Pointer(Str);</pre></td></tr>
+<tr class="covered"><td>121</td><td><pre style="display:inline;"> &nbsp; &nbsp;P := Pointer(PByte(Str) - sizeof(StrRec));</pre></td></tr>
+<tr class="covered"><td>122</td><td><pre style="display:inline;"> &nbsp; &nbsp;if P.refCnt &lt;&gt; 1 then</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>124</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Result := _NewAnsiString(P.length, P.codePage);</pre></td></tr>
+<tr class="covered"><td>125</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Move(Pointer(Str)^, Pointer(Result)^, P.length);</pre></td></tr>
+<tr class="covered"><td>126</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;_LStrClr(Str);</pre></td></tr>
+<tr class="covered"><td>127</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Pointer(Str) := Result;</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>130</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;">procedure UniqueString(var Str: RawByteString);</pre></td></tr>
+<tr class="covered"><td>133</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>134</td><td><pre style="display:inline;"> &nbsp;InternalUniqueStringA(Str);</pre></td></tr>
+<tr class="covered"><td>135</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;">end.</pre></td></tr>
+</table>
+</body>
+</html>

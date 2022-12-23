@@ -1,0 +1,898 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECHashBase (..\..\Source\DECHashBase.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECHashBase.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>152<td rowspan=3 style="background: conic-gradient(#9fe098 88%, #eee 88%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>171<tr><td>Line coverage<td>88<small>.9</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>///   Base unit for all the hash algorithms. The key deviation algorithms are
+<tr class="nocodegen"><td>20<td>///   in the DECHashAUthentication unit and hash algorithms which can process
+<tr class="nocodegen"><td>21<td>///   messages with a length specified in bits instead of whole bytes have
+<tr class="nocodegen"><td>22<td>///   to inherit from TDECHashBit
+<tr class="nocodegen"><td>23<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>24<td>unit DECHashBase;
+<tr class="nocodegen"><td>25<td>
+<tr class="nocodegen"><td>26<td>interface
+<tr class="nocodegen"><td>27<td>
+<tr class="nocodegen"><td>28<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>29<td>
+<tr class="nocodegen"><td>30<td>uses
+<tr class="nocodegen"><td>31<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>32<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>33<td>  {$ELSE}
+<tr class="nocodegen"><td>34<td>  System.SysUtils, System.Classes, Generics.Collections,
+<tr class="nocodegen"><td>35<td>  {$ENDIF}
+<tr class="nocodegen"><td>36<td>  DECBaseClass, DECFormatBase, DECUtil, DECTypes, DECHashInterface;
+<tr class="nocodegen"><td>37<td>
+<tr class="nocodegen"><td>38<td>type
+<tr class="nocodegen"><td>39<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>40<td>  ///   Meta class for all the hashing classes in order to support the
+<tr class="nocodegen"><td>41<td>  ///   registration mechanism
+<tr class="nocodegen"><td>42<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>43<td>  TDECHashClass = class of TDECHash;
+<tr class="nocodegen"><td>44<td>
+<tr class="nocodegen"><td>45<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>46<td>  ///   Base class for all hash algorithm implementation classes
+<tr class="nocodegen"><td>47<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>48<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>49<td>  TDECHash = class(TDECObject)  // does not find methods of the interface as it
+<tr class="nocodegen"><td>50<td>                                // searches for AnsiString instead of RawByteString
+<tr class="nocodegen"><td>51<td>                                // and thus does not find that
+<tr class="nocodegen"><td>52<td>  {$ELSE}
+<tr class="nocodegen"><td>53<td>  TDECHash = class(TDECObject, IDECHash)
+<tr class="nocodegen"><td>54<td>  {$ENDIF}
+<tr class="nocodegen"><td>55<td>  strict private
+<tr class="nocodegen"><td>56<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>57<td>    ///   Raises an EDECHashException hash algorithm not initialized exception
+<tr class="nocodegen"><td>58<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>59<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>60<td>    ///   Exception raised unconditionally.
+<tr class="nocodegen"><td>61<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>62<td>    procedure RaiseHashNotInitialized;
+<tr class="nocodegen"><td>63<td>
+<tr class="nocodegen"><td>64<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>65<td>    ///   Returns the current value of the padding byte used to fill up data
+<tr class="nocodegen"><td>66<td>    ///   if necessary
+<tr class="nocodegen"><td>67<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>68<td>    function GetPaddingByte: Byte;
+<tr class="nocodegen"><td>69<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>70<td>    ///   Changes the value of the padding byte used to fill up data
+<tr class="nocodegen"><td>71<td>    ///   if necessary
+<tr class="nocodegen"><td>72<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>73<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>74<td>    ///   New value for the padding byte
+<tr class="nocodegen"><td>75<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>76<td>    procedure SetPaddingByte(Value: Byte);
+<tr class="nocodegen"><td>77<td>  strict protected
+<tr class="nocodegen"><td>78<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>79<td>    ///   This array holds some state, espscially for Merkle-Darmgard based
+<tr class="nocodegen"><td>80<td>    ///   hash algorithms like MD4, SHA1 or HAVAL.
+<tr class="nocodegen"><td>81<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>82<td>    FCount       : array[0..7] of UInt32;
+<tr class="nocodegen"><td>83<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>84<td>    ///   Internal processing buffer
+<tr class="nocodegen"><td>85<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>86<td>    FBuffer      : PByteArray;
+<tr class="nocodegen"><td>87<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>88<td>    ///   Size of the internal processing buffer in byte
+<tr class="nocodegen"><td>89<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>90<td>    FBufferSize  : Integer;
+<tr class="nocodegen"><td>91<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>92<td>    ///   Position the algorithm is currently at in the processing buffer
+<tr class="nocodegen"><td>93<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>94<td>    FBufferIndex : Integer;
+<tr class="nocodegen"><td>95<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>96<td>    ///   Value used to fill up data
+<tr class="nocodegen"><td>97<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>98<td>    FPaddingByte : UInt8;
+<tr class="nocodegen"><td>99<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>100<td>    ///   Setting this to a number of bits allows to process messages which have
+<tr class="nocodegen"><td>101<td>    ///   a length which is not a exact multiple of bytes.
+<tr class="nocodegen"><td>102<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>103<td>    FFinalByteLength : UInt8;
+<tr class="nocodegen"><td>104<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>105<td>    ///   This abstract method has to be overridden by each concrete hash algorithm
+<tr class="nocodegen"><td>106<td>    ///   to initialize the necessary data structures.
+<tr class="nocodegen"><td>107<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>108<td>    procedure DoInit; virtual; abstract;
+<tr class="nocodegen"><td>109<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>110<td>    ///   The concrete calculation. Needs to be overridden by each concrete hash
+<tr class="nocodegen"><td>111<td>    ///   implementation.
+<tr class="nocodegen"><td>112<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>113<td>    /// &lt;param name=&quot;Buffer&quot;&gt;
+<tr class="nocodegen"><td>114<td>    ///   Data to operate on
+<tr class="nocodegen"><td>115<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>116<td>    procedure DoTransform(Buffer: PUInt32Array); virtual; abstract;
+<tr class="nocodegen"><td>117<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>118<td>    ///   This abstract method has to be overridden by each concrete hash algorithm
+<tr class="nocodegen"><td>119<td>    ///   to finalize the calculation of a hash value over the data passed.
+<tr class="nocodegen"><td>120<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>121<td>    procedure DoDone; virtual; abstract;
+<tr class="nocodegen"><td>122<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>123<td>    ///   Adds the value of 8*Add to the value (which is interpreted as an
+<tr class="nocodegen"><td>124<td>    ///   8*32 bit unsigned integer array. The carry is taken care of.
+<tr class="nocodegen"><td>125<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>126<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>127<td>    ///   Value which is incremented
+<tr class="nocodegen"><td>128<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>129<td>    /// &lt;param name=&quot;Add&quot;&gt;
+<tr class="nocodegen"><td>130<td>    ///   Value (which is being multiplied by 8) by which to increment Value
+<tr class="nocodegen"><td>131<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>132<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>133<td>    ///   Raises an EDECHashException overflow error if the last operation has
+<tr class="nocodegen"><td>134<td>    ///   set the carry flag
+<tr class="nocodegen"><td>135<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>136<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>137<td>    ///   Exception raised if the last operation has set the carry flag.
+<tr class="nocodegen"><td>138<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>139<td>    procedure Increment8(var Value; Add: UInt32);
+<tr class="nocodegen"><td>140<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>141<td>    ///   Raises an EDECHashException overflow error
+<tr class="nocodegen"><td>142<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>143<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>144<td>    ///   Exception raised unconditionally.
+<tr class="nocodegen"><td>145<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>146<td>    procedure RaiseHashOverflowError;
+<tr class="nocodegen"><td>147<td>
+<tr class="nocodegen"><td>148<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>149<td>    ///   Overwrite internally used processing buffers to make it harder to steal
+<tr class="nocodegen"><td>150<td>    ///   any data from memory.
+<tr class="nocodegen"><td>151<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>152<td>    procedure SecureErase; virtual;
+<tr class="nocodegen"><td>153<td>
+<tr class="nocodegen"><td>154<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>155<td>    ///   Returns the calculated hash value
+<tr class="nocodegen"><td>156<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>157<td>    function Digest: PByteArray; virtual; abstract;
+<tr class="nocodegen"><td>158<td>  public
+<tr class="nocodegen"><td>159<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>160<td>    ///   Initialize internal fields
+<tr class="nocodegen"><td>161<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>162<td>    constructor Create; override;
+<tr class="nocodegen"><td>163<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>164<td>    ///   Fees internal resources
+<tr class="nocodegen"><td>165<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>166<td>    destructor Destroy; override;
+<tr class="nocodegen"><td>167<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>168<td>    ///   Generic initialization of internal data structures. Additionally the
+<tr class="nocodegen"><td>169<td>    ///   internal algorithm specific (because of being overridden by each
+<tr class="nocodegen"><td>170<td>    ///   hash algorithm) DoInit method is called. Needs to be called before
+<tr class="nocodegen"><td>171<td>    ///   each hash calculation.
+<tr class="nocodegen"><td>172<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>173<td>    procedure Init;
+<tr class="nocodegen"><td>174<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>175<td>    ///   Processes one chunk of data to be hashed.
+<tr class="nocodegen"><td>176<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>177<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>178<td>    ///   Data on which the hash value shall be calculated on
+<tr class="nocodegen"><td>179<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>180<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>181<td>    ///   Size of the data in bytes
+<tr class="nocodegen"><td>182<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>183<td>    procedure Calc(const Data; DataSize: Integer); virtual;
+<tr class="nocodegen"><td>184<td>
+<tr class="nocodegen"><td>185<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>186<td>    ///   Frees dynamically allocated buffers in a way which safeguards agains
+<tr class="nocodegen"><td>187<td>    ///   data stealing by other methods which afterwards might allocate this memory.
+<tr class="nocodegen"><td>188<td>    ///   Additionaly calls the algorithm spercific DoDone method.
+<tr class="nocodegen"><td>189<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>190<td>    procedure Done;
+<tr class="nocodegen"><td>191<td>
+<tr class="nocodegen"><td>192<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>193<td>    ///   Returns the calculated hash value as byte array
+<tr class="nocodegen"><td>194<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>195<td>    function DigestAsBytes: TBytes; virtual;
+<tr class="nocodegen"><td>196<td>
+<tr class="nocodegen"><td>197<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>198<td>    ///   Returns the calculated hash value as formatted Unicode string
+<tr class="nocodegen"><td>199<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>200<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>201<td>    ///   Optional parameter. If a formatting class is being passed the formatting
+<tr class="nocodegen"><td>202<td>    ///   will be applied to the returned string. Otherwise no formatting is
+<tr class="nocodegen"><td>203<td>    ///   being used.
+<tr class="nocodegen"><td>204<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>205<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>206<td>    ///   Hash value of the last performed hash calculation
+<tr class="nocodegen"><td>207<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>208<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>209<td>    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+<tr class="nocodegen"><td>210<td>    ///   being returned, otherwise the conversion into the Unicode string might
+<tr class="nocodegen"><td>211<td>    ///   result in strange characters in the returned result.
+<tr class="nocodegen"><td>212<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>213<td>    function DigestAsString(Format: TDECFormatClass = nil): string;
+<tr class="nocodegen"><td>214<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>215<td>    ///   Returns the calculated hash value as formatted RawByteString
+<tr class="nocodegen"><td>216<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>217<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>218<td>    ///   Optional parameter. If a formatting class is being passed the formatting
+<tr class="nocodegen"><td>219<td>    ///   will be applied to the returned string. Otherwise no formatting is
+<tr class="nocodegen"><td>220<td>    ///   being used.
+<tr class="nocodegen"><td>221<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>222<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>223<td>    ///   Hash value of the last performed hash calculation
+<tr class="nocodegen"><td>224<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>225<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>226<td>    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+<tr class="nocodegen"><td>227<td>    ///   being returned, otherwise the conversion into the RawByteString might
+<tr class="nocodegen"><td>228<td>    ///   result in strange characters in the returned result.
+<tr class="nocodegen"><td>229<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>230<td>    function DigestAsRawByteString(Format: TDECFormatClass = nil): RawByteString;
+<tr class="nocodegen"><td>231<td>
+<tr class="nocodegen"><td>232<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>233<td>    ///   Gives the length of the calculated hash value in byte. Needs to be
+<tr class="nocodegen"><td>234<td>    ///   overridden in concrete hash implementations.
+<tr class="nocodegen"><td>235<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>236<td>    class function DigestSize: UInt32; virtual;
+<tr class="nocodegen"><td>237<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>238<td>    ///   Gives the length of the blocks the hash value is being calculated
+<tr class="nocodegen"><td>239<td>    ///   on in byte. Needs to be overridden in concrete hash implementations.
+<tr class="nocodegen"><td>240<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>241<td>    class function BlockSize: UInt32; virtual;
+<tr class="nocodegen"><td>242<td>
+<tr class="nocodegen"><td>243<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>244<td>    ///   List of registered DEC classes. Key is the Identity of the class.
+<tr class="nocodegen"><td>245<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>246<td>    class var ClassList : TDECClassList;
+<tr class="nocodegen"><td>247<td>
+<tr class="nocodegen"><td>248<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>249<td>    ///   Tries to find a class type by its name
+<tr class="nocodegen"><td>250<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>251<td>    /// &lt;param name=&quot;Name&quot;&gt;
+<tr class="nocodegen"><td>252<td>    ///   Name to look for in the list
+<tr class="nocodegen"><td>253<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>254<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>255<td>    ///   Returns the class type if found. if it could not be found a
+<tr class="nocodegen"><td>256<td>    ///   EDECClassNotRegisteredException will be thrown
+<tr class="nocodegen"><td>257<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>258<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>259<td>    ///   Exception raised if the class specified by &lt;c&gt;Name&lt;/c&gt; is not found
+<tr class="nocodegen"><td>260<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>261<td>    class function ClassByName(const Name: string): TDECHashClass;
+<tr class="nocodegen"><td>262<td>
+<tr class="nocodegen"><td>263<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>264<td>    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+<tr class="nocodegen"><td>265<td>    ///   Useful for file headers, so they can easily encode numerically which
+<tr class="nocodegen"><td>266<td>    ///   cipher class was being used.
+<tr class="nocodegen"><td>267<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>268<td>    /// &lt;param name=&quot;Identity&quot;&gt;
+<tr class="nocodegen"><td>269<td>    ///   Identity to look for
+<tr class="nocodegen"><td>270<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>271<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>272<td>    ///   Returns the class type of the class with the specified identity value
+<tr class="nocodegen"><td>273<td>    ///   or throws an EDECClassNotRegisteredException exception if no class
+<tr class="nocodegen"><td>274<td>    ///   with the given identity has been found
+<tr class="nocodegen"><td>275<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>276<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>277<td>    ///   Exception raised if the class specified by &lt;c&gt;Identity&lt;/c&gt; is not found
+<tr class="nocodegen"><td>278<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>279<td>    class function ClassByIdentity(Identity: Int64): TDECHashClass;
+<tr class="nocodegen"><td>280<td>
+<tr class="nocodegen"><td>281<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>282<td>    ///   Detects whether the given hash class is one particularily suited
+<tr class="nocodegen"><td>283<td>    ///   for storing hashes of passwords
+<tr class="nocodegen"><td>284<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>285<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>286<td>    ///   true if it's a hash class specifically designed to store password
+<tr class="nocodegen"><td>287<td>    ///   hashes, false for ordinary hash algorithms.
+<tr class="nocodegen"><td>288<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>289<td>    class function IsPasswordHash: Boolean; virtual;
+<tr class="nocodegen"><td>290<td>
+<tr class="nocodegen"><td>291<td>    // hash calculation wrappers
+<tr class="nocodegen"><td>292<td>
+<tr class="nocodegen"><td>293<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>294<td>    ///   Calculates the hash value (digest) for a given buffer. All other
+<tr class="nocodegen"><td>295<td>    ///   CalcXXX methods do call this one for the actual calculation. So for
+<tr class="nocodegen"><td>296<td>    ///   algorithms where overwriting of DoTransform and getting is called the
+<tr class="nocodegen"><td>297<td>    ///   way it is implemented here, the inheriting class should overwrite
+<tr class="nocodegen"><td>298<td>    ///   CalcBuffer and do calculation in that as desired. If DoTransform is
+<tr class="nocodegen"><td>299<td>    ///   not really needed in such a case the inheriting class should overwrite
+<tr class="nocodegen"><td>300<td>    ///   it anyway but leave it empty and comment the reason.
+<tr class="nocodegen"><td>301<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>302<td>    /// &lt;param name=&quot;Buffer&quot;&gt;
+<tr class="nocodegen"><td>303<td>    ///   Untyped buffer the hash shall be calculated for
+<tr class="nocodegen"><td>304<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>305<td>    /// &lt;param name=&quot;BufferSize&quot;&gt;
+<tr class="nocodegen"><td>306<td>    ///   Size of the buffer in byte
+<tr class="nocodegen"><td>307<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>308<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>309<td>    ///   Byte array with the calculated hash value
+<tr class="nocodegen"><td>310<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>311<td>    function CalcBuffer(const Buffer; BufferSize: Integer): TBytes;
+<tr class="nocodegen"><td>312<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>313<td>    ///   Calculates the hash value (digest) for a given buffer
+<tr class="nocodegen"><td>314<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>315<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>316<td>    ///   The TBytes array the hash shall be calculated on
+<tr class="nocodegen"><td>317<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>318<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>319<td>    ///   Byte array with the calculated hash value
+<tr class="nocodegen"><td>320<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>321<td>    function CalcBytes(const Data: TBytes): TBytes;
+<tr class="nocodegen"><td>322<td>
+<tr class="nocodegen"><td>323<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>324<td>    ///   Calculates the hash value (digest) for a given unicode string
+<tr class="nocodegen"><td>325<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>326<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>327<td>    ///   The string the hash shall be calculated on
+<tr class="nocodegen"><td>328<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>329<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>330<td>    ///   Formatting class from DECFormat. The formatting will be applied to the
+<tr class="nocodegen"><td>331<td>    ///   returned digest value. This parameter is optional.
+<tr class="nocodegen"><td>332<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>333<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>334<td>    ///   string with the calculated hash value
+<tr class="nocodegen"><td>335<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>336<td>    function CalcString(const Value: string; Format: TDECFormatClass = nil): string; overload;
+<tr class="nocodegen"><td>337<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>338<td>    ///   Calculates the hash value (digest) for a given rawbytestring
+<tr class="nocodegen"><td>339<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>340<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>341<td>    ///   The string the hash shall be calculated on
+<tr class="nocodegen"><td>342<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>343<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>344<td>    ///   Formatting class from DECFormat. The formatting will be applied to the
+<tr class="nocodegen"><td>345<td>    ///   returned digest value. This parameter is optional.
+<tr class="nocodegen"><td>346<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>347<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>348<td>    ///   string with the calculated hash value
+<tr class="nocodegen"><td>349<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>350<td>    function CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString; overload;
+<tr class="nocodegen"><td>351<td>
+<tr class="nocodegen"><td>352<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>353<td>    ///   Defines the byte used in some algorithms to padd the end of the data
+<tr class="nocodegen"><td>354<td>    ///   if the length of the data cannot be divided by required size for the
+<tr class="nocodegen"><td>355<td>    ///   hash algorithm without reminder. For algorithms which can handle message
+<tr class="nocodegen"><td>356<td>    ///   lengths which are not whole bytes (e.g. SHA3), it can be used to define
+<tr class="nocodegen"><td>357<td>    ///   the last bits. This should be done only for those methods not already
+<tr class="nocodegen"><td>358<td>    ///   returning the calculated hash value, as those manage handling of the
+<tr class="nocodegen"><td>359<td>    ///   last byte themselves.
+<tr class="nocodegen"><td>360<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>361<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>362<td>    ///   If an algorithm is used which can operate on bit sized message lengths
+<tr class="nocodegen"><td>363<td>    ///   and a method for feeding the data is used which does not already return
+<tr class="nocodegen"><td>364<td>    ///   the calculated hash value one needs to set the contents of the last
+<tr class="nocodegen"><td>365<td>    ///   byte with this property! For a stream for instance the length specified
+<tr class="nocodegen"><td>366<td>    ///   when calling CalcStream needs to be 1 byte less and that last byte
+<tr class="nocodegen"><td>367<td>    ///   needs to be assigned to this property just before calling Done.
+<tr class="nocodegen"><td>368<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>369<td>    property PaddingByte: Byte read GetPaddingByte write SetPaddingByte;
+<tr class="nocodegen"><td>370<td>  end;
+<tr class="nocodegen"><td>371<td>
+<tr class="nocodegen"><td>372<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>373<td>///   Returns the passed hash class type if it is not nil. Otherwise the
+<tr class="nocodegen"><td>374<td>///   class type class set per SetDefaultHashClass is being returned. If using
+<tr class="nocodegen"><td>375<td>///   the DECHash unit THash_SHA256 is registered in the initialization, otherwise
+<tr class="nocodegen"><td>376<td>///   nil might be returned!
+<tr class="nocodegen"><td>377<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>378<td>/// &lt;param name=&quot;HashClass&quot;&gt;
+<tr class="nocodegen"><td>379<td>///   Class type of a hash class like THash_SHA256. If nil is passed the one set
+<tr class="nocodegen"><td>380<td>///   as default is returned.
+<tr class="nocodegen"><td>381<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>382<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>383<td>///   Passed class type or defined default hash class type, depending on
+<tr class="nocodegen"><td>384<td>///   HashClass parameter value.
+<tr class="nocodegen"><td>385<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>386<td>function ValidHash(HashClass: TDECHashClass = nil): TDECHashClass;
+<tr class="nocodegen"><td>387<td>
+<tr class="nocodegen"><td>388<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>389<td>///   Defines which cipher class to return by ValidCipher if passing nil to that
+<tr class="nocodegen"><td>390<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>391<td>/// &lt;param name=&quot;HashClass&quot;&gt;
+<tr class="nocodegen"><td>392<td>///   Class type of a hash class to return by ValidHash if passing nil to
+<tr class="nocodegen"><td>393<td>///   that one. This parameter should not be nil!
+<tr class="nocodegen"><td>394<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>395<td>procedure SetDefaultHashClass(HashClass: TDECHashClass);
+<tr class="nocodegen"><td>396<td>
+<tr class="nocodegen"><td>397<td>implementation
+<tr class="nocodegen"><td>398<td>
+<tr class="nocodegen"><td>399<td>resourcestring
+<tr class="nocodegen"><td>400<td>  sHashNotInitialized     = 'Hash must be initialized';
+<tr class="nocodegen"><td>401<td>  sRaiseHashOverflowError = 'Hash Overflow: Too many bits processed';
+<tr class="nocodegen"><td>402<td>  sHashNoDefault          = 'No default hash has been registered';
+<tr class="nocodegen"><td>403<td>
+<tr class="nocodegen"><td>404<td>var
+<tr class="nocodegen"><td>405<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>406<td>  ///   Hash class returned by ValidHash if nil is passed as parameter to it
+<tr class="nocodegen"><td>407<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>408<td>  FDefaultHashClass: TDECHashClass = nil;
+<tr class="nocodegen"><td>409<td>
+<tr class="nocodegen"><td>410<td>function ValidHash(HashClass: TDECHashClass): TDECHashClass;
+<tr class="covered"><td>411<td>begin
+<tr class="covered"><td>412<td>  if Assigned(HashClass) then
+<tr class="covered"><td>413<td>    Result := HashClass
+<tr class="nocodegen"><td>414<td>  else
+<tr class="covered"><td>415<td>    Result := FDefaultHashClass;
+<tr class="nocodegen"><td>416<td>
+<tr class="covered"><td>417<td>  if not Assigned(Result) then
+<tr class="notcovered"><td>418<td>    raise EDECHashException.CreateRes(@sHashNoDefault);
+<tr class="covered"><td>419<td>end;
+<tr class="nocodegen"><td>420<td>
+<tr class="nocodegen"><td>421<td>procedure SetDefaultHashClass(HashClass: TDECHashClass);
+<tr class="covered"><td>422<td>begin
+<tr class="covered"><td>423<td>  Assert(Assigned(HashClass), 'Do not set a nil default hash class!');
+<tr class="nocodegen"><td>424<td>
+<tr class="covered"><td>425<td>  FDefaultHashClass := HashClass;
+<tr class="covered"><td>426<td>end;
+<tr class="nocodegen"><td>427<td>
+<tr class="nocodegen"><td>428<td>{ TDECHash }
+<tr class="nocodegen"><td>429<td>
+<tr class="nocodegen"><td>430<td>constructor TDECHash.Create;
+<tr class="covered"><td>431<td>begin
+<tr class="covered"><td>432<td>  inherited;
+<tr class="covered"><td>433<td>  FBufferSize := 0;
+<tr class="covered"><td>434<td>  FBuffer     := nil;
+<tr class="covered"><td>435<td>end;
+<tr class="nocodegen"><td>436<td>
+<tr class="nocodegen"><td>437<td>destructor TDECHash.Destroy;
+<tr class="covered"><td>438<td>begin
+<tr class="covered"><td>439<td>  SecureErase;
+<tr class="covered"><td>440<td>  FreeMem(FBuffer, FBufferSize);
+<tr class="nocodegen"><td>441<td>
+<tr class="covered"><td>442<td>  inherited Destroy;
+<tr class="covered"><td>443<td>end;
+<tr class="nocodegen"><td>444<td>
+<tr class="nocodegen"><td>445<td>procedure TDECHash.SecureErase;
+<tr class="covered"><td>446<td>begin
+<tr class="covered"><td>447<td>  ProtectBuffer(Digest^, DigestSize);
+<tr class="covered"><td>448<td>  if FBuffer &lt;&gt; nil then
+<tr class="covered"><td>449<td>    ProtectBuffer(FBuffer^, FBufferSize);
+<tr class="covered"><td>450<td>end;
+<tr class="nocodegen"><td>451<td>
+<tr class="nocodegen"><td>452<td>procedure TDECHash.Init;
+<tr class="covered"><td>453<td>begin
+<tr class="covered"><td>454<td>  FBufferIndex := 0;
+<tr class="nocodegen"><td>455<td>
+<tr class="covered"><td>456<td>  if (FBuffer = nil) or (UInt32(FBufferSize) &lt;&gt; BlockSize) then
+<tr class="nocodegen"><td>457<td>    begin
+<tr class="covered"><td>458<td>      FBufferSize := BlockSize;
+<tr class="nocodegen"><td>459<td>      // ReallocMemory instead of ReallocMem due to C++ compatibility as per 10.1 help
+<tr class="nocodegen"><td>460<td>      // It is necessary to reallocate the buffer as FreeMem in destructor wouldn't
+<tr class="nocodegen"><td>461<td>      // accept a nil pointer on some platforms.
+<tr class="covered"><td>462<td>      FBuffer := ReallocMemory(FBuffer, FBufferSize);
+<tr class="nocodegen"><td>463<td>    end;
+<tr class="nocodegen"><td>464<td>
+<tr class="covered"><td>465<td>  FillChar(FBuffer^, FBufferSize, 0);
+<tr class="covered"><td>466<td>  FillChar(FCount, SizeOf(FCount), 0);
+<tr class="covered"><td>467<td>  DoInit;
+<tr class="covered"><td>468<td>end;
+<tr class="nocodegen"><td>469<td>
+<tr class="nocodegen"><td>470<td>class function TDECHash.IsPasswordHash: Boolean;
+<tr class="covered"><td>471<td>begin
+<tr class="nocodegen"><td>472<td>  // has to be overwritten by the base class for password hash algorithms
+<tr class="covered"><td>473<td>  result := false;
+<tr class="covered"><td>474<td>end;
+<tr class="nocodegen"><td>475<td>
+<tr class="nocodegen"><td>476<td>procedure TDECHash.Done;
+<tr class="covered"><td>477<td>begin
+<tr class="covered"><td>478<td>  DoDone;
+<tr class="covered"><td>479<td>end;
+<tr class="nocodegen"><td>480<td>
+<tr class="nocodegen"><td>481<td>function TDECHash.GetPaddingByte: Byte;
+<tr class="covered"><td>482<td>begin
+<tr class="covered"><td>483<td>  Result := FPaddingByte;
+<tr class="covered"><td>484<td>end;
+<tr class="nocodegen"><td>485<td>
+<tr class="nocodegen"><td>486<td>procedure TDECHash.Increment8(var Value; Add: UInt32);
+<tr class="nocodegen"><td>487<td>// Value := Value + 8 * Add
+<tr class="nocodegen"><td>488<td>// Value is array[0..7] of UInt32
+<tr class="nocodegen"><td>489<td>{ TODO -oNormanNG -cCodeReview : !!Unbedingt noch einmal prüfen, ob das wirklich so alles stimmt!!
+<tr class="nocodegen"><td>490<td>Mein Versuch der Umsetzung von Increment8 in ASM.
+<tr class="nocodegen"><td>491<td>Die Implementierung zuvor hat immer Zugriffsverletzungen ausgelöst.
+<tr class="nocodegen"><td>492<td>Vermutung: die alte Implementierung lag ursprünglich ausserhalb der Klasse und wurde später
+<tr class="nocodegen"><td>493<td>in die Klasse verschoben. Dabei verändert sich aber die Nutzung der Register, da zusätzlich
+<tr class="nocodegen"><td>494<td>der SELF-Parameter in EAX übergeben wird. Beim Schreiben nach auf Value wurde dann in die Instanz (Self)
+<tr class="nocodegen"><td>495<td>geschrieben -&gt; peng
+<tr class="nocodegen"><td>496<td>}
+<tr class="nocodegen"><td>497<td>{$IF defined(X86ASM) or defined(X64ASM)}
+<tr class="nocodegen"><td>498<td>  {$IFDEF X86ASM}
+<tr class="nocodegen"><td>499<td>  //   type TData = packed array[0..7] of UInt32;  8x32bit
+<tr class="nocodegen"><td>500<td>  //   TypeOf Param &quot;Value&quot; = TData
+<tr class="nocodegen"><td>501<td>  //
+<tr class="nocodegen"><td>502<td>  //   EAX = Self
+<tr class="nocodegen"><td>503<td>  //   EDX = Pointer to &quot;Value&quot;
+<tr class="nocodegen"><td>504<td>  //   ECX = Value of &quot;ADD&quot;
+<tr class="nocodegen"><td>505<td>  register; // redundant but informative
+<tr class="nocodegen"><td>506<td>  asm
+<tr class="nocodegen"><td>507<td>      LEA EAX,[ECX*8]              //                      EAX := ADD * 8
+<tr class="nocodegen"><td>508<td>      SHR ECX,29                   //                      29bit nach rechts schieben, 3bit beiben stehen
+<tr class="nocodegen"><td>509<td>      ADD [EDX].DWord[00],EAX      // add [edx], eax       TData(Value)[00] := TData(Value)[00] + EAX
+<tr class="nocodegen"><td>510<td>      ADC [EDX].DWord[04],ECX      // adc [edx+$04], ecx   TData(Value)[04] := TData(Value)[04] + ECX + Carry
+<tr class="nocodegen"><td>511<td>      ADC [EDX].DWord[08],0        // adc [edx+$08], 0     TData(Value)[08] := TData(Value)[08] + 0 + Carry
+<tr class="nocodegen"><td>512<td>      ADC [EDX].DWord[12],0        // adc [edx+$0c], 0     TData(Value)[12] := TData(Value)[12] + 0 + Carry
+<tr class="nocodegen"><td>513<td>      ADC [EDX].DWord[16],0        // adc [edx+$10], 0     TData(Value)[16] := TData(Value)[16] + 0 + Carry
+<tr class="nocodegen"><td>514<td>      ADC [EDX].DWord[20],0        // adc [edx+$14], 0     TData(Value)[20] := TData(Value)[20] + 0 + Carry
+<tr class="nocodegen"><td>515<td>      ADC [EDX].DWord[24],0        // adc [edx+$18], 0     TData(Value)[24] := TData(Value)[24] + 0 + Carry
+<tr class="nocodegen"><td>516<td>      ADC [EDX].DWord[28],0        // adc [edx+$1c], 0     TData(Value)[28] := TData(Value)[28] + 0 + Carry
+<tr class="nocodegen"><td>517<td>      JC  RaiseHashOverflowError
+<tr class="nocodegen"><td>518<td>  end;
+<tr class="nocodegen"><td>519<td>  {$ENDIF !X86ASM}
+<tr class="nocodegen"><td>520<td>  {$IFDEF X64ASM}
+<tr class="nocodegen"><td>521<td>  //   type TData = packed array[0..3] of UInt64;  4x64bit
+<tr class="nocodegen"><td>522<td>  //   TypeOf Param &quot;Value&quot; = TData
+<tr class="nocodegen"><td>523<td>  //
+<tr class="nocodegen"><td>524<td>  //   RCX = Self
+<tr class="nocodegen"><td>525<td>  //   RDX = Pointer to &quot;Value&quot;
+<tr class="nocodegen"><td>526<td>  //   R8D = Value of &quot;ADD&quot;
+<tr class="nocodegen"><td>527<td>  register; // redundant but informative
+<tr class="nocodegen"><td>528<td>  asm
+<tr class="nocodegen"><td>529<td>    SHL R8, 3                      // R8 := Add * 8       the caller writes to R8D what automatically clears the high DWORD of R8
+<tr class="nocodegen"><td>530<td>    ADD QWORD PTR [RDX     ], R8   // add [rdx], r8       TData(Value)[00] := TData(Value)[00] + R8
+<tr class="nocodegen"><td>531<td>    ADD QWORD PTR [RDX +  8], 0    // add [rdx+$08], 0    TData(Value)[08] := TData(Value)[08] + 0 + Carry
+<tr class="nocodegen"><td>532<td>    ADD QWORD PTR [RDX + 16], 0    // add [rdx+$10], 0    TData(Value)[16] := TData(Value)[16] + 0 + Carry
+<tr class="nocodegen"><td>533<td>    ADD QWORD PTR [RDX + 24], 0    // add [rdx+$18], 0    TData(Value)[24] := TData(Value)[24] + 0 + Carry
+<tr class="nocodegen"><td>534<td>    JC RaiseHashOverflowError;
+<tr class="nocodegen"><td>535<td>  end;
+<tr class="nocodegen"><td>536<td>  {$ENDIF !X64ASM}
+<tr class="nocodegen"><td>537<td>{$ELSE PUREPASCAL}
+<tr class="nocodegen"><td>538<td>type
+<tr class="nocodegen"><td>539<td>  TData = packed array[0..7] of UInt32;
+<tr class="nocodegen"><td>540<td>
+<tr class="nocodegen"><td>541<td>var
+<tr class="nocodegen"><td>542<td>  HiBits: UInt32;
+<tr class="nocodegen"><td>543<td>  Add8: UInt32;
+<tr class="nocodegen"><td>544<td>  Carry: Boolean;
+<tr class="nocodegen"><td>545<td>
+<tr class="nocodegen"><td>546<td>  procedure AddC(var Value: UInt32; const Add: UInt32; var Carry: Boolean);
+<tr class="covered"><td>547<td>  begin
+<tr class="covered"><td>548<td>    if Carry then
+<tr class="nocodegen"><td>549<td>    begin
+<tr class="notcovered"><td>550<td>      Value := Value + 1;
+<tr class="notcovered"><td>551<td>      Carry := (Value = 0); // we might cause another overflow by adding the carry bit
+<tr class="nocodegen"><td>552<td>    end
+<tr class="nocodegen"><td>553<td>    else
+<tr class="covered"><td>554<td>      Carry := False;
+<tr class="nocodegen"><td>555<td>
+<tr class="covered"><td>556<td>    Value := Value + Add;
+<tr class="covered"><td>557<td>    Carry := Carry or (Value &lt; Add); // set Carry Flag on overflow or keep it if already set
+<tr class="covered"><td>558<td>  end;
+<tr class="nocodegen"><td>559<td>
+<tr class="covered"><td>560<td>begin
+<tr class="covered"><td>561<td>  HiBits := Add shr 29; // Save most significant 3 bits in case an overflow occurs
+<tr class="covered"><td>562<td>  Add8 := Add * 8;
+<tr class="covered"><td>563<td>  Carry := False;
+<tr class="nocodegen"><td>564<td>
+<tr class="covered"><td>565<td>  AddC(TData(Value)[0], Add8, Carry);
+<tr class="covered"><td>566<td>  AddC(TData(Value)[1], HiBits, Carry);
+<tr class="covered"><td>567<td>  AddC(TData(Value)[2], 0, Carry);
+<tr class="covered"><td>568<td>  AddC(TData(Value)[3], 0, Carry);
+<tr class="covered"><td>569<td>  AddC(TData(Value)[4], 0, Carry);
+<tr class="covered"><td>570<td>  AddC(TData(Value)[5], 0, Carry);
+<tr class="covered"><td>571<td>  AddC(TData(Value)[6], 0, Carry);
+<tr class="covered"><td>572<td>  AddC(TData(Value)[7], 0, Carry);
+<tr class="nocodegen"><td>573<td>
+<tr class="covered"><td>574<td>  if Carry then
+<tr class="notcovered"><td>575<td>    RaiseHashOverflowError;
+<tr class="covered"><td>576<td>end;
+<tr class="nocodegen"><td>577<td>{$IFEND PUREPASCAL}
+<tr class="nocodegen"><td>578<td>
+<tr class="nocodegen"><td>579<td>procedure TDECHash.RaiseHashOverflowError;
+<tr class="notcovered"><td>580<td>begin
+<tr class="notcovered"><td>581<td>  raise EDECHashException.CreateRes(@sRaiseHashOverflowError);
+<tr class="notcovered"><td>582<td>end;
+<tr class="nocodegen"><td>583<td>
+<tr class="nocodegen"><td>584<td>procedure TDECHash.SetPaddingByte(Value: Byte);
+<tr class="covered"><td>585<td>begin
+<tr class="covered"><td>586<td>  FPaddingByte := Value;
+<tr class="covered"><td>587<td>end;
+<tr class="nocodegen"><td>588<td>
+<tr class="nocodegen"><td>589<td>procedure TDECHash.RaiseHashNotInitialized;
+<tr class="covered"><td>590<td>begin
+<tr class="covered"><td>591<td>  raise EDECHashException.CreateRes(@sHashNotInitialized);
+<tr class="notcovered"><td>592<td>end;
+<tr class="nocodegen"><td>593<td>
+<tr class="nocodegen"><td>594<td>procedure TDECHash.Calc(const Data; DataSize: Integer);
+<tr class="nocodegen"><td>595<td>var
+<tr class="nocodegen"><td>596<td>  Remain: Integer;
+<tr class="nocodegen"><td>597<td>  Value: PByte;
+<tr class="covered"><td>598<td>begin
+<tr class="covered"><td>599<td>  if DataSize &lt;= 0 then
+<tr class="nocodegen"><td>600<td>    Exit;
+<tr class="nocodegen"><td>601<td>
+<tr class="covered"><td>602<td>  if not Assigned(FBuffer) then
+<tr class="covered"><td>603<td>    RaiseHashNotInitialized;
+<tr class="nocodegen"><td>604<td>
+<tr class="covered"><td>605<td>  Increment8(FCount, DataSize);
+<tr class="covered"><td>606<td>  Value := @TByteArray(Data)[0];
+<tr class="nocodegen"><td>607<td>
+<tr class="covered"><td>608<td>  if FBufferIndex &gt; 0 then
+<tr class="nocodegen"><td>609<td>  begin
+<tr class="covered"><td>610<td>    Remain := FBufferSize - FBufferIndex;
+<tr class="covered"><td>611<td>    if DataSize &lt; Remain then
+<tr class="nocodegen"><td>612<td>    begin
+<tr class="covered"><td>613<td>      Move(Value^, FBuffer[FBufferIndex], DataSize);
+<tr class="covered"><td>614<td>      Inc(FBufferIndex, DataSize);
+<tr class="notcovered"><td>615<td>      Exit;
+<tr class="nocodegen"><td>616<td>    end;
+<tr class="covered"><td>617<td>    Move(Value^, FBuffer[FBufferIndex], Remain);
+<tr class="covered"><td>618<td>    DoTransform(Pointer(FBuffer));
+<tr class="covered"><td>619<td>    Dec(DataSize, Remain);
+<tr class="covered"><td>620<td>    Inc(Value, Remain);
+<tr class="nocodegen"><td>621<td>  end;
+<tr class="nocodegen"><td>622<td>
+<tr class="covered"><td>623<td>  while DataSize &gt;= FBufferSize do
+<tr class="nocodegen"><td>624<td>  begin
+<tr class="covered"><td>625<td>    DoTransform(Pointer(Value));
+<tr class="covered"><td>626<td>    Inc(Value, FBufferSize);
+<tr class="covered"><td>627<td>    Dec(DataSize, FBufferSize);
+<tr class="nocodegen"><td>628<td>  end;
+<tr class="nocodegen"><td>629<td>
+<tr class="covered"><td>630<td>  Move(Value^, FBuffer^, DataSize);
+<tr class="covered"><td>631<td>  FBufferIndex := DataSize;
+<tr class="covered"><td>632<td>end;
+<tr class="nocodegen"><td>633<td>
+<tr class="nocodegen"><td>634<td>function TDECHash.DigestAsBytes: TBytes;
+<tr class="covered"><td>635<td>begin
+<tr class="covered"><td>636<td>  SetLength(Result, DigestSize);
+<tr class="covered"><td>637<td>  if DigestSize &lt;&gt; 0 then
+<tr class="covered"><td>638<td>    Move(Digest^, Result[0], DigestSize);
+<tr class="covered"><td>639<td>end;
+<tr class="nocodegen"><td>640<td>
+<tr class="nocodegen"><td>641<td>function TDECHash.DigestAsRawByteString(Format: TDECFormatClass): RawByteString;
+<tr class="covered"><td>642<td>begin
+<tr class="covered"><td>643<td>  Result := BytesToRawString(ValidFormat(Format).Encode(DigestAsBytes));
+<tr class="covered"><td>644<td>end;
+<tr class="nocodegen"><td>645<td>
+<tr class="nocodegen"><td>646<td>function TDECHash.DigestAsString(Format: TDECFormatClass): string;
+<tr class="covered"><td>647<td>begin
+<tr class="covered"><td>648<td>  Result := StringOf(ValidFormat(Format).Encode(DigestAsBytes));
+<tr class="covered"><td>649<td>end;
+<tr class="nocodegen"><td>650<td>
+<tr class="nocodegen"><td>651<td>class function TDECHash.DigestSize: UInt32;
+<tr class="covered"><td>652<td>begin
+<tr class="nocodegen"><td>653<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>654<td>  // marked 'abstract'. This is our workaround:
+<tr class="covered"><td>655<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>656<td>end;
+<tr class="nocodegen"><td>657<td>
+<tr class="nocodegen"><td>658<td>class function TDECHash.BlockSize: UInt32;
+<tr class="covered"><td>659<td>begin
+<tr class="nocodegen"><td>660<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>661<td>  // marked 'abstract'. This is our workaround:
+<tr class="covered"><td>662<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>663<td>end;
+<tr class="nocodegen"><td>664<td>
+<tr class="nocodegen"><td>665<td>function TDECHash.CalcBuffer(const Buffer; BufferSize: Integer): TBytes;
+<tr class="nocodegen"><td>666<td>var
+<tr class="nocodegen"><td>667<td>  DataPtr: PByte;
+<tr class="covered"><td>668<td>begin
+<tr class="covered"><td>669<td>  Init;
+<tr class="nocodegen"><td>670<td>
+<tr class="covered"><td>671<td>  if (FFinalByteLength = 0) or (BufferSize = 0) then
+<tr class="covered"><td>672<td>    Calc(Buffer, BufferSize)
+<tr class="nocodegen"><td>673<td>  else
+<tr class="covered"><td>674<td>    if (BufferSize &gt; 0) then
+<tr class="nocodegen"><td>675<td>    begin
+<tr class="nocodegen"><td>676<td>      // Remember last byte as this might be required for padding for such
+<tr class="nocodegen"><td>677<td>      // algorithms which have some automatic padding logic
+<tr class="covered"><td>678<td>      DataPtr := @Buffer;
+<tr class="covered"><td>679<td>      Inc(DataPtr, BufferSize - 1);
+<tr class="covered"><td>680<td>      FPaddingByte := DataPtr^;
+<tr class="nocodegen"><td>681<td>
+<tr class="nocodegen"><td>682<td>      // Last byte is incomplete so do not process normally
+<tr class="covered"><td>683<td>      Calc(Buffer, BufferSize-1);
+<tr class="nocodegen"><td>684<td>    end;
+<tr class="nocodegen"><td>685<td>
+<tr class="covered"><td>686<td>  Done;
+<tr class="covered"><td>687<td>  Result := DigestAsBytes;
+<tr class="covered"><td>688<td>end;
+<tr class="nocodegen"><td>689<td>
+<tr class="nocodegen"><td>690<td>function TDECHash.CalcBytes(const Data: TBytes): TBytes;
+<tr class="covered"><td>691<td>begin
+<tr class="covered"><td>692<td>  SetLength(Result, 0);
+<tr class="covered"><td>693<td>  if Length(Data) &gt; 0 then
+<tr class="covered"><td>694<td>    Result := CalcBuffer(Data[0], Length(Data))
+<tr class="nocodegen"><td>695<td>  else
+<tr class="covered"><td>696<td>    Result := CalcBuffer(Data, Length(Data));
+<tr class="covered"><td>697<td>end;
+<tr class="nocodegen"><td>698<td>
+<tr class="nocodegen"><td>699<td>function TDECHash.CalcString(const Value: string; Format: TDECFormatClass): string;
+<tr class="nocodegen"><td>700<td>var
+<tr class="nocodegen"><td>701<td>  Size : Integer;
+<tr class="nocodegen"><td>702<td>  Data : TBytes;
+<tr class="covered"><td>703<td>begin
+<tr class="covered"><td>704<td>  Result := '';
+<tr class="covered"><td>705<td>  if Length(Value) &gt; 0 then
+<tr class="nocodegen"><td>706<td>  begin
+<tr class="nocodegen"><td>707<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>708<td>    Size   := Length(Value) * SizeOf(Value[low(Value)]);
+<tr class="covered"><td>709<td>    Data   := CalcBuffer(Value[low(Value)], Size);
+<tr class="nocodegen"><td>710<td>    {$ELSE}
+<tr class="nocodegen"><td>711<td>    Size   := Length(Value) * SizeOf(Value[1]);
+<tr class="nocodegen"><td>712<td>    Data   := CalcBuffer(Value[1], Size);
+<tr class="nocodegen"><td>713<td>    {$IFEND}
+<tr class="covered"><td>714<td>    Result := StringOf(ValidFormat(Format).Encode(Data));
+<tr class="nocodegen"><td>715<td>  end
+<tr class="nocodegen"><td>716<td>  else
+<tr class="nocodegen"><td>717<td>  begin
+<tr class="covered"><td>718<td>    SetLength(Data, 0);
+<tr class="covered"><td>719<td>    result := StringOf(ValidFormat(Format).Encode(CalcBuffer(Data, 0)));
+<tr class="nocodegen"><td>720<td>  end;
+<tr class="covered"><td>721<td>end;
+<tr class="nocodegen"><td>722<td>
+<tr class="nocodegen"><td>723<td>function TDECHash.CalcString(const Value: RawByteString; Format: TDECFormatClass): RawByteString;
+<tr class="nocodegen"><td>724<td>var
+<tr class="nocodegen"><td>725<td>  Buf : TBytes;
+<tr class="covered"><td>726<td>begin
+<tr class="covered"><td>727<td>  Result := '';
+<tr class="covered"><td>728<td>  if Length(Value) &gt; 0 then
+<tr class="nocodegen"><td>729<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>730<td>    result := BytesToRawString(
+<tr class="nocodegen"><td>731<td>                ValidFormat(Format).Encode(
+<tr class="nocodegen"><td>732<td>                  CalcBuffer(Value[low(Value)],
+<tr class="nocodegen"><td>733<td>                             Length(Value) * SizeOf(Value[low(Value)]))))
+<tr class="nocodegen"><td>734<td>    {$ELSE}
+<tr class="nocodegen"><td>735<td>    result := BytesToRawString(
+<tr class="nocodegen"><td>736<td>                ValidFormat(Format).Encode(
+<tr class="nocodegen"><td>737<td>                  CalcBuffer(Value[1],
+<tr class="nocodegen"><td>738<td>                             Length(Value) * SizeOf(Value[1]))))
+<tr class="nocodegen"><td>739<td>    {$IFEND}
+<tr class="nocodegen"><td>740<td>  else
+<tr class="nocodegen"><td>741<td>  begin
+<tr class="covered"><td>742<td>    SetLength(Buf, 0);
+<tr class="covered"><td>743<td>    Result := BytesToRawString(ValidFormat(Format).Encode(CalcBuffer(Buf, 0)));
+<tr class="nocodegen"><td>744<td>  end;
+<tr class="covered"><td>745<td>end;
+<tr class="nocodegen"><td>746<td>
+<tr class="nocodegen"><td>747<td>class function TDECHash.ClassByIdentity(Identity: Int64): TDECHashClass;
+<tr class="covered"><td>748<td>begin
+<tr class="covered"><td>749<td>  Result := TDECHashClass(ClassList.ClassByIdentity(Identity));
+<tr class="covered"><td>750<td>end;
+<tr class="nocodegen"><td>751<td>
+<tr class="nocodegen"><td>752<td>class function TDECHash.ClassByName(const Name: string): TDECHashClass;
+<tr class="covered"><td>753<td>begin
+<tr class="covered"><td>754<td>  Result := TDECHashClass(ClassList.ClassByName(Name));
+<tr class="covered"><td>755<td>end;
+<tr class="nocodegen"><td>756<td>
+<tr class="nocodegen"><td>757<td>{$IFDEF DELPHIORBCB}
+<tr class="nocodegen"><td>758<td>procedure ModuleUnload(Instance: NativeUInt);
+<tr class="nocodegen"><td>759<td>var // automaticaly deregistration/releasing
+<tr class="nocodegen"><td>760<td>  i: Integer;
+<tr class="nocodegen"><td>761<td>  Items: TArray&lt;TPair&lt;Int64, TDECCLass&gt;&gt;;
+<tr class="notcovered"><td>762<td>begin
+<tr class="nocodegen"><td>763<td>  // C++Builder calls this function for our own module, but we destroy the ClassList
+<tr class="nocodegen"><td>764<td>  // in that case in the finalization section anyway.
+<tr class="notcovered"><td>765<td>  if (Instance &lt;&gt; HInstance) and
+<tr class="nocodegen"><td>766<td>     (TDECHash.ClassList &lt;&gt; nil) and (TDECHash.ClassList.Count &gt; 0) then
+<tr class="nocodegen"><td>767<td>  begin
+<tr class="notcovered"><td>768<td>    Items := TDECHash.ClassList.ToArray;
+<tr class="notcovered"><td>769<td>    for i := Length(Items) - 1 downto 0 do
+<tr class="nocodegen"><td>770<td>    begin
+<tr class="notcovered"><td>771<td>      if FindClassHInstance(Items[i].Value) = HINST(HInstance) then
+<tr class="notcovered"><td>772<td>        TDECHash.ClassList.Remove(Items[i].Key);
+<tr class="notcovered"><td>773<td>    end;
+<tr class="nocodegen"><td>774<td>  end;
+<tr class="notcovered"><td>775<td>end;
+<tr class="nocodegen"><td>776<td>{$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>777<td>
+<tr class="covered"><td>778<td>initialization
+<tr class="nocodegen"><td>779<td>  // Code for packages and dynamic extension of the class registration list
+<tr class="nocodegen"><td>780<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>781<td>  AddModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>782<td>  {$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>783<td>
+<tr class="covered"><td>784<td>  TDECHash.ClassList := TDECClassList.Create;
+<tr class="nocodegen"><td>785<td>
+<tr class="covered"><td>786<td>finalization
+<tr class="nocodegen"><td>787<td>  // Ensure no further instances of classes registered in the registration list
+<tr class="nocodegen"><td>788<td>  // are possible through the list after this unit has been unloaded by unloding
+<tr class="nocodegen"><td>789<td>  // the package this unit is in
+<tr class="nocodegen"><td>790<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>791<td>  RemoveModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>792<td>  {$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>793<td>
+<tr class="covered"><td>794<td>  TDECHash.ClassList.Free;
+<tr class="covered"><td>795<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

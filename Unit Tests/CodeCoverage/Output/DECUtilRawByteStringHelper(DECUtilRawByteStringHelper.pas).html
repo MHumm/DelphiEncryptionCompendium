@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECUtilRawByteStringHelper (..\..\Source\DECUtilRawByteStringHelper.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECUtilRawByteStringHelper.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>34<td rowspan=3 style="background: conic-gradient(#9fe098 89%, #eee 89%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>38<tr><td>Line coverage<td>89<small>.5</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory of
+<tr class="nocodegen"><td>6<td>  this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>unit DECUtilRawByteStringHelper;
+<tr class="nocodegen"><td>18<td>
+<tr class="nocodegen"><td>19<td>interface
+<tr class="nocodegen"><td>20<td>
+<tr class="nocodegen"><td>21<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>24<td>///   System.pas does not contain a RawByteString compatible version of this
+<tr class="nocodegen"><td>25<td>///   routine so we created our own, copying and adapting code from system.pas
+<tr class="nocodegen"><td>26<td>///   for the NextGen compiler and using a solution from Remy Lebeau for the
+<tr class="nocodegen"><td>27<td>///   Win32/Win64 compiler.
+<tr class="nocodegen"><td>28<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>29<td>/// &lt;param name=&quot;str&quot;&gt;
+<tr class="nocodegen"><td>30<td>///   String to be processed
+<tr class="nocodegen"><td>31<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>32<td>procedure UniqueString(var Str: RawByteString);
+<tr class="nocodegen"><td>33<td>
+<tr class="nocodegen"><td>34<td>implementation
+<tr class="nocodegen"><td>35<td>
+<tr class="nocodegen"><td>36<td>uses
+<tr class="nocodegen"><td>37<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>38<td>  SysUtils;
+<tr class="nocodegen"><td>39<td>  {$ELSE}
+<tr class="nocodegen"><td>40<td>  System.SysUtils;
+<tr class="nocodegen"><td>41<td>  {$ENDIF}
+<tr class="nocodegen"><td>42<td>
+<tr class="nocodegen"><td>43<td>type
+<tr class="nocodegen"><td>44<td>  // Duplicate of the System.pas internal declaration. Needs to be kept in sync.
+<tr class="nocodegen"><td>45<td>  PStrRec = ^StrRec;
+<tr class="nocodegen"><td>46<td>  StrRec = packed record
+<tr class="nocodegen"><td>47<td>  {$IFDEF CPU64BITS}
+<tr class="nocodegen"><td>48<td>    _Padding: Integer; // Make 16 byte align for payload..
+<tr class="nocodegen"><td>49<td>  {$ENDIF}
+<tr class="nocodegen"><td>50<td>    codePage: Word;
+<tr class="nocodegen"><td>51<td>    elemSize: Word;
+<tr class="nocodegen"><td>52<td>    refCnt: Integer;
+<tr class="nocodegen"><td>53<td>    length: Integer;
+<tr class="nocodegen"><td>54<td>  end;
+<tr class="nocodegen"><td>55<td>
+<tr class="nocodegen"><td>56<td>function _NewAnsiString(CharLength: Integer; CodePage: Word): Pointer;
+<tr class="nocodegen"><td>57<td>var
+<tr class="nocodegen"><td>58<td>  P: PStrRec;
+<tr class="covered"><td>59<td>begin
+<tr class="covered"><td>60<td>  Result := nil;
+<tr class="covered"><td>61<td>  if CharLength &gt; 0 then
+<tr class="nocodegen"><td>62<td>  begin
+<tr class="nocodegen"><td>63<td>    // Alloc an extra null for strings with even length.  This has no actual
+<tr class="nocodegen"><td>64<td>    // cost since the allocator will round up the request to an even size
+<tr class="nocodegen"><td>65<td>    // anyway. All _WideStr allocations have even length, and need a double
+<tr class="nocodegen"><td>66<td>    // null terminator.
+<tr class="covered"><td>67<td>    if CharLength &gt;= MaxInt - SizeOf(StrRec) then
+<tr class="notcovered"><td>68<td>      raise EIntOverflow.Create(
+<tr class="nocodegen"><td>69<td>        'IntOverflow in _NewAnsiString. CharLength: ' + IntToStr(CharLength));
+<tr class="nocodegen"><td>70<td>
+<tr class="covered"><td>71<td>    GetMem(P, CharLength + SizeOf(StrRec) + 1 + ((CharLength + 1) and 1));
+<tr class="covered"><td>72<td>    Result := Pointer(PByte(P) + SizeOf(StrRec));
+<tr class="covered"><td>73<td>    P.length := CharLength;
+<tr class="covered"><td>74<td>    P.refcnt := 1;
+<tr class="covered"><td>75<td>    if CodePage = 0 then
+<tr class="nocodegen"><td>76<td>{$IFDEF NEXTGEN}
+<tr class="nocodegen"><td>77<td>      CodePage := Word(CP_UTF8);
+<tr class="nocodegen"><td>78<td>{$ELSE  NEXTGEN}
+<tr class="notcovered"><td>79<td>      CodePage := Word(DefaultSystemCodePage);
+<tr class="nocodegen"><td>80<td>{$ENDIF NEXTGEN}
+<tr class="covered"><td>81<td>    P.codePage := CodePage;
+<tr class="covered"><td>82<td>    P.elemSize := 1;
+<tr class="covered"><td>83<td>    PWideChar(Result)[CharLength div 2] := #0;  // length guaranteed &gt;= 2
+<tr class="nocodegen"><td>84<td>  end;
+<tr class="covered"><td>85<td>end;
+<tr class="nocodegen"><td>86<td>
+<tr class="nocodegen"><td>87<td>function _LStrClr(var S): Pointer;
+<tr class="nocodegen"><td>88<td>var
+<tr class="nocodegen"><td>89<td>  P: PStrRec;
+<tr class="covered"><td>90<td>begin
+<tr class="covered"><td>91<td>  if Pointer(S) &lt;&gt; nil then
+<tr class="nocodegen"><td>92<td>  begin
+<tr class="covered"><td>93<td>    P := Pointer(PByte(S) - SizeOf(StrRec));
+<tr class="covered"><td>94<td>    Pointer(S) := nil;
+<tr class="covered"><td>95<td>    if P.refCnt &gt; 0 then
+<tr class="nocodegen"><td>96<td>    begin
+<tr class="nocodegen"><td>97<td>      {$IFDEF FPC}
+<tr class="nocodegen"><td>98<td>      if InterlockedDecrement(P.refCnt) = 0 then
+<tr class="nocodegen"><td>99<td>      {$ELSE}
+<tr class="nocodegen"><td>100<td>        {$IF CompilerVersion &gt;= 24.0}
+<tr class="notcovered"><td>101<td>        if AtomicDecrement(P.refCnt) = 0 then
+<tr class="nocodegen"><td>102<td>        {$ELSE}
+<tr class="nocodegen"><td>103<td>        Dec(P.refCnt);
+<tr class="nocodegen"><td>104<td>        if (P.refCnt = 0) then
+<tr class="nocodegen"><td>105<td>        {$IFEND}
+<tr class="nocodegen"><td>106<td>      {$ENDIF}
+<tr class="notcovered"><td>107<td>        FreeMem(P);
+<tr class="nocodegen"><td>108<td>    end;
+<tr class="nocodegen"><td>109<td>  end;
+<tr class="covered"><td>110<td>  Result := @S;
+<tr class="covered"><td>111<td>end;
+<tr class="nocodegen"><td>112<td>
+<tr class="nocodegen"><td>113<td>function InternalUniqueStringA(var Str: RawByteString): Pointer;
+<tr class="nocodegen"><td>114<td>var
+<tr class="nocodegen"><td>115<td>  P: PStrRec;
+<tr class="covered"><td>116<td>begin
+<tr class="covered"><td>117<td>  Result := Pointer(Str);
+<tr class="covered"><td>118<td>  if Result &lt;&gt; nil then
+<tr class="nocodegen"><td>119<td>  begin
+<tr class="covered"><td>120<td>    Result := Pointer(Str);
+<tr class="covered"><td>121<td>    P := Pointer(PByte(Str) - sizeof(StrRec));
+<tr class="covered"><td>122<td>    if P.refCnt &lt;&gt; 1 then
+<tr class="nocodegen"><td>123<td>    begin
+<tr class="covered"><td>124<td>      Result := _NewAnsiString(P.length, P.codePage);
+<tr class="covered"><td>125<td>      Move(Pointer(Str)^, Pointer(Result)^, P.length);
+<tr class="covered"><td>126<td>      _LStrClr(Str);
+<tr class="covered"><td>127<td>      Pointer(Str) := Result;
+<tr class="nocodegen"><td>128<td>    end;
+<tr class="nocodegen"><td>129<td>  end;
+<tr class="covered"><td>130<td>end;
+<tr class="nocodegen"><td>131<td>
+<tr class="nocodegen"><td>132<td>procedure UniqueString(var Str: RawByteString);
+<tr class="covered"><td>133<td>begin
+<tr class="covered"><td>134<td>  InternalUniqueStringA(Str);
+<tr class="covered"><td>135<td>end;
+<tr class="nocodegen"><td>136<td>
+<tr class="nocodegen"><td>137<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

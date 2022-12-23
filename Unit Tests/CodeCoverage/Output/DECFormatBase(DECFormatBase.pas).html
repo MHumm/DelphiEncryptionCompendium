@@ -1,0 +1,760 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECFormatBase (..\..\Source\DECFormatBase.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECFormatBase.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>97<td rowspan=3 style="background: conic-gradient(#9fe098 85%, #eee 85%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>114<tr><td>Line coverage<td>85<small>.1</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{ *****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>  http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>  ***************************************************************************** }
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>/// Contains the base class for all the formatting classes
+<tr class="nocodegen"><td>20<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>21<td>unit DECFormatBase;
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>interface
+<tr class="nocodegen"><td>24<td>
+<tr class="nocodegen"><td>25<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>26<td>
+<tr class="nocodegen"><td>27<td>uses
+<tr class="nocodegen"><td>28<td>{$IFDEF FPC}
+<tr class="nocodegen"><td>29<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>30<td>{$ELSE}
+<tr class="nocodegen"><td>31<td>  System.SysUtils, System.Classes, Generics.Collections,
+<tr class="nocodegen"><td>32<td>{$ENDIF}
+<tr class="nocodegen"><td>33<td>  DECBaseClass, DECUtil;
+<tr class="nocodegen"><td>34<td>
+<tr class="nocodegen"><td>35<td>type
+<tr class="nocodegen"><td>36<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>37<td>  /// Class reference type of the TDECFormat base class. This is used for
+<tr class="nocodegen"><td>38<td>  /// passing formatting classes as parameters or returning those. This is
+<tr class="nocodegen"><td>39<td>  /// especially useful for the formatting classes, as they only contain
+<tr class="nocodegen"><td>40<td>  /// class functions.
+<tr class="nocodegen"><td>41<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>42<td>  TDECFormatClass = class of TDECFormat;
+<tr class="nocodegen"><td>43<td>
+<tr class="nocodegen"><td>44<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>45<td>  /// copy input to output (default format)
+<tr class="nocodegen"><td>46<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>47<td>  TFormat_Copy = class;
+<tr class="nocodegen"><td>48<td>
+<tr class="nocodegen"><td>49<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>50<td>  /// Basis for all formatting classes. Not to be instantiated directly.
+<tr class="nocodegen"><td>51<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>52<td>  TDECFormat = class(TDECObject)
+<tr class="nocodegen"><td>53<td>  protected
+<tr class="nocodegen"><td>54<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>55<td>    /// Internal method for the actual format conversion. This method needs to
+<tr class="nocodegen"><td>56<td>    /// be overridden in all the child classes. Converts into the format.
+<tr class="nocodegen"><td>57<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>58<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>59<td>    /// Data to be converted
+<tr class="nocodegen"><td>60<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>61<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>62<td>    /// Into this parameter the converted data will be written into.
+<tr class="nocodegen"><td>63<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>64<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>65<td>    /// Number of bytes from source which will get converted.
+<tr class="nocodegen"><td>66<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>67<td>    class procedure DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>68<td>      Size: Integer); virtual;
+<tr class="nocodegen"><td>69<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>70<td>    /// Internal method for the actual format conversion. This method needs to
+<tr class="nocodegen"><td>71<td>    /// be overridden in all the child classes. Converts from the format into
+<tr class="nocodegen"><td>72<td>    /// the format the data had before encoding it.
+<tr class="nocodegen"><td>73<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>74<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>75<td>    /// Data to be converted
+<tr class="nocodegen"><td>76<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>77<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>78<td>    /// Into this parameter the converted data will be written into.
+<tr class="nocodegen"><td>79<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>80<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>81<td>    /// Number of bytes from source which will get converted.
+<tr class="nocodegen"><td>82<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>83<td>    class procedure DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>84<td>      Size: Integer); virtual;
+<tr class="nocodegen"><td>85<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>86<td>    /// Internal method for checking whether all bytes of the data to be
+<tr class="nocodegen"><td>87<td>    /// processed are valid for this particular formatting. This method needs
+<tr class="nocodegen"><td>88<td>    /// to be overridden in all the child classes.
+<tr class="nocodegen"><td>89<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>90<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>91<td>    /// Data to be checked
+<tr class="nocodegen"><td>92<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>93<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>94<td>    /// Number of bytes from data which will get checked.
+<tr class="nocodegen"><td>95<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>96<td>    class function DoIsValid(const Data; Size: Integer): Boolean; virtual;
+<tr class="nocodegen"><td>97<td>  public
+<tr class="nocodegen"><td>98<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>99<td>    /// List of registered DEC classes. Key is the Identity of the class.
+<tr class="nocodegen"><td>100<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>101<td>    class var ClassList: TDECClassList;
+<tr class="nocodegen"><td>102<td>
+<tr class="nocodegen"><td>103<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>104<td>    ///   Tries to find a class type by its name in the list of registered
+<tr class="nocodegen"><td>105<td>    ///   formatting classes
+<tr class="nocodegen"><td>106<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>107<td>    /// &lt;param name=&quot;Name&quot;&gt;
+<tr class="nocodegen"><td>108<td>    ///   Name to look for in the list
+<tr class="nocodegen"><td>109<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>110<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>111<td>    ///   Returns the class type if found. if it could not be found a
+<tr class="nocodegen"><td>112<td>    ///   EDECClassNotRegisteredException will be thrown
+<tr class="nocodegen"><td>113<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>114<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>115<td>    ///   Exception raised if the class specified by &lt;c&gt;Name&lt;/c&gt; is not found
+<tr class="nocodegen"><td>116<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>117<td>    class function ClassByName(const Name: string): TDECFormatClass;
+<tr class="nocodegen"><td>118<td>
+<tr class="nocodegen"><td>119<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>120<td>    ///   Tries to find a class type by its numeric identity DEC assigned to it.
+<tr class="nocodegen"><td>121<td>    ///   Useful for file headers, so they can easily encode numerically which
+<tr class="nocodegen"><td>122<td>    ///   cipher class was being used.
+<tr class="nocodegen"><td>123<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>124<td>    /// &lt;param name=&quot;Identity&quot;&gt;
+<tr class="nocodegen"><td>125<td>    ///   Identity to look for
+<tr class="nocodegen"><td>126<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>127<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>128<td>    ///   Returns the class type of the class with the specified identity value
+<tr class="nocodegen"><td>129<td>    ///   or throws an EDECClassNotRegisteredException exception if no class
+<tr class="nocodegen"><td>130<td>    ///   with the given identity has been found
+<tr class="nocodegen"><td>131<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>132<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>133<td>    ///   Exception raised if the class specified by &lt;c&gt;Identity&lt;/c&gt; is not found
+<tr class="nocodegen"><td>134<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>135<td>    class function ClassByIdentity(Identity: Int64): TDECFormatClass;
+<tr class="nocodegen"><td>136<td>
+<tr class="nocodegen"><td>137<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>138<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>139<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>140<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>141<td>    /// Source data to be converted into the format of this class as
+<tr class="nocodegen"><td>142<td>    /// RawByteString. Empty strings are allowed. They will simply lead to
+<tr class="nocodegen"><td>143<td>    // empty return arrays as well.
+<tr class="nocodegen"><td>144<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>145<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>146<td>    /// Data in the format of this formatting algorithm as RawByteString
+<tr class="nocodegen"><td>147<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>148<td>    class function Encode(const Data: RawByteString): RawByteString; overload;
+<tr class="nocodegen"><td>149<td>
+<tr class="nocodegen"><td>150<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>151<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>152<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>153<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>154<td>    /// Source data to be converted into the format of this class as untyped
+<tr class="nocodegen"><td>155<td>    /// parameter. Empty data is allowed. It will simply lead to empty return
+<tr class="nocodegen"><td>156<td>    // values as well.
+<tr class="nocodegen"><td>157<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>158<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>159<td>    /// Size of the data passed via data in bytes.
+<tr class="nocodegen"><td>160<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>161<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>162<td>    /// Data in the format of this formatting algorithm as RawByteString
+<tr class="nocodegen"><td>163<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>164<td>    class function Encode(const Data; Size: Integer): RawByteString; overload;
+<tr class="nocodegen"><td>165<td>
+<tr class="nocodegen"><td>166<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>167<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>168<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>169<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>170<td>    /// Source data to be converted into the format of this class as Byte Array.
+<tr class="nocodegen"><td>171<td>    /// Empty arrays of size 0 are allowed. They will simply lead to empty return
+<tr class="nocodegen"><td>172<td>    // arrays as well.
+<tr class="nocodegen"><td>173<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>174<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>175<td>    /// Data in the format of this formatting algorithm as byte array.
+<tr class="nocodegen"><td>176<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>177<td>    class function Encode(const Data: TBytes): TBytes; overload;
+<tr class="nocodegen"><td>178<td>
+<tr class="nocodegen"><td>179<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>180<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>181<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>182<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>183<td>    /// Source data to be converted from the format of this class as byte array
+<tr class="nocodegen"><td>184<td>    /// into the original byte representation. Empty arrays of size 0 are allowed.
+<tr class="nocodegen"><td>185<td>    // They will simply lead to empty return arrays as well.
+<tr class="nocodegen"><td>186<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>187<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>188<td>    /// Data in the original byte format it had before getting encoded with
+<tr class="nocodegen"><td>189<td>    /// this formatting.
+<tr class="nocodegen"><td>190<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>191<td>    class function Decode(const Data: TBytes): TBytes; overload;
+<tr class="nocodegen"><td>192<td>
+<tr class="nocodegen"><td>193<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>194<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>195<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>196<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>197<td>    /// Source data to be converted from the format of this class as
+<tr class="nocodegen"><td>198<td>    /// RawByteString into the original representation. Empty strings are allowed.
+<tr class="nocodegen"><td>199<td>    /// They will simply lead to empty return arrays as well.
+<tr class="nocodegen"><td>200<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>201<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>202<td>    /// Data in the format of this formatting algorithm as RawByteString
+<tr class="nocodegen"><td>203<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>204<td>    class function Decode(const Data: RawByteString): RawByteString; overload;
+<tr class="nocodegen"><td>205<td>
+<tr class="nocodegen"><td>206<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>207<td>    /// Calls the internal method which actually does the format conversion.
+<tr class="nocodegen"><td>208<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>209<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>210<td>    /// Source data to be converted from the format of this class as untyped
+<tr class="nocodegen"><td>211<td>    /// parameter into the original representation. Empty data is allowed.
+<tr class="nocodegen"><td>212<td>    /// It will simply lead to empty return values as well.
+<tr class="nocodegen"><td>213<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>214<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>215<td>    /// Size of the data passed via data in bytes.
+<tr class="nocodegen"><td>216<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>217<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>218<td>    /// Data in the format of this formatting algorithm as RawByteString
+<tr class="nocodegen"><td>219<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>220<td>    class function Decode(const Data; Size: Integer): RawByteString; overload;
+<tr class="nocodegen"><td>221<td>
+<tr class="nocodegen"><td>222<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>223<td>    /// Checks whether the data passed to this method only contains chars
+<tr class="nocodegen"><td>224<td>    /// valid for this specific formatting.
+<tr class="nocodegen"><td>225<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>226<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>227<td>    /// Untyped parameter with the data to be checked
+<tr class="nocodegen"><td>228<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>229<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>230<td>    /// Size of the data to be checked in bytes
+<tr class="nocodegen"><td>231<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>232<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>233<td>    /// true, if the input data contains only characters valid for this format
+<tr class="nocodegen"><td>234<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>235<td>    class function IsValid(const Data; Size: Integer): Boolean; overload;
+<tr class="nocodegen"><td>236<td>
+<tr class="nocodegen"><td>237<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>238<td>    /// Checks whether the data passed to this method only contains chars
+<tr class="nocodegen"><td>239<td>    /// valid for this specific formatting.
+<tr class="nocodegen"><td>240<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>241<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>242<td>    /// Byte array with the data to be checked
+<tr class="nocodegen"><td>243<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>244<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>245<td>    /// true, if the input data contains only characters valid for this format
+<tr class="nocodegen"><td>246<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>247<td>    class function IsValid(const Data: TBytes): Boolean; overload;
+<tr class="nocodegen"><td>248<td>
+<tr class="nocodegen"><td>249<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>250<td>    /// Checks whether the data passed to this method only contains chars
+<tr class="nocodegen"><td>251<td>    /// valid for this specific formatting.
+<tr class="nocodegen"><td>252<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>253<td>    /// &lt;param name=&quot;Text&quot;&gt;
+<tr class="nocodegen"><td>254<td>    /// RawByteString with the data to be checked
+<tr class="nocodegen"><td>255<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>256<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>257<td>    /// true, if the input data contains only characters valid for this format
+<tr class="nocodegen"><td>258<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>259<td>    class function IsValid(const Text: RawByteString): Boolean; overload;
+<tr class="nocodegen"><td>260<td>
+<tr class="nocodegen"><td>261<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>262<td>    /// Converts the ordinal number of an ASCII char given as byte into the
+<tr class="nocodegen"><td>263<td>    /// ordinal number of the corresponding upper case ASCII char. Works only
+<tr class="nocodegen"><td>264<td>    /// on a-z and works like the System.Pas variant just on bytes instead of chars
+<tr class="nocodegen"><td>265<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>266<td>    /// &lt;param name=&quot;b&quot;&gt;
+<tr class="nocodegen"><td>267<td>    /// Ordinal ASCII char value to be converted to upper case
+<tr class="nocodegen"><td>268<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>269<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>270<td>    /// Uppercase ordinal number if the number passed in as parameter belongs to
+<tr class="nocodegen"><td>271<td>    /// a char in the a-z range. Otherwise the number passed in will be returned.
+<tr class="nocodegen"><td>272<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>273<td>    class function UpCaseBinary(b: Byte): Byte;
+<tr class="nocodegen"><td>274<td>
+<tr class="nocodegen"><td>275<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>276<td>    /// Looks for the index of a given byte in a byte-array.
+<tr class="nocodegen"><td>277<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>278<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>279<td>    /// Byte value to be searched in the array
+<tr class="nocodegen"><td>280<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>281<td>    /// &lt;param name=&quot;Table&quot;&gt;
+<tr class="nocodegen"><td>282<td>    /// Byte-array where the value is searched in
+<tr class="nocodegen"><td>283<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>284<td>    /// &lt;param name=&quot;Len&quot;&gt;
+<tr class="nocodegen"><td>285<td>    /// Maximum index until which the search will be performed. If Len is higher
+<tr class="nocodegen"><td>286<td>    /// than length(Table) the latter will be used as maximum
+<tr class="nocodegen"><td>287<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>288<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>289<td>    /// Index of the first appearance of the searched value. If it cannot be found
+<tr class="nocodegen"><td>290<td>    /// the result will be -1. The index is 0 based.
+<tr class="nocodegen"><td>291<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>292<td>    class function TableFindBinary(Value: Byte; Table: TBytes;
+<tr class="nocodegen"><td>293<td>      Len: Integer): Integer;
+<tr class="nocodegen"><td>294<td>  end;
+<tr class="nocodegen"><td>295<td>
+<tr class="nocodegen"><td>296<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>297<td>  /// Formatting class which doesn't apply any transformation to the data
+<tr class="nocodegen"><td>298<td>  /// passed in. It simply copies it from Source to Dest.
+<tr class="nocodegen"><td>299<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>300<td>  TFormat_Copy = class(TDECFormat)
+<tr class="nocodegen"><td>301<td>  protected
+<tr class="nocodegen"><td>302<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>303<td>    /// Copies the data contained in Source into Dest without any conversion
+<tr class="nocodegen"><td>304<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>305<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>306<td>    /// Variable from which Size bytes will be copied to Dest
+<tr class="nocodegen"><td>307<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>308<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>309<td>    /// Byte-array where Source will be copied into. It will be dimensioned
+<tr class="nocodegen"><td>310<td>    /// to a length of Size internally.
+<tr class="nocodegen"><td>311<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>312<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>313<td>    /// Number of bytes to copy from Soruce to Dest
+<tr class="nocodegen"><td>314<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>315<td>    class procedure DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>316<td>      Size: Integer); override;
+<tr class="nocodegen"><td>317<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>318<td>    /// Copies the data contained in Source into Dest without any conversion
+<tr class="nocodegen"><td>319<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>320<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>321<td>    /// Variable from which Size bytes will be copied to Dest
+<tr class="nocodegen"><td>322<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>323<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>324<td>    /// Byte-array where Source will be copied into. It will be dimensioned
+<tr class="nocodegen"><td>325<td>    /// to a length of Size internally.
+<tr class="nocodegen"><td>326<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>327<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>328<td>    /// Number of bytes to copy from Soruce to Dest
+<tr class="nocodegen"><td>329<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>330<td>    class procedure DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>331<td>      Size: Integer); override;
+<tr class="nocodegen"><td>332<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>333<td>    /// Dummy function to check if Source is valid for this particular format
+<tr class="nocodegen"><td>334<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>335<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>336<td>    /// Data to be checked for validity. In this dummy case it will only be
+<tr class="nocodegen"><td>337<td>    /// checked for Size &gt;= 0
+<tr class="nocodegen"><td>338<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>339<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>340<td>    /// Number of bytes the Source to be checked contains
+<tr class="nocodegen"><td>341<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>342<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>343<td>    /// true if Size &gt;= 0
+<tr class="nocodegen"><td>344<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>345<td>    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>346<td>  public
+<tr class="nocodegen"><td>347<td>  end;
+<tr class="nocodegen"><td>348<td>
+<tr class="nocodegen"><td>349<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>350<td>  /// Returns the passed class type if it is not nil. Otherwise the class type
+<tr class="nocodegen"><td>351<td>  /// of the TFormat_Copy class is being returned.
+<tr class="nocodegen"><td>352<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>353<td>  /// &lt;param name=&quot;FormatClass&quot;&gt;
+<tr class="nocodegen"><td>354<td>  /// Class type of a formatting class like TFormat_HEX or nil, if no formatting
+<tr class="nocodegen"><td>355<td>  /// is desired.
+<tr class="nocodegen"><td>356<td>  /// &lt;/param&gt;
+<tr class="nocodegen"><td>357<td>  /// &lt;returns&gt;
+<tr class="nocodegen"><td>358<td>  /// Passed class type or TFormat_Copy class type, depending on FormatClass
+<tr class="nocodegen"><td>359<td>  /// parameter value.
+<tr class="nocodegen"><td>360<td>  /// &lt;/returns&gt;
+<tr class="nocodegen"><td>361<td>function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
+<tr class="nocodegen"><td>362<td>
+<tr class="nocodegen"><td>363<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>364<td>///   Searches a registered formatting class by name.
+<tr class="nocodegen"><td>365<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>366<td>/// &lt;param name=&quot;Name&quot;&gt;
+<tr class="nocodegen"><td>367<td>///   Unique long (TFormat_HEXL) or short (HEXL) name of the class to be searched.
+<tr class="nocodegen"><td>368<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>369<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>370<td>///   Class type, which can be used to create an object isntance from. Raises an
+<tr class="nocodegen"><td>371<td>///   EDECClassNotRegisteredException exception if the class cannot be found in
+<tr class="nocodegen"><td>372<td>///   the list of registered format classes.
+<tr class="nocodegen"><td>373<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>374<td>/// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>375<td>///   Exception raised if the class specified by &lt;c&gt;Name&lt;/c&gt; is not found
+<tr class="nocodegen"><td>376<td>/// &lt;/exception&gt;
+<tr class="nocodegen"><td>377<td>function FormatByName(const Name: string): TDECFormatClass;
+<tr class="nocodegen"><td>378<td>
+<tr class="nocodegen"><td>379<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>380<td>///   Searches a registered formatting class by identity. The identity is some
+<tr class="nocodegen"><td>381<td>///   integer value calculated on the basis of the class name, the length of the
+<tr class="nocodegen"><td>382<td>///   name and a fixed prefix and by calculating a CRC32 checksum of this.
+<tr class="nocodegen"><td>383<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>384<td>/// &lt;param name=&quot;Identity&quot;&gt;
+<tr class="nocodegen"><td>385<td>///   Unique identity of the class to be searched.
+<tr class="nocodegen"><td>386<td>/// &lt;/param&gt;
+<tr class="nocodegen"><td>387<td>/// &lt;returns&gt;
+<tr class="nocodegen"><td>388<td>///   Class type, which can be used to create an object isntance from. Raises an
+<tr class="nocodegen"><td>389<td>///   EDECClassNotRegisteredException exception if the class cannot be found in
+<tr class="nocodegen"><td>390<td>///   the list of registered format classes.
+<tr class="nocodegen"><td>391<td>/// &lt;/returns&gt;
+<tr class="nocodegen"><td>392<td>/// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>393<td>///   Exception raised if the class specified by &lt;c&gt;Identity&lt;/c&gt; is not found
+<tr class="nocodegen"><td>394<td>/// &lt;/exception&gt;
+<tr class="nocodegen"><td>395<td>function FormatByIdentity(Identity: Int64): TDECFormatClass;
+<tr class="nocodegen"><td>396<td>
+<tr class="nocodegen"><td>397<td>implementation
+<tr class="nocodegen"><td>398<td>
+<tr class="nocodegen"><td>399<td>uses
+<tr class="nocodegen"><td>400<td>  DECTypes;
+<tr class="nocodegen"><td>401<td>
+<tr class="nocodegen"><td>402<td>function ValidFormat(FormatClass: TDECFormatClass = nil): TDECFormatClass;
+<tr class="covered"><td>403<td>begin
+<tr class="covered"><td>404<td>  if FormatClass &lt;&gt; nil then
+<tr class="covered"><td>405<td>    Result := FormatClass
+<tr class="nocodegen"><td>406<td>  else
+<tr class="covered"><td>407<td>    Result := TFormat_Copy;
+<tr class="covered"><td>408<td>end;
+<tr class="nocodegen"><td>409<td>
+<tr class="nocodegen"><td>410<td>function FormatByName(const Name: string): TDECFormatClass;
+<tr class="covered"><td>411<td>begin
+<tr class="covered"><td>412<td>  Result := TDECFormatClass(TDECFormat.ClassList.ClassByName(Name));
+<tr class="covered"><td>413<td>end;
+<tr class="nocodegen"><td>414<td>
+<tr class="nocodegen"><td>415<td>function FormatByIdentity(Identity: Int64): TDECFormatClass;
+<tr class="covered"><td>416<td>begin
+<tr class="covered"><td>417<td>  Result := TDECFormatClass(TDECFormat.ClassList.ClassByIdentity(Identity));
+<tr class="covered"><td>418<td>end;
+<tr class="nocodegen"><td>419<td>
+<tr class="nocodegen"><td>420<td>{ TDECFormat }
+<tr class="nocodegen"><td>421<td>
+<tr class="nocodegen"><td>422<td>class procedure TDECFormat.DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>423<td>  Size: Integer);
+<tr class="notcovered"><td>424<td>begin
+<tr class="nocodegen"><td>425<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>426<td>  // marked 'abstract'. This is our workaround:
+<tr class="notcovered"><td>427<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>428<td>end;
+<tr class="nocodegen"><td>429<td>
+<tr class="nocodegen"><td>430<td>class procedure TDECFormat.DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>431<td>  Size: Integer);
+<tr class="notcovered"><td>432<td>begin
+<tr class="nocodegen"><td>433<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>434<td>  // marked 'abstract'. This is our workaround:
+<tr class="notcovered"><td>435<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>436<td>end;
+<tr class="nocodegen"><td>437<td>
+<tr class="nocodegen"><td>438<td>class function TDECFormat.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="notcovered"><td>439<td>begin
+<tr class="nocodegen"><td>440<td>{$IFDEF FPC}
+<tr class="nocodegen"><td>441<td>  Result := False; // suppress FPC compiler warning
+<tr class="nocodegen"><td>442<td>{$ENDIF FPC}
+<tr class="nocodegen"><td>443<td>  // C++ does not support virtual static functions thus the base cannot be
+<tr class="nocodegen"><td>444<td>  // marked 'abstract'. This is our workaround:
+<tr class="notcovered"><td>445<td>  raise EDECAbstractError.Create(GetShortClassName);
+<tr class="notcovered"><td>446<td>end;
+<tr class="nocodegen"><td>447<td>
+<tr class="nocodegen"><td>448<td>class function TDECFormat.Encode(const Data: RawByteString): RawByteString;
+<tr class="nocodegen"><td>449<td>var
+<tr class="nocodegen"><td>450<td>  b: TBytes;
+<tr class="covered"><td>451<td>begin
+<tr class="covered"><td>452<td>  if Length(Data) &gt; 0 then
+<tr class="nocodegen"><td>453<td>  begin
+<tr class="nocodegen"><td>454<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>455<td>    DoEncode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
+<tr class="nocodegen"><td>456<td>    {$ELSE}
+<tr class="nocodegen"><td>457<td>    DoEncode(Data[1], b, Length(Data) * SizeOf(Data[1]));
+<tr class="nocodegen"><td>458<td>    {$IFEND}
+<tr class="covered"><td>459<td>    Result := BytesToRawString(b);
+<tr class="nocodegen"><td>460<td>  end
+<tr class="nocodegen"><td>461<td>  else
+<tr class="covered"><td>462<td>    SetLength(Result, 0);
+<tr class="covered"><td>463<td>end;
+<tr class="nocodegen"><td>464<td>
+<tr class="nocodegen"><td>465<td>class function TDECFormat.Encode(const Data: TBytes): TBytes;
+<tr class="nocodegen"><td>466<td>var
+<tr class="nocodegen"><td>467<td>  b: TBytes;
+<tr class="covered"><td>468<td>begin
+<tr class="covered"><td>469<td>  if Length(Data) &gt; 0 then
+<tr class="nocodegen"><td>470<td>  begin
+<tr class="covered"><td>471<td>    DoEncode(Data[0], b, Length(Data));
+<tr class="covered"><td>472<td>    Result := b;
+<tr class="nocodegen"><td>473<td>  end
+<tr class="nocodegen"><td>474<td>  else
+<tr class="covered"><td>475<td>    SetLength(Result, 0);
+<tr class="covered"><td>476<td>end;
+<tr class="nocodegen"><td>477<td>
+<tr class="nocodegen"><td>478<td>class function TDECFormat.ClassByIdentity(Identity: Int64): TDECFormatClass;
+<tr class="covered"><td>479<td>begin
+<tr class="covered"><td>480<td>  Result := TDECFormatClass(ClassList.ClassByIdentity(Identity));
+<tr class="covered"><td>481<td>end;
+<tr class="nocodegen"><td>482<td>
+<tr class="nocodegen"><td>483<td>class function TDECFormat.ClassByName(const Name: string): TDECFormatClass;
+<tr class="covered"><td>484<td>begin
+<tr class="covered"><td>485<td>  Result := TDECFormatClass(ClassList.ClassByName(Name));
+<tr class="covered"><td>486<td>end;
+<tr class="nocodegen"><td>487<td>
+<tr class="nocodegen"><td>488<td>class function TDECFormat.Decode(const Data: TBytes): TBytes;
+<tr class="nocodegen"><td>489<td>var
+<tr class="nocodegen"><td>490<td>  b: TBytes;
+<tr class="covered"><td>491<td>begin
+<tr class="covered"><td>492<td>  if Length(Data) &gt; 0 then
+<tr class="nocodegen"><td>493<td>  begin
+<tr class="covered"><td>494<td>    DoDecode(Data[0], b, Length(Data));
+<tr class="covered"><td>495<td>    Result := b;
+<tr class="nocodegen"><td>496<td>  end
+<tr class="nocodegen"><td>497<td>  else
+<tr class="covered"><td>498<td>    SetLength(Result, 0);
+<tr class="covered"><td>499<td>end;
+<tr class="nocodegen"><td>500<td>
+<tr class="nocodegen"><td>501<td>class function TDECFormat.Decode(const Data: RawByteString): RawByteString;
+<tr class="nocodegen"><td>502<td>var
+<tr class="nocodegen"><td>503<td>  b: TBytes;
+<tr class="covered"><td>504<td>begin
+<tr class="covered"><td>505<td>  if Length(Data) &gt; 0 then
+<tr class="nocodegen"><td>506<td>  begin
+<tr class="nocodegen"><td>507<td>    {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>508<td>    DoDecode(Data[Low(Data)], b, Length(Data) * SizeOf(Data[Low(Data)]));
+<tr class="nocodegen"><td>509<td>    {$ELSE}
+<tr class="nocodegen"><td>510<td>    DoDecode(Data[1], b, Length(Data) * SizeOf(Data[1]));
+<tr class="nocodegen"><td>511<td>    {$IFEND}
+<tr class="covered"><td>512<td>    Result := BytesToRawString(b);
+<tr class="nocodegen"><td>513<td>  end
+<tr class="nocodegen"><td>514<td>  else
+<tr class="covered"><td>515<td>    SetLength(Result, 0);
+<tr class="covered"><td>516<td>end;
+<tr class="nocodegen"><td>517<td>
+<tr class="nocodegen"><td>518<td>class function TDECFormat.Decode(const Data; Size: Integer): RawByteString;
+<tr class="nocodegen"><td>519<td>var
+<tr class="nocodegen"><td>520<td>  b: TBytes;
+<tr class="covered"><td>521<td>begin
+<tr class="covered"><td>522<td>  if Size &gt; 0 then
+<tr class="nocodegen"><td>523<td>  begin
+<tr class="covered"><td>524<td>    DoDecode(Data, b, Size);
+<tr class="covered"><td>525<td>    Result := BytesToRawString(b);
+<tr class="nocodegen"><td>526<td>  end
+<tr class="nocodegen"><td>527<td>  else
+<tr class="covered"><td>528<td>    SetLength(Result, 0);
+<tr class="covered"><td>529<td>end;
+<tr class="nocodegen"><td>530<td>
+<tr class="nocodegen"><td>531<td>class function TDECFormat.Encode(const Data; Size: Integer): RawByteString;
+<tr class="nocodegen"><td>532<td>var
+<tr class="nocodegen"><td>533<td>  b: TBytes;
+<tr class="covered"><td>534<td>begin
+<tr class="covered"><td>535<td>  if Size &gt; 0 then
+<tr class="nocodegen"><td>536<td>  begin
+<tr class="covered"><td>537<td>    DoEncode(Data, b, Size);
+<tr class="covered"><td>538<td>    Result := BytesToRawString(b);
+<tr class="nocodegen"><td>539<td>  end
+<tr class="nocodegen"><td>540<td>  else
+<tr class="covered"><td>541<td>    SetLength(Result, 0);
+<tr class="covered"><td>542<td>end;
+<tr class="nocodegen"><td>543<td>
+<tr class="nocodegen"><td>544<td>class function TDECFormat.IsValid(const Data; Size: Integer): Boolean;
+<tr class="covered"><td>545<td>begin
+<tr class="covered"><td>546<td>  Result := DoIsValid(Data, Size);
+<tr class="covered"><td>547<td>end;
+<tr class="nocodegen"><td>548<td>
+<tr class="nocodegen"><td>549<td>class function TDECFormat.IsValid(const Data: TBytes): Boolean;
+<tr class="covered"><td>550<td>begin
+<tr class="covered"><td>551<td>  Result := (Length(Data) = 0) or (DoIsValid(Data[0], Length(Data)));
+<tr class="covered"><td>552<td>end;
+<tr class="nocodegen"><td>553<td>
+<tr class="nocodegen"><td>554<td>class function TDECFormat.IsValid(const Text: RawByteString): Boolean;
+<tr class="covered"><td>555<td>begin
+<tr class="nocodegen"><td>556<td>  {$IF CompilerVersion &gt;= 24.0}
+<tr class="covered"><td>557<td>  Result := (Length(Text) = 0) or
+<tr class="nocodegen"><td>558<td>    (DoIsValid(Text[Low(Text)], Length(Text) * SizeOf(Text[Low(Text)])));
+<tr class="nocodegen"><td>559<td>  {$ELSE}
+<tr class="nocodegen"><td>560<td>  Result := (Length(Text) = 0) or
+<tr class="nocodegen"><td>561<td>    (DoIsValid(Text[1], Length(Text) * SizeOf(Text[1])));
+<tr class="nocodegen"><td>562<td>  {$IFEND}
+<tr class="covered"><td>563<td>end;
+<tr class="nocodegen"><td>564<td>
+<tr class="nocodegen"><td>565<td>class function TDECFormat.UpCaseBinary(b: Byte): Byte;
+<tr class="covered"><td>566<td>begin
+<tr class="covered"><td>567<td>  Result := b;
+<tr class="covered"><td>568<td>  if Result in [$61 .. $7A] then
+<tr class="covered"><td>569<td>    Dec(Result, $61 - $41);
+<tr class="covered"><td>570<td>end;
+<tr class="nocodegen"><td>571<td>
+<tr class="nocodegen"><td>572<td>class function TDECFormat.TableFindBinary(Value: Byte; Table: TBytes;
+<tr class="nocodegen"><td>573<td>  Len: Integer): Integer;
+<tr class="nocodegen"><td>574<td>var
+<tr class="nocodegen"><td>575<td>  i: Integer;
+<tr class="covered"><td>576<td>begin
+<tr class="covered"><td>577<td>  Result := -1;
+<tr class="covered"><td>578<td>  i := 0;
+<tr class="covered"><td>579<td>  while (i &lt;= Len) and (i &lt; Length(Table)) do
+<tr class="nocodegen"><td>580<td>  begin
+<tr class="covered"><td>581<td>    if (Table[i] = Value) then
+<tr class="nocodegen"><td>582<td>    begin
+<tr class="covered"><td>583<td>      Result := i;
+<tr class="covered"><td>584<td>      break;
+<tr class="nocodegen"><td>585<td>    end;
+<tr class="nocodegen"><td>586<td>
+<tr class="covered"><td>587<td>    inc(i);
+<tr class="nocodegen"><td>588<td>  end;
+<tr class="covered"><td>589<td>end;
+<tr class="nocodegen"><td>590<td>
+<tr class="nocodegen"><td>591<td>{ TFormat_Copy }
+<tr class="nocodegen"><td>592<td>
+<tr class="nocodegen"><td>593<td>class procedure TFormat_Copy.DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>594<td>  Size: Integer);
+<tr class="covered"><td>595<td>begin
+<tr class="covered"><td>596<td>  SetLength(Dest, Size);
+<tr class="covered"><td>597<td>  if Size &lt;&gt; 0 then
+<tr class="covered"><td>598<td>    Move(Source, Dest[0], Size);
+<tr class="covered"><td>599<td>end;
+<tr class="nocodegen"><td>600<td>
+<tr class="nocodegen"><td>601<td>class procedure TFormat_Copy.DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>602<td>  Size: Integer);
+<tr class="covered"><td>603<td>begin
+<tr class="covered"><td>604<td>  SetLength(Dest, Size);
+<tr class="covered"><td>605<td>  if Size &lt;&gt; 0 then
+<tr class="covered"><td>606<td>    Move(Source, Dest[0], Size);
+<tr class="covered"><td>607<td>end;
+<tr class="nocodegen"><td>608<td>
+<tr class="nocodegen"><td>609<td>class function TFormat_Copy.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="covered"><td>610<td>begin
+<tr class="covered"><td>611<td>  Result := Size &gt;= 0;
+<tr class="covered"><td>612<td>end;
+<tr class="nocodegen"><td>613<td>
+<tr class="nocodegen"><td>614<td>{$IFDEF DELPHIORBCB}
+<tr class="nocodegen"><td>615<td>procedure ModuleUnload(Instance: NativeUInt);
+<tr class="nocodegen"><td>616<td>var // automaticaly deregistration/releasing
+<tr class="nocodegen"><td>617<td>  i: Integer;
+<tr class="nocodegen"><td>618<td>  Items: TArray&lt;TPair&lt;Int64, TDECCLass&gt;&gt;;
+<tr class="notcovered"><td>619<td>begin
+<tr class="nocodegen"><td>620<td>  // C++Builder calls this function for our own module, but we destroy the ClassList
+<tr class="nocodegen"><td>621<td>  // in that case in the finalization section anyway.
+<tr class="notcovered"><td>622<td>  if (Instance &lt;&gt; HInstance) and
+<tr class="nocodegen"><td>623<td>     (TDECFormat.ClassList &lt;&gt; nil) and (TDECFormat.ClassList.Count &gt; 0) then
+<tr class="nocodegen"><td>624<td>  begin
+<tr class="notcovered"><td>625<td>    Items := TDECFormat.ClassList.ToArray;
+<tr class="notcovered"><td>626<td>    for i := Length(Items) - 1 downto 0 do
+<tr class="nocodegen"><td>627<td>    begin
+<tr class="notcovered"><td>628<td>      if FindClassHInstance(Items[i].Value) = HINST(HInstance) then
+<tr class="notcovered"><td>629<td>        TDECFormat.ClassList.Remove(Items[i].Key);
+<tr class="notcovered"><td>630<td>    end;
+<tr class="nocodegen"><td>631<td>  end;
+<tr class="notcovered"><td>632<td>end;
+<tr class="nocodegen"><td>633<td>{$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>634<td>
+<tr class="covered"><td>635<td>initialization
+<tr class="nocodegen"><td>636<td>
+<tr class="nocodegen"><td>637<td>  // Code for packages and dynamic extension of the class registration list
+<tr class="nocodegen"><td>638<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>639<td>    AddModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>640<td>  {$ENDIF DELPHIORBCB}
+<tr class="covered"><td>641<td>  TDECFormat.ClassList := TDECClassList.Create;
+<tr class="nocodegen"><td>642<td>
+<tr class="covered"><td>643<td>  TFormat_Copy.RegisterClass(TDECFormat.ClassList);
+<tr class="nocodegen"><td>644<td>
+<tr class="covered"><td>645<td>finalization
+<tr class="nocodegen"><td>646<td>
+<tr class="nocodegen"><td>647<td>{$IFNDEF BCB}
+<tr class="nocodegen"><td>648<td>  // Ensure no further instances of classes registered in the registration list
+<tr class="nocodegen"><td>649<td>  // are possible through the list after this unit has been unloaded by unloding
+<tr class="nocodegen"><td>650<td>  // the package this unit is in
+<tr class="nocodegen"><td>651<td>  {$IFDEF DELPHIORBCB}
+<tr class="covered"><td>652<td>    RemoveModuleUnloadProc(ModuleUnload);
+<tr class="nocodegen"><td>653<td>  {$ENDIF DELPHIORBCB}
+<tr class="nocodegen"><td>654<td>{$ENDIF}
+<tr class="nocodegen"><td>655<td>
+<tr class="covered"><td>656<td>  TDECFormat.ClassList.Free;
+<tr class="covered"><td>657<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

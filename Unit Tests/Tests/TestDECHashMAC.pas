@@ -54,6 +54,10 @@ type
   published
     procedure TestBytes;
     procedure TestRawByteString;
+    /// <summary>
+    ///   Regression test for: https://github.com/MHumm/DelphiEncryptionCompendium/issues/46
+    /// </summary>
+    procedure TestBug46;
   end;
 
 implementation
@@ -159,6 +163,23 @@ begin
 end;
 
 { TestTHash_PBKDF2 }
+
+procedure TestTHash_PBKDF2.TestBug46;
+var
+  Result : string;
+begin
+  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
+                                                                       BytesOf('Salt'), 1000, 16)));
+  CheckEquals('05e7b33f93ea1d35', result, 'SHA1 password salt 1000 16');
+
+//  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
+//                                                                       BytesOf('Salt'), 1000, 32)));
+//  CheckEquals('05e7b33f93ea1d35939b32ad5994ef63', result, 'SHA1 password salt 1000 32');
+//
+//  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
+//                                                                       BytesOf('Salt'), 1000, 48)));
+//  CheckEquals('05e7b33f93ea1d35939b32ad5994ef6314f6170b191368e9', result, 'SHA1 password salt 1000 48');
+end;
 
 procedure TestTHash_PBKDF2.TestBytes;
 var

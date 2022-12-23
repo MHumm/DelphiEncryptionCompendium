@@ -1,0 +1,500 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+table {border-spacing:0; border-collapse:collapse;}
+table, td, th {border: 1px solid black;}
+td, th {background: white; margin: 0; padding: 2px 0.5em 2px 0.5em}
+td {border-width: 0 1px 0 0;}
+th {border-width: 1px 1px 1px 0;}
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: courier,monospace; font-size: 10pt;}
+th {background: #CCCCCC;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: 100%;}
+table.s tr td {padding: 0 0.25em 0 0.25em;}
+table.s tr td:first-child {text-align: right; font-weight: bold;}
+table.s tr.notcovered td {background: #DDDDFF;}
+table.s tr.nocodegen td {background: #FFFFEE;}
+table.s tr.covered td {background: #CCFFCC;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum tr td {border-width: 1px;}
+table.sum tr th {text-align:right;}
+table.sum tr th:first-child {text-align:center;}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+</style>
+</head>
+<body>
+<p>Coverage report for <strong>DECRandom (D:\Projekte\DECGitMaster\Source\DECRandom.pas)</strong>.</p>
+<p> Generated at 29.10.2021 18:49:30 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Statistics for D:\Projekte\DECGitMaster\Source\DECRandom.pas </p>
+<table  class="o"><tr><td>Number of lines covered</td><td>91</td></tr><tr><td>Number of lines with code gen</td><td>94</td></tr><tr><td>Line coverage</td><td>96%</td></tr></table>
+<br /><br />
+<table  class="s">
+<tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
+<tr class="nocodegen"><td>2</td><td><pre style="display:inline;"> &nbsp;The DEC team (see file NOTICE.txt) licenses this file</pre></td></tr>
+<tr class="nocodegen"><td>3</td><td><pre style="display:inline;"> &nbsp;to you under the Apache License, Version 2.0 (the</pre></td></tr>
+<tr class="nocodegen"><td>4</td><td><pre style="display:inline;"> &nbsp;&quot;License&quot;); you may not use this file except in compliance</pre></td></tr>
+<tr class="nocodegen"><td>5</td><td><pre style="display:inline;"> &nbsp;with the License. A copy of this licence is found in the root directory</pre></td></tr>
+<tr class="nocodegen"><td>6</td><td><pre style="display:inline;"> &nbsp;of this project in the file LICENCE.txt or alternatively at</pre></td></tr>
+<tr class="nocodegen"><td>7</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>8</td><td><pre style="display:inline;"> &nbsp; &nbsp;http://www.apache.org/licenses/LICENSE-2.0</pre></td></tr>
+<tr class="nocodegen"><td>9</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>10</td><td><pre style="display:inline;"> &nbsp;Unless required by applicable law or agreed to in writing,</pre></td></tr>
+<tr class="nocodegen"><td>11</td><td><pre style="display:inline;"> &nbsp;software distributed under the License is distributed on an</pre></td></tr>
+<tr class="nocodegen"><td>12</td><td><pre style="display:inline;"> &nbsp;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</pre></td></tr>
+<tr class="nocodegen"><td>13</td><td><pre style="display:inline;"> &nbsp;KIND, either express or implied. &nbsp;See the License for the</pre></td></tr>
+<tr class="nocodegen"><td>14</td><td><pre style="display:inline;"> &nbsp;specific language governing permissions and limitations</pre></td></tr>
+<tr class="nocodegen"><td>15</td><td><pre style="display:inline;"> &nbsp;under the License.</pre></td></tr>
+<tr class="nocodegen"><td>16</td><td><pre style="display:inline;">*****************************************************************************}</pre></td></tr>
+<tr class="nocodegen"><td>17</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>18</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>19</td><td><pre style="display:inline;">/// &nbsp; Secure Pseudo Random Number Generator based on Yarrow. If used without</pre></td></tr>
+<tr class="nocodegen"><td>20</td><td><pre style="display:inline;">/// &nbsp; doing anything special for initialization a repeatable generator will be</pre></td></tr>
+<tr class="nocodegen"><td>21</td><td><pre style="display:inline;">/// &nbsp; initialized always using the same start value.</pre></td></tr>
+<tr class="nocodegen"><td>22</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>23</td><td><pre style="display:inline;">unit DECRandom;</pre></td></tr>
+<tr class="nocodegen"><td>24</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>25</td><td><pre style="display:inline;">interface</pre></td></tr>
+<tr class="nocodegen"><td>26</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>27</td><td><pre style="display:inline;">{$INCLUDE DECOptions.inc}</pre></td></tr>
+<tr class="nocodegen"><td>28</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>29</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>30</td><td><pre style="display:inline;"> &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>31</td><td><pre style="display:inline;"> &nbsp;SysUtils,</pre></td></tr>
+<tr class="nocodegen"><td>32</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>33</td><td><pre style="display:inline;"> &nbsp;System.SysUtils,</pre></td></tr>
+<tr class="nocodegen"><td>34</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>35</td><td><pre style="display:inline;"> &nbsp;DECHashBase, DECHash;</pre></td></tr>
+<tr class="nocodegen"><td>36</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>37</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>38</td><td><pre style="display:inline;">/// &nbsp; Create a seed for the random number generator from system time and</pre></td></tr>
+<tr class="nocodegen"><td>39</td><td><pre style="display:inline;">/// &nbsp; PerformanceCounter.</pre></td></tr>
+<tr class="nocodegen"><td>40</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>41</td><td><pre style="display:inline;">/// &lt;remarks&gt;</pre></td></tr>
+<tr class="nocodegen"><td>42</td><td><pre style="display:inline;">/// &nbsp; Avoid initializing the seed using this fuction if you can as it is not</pre></td></tr>
+<tr class="nocodegen"><td>43</td><td><pre style="display:inline;">/// &nbsp; really secure. Use RandomBuffer instead and provide user generated input</pre></td></tr>
+<tr class="nocodegen"><td>44</td><td><pre style="display:inline;">/// &nbsp; as Buffer value but ensure that this is not uniform e.g. not a buffer only</pre></td></tr>
+<tr class="nocodegen"><td>45</td><td><pre style="display:inline;">/// &nbsp; containing $00 all over or something like this.</pre></td></tr>
+<tr class="nocodegen"><td>46</td><td><pre style="display:inline;">/// &lt;/remarks&gt;</pre></td></tr>
+<tr class="nocodegen"><td>47</td><td><pre style="display:inline;">/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>48</td><td><pre style="display:inline;">/// &nbsp; Created seed value</pre></td></tr>
+<tr class="nocodegen"><td>49</td><td><pre style="display:inline;">/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>50</td><td><pre style="display:inline;">function RandomSystemTime: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>51</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>52</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>53</td><td><pre style="display:inline;">/// &nbsp; Fills the provided buffer with random values. If the DoRandomBuffer</pre></td></tr>
+<tr class="nocodegen"><td>54</td><td><pre style="display:inline;">/// &nbsp; variable is assigned (which is usually the case because DoBuffer is</pre></td></tr>
+<tr class="nocodegen"><td>55</td><td><pre style="display:inline;">/// &nbsp; assigned to it in initialization of this unit) the hash based algorithm</pre></td></tr>
+<tr class="nocodegen"><td>56</td><td><pre style="display:inline;">/// &nbsp; in DoBuffer will be used, otherwise the weaker one in DoRndBuffer.</pre></td></tr>
+<tr class="nocodegen"><td>57</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>58</td><td><pre style="display:inline;">/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>59</td><td><pre style="display:inline;">/// &nbsp; Buffer to be filled with random values</pre></td></tr>
+<tr class="nocodegen"><td>60</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>61</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>62</td><td><pre style="display:inline;">/// &nbsp; Size of the buffer in byte</pre></td></tr>
+<tr class="nocodegen"><td>63</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>64</td><td><pre style="display:inline;">procedure RandomBuffer(out Buffer; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>66</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>67</td><td><pre style="display:inline;">/// &nbsp; Creates a buffer of the specified size filled with random bytes</pre></td></tr>
+<tr class="nocodegen"><td>68</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>69</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>70</td><td><pre style="display:inline;">/// &nbsp; Size of the buffer to be created in bytes</pre></td></tr>
+<tr class="nocodegen"><td>71</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>72</td><td><pre style="display:inline;">/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>73</td><td><pre style="display:inline;">/// &nbsp; Buffer of the specified size in bytes filled with random data</pre></td></tr>
+<tr class="nocodegen"><td>74</td><td><pre style="display:inline;">/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>75</td><td><pre style="display:inline;">function RandomBytes(Size: Integer): TBytes;</pre></td></tr>
+<tr class="nocodegen"><td>76</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>77</td><td><pre style="display:inline;">/// &nbsp; Creates a RawByteString of the specified length filled with random bytes.</pre></td></tr>
+<tr class="nocodegen"><td>78</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>79</td><td><pre style="display:inline;">/// &lt;remarks&gt;</pre></td></tr>
+<tr class="nocodegen"><td>80</td><td><pre style="display:inline;">/// &nbsp; This function is deprecated. Better use RandomBytes where ever possible!</pre></td></tr>
+<tr class="nocodegen"><td>81</td><td><pre style="display:inline;">/// &lt;/remarks&gt;</pre></td></tr>
+<tr class="nocodegen"><td>82</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>83</td><td><pre style="display:inline;">/// &nbsp; Length of the string to be created in bytes</pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>85</td><td><pre style="display:inline;">/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>86</td><td><pre style="display:inline;">/// &nbsp; String of the specified length in bytes filled with random data</pre></td></tr>
+<tr class="nocodegen"><td>87</td><td><pre style="display:inline;">/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>88</td><td><pre style="display:inline;">function RandomRawByteString(Size: Integer): RawByteString; deprecated &apos;please use RandomBytes now&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>89</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>90</td><td><pre style="display:inline;">/// &nbsp; Creates a random UInt32 value</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;">/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>93</td><td><pre style="display:inline;">/// &nbsp; Random value</pre></td></tr>
+<tr class="nocodegen"><td>94</td><td><pre style="display:inline;">/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>95</td><td><pre style="display:inline;">function RandomLong: UInt32;</pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;">/// &nbsp; If the default value of the global DoRandomSeed variable is kept, this</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;">/// &nbsp; procedure initializes a repeatable or a non repeatable seed,</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;">/// &nbsp; depending on the parameters specified. Otherwise the alternative DoRandomSeed</pre></td></tr>
+<tr class="nocodegen"><td>101</td><td><pre style="display:inline;">/// &nbsp; implementation is called. The FRndSeed variable is initialized with the</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;">/// &nbsp; seed value generated.</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;">/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;">/// &nbsp; If a repeatable seed is to be initialized, the contents of this buffer is</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;">/// &nbsp; a parameter to the seed generation and a buffer containing at least Size</pre></td></tr>
+<tr class="nocodegen"><td>107</td><td><pre style="display:inline;">/// &nbsp; bytes needs to be passed.</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>110</td><td><pre style="display:inline;">/// &nbsp; If Size is &gt; 0 a repeatable seed is initialized. If Size is 0 the</pre></td></tr>
+<tr class="nocodegen"><td>111</td><td><pre style="display:inline;">/// &nbsp; internal seed variable FRndSeed is initialized with 0. If Size is</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;">/// &nbsp; less than 0 the internal FRndSeed variable is initialized with</pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;">/// &nbsp; a value derrived from current system time/performance counter using</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;">/// &nbsp; RandomSystemTime.</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>116</td><td><pre style="display:inline;">procedure RandomSeed(const Buffer; Size: Integer); overload;</pre></td></tr>
+<tr class="nocodegen"><td>117</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>118</td><td><pre style="display:inline;">/// &nbsp; Creates a seed (starting) value for the random number generator. If the</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;">/// &nbsp; default value of the global DoRandomSeed variable is kept, a non repeatable</pre></td></tr>
+<tr class="nocodegen"><td>120</td><td><pre style="display:inline;">/// &nbsp; seed based on RandomSystemTime (based on system time and potentially</pre></td></tr>
+<tr class="nocodegen"><td>121</td><td><pre style="display:inline;">/// &nbsp; QueryPerformanceCounter) is created and assigned to the internal FRndSeed</pre></td></tr>
+<tr class="nocodegen"><td>122</td><td><pre style="display:inline;">/// &nbsp; variable.</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>124</td><td><pre style="display:inline;">procedure RandomSeed; overload;</pre></td></tr>
+<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>126</td><td><pre style="display:inline;">type</pre></td></tr>
+<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Type for the random buffer generation</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Buffer in which the random bytes shall be written. The buffer needs to</pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; exist and must be of at least Size bytes length.</pre></td></tr>
+<tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Length of the buffer to be filled in Byte.</pre></td></tr>
+<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp;TRandomBufferProc = procedure(out Buffer; Size: Integer) register;</pre></td></tr>
+<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Type for an initialization procedure for a seed</pre></td></tr>
+<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Buffer from which the random bytes shall be taken. The buffer needs to</pre></td></tr>
+<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; exist and must be of at least Size bytes length.</pre></td></tr>
+<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Length of the buffer in Byte.</pre></td></tr>
+<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>149</td><td><pre style="display:inline;"> &nbsp;TRandomSeedProc = procedure(const Buffer; Size: Integer); register;</pre></td></tr>
+<tr class="nocodegen"><td>150</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>151</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"> &nbsp;// secure PRNG initialized by this unit</pre></td></tr>
+<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>155</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; This variable allows overriding the random number generation procedure</pre></td></tr>
+<tr class="nocodegen"><td>156</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; used for data buffers. By default it is initialized to point to DoBuffer,</pre></td></tr>
+<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; which is a DECRandom internal procedure.</pre></td></tr>
+<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>159</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Buffer in which the random bytes shall be written. The buffer needs to</pre></td></tr>
+<tr class="nocodegen"><td>161</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; exist and must be of at least Size bytes length.</pre></td></tr>
+<tr class="nocodegen"><td>162</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>163</td><td><pre style="display:inline;"> &nbsp;/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>164</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Length of the buffer to be filled in Byte.</pre></td></tr>
+<tr class="nocodegen"><td>165</td><td><pre style="display:inline;"> &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp;DoRandomBuffer: TRandomBufferProc = nil;</pre></td></tr>
+<tr class="nocodegen"><td>167</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>168</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>169</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; This variable allows overriding the seed value generation procedure.</pre></td></tr>
+<tr class="nocodegen"><td>170</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; By default it is initialized with the DECRandom internal procedure DoSeed.</pre></td></tr>
+<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>172</td><td><pre style="display:inline;"> &nbsp;DoRandomSeed: TRandomSeedProc = nil;</pre></td></tr>
+<tr class="nocodegen"><td>173</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>174</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Defines the hash-algorithm used for generatin seed values or hashed buffers</pre></td></tr>
+<tr class="nocodegen"><td>175</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>176</td><td><pre style="display:inline;"> &nbsp;RandomClass: TDECHashClass = THash_SHA256;</pre></td></tr>
+<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>178</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>180</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>181</td><td><pre style="display:inline;"> &nbsp;{$IFDEF DELPHI_2010_UP}</pre></td></tr>
+<tr class="nocodegen"><td>182</td><td><pre style="display:inline;"> &nbsp; &nbsp;System.Diagnostics</pre></td></tr>
+<tr class="nocodegen"><td>183</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>184</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>185</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$IFDEF MSWINDOWS}</pre></td></tr>
+<tr class="nocodegen"><td>186</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Windows</pre></td></tr>
+<tr class="nocodegen"><td>187</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>188</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;LclIntf</pre></td></tr>
+<tr class="nocodegen"><td>189</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>190</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>191</td><td><pre style="display:inline;"> &nbsp; &nbsp;Winapi.Windows</pre></td></tr>
+<tr class="nocodegen"><td>192</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>193</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>194</td><td><pre style="display:inline;"> &nbsp;;</pre></td></tr>
+<tr class="nocodegen"><td>195</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>196</td><td><pre style="display:inline;">{$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>197</td><td><pre style="display:inline;">{$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>198</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>199</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>200</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>201</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; A sequence of values which over time will be random by replacing each</pre></td></tr>
+<tr class="nocodegen"><td>202</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; value with a derived value generated by applying the hash algorithm.</pre></td></tr>
+<tr class="nocodegen"><td>203</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>204</td><td><pre style="display:inline;"> &nbsp;FRegister: array[0..127] of Byte;</pre></td></tr>
+<tr class="nocodegen"><td>205</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>206</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; The hash used to generate derived values stored in FRegister is calculated</pre></td></tr>
+<tr class="nocodegen"><td>207</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; using this counter as input and this counter additionaly defines the index</pre></td></tr>
+<tr class="nocodegen"><td>208</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; in FRegister where the value will be stored. The counter can assume higher</pre></td></tr>
+<tr class="nocodegen"><td>209</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; values than the lngth of FRegister. The index calculation takes this into</pre></td></tr>
+<tr class="nocodegen"><td>210</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; account.</pre></td></tr>
+<tr class="nocodegen"><td>211</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>212</td><td><pre style="display:inline;"> &nbsp;FCounter: Cardinal;</pre></td></tr>
+<tr class="nocodegen"><td>213</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>214</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Object instance for the hash generation algorithm used. The object is</pre></td></tr>
+<tr class="nocodegen"><td>215</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; created the first time it is needed and freed in finalization of this unit.</pre></td></tr>
+<tr class="nocodegen"><td>216</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>217</td><td><pre style="display:inline;"> &nbsp;FHash: TDECHash = nil;</pre></td></tr>
+<tr class="nocodegen"><td>218</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>219</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>220</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Seed value, stores the last generated random number as start value for</pre></td></tr>
+<tr class="nocodegen"><td>221</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; the next randum number generation</pre></td></tr>
+<tr class="nocodegen"><td>222</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>223</td><td><pre style="display:inline;"> &nbsp;FRndSeed: Cardinal = 0;</pre></td></tr>
+<tr class="nocodegen"><td>224</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>225</td><td><pre style="display:inline;">function RandomSystemTime: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>226</td><td><pre style="display:inline;">type</pre></td></tr>
+<tr class="nocodegen"><td>227</td><td><pre style="display:inline;"> &nbsp;TInt64Rec = packed record</pre></td></tr>
+<tr class="nocodegen"><td>228</td><td><pre style="display:inline;"> &nbsp; &nbsp;Lo, Hi: UInt32;</pre></td></tr>
+<tr class="nocodegen"><td>229</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>230</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>231</td><td><pre style="display:inline;"> &nbsp;{$IF defined(MSWINDOWS) and not defined(DELPHI_2010_UP)}</pre></td></tr>
+<tr class="nocodegen"><td>232</td><td><pre style="display:inline;"> &nbsp;SysTime: TSystemTime;</pre></td></tr>
+<tr class="nocodegen"><td>233</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>234</td><td><pre style="display:inline;"> &nbsp;Hour, Minute, Second, Milliseconds: Word;</pre></td></tr>
+<tr class="nocodegen"><td>235</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>236</td><td><pre style="display:inline;"> &nbsp;Counter: TInt64Rec;</pre></td></tr>
+<tr class="nocodegen"><td>237</td><td><pre style="display:inline;"> &nbsp;Time: Cardinal;</pre></td></tr>
+<tr class="covered"><td>238</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>239</td><td><pre style="display:inline;"> &nbsp;{$IF defined(MSWINDOWS) and not defined(DELPHI_2010_UP)}</pre></td></tr>
+<tr class="nocodegen"><td>240</td><td><pre style="display:inline;"> &nbsp;GetSystemTime(SysTime);</pre></td></tr>
+<tr class="nocodegen"><td>241</td><td><pre style="display:inline;"> &nbsp;Time := ((Cardinal(SysTime.wHour) * 60 + SysTime.wMinute) * 60 + SysTime.wSecond) * 1000 + SysTime.wMilliseconds;</pre></td></tr>
+<tr class="nocodegen"><td>242</td><td><pre style="display:inline;"> &nbsp;QueryPerformanceCounter(Int64(Counter));</pre></td></tr>
+<tr class="nocodegen"><td>243</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="covered"><td>244</td><td><pre style="display:inline;"> &nbsp;DecodeTime(Now, Hour, Minute, Second, Milliseconds);</pre></td></tr>
+<tr class="covered"><td>245</td><td><pre style="display:inline;"> &nbsp;Time := ((Cardinal(Hour) * 60 + Minute) * 60 + Second) * 1000 + Milliseconds;</pre></td></tr>
+<tr class="nocodegen"><td>246</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF DELPHI_2010_UP}</pre></td></tr>
+<tr class="covered"><td>247</td><td><pre style="display:inline;"> &nbsp; &nbsp;Int64(Counter) := TStopWatch.GetTimeStamp; // uses System.Diagnostics</pre></td></tr>
+<tr class="nocodegen"><td>248</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>249</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>250</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Int64(Counter) := LclIntf.GetTickCount * 10000 {TicksPerMillisecond}; // uses LclIntf</pre></td></tr>
+<tr class="nocodegen"><td>251</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>252</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>253</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>254</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>255</td><td><pre style="display:inline;"> &nbsp;Result := Time + Counter.Hi;</pre></td></tr>
+<tr class="covered"><td>256</td><td><pre style="display:inline;"> &nbsp;Inc(Result, Ord(Result &lt; Time)); // add &quot;carry flag&quot;</pre></td></tr>
+<tr class="covered"><td>257</td><td><pre style="display:inline;"> &nbsp;Inc(Result, Counter.Lo);</pre></td></tr>
+<tr class="covered"><td>258</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>259</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>260</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>261</td><td><pre style="display:inline;">/// &nbsp; Simplistic algorithm for filling a buffer with random numbers. This</pre></td></tr>
+<tr class="nocodegen"><td>262</td><td><pre style="display:inline;">/// &nbsp; algorithm is directly dependant on the seed passed, which by internal use</pre></td></tr>
+<tr class="nocodegen"><td>263</td><td><pre style="display:inline;">/// &nbsp; will normally be FRndSeed.</pre></td></tr>
+<tr class="nocodegen"><td>264</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>265</td><td><pre style="display:inline;">/// &lt;param name=&quot;Seed&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>266</td><td><pre style="display:inline;">/// &nbsp; Seed value as starting value</pre></td></tr>
+<tr class="nocodegen"><td>267</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>268</td><td><pre style="display:inline;">/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>269</td><td><pre style="display:inline;">/// &nbsp; Buffer which shall be filled with random bytes</pre></td></tr>
+<tr class="nocodegen"><td>270</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>271</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>272</td><td><pre style="display:inline;">/// &nbsp; Size of the buffer in byte</pre></td></tr>
+<tr class="nocodegen"><td>273</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>274</td><td><pre style="display:inline;">/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>275</td><td><pre style="display:inline;">/// &nbsp; New seed value after calculating the random number for the last byte in</pre></td></tr>
+<tr class="nocodegen"><td>276</td><td><pre style="display:inline;">/// &nbsp; the buffer.</pre></td></tr>
+<tr class="nocodegen"><td>277</td><td><pre style="display:inline;">/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>278</td><td><pre style="display:inline;">function DoRndBuffer(Seed: Cardinal; out Buffer; Size: Integer): Cardinal;</pre></td></tr>
+<tr class="nocodegen"><td>279</td><td><pre style="display:inline;">// comparable to Delphi Random() function</pre></td></tr>
+<tr class="nocodegen"><td>280</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>281</td><td><pre style="display:inline;"> &nbsp;P: PByte;</pre></td></tr>
+<tr class="covered"><td>282</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>283</td><td><pre style="display:inline;"> &nbsp;Result := Seed;</pre></td></tr>
+<tr class="covered"><td>284</td><td><pre style="display:inline;"> &nbsp;P := @Buffer;</pre></td></tr>
+<tr class="covered"><td>285</td><td><pre style="display:inline;"> &nbsp;if P &lt;&gt; nil then</pre></td></tr>
+<tr class="nocodegen"><td>286</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>287</td><td><pre style="display:inline;"> &nbsp; &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>288</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>289</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Result := Result * $08088405 + 1;</pre></td></tr>
+<tr class="covered"><td>290</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;P^ := Byte(Result shr 24);</pre></td></tr>
+<tr class="covered"><td>291</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Inc(P);</pre></td></tr>
+<tr class="covered"><td>292</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="nocodegen"><td>293</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>294</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>295</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>296</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>297</td><td><pre style="display:inline;">procedure RandomBuffer(out Buffer; Size: Integer);</pre></td></tr>
+<tr class="covered"><td>298</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>299</td><td><pre style="display:inline;"> &nbsp;if Assigned(DoRandomBuffer) then</pre></td></tr>
+<tr class="covered"><td>300</td><td><pre style="display:inline;"> &nbsp; &nbsp;DoRandomBuffer(Buffer, Size)</pre></td></tr>
+<tr class="nocodegen"><td>301</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="covered"><td>302</td><td><pre style="display:inline;"> &nbsp; &nbsp;FRndSeed := DoRndBuffer(FRndSeed, Buffer, Size);</pre></td></tr>
+<tr class="covered"><td>303</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>304</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>305</td><td><pre style="display:inline;">function RandomBytes(Size: Integer): TBytes;</pre></td></tr>
+<tr class="covered"><td>306</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>307</td><td><pre style="display:inline;"> &nbsp;SetLength(Result, Size);</pre></td></tr>
+<tr class="covered"><td>308</td><td><pre style="display:inline;"> &nbsp;RandomBuffer(Result[0], Size);</pre></td></tr>
+<tr class="covered"><td>309</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>310</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>311</td><td><pre style="display:inline;">function RandomRawByteString(Size: Integer): RawByteString;</pre></td></tr>
+<tr class="nocodegen"><td>312</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>313</td><td><pre style="display:inline;"> &nbsp;SetLength(Result, Size);</pre></td></tr>
+<tr class="nocodegen"><td>314</td><td><pre style="display:inline;"> &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="nocodegen"><td>315</td><td><pre style="display:inline;"> &nbsp;RandomBuffer(Result[Low(Result)], Size);</pre></td></tr>
+<tr class="nocodegen"><td>316</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>317</td><td><pre style="display:inline;"> &nbsp;RandomBuffer(Result[1], Size);</pre></td></tr>
+<tr class="nocodegen"><td>318</td><td><pre style="display:inline;"> &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>319</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>320</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>321</td><td><pre style="display:inline;">function RandomLong: UInt32;</pre></td></tr>
+<tr class="covered"><td>322</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>323</td><td><pre style="display:inline;"> &nbsp;RandomBuffer(Result, SizeOf(Result));</pre></td></tr>
+<tr class="covered"><td>324</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>325</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>326</td><td><pre style="display:inline;">procedure RandomSeed(const Buffer; Size: Integer);</pre></td></tr>
+<tr class="covered"><td>327</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>328</td><td><pre style="display:inline;"> &nbsp;if Assigned(DoRandomSeed) then</pre></td></tr>
+<tr class="covered"><td>329</td><td><pre style="display:inline;"> &nbsp; &nbsp;DoRandomSeed(Buffer, Size)</pre></td></tr>
+<tr class="nocodegen"><td>330</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>331</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>332</td><td><pre style="display:inline;"> &nbsp; &nbsp;if Size &gt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>333</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>334</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FRndSeed := 0;</pre></td></tr>
+<tr class="covered"><td>335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;while Size &gt; 0 do</pre></td></tr>
+<tr class="nocodegen"><td>336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;Dec(Size);</pre></td></tr>
+<tr class="covered"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;FRndSeed := (FRndSeed shl 8 + FRndSeed shr 24) xor TByteArray(Buffer)[Size]</pre></td></tr>
+<tr class="nocodegen"><td>339</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>340</td><td><pre style="display:inline;"> &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>341</td><td><pre style="display:inline;"> &nbsp; &nbsp;else</pre></td></tr>
+<tr class="notcovered"><td>342</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FRndSeed := RandomSystemTime;</pre></td></tr>
+<tr class="nocodegen"><td>343</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>344</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>345</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>346</td><td><pre style="display:inline;">procedure RandomSeed;</pre></td></tr>
+<tr class="covered"><td>347</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>348</td><td><pre style="display:inline;"> &nbsp;RandomSeed(&apos;&apos;, -1);</pre></td></tr>
+<tr class="covered"><td>349</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>350</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>351</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>352</td><td><pre style="display:inline;">/// &nbsp; Generate one random byte and modify FCounter and FRegister</pre></td></tr>
+<tr class="nocodegen"><td>353</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>354</td><td><pre style="display:inline;">function DoGenerateRandomByte: Byte;</pre></td></tr>
+<tr class="covered"><td>355</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>356</td><td><pre style="display:inline;"> &nbsp;if FHash = nil then</pre></td></tr>
+<tr class="covered"><td>357</td><td><pre style="display:inline;"> &nbsp; &nbsp;FHash := RandomClass.Create;</pre></td></tr>
+<tr class="nocodegen"><td>358</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>359</td><td><pre style="display:inline;"> &nbsp;FHash.Init;</pre></td></tr>
+<tr class="covered"><td>360</td><td><pre style="display:inline;"> &nbsp;FHash.Calc(FCounter, SizeOf(FCounter));</pre></td></tr>
+<tr class="covered"><td>361</td><td><pre style="display:inline;"> &nbsp;FHash.Calc(FRegister, SizeOf(FRegister));</pre></td></tr>
+<tr class="covered"><td>362</td><td><pre style="display:inline;"> &nbsp;FHash.Done;</pre></td></tr>
+<tr class="nocodegen"><td>363</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>364</td><td><pre style="display:inline;"> &nbsp;FRegister[FCounter mod SizeOf(FRegister)] := FRegister[FCounter mod SizeOf(FRegister)] xor FHash.DigestAsBytes[0];</pre></td></tr>
+<tr class="covered"><td>365</td><td><pre style="display:inline;"> &nbsp;Inc(FCounter);</pre></td></tr>
+<tr class="nocodegen"><td>366</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>367</td><td><pre style="display:inline;"> &nbsp;Result := FHash.DigestAsBytes[1]; // no real predictable dependency to above FHash.Digest[0] !</pre></td></tr>
+<tr class="covered"><td>368</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>369</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>370</td><td><pre style="display:inline;">procedure DoBuffer(out Buffer; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>371</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>372</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
+<tr class="covered"><td>373</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>374</td><td><pre style="display:inline;"> &nbsp;for i := 0 to Size - 1 do</pre></td></tr>
+<tr class="covered"><td>375</td><td><pre style="display:inline;"> &nbsp; &nbsp;TByteArray(Buffer)[i] := DoGenerateRandomByte;</pre></td></tr>
+<tr class="covered"><td>376</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>377</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>378</td><td><pre style="display:inline;">/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>379</td><td><pre style="display:inline;">/// &nbsp; Initializes a repeatable or a non repeatable seed, depending on the</pre></td></tr>
+<tr class="nocodegen"><td>380</td><td><pre style="display:inline;">/// &nbsp; parameters specified</pre></td></tr>
+<tr class="nocodegen"><td>381</td><td><pre style="display:inline;">/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>382</td><td><pre style="display:inline;">/// &lt;param name=&quot;Buffer&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>383</td><td><pre style="display:inline;">/// &nbsp; If a repeatable seed is to be initialized, the contents of this buffer is</pre></td></tr>
+<tr class="nocodegen"><td>384</td><td><pre style="display:inline;">/// &nbsp; a parameter to the seed generation and a buffer containing at least Size</pre></td></tr>
+<tr class="nocodegen"><td>385</td><td><pre style="display:inline;">/// &nbsp; bytes needs to be passed.</pre></td></tr>
+<tr class="nocodegen"><td>386</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>387</td><td><pre style="display:inline;">/// &lt;param name=&quot;Size&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>388</td><td><pre style="display:inline;">/// &nbsp; If Size is &gt;= 0 a repeatable seed is initialized, otherwise a non repeatable</pre></td></tr>
+<tr class="nocodegen"><td>389</td><td><pre style="display:inline;">/// &nbsp; based on system time</pre></td></tr>
+<tr class="nocodegen"><td>390</td><td><pre style="display:inline;">/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>391</td><td><pre style="display:inline;">procedure DoSeed(const Buffer; Size: Integer);</pre></td></tr>
+<tr class="nocodegen"><td>392</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>393</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
+<tr class="nocodegen"><td>394</td><td><pre style="display:inline;"> &nbsp;t: Cardinal;</pre></td></tr>
+<tr class="covered"><td>395</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>396</td><td><pre style="display:inline;"> &nbsp;if Size &gt;= 0 then</pre></td></tr>
+<tr class="nocodegen"><td>397</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>398</td><td><pre style="display:inline;"> &nbsp; &nbsp;// initalize a repeatable Seed</pre></td></tr>
+<tr class="covered"><td>399</td><td><pre style="display:inline;"> &nbsp; &nbsp;FillChar(FRegister, SizeOf(FRegister), 0);</pre></td></tr>
+<tr class="covered"><td>400</td><td><pre style="display:inline;"> &nbsp; &nbsp;FCounter := 0;</pre></td></tr>
+<tr class="covered"><td>401</td><td><pre style="display:inline;"> &nbsp; &nbsp;for i := 0 to Size - 1 do</pre></td></tr>
+<tr class="notcovered"><td>402</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FRegister[i mod SizeOf(FRegister)] := FRegister[i mod SizeOf(FRegister)] xor TByteArray(Buffer)[i];</pre></td></tr>
+<tr class="nocodegen"><td>403</td><td><pre style="display:inline;"> &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>404</td><td><pre style="display:inline;"> &nbsp;else</pre></td></tr>
+<tr class="nocodegen"><td>405</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="nocodegen"><td>406</td><td><pre style="display:inline;"> &nbsp; &nbsp;// ! ATTENTION !</pre></td></tr>
+<tr class="nocodegen"><td>407</td><td><pre style="display:inline;"> &nbsp; &nbsp;// Initalizes a non-repeatable Seed based on Timers, which is not secure</pre></td></tr>
+<tr class="nocodegen"><td>408</td><td><pre style="display:inline;"> &nbsp; &nbsp;// and inpredictable. The user should call RandomSeed(Data, SizeOf(Data))</pre></td></tr>
+<tr class="nocodegen"><td>409</td><td><pre style="display:inline;"> &nbsp; &nbsp;// instead, where Date contains i.e. user generated (Human) input.</pre></td></tr>
+<tr class="covered"><td>410</td><td><pre style="display:inline;"> &nbsp; &nbsp;t := RandomSystemTime;</pre></td></tr>
+<tr class="covered"><td>411</td><td><pre style="display:inline;"> &nbsp; &nbsp;for i := Low(FRegister) to High(FRegister) do</pre></td></tr>
+<tr class="nocodegen"><td>412</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>413</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FRegister[i] := FRegister[i] xor Byte(t);</pre></td></tr>
+<tr class="covered"><td>414</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;t := t shl 1 or t shr 31;</pre></td></tr>
+<tr class="covered"><td>415</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>416</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>417</td><td><pre style="display:inline;"> &nbsp;for i := Low(FRegister) to High(FRegister) do</pre></td></tr>
+<tr class="covered"><td>418</td><td><pre style="display:inline;"> &nbsp; &nbsp;DoGenerateRandomByte;</pre></td></tr>
+<tr class="covered"><td>419</td><td><pre style="display:inline;"> &nbsp;FCounter := 0;</pre></td></tr>
+<tr class="covered"><td>420</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>421</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>422</td><td><pre style="display:inline;">procedure DoInit;</pre></td></tr>
+<tr class="covered"><td>423</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>424</td><td><pre style="display:inline;"> &nbsp;DoRandomBuffer := DoBuffer;</pre></td></tr>
+<tr class="covered"><td>425</td><td><pre style="display:inline;"> &nbsp;DoRandomSeed := DoSeed;</pre></td></tr>
+<tr class="covered"><td>426</td><td><pre style="display:inline;"> &nbsp;DoSeed(&apos;&apos;, 0);</pre></td></tr>
+<tr class="covered"><td>427</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>428</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>429</td><td><pre style="display:inline;">procedure DoDone;</pre></td></tr>
+<tr class="covered"><td>430</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>431</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
+<tr class="covered"><td>432</td><td><pre style="display:inline;"> &nbsp; &nbsp;if FHash &lt;&gt; nil then</pre></td></tr>
+<tr class="covered"><td>433</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;FHash.Free;</pre></td></tr>
+<tr class="nocodegen"><td>434</td><td><pre style="display:inline;"> &nbsp;except</pre></td></tr>
+<tr class="notcovered"><td>435</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>436</td><td><pre style="display:inline;"> &nbsp;FHash := nil;</pre></td></tr>
+<tr class="nocodegen"><td>437</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>438</td><td><pre style="display:inline;"> &nbsp;FreeAndNil(FHash);</pre></td></tr>
+<tr class="covered"><td>439</td><td><pre style="display:inline;"> &nbsp;FillChar(FRegister, SizeOf(FRegister), 0);</pre></td></tr>
+<tr class="covered"><td>440</td><td><pre style="display:inline;"> &nbsp;FCounter := 0;</pre></td></tr>
+<tr class="covered"><td>441</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>442</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>443</td><td><pre style="display:inline;">{$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>444</td><td><pre style="display:inline;">{$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>445</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>446</td><td><pre style="display:inline;">initialization</pre></td></tr>
+<tr class="nocodegen"><td>447</td><td><pre style="display:inline;"> &nbsp;{$DEFINE AUTO_PRNG}</pre></td></tr>
+<tr class="nocodegen"><td>448</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>449</td><td><pre style="display:inline;"> &nbsp;DoInit;</pre></td></tr>
+<tr class="nocodegen"><td>450</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>451</td><td><pre style="display:inline;"> &nbsp;{$IFDEF AUTO_PRNG} // see DECOptions.inc</pre></td></tr>
+<tr class="covered"><td>452</td><td><pre style="display:inline;"> &nbsp;RandomSeed;</pre></td></tr>
+<tr class="nocodegen"><td>453</td><td><pre style="display:inline;"> &nbsp;{$ENDIF AUTO_PRNG}</pre></td></tr>
+<tr class="nocodegen"><td>454</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>455</td><td><pre style="display:inline;">finalization</pre></td></tr>
+<tr class="covered"><td>456</td><td><pre style="display:inline;"> &nbsp;DoDone;</pre></td></tr>
+<tr class="nocodegen"><td>457</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>458</td><td><pre style="display:inline;">end.</pre></td></tr>
+</table>
+</body>
+</html>

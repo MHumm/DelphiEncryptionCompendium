@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+table {border-spacing:0; border-collapse:collapse;}
+table, td, th {border: 1px solid black;}
+td, th {background: white; margin: 0; padding: 2px 0.5em 2px 0.5em}
+td {border-width: 0 1px 0 0;}
+th {border-width: 1px 1px 1px 0;}
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: courier,monospace; font-size: 10pt;}
+th {background: #CCCCCC;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: 100%;}
+table.s tr td {padding: 0 0.25em 0 0.25em;}
+table.s tr td:first-child {text-align: right; font-weight: bold;}
+table.s tr.notcovered td {background: #DDDDFF;}
+table.s tr.nocodegen td {background: #FFFFEE;}
+table.s tr.covered td {background: #CCFFCC;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum tr td {border-width: 1px;}
+table.sum tr th {text-align:right;}
+table.sum tr th:first-child {text-align:center;}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+</style>
+</head>
+<body>
+<p>Coverage report for <strong>DECBaseClass (D:\Projekte\DECGitMaster\Source\DECBaseClass.pas)</strong>.</p>
+<p> Generated at 29.10.2021 18:49:29 by <a href="http://code.google.com/p/delphi-code-coverage/" title="Code Coverage for Delphi 5+">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p> Statistics for D:\Projekte\DECGitMaster\Source\DECBaseClass.pas </p>
+<table  class="o"><tr><td>Number of lines covered</td><td>77</td></tr><tr><td>Number of lines with code gen</td><td>77</td></tr><tr><td>Line coverage</td><td>100%</td></tr></table>
+<br /><br />
+<table  class="s">
+<tr class="nocodegen"><td>1</td><td><pre style="display:inline;">{*****************************************************************************</pre></td></tr>
+<tr class="nocodegen"><td>2</td><td><pre style="display:inline;">The DEC team (see file NOTICE.txt) licenses this file</pre></td></tr>
+<tr class="nocodegen"><td>3</td><td><pre style="display:inline;">to you under the Apache License, Version 2.0 (the</pre></td></tr>
+<tr class="nocodegen"><td>4</td><td><pre style="display:inline;">&quot;License&quot;); you may not use this file except in compliance</pre></td></tr>
+<tr class="nocodegen"><td>5</td><td><pre style="display:inline;">with the License. A copy of this licence is found in the root directory</pre></td></tr>
+<tr class="nocodegen"><td>6</td><td><pre style="display:inline;">of this project in the file LICENCE.txt or alternatively at</pre></td></tr>
+<tr class="nocodegen"><td>7</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>8</td><td><pre style="display:inline;"> &nbsp;http://www.apache.org/licenses/LICENSE-2.0</pre></td></tr>
+<tr class="nocodegen"><td>9</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>10</td><td><pre style="display:inline;">Unless required by applicable law or agreed to in writing,</pre></td></tr>
+<tr class="nocodegen"><td>11</td><td><pre style="display:inline;">software distributed under the License is distributed on an</pre></td></tr>
+<tr class="nocodegen"><td>12</td><td><pre style="display:inline;">&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY</pre></td></tr>
+<tr class="nocodegen"><td>13</td><td><pre style="display:inline;">KIND, either express or implied. &nbsp;See the License for the</pre></td></tr>
+<tr class="nocodegen"><td>14</td><td><pre style="display:inline;">specific language governing permissions and limitations</pre></td></tr>
+<tr class="nocodegen"><td>15</td><td><pre style="display:inline;">under the License.</pre></td></tr>
+<tr class="nocodegen"><td>16</td><td><pre style="display:inline;">*****************************************************************************}</pre></td></tr>
+<tr class="nocodegen"><td>17</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>18</td><td><pre style="display:inline;">unit DECBaseClass;</pre></td></tr>
+<tr class="nocodegen"><td>19</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>20</td><td><pre style="display:inline;">interface</pre></td></tr>
+<tr class="nocodegen"><td>21</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>22</td><td><pre style="display:inline;">{$INCLUDE DECOptions.inc}</pre></td></tr>
+<tr class="nocodegen"><td>23</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>24</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>25</td><td><pre style="display:inline;"> &nbsp;{$IFDEF FPC}</pre></td></tr>
+<tr class="nocodegen"><td>26</td><td><pre style="display:inline;"> &nbsp;SysUtils, Classes,</pre></td></tr>
+<tr class="nocodegen"><td>27</td><td><pre style="display:inline;"> &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>28</td><td><pre style="display:inline;"> &nbsp;System.SysUtils, System.Classes,</pre></td></tr>
+<tr class="nocodegen"><td>29</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>30</td><td><pre style="display:inline;"> &nbsp;Generics.Collections;</pre></td></tr>
+<tr class="nocodegen"><td>31</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>32</td><td><pre style="display:inline;">type</pre></td></tr>
+<tr class="nocodegen"><td>33</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>34</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Class type for the base class from which all other DEC classes inherit</pre></td></tr>
+<tr class="nocodegen"><td>35</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; in order to be able to create lists of classes, pick an entry of such a</pre></td></tr>
+<tr class="nocodegen"><td>36</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; list and construct an object out of it</pre></td></tr>
+<tr class="nocodegen"><td>37</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>38</td><td><pre style="display:inline;"> &nbsp;TDECClass = class of TDECObject;</pre></td></tr>
+<tr class="nocodegen"><td>39</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>40</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>41</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Generic list of DEC classes with the identity as key</pre></td></tr>
+<tr class="nocodegen"><td>42</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>43</td><td><pre style="display:inline;"> &nbsp;TDECClassList = class(TDictionary&lt;Int64, TDECClass&gt;)</pre></td></tr>
+<tr class="nocodegen"><td>44</td><td><pre style="display:inline;"> &nbsp;strict private</pre></td></tr>
+<tr class="nocodegen"><td>45</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>46</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Checks if a given class type has the same short class name as given</pre></td></tr>
+<tr class="nocodegen"><td>47</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>48</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Name&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>49</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Short class name, e.g. HEXL</pre></td></tr>
+<tr class="nocodegen"><td>50</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>51</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;ClassType&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>52</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Class reference to check against</pre></td></tr>
+<tr class="nocodegen"><td>53</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>54</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>55</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; true if the class reference is for the given short name</pre></td></tr>
+<tr class="nocodegen"><td>56</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>57</td><td><pre style="display:inline;"> &nbsp; &nbsp;function DoFindNameShort(const Name: string; const ClassType: TDECClass): Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>58</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>59</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Checks if a given class type has the same long class name as given</pre></td></tr>
+<tr class="nocodegen"><td>60</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>61</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Name&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>62</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Long class name, e.g. TFormat_HEXL</pre></td></tr>
+<tr class="nocodegen"><td>63</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>64</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;ClassType&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>65</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Class reference to check against</pre></td></tr>
+<tr class="nocodegen"><td>66</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>67</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>68</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; true if the class reference is for the given long name</pre></td></tr>
+<tr class="nocodegen"><td>69</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>70</td><td><pre style="display:inline;"> &nbsp; &nbsp;function DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>71</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
+<tr class="nocodegen"><td>72</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>73</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Tries to find a class type by its name</pre></td></tr>
+<tr class="nocodegen"><td>74</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>75</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Name&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>76</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Name to look for in the list</pre></td></tr>
+<tr class="nocodegen"><td>77</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>78</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>79</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Returns the class type if found. if it could not be found a</pre></td></tr>
+<tr class="nocodegen"><td>80</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; EDECClassNotRegisteredException will be thrown</pre></td></tr>
+<tr class="nocodegen"><td>81</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>82</td><td><pre style="display:inline;"> &nbsp; &nbsp;function ClassByName(const Name: string): TDECClass;</pre></td></tr>
+<tr class="nocodegen"><td>83</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>84</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>85</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Tries to find a class type by its numeric identity DEC assigned to it.</pre></td></tr>
+<tr class="nocodegen"><td>86</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Useful for file headers, so they can easily encode numerically which</pre></td></tr>
+<tr class="nocodegen"><td>87</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; cipher class was being used.</pre></td></tr>
+<tr class="nocodegen"><td>88</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>89</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;Identity&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>90</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Identity to look for</pre></td></tr>
+<tr class="nocodegen"><td>91</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>92</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>93</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Returns the class type of the class with the specified identity value</pre></td></tr>
+<tr class="nocodegen"><td>94</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; or throws an EDECClassNotRegisteredException exception if no class</pre></td></tr>
+<tr class="nocodegen"><td>95</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; with the given identity has been found</pre></td></tr>
+<tr class="nocodegen"><td>96</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>97</td><td><pre style="display:inline;"> &nbsp; &nbsp;function ClassByIdentity(Identity: Int64): TDECClass;</pre></td></tr>
+<tr class="nocodegen"><td>98</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>99</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Returns a list of all classes registered in this list</pre></td></tr>
+<tr class="nocodegen"><td>100</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>101</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;List&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>102</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; List where the registered classes shall be added to. The string is the</pre></td></tr>
+<tr class="nocodegen"><td>103</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; long class name, the object the class reference. The list is being</pre></td></tr>
+<tr class="nocodegen"><td>104</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; cleared first and when an uncreated list is given nothing is being done</pre></td></tr>
+<tr class="nocodegen"><td>105</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>106</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure GetClassList(List: TStrings);</pre></td></tr>
+<tr class="nocodegen"><td>107</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>108</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>109</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>110</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Parent class of all cryptography and hash implementations</pre></td></tr>
+<tr class="nocodegen"><td>111</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>112</td><td><pre style="display:inline;"> &nbsp;TDECObject = class(TInterfacedObject)</pre></td></tr>
+<tr class="nocodegen"><td>113</td><td><pre style="display:inline;"> &nbsp;public</pre></td></tr>
+<tr class="nocodegen"><td>114</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>115</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Overrideable but otherwise empty constructor (calls his parent</pre></td></tr>
+<tr class="nocodegen"><td>116</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; constructor or course)</pre></td></tr>
+<tr class="nocodegen"><td>117</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>118</td><td><pre style="display:inline;"> &nbsp; &nbsp;constructor Create; virtual;</pre></td></tr>
+<tr class="nocodegen"><td>119</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>120</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; This function creates a unique Signature for each class using the</pre></td></tr>
+<tr class="nocodegen"><td>121</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; following naming scheme:</pre></td></tr>
+<tr class="nocodegen"><td>122</td><td><pre style="display:inline;"> &nbsp; &nbsp;///</pre></td></tr>
+<tr class="nocodegen"><td>123</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; &apos;Z&apos; repeated n times (to fill space of 256 chars) + DEC ClassName</pre></td></tr>
+<tr class="nocodegen"><td>124</td><td><pre style="display:inline;"> &nbsp; &nbsp;///</pre></td></tr>
+<tr class="nocodegen"><td>125</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; The CRC32 of the generated Signature is used as our unique Identity</pre></td></tr>
+<tr class="nocodegen"><td>126</td><td><pre style="display:inline;"> &nbsp; &nbsp;///</pre></td></tr>
+<tr class="nocodegen"><td>127</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Important Note:</pre></td></tr>
+<tr class="nocodegen"><td>128</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; DEC 5.2 introduced a bug which breaks backward compatibility with</pre></td></tr>
+<tr class="nocodegen"><td>129</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; DEC 5.1 by using String instead of AnsiString. This leads to different</pre></td></tr>
+<tr class="nocodegen"><td>130</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Identities when using Unicode capable Delphi Versions (Delphi 2009+).</pre></td></tr>
+<tr class="nocodegen"><td>131</td><td><pre style="display:inline;"> &nbsp; &nbsp;///</pre></td></tr>
+<tr class="nocodegen"><td>132</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; To restore the *wrong* behavior of DEC 5.2 enable the DEC52_IDENTITY option</pre></td></tr>
+<tr class="nocodegen"><td>133</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; in the configuration file DECOptions.inc.</pre></td></tr>
+<tr class="nocodegen"><td>134</td><td><pre style="display:inline;"> &nbsp; &nbsp;///</pre></td></tr>
+<tr class="nocodegen"><td>135</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; With this and all future versions we will keep backward compatibility.</pre></td></tr>
+<tr class="nocodegen"><td>136</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>137</td><td><pre style="display:inline;"> &nbsp; &nbsp;class function Identity: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>138</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFDEF X86ASM}</pre></td></tr>
+<tr class="nocodegen"><td>139</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>140</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Override FreeInstance to fill allocated Object with zeros, that is</pre></td></tr>
+<tr class="nocodegen"><td>141</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; safer for any access to invalid Pointers of released Objects.</pre></td></tr>
+<tr class="nocodegen"><td>142</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>143</td><td><pre style="display:inline;"> &nbsp; &nbsp;procedure FreeInstance; override;</pre></td></tr>
+<tr class="nocodegen"><td>144</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ENDIF X86ASM}</pre></td></tr>
+<tr class="nocodegen"><td>145</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>146</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>147</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Registers this class type in the list of DEC classes (ClassList).</pre></td></tr>
+<tr class="nocodegen"><td>148</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Trying to register an already registered class will raise an exception.</pre></td></tr>
+<tr class="nocodegen"><td>149</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>150</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;ClassList&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>151</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; List to which the own class type shall be added. This allows subclasses</pre></td></tr>
+<tr class="nocodegen"><td>152</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; to have their own lists</pre></td></tr>
+<tr class="nocodegen"><td>153</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>154</td><td><pre style="display:inline;"> &nbsp; &nbsp;class procedure RegisterClass(ClassList : TDECClassList);</pre></td></tr>
+<tr class="nocodegen"><td>155</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>156</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Removes tthis class type from the list of registered DEC classes</pre></td></tr>
+<tr class="nocodegen"><td>157</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; (ClassList). Trying to unregister a non registered class is a do nothing</pre></td></tr>
+<tr class="nocodegen"><td>158</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; operation.</pre></td></tr>
+<tr class="nocodegen"><td>159</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>160</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;ClassList&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>161</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; List from which the own class type shall be removed. This allows</pre></td></tr>
+<tr class="nocodegen"><td>162</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; subclasses to have their own lists</pre></td></tr>
+<tr class="nocodegen"><td>163</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>164</td><td><pre style="display:inline;"> &nbsp; &nbsp;class procedure UnregisterClass(ClassList : TDECClassList);</pre></td></tr>
+<tr class="nocodegen"><td>165</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>166</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>167</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Returns short Classname of any DEC derrived class. This is the part</pre></td></tr>
+<tr class="nocodegen"><td>168</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.</pre></td></tr>
+<tr class="nocodegen"><td>169</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>170</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;param name=&quot;ClassName&quot;&gt;</pre></td></tr>
+<tr class="nocodegen"><td>171</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Complete class name</pre></td></tr>
+<tr class="nocodegen"><td>172</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/param&gt;</pre></td></tr>
+<tr class="nocodegen"><td>173</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>174</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Short class name</pre></td></tr>
+<tr class="nocodegen"><td>175</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>176</td><td><pre style="display:inline;"> &nbsp; &nbsp;class function GetShortClassNameFromName(const ClassName: string): string;</pre></td></tr>
+<tr class="nocodegen"><td>177</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>178</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>179</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Returns short Classname of any DEC derrived class type. This is the part</pre></td></tr>
+<tr class="nocodegen"><td>180</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; of the class name after the _ so for THash_RipeMD160 it will be RipeMD160.</pre></td></tr>
+<tr class="nocodegen"><td>181</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>182</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>183</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &nbsp; Short class name or empty string if ClassType is nil.</pre></td></tr>
+<tr class="nocodegen"><td>184</td><td><pre style="display:inline;"> &nbsp; &nbsp;/// &lt;/returns&gt;</pre></td></tr>
+<tr class="nocodegen"><td>185</td><td><pre style="display:inline;"> &nbsp; &nbsp;class function GetShortClassName: string;</pre></td></tr>
+<tr class="nocodegen"><td>186</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>187</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>188</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>189</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>190</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; default used for generating class identities</pre></td></tr>
+<tr class="nocodegen"><td>191</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>192</td><td><pre style="display:inline;"> &nbsp;IdentityBase: Int64 = $25844852;</pre></td></tr>
+<tr class="nocodegen"><td>193</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>194</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>195</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Size in bytes used for buffering data read from or written to a stream</pre></td></tr>
+<tr class="nocodegen"><td>196</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>197</td><td><pre style="display:inline;"> &nbsp;StreamBufferSize: Integer = 8192;</pre></td></tr>
+<tr class="nocodegen"><td>198</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>199</td><td><pre style="display:inline;"> &nbsp;{$IFDEF NEXTGEN}</pre></td></tr>
+<tr class="nocodegen"><td>200</td><td><pre style="display:inline;"> &nbsp;EmptyStr: string = &apos;&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>201</td><td><pre style="display:inline;"> &nbsp;/// &lt;summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>202</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; Pointer to an empty string. For non Nextgen platforms declared in SysUtils</pre></td></tr>
+<tr class="nocodegen"><td>203</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; for backwards compatibility only. Here declared for NextGen only and</pre></td></tr>
+<tr class="nocodegen"><td>204</td><td><pre style="display:inline;"> &nbsp;/// &nbsp; should get replaced</pre></td></tr>
+<tr class="nocodegen"><td>205</td><td><pre style="display:inline;"> &nbsp;/// &lt;/summary&gt;</pre></td></tr>
+<tr class="nocodegen"><td>206</td><td><pre style="display:inline;"> &nbsp;NullStr: PString = @EmptyStr;</pre></td></tr>
+<tr class="nocodegen"><td>207</td><td><pre style="display:inline;"> &nbsp;{$ENDIF}</pre></td></tr>
+<tr class="nocodegen"><td>208</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>209</td><td><pre style="display:inline;">implementation</pre></td></tr>
+<tr class="nocodegen"><td>210</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>211</td><td><pre style="display:inline;">uses</pre></td></tr>
+<tr class="nocodegen"><td>212</td><td><pre style="display:inline;"> &nbsp;DECTypes, DECCRC;</pre></td></tr>
+<tr class="nocodegen"><td>213</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>214</td><td><pre style="display:inline;">resourcestring</pre></td></tr>
+<tr class="nocodegen"><td>215</td><td><pre style="display:inline;"> &nbsp;sClassNotRegistered = &apos;Class %s is not registered&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>216</td><td><pre style="display:inline;"> &nbsp;sWrongIdentity &nbsp; &nbsp; &nbsp;= &apos;Another class &quot;%s&quot; with the same identity as &quot;%s&quot; has already been registered&apos;;</pre></td></tr>
+<tr class="nocodegen"><td>217</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>218</td><td><pre style="display:inline;">constructor TDECObject.Create;</pre></td></tr>
+<tr class="covered"><td>219</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>220</td><td><pre style="display:inline;"> &nbsp;inherited Create;</pre></td></tr>
+<tr class="covered"><td>221</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>222</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>223</td><td><pre style="display:inline;">class function TDECObject.Identity: Int64;</pre></td></tr>
+<tr class="nocodegen"><td>224</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>225</td><td><pre style="display:inline;"> &nbsp;Signature: {$IFDEF DEC52_IDENTITY}string{$ELSE !DEC52_IDENTITY}RawByteString{$ENDIF !DEC52_IDENTITY};</pre></td></tr>
+<tr class="covered"><td>226</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="nocodegen"><td>227</td><td><pre style="display:inline;"> &nbsp;{$IFDEF DEC52_IDENTITY}</pre></td></tr>
+<tr class="nocodegen"><td>228</td><td><pre style="display:inline;"> &nbsp;Signature := StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName);</pre></td></tr>
+<tr class="nocodegen"><td>229</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="nocodegen"><td>230</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := CRC32(IdentityBase, Signature[Low(Signature)],</pre></td></tr>
+<tr class="nocodegen"><td>231</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Length(Signature) * SizeOf(Signature[Low(Signature)]));</pre></td></tr>
+<tr class="nocodegen"><td>232</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>233</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := CRC32(IdentityBase, Signature[Low(Signature)],</pre></td></tr>
+<tr class="nocodegen"><td>234</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Length(Signature) * SizeOf(Signature[1]));</pre></td></tr>
+<tr class="nocodegen"><td>235</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>236</td><td><pre style="display:inline;"> &nbsp;{$ELSE !DEC52_IDENTITY}</pre></td></tr>
+<tr class="covered"><td>237</td><td><pre style="display:inline;"> &nbsp;Signature := RawByteString(StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName));</pre></td></tr>
+<tr class="nocodegen"><td>238</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IF CompilerVersion &gt;= 24.0}</pre></td></tr>
+<tr class="covered"><td>239</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := CRC32(IdentityBase, Signature[Low(Signature)],</pre></td></tr>
+<tr class="nocodegen"><td>240</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Length(Signature) * SizeOf(Signature[Low(Signature)]));</pre></td></tr>
+<tr class="nocodegen"><td>241</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$ELSE}</pre></td></tr>
+<tr class="nocodegen"><td>242</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := CRC32(IdentityBase, Signature[1],</pre></td></tr>
+<tr class="nocodegen"><td>243</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Length(Signature) * SizeOf(Signature[1]));</pre></td></tr>
+<tr class="nocodegen"><td>244</td><td><pre style="display:inline;"> &nbsp; &nbsp;{$IFEND}</pre></td></tr>
+<tr class="nocodegen"><td>245</td><td><pre style="display:inline;"> &nbsp;{$ENDIF !DEC52_IDENTITY}</pre></td></tr>
+<tr class="covered"><td>246</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>247</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>248</td><td><pre style="display:inline;">class procedure TDECObject.RegisterClass(ClassList : TDECClassList);</pre></td></tr>
+<tr class="covered"><td>249</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>250</td><td><pre style="display:inline;"> &nbsp;ClassList.Add(Identity, self);</pre></td></tr>
+<tr class="covered"><td>251</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>252</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>253</td><td><pre style="display:inline;">{$IFDEF X86ASM}</pre></td></tr>
+<tr class="nocodegen"><td>254</td><td><pre style="display:inline;">procedure TDECObject.FreeInstance;</pre></td></tr>
+<tr class="nocodegen"><td>255</td><td><pre style="display:inline;">// Override FreeInstance to fill allocated Object with zeros, that is</pre></td></tr>
+<tr class="nocodegen"><td>256</td><td><pre style="display:inline;">// safer for any access to invalid Pointers of released Objects</pre></td></tr>
+<tr class="nocodegen"><td>257</td><td><pre style="display:inline;">asm</pre></td></tr>
+<tr class="covered"><td>258</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;PUSH &nbsp; &nbsp;EBX</pre></td></tr>
+<tr class="covered"><td>259</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;PUSH &nbsp; &nbsp;EDI</pre></td></tr>
+<tr class="covered"><td>260</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; EBX,EAX</pre></td></tr>
+<tr class="covered"><td>261</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;CALL &nbsp; &nbsp;TObject.CleanupInstance</pre></td></tr>
+<tr class="covered"><td>262</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; EAX,[EBX]</pre></td></tr>
+<tr class="covered"><td>263</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;CALL &nbsp; &nbsp;TObject.InstanceSize</pre></td></tr>
+<tr class="covered"><td>264</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; ECX,EAX</pre></td></tr>
+<tr class="covered"><td>265</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; EDI,EBX</pre></td></tr>
+<tr class="covered"><td>266</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;XOR &nbsp; &nbsp; EAX,EAX</pre></td></tr>
+<tr class="covered"><td>267</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;REP &nbsp; &nbsp; STOSB</pre></td></tr>
+<tr class="covered"><td>268</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;MOV &nbsp; &nbsp; EAX,EBX</pre></td></tr>
+<tr class="covered"><td>269</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;CALL &nbsp; &nbsp;System.@FreeMem</pre></td></tr>
+<tr class="covered"><td>270</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;POP &nbsp; &nbsp; EDI</pre></td></tr>
+<tr class="covered"><td>271</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;POP &nbsp; &nbsp; EBX</pre></td></tr>
+<tr class="covered"><td>272</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>273</td><td><pre style="display:inline;">{$ENDIF X86ASM}</pre></td></tr>
+<tr class="nocodegen"><td>274</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>275</td><td><pre style="display:inline;">class procedure TDECObject.UnregisterClass(ClassList : TDECClassList);</pre></td></tr>
+<tr class="covered"><td>276</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>277</td><td><pre style="display:inline;"> &nbsp;ClassList.Remove(Identity);</pre></td></tr>
+<tr class="covered"><td>278</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>279</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>280</td><td><pre style="display:inline;">class function TDECObject.GetShortClassName: string;</pre></td></tr>
+<tr class="covered"><td>281</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>282</td><td><pre style="display:inline;"> &nbsp;Result := GetShortClassNameFromName(self.ClassName);</pre></td></tr>
+<tr class="covered"><td>283</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>284</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>285</td><td><pre style="display:inline;">class function TDECObject.GetShortClassNameFromName(const ClassName: string): string;</pre></td></tr>
+<tr class="nocodegen"><td>286</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>287</td><td><pre style="display:inline;"> &nbsp;i: Integer;</pre></td></tr>
+<tr class="covered"><td>288</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>289</td><td><pre style="display:inline;"> &nbsp;Result := ClassName;</pre></td></tr>
+<tr class="covered"><td>290</td><td><pre style="display:inline;"> &nbsp;i := Pos(&apos;_&apos;, Result);</pre></td></tr>
+<tr class="covered"><td>291</td><td><pre style="display:inline;"> &nbsp;if i &gt; 0 then</pre></td></tr>
+<tr class="covered"><td>292</td><td><pre style="display:inline;"> &nbsp; &nbsp;Delete(Result, 1, i);</pre></td></tr>
+<tr class="covered"><td>293</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>294</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>295</td><td><pre style="display:inline;">{ TDECClassList }</pre></td></tr>
+<tr class="nocodegen"><td>296</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>297</td><td><pre style="display:inline;">function TDECClassList.DoFindNameShort(const Name: string; const ClassType: TDECClass): Boolean;</pre></td></tr>
+<tr class="covered"><td>298</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>299</td><td><pre style="display:inline;"> &nbsp;Result := CompareText(ClassType.GetShortClassName, Name) = 0;</pre></td></tr>
+<tr class="covered"><td>300</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>301</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>302</td><td><pre style="display:inline;">function TDECClassList.DoFindNameLong(const Name: string; const ClassType: TClass): Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>303</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>304</td><td><pre style="display:inline;"> &nbsp;s: string;</pre></td></tr>
+<tr class="covered"><td>305</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>306</td><td><pre style="display:inline;"> &nbsp;s := Name;</pre></td></tr>
+<tr class="covered"><td>307</td><td><pre style="display:inline;"> &nbsp;Result := CompareText(ClassType.ClassName, Name) = 0;</pre></td></tr>
+<tr class="covered"><td>308</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>309</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>310</td><td><pre style="display:inline;">function TDECClassList.ClassByIdentity(Identity: Int64): TDECClass;</pre></td></tr>
+<tr class="covered"><td>311</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>312</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
+<tr class="covered"><td>313</td><td><pre style="display:inline;"> &nbsp; &nbsp;Result := Items[Identity];</pre></td></tr>
+<tr class="nocodegen"><td>314</td><td><pre style="display:inline;"> &nbsp;except</pre></td></tr>
+<tr class="nocodegen"><td>315</td><td><pre style="display:inline;"> &nbsp; &nbsp;On EListError do</pre></td></tr>
+<tr class="covered"><td>316</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered,</pre></td></tr>
+<tr class="nocodegen"><td>317</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [IntToHEX(Identity, 8)]);</pre></td></tr>
+<tr class="nocodegen"><td>318</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>319</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>320</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>321</td><td><pre style="display:inline;">function TDECClassList.ClassByName(const Name: string): TDECClass;</pre></td></tr>
+<tr class="nocodegen"><td>322</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>323</td><td><pre style="display:inline;"> &nbsp;FindNameShort : Boolean;</pre></td></tr>
+<tr class="nocodegen"><td>324</td><td><pre style="display:inline;"> &nbsp;Pair &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;: TPair&lt;Int64, TDECCLass&gt;;</pre></td></tr>
+<tr class="covered"><td>325</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>326</td><td><pre style="display:inline;"> &nbsp;Result := nil;</pre></td></tr>
+<tr class="nocodegen"><td>327</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>328</td><td><pre style="display:inline;"> &nbsp;if Length(Name) &gt; 0 then</pre></td></tr>
+<tr class="nocodegen"><td>329</td><td><pre style="display:inline;"> &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>330</td><td><pre style="display:inline;"> &nbsp; &nbsp;FindNameShort := TDECClass.GetShortClassNameFromName(Name) = Name;</pre></td></tr>
+<tr class="nocodegen"><td>331</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>332</td><td><pre style="display:inline;"> &nbsp; &nbsp;for Pair in self do</pre></td></tr>
+<tr class="nocodegen"><td>333</td><td><pre style="display:inline;"> &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>334</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;if FindNameShort then</pre></td></tr>
+<tr class="nocodegen"><td>335</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>336</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if DoFindNameShort(Name, Pair.Value) then</pre></td></tr>
+<tr class="nocodegen"><td>337</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>338</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;result := Pair.Value;</pre></td></tr>
+<tr class="covered"><td>339</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;break;</pre></td></tr>
+<tr class="nocodegen"><td>340</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>341</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;end</pre></td></tr>
+<tr class="nocodegen"><td>342</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;else</pre></td></tr>
+<tr class="covered"><td>343</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;if DoFindNameLong(Name, Pair.Value) then</pre></td></tr>
+<tr class="nocodegen"><td>344</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;begin</pre></td></tr>
+<tr class="covered"><td>345</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;result := Pair.Value;</pre></td></tr>
+<tr class="covered"><td>346</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;break;</pre></td></tr>
+<tr class="nocodegen"><td>347</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>348</td><td><pre style="display:inline;"> &nbsp; &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>349</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="nocodegen"><td>350</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>351</td><td><pre style="display:inline;"> &nbsp;if Result = nil then</pre></td></tr>
+<tr class="covered"><td>352</td><td><pre style="display:inline;"> &nbsp; &nbsp;raise EDECClassNotRegisteredException.CreateResFmt(@sClassNotRegistered, [Name]);</pre></td></tr>
+<tr class="covered"><td>353</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>354</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>355</td><td><pre style="display:inline;">procedure TDECClassList.GetClassList(List: TStrings);</pre></td></tr>
+<tr class="nocodegen"><td>356</td><td><pre style="display:inline;">var</pre></td></tr>
+<tr class="nocodegen"><td>357</td><td><pre style="display:inline;"> &nbsp;Pair : TPair&lt;Int64, TDECCLass&gt;;</pre></td></tr>
+<tr class="covered"><td>358</td><td><pre style="display:inline;">begin</pre></td></tr>
+<tr class="covered"><td>359</td><td><pre style="display:inline;"> &nbsp;if List &lt;&gt; nil then</pre></td></tr>
+<tr class="covered"><td>360</td><td><pre style="display:inline;"> &nbsp;try</pre></td></tr>
+<tr class="covered"><td>361</td><td><pre style="display:inline;"> &nbsp; &nbsp;List.BeginUpdate;</pre></td></tr>
+<tr class="covered"><td>362</td><td><pre style="display:inline;"> &nbsp; &nbsp;List.Clear;</pre></td></tr>
+<tr class="nocodegen"><td>363</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>364</td><td><pre style="display:inline;"> &nbsp; &nbsp;for Pair in self do</pre></td></tr>
+<tr class="covered"><td>365</td><td><pre style="display:inline;"> &nbsp; &nbsp; &nbsp;List.AddObject(Pair.Value.ClassName, TObject(Pair.Value));</pre></td></tr>
+<tr class="nocodegen"><td>366</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="nocodegen"><td>367</td><td><pre style="display:inline;"> &nbsp;finally</pre></td></tr>
+<tr class="covered"><td>368</td><td><pre style="display:inline;"> &nbsp; &nbsp;List.EndUpdate;</pre></td></tr>
+<tr class="nocodegen"><td>369</td><td><pre style="display:inline;"> &nbsp;end;</pre></td></tr>
+<tr class="covered"><td>370</td><td><pre style="display:inline;">end;</pre></td></tr>
+<tr class="nocodegen"><td>371</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>372</td><td><pre style="display:inline;">initialization</pre></td></tr>
+<tr class="nocodegen"><td>373</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>374</td><td><pre style="display:inline;">finalization</pre></td></tr>
+<tr class="nocodegen"><td>375</td><td><pre style="display:inline;"></pre></td></tr>
+<tr class="covered"><td>376</td><td><pre style="display:inline;">end.</pre></td></tr>
+</table>
+</body>
+</html>

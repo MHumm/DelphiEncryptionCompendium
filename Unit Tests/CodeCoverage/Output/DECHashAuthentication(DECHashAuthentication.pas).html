@@ -1,0 +1,1756 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECHashAuthentication (..\..\Source\DECHashAuthentication.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECHashAuthentication.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>304<td rowspan=3 style="background: conic-gradient(#9fe098 91%, #eee 91%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>333<tr><td>Line coverage<td>91<small>.3</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>///   Unit containing all the KDF, MGF, HMAC and PBKDF2 algorithms
+<tr class="nocodegen"><td>20<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>21<td>unit DECHashAuthentication;
+<tr class="nocodegen"><td>22<td>
+<tr class="nocodegen"><td>23<td>interface
+<tr class="nocodegen"><td>24<td>
+<tr class="nocodegen"><td>25<td>uses
+<tr class="nocodegen"><td>26<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>27<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>28<td>  {$ELSE}
+<tr class="nocodegen"><td>29<td>  System.SysUtils, System.Classes, Generics.Collections,
+<tr class="nocodegen"><td>30<td>  {$ENDIF}
+<tr class="nocodegen"><td>31<td>  DECBaseClass, DECHashBase, DECHashInterface, DECTypes , DECFormatBase;
+<tr class="nocodegen"><td>32<td>
+<tr class="nocodegen"><td>33<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>34<td>
+<tr class="nocodegen"><td>35<td>type
+<tr class="nocodegen"><td>36<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>37<td>  ///   Type of the KDF variant
+<tr class="nocodegen"><td>38<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>39<td>  TKDFType = (ktKDF1, ktKDF2, ktKDF3);
+<tr class="nocodegen"><td>40<td>
+<tr class="nocodegen"><td>41<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>42<td>  ///   Meta class for the class containing the password hash specific properties
+<tr class="nocodegen"><td>43<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>44<td>  TDECPasswordHashClass = class of TDECPasswordHash;
+<tr class="nocodegen"><td>45<td>
+<tr class="nocodegen"><td>46<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>47<td>  ///   Class containing all the KDF, MGF, HMAC and PBKDF2 algorithms
+<tr class="nocodegen"><td>48<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>49<td>  TDECHashAuthentication = class(TDECHash)
+<tr class="nocodegen"><td>50<td>  strict private
+<tr class="nocodegen"><td>51<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>52<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>53<td>    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+<tr class="nocodegen"><td>54<td>    ///   This is either KDF1 or KDF2 depending on KDFType
+<tr class="nocodegen"><td>55<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>56<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>57<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>58<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>59<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>60<td>    ///   Size in bytes of the source data passed.
+<tr class="nocodegen"><td>61<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>62<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>63<td>    ///   Start value for pseudo random number generator
+<tr class="nocodegen"><td>64<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>65<td>    /// &lt;param name=&quot;SeedSize&quot;&gt;
+<tr class="nocodegen"><td>66<td>    ///   Size of the seed in byte.
+<tr class="nocodegen"><td>67<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>68<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>69<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>70<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>71<td>    /// &lt;param name=&quot;KDFType&quot;&gt;
+<tr class="nocodegen"><td>72<td>    ///   Type of the algorithm: 1 = KDF1, 2 = KDF2 and 3 = KDF 3
+<tr class="nocodegen"><td>73<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>74<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>75<td>    ///   Returns the new derrived key.
+<tr class="nocodegen"><td>76<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>77<td>    class function KDFInternal(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>78<td>                               SeedSize, MaskSize: Integer;
+<tr class="nocodegen"><td>79<td>                               KDFType: TKDFType): TBytes; inline;
+<tr class="nocodegen"><td>80<td>  public
+<tr class="nocodegen"><td>81<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>82<td>    ///   Detects whether the given hash class is one particularily suited
+<tr class="nocodegen"><td>83<td>    ///   for storing hashes of passwords
+<tr class="nocodegen"><td>84<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>85<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>86<td>    ///   true if it's a hash class specifically designed to store password
+<tr class="nocodegen"><td>87<td>    ///   hashes, false for ordinary hash algorithms.
+<tr class="nocodegen"><td>88<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>89<td>    class function IsPasswordHash: Boolean; override;
+<tr class="nocodegen"><td>90<td>
+<tr class="nocodegen"><td>91<td>    // mask generation
+<tr class="nocodegen"><td>92<td>
+<tr class="nocodegen"><td>93<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>94<td>    ///   Mask generation: generates an output based on the data given which is
+<tr class="nocodegen"><td>95<td>    ///   similar to a hash function but in contrast does not have a fixed output
+<tr class="nocodegen"><td>96<td>    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+<tr class="nocodegen"><td>97<td>    ///   would be inadequate. Examples include generating padding, producing
+<tr class="nocodegen"><td>98<td>    ///   one time pads or keystreams in symmetric key encryption, and yielding
+<tr class="nocodegen"><td>99<td>    ///   outputs for pseudorandom number generators.
+<tr class="nocodegen"><td>100<td>    ///   Indexed Mask generation function, IEEE P1363 working group
+<tr class="nocodegen"><td>101<td>    ///   equal to KDF1 except without seed. RFC 2437 PKCS #1
+<tr class="nocodegen"><td>102<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>103<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>104<td>    ///   Data from which to generate a mask from
+<tr class="nocodegen"><td>105<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>106<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>107<td>    ///   Size of the input data in bytes
+<tr class="nocodegen"><td>108<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>109<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>110<td>    ///   Size of the returned mask in bytes
+<tr class="nocodegen"><td>111<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>112<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>113<td>    ///   Mask such that one cannot determine the data which had been given to
+<tr class="nocodegen"><td>114<td>    ///   generate this mask from.
+<tr class="nocodegen"><td>115<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>116<td>    class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>117<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>118<td>    ///   Mask generation: generates an output based on the data given which is
+<tr class="nocodegen"><td>119<td>    ///   similar to a hash function but incontrast does not have a fixed output
+<tr class="nocodegen"><td>120<td>    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+<tr class="nocodegen"><td>121<td>    ///   would be inadequate. Examples include generating padding, producing
+<tr class="nocodegen"><td>122<td>    ///   one time pads or keystreams in symmetric key encryption, and yielding
+<tr class="nocodegen"><td>123<td>    ///   outputs for pseudorandom number generators
+<tr class="nocodegen"><td>124<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>125<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>126<td>    ///   Data from which to generate a mask from
+<tr class="nocodegen"><td>127<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>128<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>129<td>    ///   Size of the returned mask in bytes
+<tr class="nocodegen"><td>130<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>131<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>132<td>    ///   Mask such that one cannot determine the data which had been given to
+<tr class="nocodegen"><td>133<td>    ///   generate this mask from.
+<tr class="nocodegen"><td>134<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>135<td>    class function MGF1(const Data: TBytes; MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>136<td>
+<tr class="nocodegen"><td>137<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>138<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>139<td>    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+<tr class="nocodegen"><td>140<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>141<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>142<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>143<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>144<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>145<td>    ///   Size in bytes of the source data passed.
+<tr class="nocodegen"><td>146<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>147<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>148<td>    ///   Salt value
+<tr class="nocodegen"><td>149<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>150<td>    /// &lt;param name=&quot;SeedSize&quot;&gt;
+<tr class="nocodegen"><td>151<td>    ///   Size of the seed/salt in byte.
+<tr class="nocodegen"><td>152<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>153<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>154<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>155<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>156<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>157<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>158<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>159<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>160<td>    ///   In earlier versions there was an optional format parameter. This has
+<tr class="nocodegen"><td>161<td>    ///   been removed as this is a base class. The method might not have
+<tr class="nocodegen"><td>162<td>    ///   returned a result with the MaskSize specified, as the formatting might
+<tr class="nocodegen"><td>163<td>    ///   have had to alter this. This would have been illogical.
+<tr class="nocodegen"><td>164<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>165<td>    class function KDF1(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>166<td>                        SeedSize, MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>167<td>
+<tr class="nocodegen"><td>168<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>169<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>170<td>    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+<tr class="nocodegen"><td>171<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>172<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>173<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>174<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>175<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>176<td>    ///   Salt value
+<tr class="nocodegen"><td>177<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>178<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>179<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>180<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>181<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>182<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>183<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>184<td>    class function KDF1(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>185<td>                        MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>186<td>
+<tr class="nocodegen"><td>187<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>188<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>189<td>    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+<tr class="nocodegen"><td>190<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>191<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>192<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>193<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>194<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>195<td>    ///   Size in bytes of the source data passed.
+<tr class="nocodegen"><td>196<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>197<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>198<td>    ///   Salt value
+<tr class="nocodegen"><td>199<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>200<td>    /// &lt;param name=&quot;SeedSize&quot;&gt;
+<tr class="nocodegen"><td>201<td>    ///   Size of the seed/salt in byte.
+<tr class="nocodegen"><td>202<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>203<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>204<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>205<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>206<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>207<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>208<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>209<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>210<td>    ///   In earlier versions there was an optional format parameter. This has
+<tr class="nocodegen"><td>211<td>    ///   been removed as this is a base class. The method might not have
+<tr class="nocodegen"><td>212<td>    ///   returned a result with the MaskSize specified, as the formatting might
+<tr class="nocodegen"><td>213<td>    ///   have had to alter this. This would have been illogical.
+<tr class="nocodegen"><td>214<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>215<td>    class function KDF2(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>216<td>                        SeedSize, MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>217<td>
+<tr class="nocodegen"><td>218<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>219<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>220<td>    ///   IEEE P1363 Working Group, ISO 18033-2:2004
+<tr class="nocodegen"><td>221<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>222<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>223<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>224<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>225<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>226<td>    ///   Start value for pseudo random number generator
+<tr class="nocodegen"><td>227<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>228<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>229<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>230<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>231<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>232<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>233<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>234<td>    class function KDF2(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>235<td>                        MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>236<td>
+<tr class="nocodegen"><td>237<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>238<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>239<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>240<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>241<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>242<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>243<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>244<td>    ///   Size in bytes of the source data passed.
+<tr class="nocodegen"><td>245<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>246<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>247<td>    ///   Salt value
+<tr class="nocodegen"><td>248<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>249<td>    /// &lt;param name=&quot;SeedSize&quot;&gt;
+<tr class="nocodegen"><td>250<td>    ///   Size of the seed/salt in byte.
+<tr class="nocodegen"><td>251<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>252<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>253<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>254<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>255<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>256<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>257<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>258<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>259<td>    ///   In earlier versions there was an optional format parameter. This has
+<tr class="nocodegen"><td>260<td>    ///   been removed as this is a base class. The method might not have
+<tr class="nocodegen"><td>261<td>    ///   returned a result with the MaskSize specified, as the formatting might
+<tr class="nocodegen"><td>262<td>    ///   have had to alter this. This would have been illogical.
+<tr class="nocodegen"><td>263<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>264<td>    class function KDF3(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>265<td>                        SeedSize, MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>266<td>
+<tr class="nocodegen"><td>267<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>268<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>269<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>270<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>271<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>272<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>273<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>274<td>    ///   Salt value
+<tr class="nocodegen"><td>275<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>276<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>277<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>278<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>279<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>280<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>281<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>282<td>    class function KDF3(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>283<td>                        MaskSize: Integer): TBytes; overload;
+<tr class="nocodegen"><td>284<td>
+<tr class="nocodegen"><td>285<td>    // DEC's own KDF + MGF
+<tr class="nocodegen"><td>286<td>
+<tr class="nocodegen"><td>287<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>288<td>    ///   Key deviation algorithm to derrive keys from other keys. The alrorithm
+<tr class="nocodegen"><td>289<td>    ///   implemented by this method does not follow any official standard.
+<tr class="nocodegen"><td>290<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>291<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>292<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>293<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>294<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>295<td>    ///   Size in bytes of the source data passed.
+<tr class="nocodegen"><td>296<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>297<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>298<td>    ///   Salt value
+<tr class="nocodegen"><td>299<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>300<td>    /// &lt;param name=&quot;SeedSize&quot;&gt;
+<tr class="nocodegen"><td>301<td>    ///   Size of the seed/salt in byte.
+<tr class="nocodegen"><td>302<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>303<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>304<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>305<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>306<td>    /// &lt;param name=&quot;Index&quot;&gt;
+<tr class="nocodegen"><td>307<td>    ///   Optional parameter: can be used to specify a different default value
+<tr class="nocodegen"><td>308<td>    ///   for the index variable used in the algorithm.
+<tr class="nocodegen"><td>309<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>310<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>311<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>312<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>313<td>    class function KDFx(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>314<td>                        SeedSize, MaskSize: Integer;
+<tr class="nocodegen"><td>315<td>                        Index: UInt32 = 1): TBytes; overload;
+<tr class="nocodegen"><td>316<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>317<td>    ///   Key deviation algorithm to derrive keys from other keys.
+<tr class="nocodegen"><td>318<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>319<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>320<td>    ///   This variant of the algorithm does not follow an official standard.
+<tr class="nocodegen"><td>321<td>    ///   It has been created by the original author of DEC.
+<tr class="nocodegen"><td>322<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>323<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>324<td>    ///   Source data from which the new key shall be derrived.
+<tr class="nocodegen"><td>325<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>326<td>    /// &lt;param name=&quot;Seed&quot;&gt;
+<tr class="nocodegen"><td>327<td>    ///   Salt value
+<tr class="nocodegen"><td>328<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>329<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>330<td>    ///   Size of the generated output in byte
+<tr class="nocodegen"><td>331<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>332<td>    /// &lt;param name=&quot;Index&quot;&gt;
+<tr class="nocodegen"><td>333<td>    ///   Optional parameter: can be used to specify a different default value
+<tr class="nocodegen"><td>334<td>    ///   for the index variable used in the algorithm.
+<tr class="nocodegen"><td>335<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>336<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>337<td>    ///   Returns the new derrived key with the length specified in MaskSize.
+<tr class="nocodegen"><td>338<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>339<td>    class function KDFx(const Data, Seed: TBytes; MaskSize: Integer;
+<tr class="nocodegen"><td>340<td>                        Index: UInt32 = 1): TBytes; overload;
+<tr class="nocodegen"><td>341<td>
+<tr class="nocodegen"><td>342<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>343<td>    ///   Mask generation: generates an output based on the data given which is
+<tr class="nocodegen"><td>344<td>    ///   similar to a hash function but incontrast does not have a fixed output
+<tr class="nocodegen"><td>345<td>    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+<tr class="nocodegen"><td>346<td>    ///   would be inadequate. Examples include generating padding, producing
+<tr class="nocodegen"><td>347<td>    ///   one time pads or keystreams in symmetric key encryption, and yielding
+<tr class="nocodegen"><td>348<td>    ///   outputs for pseudorandom number generators.
+<tr class="nocodegen"><td>349<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>350<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>351<td>    ///   This variant of the algorithm does not follow an official standard.
+<tr class="nocodegen"><td>352<td>    ///   It has been created by the original author of DEC.
+<tr class="nocodegen"><td>353<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>354<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>355<td>    ///   Data from which to generate a mask from
+<tr class="nocodegen"><td>356<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>357<td>    /// &lt;param name=&quot;DataSize&quot;&gt;
+<tr class="nocodegen"><td>358<td>    ///   Size of the passed data in bytes
+<tr class="nocodegen"><td>359<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>360<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>361<td>    ///   Size of the returned mask in bytes
+<tr class="nocodegen"><td>362<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>363<td>    /// &lt;param name=&quot;Index&quot;&gt;
+<tr class="nocodegen"><td>364<td>    ///   Looks like this is a salt applied to each byte of output data?
+<tr class="nocodegen"><td>365<td>{ TODO : Clarify this parameter }
+<tr class="nocodegen"><td>366<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>367<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>368<td>    ///   Mask such that one cannot determine the data which had been given to
+<tr class="nocodegen"><td>369<td>    ///   generate this mask from.
+<tr class="nocodegen"><td>370<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>371<td>    class function MGFx(const Data; DataSize, MaskSize: Integer;
+<tr class="nocodegen"><td>372<td>                        Index: UInt32 = 1): TBytes; overload;
+<tr class="nocodegen"><td>373<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>374<td>    ///   Mask generation: generates an output based on the data given which is
+<tr class="nocodegen"><td>375<td>    ///   similar to a hash function but incontrast does not have a fixed output
+<tr class="nocodegen"><td>376<td>    ///   length. Use of a MGF is desirable in cases where a fixed-size hash
+<tr class="nocodegen"><td>377<td>    ///   would be inadequate. Examples include generating padding, producing
+<tr class="nocodegen"><td>378<td>    ///   one time pads or keystreams in symmetric key encryption, and yielding
+<tr class="nocodegen"><td>379<td>    ///   outputs for pseudorandom number generators.
+<tr class="nocodegen"><td>380<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>381<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>382<td>    ///   This variant of the algorithm does not follow an official standard.
+<tr class="nocodegen"><td>383<td>    ///   It has been created by the original author of DEC.
+<tr class="nocodegen"><td>384<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>385<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>386<td>    ///   Data from which to generate a mask from
+<tr class="nocodegen"><td>387<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>388<td>    /// &lt;param name=&quot;MaskSize&quot;&gt;
+<tr class="nocodegen"><td>389<td>    ///   Size of the returned mask in bytes
+<tr class="nocodegen"><td>390<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>391<td>    /// &lt;param name=&quot;Index&quot;&gt;
+<tr class="nocodegen"><td>392<td>    ///   Looks like this is a salt applied to each byte of output data?
+<tr class="nocodegen"><td>393<td>{ TODO : Clarify this parameter }
+<tr class="nocodegen"><td>394<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>395<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>396<td>    ///   Mask such that one cannot determine the data which had been given to
+<tr class="nocodegen"><td>397<td>    ///   generate this mask from.
+<tr class="nocodegen"><td>398<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>399<td>    class function MGFx(const Data: TBytes; MaskSize: Integer;
+<tr class="nocodegen"><td>400<td>                        Index: UInt32 = 1): TBytes; overload;
+<tr class="nocodegen"><td>401<td>
+<tr class="nocodegen"><td>402<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>403<td>    ///   HMAC according to rfc2202: hash message authentication code allow to
+<tr class="nocodegen"><td>404<td>    ///   verify both the data integrity and the authenticity of a message.
+<tr class="nocodegen"><td>405<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>406<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>407<td>    ///   This is the secret key which shall not be transmitted over the line.
+<tr class="nocodegen"><td>408<td>    ///   The sender uses this key to create the resulting HMAC, transmits the
+<tr class="nocodegen"><td>409<td>    ///   text and the HMAC over the line and the receiver recalculates the HMAC
+<tr class="nocodegen"><td>410<td>    ///   based on his copy of the secret key. If his calculated HMAC equals the
+<tr class="nocodegen"><td>411<td>    ///   transfered HMAC value the message has not been tampered.
+<tr class="nocodegen"><td>412<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>413<td>    /// &lt;param name=&quot;Text&quot;&gt;
+<tr class="nocodegen"><td>414<td>    ///   Text over which to calculate the HMAC
+<tr class="nocodegen"><td>415<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>416<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>417<td>    ///   Calculated HMAC
+<tr class="nocodegen"><td>418<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>419<td>    class function HMAC(const Key, Text: TBytes): TBytes; overload;
+<tr class="nocodegen"><td>420<td>
+<tr class="nocodegen"><td>421<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>422<td>    ///   HMAC according to rfc2202: hash message authentication code allow to
+<tr class="nocodegen"><td>423<td>    ///   verify both the data integrity and the authenticity of a message.
+<tr class="nocodegen"><td>424<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>425<td>    /// &lt;param name=&quot;Key&quot;&gt;
+<tr class="nocodegen"><td>426<td>    ///   This is the secret key which shall not be transmitted over the line.
+<tr class="nocodegen"><td>427<td>    ///   The sender uses this key to create the resulting HMAC, transmits the
+<tr class="nocodegen"><td>428<td>    ///   text and the HMAC over the line and the receiver recalculates the HMAC
+<tr class="nocodegen"><td>429<td>    ///   based on his copy of the secret key. If his calculated HMAC equals the
+<tr class="nocodegen"><td>430<td>    ///   transfered HMAC value the message has not been tampered.
+<tr class="nocodegen"><td>431<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>432<td>    /// &lt;param name=&quot;Text&quot;&gt;
+<tr class="nocodegen"><td>433<td>    ///   Text over which to calculate the HMAC
+<tr class="nocodegen"><td>434<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>435<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>436<td>    ///   Calculated HMAC
+<tr class="nocodegen"><td>437<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>438<td>    class function HMAC(const Key, Text: RawByteString): TBytes; overload;
+<tr class="nocodegen"><td>439<td>
+<tr class="nocodegen"><td>440<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>441<td>    ///   Password based key deviation function 2
+<tr class="nocodegen"><td>442<td>    ///   RFC 2898, PKCS #5.
+<tr class="nocodegen"><td>443<td>    ///   This can be used to create a login sheme by storing the output,
+<tr class="nocodegen"><td>444<td>    ///   number of iterations and the salt. When the user enters a password
+<tr class="nocodegen"><td>445<td>    ///   this calculation is done using the same parameters as stored for his
+<tr class="nocodegen"><td>446<td>    ///   user account and comparing the output.
+<tr class="nocodegen"><td>447<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>448<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>449<td>    ///   Password to create the deviation from
+<tr class="nocodegen"><td>450<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>451<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>452<td>    ///   Salt used to modify the password
+<tr class="nocodegen"><td>453<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>454<td>    /// &lt;param name=&quot;Iterations&quot;&gt;
+<tr class="nocodegen"><td>455<td>    ///   Number of iterations to perform
+<tr class="nocodegen"><td>456<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>457<td>    /// &lt;param name=&quot;KeyLength&quot;&gt;
+<tr class="nocodegen"><td>458<td>    ///   Length of the resulting key in byte
+<tr class="nocodegen"><td>459<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>460<td>    class function PBKDF2(const Password, Salt: TBytes; Iterations: Integer;
+<tr class="nocodegen"><td>461<td>                          KeyLength: Integer): TBytes; overload;
+<tr class="nocodegen"><td>462<td>
+<tr class="nocodegen"><td>463<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>464<td>    ///   Password based key deviation function 2
+<tr class="nocodegen"><td>465<td>    ///   RFC 2898, PKCS #5.
+<tr class="nocodegen"><td>466<td>    ///   This can be used to create a login sheme by storing the output,
+<tr class="nocodegen"><td>467<td>    ///   number of iterations and the salt. When the user enters a password
+<tr class="nocodegen"><td>468<td>    ///   this calculation is done using the same parameters as stored for his
+<tr class="nocodegen"><td>469<td>    ///   user account and comparing the output.
+<tr class="nocodegen"><td>470<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>471<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>472<td>    ///   Password to create the deviation from
+<tr class="nocodegen"><td>473<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>474<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>475<td>    ///   Salt used to modify the password
+<tr class="nocodegen"><td>476<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>477<td>    /// &lt;param name=&quot;Iterations&quot;&gt;
+<tr class="nocodegen"><td>478<td>    ///   Number of iterations to perform
+<tr class="nocodegen"><td>479<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>480<td>    /// &lt;param name=&quot;KeyLength&quot;&gt;
+<tr class="nocodegen"><td>481<td>    ///   Length of the resulting key in byte
+<tr class="nocodegen"><td>482<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>483<td>    class function PBKDF2(const Password, Salt: RawByteString;
+<tr class="nocodegen"><td>484<td>                          Iterations: Integer;
+<tr class="nocodegen"><td>485<td>                          KeyLength: Integer): TBytes; overload;
+<tr class="nocodegen"><td>486<td>  end;
+<tr class="nocodegen"><td>487<td>
+<tr class="nocodegen"><td>488<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>489<td>  ///   Adds methods which shall not be found in the specialized password hash
+<tr class="nocodegen"><td>490<td>  ///   classes. Mainly the CalcStreamXXX and CalcFileXXX ones. They shall not
+<tr class="nocodegen"><td>491<td>  ///   be contained there as those password hashes usually restrict the maximum
+<tr class="nocodegen"><td>492<td>  ///   length of the data which can be hashed.
+<tr class="nocodegen"><td>493<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>494<td>  TDECHashExtended = class(TDECHashAuthentication, IDECHashExtended)
+<tr class="nocodegen"><td>495<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>496<td>    ///   Calculates the hash value over a given stream of bytes
+<tr class="nocodegen"><td>497<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>498<td>    /// &lt;param name=&quot;Stream&quot;&gt;
+<tr class="nocodegen"><td>499<td>    ///   Memory or file stream over which the hash value shall be calculated.
+<tr class="nocodegen"><td>500<td>    ///   The stream must be assigned. The hash value will always be calculated
+<tr class="nocodegen"><td>501<td>    ///   from the current position of the stream.
+<tr class="nocodegen"><td>502<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>503<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>504<td>    ///   Number of bytes within the stream over which to calculate the hash value
+<tr class="nocodegen"><td>505<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>506<td>    /// &lt;param name=&quot;HashResult&quot;&gt;
+<tr class="nocodegen"><td>507<td>    ///   In this byte array the calculated hash value will be returned
+<tr class="nocodegen"><td>508<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>509<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>510<td>    ///   Optional callback routine. It can be used to display the progress of
+<tr class="nocodegen"><td>511<td>    ///   the operation.
+<tr class="nocodegen"><td>512<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>513<td>    procedure CalcStream(const Stream: TStream; Size: Int64; var HashResult: TBytes;
+<tr class="nocodegen"><td>514<td>                         const OnProgress:TDECProgressEvent = nil); overload;
+<tr class="nocodegen"><td>515<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>516<td>    ///   Calculates the hash value over a givens stream of bytes
+<tr class="nocodegen"><td>517<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>518<td>    /// &lt;param name=&quot;Stream&quot;&gt;
+<tr class="nocodegen"><td>519<td>    ///   Memory or file stream over which the hash value shall be calculated.
+<tr class="nocodegen"><td>520<td>    ///   The stream must be assigned. The hash value will always be calculated
+<tr class="nocodegen"><td>521<td>    ///   from the current position of the stream.
+<tr class="nocodegen"><td>522<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>523<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>524<td>    ///   Number of bytes within the stream over which to calculate the hash value
+<tr class="nocodegen"><td>525<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>526<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>527<td>    ///   Optional formatting class. The formatting of that will be applied to
+<tr class="nocodegen"><td>528<td>    ///   the returned hash value.
+<tr class="nocodegen"><td>529<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>530<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>531<td>    ///   Optional callback routine. It can be used to display the progress of
+<tr class="nocodegen"><td>532<td>    ///   the operation.
+<tr class="nocodegen"><td>533<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>534<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>535<td>    ///   Hash value over the bytes in the stream, formatted with the formatting
+<tr class="nocodegen"><td>536<td>    ///   passed as format parameter, if used.
+<tr class="nocodegen"><td>537<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>538<td>    function CalcStream(const Stream: TStream; Size: Int64; Format: TDECFormatClass = nil;
+<tr class="nocodegen"><td>539<td>                        const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
+<tr class="nocodegen"><td>540<td>
+<tr class="nocodegen"><td>541<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>542<td>    ///   Calculates the hash value over a given stream of bytes. The calculated
+<tr class="nocodegen"><td>543<td>    ///   hash value can be retrieved with one of the DigestAsXXX methods.
+<tr class="nocodegen"><td>544<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>545<td>    /// &lt;param name=&quot;Stream&quot;&gt;
+<tr class="nocodegen"><td>546<td>    ///   Memory or file stream over which the hash value shall be calculated.
+<tr class="nocodegen"><td>547<td>    ///   The stream must be assigned. The hash value will always be calculated
+<tr class="nocodegen"><td>548<td>    ///   from the current position of the stream.
+<tr class="nocodegen"><td>549<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>550<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>551<td>    ///   Number of bytes within the stream over which to calculate the hash value
+<tr class="nocodegen"><td>552<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>553<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>554<td>    ///   Optional callback routine. It can be used to display the progress of
+<tr class="nocodegen"><td>555<td>    ///   the operation.
+<tr class="nocodegen"><td>556<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>557<td>    /// &lt;param name=&quot;DoFinalize&quot;&gt;
+<tr class="nocodegen"><td>558<td>    ///   Optinal parameter: if true this call is the last one and the
+<tr class="nocodegen"><td>559<td>    ///   finalization of the hash calculation, including calling done, will be
+<tr class="nocodegen"><td>560<td>    ///   carried out in this method call as well.
+<tr class="nocodegen"><td>561<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>562<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>563<td>    ///   Before calling this method for the first time after creation of the
+<tr class="nocodegen"><td>564<td>    ///   hash instance or after calling Done Init needs to be called.
+<tr class="nocodegen"><td>565<td>    ///   After calling this method Done needs to be called and in case of
+<tr class="nocodegen"><td>566<td>    ///   algorithms (like SHA3) with a message size in bits and not whole bytes
+<tr class="nocodegen"><td>567<td>    ///   the contents of the last byte needs to be assigned to PaddingByte before
+<tr class="nocodegen"><td>568<td>    ///   calling Done!
+<tr class="nocodegen"><td>569<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>570<td>    procedure CalcStream(const Stream: TStream; Size: Int64;
+<tr class="nocodegen"><td>571<td>                         const OnProgress:TDECProgressEvent = nil;
+<tr class="nocodegen"><td>572<td>                         DoFinalize: Boolean = false); overload;
+<tr class="nocodegen"><td>573<td>
+<tr class="nocodegen"><td>574<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>575<td>    ///   Calculates the hash value over the contents of a given file
+<tr class="nocodegen"><td>576<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>577<td>    /// &lt;param name=&quot;FileName&quot;&gt;
+<tr class="nocodegen"><td>578<td>    ///   Path and name of the file to be processed
+<tr class="nocodegen"><td>579<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>580<td>    /// &lt;param name=&quot;HashResult&quot;&gt;
+<tr class="nocodegen"><td>581<td>    ///   Here the resulting hash value is being returned as byte array
+<tr class="nocodegen"><td>582<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>583<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>584<td>    ///   Optional callback. If being used the hash calculation will call it from
+<tr class="nocodegen"><td>585<td>    ///   time to time to return the current progress of the operation
+<tr class="nocodegen"><td>586<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>587<td>    procedure CalcFile(const FileName: string; var HashResult: TBytes;
+<tr class="nocodegen"><td>588<td>                       const OnProgress:TDECProgressEvent = nil); overload;
+<tr class="nocodegen"><td>589<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>590<td>    ///   Calculates the hash value over the contents of a given file
+<tr class="nocodegen"><td>591<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>592<td>    /// &lt;param name=&quot;FileName&quot;&gt;
+<tr class="nocodegen"><td>593<td>    ///   Path and name of the file to be processed
+<tr class="nocodegen"><td>594<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>595<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>596<td>    ///   Optional parameter: Formatting class. If being used the formatting is
+<tr class="nocodegen"><td>597<td>    ///   being applied to the returned string with the calculated hash value
+<tr class="nocodegen"><td>598<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>599<td>    /// &lt;param name=&quot;OnProgress&quot;&gt;
+<tr class="nocodegen"><td>600<td>    ///   Optional callback. If being used the hash calculation will call it from
+<tr class="nocodegen"><td>601<td>    ///   time to time to return the current progress of the operation
+<tr class="nocodegen"><td>602<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>603<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>604<td>    ///   Calculated hash value as RawByteString.
+<tr class="nocodegen"><td>605<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>606<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>607<td>    ///   We recommend to use a formatting which results in 7 bit ASCII chars
+<tr class="nocodegen"><td>608<td>    ///   being returned, otherwise the conversion into the RawByteString might
+<tr class="nocodegen"><td>609<td>    ///   result in strange characters in the returned result.
+<tr class="nocodegen"><td>610<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>611<td>    function CalcFile(const FileName: string; Format: TDECFormatClass = nil;
+<tr class="nocodegen"><td>612<td>                      const OnProgress:TDECProgressEvent = nil): RawByteString; overload;
+<tr class="nocodegen"><td>613<td>  end;
+<tr class="nocodegen"><td>614<td>
+<tr class="nocodegen"><td>615<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>616<td>  ///   All hash classes with hash algorithms specially developed for password
+<tr class="nocodegen"><td>617<td>  ///   hashing should inherit from this class in order to be able to distinguish
+<tr class="nocodegen"><td>618<td>  ///   those from normal hash algorithms not really meant to be used for password
+<tr class="nocodegen"><td>619<td>  ///   hashing.
+<tr class="nocodegen"><td>620<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>621<td>  TDECPasswordHash = class(TDECHashAuthentication, IDECHashPassword)
+<tr class="nocodegen"><td>622<td>  strict private
+<tr class="nocodegen"><td>623<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>624<td>    ///   Sets the salt value given. Throws an EDECHashException if a salt is
+<tr class="nocodegen"><td>625<td>    ///   passed which is longer than MaxSaltLength.
+<tr class="nocodegen"><td>626<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>627<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>628<td>    ///   Exception raised if length of &lt;c&gt;Value&lt;/c&gt; is not in the range of
+<tr class="nocodegen"><td>629<td>    ///   &lt;c&gt;MinSaltLength&lt;/c&gt; and &lt;c&gt;MaxSaltLength&lt;/c&gt;
+<tr class="nocodegen"><td>630<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>631<td>    procedure SetSalt(const Value: TBytes);
+<tr class="nocodegen"><td>632<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>633<td>    ///   Returns the defined salt value
+<tr class="nocodegen"><td>634<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>635<td>    function  GetSalt: TBytes;
+<tr class="nocodegen"><td>636<td>  strict protected
+<tr class="nocodegen"><td>637<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>638<td>    ///   Most, if not all password hashing algorithms (like bcrypt) have a salt
+<tr class="nocodegen"><td>639<td>    ///   parameter to modify the entered password value.
+<tr class="nocodegen"><td>640<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>641<td>    FSalt : TBytes;
+<tr class="nocodegen"><td>642<td>
+<tr class="nocodegen"><td>643<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>644<td>    ///   Overwrite the salt value
+<tr class="nocodegen"><td>645<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>646<td>    procedure DoDone; override;
+<tr class="nocodegen"><td>647<td>
+<tr class="nocodegen"><td>648<td>    {$Region CryptFormatHandling}
+<tr class="nocodegen"><td>649<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>650<td>    ///   Returns the ID code for Crypt/BSD like storing of passwords. The ID
+<tr class="nocodegen"><td>651<td>    ///   has to start with the $ at the beginning and does not contain a
+<tr class="nocodegen"><td>652<td>    ///   trailing $.
+<tr class="nocodegen"><td>653<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>654<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>655<td>    ///   If the algorithm on which this is being used is a Crypt/BSD compatible
+<tr class="nocodegen"><td>656<td>    ///   password hash algorithm the ID is returned otherwise an empty string.
+<tr class="nocodegen"><td>657<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>658<td>    class function GetCryptID:string; virtual;
+<tr class="nocodegen"><td>659<td>
+<tr class="nocodegen"><td>660<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>661<td>    ///   Returns the parameters required for the crypt-like password storing
+<tr class="nocodegen"><td>662<td>    ///   in that format.
+<tr class="nocodegen"><td>663<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>664<td>    /// &lt;param name=&quot;Params&quot;&gt;
+<tr class="nocodegen"><td>665<td>    ///   Algorithm specific parameters used for initialization. For details see
+<tr class="nocodegen"><td>666<td>    ///   documentation of the concrete implementation in the algorithm.
+<tr class="nocodegen"><td>667<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>668<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>669<td>    ///   Format class for formatting the output
+<tr class="nocodegen"><td>670<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>671<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>672<td>    ///   Returns an empty string if the the algorithm on which this is being
+<tr class="nocodegen"><td>673<td>    ///   used is not a Crypt/BSD compatible password hash algorithm
+<tr class="nocodegen"><td>674<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>675<td>    function GetCryptParams(const Params : string;
+<tr class="nocodegen"><td>676<td>                            Format       : TDECFormatClass):string; virtual;
+<tr class="nocodegen"><td>677<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>678<td>    ///   Returns the salt required for the crypt-like password storing
+<tr class="nocodegen"><td>679<td>    ///   in that format.
+<tr class="nocodegen"><td>680<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>681<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>682<td>    ///   The raw salt value
+<tr class="nocodegen"><td>683<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>684<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>685<td>    ///   Format class for formatting the output
+<tr class="nocodegen"><td>686<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>687<td>    function GetCryptSalt(const Salt : TBytes;
+<tr class="nocodegen"><td>688<td>                          Format     : TDECFormatClass):string; virtual;
+<tr class="nocodegen"><td>689<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>690<td>    ///   Returns the hash required for the crypt-like password storing
+<tr class="nocodegen"><td>691<td>    ///   in that format. If a salt etc. is needed that needs to be scepcified
+<tr class="nocodegen"><td>692<td>    ///   before calling this method.
+<tr class="nocodegen"><td>693<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>694<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>695<td>    ///   Password entered which shall be hashed.
+<tr class="nocodegen"><td>696<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>697<td>    /// &lt;param name=&quot;Params&quot;&gt;
+<tr class="nocodegen"><td>698<td>    ///   Algorithm specific parameters used for initialization. For details see
+<tr class="nocodegen"><td>699<td>    ///   documentation of the concrete implementation in the algorithm.
+<tr class="nocodegen"><td>700<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>701<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>702<td>    ///   Salt value used by the password hash calculation. Depending on the
+<tr class="nocodegen"><td>703<td>    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+<tr class="nocodegen"><td>704<td>    ///   in the encoding used in the Crypt/BSD password storage string.
+<tr class="nocodegen"><td>705<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>706<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>707<td>    ///   Salt value used by the password hash calculation in binary raw format,
+<tr class="nocodegen"><td>708<td>    ///   means not Radix64 encoded or so.
+<tr class="nocodegen"><td>709<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>710<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>711<td>    ///   Format class for formatting the output
+<tr class="nocodegen"><td>712<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>713<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>714<td>    ///   Returns an empty string if the the algorithm on which this is being
+<tr class="nocodegen"><td>715<td>    ///   used is not a Crypt/BSD compatible password hash algorithm.
+<tr class="nocodegen"><td>716<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>717<td>    function GetCryptHash(Password     : TBytes;
+<tr class="nocodegen"><td>718<td>                          const Params : string;
+<tr class="nocodegen"><td>719<td>                          const Salt   : TBytes;
+<tr class="nocodegen"><td>720<td>                          Format       : TDECFormatClass):string; virtual;
+<tr class="nocodegen"><td>721<td>    {$EndRegion}
+<tr class="nocodegen"><td>722<td>  public
+<tr class="nocodegen"><td>723<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>724<td>    ///   Returns the maximum length of a salt value given for the algorithm
+<tr class="nocodegen"><td>725<td>    ///   in byte
+<tr class="nocodegen"><td>726<td>    /// &lt;/summary&gt;
+<tr class="notcovered"><td>727<td>    function MaxSaltLength:UInt8; virtual; abstract;
+<tr class="nocodegen"><td>728<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>729<td>    ///   Returns the minimum length of a salt value given for the algorithm
+<tr class="nocodegen"><td>730<td>    ///   in byte
+<tr class="nocodegen"><td>731<td>    /// &lt;/summary&gt;
+<tr class="notcovered"><td>732<td>    function MinSaltLength:UInt8; virtual; abstract;
+<tr class="nocodegen"><td>733<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>734<td>    ///   Returns the maximum length of a user supplied password given for the
+<tr class="nocodegen"><td>735<td>    ///   algorithm in byte
+<tr class="nocodegen"><td>736<td>    /// &lt;/summary&gt;
+<tr class="notcovered"><td>737<td>    class function MaxPasswordLength:UInt8; virtual; abstract;
+<tr class="nocodegen"><td>738<td>
+<tr class="nocodegen"><td>739<td>    {$Region CryptBSDFormatHandlingPublic}
+<tr class="nocodegen"><td>740<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>741<td>    ///   Tries to find a class type by its Crypt identification
+<tr class="nocodegen"><td>742<td>    ///   (e.g. 2a is Bcrypt).
+<tr class="nocodegen"><td>743<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>744<td>    /// &lt;param name=&quot;Identity&quot;&gt;
+<tr class="nocodegen"><td>745<td>    ///   Identity to look for, with or without the starting $ delimiter sign.
+<tr class="nocodegen"><td>746<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>747<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>748<td>    ///   Returns the class type of the class with the specified identity value
+<tr class="nocodegen"><td>749<td>    ///   or throws an EDECClassNotRegisteredException exception if no class
+<tr class="nocodegen"><td>750<td>    ///   with the given Crypt identity has been found
+<tr class="nocodegen"><td>751<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>752<td>    /// &lt;exception cref=&quot;EDECClassNotRegisteredException&quot;&gt;
+<tr class="nocodegen"><td>753<td>    ///   Exception raised if the class specified by &lt;c&gt;Identity&lt;/c&gt; is not found
+<tr class="nocodegen"><td>754<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>755<td>    class function ClassByCryptIdentity(Identity: string): TDECPasswordHashClass;
+<tr class="nocodegen"><td>756<td>
+<tr class="nocodegen"><td>757<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>758<td>    ///   Calculates a passwort hash for the given password and returns it in
+<tr class="nocodegen"><td>759<td>    ///   a BSDCrypt compatible format. This method only works for those hash
+<tr class="nocodegen"><td>760<td>    ///   algorithms implementing the necessary GetBSDCryptID method.
+<tr class="nocodegen"><td>761<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>762<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>763<td>    ///   Entered password for which to calculate the hash. The caller is
+<tr class="nocodegen"><td>764<td>    ///   responsible to ensure the maximum password length is adhered to.
+<tr class="nocodegen"><td>765<td>    ///   Any exceptions raised due to too long passwords are not caught here!
+<tr class="nocodegen"><td>766<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>767<td>    /// &lt;param name=&quot;Params&quot;&gt;
+<tr class="nocodegen"><td>768<td>    ///   Algorithm specific parameters used for initialization. For details see
+<tr class="nocodegen"><td>769<td>    ///   documentation of the concrete implementation in the algorithm.
+<tr class="nocodegen"><td>770<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>771<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>772<td>    ///   Salt value used by the password hash calculation. Depending on the
+<tr class="nocodegen"><td>773<td>    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+<tr class="nocodegen"><td>774<td>    ///   in the encoding used in the Crypt/BSD password storage string.
+<tr class="nocodegen"><td>775<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>776<td>    /// &lt;param name=&quot;SaltIsRaw&quot;&gt;
+<tr class="nocodegen"><td>777<td>    ///   If true the passed salt value is a raw value. If false it is encoded
+<tr class="nocodegen"><td>778<td>    ///   like in the Crypt/BSD password storage string.
+<tr class="nocodegen"><td>779<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>780<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>781<td>    ///   Formatting class used to format the calculated password. Different
+<tr class="nocodegen"><td>782<td>    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+<tr class="nocodegen"><td>783<td>    ///   which one to pass. See description of the hash class used.
+<tr class="nocodegen"><td>784<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>785<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>786<td>    ///   Calculated hash value in BSD crypt style format. Returns an empty
+<tr class="nocodegen"><td>787<td>    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+<tr class="nocodegen"><td>788<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>789<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>790<td>    ///   Exception raised if length of &lt;c&gt;Password&lt;/c&gt; is higher than
+<tr class="nocodegen"><td>791<td>    ///   &lt;c&gt;MaxPasswordLength&lt;/c&gt; or if a salt with a different length than
+<tr class="nocodegen"><td>792<td>    ///   128 bit has been specified.
+<tr class="nocodegen"><td>793<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>794<td>    function GetDigestInCryptFormat(const Password : string;
+<tr class="nocodegen"><td>795<td>                                    const Params   : string;
+<tr class="nocodegen"><td>796<td>                                    const Salt     : string;
+<tr class="nocodegen"><td>797<td>                                    SaltIsRaw      : Boolean;
+<tr class="nocodegen"><td>798<td>                                    Format         : TDECFormatClass):string; overload;
+<tr class="nocodegen"><td>799<td>
+<tr class="nocodegen"><td>800<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>801<td>    ///   Calculates a passwort hash for the given password and returns it in
+<tr class="nocodegen"><td>802<td>    ///   a BSDCrypt compatible format. This method only works for those hash
+<tr class="nocodegen"><td>803<td>    ///   algorithms implementing the necessary GetBSDCryptID method.
+<tr class="nocodegen"><td>804<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>805<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>806<td>    ///   Entered password for which to calculate the hash. The caller is
+<tr class="nocodegen"><td>807<td>    ///   responsible to ensure the maximum password length is adhered to.
+<tr class="nocodegen"><td>808<td>    ///   Any exceptions raised due to too long passwords are not caught here!
+<tr class="nocodegen"><td>809<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>810<td>    /// &lt;param name=&quot;Params&quot;&gt;
+<tr class="nocodegen"><td>811<td>    ///   Algorithm specific parameters used for initialization. For details see
+<tr class="nocodegen"><td>812<td>    ///   documentation of the concrete implementation in the algorithm.
+<tr class="nocodegen"><td>813<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>814<td>    /// &lt;param name=&quot;Salt&quot;&gt;
+<tr class="nocodegen"><td>815<td>    ///   Salt value used by the password hash calculation. Depending on the
+<tr class="nocodegen"><td>816<td>    ///   value of SaltIsRaw, the salt needs to specified in raw encoding or
+<tr class="nocodegen"><td>817<td>    ///   in the encoding used in the Crypt/BSD password storage string.
+<tr class="nocodegen"><td>818<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>819<td>    /// &lt;param name=&quot;SaltIsRaw&quot;&gt;
+<tr class="nocodegen"><td>820<td>    ///   If true the passed salt value is a raw value. If false it is encoded
+<tr class="nocodegen"><td>821<td>    ///   like in the Crypt/BSD password storage string.
+<tr class="nocodegen"><td>822<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>823<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>824<td>    ///   Formatting class used to format the calculated password. Different
+<tr class="nocodegen"><td>825<td>    ///   algorithms in BSDCrypt use different algorithms so one needs to know
+<tr class="nocodegen"><td>826<td>    ///   which one to pass. See description of the hash class used.
+<tr class="nocodegen"><td>827<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>828<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>829<td>    ///   Calculated hash value in BSD crypt style format. Returns an empty
+<tr class="nocodegen"><td>830<td>    ///   string if the algorithm is not a Crypt/BSD style password hash algorithm.
+<tr class="nocodegen"><td>831<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>832<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>833<td>    ///   Exception raised if length of &lt;c&gt;Password&lt;/c&gt; is higher than
+<tr class="nocodegen"><td>834<td>    ///   &lt;c&gt;MaxPasswordLength&lt;/c&gt; or if a salt with a different length than
+<tr class="nocodegen"><td>835<td>    ///   128 bit has been specified.
+<tr class="nocodegen"><td>836<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>837<td>    function GetDigestInCryptFormat(Password     : TBytes;
+<tr class="nocodegen"><td>838<td>                                    const Params : string;
+<tr class="nocodegen"><td>839<td>                                    const Salt   : string;
+<tr class="nocodegen"><td>840<td>                                    SaltIsRaw    : Boolean;
+<tr class="nocodegen"><td>841<td>                                    Format       : TDECFormatClass):string; overload; virtual;
+<tr class="nocodegen"><td>842<td>
+<tr class="nocodegen"><td>843<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>844<td>    ///   Checks whether a given password is the correct one for a password
+<tr class="nocodegen"><td>845<td>    ///   storage &quot;record&quot;/entry in Crypt/BSD format.
+<tr class="nocodegen"><td>846<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>847<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>848<td>    ///   Password to check for validity
+<tr class="nocodegen"><td>849<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>850<td>    /// &lt;param name=&quot;CryptData&quot;&gt;
+<tr class="nocodegen"><td>851<td>    ///   The data needed to &quot;compare&quot; the password against in Crypt/BSD like
+<tr class="nocodegen"><td>852<td>    ///   format: $&lt;id&gt;[$&lt;param&gt;=&lt;value&gt;(,&lt;param&gt;=&lt;value&gt;)*][$&lt;salt&gt;[$&lt;hash&gt;]]
+<tr class="nocodegen"><td>853<td>    ///   The exact format depends on the algorithm used.
+<tr class="nocodegen"><td>854<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>855<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>856<td>    ///   Must be the right type for the Crypt/BSD encoding used by the
+<tr class="nocodegen"><td>857<td>    ///   algorithm used. This was implemented this way to avoid making the
+<tr class="nocodegen"><td>858<td>    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+<tr class="nocodegen"><td>859<td>    ///   otherwise.
+<tr class="nocodegen"><td>860<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>861<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>862<td>    ///    True if the password given is correct.
+<tr class="nocodegen"><td>863<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>864<td>    function IsValidPassword(const Password  : string;
+<tr class="nocodegen"><td>865<td>                             const CryptData : string;
+<tr class="nocodegen"><td>866<td>                             Format          : TDECFormatClass): Boolean; overload;
+<tr class="nocodegen"><td>867<td>
+<tr class="nocodegen"><td>868<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>869<td>    ///   Checks whether a given password is the correct one for a password
+<tr class="nocodegen"><td>870<td>    ///   storage &quot;record&quot;/entry in Crypt/BSD format.
+<tr class="nocodegen"><td>871<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>872<td>    /// &lt;param name=&quot;Password&quot;&gt;
+<tr class="nocodegen"><td>873<td>    ///   Password to check for validity
+<tr class="nocodegen"><td>874<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>875<td>    /// &lt;param name=&quot;CryptData&quot;&gt;
+<tr class="nocodegen"><td>876<td>    ///   The data needed to &quot;compare&quot; the password against in Crypt/BSD like
+<tr class="nocodegen"><td>877<td>    ///   format: $&lt;id&gt;[$&lt;param&gt;=&lt;value&gt;(,&lt;param&gt;=&lt;value&gt;)*][$&lt;salt&gt;[$&lt;hash&gt;]]
+<tr class="nocodegen"><td>878<td>    ///   The exact format depends on the algorithm used.
+<tr class="nocodegen"><td>879<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>880<td>    /// &lt;param name=&quot;Format&quot;&gt;
+<tr class="nocodegen"><td>881<td>    ///   Must be the right type for the Crypt/BSD encoding used by the
+<tr class="nocodegen"><td>882<td>    ///   algorithm used. This was implemented this way to avoid making the
+<tr class="nocodegen"><td>883<td>    ///   DECHashAuthentication unit dependant on the DECFormat unit not needed
+<tr class="nocodegen"><td>884<td>    ///   otherwise.
+<tr class="nocodegen"><td>885<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>886<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>887<td>    ///    True if the password given is correct.
+<tr class="nocodegen"><td>888<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>889<td>    function IsValidPassword(Password        : TBytes;
+<tr class="nocodegen"><td>890<td>                             const CryptData : string;
+<tr class="nocodegen"><td>891<td>                             Format          : TDECFormatClass): Boolean; overload; virtual;
+<tr class="nocodegen"><td>892<td>    {$EndRegion}
+<tr class="nocodegen"><td>893<td>
+<tr class="nocodegen"><td>894<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>895<td>    ///   Defines the salt value used. Throws an EDECHashException if a salt is
+<tr class="nocodegen"><td>896<td>    ///   passed which is longer than MaxSaltLength. The salt has to be passed
+<tr class="nocodegen"><td>897<td>    ///   in binary form. Any Base64 encoded salt needs to be decoded before
+<tr class="nocodegen"><td>898<td>    ///   passing.
+<tr class="nocodegen"><td>899<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>900<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>901<td>    ///   Exception raised if the length of the value assigned is not in the
+<tr class="nocodegen"><td>902<td>    ///   range of &lt;c&gt;MinSaltLength&lt;/c&gt; and &lt;c&gt;MaxSaltLength&lt;/c&gt;
+<tr class="nocodegen"><td>903<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>904<td>    property Salt: TBytes
+<tr class="nocodegen"><td>905<td>      read   GetSalt
+<tr class="nocodegen"><td>906<td>      write  SetSalt;
+<tr class="nocodegen"><td>907<td>  end;
+<tr class="nocodegen"><td>908<td>
+<tr class="nocodegen"><td>909<td>  {$IF CompilerVersion &lt; 28.0}
+<tr class="nocodegen"><td>910<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>911<td>  ///   Class helper for implementing array concatenation which is not available
+<tr class="nocodegen"><td>912<td>  ///   in Delphi XE6 or lower.
+<tr class="nocodegen"><td>913<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>914<td>  /// &lt;remarks&gt;
+<tr class="nocodegen"><td>915<td>  ///   Shall be removed as soon as the minimum supported version is XE7 or higher.
+<tr class="nocodegen"><td>916<td>  /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>917<td>  TArrHelper = class
+<tr class="nocodegen"><td>918<td>    class procedure AppendArrays&lt;T&gt;(var A: TArray&lt;T&gt;; const B: TArray&lt;T&gt;);
+<tr class="nocodegen"><td>919<td>  end;
+<tr class="nocodegen"><td>920<td>  {$IFEND}
+<tr class="nocodegen"><td>921<td>
+<tr class="nocodegen"><td>922<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>923<td>  ///   Meta class for the class containing the authentication methods
+<tr class="nocodegen"><td>924<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>925<td>  TDECHashAuthenticationClass = class of TDECHashAuthentication;
+<tr class="nocodegen"><td>926<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>927<td>  ///   Meta class for the class containing the additional calculation methods
+<tr class="nocodegen"><td>928<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>929<td>  TDECHashExtendedClass = class of TDECHashExtended;
+<tr class="nocodegen"><td>930<td>
+<tr class="nocodegen"><td>931<td>implementation
+<tr class="nocodegen"><td>932<td>
+<tr class="nocodegen"><td>933<td>uses
+<tr class="nocodegen"><td>934<td>  DECUtil;
+<tr class="nocodegen"><td>935<td>
+<tr class="nocodegen"><td>936<td>resourcestring
+<tr class="nocodegen"><td>937<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>938<td>  ///   Exception message when specifying a salt value longer than allowed
+<tr class="nocodegen"><td>939<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>940<td>  sSaltValueTooLong     = 'Maximum allowed salt length (%0:d byte) exceeded';
+<tr class="nocodegen"><td>941<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>942<td>  ///   Exception message when specifying a salt value shorter than allowed
+<tr class="nocodegen"><td>943<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>944<td>  sSaltValueTooShort    = 'Minumum allowed salt length (%0:d byte) exceeded';
+<tr class="nocodegen"><td>945<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>946<td>  ///   No class for the given crypt ID has been registered, so that ID is
+<tr class="nocodegen"><td>947<td>  ///   not supported.
+<tr class="nocodegen"><td>948<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>949<td>  sCryptIDNotRegistered = 'No class for crypt ID %s registered';
+<tr class="nocodegen"><td>950<td>
+<tr class="nocodegen"><td>951<td>class function TDECHashAuthentication.IsPasswordHash: Boolean;
+<tr class="covered"><td>952<td>begin
+<tr class="covered"><td>953<td>  Result := self.InheritsFrom(TDECPasswordHash);
+<tr class="covered"><td>954<td>end;
+<tr class="nocodegen"><td>955<td>
+<tr class="nocodegen"><td>956<td>class function TDECHashAuthentication.KDFInternal(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>957<td>                             SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes;
+<tr class="nocodegen"><td>958<td>var
+<tr class="nocodegen"><td>959<td>  I, n,
+<tr class="nocodegen"><td>960<td>  Rounds, DigestBytes : Integer;
+<tr class="nocodegen"><td>961<td>  Dest                : PByteArray;
+<tr class="nocodegen"><td>962<td>  Count               : UInt32;
+<tr class="nocodegen"><td>963<td>  HashInstance        : TDECHashAuthentication;
+<tr class="nocodegen"><td>964<td>begin
+<tr class="nocodegen"><td>965<td>  SetLength(Result, 0);
+<tr class="nocodegen"><td>966<td>  DigestBytes := DigestSize;
+<tr class="nocodegen"><td>967<td>  Assert(MaskSize &gt;= 0);
+<tr class="nocodegen"><td>968<td>  Assert(DataSize &gt;= 0);
+<tr class="nocodegen"><td>969<td>  Assert(SeedSize &gt;= 0);
+<tr class="nocodegen"><td>970<td>  Assert(DigestBytes &gt;= 0);
+<tr class="nocodegen"><td>971<td>
+<tr class="nocodegen"><td>972<td>  HashInstance := TDECHashAuthenticationClass(self).Create;
+<tr class="nocodegen"><td>973<td>  try
+<tr class="nocodegen"><td>974<td>    Rounds := (MaskSize + DigestBytes - 1) div DigestBytes;
+<tr class="nocodegen"><td>975<td>    SetLength(Result, Rounds * DigestBytes);
+<tr class="nocodegen"><td>976<td>    Dest := @Result[0];
+<tr class="nocodegen"><td>977<td>
+<tr class="nocodegen"><td>978<td>
+<tr class="nocodegen"><td>979<td>    if (KDFType = ktKDF2) then
+<tr class="nocodegen"><td>980<td>      n := 1
+<tr class="nocodegen"><td>981<td>    else
+<tr class="nocodegen"><td>982<td>      n := 0;
+<tr class="nocodegen"><td>983<td>
+<tr class="nocodegen"><td>984<td>    for I := 0 to Rounds-1 do
+<tr class="nocodegen"><td>985<td>    begin
+<tr class="nocodegen"><td>986<td>      Count := SwapUInt32(n);
+<tr class="nocodegen"><td>987<td>      HashInstance.Init;
+<tr class="nocodegen"><td>988<td>
+<tr class="nocodegen"><td>989<td>      if (KDFType = ktKDF3) then
+<tr class="nocodegen"><td>990<td>      begin
+<tr class="nocodegen"><td>991<td>        HashInstance.Calc(Count, SizeOf(Count));
+<tr class="nocodegen"><td>992<td>        HashInstance.Calc(Data, DataSize);
+<tr class="nocodegen"><td>993<td>      end
+<tr class="nocodegen"><td>994<td>      else
+<tr class="nocodegen"><td>995<td>      begin
+<tr class="nocodegen"><td>996<td>        HashInstance.Calc(Data, DataSize);
+<tr class="nocodegen"><td>997<td>        HashInstance.Calc(Count, SizeOf(Count));
+<tr class="nocodegen"><td>998<td>      end;
+<tr class="nocodegen"><td>999<td>
+<tr class="nocodegen"><td>1000<td>      HashInstance.Calc(Seed, SeedSize);
+<tr class="nocodegen"><td>1001<td>      HashInstance.Done;
+<tr class="nocodegen"><td>1002<td>      Move(HashInstance.Digest[0], Dest[(I) * DigestBytes], DigestBytes);
+<tr class="nocodegen"><td>1003<td>
+<tr class="nocodegen"><td>1004<td>      inc(n);
+<tr class="nocodegen"><td>1005<td>    end;
+<tr class="nocodegen"><td>1006<td>
+<tr class="nocodegen"><td>1007<td>    SetLength(Result, MaskSize);
+<tr class="nocodegen"><td>1008<td>  finally
+<tr class="nocodegen"><td>1009<td>    HashInstance.Free;
+<tr class="nocodegen"><td>1010<td>  end;
+<tr class="nocodegen"><td>1011<td>end;
+<tr class="nocodegen"><td>1012<td>
+<tr class="nocodegen"><td>1013<td>class function TDECHashAuthentication.MGF1(const Data; DataSize, MaskSize: Integer): TBytes;
+<tr class="covered"><td>1014<td>begin
+<tr class="covered"><td>1015<td>  Result := KDF1(Data, DataSize, NullStr, 0, MaskSize);
+<tr class="covered"><td>1016<td>end;
+<tr class="nocodegen"><td>1017<td>
+<tr class="nocodegen"><td>1018<td>class function TDECHashAuthentication.MGF1(const Data: TBytes; MaskSize: Integer): TBytes;
+<tr class="covered"><td>1019<td>begin
+<tr class="covered"><td>1020<td>  Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF1);
+<tr class="covered"><td>1021<td>end;
+<tr class="nocodegen"><td>1022<td>
+<tr class="nocodegen"><td>1023<td>class function TDECHashAuthentication.KDF1(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>1024<td>  SeedSize, MaskSize: Integer): TBytes;
+<tr class="covered"><td>1025<td>begin
+<tr class="covered"><td>1026<td>  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF1);
+<tr class="covered"><td>1027<td>end;
+<tr class="nocodegen"><td>1028<td>
+<tr class="nocodegen"><td>1029<td>class function TDECHashAuthentication.KDF1(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>1030<td>  MaskSize: Integer): TBytes;
+<tr class="covered"><td>1031<td>begin
+<tr class="covered"><td>1032<td>  if (length(Seed) &gt; 0) then
+<tr class="covered"><td>1033<td>    Result := KDFInternal(Data[0], length(Data), Seed[0], length(Seed), MaskSize, ktKDF1)
+<tr class="nocodegen"><td>1034<td>  else
+<tr class="covered"><td>1035<td>    Result := KDFInternal(Data[0], length(Data), NullStr, 0, MaskSize, ktKDF1);
+<tr class="covered"><td>1036<td>end;
+<tr class="nocodegen"><td>1037<td>
+<tr class="nocodegen"><td>1038<td>class function TDECHashAuthentication.KDF2(const Data; DataSize: Integer; const Seed;
+<tr class="nocodegen"><td>1039<td>                             SeedSize, MaskSize: Integer): TBytes;
+<tr class="covered"><td>1040<td>begin
+<tr class="covered"><td>1041<td>  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF2);
+<tr class="covered"><td>1042<td>end;
+<tr class="nocodegen"><td>1043<td>
+<tr class="nocodegen"><td>1044<td>class function TDECHashAuthentication.KDF2(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>1045<td>                                           MaskSize: Integer): TBytes;
+<tr class="covered"><td>1046<td>begin
+<tr class="covered"><td>1047<td>  if (length(Seed) &gt; 0) then
+<tr class="covered"><td>1048<td>    Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF2)
+<tr class="nocodegen"><td>1049<td>  else
+<tr class="covered"><td>1050<td>    Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF2);
+<tr class="covered"><td>1051<td>end;
+<tr class="nocodegen"><td>1052<td>
+<tr class="nocodegen"><td>1053<td>class function TDECHashAuthentication.KDF3(const Data; DataSize: Integer;
+<tr class="nocodegen"><td>1054<td>                                           const Seed; SeedSize, MaskSize: Integer): TBytes;
+<tr class="covered"><td>1055<td>begin
+<tr class="covered"><td>1056<td>  Result := KDFInternal(Data, DataSize, Seed, SeedSize, MaskSize, ktKDF3);
+<tr class="covered"><td>1057<td>end;
+<tr class="nocodegen"><td>1058<td>
+<tr class="nocodegen"><td>1059<td>class function TDECHashAuthentication.KDF3(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>1060<td>                                           MaskSize: Integer): TBytes;
+<tr class="covered"><td>1061<td>begin
+<tr class="covered"><td>1062<td>  if (length(Seed) &gt; 0) then
+<tr class="covered"><td>1063<td>    Result := KDFInternal(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, ktKDF3)
+<tr class="nocodegen"><td>1064<td>  else
+<tr class="covered"><td>1065<td>    Result := KDFInternal(Data[0], Length(Data), NullStr, 0, MaskSize, ktKDF3);
+<tr class="covered"><td>1066<td>end;
+<tr class="nocodegen"><td>1067<td>
+<tr class="nocodegen"><td>1068<td>class function TDECHashAuthentication.KDFx(const Data; DataSize: Integer;
+<tr class="nocodegen"><td>1069<td>                                           const Seed; SeedSize, MaskSize: Integer;
+<tr class="nocodegen"><td>1070<td>                                           Index: UInt32 = 1): TBytes;
+<tr class="nocodegen"><td>1071<td>// DEC's own KDF, even stronger
+<tr class="nocodegen"><td>1072<td>var
+<tr class="nocodegen"><td>1073<td>  I, J         : Integer;
+<tr class="nocodegen"><td>1074<td>  Count        : UInt32;
+<tr class="nocodegen"><td>1075<td>  R            : Byte;
+<tr class="nocodegen"><td>1076<td>  HashInstance : TDECHashAuthentication;
+<tr class="covered"><td>1077<td>begin
+<tr class="covered"><td>1078<td>  Assert(MaskSize &gt;= 0);
+<tr class="covered"><td>1079<td>  Assert(DataSize &gt;= 0);
+<tr class="covered"><td>1080<td>  Assert(SeedSize &gt;= 0);
+<tr class="covered"><td>1081<td>  Assert(DigestSize &gt; 0);
+<tr class="nocodegen"><td>1082<td>
+<tr class="covered"><td>1083<td>  SetLength(Result, MaskSize);
+<tr class="covered"><td>1084<td>  Index := SwapUInt32(Index);
+<tr class="nocodegen"><td>1085<td>
+<tr class="covered"><td>1086<td>  HashInstance := TDECHashAuthenticationClass(self).Create;
+<tr class="covered"><td>1087<td>  try
+<tr class="covered"><td>1088<td>    for I := 0 to MaskSize - 1 do
+<tr class="nocodegen"><td>1089<td>    begin
+<tr class="covered"><td>1090<td>      HashInstance.Init;
+<tr class="nocodegen"><td>1091<td>
+<tr class="covered"><td>1092<td>      Count := SwapUInt32(I);
+<tr class="covered"><td>1093<td>      HashInstance.Calc(Count, SizeOf(Count));
+<tr class="covered"><td>1094<td>      HashInstance.Calc(Result[0], I);
+<tr class="nocodegen"><td>1095<td>
+<tr class="covered"><td>1096<td>      HashInstance.Calc(Index, SizeOf(Index));
+<tr class="nocodegen"><td>1097<td>
+<tr class="covered"><td>1098<td>      Count := SwapUInt32(SeedSize);
+<tr class="covered"><td>1099<td>      HashInstance.Calc(Count, SizeOf(Count));
+<tr class="covered"><td>1100<td>      HashInstance.Calc(Seed, SeedSize);
+<tr class="nocodegen"><td>1101<td>
+<tr class="covered"><td>1102<td>      Count := SwapUInt32(DataSize);
+<tr class="covered"><td>1103<td>      HashInstance.Calc(Count, SizeOf(Count));
+<tr class="covered"><td>1104<td>      HashInstance.Calc(Data, DataSize);
+<tr class="nocodegen"><td>1105<td>
+<tr class="covered"><td>1106<td>      HashInstance.Done;
+<tr class="nocodegen"><td>1107<td>
+<tr class="covered"><td>1108<td>      R := 0;
+<tr class="nocodegen"><td>1109<td>
+<tr class="covered"><td>1110<td>      for J := 0 to DigestSize - 1 do
+<tr class="covered"><td>1111<td>        R := R xor HashInstance.Digest[J];
+<tr class="nocodegen"><td>1112<td>
+<tr class="covered"><td>1113<td>      Result[I] := R;
+<tr class="covered"><td>1114<td>    end;
+<tr class="nocodegen"><td>1115<td>  finally
+<tr class="covered"><td>1116<td>    HashInstance.Free;
+<tr class="nocodegen"><td>1117<td>  end;
+<tr class="covered"><td>1118<td>end;
+<tr class="nocodegen"><td>1119<td>
+<tr class="nocodegen"><td>1120<td>class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes;
+<tr class="nocodegen"><td>1121<td>                                           MaskSize: Integer;
+<tr class="nocodegen"><td>1122<td>                                           Index: UInt32 = 1): TBytes;
+<tr class="covered"><td>1123<td>begin
+<tr class="covered"><td>1124<td>  if (length(Seed) &gt; 0) then
+<tr class="covered"><td>1125<td>    Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
+<tr class="nocodegen"><td>1126<td>  else
+<tr class="covered"><td>1127<td>    Result := KDFx(Data[0], Length(Data), NullStr, Length(Seed), MaskSize, Index)
+<tr class="covered"><td>1128<td>end;
+<tr class="nocodegen"><td>1129<td>
+<tr class="nocodegen"><td>1130<td>class function TDECHashAuthentication.MGFx(const Data; DataSize, MaskSize: Integer;
+<tr class="nocodegen"><td>1131<td>                                           Index: UInt32 = 1): TBytes;
+<tr class="covered"><td>1132<td>begin
+<tr class="covered"><td>1133<td>  Result := KDFx(Data, DataSize, NullStr, 0, MaskSize, Index);
+<tr class="covered"><td>1134<td>end;
+<tr class="nocodegen"><td>1135<td>
+<tr class="nocodegen"><td>1136<td>class function TDECHashAuthentication.MGFx(const Data: TBytes;
+<tr class="nocodegen"><td>1137<td>                                           MaskSize: Integer;
+<tr class="nocodegen"><td>1138<td>                                           Index: UInt32 = 1): TBytes;
+<tr class="covered"><td>1139<td>begin
+<tr class="covered"><td>1140<td>  Result := KDFx(Data[0], Length(Data), NullStr, 0, MaskSize, Index);
+<tr class="covered"><td>1141<td>end;
+<tr class="nocodegen"><td>1142<td>
+<tr class="nocodegen"><td>1143<td>class function TDECHashAuthentication.HMAC(const Key, Text: RawByteString): TBytes;
+<tr class="covered"><td>1144<td>begin
+<tr class="covered"><td>1145<td>  result := HMAC(BytesOf(Key), BytesOf(Text));
+<tr class="covered"><td>1146<td>end;
+<tr class="nocodegen"><td>1147<td>
+<tr class="nocodegen"><td>1148<td>class function TDECHashAuthentication.HMAC(const Key, Text: TBytes): TBytes;
+<tr class="nocodegen"><td>1149<td>const
+<tr class="nocodegen"><td>1150<td>  CONST_UINT_OF_0x36 = $3636363636363636;
+<tr class="nocodegen"><td>1151<td>  CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
+<tr class="nocodegen"><td>1152<td>var
+<tr class="nocodegen"><td>1153<td>  HashInstance: TDECHashAuthentication;
+<tr class="nocodegen"><td>1154<td>  InnerKeyPad, OuterKeyPad: array of Byte;
+<tr class="nocodegen"><td>1155<td>  I, KeyLength, BlockSize, DigestLength: Integer;
+<tr class="covered"><td>1156<td>begin
+<tr class="covered"><td>1157<td>  HashInstance := TDECHashAuthenticationClass(self).Create;
+<tr class="covered"><td>1158<td>  try
+<tr class="covered"><td>1159<td>    BlockSize    := HashInstance.BlockSize; // 64 for sha1, ...
+<tr class="covered"><td>1160<td>    DigestLength := HashInstance.DigestSize;
+<tr class="covered"><td>1161<td>    KeyLength    := Length(Key);
+<tr class="nocodegen"><td>1162<td>
+<tr class="covered"><td>1163<td>    SetLength(InnerKeyPad, BlockSize);
+<tr class="covered"><td>1164<td>    SetLength(OuterKeyPad, BlockSize);
+<tr class="nocodegen"><td>1165<td>
+<tr class="covered"><td>1166<td>    I := 0;
+<tr class="nocodegen"><td>1167<td>
+<tr class="covered"><td>1168<td>    if KeyLength &gt; BlockSize then
+<tr class="nocodegen"><td>1169<td>    begin
+<tr class="covered"><td>1170<td>      Result    := HashInstance.CalcBytes(Key);
+<tr class="covered"><td>1171<td>      KeyLength := DigestLength;
+<tr class="nocodegen"><td>1172<td>    end
+<tr class="nocodegen"><td>1173<td>    else
+<tr class="covered"><td>1174<td>      Result := Key;
+<tr class="nocodegen"><td>1175<td>
+<tr class="covered"><td>1176<td>    while I &lt;= KeyLength - SizeOf(NativeUInt) do
+<tr class="nocodegen"><td>1177<td>    begin
+<tr class="covered"><td>1178<td>      PNativeUInt(@InnerKeyPad[I])^ := PNativeUInt(@Result[I])^ xor NativeUInt(CONST_UINT_OF_0x36);
+<tr class="covered"><td>1179<td>      PNativeUInt(@OuterKeyPad[I])^ := PNativeUInt(@Result[I])^ xor NativeUInt(CONST_UINT_OF_0x5C);
+<tr class="covered"><td>1180<td>      Inc(I, SizeOf(NativeUInt));
+<tr class="nocodegen"><td>1181<td>    end;
+<tr class="nocodegen"><td>1182<td>
+<tr class="covered"><td>1183<td>    while I &lt; KeyLength do
+<tr class="nocodegen"><td>1184<td>    begin
+<tr class="covered"><td>1185<td>      InnerKeyPad[I] := Result[I] xor $36;
+<tr class="covered"><td>1186<td>      OuterKeyPad[I] := Result[I] xor $5C;
+<tr class="covered"><td>1187<td>      Inc(I);
+<tr class="nocodegen"><td>1188<td>    end;
+<tr class="nocodegen"><td>1189<td>
+<tr class="covered"><td>1190<td>    while I &lt;= BlockSize - SizeOf(NativeUInt) do
+<tr class="nocodegen"><td>1191<td>    begin
+<tr class="covered"><td>1192<td>      PNativeUInt(@InnerKeyPad[I])^ := NativeUInt(CONST_UINT_OF_0x36);
+<tr class="covered"><td>1193<td>      PNativeUInt(@OuterKeyPad[I])^ := NativeUInt(CONST_UINT_OF_0x5C);
+<tr class="covered"><td>1194<td>      Inc(I, SizeOf(NativeUInt));
+<tr class="nocodegen"><td>1195<td>    end;
+<tr class="nocodegen"><td>1196<td>
+<tr class="covered"><td>1197<td>    while I &lt; BlockSize do
+<tr class="nocodegen"><td>1198<td>    begin
+<tr class="covered"><td>1199<td>      InnerKeyPad[I] := $36;
+<tr class="covered"><td>1200<td>      OuterKeyPad[I] := $5C;
+<tr class="covered"><td>1201<td>      Inc(I);
+<tr class="nocodegen"><td>1202<td>    end;
+<tr class="nocodegen"><td>1203<td>
+<tr class="covered"><td>1204<td>    HashInstance.Init;
+<tr class="covered"><td>1205<td>    HashInstance.Calc(InnerKeyPad[0], BlockSize);
+<tr class="covered"><td>1206<td>    if Length(Text) &gt; 0 then
+<tr class="covered"><td>1207<td>      HashInstance.Calc(Text[0], Length(Text));
+<tr class="covered"><td>1208<td>    HashInstance.Done;
+<tr class="covered"><td>1209<td>    Result := HashInstance.DigestAsBytes;
+<tr class="nocodegen"><td>1210<td>
+<tr class="covered"><td>1211<td>    HashInstance.Init;
+<tr class="covered"><td>1212<td>    HashInstance.Calc(OuterKeyPad[0], BlockSize);
+<tr class="covered"><td>1213<td>    HashInstance.Calc(Result[0], DigestLength);
+<tr class="covered"><td>1214<td>    HashInstance.Done;
+<tr class="nocodegen"><td>1215<td>
+<tr class="covered"><td>1216<td>    Result := HashInstance.DigestAsBytes;
+<tr class="nocodegen"><td>1217<td>  finally
+<tr class="covered"><td>1218<td>    HashInstance.Free;
+<tr class="nocodegen"><td>1219<td>  end;
+<tr class="covered"><td>1220<td>end;
+<tr class="nocodegen"><td>1221<td>
+<tr class="nocodegen"><td>1222<td>class function TDECHashAuthentication.PBKDF2(const Password, Salt: TBytes; Iterations: Integer; KeyLength: Integer): TBytes;
+<tr class="nocodegen"><td>1223<td>const
+<tr class="nocodegen"><td>1224<td>  CONST_UINT_OF_0x36 = $3636363636363636;
+<tr class="nocodegen"><td>1225<td>  CONST_UINT_OF_0x5C = $5C5C5C5C5C5C5C5C;
+<tr class="nocodegen"><td>1226<td>var
+<tr class="nocodegen"><td>1227<td>  Hash: TDECHashAuthentication;
+<tr class="nocodegen"><td>1228<td>  I, J, C: Integer;
+<tr class="nocodegen"><td>1229<td>  BlockCount, HashLengthRounded, SaltLength: Integer;
+<tr class="nocodegen"><td>1230<td>  PassLength, DigestLength, BlockSize: Integer;
+<tr class="nocodegen"><td>1231<td>  InnerKeyPad, OuterKeyPad: TBytes;
+<tr class="nocodegen"><td>1232<td>  SaltEx, T, U, TrimmedKey: TBytes;
+<tr class="covered"><td>1233<td>begin
+<tr class="covered"><td>1234<td>  Hash := TDECHashAuthenticationClass(self).Create;
+<tr class="covered"><td>1235<td>  try
+<tr class="nocodegen"><td>1236<td>    // Setup needed parameters
+<tr class="covered"><td>1237<td>    DigestLength      := Hash.DigestSize;
+<tr class="covered"><td>1238<td>    HashLengthRounded := DigestLength - SizeOf(NativeUInt) + 1;
+<tr class="covered"><td>1239<td>    BlockCount        := Trunc((KeyLength + DigestLength - 1) / DigestLength);
+<tr class="covered"><td>1240<td>    BlockSize         := Hash.BlockSize;
+<tr class="covered"><td>1241<td>    PassLength        := Length(Password);
+<tr class="covered"><td>1242<td>    SaltLength        := Length(Salt);
+<tr class="covered"><td>1243<td>    SaltEx            := Salt;
+<tr class="covered"><td>1244<td>    SetLength(SaltEx, SaltLength + 4);  // reserve 4 bytes for INT_32_BE(i)
+<tr class="covered"><td>1245<td>    SetLength(T, DigestLength);
+<tr class="nocodegen"><td>1246<td>
+<tr class="nocodegen"><td>1247<td>    // Prepare Key for HMAC calculation
+<tr class="nocodegen"><td>1248<td>    // PrepareKeyForHMAC;
+<tr class="covered"><td>1249<td>    I := 0;
+<tr class="covered"><td>1250<td>    if PassLength &gt; BlockSize then
+<tr class="nocodegen"><td>1251<td>    begin
+<tr class="covered"><td>1252<td>      TrimmedKey := Hash.CalcBytes(Password);
+<tr class="covered"><td>1253<td>      PassLength := DigestLength;
+<tr class="nocodegen"><td>1254<td>    end
+<tr class="nocodegen"><td>1255<td>    else
+<tr class="covered"><td>1256<td>      TrimmedKey := Password;
+<tr class="nocodegen"><td>1257<td>
+<tr class="covered"><td>1258<td>    SetLength(InnerKeyPad, BlockSize);
+<tr class="covered"><td>1259<td>    SetLength(OuterKeyPad, BlockSize);
+<tr class="covered"><td>1260<td>    while I &lt; PassLength do
+<tr class="nocodegen"><td>1261<td>    begin
+<tr class="covered"><td>1262<td>      InnerKeyPad[I] := TrimmedKey[I] xor $36;
+<tr class="covered"><td>1263<td>      OuterKeyPad[I] := TrimmedKey[I] xor $5C;
+<tr class="covered"><td>1264<td>      Inc(I);
+<tr class="nocodegen"><td>1265<td>    end;
+<tr class="covered"><td>1266<td>    while I &lt; BlockSize do
+<tr class="nocodegen"><td>1267<td>    begin
+<tr class="covered"><td>1268<td>      InnerKeyPad[I] := $36;
+<tr class="covered"><td>1269<td>      OuterKeyPad[I] := $5C;
+<tr class="covered"><td>1270<td>      Inc(I);
+<tr class="nocodegen"><td>1271<td>    end;
+<tr class="nocodegen"><td>1272<td>
+<tr class="nocodegen"><td>1273<td>    // Calculate DK
+<tr class="covered"><td>1274<td>    for I := 1 to BlockCount do
+<tr class="nocodegen"><td>1275<td>    begin
+<tr class="covered"><td>1276<td>      SaltEx[SaltLength + 0] := Byte(I shr 24);   // INT_32_BE(i)
+<tr class="covered"><td>1277<td>      SaltEx[SaltLength + 1] := Byte(I shr 16);
+<tr class="covered"><td>1278<td>      SaltEx[SaltLength + 2] := Byte(I shr 8);
+<tr class="covered"><td>1279<td>      SaltEx[SaltLength + 3] := Byte(I shr 0);
+<tr class="covered"><td>1280<td>      FillChar(T[0], DigestLength, 0);            // reset Ti / F
+<tr class="covered"><td>1281<td>      U := SaltEx;                                // initialize U to U1 = Salt + INT_32_BE(i)
+<tr class="nocodegen"><td>1282<td>      // Calculate F(Password, Salt, c, i) = U1 ^ U2 ^ ... ^ Uc
+<tr class="covered"><td>1283<td>      for C := 1 to Iterations do
+<tr class="nocodegen"><td>1284<td>      begin
+<tr class="covered"><td>1285<td>        Hash.Init;
+<tr class="covered"><td>1286<td>        Hash.Calc(InnerKeyPad[0], BlockSize);
+<tr class="covered"><td>1287<td>        Hash.Calc(U[0], Length(U));
+<tr class="covered"><td>1288<td>        Hash.Done;
+<tr class="covered"><td>1289<td>        U := Hash.DigestAsBytes;
+<tr class="nocodegen"><td>1290<td>
+<tr class="covered"><td>1291<td>        Hash.Init;
+<tr class="covered"><td>1292<td>        Hash.Calc(OuterKeyPad[0], BlockSize);
+<tr class="covered"><td>1293<td>        Hash.Calc(U[0], DigestLength);
+<tr class="covered"><td>1294<td>        Hash.Done;
+<tr class="covered"><td>1295<td>        U := Hash.DigestAsBytes;                  // Ui
+<tr class="nocodegen"><td>1296<td>        // F = U1 ^ U2 ^ ... ^ Uc
+<tr class="covered"><td>1297<td>        J := 0;
+<tr class="covered"><td>1298<td>        while J &lt; HashLengthRounded do
+<tr class="nocodegen"><td>1299<td>        begin
+<tr class="covered"><td>1300<td>          PNativeUInt(@T[J])^ := PNativeUInt(@T[J])^ xor PNativeUInt(@U[J])^;
+<tr class="covered"><td>1301<td>          Inc(J, SizeOf(NativeUInt));
+<tr class="nocodegen"><td>1302<td>        end;
+<tr class="covered"><td>1303<td>        while J &lt; DigestLength do
+<tr class="nocodegen"><td>1304<td>        begin
+<tr class="notcovered"><td>1305<td>          T[J] := T[J] xor U[J];
+<tr class="notcovered"><td>1306<td>          Inc(J);
+<tr class="nocodegen"><td>1307<td>        end;
+<tr class="covered"><td>1308<td>      end;
+<tr class="nocodegen"><td>1309<td>
+<tr class="nocodegen"><td>1310<td>      {$IF CompilerVersion &gt;= 28.0}
+<tr class="covered"><td>1311<td>      Result := Result + T;                       // DK += F    , DK = DK || Ti
+<tr class="nocodegen"><td>1312<td>      {$ELSE}
+<tr class="nocodegen"><td>1313<td>      TArrHelper.AppendArrays&lt;Byte&gt;(Result, T);
+<tr class="nocodegen"><td>1314<td>      {$IFEND}
+<tr class="covered"><td>1315<td>    end;
+<tr class="nocodegen"><td>1316<td>  finally
+<tr class="covered"><td>1317<td>    Hash.Free;
+<tr class="nocodegen"><td>1318<td>  end;
+<tr class="nocodegen"><td>1319<td>
+<tr class="nocodegen"><td>1320<td>  // Trim to the needed key length
+<tr class="covered"><td>1321<td>  SetLength(Result, KeyLength);
+<tr class="covered"><td>1322<td>end;
+<tr class="nocodegen"><td>1323<td>
+<tr class="nocodegen"><td>1324<td>class function TDECHashAuthentication.PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes;
+<tr class="covered"><td>1325<td>begin
+<tr class="covered"><td>1326<td>  result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
+<tr class="covered"><td>1327<td>end;
+<tr class="nocodegen"><td>1328<td>
+<tr class="nocodegen"><td>1329<td>{ TDECHashExtended }
+<tr class="nocodegen"><td>1330<td>
+<tr class="nocodegen"><td>1331<td>procedure TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+<tr class="nocodegen"><td>1332<td>  var HashResult: TBytes; const OnProgress:TDECProgressEvent);
+<tr class="nocodegen"><td>1333<td>var
+<tr class="nocodegen"><td>1334<td>  Buffer: TBytes;
+<tr class="nocodegen"><td>1335<td>  Bytes: Integer;
+<tr class="nocodegen"><td>1336<td>  Max, Pos: Int64;
+<tr class="covered"><td>1337<td>begin
+<tr class="covered"><td>1338<td>  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+<tr class="nocodegen"><td>1339<td>
+<tr class="covered"><td>1340<td>  Max := 0;
+<tr class="covered"><td>1341<td>  SetLength(HashResult, 0);
+<tr class="covered"><td>1342<td>  try
+<tr class="covered"><td>1343<td>    Init;
+<tr class="nocodegen"><td>1344<td>
+<tr class="covered"><td>1345<td>    if StreamBufferSize &lt;= 0 then
+<tr class="covered"><td>1346<td>      StreamBufferSize := 8192;
+<tr class="nocodegen"><td>1347<td>
+<tr class="covered"><td>1348<td>    Pos := Stream.Position;
+<tr class="nocodegen"><td>1349<td>
+<tr class="covered"><td>1350<td>    if Size &lt; 0 then
+<tr class="covered"><td>1351<td>      Size := Stream.Size - Pos;
+<tr class="nocodegen"><td>1352<td>
+<tr class="nocodegen"><td>1353<td>    // Last byte is incomplete so it mustn't be processed
+<tr class="covered"><td>1354<td>    if (FFinalByteLength &gt; 0) then
+<tr class="covered"><td>1355<td>      Dec(Size);
+<tr class="nocodegen"><td>1356<td>
+<tr class="covered"><td>1357<td>    Max      := Pos + Size;
+<tr class="nocodegen"><td>1358<td>
+<tr class="covered"><td>1359<td>    if Assigned(OnProgress) then
+<tr class="covered"><td>1360<td>      OnProgress(Max, 0, Started);
+<tr class="nocodegen"><td>1361<td>
+<tr class="covered"><td>1362<td>    Bytes := StreamBufferSize mod FBufferSize;
+<tr class="nocodegen"><td>1363<td>
+<tr class="covered"><td>1364<td>    if Bytes = 0 then
+<tr class="covered"><td>1365<td>      Bytes := StreamBufferSize
+<tr class="nocodegen"><td>1366<td>    else
+<tr class="covered"><td>1367<td>      Bytes := StreamBufferSize + FBufferSize - Bytes;
+<tr class="nocodegen"><td>1368<td>
+<tr class="covered"><td>1369<td>    if Bytes &gt; Size then
+<tr class="covered"><td>1370<td>      SetLength(Buffer, Size)
+<tr class="nocodegen"><td>1371<td>    else
+<tr class="covered"><td>1372<td>      SetLength(Buffer, Bytes);
+<tr class="nocodegen"><td>1373<td>
+<tr class="covered"><td>1374<td>    while Size &gt; 0 do
+<tr class="nocodegen"><td>1375<td>    begin
+<tr class="covered"><td>1376<td>      Bytes := Length(Buffer);
+<tr class="covered"><td>1377<td>      if Bytes &gt; Size then
+<tr class="covered"><td>1378<td>        Bytes := Size;
+<tr class="covered"><td>1379<td>      Stream.ReadBuffer(Buffer[0], Bytes);
+<tr class="covered"><td>1380<td>      Calc(Buffer[0], Bytes);
+<tr class="covered"><td>1381<td>      Dec(Size, Bytes);
+<tr class="covered"><td>1382<td>      Inc(Pos, Bytes);
+<tr class="nocodegen"><td>1383<td>
+<tr class="covered"><td>1384<td>      if Assigned(OnProgress) then
+<tr class="covered"><td>1385<td>        OnProgress(Max, Pos, Processing);
+<tr class="nocodegen"><td>1386<td>    end;
+<tr class="nocodegen"><td>1387<td>
+<tr class="nocodegen"><td>1388<td>    // Last byte is incomplete but algorithm may need its value for padding
+<tr class="covered"><td>1389<td>    if (FFinalByteLength &gt; 0) then
+<tr class="covered"><td>1390<td>      Stream.ReadBuffer(FPaddingByte, 1);
+<tr class="nocodegen"><td>1391<td>
+<tr class="covered"><td>1392<td>    Done;
+<tr class="covered"><td>1393<td>    HashResult := DigestAsBytes;
+<tr class="nocodegen"><td>1394<td>  finally
+<tr class="covered"><td>1395<td>    ProtectBytes(Buffer);
+<tr class="covered"><td>1396<td>    if Assigned(OnProgress) then
+<tr class="covered"><td>1397<td>      OnProgress(Max, Max, Finished);
+<tr class="nocodegen"><td>1398<td>  end;
+<tr class="covered"><td>1399<td>end;
+<tr class="nocodegen"><td>1400<td>
+<tr class="nocodegen"><td>1401<td>function TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+<tr class="nocodegen"><td>1402<td>  Format: TDECFormatClass; const OnProgress:TDECProgressEvent): RawByteString;
+<tr class="nocodegen"><td>1403<td>var
+<tr class="nocodegen"><td>1404<td>  Hash: TBytes;
+<tr class="covered"><td>1405<td>begin
+<tr class="covered"><td>1406<td>  CalcStream(Stream, Size, Hash, OnProgress);
+<tr class="covered"><td>1407<td>  Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
+<tr class="covered"><td>1408<td>end;
+<tr class="nocodegen"><td>1409<td>
+<tr class="nocodegen"><td>1410<td>procedure TDECHashExtended.CalcStream(const Stream: TStream; Size: Int64;
+<tr class="nocodegen"><td>1411<td>                              const OnProgress:TDECProgressEvent;
+<tr class="nocodegen"><td>1412<td>                              DoFinalize: Boolean);
+<tr class="nocodegen"><td>1413<td>var
+<tr class="nocodegen"><td>1414<td>  Buffer: TBytes;
+<tr class="nocodegen"><td>1415<td>  Bytes: Integer;
+<tr class="nocodegen"><td>1416<td>  Max, Pos: Int64;
+<tr class="covered"><td>1417<td>begin
+<tr class="covered"><td>1418<td>  Assert(Assigned(Stream), 'Stream to calculate hash on is not assigned');
+<tr class="nocodegen"><td>1419<td>
+<tr class="covered"><td>1420<td>  Max := 0;
+<tr class="covered"><td>1421<td>  try
+<tr class="covered"><td>1422<td>    if StreamBufferSize &lt;= 0 then
+<tr class="covered"><td>1423<td>      StreamBufferSize := 8192;
+<tr class="nocodegen"><td>1424<td>
+<tr class="covered"><td>1425<td>    Pos := Stream.Position;
+<tr class="nocodegen"><td>1426<td>
+<tr class="covered"><td>1427<td>    if Size &lt; 0 then
+<tr class="covered"><td>1428<td>      Size := Stream.Size - Pos;
+<tr class="nocodegen"><td>1429<td>
+<tr class="nocodegen"><td>1430<td>    // Last byte is incomplete so it mustn't be processed
+<tr class="covered"><td>1431<td>    if DoFinalize and (FFinalByteLength &gt; 0) then
+<tr class="covered"><td>1432<td>      Dec(Size);
+<tr class="nocodegen"><td>1433<td>
+<tr class="covered"><td>1434<td>    Max      := Pos + Size;
+<tr class="nocodegen"><td>1435<td>
+<tr class="covered"><td>1436<td>    if Assigned(OnProgress) then
+<tr class="covered"><td>1437<td>      OnProgress(Max, 0, Started);
+<tr class="nocodegen"><td>1438<td>
+<tr class="covered"><td>1439<td>    Bytes := StreamBufferSize mod FBufferSize;
+<tr class="nocodegen"><td>1440<td>
+<tr class="covered"><td>1441<td>    if Bytes = 0 then
+<tr class="covered"><td>1442<td>      Bytes := StreamBufferSize
+<tr class="nocodegen"><td>1443<td>    else
+<tr class="covered"><td>1444<td>      Bytes := StreamBufferSize + FBufferSize - Bytes;
+<tr class="nocodegen"><td>1445<td>
+<tr class="covered"><td>1446<td>    if Bytes &gt; Size then
+<tr class="covered"><td>1447<td>      SetLength(Buffer, Size)
+<tr class="nocodegen"><td>1448<td>    else
+<tr class="covered"><td>1449<td>      SetLength(Buffer, Bytes);
+<tr class="nocodegen"><td>1450<td>
+<tr class="covered"><td>1451<td>    while Size &gt; 0 do
+<tr class="nocodegen"><td>1452<td>    begin
+<tr class="covered"><td>1453<td>      Bytes := Length(Buffer);
+<tr class="covered"><td>1454<td>      if Bytes &gt; Size then
+<tr class="covered"><td>1455<td>        Bytes := Size;
+<tr class="covered"><td>1456<td>      Stream.ReadBuffer(Buffer[0], Bytes);
+<tr class="covered"><td>1457<td>      Calc(Buffer[0], Bytes);
+<tr class="covered"><td>1458<td>      Dec(Size, Bytes);
+<tr class="covered"><td>1459<td>      Inc(Pos, Bytes);
+<tr class="nocodegen"><td>1460<td>
+<tr class="covered"><td>1461<td>      if Assigned(OnProgress) then
+<tr class="covered"><td>1462<td>        OnProgress(Max, Pos, Processing);
+<tr class="nocodegen"><td>1463<td>    end;
+<tr class="nocodegen"><td>1464<td>
+<tr class="nocodegen"><td>1465<td>    // Last byte is incomplete but algorithm may need its value for padding
+<tr class="covered"><td>1466<td>    if DoFinalize then
+<tr class="nocodegen"><td>1467<td>    begin
+<tr class="covered"><td>1468<td>      if (FFinalByteLength &gt; 0) then
+<tr class="covered"><td>1469<td>        Stream.ReadBuffer(FPaddingByte, 1);
+<tr class="covered"><td>1470<td>      Done;
+<tr class="nocodegen"><td>1471<td>    end;
+<tr class="nocodegen"><td>1472<td>  finally
+<tr class="covered"><td>1473<td>    ProtectBytes(Buffer);
+<tr class="covered"><td>1474<td>    if Assigned(OnProgress) then
+<tr class="covered"><td>1475<td>      OnProgress(Max, Max, Finished);
+<tr class="nocodegen"><td>1476<td>  end;
+<tr class="covered"><td>1477<td>end;
+<tr class="nocodegen"><td>1478<td>
+<tr class="nocodegen"><td>1479<td>procedure TDECHashExtended.CalcFile(const FileName: string; var HashResult: TBytes;
+<tr class="nocodegen"><td>1480<td>                            const OnProgress:TDECProgressEvent);
+<tr class="nocodegen"><td>1481<td>var
+<tr class="nocodegen"><td>1482<td>  S: TFileStream;
+<tr class="notcovered"><td>1483<td>begin
+<tr class="notcovered"><td>1484<td>  SetLength(HashResult, 0);
+<tr class="notcovered"><td>1485<td>  S := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+<tr class="notcovered"><td>1486<td>  try
+<tr class="notcovered"><td>1487<td>    CalcStream(S, S.Size, HashResult, OnProgress);
+<tr class="nocodegen"><td>1488<td>  finally
+<tr class="notcovered"><td>1489<td>    S.Free;
+<tr class="nocodegen"><td>1490<td>  end;
+<tr class="notcovered"><td>1491<td>end;
+<tr class="nocodegen"><td>1492<td>
+<tr class="nocodegen"><td>1493<td>function TDECHashExtended.CalcFile(const FileName: string; Format: TDECFormatClass;
+<tr class="nocodegen"><td>1494<td>                           const OnProgress:TDECProgressEvent): RawByteString;
+<tr class="nocodegen"><td>1495<td>var
+<tr class="nocodegen"><td>1496<td>  Hash: TBytes;
+<tr class="notcovered"><td>1497<td>begin
+<tr class="notcovered"><td>1498<td>  CalcFile(FileName, Hash, OnProgress);
+<tr class="notcovered"><td>1499<td>  Result := BytesToRawString(ValidFormat(Format).Encode(Hash));
+<tr class="notcovered"><td>1500<td>end;
+<tr class="nocodegen"><td>1501<td>
+<tr class="nocodegen"><td>1502<td>{ TArrHelper }
+<tr class="nocodegen"><td>1503<td>
+<tr class="nocodegen"><td>1504<td>{$IF CompilerVersion &lt; 28.0}
+<tr class="nocodegen"><td>1505<td>class procedure TArrHelper.AppendArrays&lt;T&gt;(var A: TArray&lt;T&gt;; const B: TArray&lt;T&gt;);
+<tr class="nocodegen"><td>1506<td>var
+<tr class="nocodegen"><td>1507<td>  i, L: Integer;
+<tr class="nocodegen"><td>1508<td>begin
+<tr class="nocodegen"><td>1509<td>  L := Length(A);
+<tr class="nocodegen"><td>1510<td>  SetLength(A, L + Length(B));
+<tr class="nocodegen"><td>1511<td>  for i := 0 to High(B) do
+<tr class="nocodegen"><td>1512<td>    A[L + i] := B[i];
+<tr class="nocodegen"><td>1513<td>end;
+<tr class="nocodegen"><td>1514<td>{$IFEND}
+<tr class="nocodegen"><td>1515<td>
+<tr class="nocodegen"><td>1516<td>{ TDECPasswordHash }
+<tr class="nocodegen"><td>1517<td>
+<tr class="nocodegen"><td>1518<td>function TDECPasswordHash.GetSalt: TBytes;
+<tr class="covered"><td>1519<td>begin
+<tr class="covered"><td>1520<td>  Result := FSalt;
+<tr class="covered"><td>1521<td>end;
+<tr class="nocodegen"><td>1522<td>
+<tr class="nocodegen"><td>1523<td>procedure TDECPasswordHash.SetSalt(const Value: TBytes);
+<tr class="covered"><td>1524<td>begin
+<tr class="covered"><td>1525<td>  if (Length(Value) &gt; MaxSaltLength) then
+<tr class="covered"><td>1526<td>    raise EDECHashException.CreateFmt(sSaltValueTooLong, [MaxSaltLength]);
+<tr class="nocodegen"><td>1527<td>
+<tr class="covered"><td>1528<td>  if (Length(Value) &lt; MinSaltLength) then
+<tr class="covered"><td>1529<td>    raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
+<tr class="nocodegen"><td>1530<td>
+<tr class="covered"><td>1531<td>  FSalt := Value;
+<tr class="covered"><td>1532<td>end;
+<tr class="nocodegen"><td>1533<td>
+<tr class="nocodegen"><td>1534<td>class function TDECPasswordHash.GetCryptID: string;
+<tr class="notcovered"><td>1535<td>begin
+<tr class="notcovered"><td>1536<td>  Result := '';
+<tr class="notcovered"><td>1537<td>end;
+<tr class="nocodegen"><td>1538<td>
+<tr class="nocodegen"><td>1539<td>function TDECPasswordHash.GetCryptParams(const Params : string;
+<tr class="nocodegen"><td>1540<td>                                         Format       : TDECFormatClass): string;
+<tr class="notcovered"><td>1541<td>begin
+<tr class="notcovered"><td>1542<td>  Result := '';
+<tr class="notcovered"><td>1543<td>end;
+<tr class="nocodegen"><td>1544<td>
+<tr class="nocodegen"><td>1545<td>function TDECPasswordHash.GetCryptSalt(const Salt : TBytes;
+<tr class="nocodegen"><td>1546<td>                                       Format     : TDECFormatCLass): string;
+<tr class="nocodegen"><td>1547<td>var
+<tr class="nocodegen"><td>1548<td>  FormattedSalt : TBytes;
+<tr class="covered"><td>1549<td>begin
+<tr class="covered"><td>1550<td>  FormattedSalt := Format.Encode(Salt);
+<tr class="nocodegen"><td>1551<td>
+<tr class="covered"><td>1552<td>  Result := '$' + TEncoding.ASCII.GetString(FormattedSalt);
+<tr class="covered"><td>1553<td>end;
+<tr class="nocodegen"><td>1554<td>
+<tr class="nocodegen"><td>1555<td>class function TDECPasswordHash.ClassByCryptIdentity(
+<tr class="nocodegen"><td>1556<td>  Identity: string): TDECPasswordHashClass;
+<tr class="nocodegen"><td>1557<td>var
+<tr class="nocodegen"><td>1558<td>  ClassEntry : TClassListEntry;
+<tr class="nocodegen"><td>1559<td>  IDLower    : string;
+<tr class="covered"><td>1560<td>begin
+<tr class="covered"><td>1561<td>  IDLower := Identity.ToLower;
+<tr class="covered"><td>1562<td>  if not IDLower.StartsWith('$') then
+<tr class="covered"><td>1563<td>    IDLower := '$' + IDLower;
+<tr class="nocodegen"><td>1564<td>
+<tr class="covered"><td>1565<td>  for ClassEntry in ClassList do
+<tr class="nocodegen"><td>1566<td>  begin
+<tr class="covered"><td>1567<td>    if TDECHashClass(ClassEntry.Value).IsPasswordHash and
+<tr class="covered"><td>1568<td>       (string(TDECPasswordHashClass(ClassEntry.Value).GetCryptID).ToLower = IDLower)  then
+<tr class="nocodegen"><td>1569<td>    begin
+<tr class="covered"><td>1570<td>      Result := TDECPasswordHashClass(ClassEntry.Value);
+<tr class="covered"><td>1571<td>      Exit;
+<tr class="nocodegen"><td>1572<td>    end;
+<tr class="covered"><td>1573<td>  end;
+<tr class="nocodegen"><td>1574<td>
+<tr class="nocodegen"><td>1575<td>  // If we got this far, we have not found any mathich class
+<tr class="covered"><td>1576<td>  raise EDECClassNotRegisteredException.CreateResFmt(@sCryptIDNotRegistered,
+<tr class="nocodegen"><td>1577<td>                                                     [Identity]);
+<tr class="covered"><td>1578<td>end;
+<tr class="nocodegen"><td>1579<td>
+<tr class="nocodegen"><td>1580<td>procedure TDECPasswordHash.DoDone;
+<tr class="covered"><td>1581<td>begin
+<tr class="nocodegen"><td>1582<td>  inherited;
+<tr class="nocodegen"><td>1583<td>
+<tr class="covered"><td>1584<td>  ProtectBuffer(FSalt[0], SizeOf(FSalt));
+<tr class="covered"><td>1585<td>  SetLength(FSalt, 0);
+<tr class="covered"><td>1586<td>end;
+<tr class="nocodegen"><td>1587<td>
+<tr class="nocodegen"><td>1588<td>function TDECPasswordHash.GetCryptHash(Password     : TBytes;
+<tr class="nocodegen"><td>1589<td>                                       const Params : string;
+<tr class="nocodegen"><td>1590<td>                                       const Salt   : TBytes;
+<tr class="nocodegen"><td>1591<td>                                       Format       : TDECFormatClass): string;
+<tr class="notcovered"><td>1592<td>begin
+<tr class="notcovered"><td>1593<td>  Result := '';
+<tr class="notcovered"><td>1594<td>end;
+<tr class="nocodegen"><td>1595<td>
+<tr class="nocodegen"><td>1596<td>function TDECPasswordHash.GetDigestInCryptFormat(
+<tr class="nocodegen"><td>1597<td>                            const Password : string;
+<tr class="nocodegen"><td>1598<td>                            const Params   : string;
+<tr class="nocodegen"><td>1599<td>                            const Salt     : string;
+<tr class="nocodegen"><td>1600<td>                            SaltIsRaw      : Boolean;
+<tr class="nocodegen"><td>1601<td>                            Format         : TDECFormatClass): string;
+<tr class="covered"><td>1602<td>begin
+<tr class="covered"><td>1603<td>  Result := GetDigestInCryptFormat(TEncoding.UTF8.GetBytes(Password),
+<tr class="nocodegen"><td>1604<td>                                   Params,
+<tr class="nocodegen"><td>1605<td>                                   Salt,
+<tr class="nocodegen"><td>1606<td>                                   SaltIsRaw,
+<tr class="nocodegen"><td>1607<td>                                   Format);
+<tr class="covered"><td>1608<td>end;
+<tr class="nocodegen"><td>1609<td>
+<tr class="nocodegen"><td>1610<td>function TDECPasswordHash.GetDigestInCryptFormat(
+<tr class="nocodegen"><td>1611<td>                            Password     : TBytes;
+<tr class="nocodegen"><td>1612<td>                            const Params : string;
+<tr class="nocodegen"><td>1613<td>                            const Salt   : string;
+<tr class="nocodegen"><td>1614<td>                            SaltIsRaw    : Boolean;
+<tr class="nocodegen"><td>1615<td>                            Format       : TDECFormatClass): string;
+<tr class="nocodegen"><td>1616<td>var
+<tr class="nocodegen"><td>1617<td>  SaltBytes : TBytes;
+<tr class="covered"><td>1618<td>begin
+<tr class="nocodegen"><td>1619<td>  // generic format used by Crypt, but not every algorithm sticks 100% to it
+<tr class="nocodegen"><td>1620<td>  // $&lt;id&gt;[$&lt;param&gt;=&lt;value&gt;(,&lt;param&gt;=&lt;value&gt;)*][$&lt;salt&gt;[$&lt;hash&gt;]]
+<tr class="nocodegen"><td>1621<td>
+<tr class="nocodegen"><td>1622<td>  // if no ID is delivered the algorithm is none of the Crypt/BSD algorithms
+<tr class="covered"><td>1623<td>  Result := GetCryptID;
+<tr class="covered"><td>1624<td>  if (Result &lt;&gt; '') then
+<tr class="nocodegen"><td>1625<td>  begin
+<tr class="covered"><td>1626<td>    if SaltIsRaw then
+<tr class="notcovered"><td>1627<td>      SaltBytes := TEncoding.UTF8.GetBytes(Salt)
+<tr class="nocodegen"><td>1628<td>    else
+<tr class="covered"><td>1629<td>      SaltBytes := Format.Decode(TEncoding.UTF8.GetBytes(Salt));
+<tr class="nocodegen"><td>1630<td>
+<tr class="covered"><td>1631<td>    Result := Result + GetCryptParams(Params, Format) +
+<tr class="nocodegen"><td>1632<td>                       GetCryptSalt(SaltBytes, Format) +
+<tr class="nocodegen"><td>1633<td>                       GetCryptHash(Password, Params, SaltBytes, Format);
+<tr class="nocodegen"><td>1634<td>  end;
+<tr class="covered"><td>1635<td>end;
+<tr class="nocodegen"><td>1636<td>
+<tr class="nocodegen"><td>1637<td>function TDECPasswordHash.IsValidPassword(const Password  : string;
+<tr class="nocodegen"><td>1638<td>                                          const CryptData : string;
+<tr class="nocodegen"><td>1639<td>                                          Format          : TDECFormatClass): Boolean;
+<tr class="covered"><td>1640<td>begin
+<tr class="covered"><td>1641<td>  Result := IsValidPassword(TEncoding.UTF8.GetBytes(Password),
+<tr class="nocodegen"><td>1642<td>                            CryptData,
+<tr class="nocodegen"><td>1643<td>                            Format);
+<tr class="covered"><td>1644<td>end;
+<tr class="nocodegen"><td>1645<td>
+<tr class="nocodegen"><td>1646<td>function TDECPasswordHash.IsValidPassword(Password        : TBytes;
+<tr class="nocodegen"><td>1647<td>                                          const CryptData : string;
+<tr class="nocodegen"><td>1648<td>                                          Format          : TDECFormatClass): Boolean;
+<tr class="notcovered"><td>1649<td>begin
+<tr class="notcovered"><td>1650<td>  Result := false;
+<tr class="notcovered"><td>1651<td>end;
+<tr class="nocodegen"><td>1652<td>
+<tr class="nocodegen"><td>1653<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

@@ -1,0 +1,2229 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECFormat (..\..\Source\DECFormat.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECFormat.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>727<td rowspan=3 style="background: conic-gradient(#9fe098 98%, #eee 98%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>740<tr><td>Line coverage<td>98<small>.2</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>///   This unit provides a standardisized way for applying format conversions
+<tr class="nocodegen"><td>20<td>///   to data
+<tr class="nocodegen"><td>21<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>22<td>unit DECFormat;
+<tr class="nocodegen"><td>23<td>
+<tr class="nocodegen"><td>24<td>interface
+<tr class="nocodegen"><td>25<td>
+<tr class="nocodegen"><td>26<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>27<td>
+<tr class="nocodegen"><td>28<td>uses
+<tr class="nocodegen"><td>29<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>30<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>31<td>  {$ELSE}
+<tr class="nocodegen"><td>32<td>  System.SysUtils, System.Classes,
+<tr class="nocodegen"><td>33<td>  {$ENDIF}
+<tr class="nocodegen"><td>34<td>  DECBaseClass, DECFormatBase, DECUtil;
+<tr class="nocodegen"><td>35<td>
+<tr class="nocodegen"><td>36<td>type
+<tr class="nocodegen"><td>37<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>38<td>  ///   wrapper (allows omitting DECFormatBase in user code)
+<tr class="nocodegen"><td>39<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>40<td>  TDECFormat            = DECFormatBase.TDECFormat;
+<tr class="nocodegen"><td>41<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>42<td>  ///   wrapper (allows omitting DECFormatBase in user code)
+<tr class="nocodegen"><td>43<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>44<td>  TDECFormatClass       = DECFormatBase.TDECFormatClass;
+<tr class="nocodegen"><td>45<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>46<td>  ///   wrapper (allows omitting DECFormatBase in user code)
+<tr class="nocodegen"><td>47<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>48<td>  TFormat_Copy          = DECFormatBase.TFormat_Copy;
+<tr class="nocodegen"><td>49<td>
+<tr class="nocodegen"><td>50<td>  TFormat_HEX           = class;
+<tr class="nocodegen"><td>51<td>  TFormat_HEXL          = class;
+<tr class="nocodegen"><td>52<td>
+<tr class="nocodegen"><td>53<td>  TFormat_Base16        = class;
+<tr class="nocodegen"><td>54<td>  TFormat_Base16L       = class;
+<tr class="nocodegen"><td>55<td>
+<tr class="nocodegen"><td>56<td>  TFormat_DECMIME32     = class;
+<tr class="nocodegen"><td>57<td>
+<tr class="nocodegen"><td>58<td>  TFormat_Base32        = class;
+<tr class="nocodegen"><td>59<td>
+<tr class="nocodegen"><td>60<td>  TFormat_Base64        = class;
+<tr class="nocodegen"><td>61<td>  TFormat_MIME64        = class;
+<tr class="nocodegen"><td>62<td>
+<tr class="nocodegen"><td>63<td>  TFormat_Radix64       = class;
+<tr class="nocodegen"><td>64<td>  TFormat_PGP           = class;
+<tr class="nocodegen"><td>65<td>  TFormat_BCryptBSD = class;
+<tr class="nocodegen"><td>66<td>
+<tr class="nocodegen"><td>67<td>  TFormat_UU            = class;
+<tr class="nocodegen"><td>68<td>  TFormat_XX            = class;
+<tr class="nocodegen"><td>69<td>  TFormat_ESCAPE        = class;
+<tr class="nocodegen"><td>70<td>
+<tr class="nocodegen"><td>71<td>  TFormat_BigEndian16   = class;
+<tr class="nocodegen"><td>72<td>  TFormat_BigEndian32   = class;
+<tr class="nocodegen"><td>73<td>
+<tr class="nocodegen"><td>74<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>75<td>  ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
+<tr class="nocodegen"><td>76<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>77<td>  TFormat_HEX = class(TDECFormat)
+<tr class="nocodegen"><td>78<td>  protected
+<tr class="nocodegen"><td>79<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>80<td>    /// &lt;exception cref=&quot;EDECFormatException&quot;&gt;
+<tr class="nocodegen"><td>81<td>    ///   Exception raised if there is a failure in the data format.
+<tr class="nocodegen"><td>82<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>83<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>84<td>    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>85<td>  public
+<tr class="nocodegen"><td>86<td>    class function CharTableBinary: TBytes; virtual;
+<tr class="nocodegen"><td>87<td>  end;
+<tr class="nocodegen"><td>88<td>
+<tr class="nocodegen"><td>89<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>90<td>  ///   Hexadecimal in lowercase, Base16, see http://tools.ietf.org/html/rfc4648
+<tr class="nocodegen"><td>91<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>92<td>  TFormat_HEXL = class(TFormat_HEX)
+<tr class="nocodegen"><td>93<td>  public
+<tr class="nocodegen"><td>94<td>    class function CharTableBinary: TBytes; override;
+<tr class="nocodegen"><td>95<td>  end;
+<tr class="nocodegen"><td>96<td>
+<tr class="nocodegen"><td>97<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>98<td>  ///   Same as TFormat_HEX, use TFormat_HEX instead
+<tr class="nocodegen"><td>99<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>100<td>  TFormat_Base16 = class(TFormat_HEX)
+<tr class="nocodegen"><td>101<td>  end deprecated 'Use TFormat_HEX instead';
+<tr class="nocodegen"><td>102<td>
+<tr class="nocodegen"><td>103<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>104<td>  ///   Same as TFormat_HEXL, use TFormat_HEXL instead
+<tr class="nocodegen"><td>105<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>106<td>  TFormat_Base16L = class(TFormat_HEXL)
+<tr class="nocodegen"><td>107<td>  end deprecated 'Use TFormat_HEXL instead';
+<tr class="nocodegen"><td>108<td>
+<tr class="nocodegen"><td>109<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>110<td>  ///   Proprietary variant of MINE32, kept for backwards compatibility with old
+<tr class="nocodegen"><td>111<td>  ///   DEC versions
+<tr class="nocodegen"><td>112<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>113<td>  /// &lt;remarks&gt;
+<tr class="nocodegen"><td>114<td>  ///   This formatting should only be used for supporting legacy projects which
+<tr class="nocodegen"><td>115<td>  ///   already use this format. It is being considered to be more or less deprecated.
+<tr class="nocodegen"><td>116<td>  /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>117<td>  TFormat_DECMIME32 = class(TFormat_HEX)
+<tr class="nocodegen"><td>118<td>  protected
+<tr class="nocodegen"><td>119<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>120<td>    ///   Encodes data passed to this method in the proprietary DECMIME32 format.
+<tr class="nocodegen"><td>121<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>122<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>123<td>    ///   This formatting should only be used for supporting legacy projects which
+<tr class="nocodegen"><td>124<td>    ///   already use this format. It is being considered to be more or less deprecated.
+<tr class="nocodegen"><td>125<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>126<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>127<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>128<td>    ///   Decodes data passed to this method in the proprietary DECMIME32 format
+<tr class="nocodegen"><td>129<td>    ///   into an array of normal bytes.
+<tr class="nocodegen"><td>130<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>131<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>132<td>    ///   This formatting should only be used for supporting legacy projects which
+<tr class="nocodegen"><td>133<td>    ///   already use this format. It is being considered to be more or less deprecated.
+<tr class="nocodegen"><td>134<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>135<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>136<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>137<td>    ///   Checks if certain data adheres to the rules for this formatting.
+<tr class="nocodegen"><td>138<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>139<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>140<td>    ///   This formatting should only be used for supporting legacy projects which
+<tr class="nocodegen"><td>141<td>    ///   already use this format. It is being considered to be more or less deprecated.
+<tr class="nocodegen"><td>142<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>143<td>    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>144<td>
+<tr class="nocodegen"><td>145<td>  public
+<tr class="nocodegen"><td>146<td>    class function CharTableBinary: TBytes; override;
+<tr class="nocodegen"><td>147<td>  end;
+<tr class="nocodegen"><td>148<td>
+<tr class="nocodegen"><td>149<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>150<td>  ///   Same as DECMIME32, which itsself should only be used for legacy projects
+<tr class="nocodegen"><td>151<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>152<td>  TFormat_MIME32 = class(TFormat_DECMIME32)
+<tr class="nocodegen"><td>153<td>  end deprecated 'Use TFormat_DECMIME32 instead';
+<tr class="nocodegen"><td>154<td>
+<tr class="nocodegen"><td>155<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>156<td>  ///   Base32, see http://tools.ietf.org/html/rfc4648
+<tr class="nocodegen"><td>157<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>158<td>  TFormat_Base32 = class(TFormat_HEX)
+<tr class="nocodegen"><td>159<td>  private const
+<tr class="nocodegen"><td>160<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>161<td>    ///   The data will be encoded using only these chars
+<tr class="nocodegen"><td>162<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>163<td>    cBase32 : RawByteString = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+<tr class="nocodegen"><td>164<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>165<td>    ///   Char used to fill up the output when performing encoding
+<tr class="nocodegen"><td>166<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>167<td>    cPaddingChar = '=';
+<tr class="nocodegen"><td>168<td>  private
+<tr class="nocodegen"><td>169<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>170<td>    ///   Table used for decoding, initialized on first use
+<tr class="nocodegen"><td>171<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>172<td>    class var FBase32DecodeTable : array [#0..'z'] of Byte;
+<tr class="nocodegen"><td>173<td>
+<tr class="nocodegen"><td>174<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>175<td>    ///   Initializes the contents of FBase32DecodeTable, which is only required
+<tr class="nocodegen"><td>176<td>    ///   when DoDecode is called for the very first time.
+<tr class="nocodegen"><td>177<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>178<td>    class procedure PrepareTable;
+<tr class="nocodegen"><td>179<td>  protected
+<tr class="nocodegen"><td>180<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>181<td>    /// &lt;exception cref=&quot;EDECFormatException&quot;&gt;
+<tr class="nocodegen"><td>182<td>    ///   Exception raised if the format of &lt;c&gt;Source&lt;/c&gt; contains invalid data.
+<tr class="nocodegen"><td>183<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>184<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>185<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>186<td>  public
+<tr class="nocodegen"><td>187<td>  end;
+<tr class="nocodegen"><td>188<td>
+<tr class="nocodegen"><td>189<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>190<td>  ///   Base64 (without soft wraps), see http://tools.ietf.org/html/rfc4648
+<tr class="nocodegen"><td>191<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>192<td>  TFormat_Base64 = class(TFormat_HEX)
+<tr class="nocodegen"><td>193<td>  protected
+<tr class="nocodegen"><td>194<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>195<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>196<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>197<td>  public
+<tr class="nocodegen"><td>198<td>    class function CharTableBinary: TBytes; override;
+<tr class="nocodegen"><td>199<td>  end;
+<tr class="nocodegen"><td>200<td>
+<tr class="nocodegen"><td>201<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>202<td>  ///   Same as TFormat_Base64, use TFormat_Base64 instead, kept for backwards
+<tr class="nocodegen"><td>203<td>  ///   compatibility only
+<tr class="nocodegen"><td>204<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>205<td>  TFormat_MIME64 = class(TFormat_Base64)
+<tr class="nocodegen"><td>206<td>  end deprecated 'Use TFormat_Base64 instead';
+<tr class="nocodegen"><td>207<td>
+<tr class="nocodegen"><td>208<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>209<td>  ///   OpenPGP/PGP Base64 with 24-bit Checksums, see http://tools.ietf.org/html/rfc4880
+<tr class="nocodegen"><td>210<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>211<td>  TFormat_Radix64 = class(TFormat_Base64)
+<tr class="nocodegen"><td>212<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>213<td>  ///   Here the section needs to be private so that the variable can be accessed
+<tr class="nocodegen"><td>214<td>  ///   for initialization in the initialization section, which is needed since
+<tr class="nocodegen"><td>215<td>  ///   all functionality of the class is implemented as class methods
+<tr class="nocodegen"><td>216<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>217<td>  private
+<tr class="nocodegen"><td>218<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>219<td>    ///   Maximum number of chars for one line of message text
+<tr class="nocodegen"><td>220<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>221<td>    class var FCharsPerLine : UInt32;
+<tr class="nocodegen"><td>222<td>  protected
+<tr class="nocodegen"><td>223<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>224<td>    ///   Extracts the CRC24 checksum from Radix64 encoded data
+<tr class="nocodegen"><td>225<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>226<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>227<td>    ///   Data to extract the checksum from
+<tr class="nocodegen"><td>228<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>229<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>230<td>    ///   Size of the data in byte
+<tr class="nocodegen"><td>231<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>232<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>233<td>    ///   CRC24 checksum if present, otherwise $FFFFFFFF
+<tr class="nocodegen"><td>234<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>235<td>    class function DoExtractCRC(const Data; var Size: Integer): UInt32;
+<tr class="nocodegen"><td>236<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>237<td>    ///   If the data given exceeds FCharsPerLine, means the maximum allowed
+<tr class="nocodegen"><td>238<td>    ///   line lenth, a CR/LF pair needs to be inserted at that position.
+<tr class="nocodegen"><td>239<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>240<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>241<td>    ///   Data to insert a CR/LF into if necessary
+<tr class="nocodegen"><td>242<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>243<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>244<td>    ///   In this byte array the processed data will be returned
+<tr class="nocodegen"><td>245<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>246<td>    /// &lt;param name=&quot;LineLength&quot;&gt;
+<tr class="nocodegen"><td>247<td>    ///   Maximum length of a line in byte. At this position the CR/LF will be
+<tr class="nocodegen"><td>248<td>    ///   inserted if the source passed in exceeds this length.
+<tr class="nocodegen"><td>249<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>250<td>    class procedure InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
+<tr class="nocodegen"><td>251<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>252<td>    /// &lt;exception cref=&quot;EDECFormatException&quot;&gt;
+<tr class="nocodegen"><td>253<td>    ///   Exception raised if the calculated CRC value does not match the one
+<tr class="nocodegen"><td>254<td>    ///   given in &lt;c&gt;Source&lt;/c&gt;.
+<tr class="nocodegen"><td>255<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>256<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>257<td>
+<tr class="nocodegen"><td>258<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>259<td>  public
+<tr class="nocodegen"><td>260<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>261<td>    ///   Changes the number of chars after which a line break is being added
+<tr class="nocodegen"><td>262<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>263<td>    /// &lt;param name=&quot;Value&quot;&gt;
+<tr class="nocodegen"><td>264<td>    ///   Maximum number of chars for a single line. Values &lt; 1 result in an
+<tr class="nocodegen"><td>265<td>    ///   EArgumentOutOfRangeException being raised
+<tr class="nocodegen"><td>266<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>267<td>    /// &lt;exception cref=&quot;EArgumentOutOfRangeException&quot;&gt;
+<tr class="nocodegen"><td>268<td>    ///   Exception raised if &lt;c&gt;Value&lt;/c&gt; is &lt; 1.
+<tr class="nocodegen"><td>269<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>270<td>    class procedure SetCharsPerLine(const Value: UInt32);
+<tr class="nocodegen"><td>271<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>272<td>    ///   Returns the number of chars after which a line break will be introduced
+<tr class="nocodegen"><td>273<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>274<td>    /// &lt;returns&gt;
+<tr class="nocodegen"><td>275<td>    ///   Maximum number of chars per line
+<tr class="nocodegen"><td>276<td>    /// &lt;/returns&gt;
+<tr class="nocodegen"><td>277<td>    /// &lt;remarks&gt;
+<tr class="nocodegen"><td>278<td>    ///   Cannot be a property, as properties cannot access class vars
+<tr class="nocodegen"><td>279<td>    /// &lt;/remarks&gt;
+<tr class="nocodegen"><td>280<td>    class function GetCharsPerLine: UInt32;
+<tr class="nocodegen"><td>281<td>  end;
+<tr class="nocodegen"><td>282<td>
+<tr class="nocodegen"><td>283<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>284<td>  ///   Same as TFormat_Radix64, use TFormat_Radix64 instead, kept for backwards
+<tr class="nocodegen"><td>285<td>  ///   compatibility only
+<tr class="nocodegen"><td>286<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>287<td>  TFormat_PGP = class(TFormat_Radix64)
+<tr class="nocodegen"><td>288<td>  end deprecated 'Use TFormat_Radix64 instead';
+<tr class="nocodegen"><td>289<td>
+<tr class="nocodegen"><td>290<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>291<td>  ///   BCrypt's Radix64 variant
+<tr class="nocodegen"><td>292<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>293<td>  TFormat_BCryptBSD = class(TFormat_Base64)
+<tr class="nocodegen"><td>294<td>  protected
+<tr class="nocodegen"><td>295<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>296<td>    /// Internal method for the actual format conversion. This method needs to
+<tr class="nocodegen"><td>297<td>    /// be overridden in all the child classes. Converts into the format.
+<tr class="nocodegen"><td>298<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>299<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>300<td>    /// Data to be converted
+<tr class="nocodegen"><td>301<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>302<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>303<td>    /// Into this parameter the converted data will be written into.
+<tr class="nocodegen"><td>304<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>305<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>306<td>    /// Number of bytes from source which will get converted.
+<tr class="nocodegen"><td>307<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>308<td>    class procedure DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>309<td>      Size: Integer); override;
+<tr class="nocodegen"><td>310<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>311<td>    /// Internal method for the actual format conversion. This method needs to
+<tr class="nocodegen"><td>312<td>    /// be overridden in all the child classes. Converts from the format into
+<tr class="nocodegen"><td>313<td>    /// the format the data had before encoding it.
+<tr class="nocodegen"><td>314<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>315<td>    /// &lt;param name=&quot;Source&quot;&gt;
+<tr class="nocodegen"><td>316<td>    /// Data to be converted
+<tr class="nocodegen"><td>317<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>318<td>    /// &lt;param name=&quot;Dest&quot;&gt;
+<tr class="nocodegen"><td>319<td>    /// Into this parameter the converted data will be written into.
+<tr class="nocodegen"><td>320<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>321<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>322<td>    /// Number of bytes from source which will get converted.
+<tr class="nocodegen"><td>323<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>324<td>    class procedure DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>325<td>      Size: Integer); override;
+<tr class="nocodegen"><td>326<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>327<td>    /// Internal method for checking whether all bytes of the data to be
+<tr class="nocodegen"><td>328<td>    /// processed are valid for this particular formatting. This method needs
+<tr class="nocodegen"><td>329<td>    /// to be overridden in all the child classes.
+<tr class="nocodegen"><td>330<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>331<td>    /// &lt;param name=&quot;Data&quot;&gt;
+<tr class="nocodegen"><td>332<td>    /// Data to be checked
+<tr class="nocodegen"><td>333<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>334<td>    /// &lt;param name=&quot;Size&quot;&gt;
+<tr class="nocodegen"><td>335<td>    /// Number of bytes from data which will get checked.
+<tr class="nocodegen"><td>336<td>    /// &lt;/param&gt;
+<tr class="nocodegen"><td>337<td>    class function DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>338<td>  public
+<tr class="nocodegen"><td>339<td>    class function CharTableBinary: TBytes; override;
+<tr class="nocodegen"><td>340<td>  end;
+<tr class="nocodegen"><td>341<td>
+<tr class="nocodegen"><td>342<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>343<td>  ///   Unix UU format
+<tr class="nocodegen"><td>344<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>345<td>  TFormat_UU = class(TDECFormat)
+<tr class="nocodegen"><td>346<td>  protected
+<tr class="nocodegen"><td>347<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>348<td>    /// &lt;exception cref=&quot;EDECFormatException&quot;&gt;
+<tr class="nocodegen"><td>349<td>    ///   Exception raised if the format of &lt;c&gt;Source&lt;/c&gt; contains invalid data.
+<tr class="nocodegen"><td>350<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>351<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>352<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>353<td>  public
+<tr class="nocodegen"><td>354<td>    class function CharTableBinary: TBytes; virtual;
+<tr class="nocodegen"><td>355<td>  end;
+<tr class="nocodegen"><td>356<td>
+<tr class="nocodegen"><td>357<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>358<td>  ///   Unix XX format
+<tr class="nocodegen"><td>359<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>360<td>  TFormat_XX = class(TFormat_UU)
+<tr class="nocodegen"><td>361<td>  public
+<tr class="nocodegen"><td>362<td>    class function CharTableBinary: TBytes; override;
+<tr class="nocodegen"><td>363<td>  end;
+<tr class="nocodegen"><td>364<td>
+<tr class="nocodegen"><td>365<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>366<td>  ///   Escaped format
+<tr class="nocodegen"><td>367<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>368<td>  TFormat_ESCAPE = class(TDECFormat)
+<tr class="nocodegen"><td>369<td>  protected
+<tr class="nocodegen"><td>370<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>371<td>    /// &lt;exception cref=&quot;EDECFormatException&quot;&gt;
+<tr class="nocodegen"><td>372<td>    ///   Exception raised if the format of &lt;c&gt;Source&lt;/c&gt; contains invalid data.
+<tr class="nocodegen"><td>373<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>374<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>375<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>376<td>  public
+<tr class="nocodegen"><td>377<td>    class function CharTableBinary: TBytes; virtual;
+<tr class="nocodegen"><td>378<td>  end;
+<tr class="nocodegen"><td>379<td>
+<tr class="nocodegen"><td>380<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>381<td>  ///   Conversion from/to 16 bit big endian
+<tr class="nocodegen"><td>382<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>383<td>  TFormat_BigEndian16 = class(TDECFormat)
+<tr class="nocodegen"><td>384<td>  private
+<tr class="nocodegen"><td>385<td>    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+<tr class="nocodegen"><td>386<td>  protected
+<tr class="nocodegen"><td>387<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>388<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>389<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>390<td>  public
+<tr class="nocodegen"><td>391<td>  end;
+<tr class="nocodegen"><td>392<td>
+<tr class="nocodegen"><td>393<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>394<td>  ///   Conversion from/to 32 bit big endian
+<tr class="nocodegen"><td>395<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>396<td>  TFormat_BigEndian32 = class(TDECFormat)
+<tr class="nocodegen"><td>397<td>  private
+<tr class="nocodegen"><td>398<td>    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+<tr class="nocodegen"><td>399<td>  protected
+<tr class="nocodegen"><td>400<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>401<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>402<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>403<td>  public
+<tr class="nocodegen"><td>404<td>  end;
+<tr class="nocodegen"><td>405<td>
+<tr class="nocodegen"><td>406<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>407<td>  ///   Conversion from/to 64 bit big endian
+<tr class="nocodegen"><td>408<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>409<td>  TFormat_BigEndian64 = class(TDECFormat)
+<tr class="nocodegen"><td>410<td>  private
+<tr class="nocodegen"><td>411<td>    class procedure DoSawp(const Source; var Dest: TBytes; Size: Integer); inline;
+<tr class="nocodegen"><td>412<td>  protected
+<tr class="nocodegen"><td>413<td>    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>414<td>    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+<tr class="nocodegen"><td>415<td>    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+<tr class="nocodegen"><td>416<td>  public
+<tr class="nocodegen"><td>417<td>  end;
+<tr class="nocodegen"><td>418<td>
+<tr class="nocodegen"><td>419<td>implementation
+<tr class="nocodegen"><td>420<td>
+<tr class="nocodegen"><td>421<td>uses
+<tr class="nocodegen"><td>422<td>  DECTypes, DECCRC; // needed by TFormat_Radix64
+<tr class="nocodegen"><td>423<td>
+<tr class="nocodegen"><td>424<td>resourcestring
+<tr class="nocodegen"><td>425<td>  sInvalidStringFormat   = 'Input is not an valid %s format';
+<tr class="nocodegen"><td>426<td>  sInvalidInputCharacter = 'Invalid character (#%d) in input';
+<tr class="nocodegen"><td>427<td>
+<tr class="nocodegen"><td>428<td>class function TFormat_HEX.CharTableBinary: TBytes;
+<tr class="covered"><td>429<td>begin
+<tr class="covered"><td>430<td>  SetLength(result, 48);
+<tr class="nocodegen"><td>431<td>  // special and skipped chars
+<tr class="nocodegen"><td>432<td>  // '0123456789ABCDEFX$ abcdefhHx()[]{},;:-_/\*+&quot;'''+CHR(9)+CHR(10)+CHR(13);
+<tr class="nocodegen"><td>433<td>
+<tr class="nocodegen"><td>434<td>  {$IF CompilerVersion &gt;= 28.0}
+<tr class="covered"><td>435<td>  result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41, $42, $43,
+<tr class="nocodegen"><td>436<td>             $44, $45, $46, $58, $24, $20, $61, $62, $63, $64, $65, $66, $68,
+<tr class="nocodegen"><td>437<td>             $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
+<tr class="covered"><td>438<td>             $2F, $5C, $2A, $2B, $22, $27, $09, $0A, $0D];
+<tr class="nocodegen"><td>439<td>  {$ELSE}
+<tr class="nocodegen"><td>440<td>  // Remove this initialisation variant as soon as XE7+ is the new minimum
+<tr class="nocodegen"><td>441<td>  // supported Delphi version
+<tr class="nocodegen"><td>442<td>  result[ 0]:=$30;
+<tr class="nocodegen"><td>443<td>  result[ 1]:=$31;
+<tr class="nocodegen"><td>444<td>  result[ 2]:=$32;
+<tr class="nocodegen"><td>445<td>  result[ 3]:=$33;
+<tr class="nocodegen"><td>446<td>  result[ 4]:=$34;
+<tr class="nocodegen"><td>447<td>  result[ 5]:=$35;
+<tr class="nocodegen"><td>448<td>  result[ 6]:=$36;
+<tr class="nocodegen"><td>449<td>  result[ 7]:=$37;
+<tr class="nocodegen"><td>450<td>  result[ 8]:=$38;
+<tr class="nocodegen"><td>451<td>  result[ 9]:=$39;
+<tr class="nocodegen"><td>452<td>  result[10]:=$41;
+<tr class="nocodegen"><td>453<td>  result[11]:=$42;
+<tr class="nocodegen"><td>454<td>  result[12]:=$43;
+<tr class="nocodegen"><td>455<td>  result[13]:=$44;
+<tr class="nocodegen"><td>456<td>  result[14]:=$45;
+<tr class="nocodegen"><td>457<td>  result[15]:=$46;
+<tr class="nocodegen"><td>458<td>  result[16]:=$58;
+<tr class="nocodegen"><td>459<td>  result[17]:=$24;
+<tr class="nocodegen"><td>460<td>  result[18]:=$20;
+<tr class="nocodegen"><td>461<td>  result[19]:=$61;
+<tr class="nocodegen"><td>462<td>  result[20]:=$62;
+<tr class="nocodegen"><td>463<td>  result[21]:=$63;
+<tr class="nocodegen"><td>464<td>  result[22]:=$64;
+<tr class="nocodegen"><td>465<td>  result[23]:=$65;
+<tr class="nocodegen"><td>466<td>  result[24]:=$66;
+<tr class="nocodegen"><td>467<td>  result[25]:=$68;
+<tr class="nocodegen"><td>468<td>  result[26]:=$48;
+<tr class="nocodegen"><td>469<td>  result[27]:=$78;
+<tr class="nocodegen"><td>470<td>  result[28]:=$28;
+<tr class="nocodegen"><td>471<td>  result[29]:=$29;
+<tr class="nocodegen"><td>472<td>  result[30]:=$5B;
+<tr class="nocodegen"><td>473<td>  result[31]:=$5D;
+<tr class="nocodegen"><td>474<td>  result[32]:=$7B;
+<tr class="nocodegen"><td>475<td>  result[33]:=$7D;
+<tr class="nocodegen"><td>476<td>  result[34]:=$2C;
+<tr class="nocodegen"><td>477<td>  result[35]:=$3B;
+<tr class="nocodegen"><td>478<td>  result[36]:=$3A;
+<tr class="nocodegen"><td>479<td>  result[37]:=$2D;
+<tr class="nocodegen"><td>480<td>  result[38]:=$5F;
+<tr class="nocodegen"><td>481<td>  result[39]:=$2F;
+<tr class="nocodegen"><td>482<td>  result[40]:=$5C;
+<tr class="nocodegen"><td>483<td>  result[41]:=$2A;
+<tr class="nocodegen"><td>484<td>  result[42]:=$2B;
+<tr class="nocodegen"><td>485<td>  result[43]:=$22;
+<tr class="nocodegen"><td>486<td>  result[44]:=$27;
+<tr class="nocodegen"><td>487<td>  result[45]:=$09;
+<tr class="nocodegen"><td>488<td>  result[46]:=$0A;
+<tr class="nocodegen"><td>489<td>  result[47]:=$0D;
+<tr class="nocodegen"><td>490<td>  {$IFEND}
+<tr class="covered"><td>491<td>end;
+<tr class="nocodegen"><td>492<td>
+<tr class="nocodegen"><td>493<td>class procedure TFormat_HEX.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>494<td>var
+<tr class="nocodegen"><td>495<td>  S     : PByte;
+<tr class="nocodegen"><td>496<td>  Table : TBytes;
+<tr class="nocodegen"><td>497<td>  i     : Integer;
+<tr class="covered"><td>498<td>begin
+<tr class="covered"><td>499<td>  if Size &lt;= 0 then Exit;
+<tr class="covered"><td>500<td>  SetLength(Dest, Size * 2);
+<tr class="nocodegen"><td>501<td>
+<tr class="covered"><td>502<td>  Table := CharTableBinary;
+<tr class="nocodegen"><td>503<td>
+<tr class="covered"><td>504<td>  S     := PByte(@Source);
+<tr class="covered"><td>505<td>  i     := 0;
+<tr class="nocodegen"><td>506<td>
+<tr class="covered"><td>507<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>508<td>  begin
+<tr class="covered"><td>509<td>    Dest[i]     := Table[S^ shr  4];
+<tr class="covered"><td>510<td>    Dest[i + 1] := Table[S^ and $F];
+<tr class="nocodegen"><td>511<td>
+<tr class="covered"><td>512<td>    Inc(S);
+<tr class="covered"><td>513<td>    Dec(Size);
+<tr class="covered"><td>514<td>    Inc(i, 2);
+<tr class="nocodegen"><td>515<td>  end;
+<tr class="covered"><td>516<td>end;
+<tr class="nocodegen"><td>517<td>
+<tr class="nocodegen"><td>518<td>class procedure TFormat_HEX.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>519<td>var
+<tr class="nocodegen"><td>520<td>  S: PByte;
+<tr class="nocodegen"><td>521<td>  D: PByte;
+<tr class="nocodegen"><td>522<td>  T: TBytes;
+<tr class="nocodegen"><td>523<td>  I,P: Integer;
+<tr class="nocodegen"><td>524<td>
+<tr class="nocodegen"><td>525<td>  HasIdent: Boolean;
+<tr class="covered"><td>526<td>begin
+<tr class="covered"><td>527<td>  SetLength(Dest, 0);
+<tr class="covered"><td>528<td>  if Size &lt;= 0 then Exit;
+<tr class="covered"><td>529<td>  SetLength(Dest, Size div 2); //  + 1);
+<tr class="nocodegen"><td>530<td>
+<tr class="covered"><td>531<td>  T := CharTableBinary;
+<tr class="nocodegen"><td>532<td>
+<tr class="covered"><td>533<td>  D := PByte(Dest);
+<tr class="covered"><td>534<td>  S := PByte(@Source);
+<tr class="covered"><td>535<td>  I := 0;
+<tr class="covered"><td>536<td>  HasIdent := False;
+<tr class="covered"><td>537<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>538<td>  begin
+<tr class="covered"><td>539<td>    P := TableFindBinary(S^, T, 18);
+<tr class="covered"><td>540<td>    if P &lt; 0 then P := TableFindBinary(UpCaseBinary(S^), T, 16);
+<tr class="covered"><td>541<td>    if P &lt; 0 then
+<tr class="covered"><td>542<td>      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="covered"><td>543<td>    Inc(S);
+<tr class="covered"><td>544<td>    if P &gt;= 0 then
+<tr class="covered"><td>545<td>      if P &gt; 16 then
+<tr class="nocodegen"><td>546<td>      begin
+<tr class="notcovered"><td>547<td>        if not HasIdent then
+<tr class="nocodegen"><td>548<td>        begin
+<tr class="notcovered"><td>549<td>          HasIdent := True;
+<tr class="notcovered"><td>550<td>          I := 0;
+<tr class="notcovered"><td>551<td>          D := PByte(Dest);
+<tr class="nocodegen"><td>552<td>        end;
+<tr class="nocodegen"><td>553<td>      end
+<tr class="nocodegen"><td>554<td>      else
+<tr class="nocodegen"><td>555<td>      begin
+<tr class="covered"><td>556<td>        if Odd(I) then
+<tr class="nocodegen"><td>557<td>        begin
+<tr class="covered"><td>558<td>          D^ := D^ or P;
+<tr class="covered"><td>559<td>          Inc(D);
+<tr class="nocodegen"><td>560<td>        end
+<tr class="nocodegen"><td>561<td>        else
+<tr class="covered"><td>562<td>          D^ := P shl 4;
+<tr class="covered"><td>563<td>        Inc(I);
+<tr class="nocodegen"><td>564<td>      end;
+<tr class="covered"><td>565<td>    Dec(Size);
+<tr class="nocodegen"><td>566<td>  end;
+<tr class="covered"><td>567<td>end;
+<tr class="nocodegen"><td>568<td>
+<tr class="nocodegen"><td>569<td>class function TFormat_HEX.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>570<td>var
+<tr class="nocodegen"><td>571<td>  T: TBytes;
+<tr class="nocodegen"><td>572<td>  S: PByte;
+<tr class="covered"><td>573<td>begin
+<tr class="covered"><td>574<td>  if not odd(Size) then
+<tr class="nocodegen"><td>575<td>  begin
+<tr class="covered"><td>576<td>    Result := True;
+<tr class="covered"><td>577<td>    T := CharTableBinary;
+<tr class="covered"><td>578<td>    S := @Data;
+<tr class="covered"><td>579<td>    while Result and (Size &gt; 0) do
+<tr class="nocodegen"><td>580<td>    begin
+<tr class="covered"><td>581<td>      if TableFindBinary(S^, T, length(T)) &gt;= 0 then
+<tr class="nocodegen"><td>582<td>      begin
+<tr class="covered"><td>583<td>        Inc(S);
+<tr class="covered"><td>584<td>        Dec(Size);
+<tr class="nocodegen"><td>585<td>      end
+<tr class="nocodegen"><td>586<td>      else
+<tr class="covered"><td>587<td>        Result := False;
+<tr class="nocodegen"><td>588<td>    end;
+<tr class="nocodegen"><td>589<td>  end
+<tr class="nocodegen"><td>590<td>  else
+<tr class="covered"><td>591<td>    result := false;
+<tr class="covered"><td>592<td>end;
+<tr class="nocodegen"><td>593<td>
+<tr class="nocodegen"><td>594<td>class function TFormat_HEXL.CharTableBinary: TBytes;
+<tr class="covered"><td>595<td>begin
+<tr class="covered"><td>596<td>  SetLength(result, 48);
+<tr class="nocodegen"><td>597<td>  // special and skipped chars
+<tr class="nocodegen"><td>598<td>  // '0123456789abcdefX$ ABCDEFhHx()[]{},;:-_/\*+&quot;'''+CHR(9)+CHR(10)+CHR(13);
+<tr class="nocodegen"><td>599<td>
+<tr class="nocodegen"><td>600<td>  {$IF CompilerVersion &gt;= 28.0}
+<tr class="covered"><td>601<td>  result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $61, $62, $63,
+<tr class="nocodegen"><td>602<td>             $64, $65, $66, $68, $58, $24, $20, $41, $42, $43, $44, $45, $46,
+<tr class="nocodegen"><td>603<td>             $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
+<tr class="covered"><td>604<td>             $2F, $5C, $2A, $2B, $22, $27, $09, $0A, $0D];
+<tr class="nocodegen"><td>605<td>  {$ELSE}
+<tr class="nocodegen"><td>606<td>  // Remove this initialisation variant as soon as XE7+ is the new minimum
+<tr class="nocodegen"><td>607<td>  // supported Delphi version
+<tr class="nocodegen"><td>608<td>  result[ 0]:=$30;
+<tr class="nocodegen"><td>609<td>  result[ 1]:=$31;
+<tr class="nocodegen"><td>610<td>  result[ 2]:=$32;
+<tr class="nocodegen"><td>611<td>  result[ 3]:=$33;
+<tr class="nocodegen"><td>612<td>  result[ 4]:=$34;
+<tr class="nocodegen"><td>613<td>  result[ 5]:=$35;
+<tr class="nocodegen"><td>614<td>  result[ 6]:=$36;
+<tr class="nocodegen"><td>615<td>  result[ 7]:=$37;
+<tr class="nocodegen"><td>616<td>  result[ 8]:=$38;
+<tr class="nocodegen"><td>617<td>  result[ 9]:=$39;
+<tr class="nocodegen"><td>618<td>  result[10]:=$61;
+<tr class="nocodegen"><td>619<td>  result[11]:=$62;
+<tr class="nocodegen"><td>620<td>  result[12]:=$63;
+<tr class="nocodegen"><td>621<td>  result[13]:=$64;
+<tr class="nocodegen"><td>622<td>  result[14]:=$65;
+<tr class="nocodegen"><td>623<td>  result[15]:=$66;
+<tr class="nocodegen"><td>624<td>  result[16]:=$68;
+<tr class="nocodegen"><td>625<td>  result[17]:=$58;
+<tr class="nocodegen"><td>626<td>  result[18]:=$24;
+<tr class="nocodegen"><td>627<td>  result[19]:=$20;
+<tr class="nocodegen"><td>628<td>  result[20]:=$41;
+<tr class="nocodegen"><td>629<td>  result[21]:=$42;
+<tr class="nocodegen"><td>630<td>  result[22]:=$43;
+<tr class="nocodegen"><td>631<td>  result[23]:=$44;
+<tr class="nocodegen"><td>632<td>  result[24]:=$45;
+<tr class="nocodegen"><td>633<td>  result[25]:=$46;
+<tr class="nocodegen"><td>634<td>  result[26]:=$48;
+<tr class="nocodegen"><td>635<td>  result[27]:=$78;
+<tr class="nocodegen"><td>636<td>  result[28]:=$28;
+<tr class="nocodegen"><td>637<td>  result[29]:=$29;
+<tr class="nocodegen"><td>638<td>  result[30]:=$5B;
+<tr class="nocodegen"><td>639<td>  result[31]:=$5D;
+<tr class="nocodegen"><td>640<td>  result[32]:=$7B;
+<tr class="nocodegen"><td>641<td>  result[33]:=$7D;
+<tr class="nocodegen"><td>642<td>  result[34]:=$2C;
+<tr class="nocodegen"><td>643<td>  result[35]:=$3B;
+<tr class="nocodegen"><td>644<td>  result[36]:=$3A;
+<tr class="nocodegen"><td>645<td>  result[37]:=$2D;
+<tr class="nocodegen"><td>646<td>  result[38]:=$5F;
+<tr class="nocodegen"><td>647<td>  result[39]:=$2F;
+<tr class="nocodegen"><td>648<td>  result[40]:=$5C;
+<tr class="nocodegen"><td>649<td>  result[41]:=$2A;
+<tr class="nocodegen"><td>650<td>  result[42]:=$2B;
+<tr class="nocodegen"><td>651<td>  result[43]:=$22;
+<tr class="nocodegen"><td>652<td>  result[44]:=$27;
+<tr class="nocodegen"><td>653<td>  result[45]:=$09;
+<tr class="nocodegen"><td>654<td>  result[46]:=$0A;
+<tr class="nocodegen"><td>655<td>  result[47]:=$0D;
+<tr class="nocodegen"><td>656<td>  {$IFEND}
+<tr class="covered"><td>657<td>end;
+<tr class="nocodegen"><td>658<td>
+<tr class="nocodegen"><td>659<td>class function TFormat_DECMIME32.CharTableBinary: TBytes;
+<tr class="covered"><td>660<td>begin
+<tr class="nocodegen"><td>661<td>  // special and skipped chars
+<tr class="nocodegen"><td>662<td>  // 'abcdefghijklnpqrstuwxyz123456789 =$()[]{},;:-_\*&quot;'''+CHR(9)+CHR(10)+CHR(13);
+<tr class="covered"><td>663<td>  SetLength(result, 53);
+<tr class="covered"><td>664<td>  result := [$61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6E, $70,
+<tr class="nocodegen"><td>665<td>             $71, $72, $73, $74, $75, $77, $78, $79, $7A, $31, $32, $33, $34, $35,
+<tr class="nocodegen"><td>666<td>             $36, $37, $38, $39, $20, $3D, $24, $28, $29, $5B, $5D, $7B, $7D, $2C,
+<tr class="covered"><td>667<td>             $3B, $3A, $2D, $5F, $5C, $2A, $22, $27, $09, $0A, $0D];
+<tr class="covered"><td>668<td>end;
+<tr class="nocodegen"><td>669<td>
+<tr class="nocodegen"><td>670<td>class procedure TFormat_DECMIME32.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>671<td>var
+<tr class="nocodegen"><td>672<td>  T   : TBytes;
+<tr class="nocodegen"><td>673<td>  Src : TBytes;
+<tr class="nocodegen"><td>674<td>  S, D: PByte;
+<tr class="nocodegen"><td>675<td>  i, n: Integer;
+<tr class="covered"><td>676<td>begin
+<tr class="covered"><td>677<td>  SetLength(Dest, 0);
+<tr class="covered"><td>678<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>679<td>    Exit;
+<tr class="nocodegen"><td>680<td>
+<tr class="nocodegen"><td>681<td>  // The passed in source parameter has to be converted into an array with
+<tr class="nocodegen"><td>682<td>  // added additional 0 value. This is because in the original form a string was
+<tr class="nocodegen"><td>683<td>  // being passed in as source parameter, which automatically contained a #00 at
+<tr class="nocodegen"><td>684<td>  // the end and depending on length of the data passed in, the @S[i shr 3] index
+<tr class="nocodegen"><td>685<td>  // calculation can result in an index which represents the last byte of the
+<tr class="nocodegen"><td>686<td>  // source parameter. That one is accessed as PWord then which results in
+<tr class="nocodegen"><td>687<td>  // reading the first byte behind that source parameter as well! This led to
+<tr class="nocodegen"><td>688<td>  // wrong data errors in the unit tests.
+<tr class="covered"><td>689<td>  SetLength(Src, Size + 1);
+<tr class="covered"><td>690<td>  Move(Source, Src[0], Size);
+<tr class="covered"><td>691<td>  Src[length(Src)-1] := 0;
+<tr class="nocodegen"><td>692<td>
+<tr class="covered"><td>693<td>  Size := Size * 8;
+<tr class="covered"><td>694<td>  SetLength(Dest, Size div 5 + 5);
+<tr class="nocodegen"><td>695<td>
+<tr class="covered"><td>696<td>  D := @Dest[0];
+<tr class="covered"><td>697<td>  T := CharTableBinary;
+<tr class="covered"><td>698<td>  S := @Src[0];
+<tr class="nocodegen"><td>699<td>
+<tr class="covered"><td>700<td>  i := 0; n := 0;
+<tr class="covered"><td>701<td>  while i &lt; Size do
+<tr class="nocodegen"><td>702<td>  begin
+<tr class="covered"><td>703<td>    D^ := T[PWord(@S[i shr 3])^ shr (i and $7) and $1F];
+<tr class="nocodegen"><td>704<td>
+<tr class="covered"><td>705<td>    Inc(D);
+<tr class="covered"><td>706<td>    Inc(i, 5);
+<tr class="nocodegen"><td>707<td>
+<tr class="covered"><td>708<td>    Inc(n);
+<tr class="nocodegen"><td>709<td>  end;
+<tr class="nocodegen"><td>710<td>
+<tr class="covered"><td>711<td>  SetLength(Dest, n);
+<tr class="covered"><td>712<td>  SetLength(Src, 0);
+<tr class="covered"><td>713<td>end;
+<tr class="nocodegen"><td>714<td>
+<tr class="nocodegen"><td>715<td>class function TFormat_DECMIME32.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>716<td>var
+<tr class="nocodegen"><td>717<td>  T: TBytes;
+<tr class="nocodegen"><td>718<td>  S: PByte;
+<tr class="covered"><td>719<td>begin
+<tr class="covered"><td>720<td>  Result := True;
+<tr class="covered"><td>721<td>  T := CharTableBinary;
+<tr class="covered"><td>722<td>  S := @Data;
+<tr class="covered"><td>723<td>  while Result and (Size &gt; 0) do
+<tr class="nocodegen"><td>724<td>  begin
+<tr class="covered"><td>725<td>    if TableFindBinary(S^, T, length(T)) &gt;= 0 then
+<tr class="nocodegen"><td>726<td>    begin
+<tr class="covered"><td>727<td>      Inc(S);
+<tr class="covered"><td>728<td>      Dec(Size);
+<tr class="nocodegen"><td>729<td>    end
+<tr class="nocodegen"><td>730<td>    else
+<tr class="covered"><td>731<td>      Result := False;
+<tr class="nocodegen"><td>732<td>  end;
+<tr class="covered"><td>733<td>end;
+<tr class="nocodegen"><td>734<td>
+<tr class="nocodegen"><td>735<td>class procedure TFormat_DECMIME32.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>736<td>var
+<tr class="nocodegen"><td>737<td>  T: TBytes;
+<tr class="nocodegen"><td>738<td>  S: PByte;
+<tr class="nocodegen"><td>739<td>  D: PByte;
+<tr class="nocodegen"><td>740<td>  i, V: Integer;
+<tr class="covered"><td>741<td>begin
+<tr class="covered"><td>742<td>  SetLength(Dest, 0);
+<tr class="covered"><td>743<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>744<td>    Exit;
+<tr class="nocodegen"><td>745<td>
+<tr class="covered"><td>746<td>  Size := Size * 5;
+<tr class="covered"><td>747<td>  SetLength(Dest, Size div 8);
+<tr class="nocodegen"><td>748<td>
+<tr class="covered"><td>749<td>  T := CharTableBinary;
+<tr class="covered"><td>750<td>  S := @Source;
+<tr class="covered"><td>751<td>  D := @Dest[0];
+<tr class="nocodegen"><td>752<td>
+<tr class="covered"><td>753<td>  FillChar(D^, Length(Dest), 0);
+<tr class="covered"><td>754<td>  i := 0;
+<tr class="nocodegen"><td>755<td>
+<tr class="covered"><td>756<td>  while i &lt; Size do
+<tr class="nocodegen"><td>757<td>  begin
+<tr class="covered"><td>758<td>    V := TableFindBinary(S^, T, 32);
+<tr class="covered"><td>759<td>    if V &lt; 0 then
+<tr class="notcovered"><td>760<td>      V := TableFindBinary(UpCaseBinary(S^), T, 32);
+<tr class="covered"><td>761<td>    if V &gt;= 0 then
+<tr class="nocodegen"><td>762<td>    begin
+<tr class="covered"><td>763<td>      PWord(@D[i shr 3])^ := PWord(@D[i shr 3])^ or (V shl (i and $7));
+<tr class="covered"><td>764<td>      Inc(i, 5);
+<tr class="nocodegen"><td>765<td>    end
+<tr class="nocodegen"><td>766<td>    else
+<tr class="notcovered"><td>767<td>      Dec(Size, 5);
+<tr class="covered"><td>768<td>    Inc(S);
+<tr class="nocodegen"><td>769<td>  end;
+<tr class="nocodegen"><td>770<td>
+<tr class="covered"><td>771<td>  SetLength(Dest, Size div 8);
+<tr class="covered"><td>772<td>end;
+<tr class="nocodegen"><td>773<td>
+<tr class="nocodegen"><td>774<td>class function TFormat_Base64.CharTableBinary: TBytes;
+<tr class="covered"><td>775<td>begin
+<tr class="nocodegen"><td>776<td>  //  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=' +
+<tr class="nocodegen"><td>777<td>  //  ' $()[]{},;:-_\*&quot;'''+CHR(9)+CHR(10)+CHR(13); // special and skipped chars
+<tr class="covered"><td>778<td>  SetLength(result, 85);
+<tr class="nocodegen"><td>779<td>
+<tr class="covered"><td>780<td>  result := [$41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
+<tr class="nocodegen"><td>781<td>             $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
+<tr class="nocodegen"><td>782<td>             $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
+<tr class="nocodegen"><td>783<td>             $6E, $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A,
+<tr class="nocodegen"><td>784<td>             $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $2B, $2F, $3D,
+<tr class="nocodegen"><td>785<td>             $20, $24, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
+<tr class="covered"><td>786<td>             $5C, $2A, $22, $27, $09, $0A, $0D];
+<tr class="covered"><td>787<td>end;
+<tr class="nocodegen"><td>788<td>
+<tr class="nocodegen"><td>789<td>class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>790<td>var
+<tr class="nocodegen"><td>791<td>  T: TBytes;
+<tr class="nocodegen"><td>792<td>  S: PByte;
+<tr class="nocodegen"><td>793<td>  D: PByte;
+<tr class="nocodegen"><td>794<td>  B: UInt32;
+<tr class="nocodegen"><td>795<td>  i: Integer;
+<tr class="nocodegen"><td>796<td>  n: Integer;
+<tr class="covered"><td>797<td>begin
+<tr class="covered"><td>798<td>  SetLength(Dest, 0);
+<tr class="covered"><td>799<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>800<td>    Exit;
+<tr class="nocodegen"><td>801<td>
+<tr class="covered"><td>802<td>  SetLength(Dest, Size * 4 div 3 + 4);
+<tr class="nocodegen"><td>803<td>
+<tr class="covered"><td>804<td>  T := CharTableBinary;
+<tr class="covered"><td>805<td>  S := @Source;
+<tr class="covered"><td>806<td>  D := @Dest[0];
+<tr class="nocodegen"><td>807<td>
+<tr class="covered"><td>808<td>  n := 0;
+<tr class="covered"><td>809<td>  while Size &gt;= 3 do
+<tr class="nocodegen"><td>810<td>  begin
+<tr class="covered"><td>811<td>    Dec(Size, 3);
+<tr class="covered"><td>812<td>    B := Byte(S[0]) shl 16 or Byte(S[1]) shl 8 or Byte(S[2]);
+<tr class="covered"><td>813<td>    D[0] := T[B shr 18 and $3F];
+<tr class="covered"><td>814<td>    D[1] := T[B shr 12 and $3F];
+<tr class="covered"><td>815<td>    D[2] := T[B shr  6 and $3F];
+<tr class="covered"><td>816<td>    D[3] := T[B        and $3F];
+<tr class="covered"><td>817<td>    Inc(D, 4);
+<tr class="covered"><td>818<td>    S := @S[3];
+<tr class="covered"><td>819<td>    Inc(n, 4);
+<tr class="nocodegen"><td>820<td>  end;
+<tr class="nocodegen"><td>821<td>
+<tr class="covered"><td>822<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>823<td>  begin
+<tr class="covered"><td>824<td>    B := 0;
+<tr class="covered"><td>825<td>    for i := 0 to 2 do
+<tr class="nocodegen"><td>826<td>    begin
+<tr class="covered"><td>827<td>      B := B shl 8;
+<tr class="covered"><td>828<td>      if Size &gt; 0 then
+<tr class="nocodegen"><td>829<td>      begin
+<tr class="covered"><td>830<td>        B := B or Byte(S[0]);
+<tr class="covered"><td>831<td>        S := @S[1];
+<tr class="nocodegen"><td>832<td>      end;
+<tr class="covered"><td>833<td>      Dec(Size);
+<tr class="covered"><td>834<td>    end;
+<tr class="covered"><td>835<td>    for i := 3 downto 0 do
+<tr class="nocodegen"><td>836<td>    begin
+<tr class="covered"><td>837<td>      if Size &lt; 0 then
+<tr class="nocodegen"><td>838<td>      begin
+<tr class="covered"><td>839<td>        D[i] := T[64];
+<tr class="covered"><td>840<td>        Inc(Size);
+<tr class="nocodegen"><td>841<td>      end
+<tr class="nocodegen"><td>842<td>      else
+<tr class="covered"><td>843<td>        D[i] := T[B and $3F];
+<tr class="covered"><td>844<td>      B := B shr 6;
+<tr class="covered"><td>845<td>    end;
+<tr class="covered"><td>846<td>    Inc(D, 4);
+<tr class="covered"><td>847<td>    Inc(n, 4);
+<tr class="nocodegen"><td>848<td>  end;
+<tr class="nocodegen"><td>849<td>
+<tr class="nocodegen"><td>850<td>  // original calculation was substract dest ptr d - start of dest
+<tr class="covered"><td>851<td>  SetLength(Dest, n);
+<tr class="covered"><td>852<td>end;
+<tr class="nocodegen"><td>853<td>
+<tr class="nocodegen"><td>854<td>class procedure TFormat_Base64.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>855<td>var
+<tr class="nocodegen"><td>856<td>  T: TBytes;
+<tr class="nocodegen"><td>857<td>  S: PByte;
+<tr class="nocodegen"><td>858<td>  D, L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>859<td>  B: UInt32;
+<tr class="nocodegen"><td>860<td>  i, j, n: Integer;
+<tr class="covered"><td>861<td>begin
+<tr class="covered"><td>862<td>  SetLength(Dest, 0);
+<tr class="covered"><td>863<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>864<td>    Exit;
+<tr class="nocodegen"><td>865<td>
+<tr class="covered"><td>866<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>867<td>
+<tr class="covered"><td>868<td>  T := CharTableBinary;
+<tr class="covered"><td>869<td>  S := @Source;
+<tr class="covered"><td>870<td>  D := @Dest[0];
+<tr class="nocodegen"><td>871<td>
+<tr class="covered"><td>872<td>  Move(Source, Dest[0], Size);
+<tr class="nocodegen"><td>873<td>
+<tr class="covered"><td>874<td>  L := S + Size;
+<tr class="covered"><td>875<td>  j := 0;
+<tr class="covered"><td>876<td>  n := 0;
+<tr class="covered"><td>877<td>  while S &lt; L do
+<tr class="nocodegen"><td>878<td>  begin
+<tr class="covered"><td>879<td>    B := 0;
+<tr class="covered"><td>880<td>    j := 4;
+<tr class="covered"><td>881<td>    while (j &gt; 0) and (S &lt; L) do
+<tr class="nocodegen"><td>882<td>    begin
+<tr class="covered"><td>883<td>      i := TableFindBinary(S^, T, 65);
+<tr class="covered"><td>884<td>      Inc(S);
+<tr class="covered"><td>885<td>      if i &gt;= 0 then
+<tr class="nocodegen"><td>886<td>      begin
+<tr class="covered"><td>887<td>        if i &lt; 64 then
+<tr class="nocodegen"><td>888<td>        begin
+<tr class="covered"><td>889<td>          B := B shl 6 or Byte(i);
+<tr class="covered"><td>890<td>          Dec(j);
+<tr class="nocodegen"><td>891<td>        end
+<tr class="nocodegen"><td>892<td>        else
+<tr class="covered"><td>893<td>          L := S;
+<tr class="nocodegen"><td>894<td>      end;
+<tr class="nocodegen"><td>895<td>    end;
+<tr class="covered"><td>896<td>    if j &gt; 0 then
+<tr class="nocodegen"><td>897<td>    begin
+<tr class="covered"><td>898<td>      if j &gt;= 4 then
+<tr class="nocodegen"><td>899<td>      begin
+<tr class="covered"><td>900<td>        j := 0;
+<tr class="covered"><td>901<td>        Break;
+<tr class="nocodegen"><td>902<td>      end
+<tr class="nocodegen"><td>903<td>      else
+<tr class="covered"><td>904<td>        B := B shl (6 * j);
+<tr class="nocodegen"><td>905<td>    end;
+<tr class="covered"><td>906<td>    i := 2;
+<tr class="covered"><td>907<td>    while i &gt;= 0 do
+<tr class="nocodegen"><td>908<td>    begin
+<tr class="covered"><td>909<td>      D[i] := Byte(B);
+<tr class="covered"><td>910<td>      B := B shr 8;
+<tr class="covered"><td>911<td>      Dec(i);
+<tr class="nocodegen"><td>912<td>    end;
+<tr class="covered"><td>913<td>    Inc(D, 3);
+<tr class="covered"><td>914<td>    Inc(n, 3);
+<tr class="nocodegen"><td>915<td>  end;
+<tr class="nocodegen"><td>916<td>
+<tr class="covered"><td>917<td>  SetLength(Dest, n-j);
+<tr class="covered"><td>918<td>end;
+<tr class="nocodegen"><td>919<td>
+<tr class="nocodegen"><td>920<td>class function TFormat_Base64.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>921<td>var
+<tr class="nocodegen"><td>922<td>  S: PByte;
+<tr class="covered"><td>923<td>begin
+<tr class="covered"><td>924<td>  Result := True;
+<tr class="covered"><td>925<td>  S := @Data;
+<tr class="covered"><td>926<td>  while Result and (Size &gt; 0) do
+<tr class="nocodegen"><td>927<td>  begin
+<tr class="nocodegen"><td>928<td>    // A-Z, a-z, 0-9, +, = and / and CR/LF
+<tr class="covered"><td>929<td>    if S^ in [$41..$5A, $61..$7A, $2B, $2F..$39, $3D, $0D, $0A] then
+<tr class="nocodegen"><td>930<td>    begin
+<tr class="covered"><td>931<td>      Inc(S);
+<tr class="covered"><td>932<td>      Dec(Size);
+<tr class="nocodegen"><td>933<td>    end
+<tr class="nocodegen"><td>934<td>    else
+<tr class="covered"><td>935<td>      Result := False;
+<tr class="nocodegen"><td>936<td>  end;
+<tr class="covered"><td>937<td>end;
+<tr class="nocodegen"><td>938<td>
+<tr class="nocodegen"><td>939<td>class function TFormat_Radix64.DoExtractCRC(const Data; var Size: Integer): UInt32;
+<tr class="nocodegen"><td>940<td>var
+<tr class="nocodegen"><td>941<td>  L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>942<td>  C: Byte;
+<tr class="nocodegen"><td>943<td>  R: TBytes;
+<tr class="covered"><td>944<td>begin
+<tr class="covered"><td>945<td>  Result := $FFFFFFFF;
+<tr class="covered"><td>946<td>  C := CharTableBinary[64]; // get padding char, per default '='
+<tr class="covered"><td>947<td>  L := PByte(@Data) + Size;
+<tr class="covered"><td>948<td>  while L &lt;&gt; @Data do
+<tr class="nocodegen"><td>949<td>  begin
+<tr class="covered"><td>950<td>    if L^ = C then
+<tr class="nocodegen"><td>951<td>      Break
+<tr class="nocodegen"><td>952<td>    else
+<tr class="covered"><td>953<td>      Dec(L); // scan reverse for padding char
+<tr class="nocodegen"><td>954<td>  end;
+<tr class="covered"><td>955<td>  if L - PByte(@Data) &gt;= Size - 5 then // remaining chars must be &gt; 4, e.g. '=XQRT'
+<tr class="covered"><td>956<td>  try
+<tr class="covered"><td>957<td>    Inc(L);
+<tr class="covered"><td>958<td>    inherited DoDecode(L^, R, Size - (L - PByte(@Data)));
+<tr class="covered"><td>959<td>    if Length(R) &gt;= 3 then
+<tr class="nocodegen"><td>960<td>    begin
+<tr class="covered"><td>961<td>      Result := 0;
+<tr class="covered"><td>962<td>      Move(R[0], Result, 3);
+<tr class="covered"><td>963<td>      Size := L - PByte(@Data);
+<tr class="nocodegen"><td>964<td>    end;
+<tr class="nocodegen"><td>965<td>  except
+<tr class="notcovered"><td>966<td>  end;
+<tr class="covered"><td>967<td>end;
+<tr class="nocodegen"><td>968<td>
+<tr class="nocodegen"><td>969<td>class function TFormat_Radix64.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>970<td>var
+<tr class="nocodegen"><td>971<td>  crc24 : UInt32;
+<tr class="nocodegen"><td>972<td>  Dest  : TBytes;
+<tr class="covered"><td>973<td>begin
+<tr class="nocodegen"><td>974<td>  // Radix64 is like Base64 but with additional CRC24 checksum
+<tr class="covered"><td>975<td>  result := TFormat_Base64.IsValid(Data, Size);
+<tr class="nocodegen"><td>976<td>
+<tr class="nocodegen"><td>977<td>  // Check contained checksum as well
+<tr class="covered"><td>978<td>  if result then
+<tr class="nocodegen"><td>979<td>  begin
+<tr class="covered"><td>980<td>    crc24 := DoExtractCRC(Data, Size);
+<tr class="nocodegen"><td>981<td>    // we need to decode, because it removes the CR/LF linebreaks which would
+<tr class="nocodegen"><td>982<td>    // invalidate the checksum
+<tr class="covered"><td>983<td>    inherited DoDecode(Data, Dest, Size);
+<tr class="nocodegen"><td>984<td>
+<tr class="covered"><td>985<td>    if crc24 &lt;&gt; $FFFFFFFF then
+<tr class="nocodegen"><td>986<td>    begin
+<tr class="nocodegen"><td>987<td>      // recalc CRC and compare
+<tr class="covered"><td>988<td>      SwapBytes(crc24, 3);
+<tr class="covered"><td>989<td>      result := crc24 = CRCCalc(CRC_24, Dest[0], Length(Dest));
+<tr class="nocodegen"><td>990<td>    end
+<tr class="nocodegen"><td>991<td>    else
+<tr class="covered"><td>992<td>      result := false;
+<tr class="nocodegen"><td>993<td>  end;
+<tr class="covered"><td>994<td>end;
+<tr class="nocodegen"><td>995<td>
+<tr class="nocodegen"><td>996<td>class function TFormat_Radix64.GetCharsPerLine: UInt32;
+<tr class="covered"><td>997<td>begin
+<tr class="covered"><td>998<td>  result := FCharsPerLine;
+<tr class="covered"><td>999<td>end;
+<tr class="nocodegen"><td>1000<td>
+<tr class="nocodegen"><td>1001<td>class procedure TFormat_Radix64.InsertCRLF(const Source: TBytes; var Dest: TBytes; LineLength: Integer);
+<tr class="nocodegen"><td>1002<td>var
+<tr class="nocodegen"><td>1003<td>  S, D: PByte;
+<tr class="nocodegen"><td>1004<td>  i: Integer;
+<tr class="covered"><td>1005<td>begin
+<tr class="covered"><td>1006<td>  i := Length(Source);
+<tr class="covered"><td>1007<td>  if (LineLength &lt;= 0) or (i &lt;= LineLength) then
+<tr class="nocodegen"><td>1008<td>  begin
+<tr class="covered"><td>1009<td>    SetLength(Dest, i);
+<tr class="covered"><td>1010<td>    Move(Source[0], Dest[0], i);
+<tr class="covered"><td>1011<td>    Exit;
+<tr class="nocodegen"><td>1012<td>  end;
+<tr class="nocodegen"><td>1013<td>
+<tr class="covered"><td>1014<td>  SetLength(Dest, i + i * 2 div LineLength + 2);
+<tr class="nocodegen"><td>1015<td>
+<tr class="covered"><td>1016<td>  S := @Source[0];
+<tr class="covered"><td>1017<td>  D := @Dest[0];
+<tr class="nocodegen"><td>1018<td>
+<tr class="nocodegen"><td>1019<td>  repeat
+<tr class="covered"><td>1020<td>    Move(S^, D^, LineLength);
+<tr class="covered"><td>1021<td>    Inc(S, LineLength);
+<tr class="covered"><td>1022<td>    Inc(D, LineLength);
+<tr class="covered"><td>1023<td>    D^ := Ord(#13);
+<tr class="covered"><td>1024<td>    Inc(D);
+<tr class="covered"><td>1025<td>    D^ := Ord(#10);
+<tr class="covered"><td>1026<td>    Inc(D);
+<tr class="covered"><td>1027<td>    Dec(i, LineLength);
+<tr class="covered"><td>1028<td>  until i &lt; LineLength;
+<tr class="nocodegen"><td>1029<td>
+<tr class="covered"><td>1030<td>  Move(S^, D^, i);
+<tr class="covered"><td>1031<td>  Inc(D, i);
+<tr class="nocodegen"><td>1032<td>
+<tr class="covered"><td>1033<td>  SetLength(Dest, PByte(D) - PByte(Dest));
+<tr class="covered"><td>1034<td>end;
+<tr class="nocodegen"><td>1035<td>
+<tr class="nocodegen"><td>1036<td>class procedure TFormat_Radix64.SetCharsPerLine(const Value: UInt32);
+<tr class="covered"><td>1037<td>begin
+<tr class="covered"><td>1038<td>  if (Value &gt; 0) then
+<tr class="covered"><td>1039<td>    FCharsPerLine := Value
+<tr class="nocodegen"><td>1040<td>  else
+<tr class="covered"><td>1041<td>    raise EArgumentOutOfRangeException.Create('Invalid number of chars per line: ' +
+<tr class="nocodegen"><td>1042<td>                                              IntToStr(Value));
+<tr class="covered"><td>1043<td>end;
+<tr class="nocodegen"><td>1044<td>
+<tr class="nocodegen"><td>1045<td>class procedure TFormat_Radix64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1046<td>var
+<tr class="nocodegen"><td>1047<td>  TempData : TBytes;
+<tr class="nocodegen"><td>1048<td>  CRC      : UInt32;
+<tr class="nocodegen"><td>1049<td>  CRCData  : TBytes;
+<tr class="nocodegen"><td>1050<td>  Position : Integer;
+<tr class="covered"><td>1051<td>begin
+<tr class="covered"><td>1052<td>  SetLength(Dest, 0);
+<tr class="covered"><td>1053<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1054<td>    Exit;
+<tr class="nocodegen"><td>1055<td>
+<tr class="nocodegen"><td>1056<td>  // use Base64
+<tr class="covered"><td>1057<td>  inherited DoEncode(Source, TempData, Size);
+<tr class="nocodegen"><td>1058<td>
+<tr class="nocodegen"><td>1059<td>  // split lines
+<tr class="covered"><td>1060<td>  InsertCRLF(TempData, Dest, FCharsPerLine);
+<tr class="covered"><td>1061<td>  SetLength(TempData, 0);
+<tr class="nocodegen"><td>1062<td>
+<tr class="covered"><td>1063<td>  CRC := CRCCalc(CRC_24, Source, Size); // calculate 24-bit Checksum
+<tr class="covered"><td>1064<td>  SwapBytes(CRC, 3); // PGP use Big Endian
+<tr class="nocodegen"><td>1065<td>
+<tr class="nocodegen"><td>1066<td>  // check and insert LF if needed
+<tr class="covered"><td>1067<td>  Position := Length(Dest) - 1; // last char
+<tr class="covered"><td>1068<td>  if Dest[Position] &lt;&gt; $0A then
+<tr class="nocodegen"><td>1069<td>  begin
+<tr class="nocodegen"><td>1070<td>    // insert CR needed, CRC must be in the next line
+<tr class="covered"><td>1071<td>    Position := Length(Dest);
+<tr class="covered"><td>1072<td>    SetLength(Dest, Position + 2);
+<tr class="covered"><td>1073<td>    Dest[Position]   := $0D; // append CR
+<tr class="covered"><td>1074<td>    Dest[Position+1] := $0A; // append LF
+<tr class="nocodegen"><td>1075<td>  end;
+<tr class="nocodegen"><td>1076<td>
+<tr class="nocodegen"><td>1077<td>  // encode CRC with Base64 too
+<tr class="covered"><td>1078<td>  inherited DoEncode(CRC, CRCData, 3);
+<tr class="nocodegen"><td>1079<td>
+<tr class="nocodegen"><td>1080<td>  // if CRC is too long insert CRLF. -1 to compensate the later added = char
+<tr class="covered"><td>1081<td>  InsertCRLF(CRCData, TempData, FCharsPerLine - 1);
+<tr class="covered"><td>1082<td>  CRCData := TempData;
+<tr class="nocodegen"><td>1083<td>
+<tr class="nocodegen"><td>1084<td>  // append encoded CRC
+<tr class="covered"><td>1085<td>  Position := Length(Dest);
+<tr class="covered"><td>1086<td>  SetLength(Dest, Position + 1 + Length(CRCData));
+<tr class="covered"><td>1087<td>  Dest[Position] := Ord('=');
+<tr class="covered"><td>1088<td>  Move(CRCData[0], Dest[Position + 1], Length(CRCData));
+<tr class="covered"><td>1089<td>end;
+<tr class="nocodegen"><td>1090<td>
+<tr class="nocodegen"><td>1091<td>class procedure TFormat_Radix64.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1092<td>var
+<tr class="nocodegen"><td>1093<td>  CRC: UInt32;
+<tr class="covered"><td>1094<td>begin
+<tr class="covered"><td>1095<td>  SetLength(Dest, 0);
+<tr class="covered"><td>1096<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1097<td>    Exit;
+<tr class="nocodegen"><td>1098<td>
+<tr class="covered"><td>1099<td>  CRC := DoExtractCRC(Source, Size);
+<tr class="covered"><td>1100<td>  inherited DoDecode(Source, Dest, Size);
+<tr class="nocodegen"><td>1101<td>
+<tr class="covered"><td>1102<td>  if CRC &lt;&gt; $FFFFFFFF then // check CRC if found
+<tr class="nocodegen"><td>1103<td>  begin
+<tr class="covered"><td>1104<td>    SwapBytes(CRC, 3);
+<tr class="covered"><td>1105<td>    if CRC &lt;&gt; CRCCalc(CRC_24, Dest[0], Length(Dest)) then
+<tr class="covered"><td>1106<td>      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="nocodegen"><td>1107<td>  end;
+<tr class="covered"><td>1108<td>end;
+<tr class="nocodegen"><td>1109<td>
+<tr class="nocodegen"><td>1110<td>class function TFormat_UU.CharTableBinary: TBytes;
+<tr class="covered"><td>1111<td>begin
+<tr class="nocodegen"><td>1112<td>  // '`!&quot;#$%&amp;''()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_' +
+<tr class="nocodegen"><td>1113<td>  // ' '+CHR(9)+CHR(10)+CHR(13);
+<tr class="nocodegen"><td>1114<td>
+<tr class="covered"><td>1115<td>  SetLength(result, 68);
+<tr class="nocodegen"><td>1116<td>  {$IF CompilerVersion &gt;= 28.0}
+<tr class="covered"><td>1117<td>  result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,
+<tr class="nocodegen"><td>1118<td>             $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,
+<tr class="nocodegen"><td>1119<td>             $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,
+<tr class="nocodegen"><td>1120<td>             $47, $48, $49, $4A, $4B, $4C, $4D, $4E, $4F, $50, $51, $52, $53,
+<tr class="nocodegen"><td>1121<td>             $54, $55, $56, $57, $58, $59, $5A, $5B, $5C, $5D, $5E, $5F, $20,
+<tr class="covered"><td>1122<td>             $09, $0A, $0D];
+<tr class="nocodegen"><td>1123<td>  {$ELSE}
+<tr class="nocodegen"><td>1124<td>  // Remove this initialisation variant as soon as XE7+ is the new minimum
+<tr class="nocodegen"><td>1125<td>  // supported Delphi version
+<tr class="nocodegen"><td>1126<td>  result[ 0]:=$60;
+<tr class="nocodegen"><td>1127<td>  result[ 1]:=$21;
+<tr class="nocodegen"><td>1128<td>  result[ 2]:=$22;
+<tr class="nocodegen"><td>1129<td>  result[ 3]:=$23;
+<tr class="nocodegen"><td>1130<td>  result[ 4]:=$24;
+<tr class="nocodegen"><td>1131<td>  result[ 5]:=$25;
+<tr class="nocodegen"><td>1132<td>  result[ 6]:=$26;
+<tr class="nocodegen"><td>1133<td>  result[ 7]:=$27;
+<tr class="nocodegen"><td>1134<td>  result[ 8]:=$28;
+<tr class="nocodegen"><td>1135<td>  result[ 9]:=$29;
+<tr class="nocodegen"><td>1136<td>  result[10]:=$2A;
+<tr class="nocodegen"><td>1137<td>  result[11]:=$2B;
+<tr class="nocodegen"><td>1138<td>  result[12]:=$2C;
+<tr class="nocodegen"><td>1139<td>
+<tr class="nocodegen"><td>1140<td>  result[13]:=$2D;
+<tr class="nocodegen"><td>1141<td>  result[14]:=$2E;
+<tr class="nocodegen"><td>1142<td>  result[15]:=$2F;
+<tr class="nocodegen"><td>1143<td>  result[16]:=$30;
+<tr class="nocodegen"><td>1144<td>  result[17]:=$31;
+<tr class="nocodegen"><td>1145<td>  result[18]:=$32;
+<tr class="nocodegen"><td>1146<td>  result[19]:=$33;
+<tr class="nocodegen"><td>1147<td>  result[20]:=$34;
+<tr class="nocodegen"><td>1148<td>  result[21]:=$35;
+<tr class="nocodegen"><td>1149<td>  result[22]:=$36;
+<tr class="nocodegen"><td>1150<td>  result[23]:=$37;
+<tr class="nocodegen"><td>1151<td>  result[24]:=$38;
+<tr class="nocodegen"><td>1152<td>  result[25]:=$39;
+<tr class="nocodegen"><td>1153<td>
+<tr class="nocodegen"><td>1154<td>  result[26]:=$3A;
+<tr class="nocodegen"><td>1155<td>  result[27]:=$3B;
+<tr class="nocodegen"><td>1156<td>  result[28]:=$3C;
+<tr class="nocodegen"><td>1157<td>  result[29]:=$3D;
+<tr class="nocodegen"><td>1158<td>  result[30]:=$3E;
+<tr class="nocodegen"><td>1159<td>  result[31]:=$3F;
+<tr class="nocodegen"><td>1160<td>  result[32]:=$40;
+<tr class="nocodegen"><td>1161<td>  result[33]:=$41;
+<tr class="nocodegen"><td>1162<td>  result[34]:=$42;
+<tr class="nocodegen"><td>1163<td>  result[35]:=$43;
+<tr class="nocodegen"><td>1164<td>  result[36]:=$44;
+<tr class="nocodegen"><td>1165<td>  result[37]:=$45;
+<tr class="nocodegen"><td>1166<td>  result[38]:=$46;
+<tr class="nocodegen"><td>1167<td>
+<tr class="nocodegen"><td>1168<td>  result[39]:=$47;
+<tr class="nocodegen"><td>1169<td>  result[40]:=$48;
+<tr class="nocodegen"><td>1170<td>  result[41]:=$49;
+<tr class="nocodegen"><td>1171<td>  result[42]:=$4A;
+<tr class="nocodegen"><td>1172<td>  result[43]:=$4B;
+<tr class="nocodegen"><td>1173<td>  result[44]:=$4C;
+<tr class="nocodegen"><td>1174<td>  result[45]:=$4D;
+<tr class="nocodegen"><td>1175<td>  result[46]:=$4E;
+<tr class="nocodegen"><td>1176<td>  result[47]:=$4F;
+<tr class="nocodegen"><td>1177<td>  result[48]:=$50;
+<tr class="nocodegen"><td>1178<td>  result[49]:=$51;
+<tr class="nocodegen"><td>1179<td>  result[50]:=$52;
+<tr class="nocodegen"><td>1180<td>  result[51]:=$53;
+<tr class="nocodegen"><td>1181<td>
+<tr class="nocodegen"><td>1182<td>  result[52]:=$54;
+<tr class="nocodegen"><td>1183<td>  result[53]:=$55;
+<tr class="nocodegen"><td>1184<td>  result[54]:=$56;
+<tr class="nocodegen"><td>1185<td>  result[55]:=$57;
+<tr class="nocodegen"><td>1186<td>  result[56]:=$58;
+<tr class="nocodegen"><td>1187<td>  result[57]:=$59;
+<tr class="nocodegen"><td>1188<td>  result[58]:=$5A;
+<tr class="nocodegen"><td>1189<td>  result[59]:=$5B;
+<tr class="nocodegen"><td>1190<td>  result[60]:=$5C;
+<tr class="nocodegen"><td>1191<td>  result[61]:=$5D;
+<tr class="nocodegen"><td>1192<td>  result[62]:=$5E;
+<tr class="nocodegen"><td>1193<td>  result[63]:=$5F;
+<tr class="nocodegen"><td>1194<td>  result[64]:=$20;
+<tr class="nocodegen"><td>1195<td>
+<tr class="nocodegen"><td>1196<td>  result[65]:=$09;
+<tr class="nocodegen"><td>1197<td>  result[66]:=$0A;
+<tr class="nocodegen"><td>1198<td>  result[67]:=$0D;
+<tr class="nocodegen"><td>1199<td>  {$IFEND}
+<tr class="covered"><td>1200<td>end;
+<tr class="nocodegen"><td>1201<td>
+<tr class="nocodegen"><td>1202<td>class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1203<td>var
+<tr class="nocodegen"><td>1204<td>  T: TBytes;
+<tr class="nocodegen"><td>1205<td>  S: PByte;
+<tr class="nocodegen"><td>1206<td>  D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>1207<td>  L, i: Integer;
+<tr class="nocodegen"><td>1208<td>  B: Cardinal;
+<tr class="covered"><td>1209<td>begin
+<tr class="covered"><td>1210<td>  SetLength(Dest, 0);
+<tr class="covered"><td>1211<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1212<td>    Exit;
+<tr class="nocodegen"><td>1213<td>
+<tr class="covered"><td>1214<td>  SetLength(Dest, Size * 4 div 3 + Size div 45 + 10);
+<tr class="nocodegen"><td>1215<td>
+<tr class="covered"><td>1216<td>  T := CharTableBinary;
+<tr class="covered"><td>1217<td>  S := @Source;
+<tr class="covered"><td>1218<td>  D := @Dest[0];
+<tr class="nocodegen"><td>1219<td>
+<tr class="covered"><td>1220<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>1221<td>  begin
+<tr class="covered"><td>1222<td>    L := Size;
+<tr class="covered"><td>1223<td>    if L &gt; 45 then
+<tr class="notcovered"><td>1224<td>      L := 45;
+<tr class="covered"><td>1225<td>    Dec(Size, L);
+<tr class="covered"><td>1226<td>    D^ := T[L];
+<tr class="covered"><td>1227<td>    while L &gt; 0 do
+<tr class="nocodegen"><td>1228<td>    begin
+<tr class="covered"><td>1229<td>      B := 0;
+<tr class="covered"><td>1230<td>      for i := 0 to 2 do
+<tr class="nocodegen"><td>1231<td>      begin
+<tr class="covered"><td>1232<td>        B := B shl 8;
+<tr class="covered"><td>1233<td>        if L &gt; 0 then
+<tr class="nocodegen"><td>1234<td>        begin
+<tr class="covered"><td>1235<td>          B := B or S^;
+<tr class="covered"><td>1236<td>          Inc(S);
+<tr class="nocodegen"><td>1237<td>        end;
+<tr class="covered"><td>1238<td>        Dec(L);
+<tr class="covered"><td>1239<td>      end;
+<tr class="covered"><td>1240<td>      for i := 4 downto 1 do
+<tr class="nocodegen"><td>1241<td>      begin
+<tr class="covered"><td>1242<td>        D[i] := T[B and $3F];
+<tr class="covered"><td>1243<td>        B := B shr 6;
+<tr class="covered"><td>1244<td>      end;
+<tr class="covered"><td>1245<td>      Inc(D, 4);
+<tr class="nocodegen"><td>1246<td>    end;
+<tr class="covered"><td>1247<td>    Inc(D);
+<tr class="nocodegen"><td>1248<td>  end;
+<tr class="nocodegen"><td>1249<td>
+<tr class="covered"><td>1250<td>  SetLength(Dest, PByte(D) - PByte(Dest));
+<tr class="covered"><td>1251<td>end;
+<tr class="nocodegen"><td>1252<td>
+<tr class="nocodegen"><td>1253<td>class procedure TFormat_UU.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1254<td>var
+<tr class="nocodegen"><td>1255<td>  T: TBytes;
+<tr class="nocodegen"><td>1256<td>  S: PByte;
+<tr class="nocodegen"><td>1257<td>  D, L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>1258<td>  i, E: Integer;
+<tr class="nocodegen"><td>1259<td>  B: UInt32;
+<tr class="covered"><td>1260<td>begin
+<tr class="covered"><td>1261<td>  SetLength(Dest, 0);
+<tr class="covered"><td>1262<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1263<td>    Exit;
+<tr class="nocodegen"><td>1264<td>
+<tr class="covered"><td>1265<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>1266<td>
+<tr class="covered"><td>1267<td>  T := CharTableBinary;
+<tr class="covered"><td>1268<td>  S := @Source;
+<tr class="covered"><td>1269<td>  D := @Dest[0];
+<tr class="nocodegen"><td>1270<td>
+<tr class="covered"><td>1271<td>  L := PByte(S) + Size;
+<tr class="nocodegen"><td>1272<td>
+<tr class="nocodegen"><td>1273<td>  repeat
+<tr class="covered"><td>1274<td>    Size := TableFindBinary(S^, T, 64);
+<tr class="covered"><td>1275<td>    if (Size &lt; 0) or (Size &gt; 45) then
+<tr class="covered"><td>1276<td>      raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="covered"><td>1277<td>    Inc(S);
+<tr class="covered"><td>1278<td>    while Size &gt; 0 do
+<tr class="nocodegen"><td>1279<td>    begin
+<tr class="covered"><td>1280<td>      B := 0;
+<tr class="covered"><td>1281<td>      i := 4;
+<tr class="covered"><td>1282<td>      while (i &gt; 0) and (S &lt;= L) do
+<tr class="nocodegen"><td>1283<td>      begin
+<tr class="covered"><td>1284<td>        E := TableFindBinary(S^, T, 64);
+<tr class="covered"><td>1285<td>        if E &gt;= 0 then
+<tr class="nocodegen"><td>1286<td>        begin
+<tr class="covered"><td>1287<td>          B := B shl 6 or Byte(E);
+<tr class="covered"><td>1288<td>          Dec(i);
+<tr class="nocodegen"><td>1289<td>        end;
+<tr class="covered"><td>1290<td>        Inc(S);
+<tr class="nocodegen"><td>1291<td>      end;
+<tr class="covered"><td>1292<td>      i := 2;
+<tr class="nocodegen"><td>1293<td>      repeat
+<tr class="covered"><td>1294<td>        D[i] := Byte(B);
+<tr class="covered"><td>1295<td>        B    := B shr 8;
+<tr class="covered"><td>1296<td>        Dec(i);
+<tr class="covered"><td>1297<td>      until i &lt; 0;
+<tr class="covered"><td>1298<td>      if Size &gt; 3 then
+<tr class="covered"><td>1299<td>        Inc(D, 3)
+<tr class="nocodegen"><td>1300<td>      else
+<tr class="covered"><td>1301<td>        Inc(D, Size);
+<tr class="covered"><td>1302<td>      Dec(Size, 3);
+<tr class="nocodegen"><td>1303<td>    end;
+<tr class="covered"><td>1304<td>  until S &gt;= L;
+<tr class="nocodegen"><td>1305<td>
+<tr class="covered"><td>1306<td>  SetLength(Dest, PByte(D) - PByte(Dest));
+<tr class="covered"><td>1307<td>end;
+<tr class="nocodegen"><td>1308<td>
+<tr class="nocodegen"><td>1309<td>class function TFormat_UU.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>1310<td>var
+<tr class="nocodegen"><td>1311<td>  T: TBytes;
+<tr class="nocodegen"><td>1312<td>  S: PByte;
+<tr class="nocodegen"><td>1313<td>  Len, P, i: Integer;
+<tr class="covered"><td>1314<td>begin
+<tr class="covered"><td>1315<td>  Result := False;
+<tr class="covered"><td>1316<td>  T := CharTableBinary;
+<tr class="covered"><td>1317<td>  Len := Length(T);
+<tr class="covered"><td>1318<td>  S := @Data;
+<tr class="covered"><td>1319<td>  P := 0;
+<tr class="nocodegen"><td>1320<td>
+<tr class="covered"><td>1321<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>1322<td>  begin
+<tr class="covered"><td>1323<td>    i := TableFindBinary(S^, T, Len);
+<tr class="covered"><td>1324<td>    if i &gt;= 0 then
+<tr class="nocodegen"><td>1325<td>    begin
+<tr class="covered"><td>1326<td>      Dec(Size);
+<tr class="covered"><td>1327<td>      Inc(S);
+<tr class="covered"><td>1328<td>      if P = 0 then
+<tr class="nocodegen"><td>1329<td>      begin
+<tr class="covered"><td>1330<td>        if i &gt; 45 then
+<tr class="nocodegen"><td>1331<td>          Exit;
+<tr class="covered"><td>1332<td>        P := (i * 4 + 2) div 3;
+<tr class="nocodegen"><td>1333<td>      end
+<tr class="nocodegen"><td>1334<td>      else
+<tr class="covered"><td>1335<td>        if i &lt; 64 then
+<tr class="covered"><td>1336<td>          Dec(P);
+<tr class="nocodegen"><td>1337<td>    end
+<tr class="nocodegen"><td>1338<td>    else
+<tr class="nocodegen"><td>1339<td>      Exit;
+<tr class="nocodegen"><td>1340<td>  end;
+<tr class="nocodegen"><td>1341<td>
+<tr class="covered"><td>1342<td>  if P &lt;&gt; 0 then
+<tr class="nocodegen"><td>1343<td>    Exit;
+<tr class="nocodegen"><td>1344<td>
+<tr class="covered"><td>1345<td>  Result := True;
+<tr class="covered"><td>1346<td>end;
+<tr class="nocodegen"><td>1347<td>
+<tr class="nocodegen"><td>1348<td>class function TFormat_XX.CharTableBinary: TBytes;
+<tr class="covered"><td>1349<td>begin
+<tr class="nocodegen"><td>1350<td>  // '+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
+<tr class="nocodegen"><td>1351<td>  // ' &quot;()[]'''+CHR(9)+CHR(10)+CHR(13);
+<tr class="covered"><td>1352<td>  SetLength(result, 74);
+<tr class="nocodegen"><td>1353<td>  {$IF CompilerVersion &gt;= 28.0}
+<tr class="covered"><td>1354<td>  result := [$2B, $2D, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41,
+<tr class="nocodegen"><td>1355<td>             $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E,
+<tr class="nocodegen"><td>1356<td>             $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A, $61,
+<tr class="nocodegen"><td>1357<td>             $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D, $6E,
+<tr class="nocodegen"><td>1358<td>             $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A, $20,
+<tr class="covered"><td>1359<td>             $22, $28, $29, $5B, $5D, $27, $09, $0A, $0D];
+<tr class="nocodegen"><td>1360<td>  {$ELSE}
+<tr class="nocodegen"><td>1361<td>  // Remove this initialisation variant as soon as XE7+ is the new minimum
+<tr class="nocodegen"><td>1362<td>  // supported Delphi version
+<tr class="nocodegen"><td>1363<td>  result[ 0]:=$2B;
+<tr class="nocodegen"><td>1364<td>  result[ 1]:=$2D;
+<tr class="nocodegen"><td>1365<td>  result[ 2]:=$30;
+<tr class="nocodegen"><td>1366<td>  result[ 3]:=$31;
+<tr class="nocodegen"><td>1367<td>  result[ 4]:=$32;
+<tr class="nocodegen"><td>1368<td>  result[ 5]:=$33;
+<tr class="nocodegen"><td>1369<td>  result[ 6]:=$34;
+<tr class="nocodegen"><td>1370<td>  result[ 7]:=$35;
+<tr class="nocodegen"><td>1371<td>  result[ 8]:=$36;
+<tr class="nocodegen"><td>1372<td>  result[ 9]:=$37;
+<tr class="nocodegen"><td>1373<td>  result[10]:=$38;
+<tr class="nocodegen"><td>1374<td>  result[11]:=$39;
+<tr class="nocodegen"><td>1375<td>  result[12]:=$41;
+<tr class="nocodegen"><td>1376<td>
+<tr class="nocodegen"><td>1377<td>  result[13]:=$42;
+<tr class="nocodegen"><td>1378<td>  result[14]:=$43;
+<tr class="nocodegen"><td>1379<td>  result[15]:=$44;
+<tr class="nocodegen"><td>1380<td>  result[16]:=$45;
+<tr class="nocodegen"><td>1381<td>  result[17]:=$46;
+<tr class="nocodegen"><td>1382<td>  result[18]:=$47;
+<tr class="nocodegen"><td>1383<td>  result[19]:=$48;
+<tr class="nocodegen"><td>1384<td>  result[20]:=$49;
+<tr class="nocodegen"><td>1385<td>  result[21]:=$4A;
+<tr class="nocodegen"><td>1386<td>  result[22]:=$4B;
+<tr class="nocodegen"><td>1387<td>  result[23]:=$4C;
+<tr class="nocodegen"><td>1388<td>  result[24]:=$4D;
+<tr class="nocodegen"><td>1389<td>  result[25]:=$4E;
+<tr class="nocodegen"><td>1390<td>
+<tr class="nocodegen"><td>1391<td>  result[26]:=$4F;
+<tr class="nocodegen"><td>1392<td>  result[27]:=$50;
+<tr class="nocodegen"><td>1393<td>  result[28]:=$51;
+<tr class="nocodegen"><td>1394<td>  result[29]:=$52;
+<tr class="nocodegen"><td>1395<td>  result[30]:=$53;
+<tr class="nocodegen"><td>1396<td>  result[31]:=$54;
+<tr class="nocodegen"><td>1397<td>  result[32]:=$55;
+<tr class="nocodegen"><td>1398<td>  result[33]:=$56;
+<tr class="nocodegen"><td>1399<td>  result[34]:=$57;
+<tr class="nocodegen"><td>1400<td>  result[35]:=$58;
+<tr class="nocodegen"><td>1401<td>  result[36]:=$59;
+<tr class="nocodegen"><td>1402<td>  result[37]:=$5A;
+<tr class="nocodegen"><td>1403<td>  result[38]:=$61;
+<tr class="nocodegen"><td>1404<td>
+<tr class="nocodegen"><td>1405<td>  result[39]:=$62;
+<tr class="nocodegen"><td>1406<td>  result[40]:=$63;
+<tr class="nocodegen"><td>1407<td>  result[41]:=$64;
+<tr class="nocodegen"><td>1408<td>  result[42]:=$65;
+<tr class="nocodegen"><td>1409<td>  result[43]:=$66;
+<tr class="nocodegen"><td>1410<td>  result[44]:=$67;
+<tr class="nocodegen"><td>1411<td>  result[45]:=$68;
+<tr class="nocodegen"><td>1412<td>  result[46]:=$69;
+<tr class="nocodegen"><td>1413<td>  result[47]:=$6A;
+<tr class="nocodegen"><td>1414<td>  result[48]:=$6B;
+<tr class="nocodegen"><td>1415<td>  result[49]:=$6C;
+<tr class="nocodegen"><td>1416<td>  result[50]:=$6D;
+<tr class="nocodegen"><td>1417<td>  result[51]:=$6E;
+<tr class="nocodegen"><td>1418<td>
+<tr class="nocodegen"><td>1419<td>  result[52]:=$6F;
+<tr class="nocodegen"><td>1420<td>  result[53]:=$70;
+<tr class="nocodegen"><td>1421<td>  result[54]:=$71;
+<tr class="nocodegen"><td>1422<td>  result[55]:=$72;
+<tr class="nocodegen"><td>1423<td>  result[56]:=$73;
+<tr class="nocodegen"><td>1424<td>  result[57]:=$74;
+<tr class="nocodegen"><td>1425<td>  result[58]:=$75;
+<tr class="nocodegen"><td>1426<td>  result[59]:=$76;
+<tr class="nocodegen"><td>1427<td>  result[60]:=$77;
+<tr class="nocodegen"><td>1428<td>  result[61]:=$78;
+<tr class="nocodegen"><td>1429<td>  result[62]:=$79;
+<tr class="nocodegen"><td>1430<td>  result[63]:=$7A;
+<tr class="nocodegen"><td>1431<td>  result[64]:=$20;
+<tr class="nocodegen"><td>1432<td>
+<tr class="nocodegen"><td>1433<td>  result[65]:=$22;
+<tr class="nocodegen"><td>1434<td>  result[66]:=$28;
+<tr class="nocodegen"><td>1435<td>  result[67]:=$29;
+<tr class="nocodegen"><td>1436<td>  result[68]:=$5B;
+<tr class="nocodegen"><td>1437<td>  result[69]:=$5D;
+<tr class="nocodegen"><td>1438<td>  result[70]:=$27;
+<tr class="nocodegen"><td>1439<td>  result[71]:=$09;
+<tr class="nocodegen"><td>1440<td>  result[72]:=$0A;
+<tr class="nocodegen"><td>1441<td>  result[73]:=$0D;
+<tr class="nocodegen"><td>1442<td>  {$IFEND}
+<tr class="covered"><td>1443<td>end;
+<tr class="nocodegen"><td>1444<td>
+<tr class="nocodegen"><td>1445<td>var
+<tr class="nocodegen"><td>1446<td>  // Initlialized in initialization section, cannot be const because of the
+<tr class="nocodegen"><td>1447<td>  // TBytes requirement
+<tr class="nocodegen"><td>1448<td>  ESCAPE_CodesL: TBytes; //array[0..6] of Byte = ($61, $62, $74, $6E, $76, $66, $72);
+<tr class="nocodegen"><td>1449<td>  ESCAPE_CodesU: TBytes; //array[0..6] of Byte = ($41, $42, $54, $4E, $56, $46, $52);
+<tr class="nocodegen"><td>1450<td>
+<tr class="nocodegen"><td>1451<td>class function TFormat_ESCAPE.CharTableBinary: TBytes;
+<tr class="covered"><td>1452<td>begin
+<tr class="covered"><td>1453<td>  Result := TFormat_HEX.CharTableBinary;
+<tr class="covered"><td>1454<td>end;
+<tr class="nocodegen"><td>1455<td>
+<tr class="nocodegen"><td>1456<td>class procedure TFormat_ESCAPE.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1457<td>var
+<tr class="nocodegen"><td>1458<td>  T: TBytes;
+<tr class="nocodegen"><td>1459<td>  S: PByte;
+<tr class="nocodegen"><td>1460<td>  D: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>1461<td>  i: Integer;
+<tr class="covered"><td>1462<td>begin
+<tr class="covered"><td>1463<td>  SetLength(Dest, 0);
+<tr class="covered"><td>1464<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1465<td>    Exit;
+<tr class="nocodegen"><td>1466<td>
+<tr class="covered"><td>1467<td>  SetLength(Dest, Size + 8);
+<tr class="nocodegen"><td>1468<td>
+<tr class="covered"><td>1469<td>  T := CharTableBinary;
+<tr class="covered"><td>1470<td>  S := @Source;
+<tr class="covered"><td>1471<td>  D := @Dest[0];
+<tr class="nocodegen"><td>1472<td>
+<tr class="covered"><td>1473<td>  i := Size;
+<tr class="nocodegen"><td>1474<td>
+<tr class="covered"><td>1475<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>1476<td>  begin
+<tr class="covered"><td>1477<td>    if i &lt;= 0 then
+<tr class="nocodegen"><td>1478<td>    begin
+<tr class="covered"><td>1479<td>      i := D - PByte(Dest);
+<tr class="covered"><td>1480<td>      SetLength(Dest, i + Size + 8);
+<tr class="covered"><td>1481<td>      D := PByte(Dest) + i;
+<tr class="covered"><td>1482<td>      i := Size;
+<tr class="nocodegen"><td>1483<td>    end;
+<tr class="covered"><td>1484<td>    if (S^ &lt; 32) or (S^ &gt; $7F) then
+<tr class="nocodegen"><td>1485<td>    begin
+<tr class="covered"><td>1486<td>      if (S^ &gt;= 7) and (S^ &lt;= 13) then
+<tr class="nocodegen"><td>1487<td>      begin
+<tr class="covered"><td>1488<td>        D^ := $5C; // \ char
+<tr class="covered"><td>1489<td>        Inc(D);
+<tr class="covered"><td>1490<td>        D^ := ESCAPE_CodesL[S^ - 7];
+<tr class="covered"><td>1491<td>        Inc(D);
+<tr class="covered"><td>1492<td>        Dec(i, 2);
+<tr class="nocodegen"><td>1493<td>      end
+<tr class="nocodegen"><td>1494<td>      else
+<tr class="nocodegen"><td>1495<td>      begin
+<tr class="covered"><td>1496<td>        D^ := $5C; // \ char
+<tr class="covered"><td>1497<td>        Inc(D);
+<tr class="covered"><td>1498<td>        D^ := $78; // x
+<tr class="covered"><td>1499<td>        Inc(D);
+<tr class="covered"><td>1500<td>        D^ := T[S^ shr 4];
+<tr class="covered"><td>1501<td>        Inc(D);
+<tr class="covered"><td>1502<td>        D^ := T[S^ and $F];
+<tr class="covered"><td>1503<td>        Inc(D);
+<tr class="covered"><td>1504<td>        Dec(i, 4);
+<tr class="nocodegen"><td>1505<td>      end
+<tr class="nocodegen"><td>1506<td>    end
+<tr class="nocodegen"><td>1507<td>    else
+<tr class="nocodegen"><td>1508<td>    begin
+<tr class="nocodegen"><td>1509<td>      // S^is \ char?
+<tr class="covered"><td>1510<td>      if S^ = $5C then
+<tr class="nocodegen"><td>1511<td>      begin
+<tr class="covered"><td>1512<td>        D^ := $5C; // \ char
+<tr class="covered"><td>1513<td>        Inc(D);
+<tr class="covered"><td>1514<td>        D^ := $5C; // \ char
+<tr class="covered"><td>1515<td>        Inc(D);
+<tr class="covered"><td>1516<td>        Dec(i, 2);
+<tr class="nocodegen"><td>1517<td>      end
+<tr class="nocodegen"><td>1518<td>      else
+<tr class="nocodegen"><td>1519<td>      // S^ is &quot; char?
+<tr class="covered"><td>1520<td>      if S^ = $22 then
+<tr class="nocodegen"><td>1521<td>      begin
+<tr class="covered"><td>1522<td>        D^ := $5C; // \ char
+<tr class="covered"><td>1523<td>        Inc(D);
+<tr class="covered"><td>1524<td>        D^ := $22; // &quot; char
+<tr class="covered"><td>1525<td>        Inc(D);
+<tr class="covered"><td>1526<td>        Dec(i, 2);
+<tr class="nocodegen"><td>1527<td>      end
+<tr class="nocodegen"><td>1528<td>      else
+<tr class="nocodegen"><td>1529<td>      begin
+<tr class="covered"><td>1530<td>        D^ := S^;
+<tr class="covered"><td>1531<td>        Inc(D);
+<tr class="covered"><td>1532<td>        Dec(i);
+<tr class="nocodegen"><td>1533<td>      end;
+<tr class="nocodegen"><td>1534<td>    end;
+<tr class="covered"><td>1535<td>    Dec(Size);
+<tr class="covered"><td>1536<td>    Inc(S);
+<tr class="nocodegen"><td>1537<td>  end;
+<tr class="nocodegen"><td>1538<td>
+<tr class="covered"><td>1539<td>  SetLength(Dest, PByte(D) - PByte(Dest));
+<tr class="covered"><td>1540<td>end;
+<tr class="nocodegen"><td>1541<td>
+<tr class="nocodegen"><td>1542<td>class function TFormat_ESCAPE.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>1543<td>var
+<tr class="nocodegen"><td>1544<td>  T: TBytes;
+<tr class="nocodegen"><td>1545<td>  S: PByte;
+<tr class="covered"><td>1546<td>begin
+<tr class="covered"><td>1547<td>  Result := False;
+<tr class="covered"><td>1548<td>  T := CharTableBinary;
+<tr class="covered"><td>1549<td>  S := @Data;
+<tr class="nocodegen"><td>1550<td>
+<tr class="covered"><td>1551<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>1552<td>  begin
+<tr class="covered"><td>1553<td>    if (S^ &gt; $7F) or (S^ &lt; 32) then
+<tr class="nocodegen"><td>1554<td>      Exit;
+<tr class="nocodegen"><td>1555<td>
+<tr class="nocodegen"><td>1556<td>    // start of an escape sequence
+<tr class="covered"><td>1557<td>    if S^ = $5C then
+<tr class="nocodegen"><td>1558<td>    begin
+<tr class="covered"><td>1559<td>      Dec(Size);
+<tr class="covered"><td>1560<td>      Inc(S);
+<tr class="nocodegen"><td>1561<td>
+<tr class="nocodegen"><td>1562<td>      // \ at the end
+<tr class="covered"><td>1563<td>      if Size &lt;= 0 then
+<tr class="nocodegen"><td>1564<td>        Exit;
+<tr class="nocodegen"><td>1565<td>
+<tr class="nocodegen"><td>1566<td>      // X for hex notation
+<tr class="covered"><td>1567<td>      if UpCaseBinary(S^) = $58 then
+<tr class="nocodegen"><td>1568<td>      begin
+<tr class="covered"><td>1569<td>        Inc(S);
+<tr class="covered"><td>1570<td>        Dec(Size);
+<tr class="nocodegen"><td>1571<td>
+<tr class="nocodegen"><td>1572<td>        // incomplete hex notation follows?
+<tr class="covered"><td>1573<td>        if (Size &lt; 2) or (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then
+<tr class="nocodegen"><td>1574<td>          Exit;
+<tr class="nocodegen"><td>1575<td>
+<tr class="covered"><td>1576<td>        Inc(S);
+<tr class="covered"><td>1577<td>        Dec(Size);
+<tr class="nocodegen"><td>1578<td>
+<tr class="covered"><td>1579<td>        if (TableFindBinary(UpCaseBinary(S^), T, 16) &lt; 0) then
+<tr class="nocodegen"><td>1580<td>          Exit;
+<tr class="nocodegen"><td>1581<td>
+<tr class="covered"><td>1582<td>        Inc(S);
+<tr class="covered"><td>1583<td>        Dec(Size);
+<tr class="nocodegen"><td>1584<td>      end
+<tr class="nocodegen"><td>1585<td>      else
+<tr class="nocodegen"><td>1586<td>      begin
+<tr class="nocodegen"><td>1587<td>        // \ with invalid following char?
+<tr class="covered"><td>1588<td>        if TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7) &lt; 0 then
+<tr class="nocodegen"><td>1589<td>          Exit;
+<tr class="nocodegen"><td>1590<td>
+<tr class="covered"><td>1591<td>        Dec(Size);
+<tr class="covered"><td>1592<td>        Inc(S);
+<tr class="nocodegen"><td>1593<td>      end;
+<tr class="nocodegen"><td>1594<td>    end
+<tr class="nocodegen"><td>1595<td>    else
+<tr class="nocodegen"><td>1596<td>    begin
+<tr class="covered"><td>1597<td>      Dec(Size);
+<tr class="covered"><td>1598<td>      Inc(S);
+<tr class="nocodegen"><td>1599<td>    end;
+<tr class="nocodegen"><td>1600<td>  end;
+<tr class="nocodegen"><td>1601<td>
+<tr class="covered"><td>1602<td>  Result := True;
+<tr class="covered"><td>1603<td>end;
+<tr class="nocodegen"><td>1604<td>
+<tr class="nocodegen"><td>1605<td>class procedure TFormat_ESCAPE.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+<tr class="nocodegen"><td>1606<td>var
+<tr class="nocodegen"><td>1607<td>  T: TBytes;
+<tr class="nocodegen"><td>1608<td>  S: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>1609<td>  D: PByte;
+<tr class="nocodegen"><td>1610<td>  L: PByte; // 1) to make pointer arithmetic work 2) P/TByteArray is limited to 32768 bytes
+<tr class="nocodegen"><td>1611<td>  i: Integer;
+<tr class="covered"><td>1612<td>begin
+<tr class="covered"><td>1613<td>  if Size &lt;= 0 then
+<tr class="nocodegen"><td>1614<td>    Exit;
+<tr class="covered"><td>1615<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>1616<td>
+<tr class="covered"><td>1617<td>  T := CharTableBinary;
+<tr class="covered"><td>1618<td>  S := @Source;
+<tr class="covered"><td>1619<td>  D := @Dest[0];
+<tr class="nocodegen"><td>1620<td>
+<tr class="covered"><td>1621<td>  L := S + Size;
+<tr class="nocodegen"><td>1622<td>
+<tr class="covered"><td>1623<td>  while S &lt; L do
+<tr class="nocodegen"><td>1624<td>  begin
+<tr class="nocodegen"><td>1625<td>    // S^ is \ char?
+<tr class="covered"><td>1626<td>    if S^ = $5C then
+<tr class="nocodegen"><td>1627<td>    begin
+<tr class="covered"><td>1628<td>      Inc(S);
+<tr class="covered"><td>1629<td>      if S &gt; L then Break;
+<tr class="nocodegen"><td>1630<td>      // S^ is X char?
+<tr class="covered"><td>1631<td>      if UpCaseBinary(S^) = $58 then
+<tr class="nocodegen"><td>1632<td>      begin
+<tr class="covered"><td>1633<td>        if S + 2 &gt; L then
+<tr class="covered"><td>1634<td>          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="covered"><td>1635<td>        Inc(S);
+<tr class="covered"><td>1636<td>        i := TableFindBinary(UpCaseBinary(S^), T, 16);
+<tr class="covered"><td>1637<td>        if i &lt; 0 then
+<tr class="covered"><td>1638<td>          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="covered"><td>1639<td>        D^ := i shl 4;
+<tr class="covered"><td>1640<td>        Inc(S);
+<tr class="covered"><td>1641<td>        i := TableFindBinary(UpCaseBinary(S^), T, 16);
+<tr class="covered"><td>1642<td>        if i &lt; 0 then
+<tr class="covered"><td>1643<td>          raise EDECFormatException.CreateResFmt(@sInvalidStringFormat, [self.GetShortClassName]);
+<tr class="covered"><td>1644<td>        D^ := D^ or i;
+<tr class="nocodegen"><td>1645<td>      end
+<tr class="nocodegen"><td>1646<td>      else
+<tr class="nocodegen"><td>1647<td>      begin
+<tr class="covered"><td>1648<td>        i := TableFindBinary(UpCaseBinary(S^), TBytes(ESCAPE_CodesU), 7);
+<tr class="covered"><td>1649<td>        if i &gt;= 0 then
+<tr class="covered"><td>1650<td>          D^ := i + 7
+<tr class="nocodegen"><td>1651<td>        else
+<tr class="covered"><td>1652<td>          D^ := S^;
+<tr class="nocodegen"><td>1653<td>      end;
+<tr class="nocodegen"><td>1654<td>    end
+<tr class="nocodegen"><td>1655<td>    else
+<tr class="covered"><td>1656<td>      D^ := S^;
+<tr class="covered"><td>1657<td>    Inc(D);
+<tr class="covered"><td>1658<td>    Inc(S);
+<tr class="nocodegen"><td>1659<td>  end;
+<tr class="nocodegen"><td>1660<td>
+<tr class="covered"><td>1661<td>  SetLength(Dest, PByte(D) - PByte(Dest));
+<tr class="covered"><td>1662<td>end;
+<tr class="nocodegen"><td>1663<td>
+<tr class="nocodegen"><td>1664<td>{ TFormat_BigEndian16 }
+<tr class="nocodegen"><td>1665<td>
+<tr class="nocodegen"><td>1666<td>class procedure TFormat_BigEndian16.DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1667<td>  Size: Integer);
+<tr class="covered"><td>1668<td>begin
+<tr class="covered"><td>1669<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1670<td>end;
+<tr class="nocodegen"><td>1671<td>
+<tr class="nocodegen"><td>1672<td>class procedure TFormat_BigEndian16.DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1673<td>  Size: Integer);
+<tr class="covered"><td>1674<td>begin
+<tr class="covered"><td>1675<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1676<td>end;
+<tr class="nocodegen"><td>1677<td>
+<tr class="nocodegen"><td>1678<td>class function TFormat_BigEndian16.DoIsValid(const Data;
+<tr class="nocodegen"><td>1679<td>  Size: Integer): Boolean;
+<tr class="covered"><td>1680<td>begin
+<tr class="nocodegen"><td>1681<td>  // swapping bytes in 16 bit mode requires even number of bytes
+<tr class="covered"><td>1682<td>  result := not Odd(Size);
+<tr class="covered"><td>1683<td>end;
+<tr class="nocodegen"><td>1684<td>
+<tr class="nocodegen"><td>1685<td>class procedure TFormat_BigEndian16.DoSawp(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1686<td>  Size: Integer);
+<tr class="nocodegen"><td>1687<td>var
+<tr class="nocodegen"><td>1688<td>  i : Integer;
+<tr class="covered"><td>1689<td>begin
+<tr class="covered"><td>1690<td>  if (Size &lt; 0) or Odd(Size) then
+<tr class="nocodegen"><td>1691<td>    Exit;
+<tr class="covered"><td>1692<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>1693<td>
+<tr class="covered"><td>1694<td>  if (Size &gt; 0) then
+<tr class="nocodegen"><td>1695<td>  begin
+<tr class="covered"><td>1696<td>    Move(Source, Dest[0], Size);
+<tr class="nocodegen"><td>1697<td>
+<tr class="covered"><td>1698<td>    i := 0;
+<tr class="covered"><td>1699<td>    while (i &lt; length(Dest)) do
+<tr class="nocodegen"><td>1700<td>    begin
+<tr class="covered"><td>1701<td>      DECUtil.SwapBytes(Dest[i], 2);
+<tr class="covered"><td>1702<td>      inc(i, 2);
+<tr class="nocodegen"><td>1703<td>    end;
+<tr class="nocodegen"><td>1704<td>  end;
+<tr class="covered"><td>1705<td>end;
+<tr class="nocodegen"><td>1706<td>
+<tr class="nocodegen"><td>1707<td>{ TFormat_BigEndian32 }
+<tr class="nocodegen"><td>1708<td>
+<tr class="nocodegen"><td>1709<td>class procedure TFormat_BigEndian32.DoDecode(const Source;
+<tr class="nocodegen"><td>1710<td>                                             var Dest: TBytes;
+<tr class="nocodegen"><td>1711<td>                                             Size: Integer);
+<tr class="covered"><td>1712<td>begin
+<tr class="covered"><td>1713<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1714<td>end;
+<tr class="nocodegen"><td>1715<td>
+<tr class="nocodegen"><td>1716<td>class procedure TFormat_BigEndian32.DoEncode(const Source;
+<tr class="nocodegen"><td>1717<td>                                             var Dest: TBytes;
+<tr class="nocodegen"><td>1718<td>                                             Size: Integer);
+<tr class="covered"><td>1719<td>begin
+<tr class="covered"><td>1720<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1721<td>end;
+<tr class="nocodegen"><td>1722<td>
+<tr class="nocodegen"><td>1723<td>class function TFormat_BigEndian32.DoIsValid(const Data;
+<tr class="nocodegen"><td>1724<td>                                             Size: Integer): Boolean;
+<tr class="covered"><td>1725<td>begin
+<tr class="covered"><td>1726<td>  result := (Size mod 4) = 0;
+<tr class="covered"><td>1727<td>end;
+<tr class="nocodegen"><td>1728<td>
+<tr class="nocodegen"><td>1729<td>class procedure TFormat_BigEndian32.DoSawp(const Source;
+<tr class="nocodegen"><td>1730<td>                                           var Dest: TBytes;
+<tr class="nocodegen"><td>1731<td>                                           Size: Integer);
+<tr class="nocodegen"><td>1732<td>var
+<tr class="nocodegen"><td>1733<td>  i       : Integer;
+<tr class="nocodegen"><td>1734<td>  SwapRes : UInt32;
+<tr class="covered"><td>1735<td>begin
+<tr class="covered"><td>1736<td>  if (Size &lt; 0) or ((Size mod 4) &lt;&gt; 0) then
+<tr class="nocodegen"><td>1737<td>    Exit;
+<tr class="covered"><td>1738<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>1739<td>
+<tr class="covered"><td>1740<td>  if (Size &gt; 0) then
+<tr class="nocodegen"><td>1741<td>  begin
+<tr class="covered"><td>1742<td>    Move(Source, Dest[0], Size);
+<tr class="nocodegen"><td>1743<td>
+<tr class="covered"><td>1744<td>    i := 0;
+<tr class="covered"><td>1745<td>    while (i &lt; length(Dest)) do
+<tr class="nocodegen"><td>1746<td>    begin
+<tr class="covered"><td>1747<td>      Move(Dest[i], SwapRes, 4);
+<tr class="covered"><td>1748<td>      SwapRes := DECUtil.SwapUInt32(SwapRes);
+<tr class="covered"><td>1749<td>      Move(SwapRes, Dest[i], 4);
+<tr class="covered"><td>1750<td>      inc(i, 4);
+<tr class="nocodegen"><td>1751<td>    end;
+<tr class="nocodegen"><td>1752<td>  end;
+<tr class="covered"><td>1753<td>end;
+<tr class="nocodegen"><td>1754<td>
+<tr class="nocodegen"><td>1755<td>{ TFormat_BigEndian64 }
+<tr class="nocodegen"><td>1756<td>
+<tr class="nocodegen"><td>1757<td>class procedure TFormat_BigEndian64.DoDecode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1758<td>  Size: Integer);
+<tr class="covered"><td>1759<td>begin
+<tr class="covered"><td>1760<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1761<td>end;
+<tr class="nocodegen"><td>1762<td>
+<tr class="nocodegen"><td>1763<td>class procedure TFormat_BigEndian64.DoEncode(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1764<td>  Size: Integer);
+<tr class="covered"><td>1765<td>begin
+<tr class="covered"><td>1766<td>  DoSawp(Source, Dest, Size);
+<tr class="covered"><td>1767<td>end;
+<tr class="nocodegen"><td>1768<td>
+<tr class="nocodegen"><td>1769<td>class function TFormat_BigEndian64.DoIsValid(const Data;
+<tr class="nocodegen"><td>1770<td>  Size: Integer): Boolean;
+<tr class="covered"><td>1771<td>begin
+<tr class="covered"><td>1772<td>  result := (Size mod 8) = 0;
+<tr class="covered"><td>1773<td>end;
+<tr class="nocodegen"><td>1774<td>
+<tr class="nocodegen"><td>1775<td>class procedure TFormat_BigEndian64.DoSawp(const Source; var Dest: TBytes;
+<tr class="nocodegen"><td>1776<td>  Size: Integer);
+<tr class="nocodegen"><td>1777<td>var
+<tr class="nocodegen"><td>1778<td>  i       : Integer;
+<tr class="nocodegen"><td>1779<td>  SwapRes : Int64;
+<tr class="covered"><td>1780<td>begin
+<tr class="covered"><td>1781<td>  if (Size &lt; 0) or ((Size mod 8) &lt;&gt; 0) then
+<tr class="nocodegen"><td>1782<td>    Exit;
+<tr class="covered"><td>1783<td>  SetLength(Dest, Size);
+<tr class="nocodegen"><td>1784<td>
+<tr class="covered"><td>1785<td>  if (Size &gt; 0) then
+<tr class="nocodegen"><td>1786<td>  begin
+<tr class="covered"><td>1787<td>    Move(Source, Dest[0], Size);
+<tr class="nocodegen"><td>1788<td>
+<tr class="covered"><td>1789<td>    i := 0;
+<tr class="covered"><td>1790<td>    while (i &lt; length(Dest)) do
+<tr class="nocodegen"><td>1791<td>    begin
+<tr class="covered"><td>1792<td>      Move(Dest[i], SwapRes, 8);
+<tr class="covered"><td>1793<td>      SwapRes := DECUtil.SwapInt64(SwapRes);
+<tr class="covered"><td>1794<td>      Move(SwapRes, Dest[i], 8);
+<tr class="covered"><td>1795<td>      inc(i, 8);
+<tr class="nocodegen"><td>1796<td>    end;
+<tr class="nocodegen"><td>1797<td>  end;
+<tr class="covered"><td>1798<td>end;
+<tr class="nocodegen"><td>1799<td>
+<tr class="nocodegen"><td>1800<td>{ TFormat_Base32 }
+<tr class="nocodegen"><td>1801<td>
+<tr class="nocodegen"><td>1802<td>class procedure TFormat_Base32.PrepareTable;
+<tr class="nocodegen"><td>1803<td>var
+<tr class="nocodegen"><td>1804<td>  c : Char;
+<tr class="covered"><td>1805<td>begin
+<tr class="covered"><td>1806<td>  for c := #0 to High(FBase32DecodeTable) do begin
+<tr class="covered"><td>1807<td>     case c of
+<tr class="covered"><td>1808<td>        'A'..'Z' : FBase32DecodeTable[c] := Ord(c)-Ord('A');
+<tr class="covered"><td>1809<td>        'a'..'z' : FBase32DecodeTable[c] := Ord(c)-Ord('a');
+<tr class="covered"><td>1810<td>        '2'..'7' : FBase32DecodeTable[c] := Ord(c)+(26-Ord('2'));
+<tr class="covered"><td>1811<td>        '0' : FBase32DecodeTable[c] := Ord('O')-Ord('A');
+<tr class="nocodegen"><td>1812<td>     else
+<tr class="covered"><td>1813<td>        FBase32DecodeTable[c] := 255;
+<tr class="nocodegen"><td>1814<td>     end;
+<tr class="covered"><td>1815<td>  end;
+<tr class="covered"><td>1816<td>end;
+<tr class="nocodegen"><td>1817<td>
+<tr class="nocodegen"><td>1818<td>class procedure TFormat_Base32.DoDecode(const Source;
+<tr class="nocodegen"><td>1819<td>                                        var Dest: TBytes;
+<tr class="nocodegen"><td>1820<td>                                        Size: Integer);
+<tr class="nocodegen"><td>1821<td>var
+<tr class="nocodegen"><td>1822<td>   c, b, i, n, d : Integer;
+<tr class="nocodegen"><td>1823<td>   pIn : PByte;
+<tr class="nocodegen"><td>1824<td>   pOut : PByte;
+<tr class="covered"><td>1825<td>begin
+<tr class="covered"><td>1826<td>  if (Pointer(Source) = nil) then
+<tr class="nocodegen"><td>1827<td>  begin
+<tr class="notcovered"><td>1828<td>    SetLength(Dest, 0);
+<tr class="notcovered"><td>1829<td>    Exit;
+<tr class="nocodegen"><td>1830<td>  end;
+<tr class="nocodegen"><td>1831<td>
+<tr class="covered"><td>1832<td>  if (FBase32DecodeTable['z'] = 0) then
+<tr class="covered"><td>1833<td>    PrepareTable;
+<tr class="nocodegen"><td>1834<td>
+<tr class="covered"><td>1835<td>  n := Size;
+<tr class="covered"><td>1836<td>  SetLength(Dest, ((n div 8)+1)*5);
+<tr class="covered"><td>1837<td>  pIn := @Source;
+<tr class="covered"><td>1838<td>  pOut := @Dest[0];
+<tr class="covered"><td>1839<td>  c := 0;
+<tr class="covered"><td>1840<td>  b := 0;
+<tr class="covered"><td>1841<td>  for i := 0 to n-1 do
+<tr class="nocodegen"><td>1842<td>  begin
+<tr class="covered"><td>1843<td>    d := FBase32DecodeTable[Chr(pIn^)];
+<tr class="covered"><td>1844<td>    if d = 255 then
+<tr class="nocodegen"><td>1845<td>    begin
+<tr class="covered"><td>1846<td>      if (Chr(pIn^) = '=') then break;
+<tr class="covered"><td>1847<td>      raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
+<tr class="nocodegen"><td>1848<td>    end;
+<tr class="nocodegen"><td>1849<td>
+<tr class="covered"><td>1850<td>    c := (c shl 5) or d;
+<tr class="covered"><td>1851<td>    Inc(b, 5);
+<tr class="covered"><td>1852<td>    if b &gt;= 8 then
+<tr class="nocodegen"><td>1853<td>    begin
+<tr class="covered"><td>1854<td>      Dec(b, 8);
+<tr class="covered"><td>1855<td>      pOut^ := Lo(c shr b);
+<tr class="covered"><td>1856<td>      Inc(pOut);
+<tr class="nocodegen"><td>1857<td>    end;
+<tr class="nocodegen"><td>1858<td>
+<tr class="covered"><td>1859<td>    Inc(pIn);
+<tr class="covered"><td>1860<td>  end;
+<tr class="covered"><td>1861<td>  n := NativeUInt(pOut)-NativeUInt(@Dest[0]);
+<tr class="covered"><td>1862<td>  SetLength(Dest, n);
+<tr class="covered"><td>1863<td>end;
+<tr class="nocodegen"><td>1864<td>
+<tr class="nocodegen"><td>1865<td>class procedure TFormat_Base32.DoEncode(const Source;
+<tr class="nocodegen"><td>1866<td>                                        var Dest: TBytes;
+<tr class="nocodegen"><td>1867<td>                                        Size: Integer);
+<tr class="nocodegen"><td>1868<td>var
+<tr class="nocodegen"><td>1869<td>   i, n, c, b : Integer;
+<tr class="nocodegen"><td>1870<td>   pIn : PByteArray;
+<tr class="nocodegen"><td>1871<td>   pOut : PByte;
+<tr class="nocodegen"><td>1872<td>   PadChars : UInt8;
+<tr class="covered"><td>1873<td>begin
+<tr class="covered"><td>1874<td>  if (Size = 0) or (Pointer(Source) = nil) then
+<tr class="nocodegen"><td>1875<td>  begin
+<tr class="notcovered"><td>1876<td>    SetLength(Dest, 0);
+<tr class="notcovered"><td>1877<td>    Exit;
+<tr class="nocodegen"><td>1878<td>  end;
+<tr class="nocodegen"><td>1879<td>
+<tr class="covered"><td>1880<td>  SetLength(Dest, ((Size div 5)+1)*8);
+<tr class="covered"><td>1881<td>  c := 0;
+<tr class="covered"><td>1882<td>  b := 0;
+<tr class="covered"><td>1883<td>  pIn := @Source;
+<tr class="covered"><td>1884<td>  pOut := @Dest[0];
+<tr class="covered"><td>1885<td>  for i := 0 to Size-1 do
+<tr class="nocodegen"><td>1886<td>  begin
+<tr class="covered"><td>1887<td>    c := (c shl 8) or pIn[i];
+<tr class="covered"><td>1888<td>    Inc(b, 8);
+<tr class="covered"><td>1889<td>    while b &gt;= 5 do
+<tr class="nocodegen"><td>1890<td>    begin
+<tr class="covered"><td>1891<td>      Dec(b, 5);
+<tr class="covered"><td>1892<td>      pOut^ := Byte(cBase32[((c shr b) and $1F)+Low(string)]);
+<tr class="covered"><td>1893<td>      Inc(pOut);
+<tr class="nocodegen"><td>1894<td>    end;
+<tr class="covered"><td>1895<td>  end;
+<tr class="nocodegen"><td>1896<td>
+<tr class="covered"><td>1897<td>  if b &gt; 0 then
+<tr class="nocodegen"><td>1898<td>  begin
+<tr class="covered"><td>1899<td>    pOut^ := Byte(cBase32[((c shl (5-b)) and $1F)+Low(string)]);
+<tr class="covered"><td>1900<td>    Inc(pOut);
+<tr class="nocodegen"><td>1901<td>  end;
+<tr class="nocodegen"><td>1902<td>
+<tr class="nocodegen"><td>1903<td>  // Calculate the length of chars needed to encode the data
+<tr class="covered"><td>1904<td>  n := (NativeUInt(pOut) - NativeUInt(@Dest[0]));
+<tr class="nocodegen"><td>1905<td>
+<tr class="covered"><td>1906<td>  case Size mod 5 of
+<tr class="covered"><td>1907<td>    1: PadChars := 6;
+<tr class="covered"><td>1908<td>    2: PadChars := 4;
+<tr class="covered"><td>1909<td>    3: PadChars := 3;
+<tr class="covered"><td>1910<td>    4: PadChars := 1;
+<tr class="nocodegen"><td>1911<td>  else
+<tr class="covered"><td>1912<td>    PadChars := 0;
+<tr class="nocodegen"><td>1913<td>  end;
+<tr class="nocodegen"><td>1914<td>
+<tr class="covered"><td>1915<td>  FillChar(Dest[n], PadChars, cPaddingChar);
+<tr class="covered"><td>1916<td>  SetLength(Dest, n+PadChars);
+<tr class="covered"><td>1917<td>end;
+<tr class="nocodegen"><td>1918<td>
+<tr class="nocodegen"><td>1919<td>class function TFormat_Base32.DoIsValid(const Data; Size: Integer): Boolean;
+<tr class="nocodegen"><td>1920<td>var
+<tr class="nocodegen"><td>1921<td>  S: PByte;
+<tr class="covered"><td>1922<td>begin
+<tr class="covered"><td>1923<td>  Result := True;
+<tr class="covered"><td>1924<td>  S := @Data;
+<tr class="covered"><td>1925<td>  while Result and (Size &gt; 0) do
+<tr class="nocodegen"><td>1926<td>  begin
+<tr class="nocodegen"><td>1927<td>    // A-Z, 2-7
+<tr class="covered"><td>1928<td>    if S^ in [$41..$5A, $32..$37, $3D] then
+<tr class="nocodegen"><td>1929<td>    begin
+<tr class="covered"><td>1930<td>      Inc(S);
+<tr class="covered"><td>1931<td>      Dec(Size);
+<tr class="nocodegen"><td>1932<td>    end
+<tr class="nocodegen"><td>1933<td>    else
+<tr class="covered"><td>1934<td>      Result := False;
+<tr class="nocodegen"><td>1935<td>  end;
+<tr class="covered"><td>1936<td>end;
+<tr class="nocodegen"><td>1937<td>
+<tr class="nocodegen"><td>1938<td>{ TFormat_Radix64BCrypt }
+<tr class="nocodegen"><td>1939<td>
+<tr class="nocodegen"><td>1940<td>class function TFormat_BCryptBSD.CharTableBinary: TBytes;
+<tr class="covered"><td>1941<td>begin
+<tr class="nocodegen"><td>1942<td>  // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+<tr class="covered"><td>1943<td>  SetLength(result, 64);
+<tr class="nocodegen"><td>1944<td>
+<tr class="covered"><td>1945<td>  result := [$2E, $2F,
+<tr class="nocodegen"><td>1946<td>             $41, $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D,
+<tr class="nocodegen"><td>1947<td>             $4E, $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A,
+<tr class="nocodegen"><td>1948<td>             $61, $62, $63, $64, $65, $66, $67, $68, $69, $6A, $6B, $6C, $6D,
+<tr class="nocodegen"><td>1949<td>             $6E, $6F, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $7A,
+<tr class="covered"><td>1950<td>             $30, $31, $32, $33, $34, $35, $36, $37, $38, $39];
+<tr class="covered"><td>1951<td>end;
+<tr class="nocodegen"><td>1952<td>
+<tr class="nocodegen"><td>1953<td>class procedure TFormat_BCryptBSD.DoDecode(const Source;
+<tr class="nocodegen"><td>1954<td>                                           var Dest: TBytes;
+<tr class="nocodegen"><td>1955<td>                                           Size: Integer);
+<tr class="nocodegen"><td>1956<td>const
+<tr class="nocodegen"><td>1957<td>  BT: array[0..127] of shortint = (
+<tr class="nocodegen"><td>1958<td>        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+<tr class="nocodegen"><td>1959<td>        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+<tr class="nocodegen"><td>1960<td>        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  0,  1,
+<tr class="nocodegen"><td>1961<td>        54, 55, 56, 57, 58, 59, 60, 61, 62, 63, -1, -1, -1, -1, -1, -1,
+<tr class="nocodegen"><td>1962<td>        -1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16,
+<tr class="nocodegen"><td>1963<td>        17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1, -1, -1,
+<tr class="nocodegen"><td>1964<td>        -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42,
+<tr class="nocodegen"><td>1965<td>        43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1);
+<tr class="nocodegen"><td>1966<td>
+<tr class="nocodegen"><td>1967<td>var
+<tr class="nocodegen"><td>1968<td>  Src : PByte;
+<tr class="nocodegen"><td>1969<td>  c1, c2, c3, c4: Integer;
+<tr class="nocodegen"><td>1970<td>
+<tr class="nocodegen"><td>1971<td>  function GetNextByte: integer;
+<tr class="nocodegen"><td>1972<td>  var
+<tr class="nocodegen"><td>1973<td>    b: UInt8;
+<tr class="covered"><td>1974<td>  begin
+<tr class="covered"><td>1975<td>    Result := -1;
+<tr class="covered"><td>1976<td>    if (Size &gt; 0) then
+<tr class="nocodegen"><td>1977<td>    begin
+<tr class="covered"><td>1978<td>      b := Src^;
+<tr class="covered"><td>1979<td>      Inc(Src);
+<tr class="covered"><td>1980<td>      Dec(Size);
+<tr class="covered"><td>1981<td>      if (b &lt; 128) then
+<tr class="covered"><td>1982<td>        Result := BT[b];
+<tr class="nocodegen"><td>1983<td>    end;
+<tr class="covered"><td>1984<td>  end;
+<tr class="nocodegen"><td>1985<td>
+<tr class="nocodegen"><td>1986<td>  procedure SetNextByte(b: Integer);
+<tr class="covered"><td>1987<td>  begin
+<tr class="nocodegen"><td>1988<td>    // Put next byte into pdest if LA&lt;ldest, inc LA and pdest
+<tr class="covered"><td>1989<td>    Dest := Dest + [byte(b and $ff)];
+<tr class="covered"><td>1990<td>  end;
+<tr class="nocodegen"><td>1991<td>
+<tr class="covered"><td>1992<td>begin
+<tr class="covered"><td>1993<td>  Src := @Source;
+<tr class="nocodegen"><td>1994<td>
+<tr class="covered"><td>1995<td>  if (Src = nil) or (Size &lt; 1) then
+<tr class="nocodegen"><td>1996<td>    exit;
+<tr class="nocodegen"><td>1997<td>
+<tr class="covered"><td>1998<td>  while Size &gt; 0 do
+<tr class="nocodegen"><td>1999<td>  begin
+<tr class="covered"><td>2000<td>    c1 := GetNextByte;
+<tr class="covered"><td>2001<td>    if (c1 &lt; 0) then exit;
+<tr class="covered"><td>2002<td>    c2 := GetNextByte;
+<tr class="covered"><td>2003<td>    if (c2 &lt; 0) then exit;
+<tr class="covered"><td>2004<td>    SetNextByte(((c1 and $3f) shl 2) or (c2 shr 4));
+<tr class="nocodegen"><td>2005<td>
+<tr class="covered"><td>2006<td>    c3 := GetNextByte;
+<tr class="covered"><td>2007<td>    if (c3 &lt; 0) then exit;
+<tr class="covered"><td>2008<td>    SetNextByte(((c2 and $0f) shl 4) or (c3 shr 2));
+<tr class="nocodegen"><td>2009<td>
+<tr class="covered"><td>2010<td>    c4 := GetNextByte;
+<tr class="covered"><td>2011<td>    if (c4 &lt; 0) then exit;
+<tr class="covered"><td>2012<td>    SetNextByte(((c3 and $03) shl 6) or c4);
+<tr class="nocodegen"><td>2013<td>  end;
+<tr class="covered"><td>2014<td>end;
+<tr class="nocodegen"><td>2015<td>
+<tr class="nocodegen"><td>2016<td>class procedure TFormat_BCryptBSD.DoEncode(const Source;
+<tr class="nocodegen"><td>2017<td>                                           var Dest: TBytes;
+<tr class="nocodegen"><td>2018<td>                                           Size: Integer);
+<tr class="nocodegen"><td>2019<td>var
+<tr class="nocodegen"><td>2020<td>  CT64  : TBytes;
+<tr class="nocodegen"><td>2021<td>  c1,c2 : UInt16;
+<tr class="nocodegen"><td>2022<td>  Src   : PByte;
+<tr class="covered"><td>2023<td>begin
+<tr class="covered"><td>2024<td>  CT64 := CharTableBinary;
+<tr class="covered"><td>2025<td>  Src := @Source;
+<tr class="covered"><td>2026<td>  if (@Src &lt;&gt; nil) then
+<tr class="nocodegen"><td>2027<td>  begin
+<tr class="covered"><td>2028<td>    while (Size &gt; 0) do
+<tr class="nocodegen"><td>2029<td>    begin
+<tr class="covered"><td>2030<td>      c1 := Src^;
+<tr class="covered"><td>2031<td>      inc(Src);
+<tr class="covered"><td>2032<td>      dec(Size);
+<tr class="nocodegen"><td>2033<td>
+<tr class="covered"><td>2034<td>      Dest := Dest + [CT64[(c1 shr 2) and $3f]];
+<tr class="covered"><td>2035<td>      c1 := (c1 and $03) shl 4;
+<tr class="covered"><td>2036<td>      if (Size &lt;= 0) then
+<tr class="covered"><td>2037<td>        Dest := Dest + [CT64[c1 and $3f]]
+<tr class="covered"><td>2038<td>      else
+<tr class="nocodegen"><td>2039<td>      begin
+<tr class="covered"><td>2040<td>        c2 := Src^;
+<tr class="covered"><td>2041<td>        inc(Src);
+<tr class="covered"><td>2042<td>        dec(Size);
+<tr class="nocodegen"><td>2043<td>
+<tr class="covered"><td>2044<td>        c1 := c1 or ((c2 shr 4) and $0f);
+<tr class="covered"><td>2045<td>        Dest := Dest + [CT64[c1 and $3f]];
+<tr class="covered"><td>2046<td>        c1 := (c2 and $0f) shl 2;
+<tr class="nocodegen"><td>2047<td>
+<tr class="covered"><td>2048<td>        if (Size &lt;= 0) then
+<tr class="covered"><td>2049<td>          Dest := Dest + [CT64[c1 and $3f]]
+<tr class="covered"><td>2050<td>        else
+<tr class="nocodegen"><td>2051<td>        begin
+<tr class="covered"><td>2052<td>          c2 := Src^;
+<tr class="covered"><td>2053<td>          inc(Src);
+<tr class="covered"><td>2054<td>          dec(Size);
+<tr class="nocodegen"><td>2055<td>
+<tr class="covered"><td>2056<td>          c1 := c1 or ((c2 shr 6) and $03);
+<tr class="covered"><td>2057<td>          Dest := Dest + [CT64[c1 and $3f]] + [CT64[c2 and $3f]];
+<tr class="nocodegen"><td>2058<td>        end;
+<tr class="nocodegen"><td>2059<td>      end;
+<tr class="nocodegen"><td>2060<td>    end;
+<tr class="nocodegen"><td>2061<td>  end;
+<tr class="covered"><td>2062<td>end;
+<tr class="nocodegen"><td>2063<td>
+<tr class="nocodegen"><td>2064<td>class function TFormat_BCryptBSD.DoIsValid(const Data;
+<tr class="nocodegen"><td>2065<td>  Size: Integer): Boolean;
+<tr class="nocodegen"><td>2066<td>var
+<tr class="nocodegen"><td>2067<td>  S: PByte;
+<tr class="covered"><td>2068<td>begin
+<tr class="covered"><td>2069<td>  Result := True;
+<tr class="covered"><td>2070<td>  S := @Data;
+<tr class="covered"><td>2071<td>  while Result and (Size &gt; 0) do
+<tr class="nocodegen"><td>2072<td>  begin
+<tr class="nocodegen"><td>2073<td>    // ./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+<tr class="covered"><td>2074<td>    if S^ in [$41..$5A, $61..$7A, $2E..$39] then
+<tr class="nocodegen"><td>2075<td>    begin
+<tr class="covered"><td>2076<td>      Inc(S);
+<tr class="covered"><td>2077<td>      Dec(Size);
+<tr class="nocodegen"><td>2078<td>    end
+<tr class="nocodegen"><td>2079<td>    else
+<tr class="notcovered"><td>2080<td>      Result := False;
+<tr class="nocodegen"><td>2081<td>  end;
+<tr class="covered"><td>2082<td>end;
+<tr class="nocodegen"><td>2083<td>
+<tr class="covered"><td>2084<td>initialization
+<tr class="covered"><td>2085<td>  SetLength(ESCAPE_CodesL, 7);
+<tr class="covered"><td>2086<td>  ESCAPE_CodesL[0] := $61;
+<tr class="covered"><td>2087<td>  ESCAPE_CodesL[1] := $62;
+<tr class="covered"><td>2088<td>  ESCAPE_CodesL[2] := $74;
+<tr class="covered"><td>2089<td>  ESCAPE_CodesL[3] := $6E;
+<tr class="covered"><td>2090<td>  ESCAPE_CodesL[4] := $76;
+<tr class="covered"><td>2091<td>  ESCAPE_CodesL[5] := $66;
+<tr class="covered"><td>2092<td>  ESCAPE_CodesL[6] := $72;
+<tr class="nocodegen"><td>2093<td>
+<tr class="covered"><td>2094<td>  SetLength(ESCAPE_CodesU, 7);
+<tr class="covered"><td>2095<td>  ESCAPE_CodesU[0] := $41;
+<tr class="covered"><td>2096<td>  ESCAPE_CodesU[1] := $42;
+<tr class="covered"><td>2097<td>  ESCAPE_CodesU[2] := $54;
+<tr class="covered"><td>2098<td>  ESCAPE_CodesU[3] := $4E;
+<tr class="covered"><td>2099<td>  ESCAPE_CodesU[4] := $56;
+<tr class="covered"><td>2100<td>  ESCAPE_CodesU[5] := $46;
+<tr class="covered"><td>2101<td>  ESCAPE_CodesU[6] := $52;
+<tr class="nocodegen"><td>2102<td>
+<tr class="nocodegen"><td>2103<td>  {$IFNDEF BCB}
+<tr class="nocodegen"><td>2104<td>    {$IFNDEF ManualRegisterFormatClasses}
+<tr class="covered"><td>2105<td>    TFormat_HEX.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2106<td>    TFormat_HEXL.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2107<td>    TFormat_DECMIME32.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2108<td>    TFormat_Base32.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2109<td>    TFormat_Base64.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2110<td>    TFormat_Radix64.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2111<td>    TFormat_BCryptBSD.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2112<td>    TFormat_UU.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2113<td>    TFormat_XX.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2114<td>    TFormat_ESCAPE.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2115<td>    TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2116<td>    TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
+<tr class="covered"><td>2117<td>    TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
+<tr class="nocodegen"><td>2118<td>    {$ENDIF}
+<tr class="nocodegen"><td>2119<td>  {$ENDIF}
+<tr class="nocodegen"><td>2120<td>
+<tr class="nocodegen"><td>2121<td>  // Init the number of chars per line as per RFC 4880 to 76 chars
+<tr class="covered"><td>2122<td>  TFormat_Radix64.FCharsPerLine := 76;
+<tr class="nocodegen"><td>2123<td>
+<tr class="covered"><td>2124<td>finalization
+<tr class="nocodegen"><td>2125<td>
+<tr class="covered"><td>2126<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

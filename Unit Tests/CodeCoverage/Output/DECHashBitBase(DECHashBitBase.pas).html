@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>Delphi CodeCoverage Coverage Report</title>
+<style type="text/css">
+body {max-width: max-content;margin: auto;}
+table {border-spacing:0;}
+table, td, th {border: 0;}
+td, th {background: white; margin: 0; padding: .5em 1em}
+table small { color: #777; }
+p, h1, h2, h3, th {font-family: verdana,arial,sans-serif; font-size: 10pt;}
+td {font-family: consolas,courier,monospace; font-size: 10pt;}
+thead, th {background: #808C98; color: white; }
+table th small { color: #ddd; }
+th[idx] {cursor: pointer; user-select: none;}
+table.o tr td:nth-child(1) {font-weight: bold;}
+table.o tr td:nth-child(2) {text-align: right;}
+table.o tr td {border-width: 1px;}
+table.s {width: calc(min(80em, 95vw));}
+table.s tr td {padding: .1em .5em; white-space: pre-wrap;}
+table.s tr td:first-child {text-align: right; font-weight: bold; vertical-align: top}
+table.s tr.notcovered td {background: #ddf;}
+table.s tr.nocodegen td {background: #ffe;}
+table.s tr.covered td {background: #cfc;}
+table.s tr.covered td:first-child {color: green;}
+table.s {border-width: 1px 0 1px 1px;}
+table.sum td { background-position: 50%; background-repeat: no-repeat; background-size: 90% 70%; }
+table.sum tr:nth-child(odd) td { background-color: #f4f4f4}
+table.sum tr:hover td, tr:hover td a { filter: invert(10%) }
+table.sum tr th {text-align:left; border: .5px solid #5d4e4c; height: 1em}
+table.sum tr td {text-align:right;}
+table.sum tr td:first-child {text-align:left;}
+table.sum thead th { position: sticky; top:0; }
+table.sum thead tr + tr th { position: sticky; top: calc(2.5em - 2px); }
+table.sum tfoot th { position: sticky; bottom:0; }
+table.sum tfoot th+th {text-align: right;}
+table.sum a, table.sum a:visited {color: #5d4e4c; text-decoration: none;}
+#nav {position: fixed;overflow: visible;left: min(calc(50% + 41em), calc(100% - 6em));padding: .1em .5em .1em .2em;background: white;box-shadow: 1px 1px 3px #888;}
+#nav div {opacity: .3; user-select: none; pointer-events: none;}
+#nav div.active {opacity: 1;	cursor: pointer;	pointer-events: initial;}
+#nav div.active:hover {color: #00A;}
+</style>
+</head>
+<body>
+<p>Coverage report for <bold>DECHashBitBase (..\..\Source\DECHashBitBase.pas)</bold>.</p>
+<p>Generated at 30.11.2022 22:06:19 by <a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverage" target="_blank" title="DelphiCodeCoverage on GitHub">DelphiCodeCoverage</a> - an open source tool for Delphi Code Coverage.</p>
+<p>Statistics for ..\..\Source\DECHashBitBase.pas</p>
+<table class="o"><tr><td>Number of lines covered<td>8<td rowspan=3 style="background: conic-gradient(#9fe098 100%, #eee 100%);width: 4.5em; border-radius: 50%"><tr><td>Number of lines with code gen<td>8<tr><td>Line coverage<td>100<small>.0</small>&nbsp;%</table>
+<br><br>
+<div id="nav"><div id="nav-prev">&#x25b2; Prev</div><div id="nav-next">&#x25bc; Next</div></div>
+<table class="s">
+<tr class="nocodegen"><td>1<td>{*****************************************************************************
+<tr class="nocodegen"><td>2<td>  The DEC team (see file NOTICE.txt) licenses this file
+<tr class="nocodegen"><td>3<td>  to you under the Apache License, Version 2.0 (the
+<tr class="nocodegen"><td>4<td>  &quot;License&quot;); you may not use this file except in compliance
+<tr class="nocodegen"><td>5<td>  with the License. A copy of this licence is found in the root directory
+<tr class="nocodegen"><td>6<td>  of this project in the file LICENCE.txt or alternatively at
+<tr class="nocodegen"><td>7<td>
+<tr class="nocodegen"><td>8<td>    http://www.apache.org/licenses/LICENSE-2.0
+<tr class="nocodegen"><td>9<td>
+<tr class="nocodegen"><td>10<td>  Unless required by applicable law or agreed to in writing,
+<tr class="nocodegen"><td>11<td>  software distributed under the License is distributed on an
+<tr class="nocodegen"><td>12<td>  &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<tr class="nocodegen"><td>13<td>  KIND, either express or implied.  See the License for the
+<tr class="nocodegen"><td>14<td>  specific language governing permissions and limitations
+<tr class="nocodegen"><td>15<td>  under the License.
+<tr class="nocodegen"><td>16<td>*****************************************************************************}
+<tr class="nocodegen"><td>17<td>
+<tr class="nocodegen"><td>18<td>/// &lt;summary&gt;
+<tr class="nocodegen"><td>19<td>///   Base unit for all the hash algorithms which can operate on bit sized
+<tr class="nocodegen"><td>20<td>///   messsages as well.
+<tr class="nocodegen"><td>21<td>/// &lt;/summary&gt;
+<tr class="nocodegen"><td>22<td>unit DECHashBitBase;
+<tr class="nocodegen"><td>23<td>
+<tr class="nocodegen"><td>24<td>interface
+<tr class="nocodegen"><td>25<td>
+<tr class="nocodegen"><td>26<td>{$INCLUDE DECOptions.inc}
+<tr class="nocodegen"><td>27<td>
+<tr class="nocodegen"><td>28<td>uses
+<tr class="nocodegen"><td>29<td>  {$IFDEF FPC}
+<tr class="nocodegen"><td>30<td>  SysUtils, Classes,
+<tr class="nocodegen"><td>31<td>  {$ELSE}
+<tr class="nocodegen"><td>32<td>  System.SysUtils, System.Classes,
+<tr class="nocodegen"><td>33<td>  {$ENDIF}
+<tr class="nocodegen"><td>34<td>  DECHashAuthentication, DECHashInterface, DECTypes;
+<tr class="nocodegen"><td>35<td>
+<tr class="nocodegen"><td>36<td>type
+<tr class="nocodegen"><td>37<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>38<td>  ///   Meta class for the class containing the additional property for hashes
+<tr class="nocodegen"><td>39<td>  ///   supporting a last byte with less than 8 bit size.
+<tr class="nocodegen"><td>40<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>41<td>  TDECHashBitClass = class of TDECHashBit;
+<tr class="nocodegen"><td>42<td>
+<tr class="nocodegen"><td>43<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>44<td>  ///   Base class for all hash algorithms which can operate on bit sized
+<tr class="nocodegen"><td>45<td>  ///   messsages as well.
+<tr class="nocodegen"><td>46<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>47<td>  TDECHashBit = class(TDECHashExtended, IDECHashBitsized)
+<tr class="nocodegen"><td>48<td>  strict private
+<tr class="nocodegen"><td>49<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>50<td>    ///   Returns the number of bits the final byte of the message consists of
+<tr class="nocodegen"><td>51<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>52<td>    function GetFinalByteLength: UInt8;
+<tr class="nocodegen"><td>53<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>54<td>    ///   Sets the number of bits the final byte of the message consists of
+<tr class="nocodegen"><td>55<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>56<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>57<td>    ///   Exception raised if &lt;c&gt;Value&lt;/c&gt; is higher than 7.
+<tr class="nocodegen"><td>58<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>59<td>    procedure SetFinalByteLength(const Value: UInt8);
+<tr class="nocodegen"><td>60<td>  public
+<tr class="nocodegen"><td>61<td>    /// &lt;summary&gt;
+<tr class="nocodegen"><td>62<td>    ///   Setting this to a number of bits allows to process messages which have
+<tr class="nocodegen"><td>63<td>    ///   a length which is not a exact multiple of bytes.
+<tr class="nocodegen"><td>64<td>    /// &lt;/summary&gt;
+<tr class="nocodegen"><td>65<td>    /// &lt;exception cref=&quot;EDECHashException&quot;&gt;
+<tr class="nocodegen"><td>66<td>    ///   Exception raised if &lt;c&gt;Value&lt;/c&gt; is higher than 7.
+<tr class="nocodegen"><td>67<td>    /// &lt;/exception&gt;
+<tr class="nocodegen"><td>68<td>    property FinalByteLength : UInt8
+<tr class="nocodegen"><td>69<td>      read   GetFinalByteLength
+<tr class="nocodegen"><td>70<td>      write  SetFinalByteLength;
+<tr class="nocodegen"><td>71<td>  end;
+<tr class="nocodegen"><td>72<td>
+<tr class="nocodegen"><td>73<td>implementation
+<tr class="nocodegen"><td>74<td>
+<tr class="nocodegen"><td>75<td>resourcestring
+<tr class="nocodegen"><td>76<td>  /// &lt;summary&gt;
+<tr class="nocodegen"><td>77<td>  ///   Exception message for the exception raised when a to long final byte
+<tr class="nocodegen"><td>78<td>  ///   length is specified.
+<tr class="nocodegen"><td>79<td>  /// &lt;/summary&gt;
+<tr class="nocodegen"><td>80<td>  rFinalByteLengthTooBig = 'Final byte length too big (%0:d) must be 0..7';
+<tr class="nocodegen"><td>81<td>
+<tr class="nocodegen"><td>82<td>{ TDECHashBit }
+<tr class="nocodegen"><td>83<td>
+<tr class="nocodegen"><td>84<td>function TDECHashBit.GetFinalByteLength: UInt8;
+<tr class="covered"><td>85<td>begin
+<tr class="covered"><td>86<td>  Result := FFinalByteLength;
+<tr class="covered"><td>87<td>end;
+<tr class="nocodegen"><td>88<td>
+<tr class="nocodegen"><td>89<td>procedure TDECHashBit.SetFinalByteLength(const Value: UInt8);
+<tr class="covered"><td>90<td>begin
+<tr class="nocodegen"><td>91<td>  // if length of final byte is 8 this value shall be 0 as the normal specification
+<tr class="nocodegen"><td>92<td>  // of message length is good enough then.
+<tr class="nocodegen"><td>93<td>
+<tr class="covered"><td>94<td>  if (Value &gt; 7) then
+<tr class="covered"><td>95<td>    raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);
+<tr class="nocodegen"><td>96<td>
+<tr class="covered"><td>97<td>  FFinalByteLength := Value;
+<tr class="covered"><td>98<td>end;
+<tr class="nocodegen"><td>99<td>
+<tr class="nocodegen"><td>100<td>end.
+</table>
+<script>(function () {
+var starts = [],prev = document.getElementById("nav-prev"),next = document.getElementById("nav-next");
+(function () {
+var p;
+document.querySelectorAll("table.s tr").forEach(r => {
+if (r.classList.contains("notcovered")) {
+if (!p) starts.push(r);
+p = r;
+} else { p = null }
+})
+})();
+function findPrev() {
+var y = prev.getBoundingClientRect().top - 4;
+for (var i=starts.length-1; i>=0; i--) {
+if (starts[i].getBoundingClientRect().top < y) return starts[i]
+}
+}
+function findNext() {
+var y = next.getBoundingClientRect().top + 4;
+for (var i=0; i<starts.length; i++) {
+if (starts[i].getBoundingClientRect().top > y) return starts[i];
+}
+}
+function onScroll() {
+prev.setAttribute("class", findPrev() ? "active" : "");
+next.setAttribute("class", findNext() ? "active" : "");
+onScroll.pending = 0;
+}
+document.addEventListener("scroll", function() {
+if (!onScroll.pending) { onScroll.pending = requestAnimationFrame(onScroll) }
+});
+onScroll();
+function scrollTo(row) {
+if (row) window.scrollTo({ behavior: "smooth", top: window.scrollY+row.getBoundingClientRect().top-prev.getBoundingClientRect().top });
+}
+next.addEventListener("click", () => scrollTo(findNext()) );
+prev.addEventListener("click", () => scrollTo(findPrev()) );
+})();</script>
+<script>
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) =>!isNaN(parseFloat(v1 || "-")) && !isNaN(parseFloat(v2 || "-")) ? parseFloat(v1)-parseFloat(v2) : v1.toString().localeCompare(v2))(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+document.querySelectorAll("thead th[idx]").forEach(th => th.addEventListener("click", (() => {
+	const table = th.closest("table").querySelector("tbody");
+	Array.from(table.querySelectorAll("tr"))
+		.sort(comparer(+th.getAttribute("idx"), this.asc = !this.asc))
+		.forEach(tr => table.appendChild(tr) );
+	})));
+</script>
+</body>
+</html>

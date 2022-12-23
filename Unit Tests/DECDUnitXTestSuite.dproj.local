@@ -3,4 +3,37 @@
 	<ActiveMobileDevice>
 		<NoProfile Android="" Android64=""/>
 	</ActiveMobileDevice>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="android-support-v4.dex.jar"/>
+    <File Path="cloud-messaging.dex.jar"/>
+    <File Path="fmx.dex.jar"/>
+    <File Path="google-analytics-v2.dex.jar"/>
+    <File Path="google-play-billing.dex.jar"/>
+    <File Path="google-play-licensing.dex.jar"/>
+    <File Path="google-play-services.dex.jar"/>
+    <File Path="android-support-v4.dex.jar"/>
+    <File Path="cloud-messaging.dex.jar"/>
+    <File Path="fmx.dex.jar"/>
+    <File Path="google-analytics-v2.dex.jar"/>
+    <File Path="google-play-billing.dex.jar"/>
+    <File Path="google-play-licensing.dex.jar"/>
+    <File Path="google-play-services.dex.jar"/>
+    <File Path="Tests"/>
+    <File Path="Tests\TestDECBaseClass.pas"/>
+    <File Path="Tests\TestDECCipher.pas"/>
+    <File Path="Tests\TestDECCipherFormats.pas"/>
+    <File Path="Tests\TestDECCipherModes.pas"/>
+    <File Path="Tests\TestDECCipherModesGCM.pas"/>
+    <File Path="Tests\TestDECCRC.pas"/>
+    <File Path="Tests\TestDECFormat.pas"/>
+    <File Path="Tests\TestDECFormatBase.pas"/>
+    <File Path="Tests\TestDECHash.pas"/>
+    <File Path="Tests\TestDECHashKDF.pas"/>
+    <File Path="Tests\TestDECHashMAC.pas"/>
+    <File Path="Tests\TestDECHashSHA3.pas"/>
+    <File Path="Tests\TestDECRandom.pas"/>
+    <File Path="Tests\TestDECTestDataContainer.pas"/>
+    <File Path="Tests\TestDECUtil.pas"/>
+    <File Path="Tests\TestDefines.inc"/>
+  </ProjectSortOrder>
 </BorlandProject>
