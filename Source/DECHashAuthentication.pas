@@ -1253,7 +1253,7 @@ begin
     // Prepare Key for HMAC calculation
     // PrepareKeyForHMAC;
     I := 0;
-    if PassLength > BlockSize then
+    if (PassLength > BlockSize) then
     begin
       TrimmedKey := Hash.CalcBytes(Password);
       PassLength := DigestLength;
@@ -1263,13 +1263,14 @@ begin
 
     SetLength(InnerKeyPad, BlockSize);
     SetLength(OuterKeyPad, BlockSize);
-    while I < PassLength do
+    while (I < PassLength) do
     begin
       InnerKeyPad[I] := TrimmedKey[I] xor $36;
       OuterKeyPad[I] := TrimmedKey[I] xor $5C;
       Inc(I);
     end;
-    while I < BlockSize do
+
+    while (I < BlockSize) do
     begin
       InnerKeyPad[I] := $36;
       OuterKeyPad[I] := $5C;
@@ -1301,19 +1302,23 @@ begin
         U := Hash.DigestAsBytes;                  // Ui
         // F = U1 ^ U2 ^ ... ^ Uc
         J := 0;
-        while J < HashLengthRounded do
+        while (J < HashLengthRounded) do
         begin
           PNativeUInt(@T[J])^ := PNativeUInt(@T[J])^ xor PNativeUInt(@U[J])^;
           Inc(J, SizeOf(NativeUInt));
         end;
-        while J < DigestLength do
+
+        while (J < DigestLength) do
         begin
           T[J] := T[J] xor U[J];
           Inc(J);
         end;
       end;
 
-      Result := Result + T;                       // DK += F    , DK = DK || Ti
+      if (I = 1) then
+        Result := Copy(T)
+      else
+        Result := Result + T;  // DK += F    , DK = DK || Ti
     end;
   finally
     Hash.Free;

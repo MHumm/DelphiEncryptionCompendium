@@ -76,22 +76,32 @@ begin
   FillChar(AAx80String[0], 80, $AA);
 
   Result := THash_MD5.HMAC(AAx80String,
-                           BytesOf('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
-  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
-              'Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+                           BytesOf('Test Using Larger Than Block-Size Key and ' +
+                                   'Larger Than One Block-Size Data'));
+  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'Test Using Larger Than Block-Size Key and Larger Than One ' +
+              'Block-Size Data');
 
-  Result := THash_MD5.HMAC(AAx80String, BytesOf('Test Using Larger Than Block-Size Key - Hash Key First'));
-  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+  Result := THash_MD5.HMAC(AAx80String, BytesOf('Test Using Larger Than ' +
+                                                'Block-Size Key - Hash Key First'));
+  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'MD5 Test Using Larger Than Block-Size Key - Hash Key First');
 
   Result := THash_SHA1.HMAC(AAx80String,
-                            BytesOf('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
-  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
-              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+                            BytesOf('Test Using Larger Than Block-Size Key and ' +
+                                    'Larger Than One Block-Size Data'));
+  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One ' +
+              'Block-Size Data');
 
   Result := THash_SHA1.HMAC(AAx80String,
-                            BytesOf('Test Using Larger Than Block-Size Key - Hash Key First'));
-  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+                            BytesOf('Test Using Larger Than Block-Size Key - ' +
+                                    'Hash Key First'));
+  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'SHA1 Test Using Larger Than Block-Size Key - Hash Key First');
 end;
 
@@ -104,23 +114,32 @@ begin
   FillChar(AAx80String[0], 80, $AA);
 
   Result := THash_MD5.HMAC(RawByteString(StringOf(AAx80String)),
-                           RawByteString('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
-  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
-              'Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+                           RawByteString('Test Using Larger Than Block-Size ' +
+                           'Key and Larger Than One Block-Size Data'));
+  CheckEquals('6F630FAD67CDA0EE1FB1F562DB3AA53E',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'Test Using Larger Than Block-Size Key and Larger Than One ' +
+              'Block-Size Data');
 
   Result := THash_MD5.HMAC(RawByteString(StringOf(AAx80String)),
               RawByteString('Test Using Larger Than Block-Size Key - Hash Key First'));
-  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+  CheckEquals('6B1AB7FE4BD7BF8F0B62E6CE61B9D0CD',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'MD5 Test Using Larger Than Block-Size Key - Hash Key First');
 
   Result := THash_SHA1.HMAC(RawByteString(StringOf(AAx80String)),
-                            RawByteString('Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data'));
-  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
-              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data');
+                            RawByteString('Test Using Larger Than Block-Size ' +
+                            'Key and Larger Than One Block-Size Data'));
+  CheckEquals('E8E99D0F45237D786D6BBAA7965C7808BBFF1A91',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+              'SHA1 Test Using Larger Than Block-Size Key and Larger Than One ' +
+              'Block-Size Data');
 
   Result := THash_SHA1.HMAC(RawByteString(StringOf(AAx80String)),
-                            RawByteString('Test Using Larger Than Block-Size Key - Hash Key First'));
-  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+                            RawByteString('Test Using Larger Than Block-Size ' +
+                            'Key - Hash Key First'));
+  CheckEquals('AA4AE5E15272D00E95705637CE8A3B55ED402112',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'SHA1 Test Using Larger Than Block-Size Key - Hash Key First');
 end;
 
@@ -129,15 +148,20 @@ var
   Res: TBytes;
 begin
   // test vectors from https://en.wikipedia.org/wiki/HMAC
-  Res := THash_MD5.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps over the lazy dog'));
-  CheckEquals('80070713463E7749B90C2DC24911E275', StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
+  Res := THash_MD5.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps ' +
+                        'over the lazy dog'));
+  CheckEquals('80070713463E7749B90C2DC24911E275',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
               'MD5 failure in The quick...');
 
-  Res := THash_SHA1.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps over the lazy dog'));
-  CheckEquals('DE7C9B85B8B78AA6BC8A7A36F70A90701C9DB4D9', StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
+  Res := THash_SHA1.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps ' +
+                         'over the lazy dog'));
+  CheckEquals('DE7C9B85B8B78AA6BC8A7A36F70A90701C9DB4D9',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
               'SHA1 failure in The quick...');
 
-  Res := THash_SHA256.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps over the lazy dog'));
+  Res := THash_SHA256.HMAC(BytesOf('key'), BytesOf('The quick brown fox jumps ' +
+                           'over the lazy dog'));
   CheckEquals('F7BC83F430538424B13298E6AA6FB143EF4D59A14946175997479DBC2D1A3CD8',
               StringOf(ValidFormat(TFormat_HEX).Encode(Res)),
               'SHA256 failure in The quick...');
@@ -148,15 +172,20 @@ var
   Result: TBytes;
 begin
   // test vectors from https://en.wikipedia.org/wiki/HMAC
-  Result := THash_MD5.HMAC(RawByteString('key'), RawByteString('The quick brown fox jumps over the lazy dog'));
-  CheckEquals('80070713463E7749B90C2DC24911E275', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+  Result := THash_MD5.HMAC(RawByteString('key'),
+                           RawByteString('The quick brown fox jumps over the lazy dog'));
+  CheckEquals('80070713463E7749B90C2DC24911E275',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'MD5 failure in The quick...');
 
-  Result := THash_SHA1.HMAC(RawByteString('key'), RawByteString('The quick brown fox jumps over the lazy dog'));
-  CheckEquals('DE7C9B85B8B78AA6BC8A7A36F70A90701C9DB4D9', StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
+  Result := THash_SHA1.HMAC(RawByteString('key'),
+                            RawByteString('The quick brown fox jumps over the lazy dog'));
+  CheckEquals('DE7C9B85B8B78AA6BC8A7A36F70A90701C9DB4D9',
+              StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'SHA1 failure in The quick...');
 
-  Result := THash_SHA256.HMAC(RawByteString('key'), RawByteString('The quick brown fox jumps over the lazy dog'));
+  Result := THash_SHA256.HMAC(RawByteString('key'),
+                              RawByteString('The quick brown fox jumps over the lazy dog'));
   CheckEquals('F7BC83F430538424B13298E6AA6FB143EF4D59A14946175997479DBC2D1A3CD8',
               StringOf(ValidFormat(TFormat_HEX).Encode(Result)),
               'SHA256 failure in The quick...');
@@ -168,56 +197,81 @@ procedure TestTHash_PBKDF2.TestBug46;
 var
   Result : string;
 begin
-  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
-                                                                       BytesOf('Salt'), 1000, 16)));
-  CheckEquals('05e7b33f93ea1d35', result, 'SHA1 password salt 1000 16');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2('password',
+                                                                       'salt', 1, 16)));
+  CheckEquals('0C60C80F961F0E71F3A9B524AF601206', result, 'SHA1 password salt 1 16');
 
-//  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
-//                                                                       BytesOf('Salt'), 1000, 32)));
-//  CheckEquals('05e7b33f93ea1d35939b32ad5994ef63', result, 'SHA1 password salt 1000 32');
-//
-//  Result := StringOf(ValidFormat(TFormat_HEXL).Encode(THash_SHA1.PBKDF2(BytesOf('PassWord'),
-//                                                                       BytesOf('Salt'), 1000, 48)));
-//  CheckEquals('05e7b33f93ea1d35939b32ad5994ef6314f6170b191368e9', result, 'SHA1 password salt 1000 48');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2('password',
+                                                                       'salt', 1, 20)));
+  CheckEquals('0C60C80F961F0E71F3A9B524AF6012062FE037A6', result, 'SHA1 password salt 1 20');
+
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2('password',
+                                                                       'salt', 1, 32)));
+  CheckEquals('0C60C80F961F0E71F3A9B524AF6012062FE037A6E0F0EB94FE8FC46BDC637164',
+              Result, 'SHA1 password salt 1 32');
+
+  // This is testing 3 blocks
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2('password',
+                                                                       'salt', 1, 48)));
+  CheckEquals('0C60C80F961F0E71F3A9B524AF6012062FE037A6E0F0EB94FE8FC46BDC63' +
+              '7164AC2E7A8E3F9D2E83ACE57E0D50E5E107', Result, 'SHA1 password salt 1 48');
 end;
 
 procedure TestTHash_PBKDF2.TestBytes;
 var
   Result : string;
 begin
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2(BytesOf('password'), BytesOf('salt'), 1, 20)));
-  CheckEquals('0C60C80F961F0E71F3A9B524AF6012062FE037A6', result, 'SHA1 password salt 1 20');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA1.PBKDF2(BytesOf('password'),
+                                                                       BytesOf('salt'), 1, 20)));
+  CheckEquals('0C60C80F961F0E71F3A9B524AF6012062FE037A6',
+              Result, 'SHA1 password salt 1 20');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'), BytesOf('salt'), 1, 32)));
-  CheckEquals('120FB6CFFCF8B32C43E7225256C4F837A86548C92CCC35480805987CB70BE17B', result, 'SHA256 password salt 1 32');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 1, 32)));
+  CheckEquals('120FB6CFFCF8B32C43E7225256C4F837A86548C92CCC35480805987CB70BE17B',
+              Result, 'SHA256 password salt 1 32');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'), BytesOf('salt'), 2, 32)));
-  CheckEquals('AE4D0C95AF6B46D32D0ADFF928F06DD02A303F8EF3C251DFD6E2D85A95474C43', result, 'SHA256 password salt 2 32');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 2, 32)));
+  CheckEquals('AE4D0C95AF6B46D32D0ADFF928F06DD02A303F8EF3C251DFD6E2D85A95474C43',
+              Result, 'SHA256 password salt 2 32');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'), BytesOf('salt'), 4096, 32)));
-  CheckEquals('C5E478D59288C841AA530DB6845C4C8D962893A001CE4E11A4963873AA98134A', result, 'SHA256 password salt 4096 32');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 4096, 32)));
+  CheckEquals('C5E478D59288C841AA530DB6845C4C8D962893A001CE4E11A4963873AA98134A',
+              Result, 'SHA256 password salt 4096 32');
 
-  // PBKDF2-HMAC-SHA512  test vectors from https://stackoverflow.com/questions/15593184/pbkdf2-hmac-sha-512-test-vectors﻿
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'), BytesOf('salt'), 1, 64)));
-  CheckEquals('867F70CF1ADE02CFF3752599A3A53DC4AF34C7A669815AE5D513554E1C8CF252C02D470A285A0501BAD999BFE943C08F050235D7D68B1DA55E63F73B60A57FCE',
-              result, 'SHA512 password salt 1 64');
+  // PBKDF2-HMAC-SHA512  test vectors from
+  // https://stackoverflow.com/questions/15593184/pbkdf2-hmac-sha-512-test-vectors﻿
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 1, 64)));
+  CheckEquals('867F70CF1ADE02CFF3752599A3A53DC4AF34C7A669815AE5D513554E1C8CF252C' +
+              '02D470A285A0501BAD999BFE943C08F050235D7D68B1DA55E63F73B60A57FCE',
+              Result, 'SHA512 password salt 1 64');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'), BytesOf('salt'), 2, 64)));
-  CheckEquals('E1D9C16AA681708A45F5C7C4E215CEB66E011A2E9F0040713F18AEFDB866D53CF76CAB2868A39B9F7840EDCE4FEF5A82BE67335C77A6068E04112754F27CCF4E',
-              result, 'SHA512 password salt 2 64');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 2, 64)));
+  CheckEquals('E1D9C16AA681708A45F5C7C4E215CEB66E011A2E9F0040713F18AEFDB866D53CF' +
+              '76CAB2868A39B9F7840EDCE4FEF5A82BE67335C77A6068E04112754F27CCF4E',
+              Result, 'SHA512 password salt 2 64');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'), BytesOf('salt'), 4096, 64)));
-  CheckEquals('D197B1B33DB0143E018B12F3D1D1479E6CDEBDCC97C5C0F87F6902E072F457B5143F30602641B3D55CD335988CB36B84376060ECD532E039B742A239434AF2D5',
-              result, 'SHA512 password salt 4096 64');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA512.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 4096, 64)));
+  CheckEquals('D197B1B33DB0143E018B12F3D1D1479E6CDEBDCC97C5C0F87F6902E072F457B51' +
+              '43F30602641B3D55CD335988CB36B84376060ECD532E039B742A239434AF2D5',
+              Result, 'SHA512 password salt 4096 64');
 
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'), BytesOf('salt'), 1000000, 32)));
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(THash_SHA256.PBKDF2(BytesOf('password'),
+                                                                         BytesOf('salt'), 1000000, 32)));
   CheckEquals('505112A590BE61AC9D3A235BF0A8EECEA40E54652EC0E3C257C227C9AA5E664C',
-              result, 'SHA256 password salt 1000000 32');
+              Result, 'SHA256 password salt 1000000 32');
 
   // test with a password longer than block length
-  result := StringOf(ValidFormat(TFormat_HEX).Encode(
-    THash_SHA1.PBKDF2(BytesOf('passwordabcdefghijklmnopqrstuvwxyzpasswordabcdefghijklmnopqrstuvwxyz'), BytesOf('salt'), 1, 20)));
-  CheckEquals('2945F3DD721E717BA7676B7D7447423B158DD3A4', result, 'SHA1 password salt 1 20');
+  Result := StringOf(ValidFormat(TFormat_HEX).Encode(
+    THash_SHA1.PBKDF2(BytesOf('passwordabcdefghijklmnopqrstuvwxyzpasswordabcdefg' +
+                              'hijklmnopqrstuvwxyz'), BytesOf('salt'), 1, 20)));
+  CheckEquals('2945F3DD721E717BA7676B7D7447423B158DD3A4',
+              Result, 'SHA1 password salt 1 20');
 end;
 
 procedure TestTHash_PBKDF2.TestRawByteString;
