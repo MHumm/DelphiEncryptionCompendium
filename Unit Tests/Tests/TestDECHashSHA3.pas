@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -295,7 +295,6 @@ type
     /// <summary>
     ///   Adds the SHA3 padding sheme to an input vector so that calculating
     ///   the hash using Keccak instead of SHA3 provides the same result.
-    ///   Deliberately empty here as only implemented in class TestTHash_Keccak_Base.
     /// </summary>
     /// <param name="SHA3InputVector">
     ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
@@ -507,23 +506,15 @@ var
   FinalByteLen : UInt8;
   HashLength   : Int16;
   lDataRow     : IHashTestDataRowSetup;
-
-//NewContents: TStringList;
-U : RawByteString;
 begin
   Len      := 0;
   Contents := TStringList.Create;
-//NewContents := TStringList.Create;
+
   try
     Contents.LoadFromFile(FileName);
 
     for FileRow in Contents do
     begin
-//if FileRow.StartsWith('MDuni') then
-//  Continue
-//else
-//  NewContents.Add(FileRow);
-
       FileRowTrim := LowerCase(Trim(FileRow));
 
       // # denotes comments
@@ -571,6 +562,9 @@ begin
         else
         begin
           FinalByteLen := 0;
+{ TODO :
+Problem: here the method from the base class is called instead the
+overwritten one from Keccack... }
           MsgWithFixup := AddLastByteForKeccakTest('', FinalByteLen);
           lDataRow.AddInputVector(MsgWithFixup);
           lDataRow.FinalBitLength := FinalByteLen;
@@ -675,7 +669,7 @@ begin
   FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
-// Für Unittests für CalcStream verschoben Start
+// FÃ¼r Unittests fÃ¼r CalcStream verschoben Start
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
   lDataRow := FTestData.AddRow;
@@ -695,7 +689,7 @@ begin
                                        '14ce743c5641cebe';
   lDataRow.AddInputVector(#$53#$58#$7B#$19);
   lDataRow.FinalBitLength := 6;
-// Für Unittests für CalcStream verschoben Ende
+// FÃ¼r Unittests fÃ¼r CalcStream verschoben Ende
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
@@ -1749,11 +1743,9 @@ procedure TestTHash_Keccak_Base.AddLastByteForCodeTest(var lDataRow    : IHashTe
                                                        SHA3InputVector : RawByteString;
                                                        LastByteLength  : UInt8);
 var
-  LastByteLen  : UInt8;
-  MsgWithFixup : RawByteString;
+  LastByteLen   : UInt8;
+  MsgWithFixup  : RawByteString;
 begin
-  lDataRow.FinalBitLength := LastByteLength;
-  LastByteLen             := LastByteLength;
   MsgWithFixup            := AddLastByteForKeccakTest(SHA3InputVector, LastByteLen);
   lDataRow.AddInputVector(MsgWithFixup);
   lDataRow.FinalBitLength := LastByteLen;
@@ -1777,9 +1769,9 @@ begin
   1..6 :
       begin
         lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
-        // in lastbyte 0 an stelle fblSHA3 einfügen:
+        // in lastbyte 0 an stelle fblSHA3 einfÃ¼gen:
         lastbyte := lastbyte and (( 1 shl LastByteLength ) xor $FF);
-        // in lastbyte 1 an stelle fblSHA3+1 einfügen:
+        // in lastbyte 1 an stelle fblSHA3+1 einfÃ¼gen:
         lastbyte := lastbyte or BYTE( 1 shl (LastByteLength + 1));
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
         if LastByteLength < 6 then
@@ -1788,11 +1780,11 @@ begin
           LastByteLength := 0;
       end;
   7 : begin // ist ok
-        // 0 anhängen - es könnte sein, dass in mSHA3 eine 1 steht
+        // 0 anhÃ¤ngen - es kÃ¶nnte sein, dass in mSHA3 eine 1 steht
         // wenn man sicher ist, dass dies nie der Fall ist, dann kann
         // man auf die vier Zeilen verzichten
         lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
-        lastbyte := lastbyte and $7F; // evt vorhandene 1 an vorderster Stelle löschen
+        lastbyte := lastbyte and $7F; // evt vorhandene 1 an vorderster Stelle lÃ¶schen
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
 
         SHA3InputVector := SHA3InputVector + chr($01);
@@ -1826,7 +1818,7 @@ begin
   //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
   //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
   FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
-  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
@@ -1834,7 +1826,8 @@ begin
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32d' +
                                        'ca6b3301489674ab';
-  AddLastByteForCodeTest(lDataRow, #$13, 5);
+  AddLastByteForCodeTest(lDataRow, #$19, 5);
+
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg30.pdf

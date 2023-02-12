@@ -470,8 +470,9 @@ type
     ///   Value used for padding if the length of the message to be hashed
     ///   is not a multiple of 8 bit bytes.
     /// </param>
-    /// <param name="BitLen">
-    ///   Number of needed padding bits?
+    /// <param name="Bitlen">
+    ///   Length of the final byte in bit. Required for supporting message
+    ///   lengths which are not a multiple of 8 bits.
     /// </param>
     /// <param name="HashValue">
     ///   The hash value which shall be updated by this method

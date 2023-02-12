@@ -235,6 +235,7 @@ type
     procedure TestDecodeAuthenticationFailure;
     procedure TestEncodeStream;
     procedure TestEncodeLargeStream;
+    procedure TestEncodeStreamChunked;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
@@ -733,6 +734,13 @@ begin
   DoTestEncodeStream_LoadAndTestCAVSData(-1);
 end;
 
+procedure TestTDECGCM.TestEncodeStreamChunked;
+begin
+  // Use cipher block size as max chunk size
+  DoTestEncodeStream_LoadAndTestCAVSData(
+    Max(FCipherAES.Context.BlockSize, FCipherAES.Context.BufferSize));
+end;
+
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
     aMaxChunkSize: Int64);
 var
@@ -761,7 +769,9 @@ begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256_large.rsp',
     FTestDataList, True);
   Status('Encode large stream using chunking');
-  Assert(StreamBufferSize = 8192, 'Might need to update data set to have enough data!');
+  CheckEquals(8192, StreamBufferSize, 'Might need to update data set to have enough data!');
+{ TODO : Auskommentierten Code entfernen }
+//  Assert(StreamBufferSize = 8192, 'Might need to update data set to have enough data!');
   DoTestEncodeStream_TestSingleSet(0, 0, StreamBufferSize);
   Status('Encode large stream without chunking');
   DoTestEncodeStream_TestSingleSet(0, 0, -1);
