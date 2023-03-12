@@ -24,6 +24,7 @@
         <!-- Our activity is a subclass of the built-in NativeActivity framework class.
              This will take care of integrating with our NDK code. -->
         <activity android:name="com.embarcadero.firemonkey.FMXNativeActivity"
+		        android:exported="true"
                 android:label="%activityLabel%"
                 android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
                 android:launchMode="singleTask">
