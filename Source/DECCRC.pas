@@ -47,10 +47,10 @@
 }
 
 unit DECCRC;
+{$INCLUDE DECOptions.inc}
+
 
 interface
-
-{$INCLUDE DECOptions.inc}
 
 type
   /// <summary>

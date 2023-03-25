@@ -22,10 +22,10 @@
 ///   to inherit from TDECHashBit
 /// </summary>
 unit DECHashBase;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -45,14 +45,12 @@ type
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
   /// </summary>
-  {$IFDEF FPC}
-  TDECHash = class(TDECObject)  // does not find methods of the interface as it
-                                // searches for AnsiString instead of RawByteString
-                                // and thus does not find that
-  {$ELSE}
   TDECHash = class(TDECObject, IDECHash)
-  {$ENDIF}
+{$IFDEF FPC}
+  protected
+{$ELSE}
   strict private
+{$ENDIF}
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
@@ -704,7 +702,7 @@ begin
   Result := '';
   if Length(Value) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Size   := Length(Value) * SizeOf(Value[low(Value)]);
     Data   := CalcBuffer(Value[low(Value)], Size);
     {$ELSE}
@@ -726,7 +724,7 @@ var
 begin
   Result := '';
   if Length(Value) > 0 then
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     result := BytesToRawString(
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[low(Value)],

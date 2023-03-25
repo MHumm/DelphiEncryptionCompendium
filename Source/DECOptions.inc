@@ -76,19 +76,29 @@
 // if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM
 // in Delphi do not use Intel x86 ASM
-{$IFNDEF FPC}
-  {$IFNDEF ASSEMBLER}
-    {$DEFINE NO_ASM} (* default ON *)
+{$IFDEF FPC }
+  {$IF defined(CPUX86_64) or defined(CPUAMD64) or defined(CPUIA64) }
+    {$ifndef CPUX64}
+        {$define CPUX64}
+    {$endif}
+  {$else}{$if defined(CPU386) or defined(CPUI386) }
+      {$ifndef CPUX32}
+          {$define CPUX32}
+      {$endif}
   {$ELSE}
-    {$IFDEF WINDOWS}
-      {.$DEFINE NO_ASM} (* default OFF *)
-    {$ELSE}
-      {$DEFINE NO_ASM} (* default ON *)
-    {$ENDIF}
-  {$ENDIF}
+      {$IFNDEF ASSEMBLER }
+        {$DEFINE NO_ASM} (* default ON *)
+      {$ELSE}
+        {$IFDEF WINDOWS}
+          {.$DEFINE NO_ASM} (* default OFF *)
+        {$ELSE}
+          {$DEFINE NO_ASM} (* default ON *)
+        {$ENDIF}
+      {$ENDIF}
+  {$ENDIF}{$endif}
 {$ELSE}
   // Turn ASM off for FPC as we do not know enough about ASM support on FPC
-  {$DEFINE NO_ASM} (* default ON *)
+  {$DEFINE NO_ASM}
 {$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
@@ -129,18 +139,41 @@
 {$IFDEF FPC}
   {$UNDEF DELPHIORBCB}
 
-  {$DEFINE PUREPASCAL}
+  // fpc supports assembler
+  //{$DEFINE PUREPASCAL}
 
   {$DEFINE NATIVEINT_UNDEFINED}
+  {$if FPC_FULLVERSION >=30300}
+       {$define HAVE_LAMBDAS}
+  {$endif}
 
   // use compatibility mode
   {$MODE DELPHI}
+  {$ifdef HAVE_LAMBDAS}
+          {$modeswitch functionreferences}
+          {$modeswitch anonymousfunctions}
+  {$endif}
+
+  {$define HAVE_ASSIGN_ARRAY}
 
   // defines for Mac OS X
   {$IFDEF DARWIN}
     {$DEFINE MACOS}
     {$DEFINE ALIGN_STACK}
   {$ENDIF}
+
+  // define delphi-style CPU-width
+  {$ifdef CPU64}
+    {$define CPU64BITS}
+  {$else} {$if defined(CPU32) }
+    {$define CPU32BITS}
+  {$endif}{$endif}
+
+  {$ASMMODE intel}
+
+{$ELSE}
+       // assume delphi have "reference to" feature
+       {$define HAVE_LAMBDAS}
 {$ENDIF FPC}
 
 //------------------------------------------------------------------------------
@@ -169,13 +202,6 @@
   {$ENDIF}
 {$ENDIF !PUREPASCAL}
 
-{$IF SizeOf(Pointer) = 4}
-  {$DEFINE CPU32BITS}
-{$IFEND}
-{$IF SizeOf(Pointer) = 8}
-  {$DEFINE CPU64BITS}
-{$IFEND}
-
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder
 //------------------------------------------------------------------------------
@@ -190,6 +216,12 @@
   {$ELSE}
     Sorry, but Delphi 2007 and lower are no longer supported!
   {$IFEND}
+  {$IF CompilerVersion >= 24.0}
+       {$define HAVE_STR_LIKE_ARRAY}    // Deplhi provides Low(str), Hight(Str) features
+  {$endif}
+  {$IF CompilerVersion >= 28.0}
+       {$define HAVE_ASSIGN_ARRAY}      // XE7+ supports result := []
+  {$endif}
 {$ENDIF}
 
 //------------------------------------------------------------------------------

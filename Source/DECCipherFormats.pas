@@ -15,10 +15,10 @@
   under the License.
 *****************************************************************************}
 unit DECCipherFormats;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -845,7 +845,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
@@ -867,7 +867,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
@@ -1009,7 +1009,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
@@ -1034,7 +1034,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
@@ -1046,7 +1046,7 @@ begin
 
     Temp   := ValidFormat(Format).Encode(EncryptedBuffer);
     SetLength(Result, length(Temp));
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Move(Temp[0], Result[low(Result)], length(Temp))
     {$ELSE}
     Move(Temp[0], Result[1], length(Temp))
@@ -1093,7 +1093,7 @@ begin
 
     SetLength(Result, length(Tmp));
 
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Move(Tmp[0], Result[low(Result)], length(Tmp))
     {$ELSE}
     Move(Tmp[0], Result[1], length(Tmp))
@@ -1129,7 +1129,7 @@ begin
 
     SetLength(Result, length(Tmp));
 
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Move(Tmp[0], Result[low(Result)], length(Tmp))
     {$ELSE}
     Move(Tmp[0], Result[1], length(Tmp))

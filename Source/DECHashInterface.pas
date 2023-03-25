@@ -15,6 +15,7 @@
   under the License.
 *****************************************************************************}
 unit DECHashInterface;
+{$INCLUDE DECOptions.inc}
 
 interface
 
