@@ -266,6 +266,9 @@ const
    $27, $A7, $67, $E7, $17, $97, $57, $D7, $37, $B7, $77, $F7, $0F, $8F,
    $4F, $CF, $2F, $AF, $6F, $EF, $1F, $9F, $5F, $DF, $3F, $BF, $7F, $FF);
 
+{$ifdef FPC}
+{$include fpc\DECUtil.inc}
+{$endif}
 
 {$ifdef X64ASM}
   {$include x86_64\DECUtil.inc}

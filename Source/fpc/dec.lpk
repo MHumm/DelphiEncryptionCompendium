@@ -130,6 +130,10 @@
         <Filename Value="..\x86_64\DECUtil.inc"/>
         <Type Value="Include"/>
       </Item>
+      <Item>
+        <Filename Value="DECUtil.inc"/>
+        <Type Value="Include"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
