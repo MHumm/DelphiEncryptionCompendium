@@ -1237,6 +1237,8 @@ var
   InnerKeyPad, OuterKeyPad: TBytes;
   SaltEx, T, U, TrimmedKey: TBytes;
 begin
+  Result := nil;
+
   Hash := TDECHashAuthenticationClass(self).Create;
   try
     // Setup needed parameters
@@ -1315,10 +1317,7 @@ begin
         end;
       end;
 
-      if (I = 1) then
-        Result := Copy(T)
-      else
-        Result := Result + T;  // DK += F    , DK = DK || Ti
+      Result := Result + T;  // DK += F    , DK = DK || Ti
     end;
   finally
     Hash.Free;
