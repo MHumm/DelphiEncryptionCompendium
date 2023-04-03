@@ -510,7 +510,8 @@ type
     ///   Number of bytes within the stream over which to calculate the hash value
     /// </param>
     /// <param name="HashResult">
-    ///   In this byte array the calculated hash value will be returned
+    ///   In this byte array the calculated hash value will be returned. The
+    ///   array will be automatically sized suitably.
     /// </param>
     /// <param name="OnProgress">
     ///   Optional callback routine. It can be used to display the progress of
@@ -1237,6 +1238,7 @@ var
   InnerKeyPad, OuterKeyPad: TBytes;
   SaltEx, T, U, TrimmedKey: TBytes;
 begin
+  SetLength(Result, 0);
   Hash := TDECHashAuthenticationClass(self).Create;
   try
     // Setup needed parameters
@@ -1330,7 +1332,7 @@ end;
 
 class function TDECHashAuthentication.PBKDF2(const Password, Salt: RawByteString; Iterations: Integer; KeyLength: Integer): TBytes;
 begin
-  result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
+  Result := PBKDF2(BytesOf(Password), BytesOf(Salt), Iterations, KeyLength);
 end;
 
 { TDECHashExtended }
