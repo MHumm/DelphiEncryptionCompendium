@@ -610,7 +610,7 @@ procedure TDECCipherModes.EncodeCFBx(Source, Dest: PByteArray; Size: Integer);
 // CFB-BlockSize
 var
   I: Integer;
-  F: PByteArray;
+  F: PUInt8Array;
 begin
   FState := csEncode;
   if FBufferIndex > 0 then
@@ -790,7 +790,7 @@ end;
 
 procedure TDECCipherModes.EncodeCBCx(Source, Dest: PByteArray; Size: Integer);
 var
-  F: PByteArray;
+  F: PUInt8Array;
   I: Integer;
 begin
   Dec(Size, FBufferSize);
@@ -1011,7 +1011,7 @@ procedure TDECCipherModes.DecodeCFBx(Source, Dest: PByteArray; Size: Integer);
 // CFB-BlockSize
 var
   I: Integer;
-  F: PByteArray;
+  F: PUInt8Array;
 begin
   FState := csDecode;
   if FBufferIndex > 0 then
@@ -1171,7 +1171,7 @@ end;
 procedure TDECCipherModes.DecodeCBCx(Source, Dest: PByteArray; Size: Integer);
 var
   I: Integer;
-  F, B, T: PByteArray;
+  F, B, T: PUInt8Array;
 begin
   Dec(Size, FBufferSize);
   F := FFeedback;
@@ -1215,7 +1215,7 @@ end;
 procedure TDECCipherModes.DecodeCTSx(Source, Dest: PByteArray; Size: Integer);
 var
   I: Integer;
-  F, B, T: PByteArray;
+  F, B, T: PUInt8Array;
 begin
   Dec(Size, FBufferSize);
   F := FFeedback;

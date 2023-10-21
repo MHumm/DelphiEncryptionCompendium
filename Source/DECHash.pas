@@ -79,6 +79,7 @@ type
   THash_Snefru128   = class;  // derived from the Xerox Secure Hash Function
   THash_Snefru256   = class;  // " - "
   THash_Sapphire    = class;
+  THash_BCrypt      = class;
 
   /// <summary>
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,
@@ -92,7 +93,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -108,7 +109,7 @@ type
     procedure DoInit; override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -239,7 +240,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -565,7 +566,7 @@ type
     /// <returns>
     ///   Hash value calculated
     /// </returns>
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
   public
     /// <summary>
     ///   Dimension hash result buffer
@@ -755,7 +756,7 @@ type
     procedure DoTransform5(Buffer: PUInt32Array);
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function BlockSize: UInt32; override;
     /// <summary>
     ///   Returns the minimum possible number for the rounds parameter.
@@ -880,7 +881,7 @@ type
     procedure DoDone; override;
     procedure DoPull;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override; // 32
   end;
@@ -894,7 +895,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -975,7 +976,7 @@ type
     procedure DoTransform(Buffer: PUInt32Array); override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
   end;
@@ -1001,7 +1002,7 @@ type
     procedure DoInit; override;
     procedure DoDone; override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     ///   Returns the minimum possible number for the rounds parameter.
     ///   Value depends on Digest size which depends on concrete implementation
     /// </summary>
@@ -1073,7 +1074,7 @@ type
     procedure DoDone; override;
     procedure DoTransform(Buffer: PUInt32Array); override;
   public
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     function DigestAsBytes: TBytes; override;
     /// <summary>
     ///   Returns the default digest/hash size in bit. If RequestedDigestSize is
@@ -1408,7 +1409,7 @@ type
     /// </exception>
     procedure Calc(const Data; DataSize: Integer); override;
 
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
     class function DigestSize: UInt32; override;
     class function BlockSize: UInt32; override;
 
@@ -1554,7 +1555,7 @@ begin
   DoTransform(Pointer(FBuffer));
 end;
 
-function THash_MD2.Digest: PByteArray;
+function THash_MD2.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -1604,7 +1605,7 @@ begin
   DoTransform(Pointer(FBuffer));
 end;
 
-function THashBaseMD4.Digest: PByteArray;
+function THashBaseMD4.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -2982,7 +2983,7 @@ begin
   SwapInt64Buffer(FDigest, FDigest, SizeOf(FDigest) div 8);
 end;
 
-function THash_SHA384.Digest: PByteArray;
+function THash_SHA384.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -3368,7 +3369,7 @@ begin
   end;
 end;
 
-function THashBaseHaval.Digest: PByteArray;
+function THashBaseHaval.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -3905,7 +3906,7 @@ begin
 end;
 {$ENDIF !THash_Panama_asm}
 
-function THash_Panama.Digest: PByteArray;
+function THash_Panama.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -4112,7 +4113,7 @@ begin
   DoTransform(Pointer(FBuffer));
 end;
 
-function THashBaseWhirlpool.Digest: PByteArray;
+function THashBaseWhirlpool.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -4271,7 +4272,7 @@ begin
   DoTransform(Pointer(FBuffer));
 end;
 
-function THash_Square.Digest: PByteArray;
+function THash_Square.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -4331,7 +4332,7 @@ begin
   SwapUInt32Buffer(FDigest, FDigest, 8);
 end;
 
-function THashBaseSnefru.Digest: PByteArray;
+function THashBaseSnefru.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -4537,7 +4538,7 @@ begin
 end;
 {$ENDIF !THash_Sapphire_asm}
 
-function THash_Sapphire.Digest: PByteArray;
+function THash_Sapphire.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;
@@ -5113,7 +5114,7 @@ begin
   SetLength(FDigest, 64);
 end;
 
-function THash_SHA3Base.Digest: PByteArray;
+function THash_SHA3Base.Digest: PUInt8Array;
 begin
   Result := @FDigest[0];
 end;
@@ -5545,7 +5546,7 @@ begin
                // fixed value instead of no initialization at all.
 end;
 
-function THash_BCrypt.Digest: PByteArray;
+function THash_BCrypt.Digest: PUInt8Array;
 begin
   Result := @FDigest;
 end;

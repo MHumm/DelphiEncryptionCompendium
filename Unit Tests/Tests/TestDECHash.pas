@@ -61,7 +61,7 @@ type
     ///   Needs to be overridden, even if empty, as it's called internally by
     ///   the class to be tested
     /// </summary>
-    function Digest: PByteArray; override;
+    function Digest: PUInt8Array; override;
   public
     /// <summary>
     ///   Need to be overriden, as the originals would raise an exception by design
@@ -6019,7 +6019,7 @@ begin
   result := 4;
 end;
 
-function TDECHashIncrement8.Digest: PByteArray;
+function TDECHashIncrement8.Digest: PUInt8Array;
 begin
   // Returns nil on purpose to supress a return value might be undefined warning
   result := nil;

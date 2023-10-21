@@ -43,6 +43,12 @@ type
     {$IFEND}
   {$ENDIF}
 
+  /// <summary>
+  ///   Replacement for PByteArray
+  /// </summary>
+  PUInt8Array = ^TInt8Array;
+  TInt8Array = array[0..MaxInt-1] of Byte;
+
   PUInt32Array = ^TUInt32Array;
   TUInt32Array = array[0..1023] of UInt32;
 

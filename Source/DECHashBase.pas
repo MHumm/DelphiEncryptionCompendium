@@ -83,7 +83,7 @@ type
     /// <summary>
     ///   Internal processing buffer
     /// </summary>
-    FBuffer      : PByteArray;
+    FBuffer      : PUInt8Array;
     /// <summary>
     ///   Size of the internal processing buffer in byte
     /// </summary>
@@ -154,7 +154,7 @@ type
     /// <summary>
     ///   Returns the calculated hash value
     /// </summary>
-    function Digest: PByteArray; virtual; abstract;
+    function Digest: PUInt8Array; virtual; abstract;
   public
     /// <summary>
     ///   Initialize internal fields

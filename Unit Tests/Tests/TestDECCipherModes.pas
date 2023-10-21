@@ -91,7 +91,7 @@ type
   /// <param name="Size">
   ///   Size of the data to be processed in byte
   /// </param>
-  TTestFunction = procedure(Source, Dest: PByteArray; Size: Integer) of object;
+  TTestFunction = procedure(Source, Dest: PUInt8Array; Size: Integer) of object;
 
   /// <summary>
   ///   Testmethoden für Klasse TDECCipherModes

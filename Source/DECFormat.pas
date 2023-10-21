@@ -1867,9 +1867,9 @@ class procedure TFormat_Base32.DoEncode(const Source;
                                         Size: Integer);
 var
    i, n, c, b : Integer;
-   pIn : PByteArray;
-   pOut : PByte;
-   PadChars : UInt8;
+   pIn        : PUInt8Array;
+   pOut       : PByte;
+   PadChars   : UInt8;
 begin
   if (Size = 0) or (Pointer(Source) = nil) then
   begin
