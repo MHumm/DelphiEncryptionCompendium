@@ -49,10 +49,11 @@ type
   TDECHash = class(TDECObject)  // does not find methods of the interface as it
                                 // searches for AnsiString instead of RawByteString
                                 // and thus does not find that
+  private
   {$ELSE}
   TDECHash = class(TDECObject, IDECHash)
-  {$ENDIF}
   strict private
+  {$ENDIF}
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
