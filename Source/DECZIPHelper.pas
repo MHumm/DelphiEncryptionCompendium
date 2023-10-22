@@ -84,7 +84,7 @@ begin
   end;
 
   if Assigned(Result) then
-    Result.Mode := cmCBCx;
+    Result.Mode := cmCBCx; // as per ZIP documentation the only supported mode
 end;
 
 end.
