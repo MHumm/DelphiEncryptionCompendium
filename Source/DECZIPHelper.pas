@@ -58,8 +58,6 @@ uses
 
 function CreateZIPCryptoAlgorithmInstance(AlgorithmID: UInt16):TDECFormattedCipher;
 begin
-  Result := nil;
-
   case AlgorithmID of
     $6601 : Result := TCipher_1DES.Create;
 //    $6602 : Result := TCipher_RC2.Create; // (version needed to extract < 5.2)
@@ -83,8 +81,7 @@ begin
                                                           [AlgorithmID]));
   end;
 
-  if Assigned(Result) then
-    Result.Mode := cmCBCx; // as per ZIP documentation the only supported mode
+  Result.Mode := cmCBCx; // as per ZIP documentation the only supported mode
 end;
 
 end.

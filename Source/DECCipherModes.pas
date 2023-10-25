@@ -170,16 +170,16 @@ type
     ///   This mode should not be used in practice, as it makes the encrypted
     ///   message vulnerable to certain attacks without knowing the encryption key
     /// </remarks>
-    procedure EncodeECBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeECBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8bit Output Feedback mode, needs no padding
     /// </summary>
-    procedure EncodeOFB8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeOFB8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8 bit Cipher Feedback mode, needs no padding and works on 8 bit
     ///   Feedback Shift Registers.
     /// </summary>
-    procedure EncodeCFB8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCFB8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8Bit CFS, double Cipher Feedback mode (CFB), needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
@@ -187,20 +187,20 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
-    procedure EncodeCFS8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCFS8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
     ///   Blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure EncodeCFBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCFBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Output Feedback mode on Blocksize of Cipher, needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
     ///   Blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure EncodeOFBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeOFBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   double Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding.
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
@@ -209,7 +209,7 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
-    procedure EncodeCFSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCFSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Cipher Block Chaining, with CFB8 padding of truncated final block
     ///   It needs no external padding, because internally the last
@@ -219,7 +219,7 @@ type
     ///   This one works on Blocks of Cipher.BufferSize bytes, when using a
     ///   Blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure EncodeCBCx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCBCx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   double CBC, with CFS8 padding of truncated final block
     ///   It needs no external padding, because internally the last
@@ -232,13 +232,13 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
-    procedure EncodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCTSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Galois Counter Mode: encryption with addtional optional authentication.
     ///   Implemented in its own unit, but needed here to be callable even if
     ///   source length is 0.
     /// </summary>
-    procedure EncodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -250,7 +250,7 @@ type
     ///   cmCTSx has. It has a less secure padding of the truncated final block.
     ///   (to enable it see DECOptions.inc)
     /// </summary>
-    procedure EncodeCTS3(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure EncodeCTS3(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$ENDIF}
     /// <summary>
     ///   Electronic Code Book
@@ -259,16 +259,16 @@ type
     ///   This one works on blocks of Cipher.BufferSize bytes, when using a
     ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure DecodeECBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeECBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8 bit Output Feedback mode, needs no padding
     /// </summary>
-    procedure DecodeOFB8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeOFB8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8 bit Cipher Feedback mode, needs no padding and works on 8 bit
     ///   Feedback Shift Registers.
     /// </summary>
-    procedure DecodeCFB8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCFB8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   8 Bit CFS, double Cipher Feedback mode (CFB), needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
@@ -276,20 +276,20 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
-    procedure DecodeCFS8(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCFS8(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding
     ///   This one works on blocks of Cipher.BufferSize bytes, when using a
     ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure DecodeCFBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCFBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Output Feedback mode on Blocksize of Cipher, needs no padding and
     ///   works on 8 bit Feedback Shift Registers.
     ///   This one works on blocks of Cipher.BufferSize bytes, when using a
     ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure DecodeOFBx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeOFBx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   double Cipher Feedback mode (CFB) on Blocksize of Cipher, needs no padding.
     ///   This one works on blocks of Cipher.BufferSize bytes, when using a
@@ -298,7 +298,7 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into Feedback register.
     /// </summary>
-    procedure DecodeCFSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCFSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Cipher Block Chaining, with CFB8 padding of truncated final block.
     ///   It needs no external padding, because internally the last
@@ -308,7 +308,7 @@ type
     ///   This one works on blocks of Cipher.BufferSize bytes, when using a
     ///   blockcipher that's equal to Cipher.BlockSize.
     /// </summary>
-    procedure DecodeCBCx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCBCx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   double CBC, with CFS8 padding of truncated final block
     ///   It needs no external padding, because internally the last
@@ -321,11 +321,11 @@ type
     ///   works as cmCBCx, cmCFBx, cmCFB8 but with double XOR'ing of the
     ///   inputstream into feedback register.
     /// </summary>
-    procedure DecodeCTSx(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCTSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
     ///   Galois Counter Mode, details are implemented in DECCipherModesGCM
     /// </summary>
-    procedure DecodeGCM(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC
@@ -339,7 +339,7 @@ type
     /// <remarks>
     ///   For DEC 3.0 compatibility only
     /// </remarks>
-    procedure DecodeCTS3(Source, Dest: PByteArray; Size: Integer); virtual;
+    procedure DecodeCTS3(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$ENDIF}
     /// <summary>
     ///   When setting mode to GCM the GCM implementing class instance needs to
@@ -521,7 +521,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.EncodeECBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeECBx(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -556,7 +556,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.EncodeOFB8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeOFB8(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -572,7 +572,7 @@ begin
   FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeCFB8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCFB8(Source, Dest: PUInt8Array; Size: Integer);
 // CFB-8
 var
   I: Integer;
@@ -589,7 +589,7 @@ begin
   FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeCFS8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCFS8(Source, Dest: PUInt8Array; Size: Integer);
 // CFS-8, CTS as CFB
 var
   I: Integer;
@@ -606,7 +606,7 @@ begin
   FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeCFBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCFBx(Source, Dest: PUInt8Array; Size: Integer);
 // CFB-BlockSize
 var
   I: Integer;
@@ -650,7 +650,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.EncodeOFBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeOFBx(Source, Dest: PUInt8Array; Size: Integer);
 // OFB-BlockSize
 var
   I: Integer;
@@ -748,7 +748,7 @@ begin
       FreeAndNil(FGCM);
 end;
 
-procedure TDECCipherModes.EncodeCFSx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCFSx(Source, Dest: PUInt8Array; Size: Integer);
 // CFS-BlockSize
 var
   I: Integer;
@@ -788,7 +788,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.EncodeCBCx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCBCx(Source, Dest: PUInt8Array; Size: Integer);
 var
   F: PUInt8Array;
   I: Integer;
@@ -815,7 +815,7 @@ begin
     FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeCTSx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCTSx(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -838,7 +838,7 @@ begin
     FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeGCM(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeGCM(Source, Dest: PUInt8Array; Size: Integer);
 var
   PlainText,
   CipherText : TBytes;
@@ -858,7 +858,7 @@ begin
 end;
 
 {$IFDEF DEC3_CMCTS}
-procedure TDECCipherModes.EncodeCTS3(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.EncodeCTS3(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -903,7 +903,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeECBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeECBx(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -938,7 +938,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeGCM(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeGCM(Source, Dest: PUInt8Array; Size: Integer);
 var
   PlainText,
   CipherText : TBytes;
@@ -957,7 +957,7 @@ begin
   FGCM.DecodeGCM(PlainText, CipherText, Size);
 end;
 
-procedure TDECCipherModes.DecodeCFB8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCFB8(Source, Dest: PUInt8Array; Size: Integer);
 // CFB-8
 var
   I: Integer;
@@ -974,7 +974,7 @@ begin
   FState := csDecode;
 end;
 
-procedure TDECCipherModes.DecodeOFB8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeOFB8(Source, Dest: PUInt8Array; Size: Integer);
 // same as EncodeOFB
 var
   I: Integer;
@@ -991,7 +991,7 @@ begin
   FState := csDecode;
 end;
 
-procedure TDECCipherModes.DecodeCFS8(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCFS8(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
 begin
@@ -1007,7 +1007,7 @@ begin
   FState := csDecode;
 end;
 
-procedure TDECCipherModes.DecodeCFBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCFBx(Source, Dest: PUInt8Array; Size: Integer);
 // CFB-BlockSize
 var
   I: Integer;
@@ -1063,7 +1063,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeOFBx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeOFBx(Source, Dest: PUInt8Array; Size: Integer);
 // OFB-BlockSize, same as EncodeOFBx
 var
   I: Integer;
@@ -1127,7 +1127,7 @@ begin
     FGCM.Init(self.DoEncode, OriginalInitVector);
 end;
 
-procedure TDECCipherModes.DecodeCFSx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCFSx(Source, Dest: PUInt8Array; Size: Integer);
 // CFS-BlockSize
 var
   I: Integer;
@@ -1168,7 +1168,7 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeCBCx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCBCx(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
   F, B, T: PUInt8Array;
@@ -1212,7 +1212,7 @@ begin
     FState := csDecode;
 end;
 
-procedure TDECCipherModes.DecodeCTSx(Source, Dest: PByteArray; Size: Integer);
+procedure TDECCipherModes.DecodeCTSx(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
   F, B, T: PUInt8Array;
@@ -1244,10 +1244,10 @@ begin
 end;
 
 {$IFDEF DEC3_CMCTS}
-procedure DecodeCTS3(Source, Dest: PByteArray; Size: Integer);
+procedure DecodeCTS3(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
-  F, B, T: PByteArray;
+  F, B, T: PUInt8Array;
 begin
   Dec(Size, FBufferSize);
   F := FFeedback;
