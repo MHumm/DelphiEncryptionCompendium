@@ -143,18 +143,20 @@
   //{$DEFINE PUREPASCAL}
 
   {$DEFINE NATIVEINT_UNDEFINED}
-  {$if FPC_FULLVERSION >=30300}
-       {$define HAVE_LAMBDAS}
-  {$endif}
+
+
+  {$IF declared(FPC_FULLVERSION) and (FPC_FULLVERSION >= 30300)}
+       {$DEFINE HAVE_LAMBDAS}
+  {$IFEND}
 
   // use compatibility mode
   {$MODE DELPHI}
-  {$ifdef HAVE_LAMBDAS}
+  {$IFDEF HAVE_LAMBDAS}
           {$modeswitch functionreferences}
           {$modeswitch anonymousfunctions}
-  {$endif}
+  {$ENDIF}
 
-  {$define HAVE_ASSIGN_ARRAY}
+  {$DEFINE HAVE_ASSIGN_ARRAY}
 
   // defines for Mac OS X
   {$IFDEF DARWIN}
@@ -167,7 +169,7 @@
     {$define CPU64BITS}
   {$else} {$if defined(CPU32) }
     {$define CPU32BITS}
-  {$endif}{$endif}
+  {$ifend}{$endif}
 
   {$ASMMODE intel}
 
@@ -218,10 +220,10 @@
   {$IFEND}
   {$IF CompilerVersion >= 24.0}
        {$define HAVE_STR_LIKE_ARRAY}    // Deplhi provides Low(str), Hight(Str) features
-  {$endif}
+  {$ifend}
   {$IF CompilerVersion >= 28.0}
        {$define HAVE_ASSIGN_ARRAY}      // XE7+ supports result := []
-  {$endif}
+  {$ifend}
 {$ENDIF}
 
 //------------------------------------------------------------------------------

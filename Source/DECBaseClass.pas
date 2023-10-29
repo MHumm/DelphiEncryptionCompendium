@@ -243,7 +243,7 @@ begin
     {$ELSE}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[1]));
-    {$IFEND}
+    {$ENDIF}
   {$ELSE !DEC52_IDENTITY}
   Signature := RawByteString(StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName));
     {$IFDEF HAVE_STR_LIKE_ARRAY}
@@ -252,7 +252,7 @@ begin
     {$ELSE}
     Result := CRC32(IdentityBase, Signature[1],
                                   Length(Signature) * SizeOf(Signature[1]));
-    {$IFEND}
+    {$ENDIF}
   {$ENDIF !DEC52_IDENTITY}
 end;
 

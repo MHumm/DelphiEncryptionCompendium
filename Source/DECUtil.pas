@@ -330,7 +330,7 @@ begin
 end;
 {$ENDIF !X86ASM}
 
-{$ifndef SwapUInt32_asm}
+{$IFNDEF SwapUInt32_asm}
 function SwapUInt32(Source: UInt32): UInt32;
 begin
   Result := Source shl 24 or
@@ -338,7 +338,7 @@ begin
             Source shl 8 and $00FF0000 or
             Source shr 8 and $0000FF00;
 end;
-{$IFEND PUREPASCAL}
+{$ENDIF PUREPASCAL}
 
 procedure SwapUInt32Buffer(const Source; var Dest; Count: Integer);
 {$IFDEF X86ASM}
@@ -517,7 +517,7 @@ begin
     FillChar(Buffer[Low(Buffer)], BufferSize, WipeBytes[Count]);
     {$ELSE}
     FillChar(Buffer[1], BufferSize, WipeBytes[Count]);
-    {$IFEND}
+    {$ENDIF}
     while Size > 0 do
     begin
       Bytes := Size;
@@ -527,7 +527,7 @@ begin
       Stream.Write(Buffer[Low(Buffer)], Bytes);
       {$ELSE}
       Stream.Write(Buffer[1], Bytes);
-      {$IFEND}
+      {$ENDIF}
       Dec(Size, Bytes);
     end;
   end;
@@ -551,7 +551,7 @@ begin
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$IFEND}
+    {$ENDIF}
     Source := '';
   end;
 end;
@@ -567,7 +567,7 @@ begin
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$IFEND}
+    {$ENDIF}
     Source := '';
   end;
 end;
@@ -583,7 +583,7 @@ begin
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$IFEND}
+    {$ENDIF}
     Source := '';
   end;
 end;
@@ -598,7 +598,7 @@ begin
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[Low(Source)]));
     {$ELSE}
     ProtectBuffer(Pointer(Source)^, Length(Source) * SizeOf(Source[1]));
-    {$IFEND}
+    {$ENDIF}
     Source := '';
   end;
 end;
@@ -614,7 +614,7 @@ begin
     Move(Source[0], Result[Low(result)], Length(Source));
     {$ELSE}
     Move(Source[0], Result[1], Length(Source));
-    {$IFEND}
+    {$ENDIF}
   end;
 end;
 

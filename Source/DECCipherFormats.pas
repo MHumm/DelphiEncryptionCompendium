@@ -845,7 +845,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
@@ -853,7 +853,7 @@ begin
     Len := Length(Source) * SizeOf(Source[1]);
     SetLength(Result, Len);
     Encode(Source[1], Result[0], Len);
-    {$IFEND}
+    {$ENDIF}
 
     Result := ValidFormat(Format).Encode(Result);
   end
@@ -867,7 +867,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Len := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(Result, Len);
     Encode(Source[low(Source)], Result[0], Len);
@@ -875,7 +875,7 @@ begin
     Len := Length(Source) * SizeOf(Source[1]);
     SetLength(Result, Len);
     Encode(Source[1], Result[0], Len);
-    {$IFEND}
+    {$ENDIF}
 
     Result := ValidFormat(Format).Encode(Result);
   end
@@ -1009,7 +1009,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
@@ -1017,7 +1017,7 @@ begin
     SourceSize := Length(Source) * SizeOf(Source[1]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[1], EncryptedBuffer[0], SourceSize);
-    {$IFEND}
+    {$ENDIF}
 
     Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
   end
@@ -1034,7 +1034,7 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     SourceSize := Length(Source) * SizeOf(Source[low(Source)]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[low(Source)], EncryptedBuffer[0], SourceSize);
@@ -1042,15 +1042,15 @@ begin
     SourceSize := Length(Source) * SizeOf(Source[1]);
     SetLength(EncryptedBuffer, SourceSize);
     Encode(Source[1], EncryptedBuffer[0], SourceSize);
-    {$IFEND}
+    {$ENDIF}
 
     Temp   := ValidFormat(Format).Encode(EncryptedBuffer);
     SetLength(Result, length(Temp));
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Move(Temp[0], Result[low(Result)], length(Temp))
     {$ELSE}
     Move(Temp[0], Result[1], length(Temp))
-    {$IFEND}
+    {$ENDIF}
   end
   else
     Result := '';
@@ -1093,11 +1093,11 @@ begin
 
     SetLength(Result, length(Tmp));
 
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Move(Tmp[0], Result[low(Result)], length(Tmp))
     {$ELSE}
     Move(Tmp[0], Result[1], length(Tmp))
-    {$IFEND}
+    {$ENDIF}
   end
   else
     SetLength(Result, 0);
@@ -1129,11 +1129,11 @@ begin
 
     SetLength(Result, length(Tmp));
 
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Move(Tmp[0], Result[low(Result)], length(Tmp))
     {$ELSE}
     Move(Tmp[0], Result[1], length(Tmp))
-    {$IFEND}
+    {$ENDIF}
   end
   else
     SetLength(Result, 0);

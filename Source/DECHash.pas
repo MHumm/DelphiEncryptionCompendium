@@ -79,6 +79,7 @@ type
   THash_Snefru128   = class;  // derived from the Xerox Secure Hash Function
   THash_Snefru256   = class;  // " - "
   THash_Sapphire    = class;
+  THash_BCrypt      = class;
 
   /// <summary>
   ///   Implementation of the MD2 hash algorithm. Considered to be broken,

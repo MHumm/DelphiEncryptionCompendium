@@ -431,7 +431,7 @@ begin
   // special and skipped chars
   // '0123456789ABCDEFX$ abcdefhHx()[]{},;:-_/\*+"'''+CHR(9)+CHR(10)+CHR(13);
 
-  {$IFdef HAVE_ASSIGN_ARRAY}
+  {$IFDEF HAVE_ASSIGN_ARRAY}
   result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41, $42, $43,
              $44, $45, $46, $58, $24, $20, $61, $62, $63, $64, $65, $66, $68,
              $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
@@ -487,7 +487,7 @@ begin
   result[45]:=$09;
   result[46]:=$0A;
   result[47]:=$0D;
-  {$IFEND}
+  {$ENDIF}
 end;
 
 class procedure TFormat_HEX.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -597,7 +597,7 @@ begin
   // special and skipped chars
   // '0123456789abcdefX$ ABCDEFhHx()[]{},;:-_/\*+"'''+CHR(9)+CHR(10)+CHR(13);
 
-  {$IFdef HAVE_ASSIGN_ARRAY}
+  {$IFDEF HAVE_ASSIGN_ARRAY}
   result := [$30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $61, $62, $63,
              $64, $65, $66, $68, $58, $24, $20, $41, $42, $43, $44, $45, $46,
              $48, $78, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
@@ -653,7 +653,7 @@ begin
   result[45]:=$09;
   result[46]:=$0A;
   result[47]:=$0D;
-  {$IFEND}
+  {$ENDIF}
 end;
 
 class function TFormat_DECMIME32.CharTableBinary: TBytes;
@@ -1113,7 +1113,7 @@ begin
   // ' '+CHR(9)+CHR(10)+CHR(13);
 
   SetLength(result, 68);
-  {$IFdef HAVE_ASSIGN_ARRAY}
+  {$IFDEF HAVE_ASSIGN_ARRAY}
   result := [$60, $21, $22, $23, $24, $25, $26, $27, $28, $29, $2A, $2B, $2C,
              $2D, $2E, $2F, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39,
              $3A, $3B, $3C, $3D, $3E, $3F, $40, $41, $42, $43, $44, $45, $46,
@@ -1196,7 +1196,7 @@ begin
   result[65]:=$09;
   result[66]:=$0A;
   result[67]:=$0D;
-  {$IFEND}
+  {$ENDIF}
 end;
 
 class procedure TFormat_UU.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1350,7 +1350,7 @@ begin
   // '+-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' +
   // ' "()[]'''+CHR(9)+CHR(10)+CHR(13);
   SetLength(result, 74);
-  {$IFdef HAVE_ASSIGN_ARRAY}
+  {$IFDEF HAVE_ASSIGN_ARRAY}
   result := [$2B, $2D, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $41,
              $42, $43, $44, $45, $46, $47, $48, $49, $4A, $4B, $4C, $4D, $4E,
              $4F, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $5A, $61,
@@ -1439,7 +1439,7 @@ begin
   result[71]:=$09;
   result[72]:=$0A;
   result[73]:=$0D;
-  {$IFEND}
+  {$ENDIF}
 end;
 
 var

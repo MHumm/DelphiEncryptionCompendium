@@ -311,11 +311,11 @@ end;
 function RandomRawByteString(Size: Integer): RawByteString;
 begin
   SetLength(Result, Size);
-  {$IFdef HAVE_STR_LIKE_ARRAY}
+  {$IFDEF HAVE_STR_LIKE_ARRAY}
   RandomBuffer(Result[Low(Result)], Size);
   {$ELSE}
   RandomBuffer(Result[1], Size);
-  {$IFEND}
+  {$ENDIF}
 end;
 
 function RandomLong: UInt32;

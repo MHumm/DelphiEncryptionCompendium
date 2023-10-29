@@ -702,13 +702,13 @@ begin
   Result := '';
   if Length(Value) > 0 then
   begin
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Size   := Length(Value) * SizeOf(Value[low(Value)]);
     Data   := CalcBuffer(Value[low(Value)], Size);
     {$ELSE}
     Size   := Length(Value) * SizeOf(Value[1]);
     Data   := CalcBuffer(Value[1], Size);
-    {$IFEND}
+    {$ENDIF}
     Result := StringOf(ValidFormat(Format).Encode(Data));
   end
   else
@@ -724,7 +724,7 @@ var
 begin
   Result := '';
   if Length(Value) > 0 then
-    {$IFdef HAVE_STR_LIKE_ARRAY}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     result := BytesToRawString(
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[low(Value)],
@@ -734,7 +734,7 @@ begin
                 ValidFormat(Format).Encode(
                   CalcBuffer(Value[1],
                              Length(Value) * SizeOf(Value[1]))))
-    {$IFEND}
+    {$ENDIF}
   else
   begin
     SetLength(Buf, 0);

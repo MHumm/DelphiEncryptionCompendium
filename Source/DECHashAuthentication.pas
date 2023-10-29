@@ -913,7 +913,7 @@ type
       write  SetSalt;
   end;
 
-  {$IFndef HAVE_ASSIGN_ARRAY}
+  {$IFNDEF HAVE_ASSIGN_ARRAY}
   /// <summary>
   ///   Class helper for implementing array concatenation which is not available
   ///   in Delphi XE6 or lower.
@@ -924,7 +924,7 @@ type
   TArrHelper = class
     class procedure AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
   end;
-  {$IFEND}
+  {$ENDIF}
 
   /// <summary>
   ///   Meta class for the class containing the authentication methods
@@ -1520,7 +1520,7 @@ begin
   for i := 0 to High(B) do
     A[L + i] := B[i];
 end;
-{$IFEND}
+{$ENDIF}
 
 { TDECPasswordHash }
 
