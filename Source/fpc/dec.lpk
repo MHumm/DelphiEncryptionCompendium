@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <PathDelim Value="\"/>
+    <Name Value="DEC"/>
+    <Author Value="geheimniswelten"/>
+    <AutoUpdate Value="Manually"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\$(TargetCPU);.."/>
+        <OtherUnitFiles Value=".."/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="Delphi Encryption Compendium (DEC)"/>
+    <License Value="AFL 2.0"/>
+    <Version Major="6" Minor="4"/>
+    <Files>
+      <Item>
+        <Filename Value="..\DECCRC.pas"/>
+        <UnitName Value="DECCRC"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECData.pas"/>
+        <UnitName Value="DECData"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHash.pas"/>
+        <UnitName Value="DECHash"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECRandom.pas"/>
+        <UnitName Value="DECRandom"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECUtil.pas"/>
+        <UnitName Value="DECUtil"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECBaseClass.pas"/>
+        <UnitName Value="DECBaseClass"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCipherBase.pas"/>
+        <UnitName Value="DECCipherBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCipherFormats.pas"/>
+        <UnitName Value="DECCipherFormats"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCipherInterface.pas"/>
+        <UnitName Value="DECCipherInterface"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCipherModes.pas"/>
+        <UnitName Value="DECCipherModes"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCipherModesGCM.pas"/>
+        <UnitName Value="DECCipherModesGCM"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECCiphers.pas"/>
+        <UnitName Value="DECCiphers"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECDataCipher.pas"/>
+        <UnitName Value="DECDataCipher"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECDataHash.pas"/>
+        <UnitName Value="DECDataHash"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECFormat.pas"/>
+        <UnitName Value="DECFormat"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECFormatBase.pas"/>
+        <UnitName Value="DECFormatBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHashAuthentication.pas"/>
+        <UnitName Value="DECHashAuthentication"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHashBase.pas"/>
+        <UnitName Value="DECHashBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHashBitBase.pas"/>
+        <UnitName Value="DECHashBitBase"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHashInterface.pas"/>
+        <UnitName Value="DECHashInterface"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECTypes.pas"/>
+        <UnitName Value="DECTypes"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECUtilRawByteStringHelper.pas"/>
+        <UnitName Value="DECUtilRawByteStringHelper"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHash.asm86.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHash.sha3_mmx.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECHash.sha3_x64.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="..\DECOptions.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="..\x86\DECUtil.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="..\x86_64\DECUtil.inc"/>
+        <Type Value="Include"/>
+      </Item>
+      <Item>
+        <Filename Value="DECUtil.inc"/>
+        <Type Value="Include"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

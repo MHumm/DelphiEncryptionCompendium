@@ -21,10 +21,10 @@
 ///   initialized always using the same start value.
 /// </summary>
 unit DECRandom;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -311,7 +311,7 @@ end;
 function RandomRawByteString(Size: Integer): RawByteString;
 begin
   SetLength(Result, Size);
-  {$IF CompilerVersion >= 24.0}
+  {$IFdef HAVE_STR_LIKE_ARRAY}
   RandomBuffer(Result[Low(Result)], Size);
   {$ELSE}
   RandomBuffer(Result[1], Size);
