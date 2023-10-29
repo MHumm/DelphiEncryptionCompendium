@@ -49,7 +49,7 @@ type
   TDECHash = class(TDECObject)  // does not find methods of the interface as it
                                 // searches for AnsiString instead of RawByteString
                                 // and thus does not find that
-  private
+  protected
   {$ELSE}
   TDECHash = class(TDECObject, IDECHash)
   strict private
