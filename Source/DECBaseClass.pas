@@ -16,10 +16,10 @@ under the License.
 *****************************************************************************}
 
 unit DECBaseClass;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -237,7 +237,7 @@ var
 begin
   {$IFDEF DEC52_IDENTITY}
   Signature := StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName);
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[Low(Signature)]));
     {$ELSE}
@@ -246,7 +246,7 @@ begin
     {$IFEND}
   {$ELSE !DEC52_IDENTITY}
   Signature := RawByteString(StringOfChar(#$5A, 256 - Length(ClassName)) + UpperCase(ClassName));
-    {$IF CompilerVersion >= 24.0}
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
     Result := CRC32(IdentityBase, Signature[Low(Signature)],
                                   Length(Signature) * SizeOf(Signature[Low(Signature)]));
     {$ELSE}

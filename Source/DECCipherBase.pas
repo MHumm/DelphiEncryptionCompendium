@@ -15,10 +15,10 @@
   under the License.
 *****************************************************************************}
 unit DECCipherBase;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -1003,7 +1003,7 @@ begin
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
     {$ELSE}
@@ -1011,7 +1011,7 @@ begin
          IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
     {$IFEND}
   else
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
@@ -1052,7 +1052,7 @@ begin
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]),
          IVector[Low(IVector)], Length(IVector) * SizeOf(IVector[Low(IVector)]), IFiller)
     {$ELSE}
@@ -1060,7 +1060,7 @@ begin
          IVector[1], Length(IVector) * SizeOf(IVector[1]), IFiller)
     {$IFEND}
   else
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     Init(Key[Low(Key)], Length(Key) * SizeOf(Key[Low(Key)]), NullStr, 0, IFiller);
     {$ELSE}
     Init(Key[1], Length(Key) * SizeOf(Key[1]), NullStr, 0, IFiller);
@@ -1098,7 +1098,7 @@ begin
   SetLength(b, 0);
   if Length(Source) > 0 then
   begin
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     SetLength(b, Length(Source) * SizeOf(Source[Low(Source)]));
     DoEncode(@Source[low(Source)], @b[0], Length(Source) * SizeOf(Source[low(Source)]));
     {$ELSE}
@@ -1139,7 +1139,7 @@ begin
     // This has been fixed in 10.3.0 Rio
     b := ValidFormat(Format).Decode(BytesOf(Source));
 
-    {$IF CompilerVersion >= 24.0}
+    {$IFdef HAVE_STR_LIKE_ARRAY}
     DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));
     {$ELSE}
     DoDecode(@b[0], @Result[1], Length(Result) * SizeOf(Result[1]));

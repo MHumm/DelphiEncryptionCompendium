@@ -15,10 +15,10 @@
   under the License.
 *****************************************************************************}
 unit DECCipherModes;
+{$INCLUDE DECOptions.inc}
 
 interface
 
-{$INCLUDE DECOptions.inc}
 
 uses
   {$IFDEF FPC}
@@ -470,7 +470,7 @@ resourcestring
 procedure TDECCipherModes.ReportInvalidMessageLength(Cipher: TDECCipher);
 begin
   raise EDECCipherException.CreateResFmt(@sInvalidMessageLength,
-                                         [System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
+                                         [GetEnumName(TypeInfo(TCipherMode),
                                          Integer(Cipher.Mode)),
                                          Cipher.Context.BlockSize]);
 end;
@@ -740,7 +740,7 @@ begin
     else
       // GCM requires a cipher with 128 bit block size
       raise EDECCipherException.CreateResFmt(@sInvalidBlockSize,
-                                             [128, System.TypInfo.GetEnumName(TypeInfo(TCipherMode),
+                                             [128, GetEnumName(TypeInfo(TCipherMode),
                                              Integer(FMode))]);
   end
   else

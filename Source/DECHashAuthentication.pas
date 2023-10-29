@@ -19,6 +19,7 @@
 ///   Unit containing all the KDF, MGF, HMAC and PBKDF2 algorithms
 /// </summary>
 unit DECHashAuthentication;
+{$INCLUDE DECOptions.inc}
 
 interface
 
@@ -30,7 +31,6 @@ uses
   {$ENDIF}
   DECBaseClass, DECHashBase, DECHashInterface, DECTypes , DECFormatBase;
 
-{$INCLUDE DECOptions.inc}
 
 type
   /// <summary>
@@ -912,7 +912,7 @@ type
       write  SetSalt;
   end;
 
-  {$IF CompilerVersion < 28.0}
+  {$IFndef HAVE_ASSIGN_ARRAY}
   /// <summary>
   ///   Class helper for implementing array concatenation which is not available
   ///   in Delphi XE6 or lower.
@@ -1508,7 +1508,7 @@ end;
 
 { TArrHelper }
 
-{$IF CompilerVersion < 28.0}
+{$IFNDEF HAVE_ASSIGN_ARRAY}
 class procedure TArrHelper.AppendArrays<T>(var A: TArray<T>; const B: TArray<T>);
 var
   i, L: Integer;
