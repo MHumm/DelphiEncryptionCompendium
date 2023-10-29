@@ -1076,7 +1076,7 @@ procedure TCipher_Blowfish.DoInit(const Key; Size: Integer);
 var
   I, J: Integer;
   B: array[0..1] of UInt32;
-  K: PByteArray;
+  K: PUInt8Array;
   P: PUInt32Array;
   S: PBlowfish;
 begin
@@ -2437,7 +2437,7 @@ end;
 procedure TCipher_RC4.DoInit(const Key; Size: Integer);
 var
   K: array[0..255] of Byte;
-  D: PByteArray;
+  D: PUInt8Array;
   I, J, T: Byte;
 begin
   D := FAdditionalBuffer;
@@ -2464,7 +2464,7 @@ end;
 
 procedure TCipher_RC4.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
-  D: PByteArray;
+  D: PUInt8Array;
   S: Integer;
   T, I, J: Byte;
 begin
@@ -2478,7 +2478,7 @@ begin
     Inc(J, T);
     D[I] := D[J];
     D[J] := T;
-    PByteArray(Dest)[S] := PByteArray(Source)[S] xor D[Byte(D[I] + T)];
+    PUInt8Array(Dest)[S] := PUInt8Array(Source)[S] xor D[Byte(D[I] + T)];
   end;
   D[256] := I;
   D[257] := J;
@@ -3384,7 +3384,7 @@ var
 
   procedure ExpandKey;
   var
-    P: PByteArray;
+    P: PUInt8Array;
     I, C: Integer;
   begin
     C := 1;
@@ -3541,7 +3541,7 @@ var
 
   procedure ExpandKey;
   var
-    P: PByteArray;
+    P: PUInt8Array;
     I, C: Integer;
   begin
     C := 1;
@@ -3789,11 +3789,11 @@ begin
     SKey.Cards[SKey.Rotor]   := T;
     SKey.Avalanche := (SKey.Avalanche + SKey.Cards[T]) and $FF;
     T := (SKey.Cards[SKey.Plain] + SKey.Cards[SKey.Cipher] + SKey.Cards[SKey.Avalanche]) and $FF;
-    SKey.Plain := PByteArray(Source)[I];
+    SKey.Plain := PUInt8Array(Source)[I];
     SKey.Cipher := SKey.Plain xor SKey.Cards[SKey.Cards[T]] xor
                    SKey.Cards[(SKey.Cards[SKey.Ratchet] +
                    SKey.Cards[SKey.Rotor]) and $FF];
-    PByteArray(Dest)[I] := SKey.Cipher;
+    PUInt8Array(Dest)[I] := SKey.Cipher;
   end;
 end;
 
@@ -3815,11 +3815,11 @@ begin
     SKey.Cards[SKey.Rotor]   := T;
     SKey.Avalanche := (SKey.Avalanche + SKey.Cards[T]) and $FF;
     T := (SKey.Cards[SKey.Plain] + SKey.Cards[SKey.Cipher] + SKey.Cards[SKey.Avalanche]) and $FF;
-    SKey.Cipher := PByteArray(Source)[I];
+    SKey.Cipher := PUInt8Array(Source)[I];
     SKey.Plain := SKey.Cipher xor SKey.Cards[SKey.Cards[T]] xor
                   SKey.Cards[(SKey.Cards[SKey.Ratchet] +
                   SKey.Cards[SKey.Rotor]) and $FF];
-    PByteArray(Dest)[I] := SKey.Plain;
+    PUInt8Array(Dest)[I] := SKey.Plain;
   end;
 end;
 
@@ -5001,7 +5001,7 @@ end;
 
 { TCipher_NewDES }
 
-procedure NewDES_Func(Source, Dest, Key: PByteArray);
+procedure NewDES_Func(Source, Dest, Key: PUInt8Array);
 var
   I: Integer;
   A, B, C, D, E, F, G, H: Byte;
@@ -5058,7 +5058,7 @@ end;
 procedure TCipher_NewDES.DoInit(const Key; Size: Integer);
 var
   K: array[0..14] of Byte;
-  E: PByteArray;
+  E: PUInt8Array;
   I: Integer;
 begin
   FillChar(K, SizeOf(K), 0);
@@ -5098,7 +5098,7 @@ end;
 procedure TCipher_NewDES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BlockSize);
-  NewDES_Func(Source, Dest, @PByteArray(FAdditionalBuffer)[60]);
+  NewDES_Func(Source, Dest, @PUInt8Array(FAdditionalBuffer)[60]);
 end;
 
 { TCipher_Q128 }
@@ -5323,7 +5323,7 @@ procedure TCipher_RC2.DoInit(const Key; Size: Integer);
 // pointing that out.
 var
   I, L, Mask, KeyEffectiveBits: Integer;
-  K: PByteArray;
+  K: PUInt8Array;
 begin
   if Size <= 0 then
     Exit;
@@ -5573,8 +5573,8 @@ procedure TCipher_SAFER.DoInit(const Key; Size: Integer);
   procedure InitTab;
   var
     I, E: Integer;
-    Exp: PByteArray;
-    Log: PByteArray;
+    Exp: PUInt8Array;
+    Log: PUInt8Array;
   begin
     Exp := FAdditionalBuffer;
     Log := @Exp[256];
@@ -5590,7 +5590,7 @@ procedure TCipher_SAFER.DoInit(const Key; Size: Integer);
   procedure InitKey;
   var
     D: PByte;
-    Exp: PByteArray;
+    Exp: PUInt8Array;
     Strong: Boolean;
     K: array[Boolean, 0..8] of Byte;
     I, J: Integer;
@@ -5681,7 +5681,7 @@ end;
 
 procedure TCipher_SAFER.DoEncode(Source, Dest: Pointer; Size: Integer);
 var
-  Exp, Log, Key: PByteArray;
+  Exp, Log, Key: PUInt8Array;
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
@@ -5691,14 +5691,14 @@ begin
   Log := @Exp[256];
   Key := @Exp[512];
 
-  A := PByteArray(Source)[0];
-  B := PByteArray(Source)[1];
-  C := PByteArray(Source)[2];
-  D := PByteArray(Source)[3];
-  E := PByteArray(Source)[4];
-  F := PByteArray(Source)[5];
-  G := PByteArray(Source)[6];
-  H := PByteArray(Source)[7];
+  A := PUInt8Array(Source)[0];
+  B := PUInt8Array(Source)[1];
+  C := PUInt8Array(Source)[2];
+  D := PUInt8Array(Source)[3];
+  E := PUInt8Array(Source)[4];
+  F := PUInt8Array(Source)[5];
+  G := PUInt8Array(Source)[6];
+  H := PUInt8Array(Source)[7];
 
   for I := 0 to FRounds - 1 do
   begin
@@ -5736,19 +5736,19 @@ begin
     Key := @Key[16];
   end;
 
-  PByteArray(Dest)[0] := A xor Key[0];
-  PByteArray(Dest)[1] := B  +  Key[1];
-  PByteArray(Dest)[2] := C  +  Key[2];
-  PByteArray(Dest)[3] := D xor Key[3];
-  PByteArray(Dest)[4] := E xor Key[4];
-  PByteArray(Dest)[5] := F  +  Key[5];
-  PByteArray(Dest)[6] := G  +  Key[6];
-  PByteArray(Dest)[7] := H xor Key[7];
+  PUInt8Array(Dest)[0] := A xor Key[0];
+  PUInt8Array(Dest)[1] := B  +  Key[1];
+  PUInt8Array(Dest)[2] := C  +  Key[2];
+  PUInt8Array(Dest)[3] := D xor Key[3];
+  PUInt8Array(Dest)[4] := E xor Key[4];
+  PUInt8Array(Dest)[5] := F  +  Key[5];
+  PUInt8Array(Dest)[6] := G  +  Key[6];
+  PUInt8Array(Dest)[7] := H xor Key[7];
 end;
 
 procedure TCipher_SAFER.DoDecode(Source, Dest: Pointer; Size: Integer);
 var
-  Exp, Log, Key: PByteArray;
+  Exp, Log, Key: PUInt8Array;
   I: Integer;
   A, B, C, D, E, F, G, H, T: Byte;
 begin
@@ -5758,14 +5758,14 @@ begin
   Log := @Exp[256];
   Key := @Exp[504 + 8 * (FRounds * 2 + 1)];
 
-  A := PByteArray(Source)[0] xor Key[0];
-  B := PByteArray(Source)[1]  -  Key[1];
-  C := PByteArray(Source)[2]  -  Key[2];
-  D := PByteArray(Source)[3] xor Key[3];
-  E := PByteArray(Source)[4] xor Key[4];
-  F := PByteArray(Source)[5]  -  Key[5];
-  G := PByteArray(Source)[6]  -  Key[6];
-  H := PByteArray(Source)[7] xor Key[7];
+  A := PUInt8Array(Source)[0] xor Key[0];
+  B := PUInt8Array(Source)[1]  -  Key[1];
+  C := PUInt8Array(Source)[2]  -  Key[2];
+  D := PUInt8Array(Source)[3] xor Key[3];
+  E := PUInt8Array(Source)[4] xor Key[4];
+  F := PUInt8Array(Source)[5]  -  Key[5];
+  G := PUInt8Array(Source)[6]  -  Key[6];
+  H := PUInt8Array(Source)[7] xor Key[7];
 
   for I := 0 to FRounds - 1 do
   begin
@@ -5802,14 +5802,14 @@ begin
     A := Log[A] xor Key[0];
   end;
 
-  PByteArray(Dest)[0] := A;
-  PByteArray(Dest)[1] := B;
-  PByteArray(Dest)[2] := C;
-  PByteArray(Dest)[3] := D;
-  PByteArray(Dest)[4] := E;
-  PByteArray(Dest)[5] := F;
-  PByteArray(Dest)[6] := G;
-  PByteArray(Dest)[7] := H;
+  PUInt8Array(Dest)[0] := A;
+  PUInt8Array(Dest)[1] := B;
+  PUInt8Array(Dest)[2] := C;
+  PUInt8Array(Dest)[3] := D;
+  PUInt8Array(Dest)[4] := E;
+  PUInt8Array(Dest)[5] := F;
+  PUInt8Array(Dest)[6] := G;
+  PUInt8Array(Dest)[7] := H;
 end;
 
 { TCipher_SharkBase }

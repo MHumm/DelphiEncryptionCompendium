@@ -44,7 +44,7 @@ type
     /// <summary>
     ///   Load the data of all test files specified for the test class
     /// </summary>
-    procedure LoadTestFiles; inline;
+    procedure LoadTestFiles;
   strict protected
     /// <summary>
     ///   List of test data files to laod
@@ -149,6 +149,24 @@ type
     /// </returns>
     function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
                                       var LastByteLength : UInt8): RawByteString; virtual;
+
+    /// <summary>
+    ///   Adds the AddLastByteForKeccakTest necessary to be able to use a SHA3
+    ///   test vector given in the source code directly for Keccak.
+    /// </summary>
+    /// <param name="lDataRow">
+    ///   The already initialized test data row
+    /// </param>
+    /// <param name="SHA3InputVector">
+    ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
+    ///   the padding appended.
+    /// </param>
+    /// <param name="LastByteLength">
+    ///   Number of bits used from the last byte
+    /// </param>
+    procedure AddLastByteForCodeTest(var lDataRow    : IHashTestDataRowSetup;
+                                     SHA3InputVector : RawByteString;
+                                     LastByteLength  : UInt8);
   public
     /// <summary>
     ///   Create test file list
@@ -309,24 +327,6 @@ type
     /// </returns>
     function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
                                       var LastByteLength : UInt8): RawByteString; override;
-
-    /// <summary>
-    ///   Adds the AddLastByteForKeccakTest necessary to be able to use a SHA3
-    ///   test vector given in the source code directly for Keccak.
-    /// </summary>
-    /// <param name="lDataRow">
-    ///   The already initialized test data row
-    /// </param>
-    /// <param name="SHA3InputVector">
-    ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
-    ///   the padding appended.
-    /// </param>
-    /// <param name="LastByteLength">
-    ///   Number of bits used from the last byte 
-    /// </param>
-    procedure AddLastByteForCodeTest(var lDataRow    : IHashTestDataRowSetup;
-                                     SHA3InputVector : RawByteString;
-                                     LastByteLength  : UInt8);
   end;
 
   // Test methods for class THash_Keccak_224
@@ -544,9 +544,14 @@ begin
 
         if (Len > 0) then
         begin
+//          AddLastByteForCodeTest(lDataRow,
+//                                 TFormat_HexL.Decode(RawByteString(msg)),
+//                                 FinalByteLen);
+
           MsgWithFixup := AddLastByteForKeccakTest(
                                     TFormat_HexL.Decode(RawByteString(msg)),
                                     FinalByteLen);
+//
           lDataRow.AddInputVector(MsgWithFixup);
 
           lDataRow.FinalBitLength := FinalByteLen;
@@ -569,6 +574,12 @@ overwritten one from Keccack... }
           lDataRow.AddInputVector(MsgWithFixup);
           lDataRow.FinalBitLength := FinalByteLen;
           THash_SHA3Base(HashInst).FinalByteLength := FinalByteLen;
+//          AddLastByteForCodeTest(lDataRow,
+//                                 '', //TFormat_HexL.Decode(RawByteString(msg)),
+//                                 FinalByteLen);
+
+
+
 //
 //          FinalByteLen := 0;
 //U := CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), HashInst);
@@ -1739,9 +1750,9 @@ end;
 
 { TestTHash_Keccak_Base }
 
-procedure TestTHash_Keccak_Base.AddLastByteForCodeTest(var lDataRow    : IHashTestDataRowSetup;
-                                                       SHA3InputVector : RawByteString;
-                                                       LastByteLength  : UInt8);
+procedure TestTHash_SHA3_Base.AddLastByteForCodeTest(var lDataRow    : IHashTestDataRowSetup;
+                                                     SHA3InputVector : RawByteString;
+                                                     LastByteLength  : UInt8);
 var
   LastByteLen   : UInt8;
   MsgWithFixup  : RawByteString;
@@ -1817,7 +1828,8 @@ begin
 
   //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
   //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\Keccak.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
 //  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
@@ -1827,6 +1839,11 @@ begin
   lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32d' +
                                        'ca6b3301489674ab';
   AddLastByteForCodeTest(lDataRow, #$19, 5);
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '6f2fc54a6b11a6da611ed734505b9cab89eec' +
+                                       'c1dc7dd2debd27bd1c9';
+  AddLastByteForCodeTest(lDataRow, #$01, 1);
 
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-

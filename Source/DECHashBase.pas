@@ -45,12 +45,15 @@ type
   /// <summary>
   ///   Base class for all hash algorithm implementation classes
   /// </summary>
+  {$IFDEF FPC}
+  TDECHash = class(TDECObject)  // does not find methods of the interface as it
+                                // searches for AnsiString instead of RawByteString
+                                // and thus does not find that
+  private
+  {$ELSE}
   TDECHash = class(TDECObject, IDECHash)
-{$IFDEF FPC}
-  protected
-{$ELSE}
   strict private
-{$ENDIF}
+  {$ENDIF}
     /// <summary>
     ///   Raises an EDECHashException hash algorithm not initialized exception
     /// </summary>
@@ -81,7 +84,7 @@ type
     /// <summary>
     ///   Internal processing buffer
     /// </summary>
-    FBuffer      : PByteArray;
+    FBuffer      : PUInt8Array;
     /// <summary>
     ///   Size of the internal processing buffer in byte
     /// </summary>
@@ -152,7 +155,7 @@ type
     /// <summary>
     ///   Returns the calculated hash value
     /// </summary>
-    function Digest: PByteArray; virtual; abstract;
+    function Digest: PUInt8Array; virtual; abstract;
   public
     /// <summary>
     ///   Initialize internal fields
@@ -484,12 +487,12 @@ end;
 procedure TDECHash.Increment8(var Value; Add: UInt32);
 // Value := Value + 8 * Add
 // Value is array[0..7] of UInt32
-{ TODO -oNormanNG -cCodeReview : !!Unbedingt noch einmal prüfen, ob das wirklich so alles stimmt!!
+{ TODO -oNormanNG -cCodeReview : !!Unbedingt noch einmal prï¿½fen, ob das wirklich so alles stimmt!!
 Mein Versuch der Umsetzung von Increment8 in ASM.
-Die Implementierung zuvor hat immer Zugriffsverletzungen ausgelöst.
-Vermutung: die alte Implementierung lag ursprünglich ausserhalb der Klasse und wurde später
-in die Klasse verschoben. Dabei verändert sich aber die Nutzung der Register, da zusätzlich
-der SELF-Parameter in EAX übergeben wird. Beim Schreiben nach auf Value wurde dann in die Instanz (Self)
+Die Implementierung zuvor hat immer Zugriffsverletzungen ausgelï¿½st.
+Vermutung: die alte Implementierung lag ursprï¿½nglich ausserhalb der Klasse und wurde spï¿½ter
+in die Klasse verschoben. Dabei verï¿½ndert sich aber die Nutzung der Register, da zusï¿½tzlich
+der SELF-Parameter in EAX ï¿½bergeben wird. Beim Schreiben nach auf Value wurde dann in die Instanz (Self)
 geschrieben -> peng
 }
 {$IF defined(X86ASM) or defined(X64ASM)}

@@ -965,7 +965,6 @@ class function TDECHashAuthentication.KDFInternal(const Data; DataSize: Integer;
 var
   I, n,
   Rounds, DigestBytes : Integer;
-  Dest                : PByteArray;
   Count               : UInt32;
   HashInstance        : TDECHashAuthentication;
 begin
@@ -980,8 +979,6 @@ begin
   try
     Rounds := (MaskSize + DigestBytes - 1) div DigestBytes;
     SetLength(Result, Rounds * DigestBytes);
-    Dest := @Result[0];
-
 
     if (KDFType = ktKDF2) then
       n := 1
@@ -1006,7 +1003,7 @@ begin
 
       HashInstance.Calc(Seed, SeedSize);
       HashInstance.Done;
-      Move(HashInstance.Digest[0], Dest[(I) * DigestBytes], DigestBytes);
+      Move(HashInstance.Digest[0], Result[(I) * DigestBytes], DigestBytes);
 
       inc(n);
     end;

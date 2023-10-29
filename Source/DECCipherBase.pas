@@ -26,7 +26,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes, Generics.Collections,
   {$ENDIF}
-  DECBaseClass, DECFormatBase;
+  DECBaseClass, DECFormatBase, DECTypes;
 
 type
   /// <summary>
@@ -221,7 +221,7 @@ type
     ///   This is the complete memory block containing FInitializationVector,
     ///   FFeedback, FBuffer and FAdditionalBuffer
     /// </summary>
-    FData     : PByteArray;
+    FData     : PUInt8Array;
     /// <summary>
     ///   This is the size of FData in byte
     /// </summary>
@@ -253,7 +253,7 @@ type
     ///   to work with. Some other methods like Done or Valid cipher need to pass
     ///   a buffer as parameter as that is ecpected by the called method.
     /// </summary>
-    FBuffer: PByteArray;
+    FBuffer: PUInt8Array;
 
     /// <summary>
     ///   Initialization vector. When using cipher modes to derive a stream
@@ -262,7 +262,7 @@ type
     ///   is no such encrypted data yet, so this initialization vector fills this
     ///   "gap".
     /// </summary>
-    FInitializationVector: PByteArray;
+    FInitializationVector: PUInt8Array;
 
     /// <summary>
     ///   Size of the initialization vector in byte. Required for algorithms
@@ -277,7 +277,7 @@ type
     ///   block. It may be XORed with the next block cipher text for isntance.
     ///   That data "going into the next block encryption" is this feedback array
     /// </summary>
-    FFeedback: PByteArray;
+    FFeedback: PUInt8Array;
 
     /// <summary>
     ///   Size of FAdditionalBuffer in Byte
@@ -720,7 +720,7 @@ type
     /// <summary>
     ///   Provides access to the contents of the initialization vector
     /// </summary>
-    property InitVector: PByteArray
+    property InitVector: PUInt8Array
       read   FInitializationVector;
 
     /// <summary>
@@ -732,7 +732,7 @@ type
     ///   feedback array. The size usually depends on the block size of the
     ///   cipher algorithm.
     /// </summary>
-    property Feedback: PByteArray
+    property Feedback: PUInt8Array
       read   FFeedback;
     /// <summary>
     ///   Allows to query the current internal processing state
@@ -799,7 +799,7 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECTypes, DECUtil;
+  DECUtil;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
@@ -873,7 +873,7 @@ begin
 
   if MustAdditionalBufferSave then
     // buffer contents: FData, then FFeedback, then FBuffer then FAdditionalBuffer
-    FAdditionalBufferBackup := @PByteArray(FAdditionalBuffer)[FAdditionalBufferSize]
+    FAdditionalBufferBackup := @PUInt8Array(FAdditionalBuffer)[FAdditionalBufferSize]
   else
     FAdditionalBufferBackup := nil;
 

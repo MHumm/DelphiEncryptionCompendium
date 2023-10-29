@@ -386,6 +386,9 @@ type
       write  SetRounds;
   end;
 
+  /// <summary>
+  ///   Interface for passwordn hash algorithms
+  /// </summary>
   IDECHashPassword = Interface(IDECHash)
   ['{B4D8A80C-1F42-46F8-9288-D71ECCFE6F02}']
       /// <summary>

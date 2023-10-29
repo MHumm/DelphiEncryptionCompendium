@@ -16,11 +16,9 @@ program DECDUnitTestSuite;
 {$ENDIF}
 
 uses
-//  FastMM4,
   Vcl.Forms,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,
-  TestInsight.DUnit,
   {$ELSE}
   TestFramework,
   GUITestRunner,
@@ -40,7 +38,8 @@ uses
   TestDECCipherFormats in 'Tests\TestDECCipherFormats.pas',
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
   TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
-  TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas';
+  TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
+  TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas';
 
 {$R *.RES}
 
