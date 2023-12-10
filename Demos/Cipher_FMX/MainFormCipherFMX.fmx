@@ -34,6 +34,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Cipher function'
         TabOrder = 3
       end
@@ -57,6 +58,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Cipher mode'
         TabOrder = 4
       end
@@ -80,6 +82,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Cipher properties'
         TabOrder = 8
       end
@@ -99,11 +102,13 @@ object FormMain: TFormMain
         Viewport.Height = 59.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Property'
+          HeaderSettings.TextSettings.WordWrap = False
           ReadOnly = True
           Size.Width = 250.000000000000000000
         end
         object StringColumn2: TStringColumn
           Header = 'Value'
+          HeaderSettings.TextSettings.WordWrap = False
           ReadOnly = True
           Size.Width = 95.000000000000000000
         end
@@ -122,6 +127,7 @@ object FormMain: TFormMain
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
+        TextSettings.Trimming = None
         Text = 'Authenticated data (AAD)'
         TabOrder = 3
       end
@@ -145,6 +151,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.VertAlign = Leading
+        TextSettings.Trimming = None
         Text = 'Expected authentication result (Tag)'
         TabOrder = 2
       end
@@ -168,6 +175,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.VertAlign = Leading
+        TextSettings.Trimming = None
         Text = 'Calculated authentication value (Tag)'
         TabOrder = 1
       end
@@ -213,6 +221,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.VertAlign = Leading
+        TextSettings.Trimming = None
         Text = 'Length calculated auth. value (bit)'
         TabOrder = 0
       end
@@ -232,6 +241,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Encryption key (hexadecimal)'
         TabOrder = 2
       end
@@ -256,6 +266,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Init vector (hexadecimal)'
         TabOrder = 6
       end
@@ -280,6 +291,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Filler byte (hexadecimal)'
         TabOrder = 7
       end
@@ -312,6 +324,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 15
         Text = 'Decrypt'
+        TextSettings.Trimming = None
         OnClick = ButtonDecryptClick
       end
       object ButtonEncrypt: TButton
@@ -324,6 +337,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 13
         Text = 'Encrypt'
+        TextSettings.Trimming = None
         OnClick = ButtonEncryptClick
       end
       object ButtonCopy: TButton
@@ -336,6 +350,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 16
         Text = 'Copy to clipboard'
+        TextSettings.Trimming = None
         OnClick = ButtonCopyClick
       end
       object EditCipherText: TEdit
@@ -369,6 +384,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Cipher text'
         TabOrder = 10
       end
@@ -381,6 +397,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Plain text'
         TabOrder = 12
       end
@@ -393,7 +410,8 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2021 by Team DEC V%0:s'
+        TextSettings.Trimming = None
+        Text = #169' 2018-2023 by Team DEC V%0:s'
         TabOrder = 14
       end
       object Label5: TLabel
@@ -405,6 +423,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Format plain text'
         TabOrder = 17
       end
@@ -427,6 +446,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Format cipher text'
         TabOrder = 18
       end

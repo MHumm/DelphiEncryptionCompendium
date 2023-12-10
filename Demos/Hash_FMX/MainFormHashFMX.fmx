@@ -35,6 +35,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Input'
       end
       object Label4: TLabel
@@ -46,6 +47,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Digest/Hash value'
       end
       object ButtonCalc: TButton
@@ -57,6 +59,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         TabOrder = 7
         Text = 'Calc'
+        TextSettings.Trimming = None
         OnClick = ButtonCalcClick
       end
       object EditInput: TEdit
@@ -92,7 +95,8 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2022 by Team DEC V%0:s'
+        TextSettings.Trimming = None
+        Text = #169' 2018-2023 by Team DEC V%0:s'
       end
     end
     object LayoutTop: TLayout
@@ -141,6 +145,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Hash function'
       end
       object Label5: TLabel
@@ -152,6 +157,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Input is in format'
       end
       object Label6: TLabel
@@ -163,6 +169,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Desired output format'
       end
       object CheckBoxLiveCalc: TCheckBox
@@ -208,6 +215,7 @@ object FormMain: TFormMain
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
+        TextSettings.Trimming = None
         Text = 'Generated hash length (byte)'
         TabOrder = 12
       end
@@ -235,6 +243,7 @@ object FormMain: TFormMain
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
+        TextSettings.Trimming = None
         Text = 'Number of rounds'
         TabOrder = 10
       end
@@ -323,6 +332,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Salt'
         TabOrder = 1
       end
@@ -348,6 +358,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Desired salt format'
         TabOrder = 5
       end
@@ -370,6 +381,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
+        TextSettings.Trimming = None
         Text = 'Cost'
         TabOrder = 0
       end

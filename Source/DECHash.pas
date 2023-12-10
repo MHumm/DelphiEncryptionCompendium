@@ -5312,9 +5312,9 @@ const
 begin
   // number of rounds = 2^cost, loop includes 0
   if (FCost = 31) then
-    rounds := MaxLongint
+    rounds := High(UInt32)
   else
-    rounds := (Int32(1) shl FCost) - 1;
+    rounds := UInt32(UInt32(1) shl FCost) - 1;
 
   // Just copy the boxes into the context
   ExpandKey(FSalt, Password, PasswordSize);
