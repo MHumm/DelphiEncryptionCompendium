@@ -4065,16 +4065,21 @@ procedure TCipher_3DES.DoEncode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[ 0]);
-  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[32]);
-  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[64]);
+  DES_Func(Dest,   Dest, @PUInt32Array(FAdditionalBuffer)[32]);
+  DES_Func(Dest,   Dest, @PUInt32Array(FAdditionalBuffer)[64]);
+
+//  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[32]);
+//  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[64]);
 end;
 
 procedure TCipher_3DES.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
   Assert(Size = Context.BlockSize);
   DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[96]);
-  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[128]);
-  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[160]);
+  DES_Func(Dest, Dest,   @PUInt32Array(FAdditionalBuffer)[128]);
+  DES_Func(Dest, Dest,   @PUInt32Array(FAdditionalBuffer)[160]);
+//  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[128]);
+//  DES_Func(Source, Dest, @PUInt32Array(FAdditionalBuffer)[160]);
 end;
 
 { TCipher_2DDES }
