@@ -554,19 +554,14 @@ var
     else
       Carry := False;
 
-{ TODO :
-Das wäre eine funktionierende Lösung für Bug #59, Anfrage in DE DP ob das gut ist läuft }
-    {$IFDEF Q+}
-      {$define USES_OVERFLOW_CHECKING}
+    {$IFOPT Q+}
+      {$DEFINE USES_OVERFLOW_CHECKING}
+    {$ELSE}
+      {$UNDEF USES_OVERFLOW_CHECKING}
     {$ENDIF}
-
     {$Q-}
     Value := Value + Add;
-
-    {$IFDEF USES_OVERFLOW_CHECKING}
-      {$Q+}
-      {$undefine USES_OVERFLOW_CHECKING}
-     {$ENDIF}
+    {$IFDEF USES_OVERFLOW_CHECKING} {$Q+} {$ENDIF}
     Carry := Carry or (Value < Add); // set Carry Flag on overflow or keep it if already set
   end;
 
