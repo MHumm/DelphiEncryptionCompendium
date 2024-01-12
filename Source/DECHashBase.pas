@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -554,7 +554,14 @@ var
     else
       Carry := False;
 
+    {$IFOPT Q+}
+      {$DEFINE USES_OVERFLOW_CHECKING}
+    {$ELSE}
+      {$UNDEF USES_OVERFLOW_CHECKING}
+    {$ENDIF}
+    {$Q-}
     Value := Value + Add;
+    {$IFDEF USES_OVERFLOW_CHECKING} {$Q+} {$ENDIF}
     Carry := Carry or (Value < Add); // set Carry Flag on overflow or keep it if already set
   end;
 
