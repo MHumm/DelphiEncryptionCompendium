@@ -97,6 +97,8 @@ type
 
   IHashTestDataRowSetup = interface(ITestDataRowSetup)
   ['{ADB4AFA2-4199-47F4-86F6-E84A20C3AA8E}']
+    function GetInputData:RawByteString;
+    procedure SetInputData(const aValue: RawByteString);
     /// <summary>
     ///   Specifies the length of the hash value generated for those hash classes
     ///   which support configurable output lengths.
@@ -234,6 +236,13 @@ type
     /// </summary>
     property Salt                : TBytes
       write  SetSalt;
+
+    /// <summary>
+    ///   Data to feed the hash algorithm, means to run the test on
+    /// </summary>
+    property InputData            : RawByteString
+      read   GetInputData
+      write  SetInputData;
   end;
 
   IHashTestDataRow = interface(ITestDataRow)
@@ -509,11 +518,12 @@ type
     /// </summary>
     FSalt                 : TBytes;
   protected // ITestDataRow
-    function GetInputData:RawByteString;
     function GetInputVectors:ITestDataInputVectorList;
     function GetOutputData:RawByteString;
     function GetOutputUTFStrTest:RawByteString;
   protected // ITestDataRowSetup
+    function GetInputData:RawByteString;
+    procedure SetInputData(const aValue: RawByteString);
     procedure SetExpectedOutput(const aValue:RawByteString);
     procedure SetExpectedOutputUTFStrTest(const aValue:RawByteString);
     procedure AddInputVector(const aData:RawByteString; const aRunCount:UInt32 = 1;
@@ -656,6 +666,12 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
+    /// <summary>
+    ///   Data to feed the hash algorithm, means to run the test on
+    /// </summary>
+    property InputData            : RawByteString
+      read   GetInputData;
   end;
 
   /// <summary>
@@ -837,6 +853,11 @@ end;
 procedure THashTestDataRow.SetHashResultByteLength(const aValue: UInt16);
 begin
   FHashResultByteLength := aValue;
+end;
+
+procedure THashTestDataRow.SetInputData(const aValue: RawByteString);
+begin
+  FInputData := aValue;
 end;
 
 procedure THashTestDataRow.SetPaddingByte(const aValue: Byte);
