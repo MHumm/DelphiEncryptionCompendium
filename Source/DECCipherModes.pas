@@ -1244,7 +1244,7 @@ begin
 end;
 
 {$IFDEF DEC3_CMCTS}
-procedure DecodeCTS3(Source, Dest: PUInt8Array; Size: Integer);
+procedure TDECCipherModes.DecodeCTS3(Source, Dest: PUInt8Array; Size: Integer);
 var
   I: Integer;
   F, B, T: PUInt8Array;
