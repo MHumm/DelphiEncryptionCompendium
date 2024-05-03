@@ -616,8 +616,7 @@ type
     /// </exception>
     function EncodeRawByteString(const Source: RawByteString;
                                  Format: TDECFormatClass = nil): RawByteString;
-                                 deprecated; // please use EncodeBytes functions now
-                                             // or TCipherFormats.EncodeStringToString
+                                 deprecated 'please use EncodeBytes functions or TCipherFormats.EncodeStringToString now';
     /// <summary>
     ///   Decrypts the contents of a RawByteString. This method is deprecated
     ///   and should be replaced by a variant expecting TBytes as source in
@@ -648,7 +647,7 @@ type
     ///   is not a multiple of the algorithm's block size.
     /// </exception>
     function DecodeRawByteString(const Source: RawByteString;
-                                 Format: TDECFormatClass = nil): RawByteString; deprecated; // please use DecodeBytes functions now
+                                 Format: TDECFormatClass = nil): RawByteString; deprecated 'please use DecodeBytes functions now';
 
     /// <summary>
     ///   Encrypts the contents of a ByteArray.
@@ -708,7 +707,7 @@ type
     // Deprecated directive commented out, as replacement CalcMACByte has not
     // been implemented yet, see remark above. Use case for CalcMAC is not clear
     // yet either.
-    function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; //deprecated; // please use the TBytes based overload;
+    function CalcMAC(Format: TDECFormatClass = nil): RawByteString; overload; //deprecated 'please use the TBytes based overload';
 
     // properties
 
