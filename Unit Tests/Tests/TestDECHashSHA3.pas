@@ -147,6 +147,7 @@ type
     /// <returns>
     ///   The input vector with added padding
     /// </returns>
+{ TODO : Namen überlegen zu ändern, im Kommentar Keccak drin lassen }
     function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
                                       var LastByteLength : UInt8): RawByteString; virtual;
 
@@ -318,15 +319,15 @@ type
     ///   The SHA3 input vector in bytes (not hex encoded!) which shall get
     ///   the padding appended.
     /// </param>
-    /// <param name="LastByteLength">
+    /// <param name="NumBitsOfLastByteUsed">
     ///   Number of bits used in the last byte. In the keccak override this will
     ///   be adjusted inside so it's a var param.
     /// </param>
     /// <returns>
     ///   The input vector with added padding
     /// </returns>
-    function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
-                                      var LastByteLength : UInt8): RawByteString; override;
+    function AddLastByteForKeccakTest(SHA3InputVector           : RawByteString;
+                                      var NumBitsOfLastByteUsed : UInt8): RawByteString; override;
   end;
 
   // Test methods for class THash_Keccak_224
@@ -1767,28 +1768,28 @@ begin
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), FHash);
 end;
 
-function TestTHash_Keccak_Base.AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
-                                                        var LastByteLength : UInt8): RawByteString;
+function TestTHash_Keccak_Base.AddLastByteForKeccakTest(SHA3InputVector           : RawByteString;
+                                                        var NumBitsOfLastByteUsed : UInt8): RawByteString;
 var
   lastbyte : UInt8;
 begin
-  case LastByteLength of
+  case NumBitsOfLastByteUsed of
   0 : begin // ist ok
-        SHA3InputVector := SHA3InputVector + chr($02);
-        LastByteLength := 2;
+        SHA3InputVector       := SHA3InputVector + chr($02);
+        NumBitsOfLastByteUsed := 2;
       end;
   1..6 :
       begin
         lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
         // in lastbyte 0 an stelle fblSHA3 einfügen:
-        lastbyte := lastbyte and (( 1 shl LastByteLength ) xor $FF);
+        lastbyte := lastbyte and (( 1 shl NumBitsOfLastByteUsed ) xor $FF);
         // in lastbyte 1 an stelle fblSHA3+1 einfügen:
-        lastbyte := lastbyte or BYTE( 1 shl (LastByteLength + 1));
+        lastbyte := lastbyte or BYTE( 1 shl (NumBitsOfLastByteUsed + 1));
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
-        if LastByteLength < 6 then
-          inc(LastByteLength,2)
+        if NumBitsOfLastByteUsed < 6 then
+          inc(NumBitsOfLastByteUsed,2)
         else
-          LastByteLength := 0;
+          NumBitsOfLastByteUsed := 0;
       end;
   7 : begin // ist ok
         // 0 anhängen - es könnte sein, dass in mSHA3 eine 1 steht
@@ -1799,7 +1800,7 @@ begin
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
 
         SHA3InputVector := SHA3InputVector + chr($01);
-        LastByteLength := 1;
+        NumBitsOfLastByteUsed := 1;
       end;
   end;
 
@@ -1828,41 +1829,64 @@ begin
 
   //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
   //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\Keccak.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
+
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '6b4e03423667dbb73b6e15454f0eb1abd459' +
+                                       '7f9a1b078e3f5b5a6bc7';
+  AddLastByteForCodeTest(lDataRow, '', 0);
+
+
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'ffbad5da96bad71789330206dc6768ecaeb1b32d' +
                                        'ca6b3301489674ab';
-  AddLastByteForCodeTest(lDataRow, #$19, 5);
-
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := '6f2fc54a6b11a6da611ed734505b9cab89eec' +
-                                       'c1dc7dd2debd27bd1c9';
-  AddLastByteForCodeTest(lDataRow, #$01, 1);
-
-
-  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
-  //        and-Guidelines/documents/examples/SHA3-224_Msg30.pdf
-  lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac985' +
-                                       '1b5f0baab007df3b';
-  AddLastByteForCodeTest(lDataRow, #$53#$58#$7B#$19, 6);
+  lDataRow.AddInputVector(RawByteString(#$19), 1, 1);
+  lDataRow.AddInputVector(RawByteString(#$02), 1, 1);
+  lDataRow.FinalBitLength := 5;
+//  AddLastByteForCodeTest(lDataRow, #$19, 5);
+//exit;
+//
+////          MsgWithFixup := AddLastByteForKeccakTest(
+////                                    TFormat_HexL.Decode(RawByteString(msg)),
+////                                    FinalByteLen);
+//
+//
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := '6f2fc54a6b11a6da611ed734505b9cab89eec' +
+//                                       'c1dc7dd2debd27bd1c9';
+//  AddLastByteForCodeTest(lDataRow, #$01, 1);
+//
+//
+//  // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+//  //        and-Guidelines/documents/examples/SHA3-224_Msg30.pdf
+//  lDataRow := FTestData.AddRow;
+//  lDataRow.ExpectedOutput           := 'd666a514cc9dba25ac1ba69ed3930460deaac985' +
+//                                       '1b5f0baab007df3b';
+//  AddLastByteForCodeTest(lDataRow, #$53#$58#$7B#$19, 6);
 
 // Commented out because AddLastByteForCodeTest cannot handle the 1, 20 syntax
-//  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
-//  //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
-//  lDataRow := FTestData.AddRow;
-//  lDataRow.ExpectedOutput           := '9376816aba503f72f96ce7eb65ac095deee3be4b' +
-//                                       'f9bbc2a1cb7e11e0';
+  // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
+  //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
+  lDataRow := FTestData.AddRow;
+  lDataRow.ExpectedOutput           := '9376816aba503f72f96ce7eb65ac095deee3be4b' +
+                                       'f9bbc2a1cb7e11e0';
 //  lDataRow.ExpectedOutputUTFStrTest := '28a4a80fded04a676674687c8330422eedeb18c9' +
 //                                       'dba976234a9e007a';
-//  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
+
+  lDataRow.AddInputVector(RawByteString(#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3#$A3), 1, 20);
+  lDataRow.AddInputVector(RawByteString(#$02), 1, 1);
+  lDataRow.FinalBitLength := 2;
+exit;
+
+//  lDataRow.AddInputVector(RawByteString(#$80), 1, 1);
 //  lDataRow.FinalBitLength := 0;
+//  lDataRow.FinalBitLength := 2;
 //
 //  // Source: https://emn178.github.io/online-tools/sha3_224.html
 //  lDataRow := FTestData.AddRow;
