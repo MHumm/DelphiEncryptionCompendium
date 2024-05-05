@@ -43,7 +43,6 @@ begin
       WriteLn('RipeMD160 digest (hash value) of ' + s + ' is ' + sLineBreak +
               Hash.CalcString(s, TFormat_HEX));
 
-      // Securely erase the memory
       Hash.Done;
     except
       on E: Exception do
@@ -52,6 +51,7 @@ begin
 
     ReadLn;
   finally
+    // Securely erase the memory
     Hash.Free;
   end;
 end.
