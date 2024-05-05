@@ -1156,6 +1156,8 @@ begin
     // This has been fixed in 10.3.0 Rio
     b := ValidFormat(Format).Decode(BytesOf(Source));
 
+    SetLength(Result, Length(b));
+
     {$IFDEF HAVE_STR_LIKE_ARRAY}
     DoDecode(@b[0], @Result[Low(Result)], Length(Result) * SizeOf(Result[Low(Result)]));
     {$ELSE}
