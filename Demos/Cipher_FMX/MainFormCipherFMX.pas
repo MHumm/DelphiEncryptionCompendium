@@ -294,8 +294,8 @@ begin
           PlainTextBuffer := (Cipher as TDECFormattedCipher).DecodeBytes(
                             CipherTextFormatting.Decode(CipherTextBuffer));
           // in case of an authenticated cipher mode like cmGCM the Done method
-          // will raise an exceptino when the calculated authentication value does
-          // not match the given expected one
+          // will raise an exception when the calculated authentication value does
+          // not match the given expected one set in SetAuthenticationParams().
           (Cipher as TDECFormattedCipher).Done;
           // If we managed to get to here, the calculated authentication value is
           // ok if we're in an authenticated mode and have entered an expected value.

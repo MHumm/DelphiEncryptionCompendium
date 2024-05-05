@@ -116,7 +116,7 @@ type
     class function MGF1(const Data; DataSize, MaskSize: Integer): TBytes; overload;
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
-    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   similar to a hash function but in contrast does not have a fixed output
     ///   length. Use of a MGF is desirable in cases where a fixed-size hash
     ///   would be inadequate. Examples include generating padding, producing
     ///   one time pads or keystreams in symmetric key encryption, and yielding
@@ -341,7 +341,7 @@ type
 
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
-    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   similar to a hash function but in contrast does not have a fixed output
     ///   length. Use of a MGF is desirable in cases where a fixed-size hash
     ///   would be inadequate. Examples include generating padding, producing
     ///   one time pads or keystreams in symmetric key encryption, and yielding
@@ -372,7 +372,7 @@ type
                         Index: UInt32 = 1): TBytes; overload;
     /// <summary>
     ///   Mask generation: generates an output based on the data given which is
-    ///   similar to a hash function but incontrast does not have a fixed output
+    ///   similar to a hash function but in contrast does not have a fixed output
     ///   length. Use of a MGF is desirable in cases where a fixed-size hash
     ///   would be inadequate. Examples include generating padding, producing
     ///   one time pads or keystreams in symmetric key encryption, and yielding
