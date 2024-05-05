@@ -1828,9 +1828,9 @@ begin
 
   //Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-
   //       Validation-Program/documents/sha3/sha-3bittestvectors.zip
-  FTestFileNames.Add('..\..\Unit Tests\Data\Keccak.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
-//  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
+//  FTestFileNames.Add('..\..\Unit Tests\Data\Keccak.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224ShortMsg.rsp');
+  FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
@@ -2044,6 +2044,9 @@ begin
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-256_Msg5.pdf
+  // TODO:
+  // expected: <7b0047cf5a456882363cbf0fb05322cf65f4b7059a46365e830132e3b5d957af>
+  // but was:  <1594a22d1e1dd176e6f35ae26d8efa294589e23676e1fdc917423a1282546528>
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '7b0047cf5a456882363cbf0fb05322cf65f4b705' +
                                        '9a46365e830132e3b5d957af';
@@ -2051,13 +2054,19 @@ begin
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-256_Msg30.pdf
+  // TODO:
+  // expected: <c8242fef409e5ae9d1f1c857ae4dc624b92b19809f62aa8c07411c54a078b1d0>
+  // but was:  <ce8c2109c14e5416785a205f34316b50fa11993fac9c7236c643cb5e7b00afbd>
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := 'c8242fef409e5ae9d1f1c857ae4dc624b92b1980' +
                                        '9f62aa8c07411c54a078b1d0';
-  AddLastByteForCodeTest(lDataRow, #$53#$58#$7B#$19, 6);
+  AddLastByteForCodeTest(lDataRow, #$53#$58#$7B#$19, 30 mod 8);
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-256_Msg1605.pdf
+  // TODO:
+  // expected: <81ee769bed0950862b1ddded2e84aaa6ab7bfdd3ceaa471be31163d40336363c>
+  // but was:  <ffc38f204f021c3adf97c55e0d453904749b6ad71c15612f60d018e946d00c24>
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '81ee769bed0950862b1ddded2e84aaa6ab7bfdd3' +
                                        'ceaa471be31163d40336363c';
@@ -2086,6 +2095,9 @@ begin
 
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-256_1630.pdf
+  // TODO:
+  // expected: <52860aa301214c610d922a6b6cab981ccd06012e54ef689d744021e738b9ed20>
+  // but was:  <96eb974c5cfdfc80fe2e8b0203652998827cda5b8ecd2a99ab90e653ed1eacc1>
   lDataRow := FTestData.AddRow;
   lDataRow.ExpectedOutput           := '52860aa301214c610d922a6b6cab981ccd06012e' +
                                        '54ef689d744021e738b9ed20';

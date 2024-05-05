@@ -63,7 +63,6 @@ begin
 
       // Encrypt
       Output := Cipher.EncodeBytes(Input);
-      // clean up inside the cipher instance, which also removes the key from RAM
       Cipher.Done;
 
       Write('Encrypted data in hex: ');
@@ -75,7 +74,6 @@ begin
       // Decrypt
       Cipher.Init(CipherKey, IV, 0);
       Output := Cipher.DecodeBytes(Output);
-      // clean up inside the cipher instance, which also removes the key from RAM
       Cipher.Done;
 
       SourceText := RawByteString(System.SysUtils.StringOf(Output));
@@ -89,7 +87,6 @@ begin
       CipherKey := 'Password';
       Cipher.Init(CipherKey, IV, 0);
       Output := Cipher.DecodeBytes(Output);
-      // clean up inside the cipher instance, which also removes the key from RAM
       Cipher.Done;
 
       SourceText := RawByteString(System.SysUtils.StringOf(Output));
@@ -104,6 +101,7 @@ begin
 
     ReadLn;
   finally
+    // clean up inside the cipher instance, which also removes the key from RAM
     Cipher.Free;
   end;
 end.
