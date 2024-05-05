@@ -1001,7 +1001,7 @@ procedure TDECCipher.Init(const Key: TBytes; const IVector: TBytes; IFiller: Byt
 begin
   // GCM allows empty key as the authentication still works
   if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
-     (not (FMode = cmGCM)) then
+     (not (FMode = cmGCM)) and (Context.KeySize > 0) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if IVector <> nil then
@@ -1016,7 +1016,7 @@ procedure TDECCipher.Init(const Key     : RawByteString;
 begin
   // GCM allows empty key as the authentication still works
   if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
-     (not (FMode = cmGCM)) then
+     (not (FMode = cmGCM)) and (Context.KeySize > 0) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
@@ -1039,7 +1039,9 @@ end;
 {$IFDEF ANSISTRINGSUPPORTED}
 procedure TDECCipher.Init(const Key, IVector: AnsiString; IFiller: Byte);
 begin
-  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) then
+  // GCM allows empty key as the authentication still works
+  if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
+     (not (FMode = cmGCM)) and (Context.KeySize > 0) then
     raise EDECCipherException.Create(sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
@@ -1065,7 +1067,7 @@ procedure TDECCipher.Init(const Key, IVector: WideString; IFiller: Byte);
 begin
   // GCM allows empty key as the authentication still works
   if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
-     (not (FMode = cmGCM)) then
+     (not (FMode = cmGCM)) and (Context.KeySize > 0) then
     raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
