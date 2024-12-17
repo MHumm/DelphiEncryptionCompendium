@@ -222,6 +222,13 @@ procedure ProtectString(var Source: WideString); overload;
 /// </remarks>
 function BytesToRawString(const Source: TBytes): RawByteString;
 
+function RawStringToBytes(const RawString: RawByteString): TBytes;
+
+function BytesToString(const Source: TBytes): String;
+
+function StringToBytes(const Str: String): TBytes;
+
+
 // Buffer comparison
 
 /// <summary>
@@ -614,6 +621,45 @@ begin
     Move(Source[0], Result[Low(result)], Length(Source));
     {$ELSE}
     Move(Source[0], Result[1], Length(Source));
+    {$ENDIF}
+  end;
+end;
+
+function RawStringToBytes(const RawString: RawByteString): TBytes;
+begin
+  SetLength(Result, Length(RawString));
+  if Length(RawString) > 0 then
+  begin
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
+    Move(RawString[Low(RawString)], Result[0], Length(RawString));
+    {$ELSE}
+    Move(RawString[1], Result[0], Length(RawString));
+    {$ENDIF}
+  end;
+end;
+
+function BytesToString(const Source: TBytes): String;
+begin
+  SetLength(Result, Length(Source) div SizeOf(Char));
+  if Length(Source) > 0 then
+  begin
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
+    Move(Source[0], Result[Low(result)], Length(Source));
+    {$ELSE}
+    Move(Source[0], Result[1], Length(Source) * SizeOf(Char));
+    {$ENDIF}
+  end;
+end;
+
+function StringToBytes(const Str: String): TBytes;
+begin
+  SetLength(Result, Length(Str) * SizeOf(Char));
+  if Length(Str) > 0 then
+  begin
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
+    Move(Str[Low(Str)], Result[0], Length(Str) * SizeOf(Char));
+    {$ELSE}
+    Move(Str[1], Result[0], Length(Str) * SizeOf(Char));
     {$ENDIF}
   end;
 end;
