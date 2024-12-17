@@ -290,6 +290,9 @@ type
     /// </returns>
     class function TableFindBinary(Value: Byte; Table: TBytes;
       Len: Integer): Integer;
+
+
+    class function FilterChar: string; virtual; abstract;
   end;
 
   /// <summary>
