@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 750
-  ClientWidth = 400
+  ClientHeight = 733
+  ClientWidth = 402
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -13,13 +13,13 @@ object FormMain: TFormMain
   DesignerMasterStyle = 0
   object VertScrollBox1: TVertScrollBox
     Align = Client
-    Size.Width = 400.000000000000000000
-    Size.Height = 750.000000000000000000
+    Size.Width = 402.000000000000000000
+    Size.Height = 733.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 6
-    Viewport.Width = 384.000000000000000000
-    Viewport.Height = 750.000000000000000000
+    Viewport.Width = 386.000000000000000000
+    Viewport.Height = 733.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 400.000000000000000000
       Size.Height = 300.000000000000000000
@@ -96,27 +96,29 @@ object FormMain: TFormMain
         TabOrder = 2
         Options = [Editing, ColumnResize, ColumnMove, ColLines, RowLines, Tabs, Header, AutoDisplacement]
         Viewport.Width = 340.000000000000000000
-        Viewport.Height = 59.000000000000000000
+        Viewport.Height = 75.000000000000000000
         object StringColumn1: TStringColumn
           Header = 'Property'
+          HeaderSettings.TextSettings.WordWrap = False
           ReadOnly = True
-          Size.Width = 250.000000000000000000
+          Size.Width = 240.000000000000000000
         end
         object StringColumn2: TStringColumn
           Header = 'Value'
+          HeaderSettings.TextSettings.WordWrap = False
           ReadOnly = True
           Size.Width = 95.000000000000000000
         end
       end
     end
     object LayoutAuthentication: TLayout
-      Position.Y = 524.000000000000000000
+      Position.Y = 584.000000000000000000
       Size.Width = 400.000000000000000000
       Size.Height = 278.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
       object Label11: TLabel
-        Position.X = 16.000000000000000000
+        Position.X = 15.000000000000000000
         Position.Y = 8.000000000000000000
         Size.Width = 377.000000000000000000
         Size.Height = 17.000000000000000000
@@ -220,19 +222,19 @@ object FormMain: TFormMain
     object LayoutCipherSettings: TLayout
       Position.Y = 300.000000000000000000
       Size.Width = 400.000000000000000000
-      Size.Height = 225.000000000000000000
+      Size.Height = 284.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object Label1: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 16.000000000000000000
-        Size.Width = 154.000000000000000000
+        Position.Y = 69.000000000000000000
+        Size.Width = 78.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Encryption key (hexadecimal)'
+        Text = 'Encryption key'
         TabOrder = 2
       end
       object EditKey: TEdit
@@ -242,7 +244,7 @@ object FormMain: TFormMain
         TabOrder = 3
         FilterChar = '0123456789ABCDEFabcdef'
         Position.X = 16.000000000000000000
-        Position.Y = 48.000000000000000000
+        Position.Y = 93.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -250,13 +252,13 @@ object FormMain: TFormMain
       object Label3: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 88.000000000000000000
-        Size.Width = 130.000000000000000000
+        Position.Y = 150.000000000000000000
+        Size.Width = 54.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Init vector (hexadecimal)'
+        Text = 'Init vector'
         TabOrder = 6
       end
       object EditInitVector: TEdit
@@ -266,7 +268,7 @@ object FormMain: TFormMain
         TabOrder = 4
         FilterChar = '0123456789ABCDEFabcdef'
         Position.X = 16.000000000000000000
-        Position.Y = 120.000000000000000000
+        Position.Y = 174.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -274,7 +276,7 @@ object FormMain: TFormMain
       object LabelFillerByte: TLabel
         AutoSize = True
         Position.X = 16.000000000000000000
-        Position.Y = 160.000000000000000000
+        Position.Y = 214.000000000000000000
         Size.Width = 128.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -289,17 +291,62 @@ object FormMain: TFormMain
         TabOrder = 5
         MaxLength = 2
         FilterChar = '0123456789ABCDEFabcdef'
+        Text = '00'
         Position.X = 16.000000000000000000
-        Position.Y = 184.000000000000000000
+        Position.Y = 238.000000000000000000
         Size.Width = 137.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
+      object btnCreateKey: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 296.000000000000000000
+        Position.Y = 52.000000000000000000
+        Size.Width = 80.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        Text = 'Create Key'
+        TextSettings.Trimming = None
+        OnClick = btnCreateKeyClick
+      end
+      object btnCreateIV: TButton
+        Anchors = [akTop, akRight]
+        Position.X = 298.000000000000000000
+        Position.Y = 133.000000000000000000
+        Size.Width = 80.000000000000000000
+        Size.Height = 33.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 8
+        Text = 'Create IV'
+        TextSettings.Trimming = None
+        OnClick = btnCreateIVClick
+      end
+      object cboKeyIVFormat: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 18.000000000000000000
+        Position.Y = 32.000000000000000000
+        Size.Width = 191.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'comboboxstyle'
+        TabOrder = 1
+        OnChange = cboKeyIVFormatChange
+      end
+      object Label4: TLabel
+        Position.X = 20.000000000000000000
+        Position.Y = 8.000000000000000000
+        Size.Width = 189.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        Text = 'Format of Key and Initial Vector'
+        TabOrder = 10
+      end
     end
     object LayoutEncrypt: TLayout
-      Position.Y = 758.000000000000000000
+      Position.Y = 860.000000000000000000
       Size.Width = 400.000000000000000000
-      Size.Height = 550.000000000000000000
+      Size.Height = 419.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 3
       object ButtonDecrypt: TButton
@@ -312,6 +359,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 15
         Text = 'Decrypt'
+        TextSettings.Trimming = None
         OnClick = ButtonDecryptClick
       end
       object ButtonEncrypt: TButton
@@ -324,6 +372,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 13
         Text = 'Encrypt'
+        TextSettings.Trimming = None
         OnClick = ButtonEncryptClick
       end
       object ButtonCopy: TButton
@@ -336,6 +385,7 @@ object FormMain: TFormMain
         StyleLookup = 'buttonstyle'
         TabOrder = 16
         Text = 'Copy to clipboard'
+        TextSettings.Trimming = None
         OnClick = ButtonCopyClick
       end
       object EditCipherText: TEdit
@@ -393,7 +443,7 @@ object FormMain: TFormMain
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = #169' 2018-2021 by Team DEC V%0:s'
+        Text = #169' 2018-2024 by Team DEC V%0:s'
         TabOrder = 14
       end
       object Label5: TLabel
