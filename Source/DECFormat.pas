@@ -71,6 +71,8 @@ type
   TFormat_BigEndian16   = class;
   TFormat_BigEndian32   = class;
 
+  TFormat_UTF8          = class;
+
   /// <summary>
   ///   Hexadecimal in Uppercase, Base16, see http://tools.ietf.org/html/rfc4648
   /// </summary>
@@ -84,6 +86,7 @@ type
     class function DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
+    class function FilterChar: string; override;
   end;
 
   /// <summary>
@@ -92,6 +95,7 @@ type
   TFormat_HEXL = class(TFormat_HEX)
   public
     class function CharTableBinary: TBytes; override;
+    class function FilterChar: string; override;
   end;
 
   /// <summary>
@@ -184,6 +188,7 @@ type
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
+    class function FilterChar: string; override;
   end;
 
   /// <summary>
@@ -196,6 +201,7 @@ type
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; override;
+    class function FilterChar: string; override;
   end;
 
   /// <summary>
@@ -416,6 +422,17 @@ type
   public
   end;
 
+  /// <summary>
+  ///   Conversion from/to UTF8
+  /// </summary>
+  TFormat_UTF8 = class(TDECFormat)
+  protected
+    class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
+    class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
+    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+  end;
+
+
 implementation
 
 uses
@@ -591,6 +608,11 @@ begin
     result := false;
 end;
 
+class function TFormat_HEX.FilterChar: string;
+begin
+  result := '0123456789ABCDEF';
+end;
+
 class function TFormat_HEXL.CharTableBinary: TBytes;
 begin
   SetLength(result, 48);
@@ -654,6 +676,11 @@ begin
   result[46]:=$0A;
   result[47]:=$0D;
   {$ENDIF}
+end;
+
+class function TFormat_HEXL.FilterChar: string;
+begin
+  result := '0123456789abcdef';
 end;
 
 class function TFormat_DECMIME32.CharTableBinary: TBytes;
@@ -784,6 +811,11 @@ begin
              $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $2B, $2F, $3D,
              $20, $24, $28, $29, $5B, $5D, $7B, $7D, $2C, $3B, $3A, $2D, $5F,
              $5C, $2A, $22, $27, $09, $0A, $0D];
+end;
+
+class function TFormat_Base64.FilterChar: string;
+begin
+  result := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 end;
 
 class procedure TFormat_Base64.DoEncode(const Source; var Dest: TBytes; Size: Integer);
@@ -1935,6 +1967,11 @@ begin
   end;
 end;
 
+class function TFormat_Base32.FilterChar: string;
+begin
+  result := string(cBase32);
+end;
+
 { TFormat_Radix64BCrypt }
 
 class function TFormat_BCryptBSD.CharTableBinary: TBytes;
@@ -2081,6 +2118,52 @@ begin
   end;
 end;
 
+{ TFormat_UTF8 }
+
+class procedure TFormat_UTF8.DoDecode(const Source; var Dest: TBytes; Size: Integer);
+var
+  p: pointer;
+  Raw: string;
+begin
+  p := Pointer(@Source);
+  if p = nil then
+    SetLength(Dest, 0)
+  else begin
+    SetString(Raw, PChar(@Source), Size div sizeof(Char));
+    Dest := System.SysUtils.BytesOf(UTF8Encode(Raw));
+  end;
+end;
+
+class procedure TFormat_UTF8.DoEncode(const Source; var Dest: TBytes; Size: Integer);
+var
+  p: PChar;
+  u: UTF8String;
+  s: String;
+begin
+  p := PChar(Source);
+  if p = nil then
+    SetLength(Dest, 0)
+  else begin
+    SetLength(u, Size);
+    Move(Source, u[1], Size);
+    s := UTF8ToString(u);
+    SetLength(Dest, length(s) * SizeOf(Char));
+    Move(s[1], Dest[0], length(s) * SizeOf(Char));
+  end;
+end;
+
+class function TFormat_UTF8.DoIsValid(const Data; Size: Integer): Boolean;
+var
+  Dest: TBytes;
+begin
+  try
+    DoDecode(Data, Dest, Size);
+    result := true;
+  except
+    result := false;
+  end;
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -2115,6 +2198,7 @@ initialization
     TFormat_BigEndian16.RegisterClass(TDECFormat.ClassList);
     TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
     TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
+    TFormat_UTF8.RegisterClass(TDECFormat.ClassList);
     {$ENDIF}
   {$ENDIF}
 
