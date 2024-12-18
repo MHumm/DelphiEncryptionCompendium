@@ -219,7 +219,7 @@ procedure ProtectString(var Source: WideString); overload;
 /// <remarks>
 ///   This is a wrapper for StringOf of Sysutils
 /// </remarks>
-function BytesToRawString(const Source: TBytes): RawByteString;
+function BytesToRawString(const Source: TBytes): RawByteString; inline;
 
 /// <summary>
 ///   Converts a RawByteString to a byte array
@@ -235,7 +235,7 @@ function BytesToRawString(const Source: TBytes): RawByteString;
 /// <remarks>
 ///   This is a wrapper for BytesOf of Sysutils
 /// </remarks>
-function RawStringToBytes(const RawString: RawByteString): TBytes;
+function RawStringToBytes(const RawString: RawByteString): TBytes; inline;
 
 /// <summary>
 ///   Converts a byte array to a string using unicode encoding.
@@ -250,7 +250,7 @@ function RawStringToBytes(const RawString: RawByteString): TBytes;
 /// <remarks>
 ///   This function is a wrapper for TEncoding.Unicode.GetString
 /// </remarks>
-function BytesToString(const Source: TBytes): String;
+function BytesToString(const Source: TBytes): String; inline;
 
 /// <summary>
 ///   Converts a string to a byte array using unicode encoding.
@@ -265,7 +265,7 @@ function BytesToString(const Source: TBytes): String;
 /// <remarks>
 ///   This function is a wrapper for TEncoding.Unicode.GetBytes
 /// </remarks>
-function StringToBytes(const Str: String): TBytes;
+function StringToBytes(const Str: String): TBytes; inline;
 
 
 // Buffer comparison
