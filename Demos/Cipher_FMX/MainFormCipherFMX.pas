@@ -21,9 +21,10 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
+  System.Rtti,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.Layouts,
-  FMX.ListBox, FMX.Controls.Presentation, FMX.StdCtrls, System.Rtti,
-  FMX.Grid, FMX.ScrollBox, FMX.ComboEdit, FMX.Edit, FMX.Platform,
+  FMX.ListBox, FMX.Controls.Presentation, FMX.StdCtrls,
+  FMX.Grid, FMX.ScrollBox, FMX.ComboEdit, FMX.Edit, FMX.Platform, FMX.Objects,
   {$IF RTLVersion < 31}
   {$ELSE}
   FMX.Grid.Style,
@@ -84,6 +85,9 @@ type
     Label4: TLabel;
     LabelLenPlainText: TLabel;
     LabelLenChiffreText: TLabel;
+    CheckBoxPKCS7: TCheckBox;
+    TextPassed: TText;
+    TextFailed: TText;
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
@@ -95,6 +99,7 @@ type
     procedure ButtonCreateKeyClick(Sender: TObject);
     procedure ButtonCreateIVClick(Sender: TObject);
     procedure ComboBoxKeyIVFormatChange(Sender: TObject);
+    procedure CheckBoxPKCS7Change(Sender: TObject);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -312,7 +317,8 @@ var
   CipherTextBuffer     : TBytes;
   PlainTextBuffer      : TBytes;
   AuthenticationOK     : Boolean; // for authenticated ciphers: is the calculated
-                              // authentication result value correct?
+                                  // authentication result value correct?
+  LastPlainText        : string;
 begin
   if not GetFormatSettings(PlainTextFormatting, CipherTextFormatting) then
     exit;
@@ -338,6 +344,9 @@ begin
           // in case of an authenticated cipher mode like cmGCM the Done method
           // will raise an exception when the calculated authentication value does
           // not match the given expected one set in SetAuthenticationParams().
+          if CheckBoxPKCS7.IsChecked then
+            PlainTextBuffer := (Cipher as TDECFormattedCipher).RemovePKCS7Padding(PlainTextBuffer);
+
           (Cipher as TDECFormattedCipher).Done;
           // If we managed to get to here, the calculated authentication value is
           // ok if we're in an authenticated mode and have entered an expected value.
@@ -360,9 +369,23 @@ begin
             ShowMessage('Calculated authentication result value is correct!',
                         TMsgDlgType.mtInformation);
         end;
+        LastPlainText := EditPlainText.Text;
         EditPlainText.Text := DECUtil.BytesToString(PlainTextFormatting.Encode(PlainTextBuffer));
         LabelLenPlainText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
             [length(PlainTextBuffer), length(EditPlainText.Text)]);
+        if LastPlainText.IsEmpty then
+        begin
+          TextPassed.Visible := false;
+          TextFailed.Visible := false;
+        end
+        else if LastPlainText = EditPlainText.Text then
+        begin
+          TextPassed.Visible := true;
+          TextFailed.Visible := false;
+        end else begin
+          TextPassed.Visible := true;
+          TextFailed.Visible := false;
+        end;
       end
       else
         ShowMessage('Input has wrong format', TMsgDlgType.mtError);
@@ -400,6 +423,9 @@ begin
           InputBuffer := InputFormatting.Decode(InputBuffer);
           LabelLenPlainText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
             [length(InputBuffer), length(EditPlainText.Text)]);
+
+          if CheckBoxPKCS7.IsChecked then
+            InputBuffer := (Cipher as TDECFormattedCipher).AddPKCS7Padding(InputBuffer);
 
           OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputBuffer);
           (Cipher as TDECFormattedCipher).Done;
@@ -515,6 +541,11 @@ begin
     UpdateAuthenticationStatus;
     ButtonCreateKey.Enabled := true;
   end;
+end;
+
+procedure TFormMain.CheckBoxPKCS7Change(Sender: TObject);
+begin
+  EditFiller.Enabled := not CheckBoxPKCS7.IsChecked;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);

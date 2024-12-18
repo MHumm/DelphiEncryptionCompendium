@@ -344,6 +344,16 @@ object FormMain: TFormMain
         Text = 'Format of Key and Initial Vector'
         TabOrder = 10
       end
+      object CheckBoxPKCS7: TCheckBox
+        Position.X = 161.000000000000000000
+        Position.Y = 240.000000000000000000
+        Size.Width = 218.000000000000000000
+        Size.Height = 27.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 11
+        Text = 'Use PKCS#7 Padding'
+        OnChange = CheckBoxPKCS7Change
+      end
     end
     object LayoutEncrypt: TLayout
       Position.Y = 835.000000000000000000
@@ -431,6 +441,26 @@ object FormMain: TFormMain
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
+        object TextPassed: TText
+          Align = Right
+          Position.X = 328.000000000000000000
+          Size.Width = 32.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Text = #10004
+          TextSettings.Font.Size = 24.000000000000000000
+          Visible = False
+        end
+        object TextFailed: TText
+          Align = Right
+          Position.X = 328.000000000000000000
+          Size.Width = 32.000000000000000000
+          Size.Height = 32.000000000000000000
+          Size.PlatformDefault = False
+          Text = #10060
+          TextSettings.Font.Size = 24.000000000000000000
+          Visible = False
+        end
       end
       object Label10: TLabel
         AutoSize = True
