@@ -2,7 +2,7 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 733
+  ClientHeight = 986
   ClientWidth = 402
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,15 +14,15 @@ object FormMain: TFormMain
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 402.000000000000000000
-    Size.Height = 733.000000000000000000
+    Size.Height = 986.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 6
     Viewport.Width = 386.000000000000000000
-    Viewport.Height = 733.000000000000000000
+    Viewport.Height = 986.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 400.000000000000000000
-      Size.Height = 300.000000000000000000
+      Size.Height = 281.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label2: TLabel
@@ -40,7 +40,7 @@ object FormMain: TFormMain
       object ComboBoxCipherAlgorithm: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 44.000000000000000000
+        Position.Y = 40.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -74,7 +74,7 @@ object FormMain: TFormMain
       object Label8: TLabel
         AutoSize = True
         Position.X = 18.000000000000000000
-        Position.Y = 160.000000000000000000
+        Position.Y = 150.000000000000000000
         Size.Width = 93.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -88,7 +88,7 @@ object FormMain: TFormMain
         CanFocus = True
         ClipChildren = True
         Position.X = 18.000000000000000000
-        Position.Y = 184.000000000000000000
+        Position.Y = 174.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 100.000000000000000000
         Size.PlatformDefault = False
@@ -112,9 +112,9 @@ object FormMain: TFormMain
       end
     end
     object LayoutAuthentication: TLayout
-      Position.Y = 584.000000000000000000
+      Position.Y = 563.000000000000000000
       Size.Width = 400.000000000000000000
-      Size.Height = 278.000000000000000000
+      Size.Height = 272.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
       object Label11: TLabel
@@ -205,22 +205,24 @@ object FormMain: TFormMain
         Text = '128'
         Position.X = 276.000000000000000000
         Position.Y = 224.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
       end
       object Label14: TLabel
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
         Position.Y = 224.000000000000000000
         Size.Width = 230.000000000000000000
-        Size.Height = 40.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
-        TextSettings.VertAlign = Leading
         Text = 'Length calculated auth. value (bit)'
         TabOrder = 0
       end
     end
     object LayoutCipherSettings: TLayout
-      Position.Y = 300.000000000000000000
+      Position.Y = 280.000000000000000000
       Size.Width = 400.000000000000000000
       Size.Height = 284.000000000000000000
       Size.PlatformDefault = False
@@ -298,7 +300,7 @@ object FormMain: TFormMain
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
-      object btnCreateKey: TButton
+      object ButtonCreateKey: TButton
         Anchors = [akTop, akRight]
         Position.X = 296.000000000000000000
         Position.Y = 52.000000000000000000
@@ -308,9 +310,9 @@ object FormMain: TFormMain
         TabOrder = 9
         Text = 'Create Key'
         TextSettings.Trimming = None
-        OnClick = btnCreateKeyClick
+        OnClick = ButtonCreateKeyClick
       end
-      object btnCreateIV: TButton
+      object ButtonCreateIV: TButton
         Anchors = [akTop, akRight]
         Position.X = 298.000000000000000000
         Position.Y = 133.000000000000000000
@@ -320,21 +322,21 @@ object FormMain: TFormMain
         TabOrder = 8
         Text = 'Create IV'
         TextSettings.Trimming = None
-        OnClick = btnCreateIVClick
+        OnClick = ButtonCreateIVClick
       end
-      object cboKeyIVFormat: TComboBox
+      object ComboBoxKeyIVFormat: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 18.000000000000000000
+        Position.X = 16.000000000000000000
         Position.Y = 32.000000000000000000
         Size.Width = 191.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
         TabOrder = 1
-        OnChange = cboKeyIVFormatChange
+        OnChange = ComboBoxKeyIVFormatChange
       end
       object Label4: TLabel
-        Position.X = 20.000000000000000000
+        Position.X = 16.000000000000000000
         Position.Y = 8.000000000000000000
         Size.Width = 189.000000000000000000
         Size.Height = 17.000000000000000000
@@ -344,11 +346,31 @@ object FormMain: TFormMain
       end
     end
     object LayoutEncrypt: TLayout
-      Position.Y = 860.000000000000000000
+      Position.Y = 835.000000000000000000
       Size.Width = 400.000000000000000000
       Size.Height = 419.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 3
+      object LabelLenPlainText: TLabel
+        Anchors = [akTop, akRight]
+        Position.X = 152.000000000000000000
+        Position.Y = 72.000000000000000000
+        Size.Width = 224.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Trailing
+        TabOrder = 20
+      end
+      object LabelLenChiffreText: TLabel
+        Anchors = [akTop, akRight]
+        Position.X = 152.000000000000000000
+        Position.Y = 196.000000000000000000
+        Size.Width = 224.000000000000000000
+        Size.Height = 17.000000000000000000
+        Size.PlatformDefault = False
+        TextSettings.HorzAlign = Trailing
+        TabOrder = 19
+      end
       object ButtonDecrypt: TButton
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
@@ -470,8 +492,8 @@ object FormMain: TFormMain
       end
       object Label6: TLabel
         AutoSize = True
-        Position.X = 20.000000000000000000
-        Position.Y = 128.000000000000000000
+        Position.X = 16.000000000000000000
+        Position.Y = 136.000000000000000000
         Size.Width = 97.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -483,7 +505,7 @@ object FormMain: TFormMain
       object ComboBoxCipherTextFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 148.000000000000000000
+        Position.Y = 156.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
