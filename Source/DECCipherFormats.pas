@@ -687,6 +687,11 @@ type
     function DecodeStringToString(const Source: WideString;
                                   Format: TDECFormatClass = nil): WideString; overload;
 {$ENDIF}
+
+    function AddPKCS7Padding(const Data: TBytes): TBytes;
+
+    function RemovePKCS7Padding(const Data: TBytes): TBytes;
+
   end;
 
 implementation
@@ -1158,5 +1163,40 @@ begin
   else
     SetLength(Result, 0);
 end;
+
+{$REGION 'PKCS#7 Padding'}
+function TDECFormattedCipher.AddPKCS7Padding(const Data: TBytes): TBytes;
+var
+  PadLength: Integer;
+  PadByte: Byte;
+  I: Integer;
+begin
+  PadLength := Context.BlockSize - (Length(Data) mod Context.BlockSize);
+  SetLength(Result, Length(Data) + PadLength);
+  Move(Data[0], Result[0], Length(Data));
+  PadByte := Byte(PadLength);
+  for I := Length(Data) to High(Result) do
+    Result[I] := PadByte;
+end;
+
+function TDECFormattedCipher.RemovePKCS7Padding(const Data: TBytes): TBytes;
+var
+  PadLength: Integer;
+  I: Integer;
+begin
+  if Length(Data) = 0 then
+    Setlength(result, 0)
+  else begin
+    PadLength := Data[High(Data)];
+    if (PadLength <= 0) or (PadLength > Context.BlockSize) then
+      raise EDECCipherException.Create('Invalid PKCS7 padding');
+    for I := Length(Data) - PadLength to High(Data) do
+      if Data[I] <> Byte(PadLength) then
+        raise EDECCipherException.Create('Invalid PKCS7 padding');
+    SetLength(Result, Length(Data) - PadLength);
+    Move(Data[0], Result[0], Length(Result));
+  end;
+end;
+{$ENDREGION}
 
 end.
