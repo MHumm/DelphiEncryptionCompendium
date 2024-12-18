@@ -613,55 +613,22 @@ end;
 
 function BytesToRawString(const Source: TBytes): RawByteString;
 begin
-  SetLength(Result, Length(Source));
-  if Length(Source) > 0 then
-  begin
-    // determine lowest string index for handling of ZeroBasedStrings
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(Source[0], Result[Low(result)], Length(Source));
-    {$ELSE}
-    Move(Source[0], Result[1], Length(Source));
-    {$ENDIF}
-  end;
+  result := RawByteString(StringOf(Source));
 end;
 
 function RawStringToBytes(const RawString: RawByteString): TBytes;
 begin
-  SetLength(Result, Length(RawString));
-  if Length(RawString) > 0 then
-  begin
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(RawString[Low(RawString)], Result[0], Length(RawString));
-    {$ELSE}
-    Move(RawString[1], Result[0], Length(RawString));
-    {$ENDIF}
-  end;
+  result := BytesOf(RawString);
 end;
 
 function BytesToString(const Source: TBytes): String;
 begin
-  SetLength(Result, Length(Source) div SizeOf(Char));
-  if Length(Source) > 0 then
-  begin
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(Source[0], Result[Low(result)], Length(Source));
-    {$ELSE}
-    Move(Source[0], Result[1], Length(Source) * SizeOf(Char));
-    {$ENDIF}
-  end;
+  Result := TEncoding.Unicode.GetString(Source);
 end;
 
 function StringToBytes(const Str: String): TBytes;
 begin
-  SetLength(Result, Length(Str) * SizeOf(Char));
-  if Length(Str) > 0 then
-  begin
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(Str[Low(Str)], Result[0], Length(Str) * SizeOf(Char));
-    {$ELSE}
-    Move(Str[1], Result[0], Length(Str) * SizeOf(Char));
-    {$ENDIF}
-  end;
+  Result := TEncoding.Unicode.GetBytes(Str);
 end;
 
 function IsEqual(const a, b : TBytes):Boolean;
