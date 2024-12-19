@@ -85,9 +85,9 @@ type
     Label4: TLabel;
     LabelLenPlainText: TLabel;
     LabelLenChiffreText: TLabel;
-    CheckBoxPKCS7: TCheckBox;
     TextPassed: TText;
     TextFailed: TText;
+    ComboBoxPaddingMode: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
@@ -99,7 +99,7 @@ type
     procedure ButtonCreateKeyClick(Sender: TObject);
     procedure ButtonCreateIVClick(Sender: TObject);
     procedure ComboBoxKeyIVFormatChange(Sender: TObject);
-    procedure CheckBoxPKCS7Change(Sender: TObject);
+    procedure ComboBoxPaddingModeChange(Sender: TObject);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -165,6 +165,10 @@ type
     ///   Returns the selected block chaining mode
     /// </summary>
     function GetSelectedCipherMode: TCipherMode;
+    /// <summary>
+    ///   Returns the selected padding mode
+    /// </summary>
+    function GetSelectedPaddingMode: TPaddingMode;
     /// <summary>
     ///   If a cipher and block chaining mode is selected which provide
     ///   authentication capabilities show the authentication fields. Also show
@@ -344,8 +348,6 @@ begin
           // in case of an authenticated cipher mode like cmGCM the Done method
           // will raise an exception when the calculated authentication value does
           // not match the given expected one set in SetAuthenticationParams().
-          if CheckBoxPKCS7.IsChecked then
-            PlainTextBuffer := (Cipher as TDECFormattedCipher).RemovePKCS7Padding(PlainTextBuffer);
 
           (Cipher as TDECFormattedCipher).Done;
           // If we managed to get to here, the calculated authentication value is
@@ -406,6 +408,9 @@ var
   InputBuffer      : TBytes;
   OutputBuffer     : TBytes;
 begin
+  TextPassed.Visible := false;
+  TextFailed.Visible := false;
+
   if not GetFormatSettings(InputFormatting, OutputFormatting) then
     exit;
 
@@ -423,9 +428,6 @@ begin
           InputBuffer := InputFormatting.Decode(InputBuffer);
           LabelLenPlainText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
             [length(InputBuffer), length(EditPlainText.Text)]);
-
-          if CheckBoxPKCS7.IsChecked then
-            InputBuffer := (Cipher as TDECFormattedCipher).AddPKCS7Padding(InputBuffer);
 
           OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputBuffer);
           (Cipher as TDECFormattedCipher).Done;
@@ -500,6 +502,11 @@ begin
   KeyAndIVFormatting := NewFormat;
 end;
 
+procedure TFormMain.ComboBoxPaddingModeChange(Sender: TObject);
+begin
+  EditFiller.Enabled := ComboBoxPaddingMode.ItemIndex = 0; // Enable Filler for pmNone only
+end;
+
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);
 var
   Context : TCipherContext;
@@ -541,11 +548,6 @@ begin
     UpdateAuthenticationStatus;
     ButtonCreateKey.Enabled := true;
   end;
-end;
-
-procedure TFormMain.CheckBoxPKCS7Change(Sender: TObject);
-begin
-  EditFiller.Enabled := not CheckBoxPKCS7.IsChecked;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -656,7 +658,7 @@ begin
     Result := GetCipherInstance;
     Result.Init(RawStringToBytes(KeyIVFormat.Decode(RawByteString(EditKey.Text))),
                 RawStringToBytes(KeyIVFormat.Decode(RawByteString(EditInitVector.Text))),
-                FillerByte);
+                FillerByte, GetSelectedPaddingMode);
   end
   else
     raise Exception.Create('No valid encryption key or init vector given!');
@@ -674,6 +676,17 @@ begin
   // Determine selected block chaining method via RTTI (runtime type information)
   result := TCipherMode(System.TypInfo.GetEnumValue(
               TypeInfo(TCipherMode),
+              ModeStr));
+end;
+
+function TFormMain.GetSelectedPaddingMode: TPaddingMode;
+var
+  ModeStr : string;
+begin
+  ModeStr := ComboBoxPaddingMode.Items[ComboBoxPaddingMode.ItemIndex];
+  // Determine selected block chaining method via RTTI (runtime type information)
+  result := TPaddingMode(System.TypInfo.GetEnumValue(
+              TypeInfo(TPaddingMode),
               ModeStr));
 end;
 
@@ -705,14 +718,16 @@ end;
 
 procedure TFormMain.InitCipherModes;
 var
-  Mode : TCipherMode;
-  Name : string;
+  CipherMode: TCipherMode;
+  PaddingMode: TPaddingMode;
+  Name: string;
 begin
-  for Mode := low(TCipherMode) to high(TCipherMode) do
+  ComboBoxChainingMethod.Clear;
+  for CipherMode := low(TCipherMode) to high(TCipherMode) do
   begin
-    Name := System.TypInfo.GetEnumName(TypeInfo(TCipherMode), Integer(Mode));
+    Name := System.TypInfo.GetEnumName(TypeInfo(TCipherMode), Integer(CipherMode));
 
-    if IsAuthenticatedBlockMode(Mode) then
+    if IsAuthenticatedBlockMode(CipherMode) then
       name := name + ' (authenticated)';
 
     ComboBoxChainingMethod.Items.Add(Name);
@@ -720,6 +735,14 @@ begin
 
   if ComboBoxChainingMethod.Items.Count > 0 then
     ComboBoxChainingMethod.ItemIndex := 0;
+
+  ComboBoxPaddingMode.Clear;
+  for PaddingMode := low(TPaddingMode) to high(TPaddingMode) do
+    ComboBoxPaddingMode.Items.Add(
+      System.TypInfo.GetEnumName(
+        TypeInfo(TPaddingMode),
+        Integer(PaddingMode)));
+  ComboBoxPaddingMode.ItemIndex := 0;
 end;
 
 procedure TFormMain.InitFormatCombos;

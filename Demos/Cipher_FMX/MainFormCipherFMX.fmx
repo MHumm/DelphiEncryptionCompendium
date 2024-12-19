@@ -344,15 +344,15 @@ object FormMain: TFormMain
         Text = 'Format of Key and Initial Vector'
         TabOrder = 10
       end
-      object CheckBoxPKCS7: TCheckBox
+      object ComboBoxPaddingMode: TComboBox
+        Anchors = [akLeft, akTop, akRight]
         Position.X = 161.000000000000000000
-        Position.Y = 240.000000000000000000
-        Size.Width = 218.000000000000000000
-        Size.Height = 27.000000000000000000
+        Position.Y = 238.000000000000000000
+        Size.Width = 215.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         TabOrder = 11
-        Text = 'Use PKCS#7 Padding'
-        OnChange = CheckBoxPKCS7Change
+        OnChange = ComboBoxPaddingModeChange
       end
     end
     object LayoutEncrypt: TLayout
