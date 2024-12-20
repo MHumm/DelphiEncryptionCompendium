@@ -902,6 +902,24 @@ type
     procedure TestClassByName;
   end;
 
+  // Testmethods for class TCipher_AES256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_AES256_CBC_PKCS7 = class(TCipherBasis)
+  strict private
+    FCipher_AES: TCipher_AES256;
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+
+  published
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+  end;
+
 implementation
 
 const
@@ -4125,7 +4143,7 @@ Daten synthetisieren. }
 
     TempResultHex := RawByteString(StringOf(Result));
 
-    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(TempResultHex));
+    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(TempResultHex), 'Failed for key:' + Data.Key);
   end;
 end;
 
@@ -4900,6 +4918,89 @@ begin
   CheckException(DoTestTooLargeKey, EDECCipherException);
 end;
 
+{ TestTCipher_AES256_CBC_PKCS7 }
+
+procedure TestTCipher_AES256_CBC_PKCS7.SetUp;
+var
+  TestFile: TStringList;
+  Ind: integer;
+begin
+  inherited;
+  FCipher_AES := TCipher_AES256.Create;
+  FCipher_AES.PaddingMode := pmPKCS7;
+  FCipher_AES.Mode := cmCBCx;
+
+  SetLength(FTestData, 13);
+  TestFile := TStringList.Create;
+  try
+    TestFile.LoadFromFile('..\..\Unit Tests\Data\aes-cbc-pkcs7.txt');
+    Assert(TestFile.Count > 13 * 5 + 9, 'Too short aes-cbc-pkcs7.txt file');
+    for Ind := 0 to length(FTestData) - 1 do
+    begin
+      Assert(TestFile[5 + Ind * 5].StartsWith('PT='), 'PT is missing in line ' + IntToStr(5 + Ind * 5));
+      FTestData[Ind].InputData := TFormat_HEXL.Decode(TestFile[5 + Ind * 5].Substring(3));
+      Assert(TestFile[6 + Ind * 5].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(6 + Ind * 5));
+      FTestData[Ind].Key := TestFile[6 + Ind * 5].Substring(4);
+      Assert(TestFile[7 + Ind * 5].StartsWith('IV='), 'PT is missing in line ' + IntToStr(7 + Ind * 5));
+      FTestData[Ind].InitVector := TestFile[7 + Ind * 5].Substring(3);
+      Assert(TestFile[8 + Ind * 5].StartsWith('CT='), 'CT is missing in line ' + IntToStr(8 + Ind * 5));
+      FTestData[Ind].OutputData := TestFile[8 + Ind * 5].Substring(3);
+      FTestData[Ind].Filler := 0;
+    end;
+  finally
+    TestFile.Free;
+  end;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TearDown;
+begin
+  inherited;
+  FCipher_AES.free;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestClassByName;
+begin
+
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_AES.Context;
+
+  CheckEquals(  32,  ReturnValue.KeySize);
+  CheckEquals(  16,  ReturnValue.BlockSize);
+  CheckEquals(  16,  ReturnValue.BufferSize);
+  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.Init(TestData: TCipherTestData);
+begin
+  FCipher_AES.Init(TFormat_HEXL.Decode(TestData.Key), TFormat_HEXL.Decode(TestData.InitVector), TestData.Filler);
+  FCipher_AES.PaddingMode := pmPKCS7;
+  FCipher_AES.Mode := cmCBCx;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.Done;
+begin
+  FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestEncode;
+begin
+  DoTestEncode(FCipher_AES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestDecode;
+begin
+  DoTestDecode(FCipher_AES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
 initialization
   // Register all test classes
   {$IFDEF DUnitX}
@@ -4943,6 +5044,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA_DEC52);
+  TDUnitX.RegisterTestFixture(TestTCipher_AES256_CBC_PKCS7);
   {$ELSE}
   RegisterTests('DECCipher', [TestTDECCipher.Suite,
                               TestTCipher_Null.Suite,
@@ -4983,7 +5085,8 @@ initialization
                               TestTCipher_Skipjack.Suite,
                               TestTCipher_TEA.Suite,
                               TestTCipher_XTEA.Suite,
-                              TestTCipher_XTEA_DEC52.Suite]);
+                              TestTCipher_XTEA_DEC52.Suite,
+                              TestTCipher_AES256_CBC_PKCS7.Suite]);
   {$ENDIF}
 end.
 
