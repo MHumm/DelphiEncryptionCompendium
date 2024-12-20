@@ -2153,15 +2153,19 @@ begin
 end;
 
 class function TFormat_UTF8.DoIsValid(const Data; Size: Integer): Boolean;
+const
+  cIllegalSequence = #$FFFD;
+  // https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
 var
-  Dest: TBytes;
+  u: UTF8String;
 begin
-  try
-    DoDecode(Data, Dest, Size);
+  if Size > 0 then
+  begin
+    SetLength(u, Size);
+    Move(Data, u[1], Size);
+    result := not UTF8ToString(u).Contains(cIllegalSequence);
+  end else
     result := true;
-  except
-    result := false;
-  end;
 end;
 
 initialization

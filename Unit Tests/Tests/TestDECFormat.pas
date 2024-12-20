@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -173,7 +173,7 @@ type
          Output: 'xk3gh4jbjsklfyzkkf'),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
          Output: 'xk3gh4jbjsklfyzkkpya')); // als letzter Buchstabe kommt manchmal oft ,u statt a heraus?
-                                           // scheint etwas zuf�llig? Was ist da faul?
+                                           // scheint etwas zufällig? Was ist da faul?
                                            // lt. DECTest.vec ist a richtig
 
       cTestDataDecode : array[1..6] of TestRecRawByteString = (
@@ -857,11 +857,75 @@ type
   end;
 
 
+  // Test methods for class TFormat_UTF8
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_UTF8 = class(TFormatTestsBase)
+  strict private
+    FFormat_UTF8: TFormat_UTF8;
+
+    const
+      cTestDataEncode : array[1..9] of TestRecRawByteString = (
+        (Input:  RawByteString('');
+         Output: ''),
+        (Input:  RawByteString('ASCIi'#10#9);
+         Output: RawByteString('A'#00'S'#00'C'#00'I'#00'i'#00#10#00#9#00)),
+        (Input:  RawByteString('Ansi '#$C3#$B6#$C3#$A4#10#13);
+         Output: RawByteString('A'#00'n'#00's'#00'i'#00' '#00'ö'#00'ä'#00#10#00#13#00)),
+        (input:  Rawbytestring(#$7f); // Delete character (ASCII)
+         output: Rawbytestring(#$7f#00)),
+        (input:  Rawbytestring('Greek: '#$ce#$b1#$ce#$b2#$ce#$b3); // Greek alpha, beta, gamma
+         output: Rawbytestring('G'#00'r'#00'e'#00'e'#00'k'#00':'#00' '#00#$b1#3#$B2#3#$B3#3)),
+        (input:  Rawbytestring(#$e2#$82#$ac); // Euro sign €
+         output: Rawbytestring(#$ac#$20)),
+        (input:  Rawbytestring(#$f0#$9f#$98#$81); // grinning face with smiling eyes 😃
+         output: Rawbytestring(#$3D#$D8#1#$DE)),
+        (Input:  Rawbytestring('Marco Cant'#$C3#$B9);
+         Output: Rawbytestring('M'#00'a'#00'r'#00'c'#00'o'#00' '#00'C'#00'a'#00'n'#00't'#00#$F9#00)),
+        (input:  Rawbytestring('Mixed'#$D7#$A9'bag'); // (hebrew letter Shin)
+         output: Rawbytestring('M'#00'i'#00'x'#00'e'#00'd'#00#$E9#$05'b'#00'a'#00'g'#00)));
+
+      cTestDataDecode : array[1..9] of TestRecRawByteString = (
+        (Input:  '';
+         Output: RawByteString('')),
+        (Input:  RawByteString('A'#00'S'#00'C'#00'I'#00'i'#00#10#00#9#00);
+         Output: RawByteString('ASCIi'#10#9)),
+        (Input:  RawByteString('A'#00'n'#00's'#00'i'#00' '#00'ö'#00'ä'#00#10#00#13#00);
+         Output: RawByteString('Ansi '#$C3#$B6#$C3#$A4#10#13)),
+        (Input:  Rawbytestring(#$7f#00);
+         Output: Rawbytestring(#$7f)), // Delete character (ASCII)
+        (Input:  Rawbytestring('G'#00'r'#00'e'#00'e'#00'k'#00':'#00' '#00#$b1#3#$B2#3#$B3#3);
+         Output: Rawbytestring('Greek: '#$ce#$b1#$ce#$b2#$ce#$b3)), // Greek alpha, beta, gamma
+        (Input:  Rawbytestring(#$ac#$20); // Euro sign €
+         Output: Rawbytestring(#$e2#$82#$ac)),
+        (Input:  Rawbytestring(#$3D#$D8#1#$DE); // grinning face with smiling eyes 😃
+         Output: Rawbytestring(#$f0#$9f#$98#$81)),
+        (Input:  Rawbytestring('M'#00'a'#00'r'#00'c'#00'o'#00' '#00'C'#00'a'#00'n'#00't'#00#$F9#00);
+         Output: Rawbytestring('Marco Cant'#$C3#$B9)),
+        (Input:  Rawbytestring('M'#00'i'#00'x'#00'e'#00'd'#00#$E9#$05'b'#00'a'#00'g'#00); // (hebrew letter Shin)
+         Output: Rawbytestring('Mixed'#$D7#$A9'bag')));
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestEncodeBytes;
+    procedure TestEncodeRawByteString;
+    procedure TestEncodeTypeless;
+    procedure TestDecodeBytes;
+    procedure TestDecodeRawByteString;
+    procedure TestDecodeTypeless;
+    procedure TestIsValidTypeless;
+    procedure TestIsValidTBytes;
+    procedure TestIsValidRawByteString;
+    procedure TestClassByName;
+    procedure TestIdentity;
+  end;
+
+
 implementation
 
 procedure TestTFormat_HEX.DoTestDecodeException;
 begin
-  FFormat_HEX.Decode('�');
+  FFormat_HEX.Decode('ä');
 end;
 
 procedure TestTFormat_HEX.SetUp;
@@ -1522,7 +1586,7 @@ end;
 
 procedure TestTFormat_UU.DoTestDecodeException;
 begin
-  FFormat_UU.Decode('�');
+  FFormat_UU.Decode('ä');
 end;
 
 procedure TestTFormat_UU.SetUp;
@@ -1684,7 +1748,7 @@ end;
 
 procedure TestTFormat_XX.DoTestDecodeException;
 begin
-  FFormat_XX.Decode('�');
+  FFormat_XX.Decode('ä');
 end;
 
 procedure TestTFormat_XX.SetUp;
@@ -1869,12 +1933,12 @@ end;
 
 procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar;
 begin
-  FFormat_ESCAPE.Decode(RawByteString('\x�'));
+  FFormat_ESCAPE.Decode(RawByteString('\xä'));
 end;
 
 procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongChar2;
 begin
-  FFormat_ESCAPE.Decode(RawByteString('\xa�'));
+  FFormat_ESCAPE.Decode(RawByteString('\xaä'));
 end;
 
 procedure TestTFormat_ESCAPE.DoTestDecodeExceptionWrongLength;
@@ -2741,6 +2805,204 @@ begin
   end;
 end;
 
+{ TestTFormat_UTF8 }
+
+procedure TestTFormat_UTF8.SetUp;
+begin
+  FFormat_UTF8 := TFormat_UTF8.Create;
+end;
+
+procedure TestTFormat_UTF8.TearDown;
+begin
+  FreeAndNil(FFormat_UTF8);
+end;
+
+procedure TestTFormat_UTF8.TestClassByName;
+var
+  ReturnValue : TDECFormatClass;
+begin
+  ReturnValue := FFormat_UTF8.ClassByName('TFormat_UTF8');
+  CheckEquals(TFormat_UTF8, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTFormat_UTF8.TestEncodeBytes;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataEncode) do
+    DoTestEncodeDecode(FFormat_UTF8.Encode, cTestDataEncode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestEncodeRawByteString;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataEncode) do
+    DoTestEncodeDecodeRawByteString(FFormat_UTF8.Encode, cTestDataEncode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestEncodeTypeless;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataEncode) do
+    DoTestEncodeDecodeTypeless(FFormat_UTF8.Encode, cTestDataEncode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestDecodeBytes;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataDecode) do
+    DoTestEncodeDecode(FFormat_UTF8.Decode, cTestDataDecode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestDecodeRawByteString;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataDecode) do
+    DoTestEncodeDecodeRawByteString(FFormat_UTF8.Decode, cTestDataDecode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestDecodeTypeless;
+var
+  i: integer;
+begin
+  for i := 1 to length(cTestDataDecode) do
+    DoTestEncodeDecodeTypeless(FFormat_UTF8.Decode, cTestDataDecode[i]);
+end;
+
+procedure TestTFormat_UTF8.TestIdentity;
+begin
+  CheckEquals($56C1D72, FFormat_UTF8.Identity);
+end;
+
+procedure TestTFormat_UTF8.TestIsValidRawByteString;
+var
+  Bytes : TBytes;
+begin
+  SetLength(Bytes, 0);
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on empty data');
+
+  Bytes := TBytes.Create(1);
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 1-byte data');
+
+  Bytes := TBytes.Create($20);
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 1-byte data-1');
+
+  Bytes := TBytes.Create(195, 164);  // ä
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 2-byte data');
+
+  Bytes := TBytes.Create(226, 130, 172); // €
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 3-byte data');
+
+  Bytes := TBytes.Create(240, 159, 152, 128); // 😀
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 4-byte data');
+
+  Bytes := TBytes.Create(130); // is a continuation byte
+  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation byte');
+
+  Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
+  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on start byte');
+
+  Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
+  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
+  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(129, 128, 128);
+  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Continuation bytes can only follow valid start bytes');
+end;
+
+procedure TestTFormat_UTF8.TestIsValidTBytes;
+var
+  Bytes : TBytes;
+begin
+  SetLength(Bytes, 0);
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on empty data');
+
+  Bytes := TBytes.Create(1);
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 1-byte data');
+
+  Bytes := TBytes.Create($20);
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 1-byte data-1');
+
+  Bytes := TBytes.Create(195, 164);  // ä
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 2-byte data');
+
+  Bytes := TBytes.Create(226, 130, 172); // €
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 3-byte data');
+
+  Bytes := TBytes.Create(240, 159, 152, 128); // 😀
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 4-byte data');
+
+  Bytes := TBytes.Create(130); // is a continuation byte
+  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation byte');
+
+  Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
+  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on start byte');
+
+  Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
+  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
+  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(129, 128, 128);
+  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Continuation bytes can only follow valid start bytes');
+end;
+
+procedure TestTFormat_UTF8.TestIsValidTypeless;
+var
+  Bytes : TBytes;
+  p: pointer;
+begin
+  p := nil;
+  CheckEquals(true, TFormat_UTF8.IsValid(p, 0),'Failure on empty data');
+
+  Bytes := TBytes.Create(1);
+  p := @Bytes[0];
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 1),'Failure on 1-byte data');
+
+  Bytes := TBytes.Create($20);
+  p := @Bytes[0];
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 1),'Failure on 1-byte data-1');
+
+  Bytes := TBytes.Create(195, 164);  // ä
+  p := @Bytes[0];
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 2),'Failure on 2-byte data');
+
+  Bytes := TBytes.Create(226, 130, 172); // €
+  p := @Bytes[0];
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 3),'Failure on 3-byte data');
+
+  Bytes := TBytes.Create(240, 159, 152, 128); // 😀
+  p := @Bytes[0];
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 4),'Failure on 4-byte data');
+
+  Bytes := TBytes.Create(130); // is a continuation byte
+  p := @Bytes[0];
+  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1),'Failure on continuation byte');
+
+  Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
+  p := @Bytes[0];
+  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1),'Failure on start byte');
+
+  Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
+  p := @Bytes[0];
+  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
+  p := @Bytes[0];
+  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
+
+  Bytes := TBytes.Create(129, 128, 128);
+  p := @Bytes[0];
+  CheckEquals(false, TFormat_UTF8.IsValid(p^, 3),'Continuation bytes can only follow valid start bytes');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
@@ -2772,7 +3034,8 @@ initialization
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,
-                              TestTFormat_BigEndian64.Suite]);
+                              TestTFormat_BigEndian64.Suite,
+                              TestTFormat_UTF8.Suite]);
   {$ENDIF}
 
 finalization

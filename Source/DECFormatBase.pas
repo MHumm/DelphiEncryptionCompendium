@@ -292,7 +292,7 @@ type
       Len: Integer): Integer;
 
 
-    class function FilterChar: string; virtual; abstract;
+    class function FilterChar: string; virtual;
   end;
 
   /// <summary>
@@ -475,6 +475,11 @@ begin
   end
   else
     SetLength(Result, 0);
+end;
+
+class function TDECFormat.FilterChar: string;
+begin
+  Result := '';
 end;
 
 class function TDECFormat.ClassByIdentity(Identity: Int64): TDECFormatClass;
