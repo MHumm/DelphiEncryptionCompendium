@@ -939,9 +939,9 @@ type
   /// Returns the passed class type if it is not nil. Otherwise the class type
   /// of the TFormat_Copy class is being returned.
   /// </summary>
-  /// <param name="FormatClass">
-  /// Class type of a formatting class like TFormat_HEX or nil, if no formatting
-  /// is desired.
+  /// <param name="HashClass">
+  ///   Class type of a Hash class to return by ValidAuthenticationHash if
+  ///   passing nil to that one. This parameter should not be nil!
   /// </param>
   /// <returns>
   /// Passed class type or TFormat_Copy class type, depending on FormatClass

@@ -2,7 +2,6 @@ program ProgressDemoVCL;
 
 uses
   Vcl.Forms,
-  MainFormProgressVLC in 'MainFormProgressVLC.pas' {FormMain},
   DECBaseClass in '..\..\Source\DECBaseClass.pas',
   DECCipherBase in '..\..\Source\DECCipherBase.pas',
   DECCipherFormats in '..\..\Source\DECCipherFormats.pas',
@@ -15,7 +14,8 @@ uses
   DECTypes in '..\..\Source\DECTypes.pas',
   DECUtilRawByteStringHelper in '..\..\Source\DECUtilRawByteStringHelper.pas',
   DECFormatBase in '..\..\Source\DECFormatBase.pas',
-  DECData in '..\..\Source\DECData.pas';
+  DECData in '..\..\Source\DECData.pas',
+  MainFormProgressVCL in 'MainFormProgressVCL.pas' {FormMain};
 
 {$R *.res}
 
