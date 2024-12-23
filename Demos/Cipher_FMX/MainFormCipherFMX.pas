@@ -88,6 +88,7 @@ type
     TextPassed: TText;
     TextFailed: TText;
     ComboBoxPaddingMode: TComboBox;
+    Label15: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ComboBoxCipherAlgorithmChange(Sender: TObject);
     procedure ComboBoxChainingMethodChange(Sender: TObject);
@@ -99,7 +100,7 @@ type
     procedure ButtonCreateKeyClick(Sender: TObject);
     procedure ButtonCreateIVClick(Sender: TObject);
     procedure ComboBoxKeyIVFormatChange(Sender: TObject);
-    procedure ComboBoxPaddingModeChange(Sender: TObject);
+    procedure EditPlainCipherTextChangeTracking(Sender: TObject);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -380,14 +381,17 @@ begin
           TextPassed.Visible := false;
           TextFailed.Visible := false;
         end
-        else if LastPlainText = EditPlainText.Text then
-        begin
-          TextPassed.Visible := true;
-          TextFailed.Visible := false;
-        end else begin
-          TextPassed.Visible := true;
-          TextFailed.Visible := false;
-        end;
+        else
+          if LastPlainText = EditPlainText.Text then
+          begin
+            TextPassed.Visible := true;
+            TextFailed.Visible := false;
+          end
+          else
+          begin
+            TextPassed.Visible := true;
+            TextFailed.Visible := false;
+          end;
       end
       else
         ShowMessage('Input has wrong format', TMsgDlgType.mtError);
@@ -507,9 +511,10 @@ begin
   FKeyAndIVFormatting := NewFormat;
 end;
 
-procedure TFormMain.ComboBoxPaddingModeChange(Sender: TObject);
+procedure TFormMain.EditPlainCipherTextChangeTracking(Sender: TObject);
 begin
-  EditFiller.Enabled := ComboBoxPaddingMode.ItemIndex = 0; // Enable Filler for pmNone only
+  TextPassed.Visible := false;
+  TextFailed.Visible := false;
 end;
 
 procedure TFormMain.ComboBoxCipherAlgorithmChange(Sender: TObject);

@@ -2,7 +2,7 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 986
+  ClientHeight = 910
   ClientWidth = 402
   FormFactor.Width = 320
   FormFactor.Height = 480
@@ -14,21 +14,21 @@ object FormMain: TFormMain
   object VertScrollBox1: TVertScrollBox
     Align = Client
     Size.Width = 402.000000000000000000
-    Size.Height = 986.000000000000000000
+    Size.Height = 910.000000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 6
     Viewport.Width = 386.000000000000000000
-    Viewport.Height = 986.000000000000000000
+    Viewport.Height = 910.000000000000000000
     object LayoutTop: TLayout
       Size.Width = 400.000000000000000000
-      Size.Height = 281.000000000000000000
+      Size.Height = 313.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 0
       object Label2: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 16.000000000000000000
+        Position.X = 20.000000000000000000
+        Position.Y = 8.000000000000000000
         Size.Width = 82.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -39,8 +39,8 @@ object FormMain: TFormMain
       end
       object ComboBoxCipherAlgorithm: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
-        Position.Y = 40.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 24.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -50,8 +50,8 @@ object FormMain: TFormMain
       end
       object Label7: TLabel
         AutoSize = True
-        Position.X = 18.000000000000000000
-        Position.Y = 85.000000000000000000
+        Position.X = 20.000000000000000000
+        Position.Y = 69.000000000000000000
         Size.Width = 69.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -62,8 +62,8 @@ object FormMain: TFormMain
       end
       object ComboBoxChainingMethod: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 18.000000000000000000
-        Position.Y = 110.000000000000000000
+        Position.X = 20.000000000000000000
+        Position.Y = 86.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -73,8 +73,8 @@ object FormMain: TFormMain
       end
       object Label8: TLabel
         AutoSize = True
-        Position.X = 18.000000000000000000
-        Position.Y = 150.000000000000000000
+        Position.X = 20.000000000000000000
+        Position.Y = 188.000000000000000000
         Size.Width = 93.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -87,8 +87,8 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         CanFocus = True
         ClipChildren = True
-        Position.X = 18.000000000000000000
-        Position.Y = 174.000000000000000000
+        Position.X = 20.000000000000000000
+        Position.Y = 204.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 100.000000000000000000
         Size.PlatformDefault = False
@@ -110,11 +110,26 @@ object FormMain: TFormMain
           Size.Width = 95.000000000000000000
         end
       end
+      object ComboBoxPaddingMode: TComboBox
+        Anchors = [akLeft, akTop, akRight]
+        Position.X = 20.000000000000000000
+        Position.Y = 148.000000000000000000
+        Size.Width = 360.000000000000000000
+        Size.Height = 32.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 11
+      end
+      object Label15: TLabel
+        Position.X = 20.000000000000000000
+        Position.Y = 131.000000000000000000
+        Text = 'Padding mode'
+        TabOrder = 12
+      end
     end
     object LayoutAuthentication: TLayout
-      Position.Y = 563.000000000000000000
+      Position.Y = 488.000000000000000000
       Size.Width = 400.000000000000000000
-      Size.Height = 272.000000000000000000
+      Size.Height = 233.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 2
       object Label11: TLabel
@@ -132,16 +147,16 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 4
-        Position.X = 16.000000000000000000
-        Position.Y = 38.000000000000000000
+        Position.X = 17.000000000000000000
+        Position.Y = 25.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         TextPrompt = 'Optional, hexadecimal lower case'
       end
       object Label12: TLabel
-        Position.X = 16.000000000000000000
-        Position.Y = 80.000000000000000000
+        Position.X = 15.000000000000000000
+        Position.Y = 65.000000000000000000
         Size.Width = 377.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -156,15 +171,15 @@ object FormMain: TFormMain
         StyleLookup = 'editstyle'
         TabOrder = 6
         Position.X = 16.000000000000000000
-        Position.Y = 108.000000000000000000
+        Position.Y = 83.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         TextPrompt = 'Optional, hexadecimal lower case'
       end
       object Label13: TLabel
-        Position.X = 16.000000000000000000
-        Position.Y = 152.000000000000000000
+        Position.X = 15.000000000000000000
+        Position.Y = 124.000000000000000000
         Size.Width = 377.000000000000000000
         Size.Height = 22.000000000000000000
         Size.PlatformDefault = False
@@ -180,7 +195,7 @@ object FormMain: TFormMain
         TabOrder = 8
         ReadOnly = True
         Position.X = 16.000000000000000000
-        Position.Y = 180.000000000000000000
+        Position.Y = 143.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -204,7 +219,7 @@ object FormMain: TFormMain
         ItemIndex = 6
         Text = '128'
         Position.X = 276.000000000000000000
-        Position.Y = 224.000000000000000000
+        Position.Y = 188.000000000000000000
         Size.Width = 100.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -212,7 +227,7 @@ object FormMain: TFormMain
       object Label14: TLabel
         Anchors = [akLeft, akTop, akRight]
         Position.X = 16.000000000000000000
-        Position.Y = 224.000000000000000000
+        Position.Y = 188.000000000000000000
         Size.Width = 230.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
@@ -222,15 +237,15 @@ object FormMain: TFormMain
       end
     end
     object LayoutCipherSettings: TLayout
-      Position.Y = 280.000000000000000000
+      Position.Y = 312.000000000000000000
       Size.Width = 400.000000000000000000
-      Size.Height = 284.000000000000000000
+      Size.Height = 177.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
       object Label1: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 69.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 58.000000000000000000
         Size.Width = 78.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -245,22 +260,22 @@ object FormMain: TFormMain
         StyleLookup = 'editstyle'
         TabOrder = 3
         FilterChar = '0123456789ABCDEFabcdef'
-        Position.X = 16.000000000000000000
-        Position.Y = 93.000000000000000000
-        Size.Width = 360.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 77.000000000000000000
+        Size.Width = 271.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
       object Label3: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 150.000000000000000000
-        Size.Width = 54.000000000000000000
+        Position.X = 19.000000000000000000
+        Position.Y = 118.000000000000000000
+        Size.Width = 65.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Init vector'
+        Text = 'Initial vector'
         TabOrder = 6
       end
       object EditInitVector: TEdit
@@ -269,41 +284,43 @@ object FormMain: TFormMain
         StyleLookup = 'editstyle'
         TabOrder = 4
         FilterChar = '0123456789ABCDEFabcdef'
-        Position.X = 16.000000000000000000
-        Position.Y = 174.000000000000000000
-        Size.Width = 360.000000000000000000
+        Position.X = 17.000000000000000000
+        Position.Y = 134.000000000000000000
+        Size.Width = 233.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
       object LabelFillerByte: TLabel
+        Anchors = [akTop, akRight]
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 214.000000000000000000
-        Size.Width = 128.000000000000000000
+        Position.X = 258.000000000000000000
+        Position.Y = 117.000000000000000000
+        Size.Width = 81.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
-        Text = 'Filler byte (hexadecimal)'
+        Text = 'Filler byte (hex)'
         TabOrder = 7
       end
       object EditFiller: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
+        Anchors = [akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 5
         MaxLength = 2
         FilterChar = '0123456789ABCDEFabcdef'
         Text = '00'
-        Position.X = 16.000000000000000000
-        Position.Y = 238.000000000000000000
-        Size.Width = 137.000000000000000000
+        Position.X = 258.000000000000000000
+        Position.Y = 134.000000000000000000
+        Size.Width = 31.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
       end
       object ButtonCreateKey: TButton
         Anchors = [akTop, akRight]
-        Position.X = 296.000000000000000000
-        Position.Y = 52.000000000000000000
+        Position.X = 297.000000000000000000
+        Position.Y = 76.000000000000000000
         Size.Width = 80.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
@@ -326,9 +343,9 @@ object FormMain: TFormMain
       end
       object ComboBoxKeyIVFormat: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
-        Position.Y = 32.000000000000000000
-        Size.Width = 191.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 24.000000000000000000
+        Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'comboboxstyle'
@@ -341,22 +358,12 @@ object FormMain: TFormMain
         Size.Width = 189.000000000000000000
         Size.Height = 17.000000000000000000
         Size.PlatformDefault = False
-        Text = 'Format of Key and Initial Vector'
+        Text = 'Format of key and initial vector'
         TabOrder = 10
-      end
-      object ComboBoxPaddingMode: TComboBox
-        Anchors = [akLeft, akTop, akRight]
-        Position.X = 161.000000000000000000
-        Position.Y = 238.000000000000000000
-        Size.Width = 215.000000000000000000
-        Size.Height = 32.000000000000000000
-        Size.PlatformDefault = False
-        TabOrder = 11
-        OnChange = ComboBoxPaddingModeChange
       end
     end
     object LayoutEncrypt: TLayout
-      Position.Y = 835.000000000000000000
+      Position.Y = 720.000000000000000000
       Size.Width = 400.000000000000000000
       Size.Height = 419.000000000000000000
       Size.PlatformDefault = False
@@ -383,9 +390,9 @@ object FormMain: TFormMain
       end
       object ButtonDecrypt: TButton
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
+        Position.X = 17.000000000000000000
         Position.Y = 308.000000000000000000
-        Size.Width = 360.000000000000000000
+        Size.Width = 359.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
@@ -396,9 +403,9 @@ object FormMain: TFormMain
       end
       object ButtonEncrypt: TButton
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
+        Position.X = 17.000000000000000000
         Position.Y = 260.000000000000000000
-        Size.Width = 360.000000000000000000
+        Size.Width = 359.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
@@ -409,9 +416,9 @@ object FormMain: TFormMain
       end
       object ButtonCopy: TButton
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 356.000000000000000000
-        Size.Width = 360.000000000000000000
+        Size.Width = 358.000000000000000000
         Size.Height = 33.000000000000000000
         Size.PlatformDefault = False
         StyleLookup = 'buttonstyle'
@@ -425,22 +432,24 @@ object FormMain: TFormMain
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 11
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 216.000000000000000000
-        Size.Width = 360.000000000000000000
+        Size.Width = 359.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
+        OnChangeTracking = EditPlainCipherTextChangeTracking
       end
       object EditPlainText: TEdit
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         Anchors = [akLeft, akTop, akRight]
         StyleLookup = 'editstyle'
         TabOrder = 8
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 96.000000000000000000
-        Size.Width = 360.000000000000000000
+        Size.Width = 359.000000000000000000
         Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
+        OnChangeTracking = EditPlainCipherTextChangeTracking
         object TextPassed: TText
           Align = Right
           Position.X = 328.000000000000000000
@@ -464,8 +473,8 @@ object FormMain: TFormMain
       end
       object Label10: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 196.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 197.000000000000000000
         Size.Width = 58.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -476,8 +485,8 @@ object FormMain: TFormMain
       end
       object Label9: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 72.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 77.000000000000000000
         Size.Width = 49.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -488,7 +497,7 @@ object FormMain: TFormMain
       end
       object LabelVersion: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 395.000000000000000000
         Size.Width = 178.000000000000000000
         Size.Height = 16.000000000000000000
@@ -501,7 +510,7 @@ object FormMain: TFormMain
       object Label5: TLabel
         AutoSize = True
         Position.X = 18.000000000000000000
-        Position.Y = 8.000000000000000000
+        Position.Y = 12.000000000000000000
         Size.Width = 90.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -512,7 +521,7 @@ object FormMain: TFormMain
       end
       object ComboBoxPlainTextFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 32.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
@@ -522,8 +531,8 @@ object FormMain: TFormMain
       end
       object Label6: TLabel
         AutoSize = True
-        Position.X = 16.000000000000000000
-        Position.Y = 136.000000000000000000
+        Position.X = 18.000000000000000000
+        Position.Y = 138.000000000000000000
         Size.Width = 97.000000000000000000
         Size.Height = 16.000000000000000000
         Size.PlatformDefault = False
@@ -534,7 +543,7 @@ object FormMain: TFormMain
       end
       object ComboBoxCipherTextFormatting: TComboBox
         Anchors = [akLeft, akTop, akRight]
-        Position.X = 16.000000000000000000
+        Position.X = 18.000000000000000000
         Position.Y = 156.000000000000000000
         Size.Width = 360.000000000000000000
         Size.Height = 32.000000000000000000
