@@ -833,7 +833,7 @@ var
   outBuffer: TBytes;
   BufferSize, Bytes: Integer;
   Max, StartPos, Pos: Int64;
-  doPKCS7Padding, doAdjustBuffer: Boolean;
+  doPKCS7Padding, doAdjustBuffer, doStartOnlyPadding: Boolean;
 begin
   Pos := Source.Position;
   if DataSize < 0 then
@@ -842,8 +842,9 @@ begin
   Max      := Pos + DataSize;
   StartPos := Pos;
   doPKCS7Padding := false;
+  doStartOnlyPadding := (DataSize = 0) and IsEncode and (fPaddingMode > pmNone);
 
-  if DataSize > 0 then
+  if (DataSize > 0) or doStartOnlyPadding then
   begin
     try
       if Assigned(OnProgress) then
@@ -865,8 +866,9 @@ begin
       if (FMode = cmGCM) then
         SetLength(outBuffer, Length(Buffer));
 
-      while DataSize > 0 do
+      while (DataSize > 0) or doStartOnlyPadding do
       begin
+        doStartOnlyPadding := false;
         Bytes := BufferSize;
         if Bytes >= DataSize then
         begin
@@ -883,11 +885,13 @@ begin
               SetLength(outBuffer, Bytes);
             end;
         end;
-        Source.ReadBuffer(Buffer[0], Bytes);
+        if Bytes > 0 then
+          Source.ReadBuffer(Buffer[0], Bytes);
         if IsEncode and doPKCS7Padding then
         begin
           Buffer := AddPKCS7Padding(Buffer);
           Bytes := length(Buffer);
+          SetLength(outBuffer, length(Buffer));
         end;
 
         // The real encryption or decryption routine
@@ -897,7 +901,10 @@ begin
           outBuffer := RemovePKCS7Padding(outBuffer);
           Bytes := length(outBuffer);
         end;
-        Dest.WriteBuffer(outBuffer[0], Bytes);
+        if Bytes > 0 then
+          Dest.WriteBuffer(outBuffer[0], Bytes)
+        else
+          SetLength(outBuffer, 0);
         if doPKCS7Padding then
         begin
           DataSize := 0;
