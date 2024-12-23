@@ -917,7 +917,6 @@ type
     procedure TestContext;
     procedure TestEncode;
     procedure TestDecode;
-    procedure TestClassByName;
   end;
 
 implementation
@@ -4164,8 +4163,10 @@ Daten synthetisieren. }
     InitProc(Data);
     Result := EncodeFunc(RawByteString(Data.InputData), TFormat_COPY);
     DoneProc;
-
-    TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result));
+    if length(Result) > 0 then
+      TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result))
+    else
+      TempResultHex := '';
 
     CheckEquals(Data.OutputData, TempResultHex);
   end;
@@ -4923,28 +4924,32 @@ end;
 procedure TestTCipher_AES256_CBC_PKCS7.SetUp;
 var
   TestFile: TStringList;
-  Ind: integer;
+  Ind, StartLine: integer;
 begin
   inherited;
   FCipher_AES := TCipher_AES256.Create;
   FCipher_AES.PaddingMode := pmPKCS7;
   FCipher_AES.Mode := cmCBCx;
 
-  SetLength(FTestData, 13);
+  SetLength(FTestData, 46);
   TestFile := TStringList.Create;
   try
     TestFile.LoadFromFile('..\..\Unit Tests\Data\aes-cbc-pkcs7.txt');
-    Assert(TestFile.Count > 13 * 5 + 9, 'Too short aes-cbc-pkcs7.txt file');
+    Assert(TestFile.Count >= 236, 'Too short aes-cbc-pkcs7.txt file');
     for Ind := 0 to length(FTestData) - 1 do
     begin
-      Assert(TestFile[5 + Ind * 5].StartsWith('PT='), 'PT is missing in line ' + IntToStr(5 + Ind * 5));
-      FTestData[Ind].InputData := TFormat_HEXL.Decode(TestFile[5 + Ind * 5].Substring(3));
-      Assert(TestFile[6 + Ind * 5].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(6 + Ind * 5));
-      FTestData[Ind].Key := TestFile[6 + Ind * 5].Substring(4);
-      Assert(TestFile[7 + Ind * 5].StartsWith('IV='), 'PT is missing in line ' + IntToStr(7 + Ind * 5));
-      FTestData[Ind].InitVector := TestFile[7 + Ind * 5].Substring(3);
-      Assert(TestFile[8 + Ind * 5].StartsWith('CT='), 'CT is missing in line ' + IntToStr(8 + Ind * 5));
-      FTestData[Ind].OutputData := TestFile[8 + Ind * 5].Substring(3);
+      if Ind < 13 then
+        StartLine := 5 + Ind * 5
+      else
+        StartLine := 7 + Ind * 5;
+      Assert(TestFile[StartLine].StartsWith('PT='), 'PT is missing in line ' + IntToStr(StartLine));
+      FTestData[Ind].InputData := TFormat_HEXL.Decode(TestFile[StartLine].Substring(3));
+      Assert(TestFile[StartLine + 1].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(StartLine + 1));
+      FTestData[Ind].Key := TestFile[StartLine + 1].Substring(4);
+      Assert(TestFile[StartLine + 2].StartsWith('IV='), 'PT is missing in line ' + IntToStr(StartLine + 2));
+      FTestData[Ind].InitVector := TestFile[StartLine + 2].Substring(3);
+      Assert(TestFile[StartLine + 3].StartsWith('CT='), 'CT is missing in line ' + IntToStr(StartLine + 3));
+      FTestData[Ind].OutputData := TestFile[StartLine + 3].Substring(3);
       FTestData[Ind].Filler := 0;
     end;
   finally
@@ -4956,11 +4961,6 @@ procedure TestTCipher_AES256_CBC_PKCS7.TearDown;
 begin
   inherited;
   FCipher_AES.free;
-end;
-
-procedure TestTCipher_AES256_CBC_PKCS7.TestClassByName;
-begin
-
 end;
 
 procedure TestTCipher_AES256_CBC_PKCS7.TestContext;
