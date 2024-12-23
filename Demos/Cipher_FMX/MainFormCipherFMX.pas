@@ -215,7 +215,7 @@ type
     /// </summary>
     function GetCipherModesWithoutFiller:TCipherModes;
   private
-    KeyAndIVFormatting: TDECFormatClass;
+    FKeyAndIVFormatting: TDECFormatClass;
   end;
 
 var
@@ -484,25 +484,27 @@ begin
   NewFormat := TDECFormat.ClassByName(ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
   if not EditKey.Text.IsEmpty then
   begin
-    if KeyAndIVFormatting.IsValid(RawByteString(EditKey.Text)) then
+    if FKeyAndIVFormatting.IsValid(RawByteString(EditKey.Text)) then
     begin
-      Raw := KeyAndIVFormatting.Decode(RawByteString(EditKey.Text));
+      Raw := FKeyAndIVFormatting.Decode(RawByteString(EditKey.Text));
       EditKey.FilterChar := NewFormat.FilterChars;
       EditKey.Text := string(NewFormat.Encode(Raw));
-    end;
+    end else
+      EditKey.FilterChar := NewFormat.FilterChars;
   end else
     EditKey.FilterChar := NewFormat.FilterChars;
   if not EditInitVector.Text.IsEmpty then
   begin
-    if KeyAndIVFormatting.IsValid(RawByteString(EditInitVector.Text)) then
+    if FKeyAndIVFormatting.IsValid(RawByteString(EditInitVector.Text)) then
     begin
-      Raw := KeyAndIVFormatting.Decode(RawByteString(EditInitVector.Text));
+      Raw := FKeyAndIVFormatting.Decode(RawByteString(EditInitVector.Text));
       EditInitVector.FilterChar := NewFormat.FilterChars;
       EditInitVector.Text := string(NewFormat.Encode(Raw));
-    end;
+    end else
+      EditInitVector.FilterChar := NewFormat.FilterChars;
   end else
     EditInitVector.FilterChar := NewFormat.FilterChars;
-  KeyAndIVFormatting := NewFormat;
+  FKeyAndIVFormatting := NewFormat;
 end;
 
 procedure TFormMain.ComboBoxPaddingModeChange(Sender: TObject);
@@ -547,10 +549,7 @@ begin
   // point the block chaining mode combo has not been fully initialized yet so
   // we must not update authentication status yet.
   if ComboBoxChainingMethod.ItemIndex >= 0 then
-  begin
     UpdateAuthenticationStatus;
-    ButtonCreateKey.Enabled := true;
-  end;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -784,7 +783,7 @@ begin
     ComboBoxKeyIVFormat.Items.Add(TFormat_Base32.ClassName);
     ComboBoxKeyIVFormat.Items.Add(TFormat_Base64.ClassName);
     ComboBoxKeyIVFormat.ItemIndex := 1;
-    KeyAndIVFormatting := TFormat_HEXL;
+    FKeyAndIVFormatting := TFormat_HEXL;
     EditInitVector.FilterChar := TFormat_HEXL.FilterChars;
     EditKey.FilterChar := TFormat_HEXL.FilterChars;
   finally
