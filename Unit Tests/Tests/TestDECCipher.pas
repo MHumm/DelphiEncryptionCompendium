@@ -5067,20 +5067,20 @@ begin
   TestFile := TStringList.Create;
   try
     TestFile.LoadFromFile('..\..\Unit Tests\Data\aes-cbc-pkcs7.txt');
-    Assert(TestFile.Count >= 236, 'Too short aes-cbc-pkcs7.txt file');
+    CheckTrue(TestFile.Count >= 236, 'Too short aes-cbc-pkcs7.txt file');
     for Ind := 0 to length(FTestData) - 1 do
     begin
       if Ind < 13 then
         StartLine := 5 + Ind * 5
       else
         StartLine := 7 + Ind * 5;
-      Assert(TestFile[StartLine].StartsWith('PT='), 'PT is missing in line ' + IntToStr(StartLine));
+      CheckTrue(TestFile[StartLine].StartsWith('PT='), 'PT is missing in line ' + IntToStr(StartLine));
       FTestData[Ind].InputData := TFormat_HEXL.Decode(RawbyteString(TestFile[StartLine].Substring(3)));
-      Assert(TestFile[StartLine + 1].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(StartLine + 1));
+      CheckTrue(TestFile[StartLine + 1].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(StartLine + 1));
       FTestData[Ind].Key := RawbyteString(TestFile[StartLine + 1].Substring(4));
-      Assert(TestFile[StartLine + 2].StartsWith('IV='), 'PT is missing in line ' + IntToStr(StartLine + 2));
+      CheckTrue(TestFile[StartLine + 2].StartsWith('IV='), 'PT is missing in line ' + IntToStr(StartLine + 2));
       FTestData[Ind].InitVector := RawbyteString(TestFile[StartLine + 2].Substring(3));
-      Assert(TestFile[StartLine + 3].StartsWith('CT='), 'CT is missing in line ' + IntToStr(StartLine + 3));
+      CheckTrue(TestFile[StartLine + 3].StartsWith('CT='), 'CT is missing in line ' + IntToStr(StartLine + 3));
       FTestData[Ind].OutputData := RawbyteString(TestFile[StartLine + 3].Substring(3));
       FTestData[Ind].Filler := 0;
     end;
