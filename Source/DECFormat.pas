@@ -391,6 +391,11 @@ type
   end;
 
   /// <summary>
+  ///   Conversion from/to UTF16 strings
+  /// </summary>
+  TFormat_UTF16 = TFormat_BigEndian16;
+
+  /// <summary>
   ///   Conversion from/to 32 bit big endian
   /// </summary>
   TFormat_BigEndian32 = class(TDECFormat)

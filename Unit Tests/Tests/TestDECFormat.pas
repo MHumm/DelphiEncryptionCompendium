@@ -798,6 +798,10 @@ type
     procedure TestIdentity;
   end;
 
+  // Test methods for class TFormat_UTF16
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTFormat_UTF16 = class(TestTFormat_BigEndian16);
+
   // Test methods for class TFormat_BigEndian32
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTFormat_BigEndian32 = class(TFormatTestsBase)
@@ -2758,6 +2762,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian16);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian32);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian64);
+  TDUnitX.RegisterTestFixture(TestTFormat_UTF16);
   {$ELSE}
   RegisterTests('DECFormat', [//TestTFormat,
                               TestTFormat_HEX.Suite,
@@ -2772,7 +2777,8 @@ initialization
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,
-                              TestTFormat_BigEndian64.Suite]);
+                              TestTFormat_BigEndian64.Suite,
+                              TestTFormat_UTF16.Suite]);
   {$ENDIF}
 
 finalization

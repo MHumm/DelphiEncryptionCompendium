@@ -29,6 +29,7 @@ denovosoftware
 alexrayne
 Stevie
 danielmarschall
+Christoph Schneider (Schneider Infosystems AG)
 
 Parts of the work loosely based on the works of Wolfgang Erhardt, who is
 unfortunately dead already.
