@@ -5519,7 +5519,8 @@ begin
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
-                  string(RawByteStrResult) + '> Input: <' + TFormat_HEXL.Encode(InpStr) + '>');
+                  string(RawByteStrResult) + '> Input: <' +
+                  string(TFormat_HEXL.Encode(RawByteString(InpStr))) + '>');
     end;
   end;
 end;
