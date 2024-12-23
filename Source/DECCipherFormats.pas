@@ -67,7 +67,7 @@ type
     procedure DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
                                    const CipherProc: TDECCipherCodeEvent;
                                    const OnProgress: TDECProgressEvent;
-                                   IsEncode: boolean);
+                                   IsEncode: Boolean);
     /// <summary>
     ///   Encrypts or decrypts a file and stores the result in another file
     /// </summary>
@@ -795,10 +795,12 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
   end;
 
 begin
-  if FPaddingMode = pmPKCS7 then
-    result := CipherEncodeBytes(AddPKCS7Padding(Source))
-  else
-    result := CipherEncodeBytes(Source);
+  case FPaddingMode of
+    pmPKCS7:
+      result := CipherEncodeBytes(AddPKCS7Padding(Source))
+    else
+      result := CipherEncodeBytes(Source);
+  end;
 end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
@@ -815,21 +817,23 @@ begin
   else
     if (FMode = cmGCM) then
       DecodeGCM(@Source, @Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
                                                    DataSize: Int64;
                                                    const CipherProc: TDECCipherCodeEvent;
                                                    const OnProgress: TDECProgressEvent;
-                                                   IsEncode: boolean);
+                                                   IsEncode: Boolean);
 var
   Buffer: TBytes;
   outBuffer: TBytes;
   BufferSize, Bytes: Integer;
   Max, StartPos, Pos: Int64;
-  doPKCS7Padding, doAdjustBuffer: boolean;
+  doPKCS7Padding, doAdjustBuffer: Boolean;
 begin
   Pos := Source.Position;
   if DataSize < 0 then
@@ -988,10 +992,12 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: string;
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      Result := CipherEncodeStringToBytes(Source, Format);
+    case FPaddingMode of
+      pmPKCS7:
+        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        Result := CipherEncodeStringToBytes(Source, Format);
+    end;
     Result := ValidFormat(Format).Encode(Result);
   end
   else
@@ -1019,10 +1025,12 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Fo
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      Result := CipherEncodeStringToBytes(Source, Format);
+    case FPaddingMode of
+      pmPKCS7:
+        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        Result := CipherEncodeStringToBytes(Source, Format);
+    end;
     Result := ValidFormat(Format).Encode(Result);
   end
   else
@@ -1044,8 +1052,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 
 function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
@@ -1063,8 +1073,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 
 {$IFDEF ANSISTRINGSUPPORTED}
@@ -1083,11 +1095,12 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Forma
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      Result := CipherEncodeStringToBytes(Source, Format);
-
+    case FPaddingMode of
+      pmPKCS7:
+        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        Result := CipherEncodeStringToBytes(Source, Format);
+    end;
     Result := ValidFormat(Format).Encode(Result);
   end
   else
@@ -1111,8 +1124,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 {$ENDIF}
 
@@ -1132,10 +1147,12 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Forma
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      Result := CipherEncodeStringToBytes(Source, Format);
+    case FPaddingMode of
+      pmPKCS7:
+        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        Result := CipherEncodeStringToBytes(Source, Format);
+    end;
     Result := ValidFormat(Format).Encode(Result);
   end
   else
@@ -1169,11 +1186,12 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      EncryptedBuffer := AddPKCS7Padding(Source);
-
+    case FPaddingMode of
+      pmPKCS7:
+        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        EncryptedBuffer := AddPKCS7Padding(Source);
+    end;
     Temp := ValidFormat(Format).Encode(EncryptedBuffer);
     SetLength(Result, length(Temp));
     Move(Temp[0], Result[1], length(Temp));
@@ -1207,10 +1225,12 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
+    case FPaddingMode of
+      pmPKCS7:
+        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
+    end;
     Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
   end
   else
@@ -1242,10 +1262,12 @@ var
 begin
   if Length(Source) > 0 then
   begin
-    if FPaddingMode = pmPKCS7 then
-      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-    else
-      EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
+    case FPaddingMode of
+      pmPKCS7:
+        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+      else
+        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
+    end;
     Temp := ValidFormat(Format).Encode(EncryptedBuffer);
     SetLength(Result, length(Temp));
     {$IFDEF HAVE_STR_LIKE_ARRAY}
@@ -1274,8 +1296,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 {$ENDIF}
 
@@ -1305,8 +1329,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 {$ENDIF}
 
@@ -1343,8 +1369,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 
 function TDECFormattedCipher.DecodeStringToString(const Source: string;
@@ -1365,8 +1393,10 @@ begin
   end
   else
     SetLength(Result, 0);
-  if FPaddingMode = pmPKCS7 then
-    Result := RemovePKCS7Padding(Result);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := RemovePKCS7Padding(Result);
+  end;
 end;
 
 {$REGION 'PKCS#7 Padding'}
