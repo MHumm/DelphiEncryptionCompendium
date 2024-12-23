@@ -93,7 +93,7 @@ type
     procedure DoEncodeDecodeFile(const SourceFileName, DestFileName: string;
                                  const Proc: TDECCipherCodeEvent;
                                  const OnProgress: TDECProgressEvent;
-                                 IsEncode: boolean);
+                                 IsEncode: Boolean);
     // <summary>
     /// Adds PKCS#7 padding to a byte array.
     /// </summary>
@@ -940,7 +940,7 @@ end;
 procedure TDECFormattedCipher.DoEncodeDecodeFile(const SourceFileName, DestFileName: string;
                                                  const Proc: TDECCipherCodeEvent;
                                                  const OnProgress: TDECProgressEvent;
-                                                 IsEncode: boolean);
+                                                 IsEncode: Boolean);
 var
   S, D: TStream;
 begin
