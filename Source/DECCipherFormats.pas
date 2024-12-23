@@ -989,18 +989,19 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: string;
   end;
 
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        Result := CipherEncodeStringToBytes(Source, Format)
       else
-        Result := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Result := ValidFormat(Format).Encode(Result);
-  end
-  else
-    SetLength(Result, 0);
+      begin
+        SetLength(Result, 0);
+        exit;
+      end;
+  end;
+  Result := ValidFormat(Format).Encode(Result);
 end;
 
 function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
@@ -1022,18 +1023,18 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Fo
   end;
 
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
-      else
-        Result := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Result := ValidFormat(Format).Encode(Result);
-  end
-  else
-    SetLength(Result, 0);
+  case FPaddingMode of
+    pmPKCS7:
+      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+     if Length(Source) > 0 then
+       Result := CipherEncodeStringToBytes(Source, Format)
+     else begin
+       SetLength(Result, 0);
+       exit;
+     end;
+  end;
+  Result := ValidFormat(Format).Encode(Result);
 end;
 
 function TDECFormattedCipher.DecodeStringToBytes(const Source: string; Format: TDECFormatClass): TBytes;
@@ -1092,18 +1093,19 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Forma
   end;
 
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        Result := CipherEncodeStringToBytes(Source, Format)
       else
-        Result := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Result := ValidFormat(Format).Encode(Result);
-  end
-  else
-    SetLength(Result, 0);
+      begin
+        SetLength(Result, 0);
+        exit;
+      end;
+  end;
+  Result := ValidFormat(Format).Encode(Result);
 end;
 {$ENDIF}
 
@@ -1144,18 +1146,19 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Forma
   end;
 
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        Result := CipherEncodeStringToBytes(Source, Format)
       else
-        Result := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Result := ValidFormat(Format).Encode(Result);
-  end
-  else
-    SetLength(Result, 0);
+      begin
+        SetLength(Result, 0);
+        exit;
+      end;
+  end;
+  Result := ValidFormat(Format).Encode(Result);
 end;
 
 function TDECFormattedCipher.EncodeStringToString(const Source: WideString;
@@ -1183,20 +1186,18 @@ var
   EncryptedBuffer : TBytes;
   Temp            : TBytes;
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        EncryptedBuffer := CipherEncodeStringToBytes(Source)
       else
-        EncryptedBuffer := AddPKCS7Padding(Source);
-    end;
-    Temp := ValidFormat(Format).Encode(EncryptedBuffer);
-    SetLength(Result, length(Temp));
-    Move(Temp[0], Result[1], length(Temp));
-  end
-  else
-    SetLength(Result, 0);
+        exit('');
+  end;
+  Temp := ValidFormat(Format).Encode(EncryptedBuffer);
+  SetLength(Result, length(Temp));
+  Move(Temp[0], Result[1], length(Temp));
 end;
 {$ENDIF}
 
@@ -1222,18 +1223,16 @@ function TDECFormattedCipher.EncodeStringToString(const Source: string;
 var
   EncryptedBuffer : TBytes;
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
       else
-        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
-  end
-  else
-    Result := '';
+        exit('');
+  end;
+  Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
 end;
 
 function TDECFormattedCipher.EncodeStringToString(const Source: RawByteString;
@@ -1259,24 +1258,22 @@ var
   EncryptedBuffer : TBytes;
   Temp            : TBytes;
 begin
-  if Length(Source) > 0 then
-  begin
-    case FPaddingMode of
-      pmPKCS7:
-        EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+  case FPaddingMode of
+    pmPKCS7:
+      EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    else
+      if Length(Source) > 0 then
+        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
       else
-        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format);
-    end;
-    Temp := ValidFormat(Format).Encode(EncryptedBuffer);
-    SetLength(Result, length(Temp));
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(Temp[0], Result[low(Result)], length(Temp))
-    {$ELSE}
-    Move(Temp[0], Result[1], length(Temp))
-    {$ENDIF}
-  end
-  else
-    Result := '';
+        exit('');
+  end;
+  Temp := ValidFormat(Format).Encode(EncryptedBuffer);
+  SetLength(Result, length(Temp));
+  {$IFDEF HAVE_STR_LIKE_ARRAY}
+  Move(Temp[0], Result[low(Result)], length(Temp))
+  {$ELSE}
+  Move(Temp[0], Result[1], length(Temp))
+  {$ENDIF}
 end;
 
 {$IFNDEF NEXTGEN}
@@ -1407,7 +1404,8 @@ var
 begin
   PadLength := Context.BlockSize - (Length(Data) mod Context.BlockSize);
   SetLength(Result, Length(Data) + PadLength);
-  Move(Data[0], Result[0], Length(Data));
+  if Length(Data) > 0 then
+    Move(Data[0], Result[0], Length(Data));
   PadByte := Byte(PadLength);
   for I := Length(Data) to High(Result) do
     Result[I] := PadByte;
@@ -1446,7 +1444,8 @@ begin
       if Data[I] <> Byte(PadLength) then
         raise EDECCipherException.Create('Invalid PKCS7 padding');
     SetLength(Result, Length(Data) - PadLength);
-    Move(Data[0], Result[0], Length(Result));
+    if length(Result) > 0 then
+      Move(Data[0], Result[0], Length(Result));
   end;
 end;
 
