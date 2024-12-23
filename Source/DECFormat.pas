@@ -429,7 +429,7 @@ type
   protected
     class procedure DoEncode(const Source; var Dest: TBytes; Size: Integer); override;
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
-    class function  DoIsValid(const Data; Size: Integer): Boolean; override;
+    class function  DoIsValid(const Data; Size: Integer{;IsEncode: boolean}): Boolean; override;
   end;
 
 
@@ -2152,21 +2152,21 @@ begin
   end;
 end;
 
-class function TFormat_UTF8.DoIsValid(const Data; Size: Integer): Boolean;
+class function TFormat_UTF8.DoIsValid(const Data; Size: Integer{;IsEncode: boolean}): Boolean;
 //const
 //  cIllegalSequence = #$FFFD;
 //  // https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
 //var
 //  u: UTF8String;
 begin
-  result := true;
-//  if Size > 0 then
+//  if IsEncode and (Size > 0) then
 //  begin
 //    SetLength(u, Size);
 //    Move(Data, u[1], Size);
 //    result := not UTF8ToString(u).Contains(cIllegalSequence);
 //  end else
 //    result := true;
+  result := true;
 end;
 
 initialization

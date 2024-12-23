@@ -2901,19 +2901,24 @@ begin
   CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on 4-byte data');
 
   Bytes := TBytes.Create(130); // is a continuation byte
-  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes), true),'Failure on continuation byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation byte');
 
   Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
-  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on start byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes), true),'Failure on start byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on start byte');
 
   Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
-  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes), true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
-  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes), true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(129, 128, 128);
-  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Continuation bytes can only follow valid start bytes');
+//  CheckEquals(false, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes), true),'Continuation bytes can only follow valid start bytes');
+  CheckEquals(true, TFormat_UTF8.IsValid(DECUtil.BytesToRawString(Bytes)),'Continuation bytes can only follow valid start bytes');
 end;
 
 procedure TestTFormat_UTF8.TestIsValidTBytes;
@@ -2939,19 +2944,24 @@ begin
   CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on 4-byte data');
 
   Bytes := TBytes.Create(130); // is a continuation byte
-  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(Bytes, true),'Failure on continuation byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on continuation byte');
 
   Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
-  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on start byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(Bytes, true),'Failure on start byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on start byte');
 
   Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
-  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(Bytes, true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
-  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(Bytes, true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(129, 128, 128);
-  CheckEquals(false, TFormat_UTF8.IsValid(Bytes),'Continuation bytes can only follow valid start bytes');
+//  CheckEquals(false, TFormat_UTF8.IsValid(Bytes, true),'Continuation bytes can only follow valid start bytes');
+  CheckEquals(true, TFormat_UTF8.IsValid(Bytes),'Continuation bytes can only follow valid start bytes');
 end;
 
 procedure TestTFormat_UTF8.TestIsValidTypeless;
@@ -2984,23 +2994,28 @@ begin
 
   Bytes := TBytes.Create(130); // is a continuation byte
   p := @Bytes[0];
-  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1),'Failure on continuation byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1, true),'Failure on continuation byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 1),'Failure on continuation byte');
 
   Bytes := TBytes.Create(255); // 255 is not a valid UTF-8 start byte
   p := @Bytes[0];
-  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1),'Failure on start byte');
+//  CheckEquals(false, TFormat_UTF8.IsValid(p^, 1, true),'Failure on start byte');
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 1),'Failure on start byte');
 
   Bytes := TBytes.Create(240, 159); // The start byte 240 expects three continuation bytes, but there is only one.
   p := @Bytes[0];
-  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2, true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(192, 128); // This sequence encodes the ASCII value 0 using 2 bytes, which is forbidden in UTF-8
   p := @Bytes[0];
-  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
+//  CheckEquals(false, TFormat_UTF8.IsValid(p^, 2, true),'Failure on continuation bytes.');
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 2),'Failure on continuation bytes.');
 
   Bytes := TBytes.Create(129, 128, 128);
   p := @Bytes[0];
-  CheckEquals(false, TFormat_UTF8.IsValid(p^, 3),'Continuation bytes can only follow valid start bytes');
+//  CheckEquals(false, TFormat_UTF8.IsValid(p^, 3, true),'Continuation bytes can only follow valid start bytes');
+  CheckEquals(true, TFormat_UTF8.IsValid(p^, 3),'Continuation bytes can only follow valid start bytes');
 end;
 
 initialization
