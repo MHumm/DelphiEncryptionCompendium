@@ -97,8 +97,8 @@ type
     // <summary>
     /// Adds PKCS#7 padding to a byte array.
     /// </summary>
-    /// <param name="data">The byte array/string/rawbytestring to which padding should be added.</param>
-    /// <returns>A new byte array/string/rawbytestring with PKCS#7 padding applied.</returns>
+    /// <param name="data">The byte array to which padding should be added.</param>
+    /// <returns>A new byte array with PKCS#7 padding applied.</returns>
     /// <remarks>
     /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
     /// to the end of the data so that the total length is a multiple of the block size
@@ -107,14 +107,37 @@ type
     /// <para>Call this method before starting encryption.</para>
     /// </remarks>
     function AddPKCS7Padding(const Data: TBytes): TBytes; overload;
+    // <summary>
+    /// Adds PKCS#7 padding to a raw byte string.
+    /// </summary>
+    /// <param name="data">The raw byte string to which padding should be added.</param>
+    /// <returns>A new byte raw byte string with PKCS#7 padding applied.</returns>
+    /// <remarks>
+    /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
+    /// to the end of the data so that the total length is a multiple of the block size
+    /// Each padding byte contains the number of padding bytes added. For example,
+    /// if 5 bytes of padding are needed, each of the 5 padding bytes will have the value $5.
+    /// <para>Call this method before starting encryption.</para>
+    /// </remarks>
     function AddPKCS7Padding(const Data: RawByteString): RawByteString; overload;
+    // <summary>
+    /// Adds PKCS#7 padding to a string.
+    /// </summary>
+    /// <param name="data">The string to which padding should be added.</param>
+    /// <returns>A new byte string with PKCS#7 padding applied.</returns>
+    /// <remarks>
+    /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
+    /// to the end of the data so that the total length is a multiple of the block size
+    /// Each padding byte contains the number of padding bytes added. For example,
+    /// if 5 bytes of padding are needed, each of the 5 padding bytes will have the value $5.
+    /// <para>Call this method before starting encryption.</para>
+    /// </remarks>
     function AddPKCS7Padding(const Data: string): string; overload;
-
     // <summary>
     /// Removes PKCS#7 padding from a byte array.
     /// </summary>
-    /// <param name="data">The padded byte array/string/rawbytestring.</param>
-    /// <returns>A new byte array/string/rawbytestring with the padding removed. Raises an exception
+    /// <param name="data">The padded byte array.</param>
+    /// <returns>A new byte array with the padding removed. Raises an exception
     /// if the padding is invalid.</returns>
     /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
     /// <remarks>
@@ -124,7 +147,33 @@ type
     /// <para>Call this method after decryption.</para>
     /// </remarks>
     function RemovePKCS7Padding(const Data: TBytes): TBytes; overload;
+    // <summary>
+    /// Removes PKCS#7 padding from a raw byte string.
+    /// </summary>
+    /// <param name="data">The padded byte raw byte string.</param>
+    /// <returns>A new raw byte string with the padding removed. Raises an exception
+    /// if the padding is invalid.</returns>
+    /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
+    /// <remarks>
+    /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
+    /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
+    /// count or if the pad count is greater than the block size.
+    /// <para>Call this method after decryption.</para>
+    /// </remarks>
     function RemovePKCS7Padding(const Data: RawByteString): RawByteString; overload;
+    // <summary>
+    /// Removes PKCS#7 padding from a string.
+    /// </summary>
+    /// <param name="data">The padded string.</param>
+    /// <returns>A new string with the padding removed. Raises an exception
+    /// if the padding is invalid.</returns>
+    /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
+    /// <remarks>
+    /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
+    /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
+    /// count or if the pad count is greater than the block size.
+    /// <para>Call this method after decryption.</para>
+    /// </remarks>
     function RemovePKCS7Padding(const Data: string): string; overload;
   public
     /// <summary>
@@ -1335,7 +1384,7 @@ begin
     Result[I] := PadByte;
 end;
 
-function TDECFormattedCipher.AddPKCS7Padding(const Data: String): String;
+function TDECFormattedCipher.AddPKCS7Padding(const Data: string): string;
 var
   Buf: TBytes;
 begin
