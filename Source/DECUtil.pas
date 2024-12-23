@@ -250,7 +250,7 @@ function RawStringToBytes(const RawString: RawByteString): TBytes; inline;
 /// <remarks>
 ///   This function is a wrapper for TEncoding.Unicode.GetString
 /// </remarks>
-function BytesToString(const Source: TBytes): String; inline;
+function BytesToString(const Source: TBytes): string; inline;
 
 /// <summary>
 ///   Converts a string to a byte array using unicode encoding.
@@ -265,7 +265,7 @@ function BytesToString(const Source: TBytes): String; inline;
 /// <remarks>
 ///   This function is a wrapper for TEncoding.Unicode.GetBytes
 /// </remarks>
-function StringToBytes(const Str: String): TBytes; inline;
+function StringToBytes(const Str: string): TBytes; inline;
 
 
 // Buffer comparison
@@ -660,12 +660,12 @@ begin
   result := BytesOf(RawString);
 end;
 
-function BytesToString(const Source: TBytes): String;
+function BytesToString(const Source: TBytes): string;
 begin
   Result := TEncoding.Unicode.GetString(Source);
 end;
 
-function StringToBytes(const Str: String): TBytes;
+function StringToBytes(const Str: string): TBytes;
 begin
   Result := TEncoding.Unicode.GetBytes(Str);
 end;
