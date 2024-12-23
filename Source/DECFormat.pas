@@ -86,7 +86,7 @@ type
     class function DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; virtual;
-    class function FilterChar: string; override;
+    class function FilterChars: string; override;
   end;
 
   /// <summary>
@@ -95,7 +95,7 @@ type
   TFormat_HEXL = class(TFormat_HEX)
   public
     class function CharTableBinary: TBytes; override;
-    class function FilterChar: string; override;
+    class function FilterChars: string; override;
   end;
 
   /// <summary>
@@ -188,7 +188,7 @@ type
     class procedure DoDecode(const Source; var Dest: TBytes; Size: Integer); override;
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
-    class function FilterChar: string; override;
+    class function FilterChars: string; override;
   end;
 
   /// <summary>
@@ -201,7 +201,7 @@ type
     class function  DoIsValid(const Data; Size: Integer): Boolean; override;
   public
     class function CharTableBinary: TBytes; override;
-    class function FilterChar: string; override;
+    class function FilterChars: string; override;
   end;
 
   /// <summary>
@@ -608,7 +608,7 @@ begin
     result := false;
 end;
 
-class function TFormat_HEX.FilterChar: string;
+class function TFormat_HEX.FilterChars: string;
 begin
   result := '0123456789ABCDEF';
 end;
@@ -678,7 +678,7 @@ begin
   {$ENDIF}
 end;
 
-class function TFormat_HEXL.FilterChar: string;
+class function TFormat_HEXL.FilterChars: string;
 begin
   result := '0123456789abcdef';
 end;
@@ -813,7 +813,7 @@ begin
              $5C, $2A, $22, $27, $09, $0A, $0D];
 end;
 
-class function TFormat_Base64.FilterChar: string;
+class function TFormat_Base64.FilterChars: string;
 begin
   result := 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 end;
@@ -1967,7 +1967,7 @@ begin
   end;
 end;
 
-class function TFormat_Base32.FilterChar: string;
+class function TFormat_Base32.FilterChars: string;
 begin
   result := string(cBase32);
 end;
@@ -2153,19 +2153,20 @@ begin
 end;
 
 class function TFormat_UTF8.DoIsValid(const Data; Size: Integer): Boolean;
-const
-  cIllegalSequence = #$FFFD;
-  // https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
-var
-  u: UTF8String;
+//const
+//  cIllegalSequence = #$FFFD;
+//  // https://learn.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
+//var
+//  u: UTF8String;
 begin
-  if Size > 0 then
-  begin
-    SetLength(u, Size);
-    Move(Data, u[1], Size);
-    result := not UTF8ToString(u).Contains(cIllegalSequence);
-  end else
-    result := true;
+  result := true;
+//  if Size > 0 then
+//  begin
+//    SetLength(u, Size);
+//    Move(Data, u[1], Size);
+//    result := not UTF8ToString(u).Contains(cIllegalSequence);
+//  end else
+//    result := true;
 end;
 
 initialization

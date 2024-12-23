@@ -291,8 +291,14 @@ type
     class function TableFindBinary(Value: Byte; Table: TBytes;
       Len: Integer): Integer;
 
-
-    class function FilterChar: string; virtual;
+    /// <summary>
+    /// When editing character strings in the specified format, the FilterChar
+    /// can be used to restrict the input characters according to the format.
+    /// </summary>
+    /// <returns>
+    /// List of all characters for input validation of decoding.
+    /// </returns>
+    class function FilterChars: string; virtual;
   end;
 
   /// <summary>
@@ -477,7 +483,7 @@ begin
     SetLength(Result, 0);
 end;
 
-class function TDECFormat.FilterChar: string;
+class function TDECFormat.FilterChars: string;
 begin
   Result := '';
 end;

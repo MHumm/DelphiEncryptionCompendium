@@ -418,7 +418,10 @@ begin
     Cipher := GetInitializedCipherInstance;
 
     try
-      InputBuffer := DECUtil.StringToBytes(EditPlainText.Text);
+      if (InputFormatting = TFormat_UTF8) or (InputFormatting = TFormat_Copy) then
+        InputBuffer := DECUtil.StringToBytes(EditPlainText.Text)
+      else
+        InputBuffer := DECUtil.RawStringToBytes(RawByteString(EditPlainText.Text));
       if InputFormatting.IsValid(InputBuffer) then
       begin
         // Set all authentication related properties
@@ -484,21 +487,21 @@ begin
     if KeyAndIVFormatting.IsValid(RawByteString(EditKey.Text)) then
     begin
       Raw := KeyAndIVFormatting.Decode(RawByteString(EditKey.Text));
-      EditKey.FilterChar := NewFormat.FilterChar;
+      EditKey.FilterChar := NewFormat.FilterChars;
       EditKey.Text := string(NewFormat.Encode(Raw));
     end;
   end else
-    EditKey.FilterChar := NewFormat.FilterChar;
+    EditKey.FilterChar := NewFormat.FilterChars;
   if not EditInitVector.Text.IsEmpty then
   begin
     if KeyAndIVFormatting.IsValid(RawByteString(EditInitVector.Text)) then
     begin
       Raw := KeyAndIVFormatting.Decode(RawByteString(EditInitVector.Text));
-      EditInitVector.FilterChar := NewFormat.FilterChar;
+      EditInitVector.FilterChar := NewFormat.FilterChars;
       EditInitVector.Text := string(NewFormat.Encode(Raw));
     end;
   end else
-    EditInitVector.FilterChar := NewFormat.FilterChar;
+    EditInitVector.FilterChar := NewFormat.FilterChars;
   KeyAndIVFormatting := NewFormat;
 end;
 
@@ -782,6 +785,8 @@ begin
     ComboBoxKeyIVFormat.Items.Add(TFormat_Base64.ClassName);
     ComboBoxKeyIVFormat.ItemIndex := 1;
     KeyAndIVFormatting := TFormat_HEXL;
+    EditInitVector.FilterChar := TFormat_HEXL.FilterChars;
+    EditKey.FilterChar := TFormat_HEXL.FilterChars;
   finally
     Formats.Free;
   end;
