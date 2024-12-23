@@ -226,7 +226,7 @@ type
     FDataSize : Integer;
   strict protected
     /// <summary>
-    ///   Padding mode used to concatenate/connect blocks in a block cipher
+    ///   Block chaining mode used to concatenate/connect blocks in a block cipher
     /// </summary>
     FMode     : TCipherMode;
     /// <summary>
@@ -372,7 +372,7 @@ type
     procedure SecureErase; virtual;
 
     /// <summary>
-    ///   Returns the currently set cipher block mode, means how blocks are
+    ///   Returns the currently set block chaining mode, means how blocks are
     ///   linked to each other in order to avoid certain attacks.
     /// </summary>
     function GetMode: TCipherMode;
@@ -849,6 +849,7 @@ resourcestring
   sIVMaterialTooLarge   = 'Initvector is too large for use (Security Issue)';
   sInvalidMACMode       = 'Invalid Cipher mode to compute MAC';
   sCipherNoDefault      = 'No default cipher has been registered';
+  sInvalidUseOfPadding  = 'No padding for stream cipher allowed';
 
 var
   /// <summary>
@@ -981,6 +982,8 @@ var
 begin
   FState          := csNew;
   FInitVectorSize := IVectorSize;
+  if (PaddingMode <> pmNone) and (ctStream in Context.CipherType) then
+    raise EDECCipherException.CreateRes(@sInvalidUseOfPadding);
   FPaddingMode    := PaddingMode;
   SecureErase;
 

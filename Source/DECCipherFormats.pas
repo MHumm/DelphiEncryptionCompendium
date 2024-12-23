@@ -911,7 +911,6 @@ begin
       end;
     finally
       ProtectBytes(Buffer);
-      // if (FMode = cmGCM) then // Why we don't protect the outBuffer always. In decode workflow there is clear text in!
       ProtectBytes(outBuffer);
       if Assigned(OnProgress) then
         OnProgress(Max, Max, Finished);
