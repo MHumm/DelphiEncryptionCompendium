@@ -305,7 +305,7 @@ type
                         Size   : Integer);
 
     /// <summary>
-    ///   Returns a list of authentication tag lengs explicitely specified by
+    ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
     /// <returns>
