@@ -36,7 +36,6 @@ type
     RadioButtonMethod: TRadioButton;
     RadioButtonProcedure: TRadioButton;
     RadioButtonAnonMethod: TRadioButton;
-    CheckBoxPKCS7: TCheckBox;
     PageControl1: TPageControl;
     tabEncrypt: TTabSheet;
     tabDecrypt: TTabSheet;
@@ -45,13 +44,41 @@ type
     EditKey: TLabeledEdit;
     EditIV: TLabeledEdit;
     ButtonCreateKeyAndIV: TButton;
+    LabelPaddingMode: TLabel;
+    ComboBoxPaddingMode: TComboBox;
     procedure ButtonEncryptClick(Sender: TObject);
     procedure ButtonDecryptClick(Sender: TObject);
     procedure ButtonCreateKeyAndIVClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    fCipher: TCipher_AES;
+    /// <summary>
+    ///   Instance of the encryption/decryption class used
+    /// </summary>
+    FCipher: TCipher_AES;
+
+    /// <summary>
+    ///   Returns the selected padding mode
+    /// </summary>
+    function GetSelectedPaddingMode: TPaddingMode;
+
+    /// <summary>
+    ///   Fills the padding mode combobox with the available modes
+    /// </summary>
+    procedure InitPaddingModesCombo;
+
+    /// <summary>
+    ///   Progress event called by the encryption/decryption methods
+    /// </summary>
+    /// <param name="Size">
+    ///   Size of the of the file to be processed in bytes
+    /// </param>
+    /// <param name="Pos">
+    ///   Byte position the algorithm is currently processing
+    /// </param>
+    /// <param name="State">
+    ///   Status of the operation: Started, Processing, Finished
+    /// </param>
     procedure OnProgress(Size, Pos: Int64; State: TDECProgressState);
   end;
 
@@ -61,7 +88,8 @@ var
 implementation
 
 uses
-  System.UITypes;
+  System.UITypes,
+  System.TypInfo;
 
 {$R *.dfm}
 
@@ -70,21 +98,24 @@ resourcestring
 
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
-  fCipher := TCipher_AES.Create;
-  fCipher.Mode := cmCBCx;
+  FCipher      := TCipher_AES.Create;
+  FCipher.Mode := cmCBCx;
+
+  InitPaddingModesCombo;
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
-  fCipher.Free;
+  FCipher.Free;
 end;
 
 procedure TFormMain.ButtonCreateKeyAndIVClick(Sender: TObject);
 begin
   EditKey.Text := StringOf(TFormat_Base64.Encode(
-    RandomBytes(fCipher.Context.KeySize)));
+                    RandomBytes(FCipher.Context.KeySize)));
+
   EditIV.Text := StringOf(TFormat_Base64.Encode(
-    RandomBytes(fCipher.Context.BlockSize)));
+                    RandomBytes(FCipher.Context.BlockSize)));
 end;
 
 procedure OnProgressProc(Size, Pos: Int64; State: TDECProgressState);
@@ -120,14 +151,11 @@ begin
     exit;
   end;
 
-  if CheckBoxPKCS7.Checked then
-    PaddingMode := pmPKCS7
-  else
-    PaddingMode := pmNone;
+  PaddingMode := GetSelectedPaddingMode;
 
   try
     // Init encryption
-    fCipher.Init(
+    FCipher.Init(
       RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditKey.Text))),
       RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditIV.Text))),
       0,
@@ -139,21 +167,23 @@ begin
 
     // depending on selected radio button demo a different progress event technique
     if RadioButtonMethod.Checked then
-      fCipher.EncodeFile(SourceFile, DestFile, OnProgress)
-    else if RadioButtonProcedure.Checked then
-      fCipher.EncodeFile(SourceFile, DestFile, OnProgressProc)
-    else if RadioButtonAnonMethod.Checked then
-      fCipher.EncodeFile(SourceFile, DestFile,
-                         procedure(Size, Pos: Int64; State: TDECProgressState)
-                         begin
-                           ProgressBar1.Min := 0;
-                           ProgressBar1.Max := Size;
+      FCipher.EncodeFile(SourceFile, DestFile, OnProgress)
+    else
+      if RadioButtonProcedure.Checked then
+        FCipher.EncodeFile(SourceFile, DestFile, OnProgressProc)
+    else
+      if RadioButtonAnonMethod.Checked then
+        FCipher.EncodeFile(SourceFile, DestFile,
+                           procedure(Size, Pos: Int64; State: TDECProgressState)
+                           begin
+                             ProgressBar1.Min := 0;
+                             ProgressBar1.Max := Size;
 
-                           if (State = Finished) then
-                             ProgressBar1.Position := ProgressBar1.Max
-                           else
-                             ProgressBar1.Position := Pos;
-                         end);
+                             if (State = Finished) then
+                               ProgressBar1.Position := ProgressBar1.Max
+                             else
+                               ProgressBar1.Position := Pos;
+                           end);
   except
     on E: Exception do
       MessageDlg(E.Message, mtError, [mbOK], -1);
@@ -171,18 +201,14 @@ begin
     exit;
   end;
 
-  if CheckBoxPKCS7.Checked then
-    PaddingMode := pmPKCS7
-  else
-    PaddingMode := pmNone;
+  PaddingMode := GetSelectedPaddingMode;
 
   try
     // Init encryption
-    fCipher.Init(
-      RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditKey.Text))),
-      RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditIV.Text))),
-      0,
-      PaddingMode);
+    FCipher.Init(RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditKey.Text))),
+                 RawStringToBytes(TFormat_Base64.Decode(RawByteString(EditIV.Text))),
+                 0,
+                 PaddingMode);
 
     // replace file extension of input file
     SourceFile := EditDecrypt.Text;
@@ -190,25 +216,50 @@ begin
 
     // depending on selected radio button demo a different progress event technique
     if RadioButtonMethod.Checked then
-      fCipher.DecodeFile(SourceFile, DestFile, OnProgress)
-    else if RadioButtonProcedure.Checked then
-      fCipher.DecodeFile(SourceFile, DestFile, OnProgressProc)
-    else if RadioButtonAnonMethod.Checked then
-      fCipher.DecodeFile(SourceFile, DestFile,
-                         procedure(Size, Pos: Int64; State: TDECProgressState)
-                         begin
-                           ProgressBar1.Min := 0;
-                           ProgressBar1.Max := Size;
+      FCipher.DecodeFile(SourceFile, DestFile, OnProgress)
+    else
+      if RadioButtonProcedure.Checked then
+        FCipher.DecodeFile(SourceFile, DestFile, OnProgressProc)
+      else
+        if RadioButtonAnonMethod.Checked then
+          FCipher.DecodeFile(SourceFile, DestFile,
+                             procedure(Size, Pos: Int64; State: TDECProgressState)
+                             begin
+                               ProgressBar1.Min := 0;
+                               ProgressBar1.Max := Size;
 
-                           if (State = Finished) then
-                             ProgressBar1.Position := ProgressBar1.Max
-                           else
-                             ProgressBar1.Position := Pos;
-                         end);
+                               if (State = Finished) then
+                                 ProgressBar1.Position := ProgressBar1.Max
+                               else
+                                 ProgressBar1.Position := Pos;
+                             end);
   except
     on E: Exception do
       MessageDlg(E.Message, mtError, [mbOK], -1);
   end;
+end;
+
+function TFormMain.GetSelectedPaddingMode: TPaddingMode;
+var
+  ModeStr : string;
+begin
+  ModeStr := ComboBoxPaddingMode.Items[ComboBoxPaddingMode.ItemIndex];
+  // Determine selected block chaining method via RTTI (runtime type information)
+  Result := TPaddingMode(System.TypInfo.GetEnumValue(TypeInfo(TPaddingMode),
+                                                     ModeStr));
+end;
+
+procedure TFormMain.InitPaddingModesCombo;
+var
+  PaddingMode: TPaddingMode;
+begin
+  ComboBoxPaddingMode.Clear;
+
+  for PaddingMode := low(TPaddingMode) to high(TPaddingMode) do
+    ComboBoxPaddingMode.Items.Add(System.TypInfo.GetEnumName(TypeInfo(TPaddingMode),
+                                                             Integer(PaddingMode)));
+
+  ComboBoxPaddingMode.ItemIndex := 0;
 end;
 
 end.

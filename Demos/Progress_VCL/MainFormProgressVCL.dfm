@@ -5,7 +5,8 @@ object FormMain: TFormMain
   ClientHeight = 319
   ClientWidth = 635
   Color = clBtnFace
-  Constraints.MinHeight = 226
+  Constraints.MaxHeight = 358
+  Constraints.MinHeight = 358
   Constraints.MinWidth = 350
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,6 +19,13 @@ object FormMain: TFormMain
     635
     319)
   TextHeight = 13
+  object LabelPaddingMode: TLabel
+    Left = 8
+    Top = 106
+    Width = 67
+    Height = 13
+    Caption = 'Padding mode'
+  end
   object ProgressBar1: TProgressBar
     Left = 8
     Top = 193
@@ -52,22 +60,13 @@ object FormMain: TFormMain
     Caption = 'Use anonymous method as progress event'
     TabOrder = 3
   end
-  object CheckBoxPKCS7: TCheckBox
-    Left = 8
-    Top = 98
-    Width = 121
-    Height = 17
-    Anchors = [akTop, akRight]
-    Caption = 'Use PKCS7'
-    TabOrder = 4
-  end
   object PageControl1: TPageControl
     Left = 8
     Top = 130
     Width = 619
     Height = 57
     ActivePage = tabEncrypt
-    TabOrder = 5
+    TabOrder = 4
     object tabEncrypt: TTabSheet
       Caption = 'Encrypt AES256-CBC'
       DesignSize = (
@@ -126,7 +125,7 @@ object FormMain: TFormMain
     EditLabel.Width = 99
     EditLabel.Height = 13
     EditLabel.Caption = 'Key (base64 format)'
-    TabOrder = 6
+    TabOrder = 5
     Text = ''
   end
   object EditIV: TLabeledEdit
@@ -137,17 +136,25 @@ object FormMain: TFormMain
     EditLabel.Width = 141
     EditLabel.Height = 13
     EditLabel.Caption = 'Initial Vector (base64 format)'
-    TabOrder = 7
+    TabOrder = 6
     Text = ''
   end
   object ButtonCreateKeyAndIV: TButton
     Left = 552
     Top = 24
     Width = 75
-    Height = 64
+    Height = 60
     Caption = 'Create Key and IV'
-    TabOrder = 8
+    TabOrder = 7
     WordWrap = True
     OnClick = ButtonCreateKeyAndIVClick
+  end
+  object ComboBoxPaddingMode: TComboBox
+    Left = 100
+    Top = 103
+    Width = 185
+    Height = 21
+    Style = csDropDownList
+    TabOrder = 8
   end
 end

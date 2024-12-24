@@ -215,7 +215,15 @@ type
     ///   Returns the list of block chaining modes which do not have a filler byte
     /// </summary>
     function GetCipherModesWithoutFiller:TCipherModes;
+    /// <summary>
+    ///   Fills the padding mode combobox with the available modes
+    /// </summary>
+    procedure InitPaddingModesCombo;
   private
+    /// <summary>
+    ///   Formatting class used to format the encryption/decryption key and
+    ///   initialization vector
+    /// </summary>
     FKeyAndIVFormatting: TDECFormatClass;
   end;
 
@@ -260,10 +268,12 @@ var
 begin
   Assert(ComboBoxCipherAlgorithm.ItemIndex >= 0, 'No algo selected');
   KeyFormat := TDECFormat.ClassByName(ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
+
   Assert(Assigned(KeyFormat), 'Missing format');
   Context := TDECCipher.ClassByName(
     ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Context;
-  RandBytes := RandomBytes(Context.KeySize);
+
+  RandBytes    := RandomBytes(Context.KeySize);
   EditKey.Text := StringOf(KeyFormat.Encode(RandBytes));
 end;
 
@@ -275,10 +285,12 @@ var
 begin
   Assert(ComboBoxCipherAlgorithm.ItemIndex >= 0, 'No algo selected');
   IVFormat := TDECFormat.ClassByName(ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
+
   Assert(Assigned(IVFormat), 'Missing format');
   Context := TDECCipher.ClassByName(
     ComboBoxCipherAlgorithm.Items[ComboBoxCipherAlgorithm.ItemIndex]).Context;
-  RandBytes := RandomBytes(Context.BlockSize);
+
+  RandBytes           := RandomBytes(Context.BlockSize);
   EditInitVector.Text := StringOf(IVFormat.Encode(RandBytes));
 end;
 
@@ -293,9 +305,9 @@ begin
        'Mode: ' +
          ComboBoxChainingMethod.Items[ComboBoxChainingMethod.ItemIndex] +
          sLineBreak +
-       'Key: ' + EditKey.Text + sLineBreak +
-       'Init vector: ' + EditInitVector.Text + sLineBreak +
-       'Filler: ' + EditFiller.Text + sLineBreak +
+       'Key: '                 + EditKey.Text + sLineBreak +
+       'Init vector: '         + EditInitVector.Text + sLineBreak +
+       'Filler: '              + EditFiller.Text + sLineBreak +
        'Data to auhenticate: ' + EditAuthenticatedData.Text + sLineBreak +
        'Expected authentication result: ' +
          EditExpectedAuthenthicationResult.Text + sLineBreak +
@@ -307,8 +319,8 @@ begin
        'Format output: ' +
          ComboBoxCipherTextFormatting.Items[ComboBoxCipherTextFormatting.ItemIndex] +
          sLineBreak +
-       'Plain text: ' + EditPlainText.Text + sLineBreak +
-       'Cipher text: ' + EditCipherText.Text + sLineBreak +
+       'Plain text: '   + EditPlainText.Text + sLineBreak +
+       'Cipher text: '  + EditCipherText.Text + sLineBreak +
        'Demo version: ' + LabelVersion.Text + sLineBreak +
        '//end';
   StringToClipboard(s);
@@ -359,8 +371,13 @@ begin
             AuthenticationOK := true;
         except
           On e:Exception do
+          begin
+//            TextPassed.Visible := false;
+//            TextFailed.Visible := true;
+
             ShowMessage('Decryption failure:' + sLineBreak + e.Message,
                         TMsgDlgType.mtError);
+          end;
         end;
 
         if Cipher.IsAuthenticated then
@@ -372,10 +389,12 @@ begin
             ShowMessage('Calculated authentication result value is correct!',
                         TMsgDlgType.mtInformation);
         end;
-        LastPlainText := EditPlainText.Text;
-        EditPlainText.Text := DECUtil.BytesToString(PlainTextFormatting.Encode(PlainTextBuffer));
+
+        LastPlainText          := EditPlainText.Text;
+        EditPlainText.Text     := DECUtil.BytesToString(PlainTextFormatting.Encode(PlainTextBuffer));
         LabelLenPlainText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
-            [length(PlainTextBuffer), length(EditPlainText.Text)]);
+                                         [length(PlainTextBuffer), length(EditPlainText.Text)]);
+
         if LastPlainText.IsEmpty then
         begin
           TextPassed.Visible := false;
@@ -389,8 +408,8 @@ begin
           end
           else
           begin
-            TextPassed.Visible := true;
-            TextFailed.Visible := false;
+            TextPassed.Visible := false; //true;
+            TextFailed.Visible := true; //false;
           end;
       end
       else
@@ -426,6 +445,7 @@ begin
         InputBuffer := DECUtil.StringToBytes(EditPlainText.Text)
       else
         InputBuffer := DECUtil.RawStringToBytes(RawByteString(EditPlainText.Text));
+
       if InputFormatting.IsValid(InputBuffer) then
       begin
         // Set all authentication related properties
@@ -443,6 +463,7 @@ begin
             ShowMessage('Encryption failure:' + sLineBreak + e.Message,
                         TMsgDlgType.mtError);
         end;
+
         EditCipherText.Text := string(DECUtil.BytesToRawString(OutputFormatting.Encode(OutputBuffer)));
         LabelLenChiffreText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
             [length(OutputBuffer), length(EditCipherText.Text)]);
@@ -483,20 +504,25 @@ end;
 procedure TFormMain.ComboBoxKeyIVFormatChange(Sender: TObject);
 var
   NewFormat: TDECFormatClass;
-  Raw: RawByteString;
+  Raw      : RawByteString;
 begin
-  NewFormat := TDECFormat.ClassByName(ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
+  NewFormat := TDECFormat.ClassByName(
+                 ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
+
   if not EditKey.Text.IsEmpty then
   begin
     if FKeyAndIVFormatting.IsValid(RawByteString(EditKey.Text)) then
     begin
-      Raw := FKeyAndIVFormatting.Decode(RawByteString(EditKey.Text));
+      Raw                := FKeyAndIVFormatting.Decode(RawByteString(EditKey.Text));
       EditKey.FilterChar := NewFormat.FilterChars;
-      EditKey.Text := string(NewFormat.Encode(Raw));
-    end else
+      EditKey.Text       := string(NewFormat.Encode(Raw));
+    end
+    else
       EditKey.FilterChar := NewFormat.FilterChars;
-  end else
+  end
+  else
     EditKey.FilterChar := NewFormat.FilterChars;
+
   if not EditInitVector.Text.IsEmpty then
   begin
     if FKeyAndIVFormatting.IsValid(RawByteString(EditInitVector.Text)) then
@@ -504,10 +530,13 @@ begin
       Raw := FKeyAndIVFormatting.Decode(RawByteString(EditInitVector.Text));
       EditInitVector.FilterChar := NewFormat.FilterChars;
       EditInitVector.Text := string(NewFormat.Encode(Raw));
-    end else
+    end
+    else
       EditInitVector.FilterChar := NewFormat.FilterChars;
-  end else
+  end
+  else
     EditInitVector.FilterChar := NewFormat.FilterChars;
+
   FKeyAndIVFormatting := NewFormat;
 end;
 
@@ -574,10 +603,10 @@ end;
 
 procedure TFormMain.FormResize(Sender: TObject);
 begin
-  LayoutTop.Width := self.Width - 20;
+  LayoutTop.Width            := self.Width - 20;
   LayoutCipherSettings.Width := self.Width - 20;
   LayoutAuthentication.Width := self.Width - 20;
-  LayoutEncrypt.Width := self.Width - 20;
+  LayoutEncrypt.Width        := self.Width - 20;
 end;
 
 procedure TFormMain.FormShow(Sender: TObject);
@@ -600,10 +629,23 @@ begin
   Result := [cmGCM, cmECBx];
 end;
 
-function TFormMain.GetFormatSettings(var PlainTextFormatting,
-  CipherTextFormatting: TDECFormatClass): Boolean;
+procedure TFormMain.InitPaddingModesCombo;
+var
+  PaddingMode: TPaddingMode;
 begin
-  result := false;
+  ComboBoxPaddingMode.Clear;
+
+  for PaddingMode := low(TPaddingMode) to high(TPaddingMode) do
+    ComboBoxPaddingMode.Items.Add(System.TypInfo.GetEnumName(TypeInfo(TPaddingMode),
+                                                             Integer(PaddingMode)));
+
+  ComboBoxPaddingMode.ItemIndex := 0;
+end;
+
+function TFormMain.GetFormatSettings(var PlainTextFormatting,
+                                     CipherTextFormatting: TDECFormatClass): Boolean;
+begin
+  Result := false;
 
   if ComboBoxPlainTextFormatting.ItemIndex >= 0 then
   begin
@@ -637,7 +679,7 @@ begin
     exit;
   end;
 
-  result := true;
+  Result := true;
 end;
 
 function TFormMain.GetInitializedCipherInstance: TDECCipherModes;
@@ -656,7 +698,8 @@ begin
     // we need to assume something to be able to call that init overload
     FillerByte := 0;
 
-  KeyIVFormat := TDECFormat.ClassByName(ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
+  KeyIVFormat := TDECFormat.ClassByName(
+                   ComboBoxKeyIVFormat.Items[ComboBoxKeyIVFormat.ItemIndex]);
   Assert(Assigned(KeyIVFormat), 'Missing format');
 
   if KeyIVFormat.IsValid(RawByteString(EditInitVector.Text)) and
@@ -681,7 +724,7 @@ begin
     ModeStr := ModeStr.Remove(ModeStr.IndexOf('(')-1);
 
   // Determine selected block chaining method via RTTI (runtime type information)
-  result := TCipherMode(System.TypInfo.GetEnumValue(
+  Result := TCipherMode(System.TypInfo.GetEnumValue(
               TypeInfo(TCipherMode),
               ModeStr));
 end;
@@ -692,9 +735,8 @@ var
 begin
   ModeStr := ComboBoxPaddingMode.Items[ComboBoxPaddingMode.ItemIndex];
   // Determine selected block chaining method via RTTI (runtime type information)
-  result := TPaddingMode(System.TypInfo.GetEnumValue(
-              TypeInfo(TPaddingMode),
-              ModeStr));
+  Result := TPaddingMode(System.TypInfo.GetEnumValue(TypeInfo(TPaddingMode),
+                                                     ModeStr));
 end;
 
 procedure TFormMain.InitCipherCombo;
@@ -725,9 +767,8 @@ end;
 
 procedure TFormMain.InitCipherModes;
 var
-  CipherMode: TCipherMode;
-  PaddingMode: TPaddingMode;
-  Name: string;
+  CipherMode : TCipherMode;
+  Name       : string;
 begin
   ComboBoxChainingMethod.Clear;
   for CipherMode := low(TCipherMode) to high(TCipherMode) do
@@ -743,13 +784,7 @@ begin
   if ComboBoxChainingMethod.Items.Count > 0 then
     ComboBoxChainingMethod.ItemIndex := 0;
 
-  ComboBoxPaddingMode.Clear;
-  for PaddingMode := low(TPaddingMode) to high(TPaddingMode) do
-    ComboBoxPaddingMode.Items.Add(
-      System.TypInfo.GetEnumName(
-        TypeInfo(TPaddingMode),
-        Integer(PaddingMode)));
-  ComboBoxPaddingMode.ItemIndex := 0;
+  InitPaddingModesCombo;
 end;
 
 procedure TFormMain.InitFormatCombos;
@@ -788,9 +823,10 @@ begin
     ComboBoxKeyIVFormat.Items.Add(TFormat_Base32.ClassName);
     ComboBoxKeyIVFormat.Items.Add(TFormat_Base64.ClassName);
     ComboBoxKeyIVFormat.ItemIndex := 1;
-    FKeyAndIVFormatting := TFormat_HEXL;
-    EditInitVector.FilterChar := TFormat_HEXL.FilterChars;
-    EditKey.FilterChar := TFormat_HEXL.FilterChars;
+
+    FKeyAndIVFormatting           := TFormat_HEXL;
+    EditInitVector.FilterChar     := TFormat_HEXL.FilterChars;
+    EditKey.FilterChar            := TFormat_HEXL.FilterChars;
   finally
     Formats.Free;
   end;
@@ -814,8 +850,8 @@ begin
 
   // Adjust layout
   if Visible then
-    LayoutEncrypt.Position.Y        := LayoutAuthentication.Position.Y +
-                                       LayoutAuthentication.Height
+    LayoutEncrypt.Position.Y := LayoutAuthentication.Position.Y +
+                                LayoutAuthentication.Height
   else
     LayoutEncrypt.Position.Y := LayoutCipherSettings.Position.Y +
                                 LayoutCipherSettings.Height;
@@ -842,12 +878,9 @@ begin
 end;
 
 procedure TFormMain.ShowMessage(Msg: string; MessageType: TMsgDlgType);
-{$IF RTLVersion > 30}
 var
   AsyncDlg : IFMXDialogServiceASync;
-{$ENDIF}
 begin
-  {$IF RTLVersion > 30}
   if TPlatformServices.Current.SupportsPlatformService(IFMXDialogServiceAsync,
                                                        IInterface(AsyncDlg)) then
     AsyncDlg.MessageDialogAsync(Translate(Msg),
@@ -855,10 +888,6 @@ begin
     procedure (const AResult: TModalResult)
     begin
     end);
-  {$ELSE}
-  MessageDlg(Translate(Msg),
-             TMsgDlgType.mtError, [TMsgDlgBtn.mbOk], 0);
-  {$ENDIF}
 end;
 
 procedure TFormMain.UpdateAuthenticationStatus;

@@ -2209,6 +2209,7 @@ initialization
     TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
     TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
     TFormat_UTF8.RegisterClass(TDECFormat.ClassList);
+//    TFormat_UTF16.RegisterClass(TDECFormat.ClassList);
     {$ENDIF}
   {$ENDIF}
 

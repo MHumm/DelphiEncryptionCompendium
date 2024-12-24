@@ -16,3 +16,5 @@ __recovery
 *.stat
 Thumbs.db
 
+
+*.dsv

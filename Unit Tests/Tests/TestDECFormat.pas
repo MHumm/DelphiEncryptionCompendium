@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -3054,7 +3054,7 @@ initialization
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,
-                              TestTFormat_UTF8.Suite]);
+                              TestTFormat_UTF8.Suite,
                               TestTFormat_UTF16.Suite]);
   {$ENDIF}
 

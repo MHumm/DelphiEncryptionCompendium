@@ -96,7 +96,7 @@ object FormMain: TFormMain
         StyleLookup = 'labelstyle'
         TextSettings.WordWrap = False
         TextSettings.Trimming = None
-        Text = #169' 2018-2023 by Team DEC V%0:s'
+        Text = #169' 2018-2024 by Team DEC V%0:s'
       end
     end
     object LayoutTop: TLayout
