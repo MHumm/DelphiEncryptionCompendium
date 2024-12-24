@@ -66,6 +66,8 @@ type
     {$ENDIF}
     procedure BytesToRawString;
     procedure BytesToRawStringEmpty;
+    procedure BytesToRawString_RawStringToBytes;
+    procedure BytesToString_StringToBytes;
   end;
 
   TTestIsEqual = class(TTestCase)
@@ -541,6 +543,46 @@ begin
   SetLength(Buf, 0);
 
   CheckEquals('', string(DECUtil.BytesToRawString(Buf)));
+end;
+
+procedure TTestBufferProtection.BytesToRawString_RawStringToBytes;
+var
+  Buf, Res: TBytes;
+  i, c: Integer;
+  Raw : RawByteString;
+begin
+  for c := 0 to 99 do
+  begin
+    SetLength(Buf, 200);
+    for i := 0 to length(Buf) - 1 do
+      Buf[i] := random(256);
+
+    Raw := DECUtil.BytesToRawString(Buf);
+    Res := DECUtil.RawStringToBytes(Raw);
+    CheckEquals(length(Buf), length(Res), 'Resulting byte array size does not match to input size');
+    for i := 0 to length(Buf) - 1 do
+      CheckEquals(Buf[i], Res[i], 'Resulting byte[' + i.ToString + '] does not match to input');
+  end;
+end;
+
+procedure TTestBufferProtection.BytesToString_StringToBytes;
+var
+  Buf, Res: TBytes;
+  i, c: Integer;
+  Str : String;
+begin
+  for c := 0 to 99 do
+  begin
+    SetLength(Buf, 200);
+    for i := 0 to length(Buf) - 1 do
+      Buf[i] := random(256);
+
+    Str := DECUtil.BytesToString(Buf);
+    Res := DECUtil.StringToBytes(Str);
+    CheckEquals(length(Buf), length(Res), 'Resulting byte array size does not match to input size');
+    for i := 0 to length(Buf) - 1 do
+      CheckEquals(Buf[i], Res[i], 'Resulting byte[' + i.ToString + '] does not match to input');
+  end;
 end;
 
 procedure TTestIsEqual.IsEqualsFailure;

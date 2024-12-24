@@ -5519,7 +5519,8 @@ begin
                   RawByteStrResult,
                   'Index: ' + IntToStr(i) + ' - expected: <' +
                   string(FTestData[i].ExpectedOutputUTFStrTest) + '> but was: <' +
-                  string(RawByteStrResult) + '> Input: <' + TFormat_HEXL.Encode(InpStr) + '>');
+                  string(RawByteStrResult) + '> Input: <' +
+                  string(TFormat_HEXL.Encode(RawByteString(InpStr))) + '>');
     end;
   end;
 end;
@@ -6530,36 +6531,39 @@ procedure TestTHash_BCrypt.TestIsValidPasswordFalseTBytes;
 var
   Result    : Boolean;
   HashInst  : THash_BCrypt;
+  Password, Pwd2: TBytes;
 begin
   HashInst := THash_BCrypt.Create;
   try
-    Result := HashInst.IsValidPassword([$61],
+    SetLength(Password, 1); Password[0] := $61;
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '1234567890123456789012345678901234567' +
                                        '8901234567890123456789',
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failure at wrong CryptData length');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        TestData[1].CryptData,
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failed to detect wrong password for empty password');
 
-    Result := HashInst.IsValidPassword([$61, $62],
+    SetLength(Pwd2, 2); Pwd2[0] := $61; Pwd2[1] := $62;
+    Result := HashInst.IsValidPassword(Pwd2, //[$61, $62],
                                        TestData[5].CryptData,
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failed to detect wrong password for password a');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '$3a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
                                        'WLuGmsfGlMfOxih58VYVfxe',
                                        TFormat_BCryptBSD);
 
     CheckEquals(false, Result, 'Failed to detect wrong CryptData format for ID');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '$2a06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
                                        'WLuGmsfGlMfOxih58VYVfxe',
                                        TFormat_BCryptBSD);
@@ -6567,7 +6571,7 @@ begin
     CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
                                'cost missing');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '$2a$06m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
                                        'WLuGmsfGlMfOxih58VYVfxe',
                                        TFormat_BCryptBSD);
@@ -6575,7 +6579,7 @@ begin
     CheckEquals(false, Result, 'Failed to detect wrong CryptData format for '+
                                'salt missing');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '$2a$06$n0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
                                        'WLuGmsfGlMfOxih58VYVfxe',
                                        TFormat_BCryptBSD);
@@ -6583,7 +6587,7 @@ begin
     CheckEquals(false, Result, 'Failed to detect wrong password with wrong '+
                                'salt given');
 
-    Result := HashInst.IsValidPassword([$61],
+    Result := HashInst.IsValidPassword(Password, // [$61],
                                        '$2a$06$m0CrhHm10qJ3lXRY.5zDGO3rS2Kdee' +
                                        'WLuGmsfGlMfOxih58VYVfxf',
                                        TFormat_BCryptBSD);

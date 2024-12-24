@@ -488,7 +488,11 @@ type
     ///   vector is prefilled. So it will contain something defined in any unused
     ///   bytes if a value shorter than the required IV size is given for the IV.
     /// </param>
-    procedure Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte = $FF); overload;
+    /// <param name="PaddingMode">
+    ///   optional parameter defining the padding mode instead of using IFiller byte.
+    /// </param>
+    procedure Init(const Key; Size: Integer; const IVector; IVectorSize: Integer; IFiller: Byte = $FF;
+      PaddingMode: TPaddingMode = pmNone); overload;
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key
     /// </summary>
@@ -508,7 +512,11 @@ type
     ///   vector is prefilled. So it will contain something defined in any unused
     ///   bytes if a value shorter than the required IV size is given for the IV.
     /// </param>
-    procedure Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF); overload;
+    /// <param name="PaddingMode">
+    ///   optional parameter defining the padding mode instead of using IFiller byte.
+    /// </param>
+    procedure Init(const Key: TBytes; const IVector: TBytes; IFiller: Byte = $FF;
+      PaddingMode: TPaddingMode = pmNone); overload;
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key
     /// </summary>
@@ -528,7 +536,11 @@ type
     ///   vector is prefilled. So it will contain something defined in any unused
     ///   bytes if a value shorter than the required IV size is given for the IV.
     /// </param>
-    procedure Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF); overload;
+    /// <param name="PaddingMode">
+    ///   optional parameter defining the padding mode instead of using IFiller byte.
+    /// </param>
+    procedure Init(const Key: RawByteString; const IVector: RawByteString = ''; IFiller: Byte = $FF;
+      PaddingMode: TPaddingMode = pmNone); overload;
     {$IFDEF ANSISTRINGSUPPORTED}
     /// <summary>
     ///   Initializes the cipher with the necessary encryption/decryption key.
@@ -550,7 +562,11 @@ type
     ///   vector is prefilled. So it will contain something defined in any unused
     ///   bytes if a value shorter than the required IV size is given for the IV.
     /// </param>
-    procedure Init(const Key: AnsiString; const IVector: AnsiString = ''; IFiller: Byte = $FF); overload;
+    /// <param name="PaddingMode">
+    ///   optional parameter defining the padding mode instead of using IFiller byte.
+    /// </param>
+    procedure Init(const Key: AnsiString; const IVector: AnsiString = ''; IFiller: Byte = $FF;
+      PaddingMode: TPaddingMode = pmNone); overload;
     {$ENDIF}
     {$IFNDEF NEXTGEN}
     /// <summary>
@@ -573,7 +589,11 @@ type
     ///   vector is prefilled. So it will contain something defined in any unused
     ///   bytes if a value shorter than the required IV size is given for the IV.
     /// </param>
-    procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF); overload;
+    /// <param name="PaddingMode">
+    ///   optional parameter defining the padding mode instead of using IFiller byte.
+    /// </param>
+    procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF;
+      PaddingMode: TPaddingMode = pmNone); overload;
     {$ENDIF}
 
     /// <summary>

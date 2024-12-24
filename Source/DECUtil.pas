@@ -217,10 +217,56 @@ procedure ProtectString(var Source: WideString); overload;
 ///   No conversion of any sort is being applied to the bytes.
 /// </returns>
 /// <remarks>
-///   Not easily replaced by some RTL function as none for TBytes to RawByteString
-///   seems to exist
+///   This is a wrapper for StringOf of Sysutils
 /// </remarks>
-function BytesToRawString(const Source: TBytes): RawByteString;
+function BytesToRawString(const Source: TBytes): RawByteString; inline;
+
+/// <summary>
+///   Converts a RawByteString to a byte array
+/// </summary>
+/// <param name="RawString">
+///   RawByteString to be converted to a byte array. An empty string is
+///   allowed and results in an empty byte array.
+/// </param>
+/// <returns>
+///    Dynamic byte array (TBytes) with the same length as the input RawByteString.
+///    The bytes are copied directly without any conversion.
+/// </returns>
+/// <remarks>
+///   This is a wrapper for BytesOf of Sysutils
+/// </remarks>
+function RawStringToBytes(const RawString: RawByteString): TBytes; inline;
+
+/// <summary>
+///   Converts a byte array to a string using unicode encoding.
+/// </summary>
+/// <param name="source">
+///   The byte array to be converted to a string. An empty byte array is allowed
+///   and results in an empty string.
+/// </param>
+/// <returns>
+///   A string representation of the byte array using the unicode encoding.
+/// </returns>
+/// <remarks>
+///   This function is a wrapper for TEncoding.Unicode.GetString
+/// </remarks>
+function BytesToString(const Source: TBytes): string; inline;
+
+/// <summary>
+///   Converts a string to a byte array using unicode encoding.
+/// </summary>
+/// <param name="str">
+///   The string to be converted to a byte array. An empty string is allowed
+///   and results in an empty byte array.
+/// </param>
+/// <returns>
+///   A byte array representation of the string using unicode encoding.
+/// </returns>
+/// <remarks>
+///   This function is a wrapper for TEncoding.Unicode.GetBytes
+/// </remarks>
+function StringToBytes(const Str: string): TBytes; inline;
+
 
 // Buffer comparison
 
@@ -606,16 +652,22 @@ end;
 
 function BytesToRawString(const Source: TBytes): RawByteString;
 begin
-  SetLength(Result, Length(Source));
-  if Length(Source) > 0 then
-  begin
-    // determine lowest string index for handling of ZeroBasedStrings
-    {$IFDEF HAVE_STR_LIKE_ARRAY}
-    Move(Source[0], Result[Low(result)], Length(Source));
-    {$ELSE}
-    Move(Source[0], Result[1], Length(Source));
-    {$ENDIF}
-  end;
+  result := RawByteString(StringOf(Source));
+end;
+
+function RawStringToBytes(const RawString: RawByteString): TBytes;
+begin
+  result := BytesOf(RawString);
+end;
+
+function BytesToString(const Source: TBytes): string;
+begin
+  Result := TEncoding.Unicode.GetString(Source);
+end;
+
+function StringToBytes(const Str: string): TBytes;
+begin
+  Result := TEncoding.Unicode.GetBytes(Str);
 end;
 
 function IsEqual(const a, b : TBytes):Boolean;

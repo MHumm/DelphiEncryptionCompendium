@@ -36,6 +36,9 @@ type
   // A function with these parameters has to be passed to DoTestEncode/Decode to
   // make that one generic
   TEncodeDecodeFunc = function (const Source: RawByteString; Format: TDECFormatClass = nil): TBytes of Object;
+  TEncodeDecodeStringFunc = function (const Source: RawByteString; Format: TDECFormatClass = nil): RawByteString of Object;
+  TEncodeDecodeStreamProc = procedure (const Source, Dest: TStream; DataSize: Int64; const OnProg: TDECProgressEvent)
+    of Object;
 
   /// <summary>
   ///   All known testvectors use the same filler byte and the same cmCTSx mode
@@ -98,6 +101,12 @@ type
 
     procedure DoTestEncode(EncodeFunc: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
     procedure DoTestDecode(DecodeFunct: TEncodeDecodeFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+
+    procedure DoTestEncodeString(EncodeFunc: TEncodeDecodeStringFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+    procedure DoTestDecodeString(DecodeFunct: TEncodeDecodeStringFunc; InitProc: TInitProc; DoneProc: TDoneProc);
+
+    procedure DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
+    procedure DoTestDecodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
   end;
 
   // Testmethods for class TDECCipher
@@ -900,6 +909,27 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+  end;
+
+  // Testmethods for class TCipher_AES256
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_AES256_CBC_PKCS7 = class(TCipherBasis)
+  strict private
+    FCipher_AES: TCipher_AES256;
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+
+  published
+    procedure TestContext;
+    procedure TestEncodeStringToBytes;
+    procedure TestDecodeStringToBytes;
+    procedure TestEncodeStringToString;
+    procedure TestDecodeStringToString;
+    procedure TestEncodeStream;
+    procedure TestDecodeStream;
   end;
 
 implementation
@@ -4125,7 +4155,8 @@ Daten synthetisieren. }
 
     TempResultHex := RawByteString(StringOf(Result));
 
-    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(TempResultHex));
+    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(TempResultHex),
+      'Failed for key:' + string(Data.Key));
   end;
 end;
 
@@ -4146,10 +4177,130 @@ Daten synthetisieren. }
     InitProc(Data);
     Result := EncodeFunc(RawByteString(Data.InputData), TFormat_COPY);
     DoneProc;
-
-    TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result));
+    if length(Result) > 0 then
+      TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result))
+    else
+      TempResultHex := '';
 
     CheckEquals(Data.OutputData, TempResultHex);
+  end;
+end;
+
+procedure TCipherBasis.DoTestDecodeString(DecodeFunct: TEncodeDecodeStringFunc; InitProc: TInitProc;
+  DoneProc: TDoneProc);
+var
+  Data          : TCipherTestData;
+  Result        : RawByteString;
+begin
+  for Data in FTestData do
+  begin
+    InitProc(Data);
+    Result := DecodeFunct(RawByteString(Data.OutputData), TFormat_HEXL);
+    DoneProc;
+    CheckEquals(TFormat_HEXL.Encode(Data.InputData), TFormat_HEXL.Encode(Result),
+      'Failed for key:' + string(Data.Key));
+  end;
+end;
+
+procedure TCipherBasis.DoTestEncodeString(EncodeFunc: TEncodeDecodeStringFunc; InitProc: TInitProc;
+  DoneProc: TDoneProc);
+var
+  Data          : TCipherTestData;
+  Result        : RawByteString;
+  TempResultHex : RawByteString;
+begin
+  for Data in FTestData do
+  begin
+    InitProc(Data);
+    Result := EncodeFunc(RawByteString(Data.InputData), TFormat_COPY);
+    DoneProc;
+    if length(Result) > 0 then
+      TempResultHex := TFormat_HEXL.Encode(Result[low(Result)], length(Result))
+    else
+      TempResultHex := '';
+    CheckEquals(Data.OutputData, TempResultHex);
+  end;
+end;
+
+procedure TCipherBasis.DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc;
+  DoneProc: TDoneProc);
+var
+  Data          : TCipherTestData;
+  SourceStr,
+  DestStr       : TMemoryStream;
+  Result        : TBytes;
+  TempResultHex : RawByteString;
+begin
+  SourceStr := TMemoryStream.Create;
+  DestStr := TMemoryStream.Create;
+  try
+    for Data in FTestData do
+    begin
+      InitProc(Data);
+      SourceStr.Clear;
+      if length(Data.InputData) > 0 then
+        SourceStr.Write(Data.InputData[low(Data.InputData)], length(Data.InputData));
+      SourceStr.Position := 0;
+      DestStr.Clear;
+      EncodeProc(SourceStr, DestStr, SourceStr.Size, nil);
+      DoneProc;
+      if DestStr.Size > 0 then
+      begin
+        DestStr.Position := 0;
+        SetLength(Result, DestStr.Size);
+        if DestStr.Size > 0 then
+          DestStr.Read(Result, DestStr.Size);
+        TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result))
+      end else
+        TempResultHex := '';
+      CheckEquals(Data.OutputData, TempResultHex);
+    end;
+  finally
+    DestStr.Free;
+    SourceStr.Free;
+  end;
+end;
+
+procedure TCipherBasis.DoTestDecodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc;
+  DoneProc: TDoneProc);
+var
+  Data          : TCipherTestData;
+  SourceStr,
+  DestStr       : TMemoryStream;
+  Result        : TBytes;
+  TempResultHex : RawByteString;
+begin
+  SourceStr := TMemoryStream.Create;
+  DestStr := TMemoryStream.Create;
+  try
+    for Data in FTestData do
+    begin
+      InitProc(Data);
+      SourceStr.Clear;
+      if length(Data.OutputData) > 0 then
+      begin
+        TempResultHex := TFormat_HEXL.Decode(Data.OutputData);
+        SourceStr.Write(TempResultHex[low(TempResultHex)], length(TempResultHex))
+      end;
+      SourceStr.Position := 0;
+      DestStr.Clear;
+      EncodeProc(SourceStr, DestStr, SourceStr.Size, nil);
+      DoneProc;
+      if DestStr.Size > 0 then
+      begin
+        DestStr.Position := 0;
+        SetLength(Result, DestStr.Size);
+        if DestStr.Size > 0 then
+          DestStr.Read(Result, DestStr.Size);
+        TempResultHex := TFormat_HEXL.Encode(Result[0], length(Result))
+      end else
+        TempResultHex := '';
+      CheckEquals(TFormat_HEXL.Encode(Data.InputData), TempResultHex,
+        'Failed for key:' + string(Data.Key));
+    end;
+  finally
+    DestStr.Free;
+    SourceStr.Free;
   end;
 end;
 
@@ -4900,6 +5051,108 @@ begin
   CheckException(DoTestTooLargeKey, EDECCipherException);
 end;
 
+{ TestTCipher_AES256_CBC_PKCS7 }
+
+procedure TestTCipher_AES256_CBC_PKCS7.SetUp;
+var
+  TestFile: TStringList;
+  Ind, StartLine: integer;
+begin
+  inherited;
+  FCipher_AES := TCipher_AES256.Create;
+  FCipher_AES.PaddingMode := pmPKCS7;
+  FCipher_AES.Mode := cmCBCx;
+
+  SetLength(FTestData, 46);
+  TestFile := TStringList.Create;
+  try
+    TestFile.LoadFromFile('..\..\Unit Tests\Data\aes-cbc-pkcs7.txt');
+    CheckTrue(TestFile.Count >= 236, 'Too short aes-cbc-pkcs7.txt file');
+    for Ind := 0 to length(FTestData) - 1 do
+    begin
+      if Ind < 13 then
+        StartLine := 5 + Ind * 5
+      else
+        StartLine := 7 + Ind * 5;
+      CheckTrue(TestFile[StartLine].StartsWith('PT='), 'PT is missing in line ' + IntToStr(StartLine));
+      FTestData[Ind].InputData := TFormat_HEXL.Decode(RawbyteString(TestFile[StartLine].Substring(3)));
+      CheckTrue(TestFile[StartLine + 1].StartsWith('KEY='), 'KEY is missing in line ' + IntToStr(StartLine + 1));
+      FTestData[Ind].Key := RawbyteString(TestFile[StartLine + 1].Substring(4));
+      CheckTrue(TestFile[StartLine + 2].StartsWith('IV='), 'PT is missing in line ' + IntToStr(StartLine + 2));
+      FTestData[Ind].InitVector := RawbyteString(TestFile[StartLine + 2].Substring(3));
+      CheckTrue(TestFile[StartLine + 3].StartsWith('CT='), 'CT is missing in line ' + IntToStr(StartLine + 3));
+      FTestData[Ind].OutputData := RawbyteString(TestFile[StartLine + 3].Substring(3));
+      FTestData[Ind].Filler := 0;
+    end;
+  finally
+    TestFile.Free;
+  end;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TearDown;
+begin
+  inherited;
+  FCipher_AES.free;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_AES.Context;
+
+  CheckEquals(  32,  ReturnValue.KeySize);
+  CheckEquals(  16,  ReturnValue.BlockSize);
+  CheckEquals(  16,  ReturnValue.BufferSize);
+  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   1,  ReturnValue.MinRounds);
+  CheckEquals(   1,  ReturnValue.MaxRounds);
+  CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctBlock, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.Init(TestData: TCipherTestData);
+begin
+  FCipher_AES.Init(TFormat_HEXL.Decode(TestData.Key), TFormat_HEXL.Decode(TestData.InitVector), TestData.Filler);
+  FCipher_AES.PaddingMode := pmPKCS7;
+  FCipher_AES.Mode := cmCBCx;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.Done;
+begin
+  FCipher_AES.Done;
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestEncodeStringToBytes;
+begin
+  DoTestEncode(FCipher_AES.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestDecodeStringToBytes;
+begin
+  DoTestDecode(FCipher_AES.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestEncodeStringToString;
+begin
+  DoTestEncodeString(FCipher_AES.EncodeStringToString, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestDecodeStringToString;
+begin
+  DoTestDecodeString(FCipher_AES.DecodeStringToString, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestEncodeStream;
+begin
+  DoTestEncodeStream(FCipher_AES.EncodeStream, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestDecodeStream;
+begin
+  DoTestDecodeStream(FCipher_AES.DecodeStream, self.Init, self.Done);
+end;
+
 initialization
   // Register all test classes
   {$IFDEF DUnitX}
@@ -4943,6 +5196,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA_DEC52);
+  TDUnitX.RegisterTestFixture(TestTCipher_AES256_CBC_PKCS7);
   {$ELSE}
   RegisterTests('DECCipher', [TestTDECCipher.Suite,
                               TestTCipher_Null.Suite,
@@ -4983,7 +5237,8 @@ initialization
                               TestTCipher_Skipjack.Suite,
                               TestTCipher_TEA.Suite,
                               TestTCipher_XTEA.Suite,
-                              TestTCipher_XTEA_DEC52.Suite]);
+                              TestTCipher_XTEA_DEC52.Suite,
+                              TestTCipher_AES256_CBC_PKCS7.Suite]);
   {$ENDIF}
 end.
 

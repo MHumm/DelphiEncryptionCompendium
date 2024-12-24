@@ -829,8 +829,8 @@ begin
 
   CheckEquals(string(TestDataSet.TestData[aDataIndex].CT),
               StringOf(TFormat_HexL.Encode(EncryptData)),
-              'Cipher text wrong for Key ' +
-              string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
+              'Cipher text wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +
+              ' and Key ' + string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
               string(TestDataSet.TestData[aDataIndex].InitVector) + ' PT ' +
               string(TestDataSet.TestData[aDataIndex].PT) + ' AAD Exp.: ' +
               string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
@@ -839,8 +839,8 @@ begin
   // Additional Authentication Data prüfen
   CheckEquals(string(TestDataSet.TestData[aDataIndex].TagResult),
                      StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
-              'Authentication tag wrong for Key ' +
-              string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
+              'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +
+              ' and Key ' + string(TestDataSet.TestData[aDataIndex].CryptKey) + ' IV ' +
               string(TestDataSet.TestData[aDataIndex].InitVector) + ' PT ' +
               string(TestDataSet.TestData[aDataIndex].PT) + ' AAD Exp.: ' +
               string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
