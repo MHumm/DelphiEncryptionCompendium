@@ -225,6 +225,11 @@ type
     ///   initialization vector
     /// </summary>
     FKeyAndIVFormatting: TDECFormatClass;
+    /// <summary>
+    ///   To compare the decrypted text with the last encrypted plain text,
+    ///   the plain text is saved.
+    /// </summary>
+    FLastEncryptedPlainText: string;
   end;
 
 var
@@ -335,7 +340,6 @@ var
   PlainTextBuffer      : TBytes;
   AuthenticationOK     : Boolean; // for authenticated ciphers: is the calculated
                                   // authentication result value correct?
-  LastPlainText        : string;
 begin
   if not GetFormatSettings(PlainTextFormatting, CipherTextFormatting) then
     exit;
@@ -372,11 +376,12 @@ begin
         except
           On e:Exception do
           begin
-//            TextPassed.Visible := false;
-//            TextFailed.Visible := true;
+            TextPassed.Visible := false;
+            TextFailed.Visible := true;
 
             ShowMessage('Decryption failure:' + sLineBreak + e.Message,
                         TMsgDlgType.mtError);
+            exit;
           end;
         end;
 
@@ -390,26 +395,25 @@ begin
                         TMsgDlgType.mtInformation);
         end;
 
-        LastPlainText          := EditPlainText.Text;
         EditPlainText.Text     := DECUtil.BytesToString(PlainTextFormatting.Encode(PlainTextBuffer));
         LabelLenPlainText.Text := Format('Buffer: %d bytes, Formatted: %d chars',
                                          [length(PlainTextBuffer), length(EditPlainText.Text)]);
 
-        if LastPlainText.IsEmpty then
+        if FLastEncryptedPlainText.IsEmpty then
         begin
           TextPassed.Visible := false;
           TextFailed.Visible := false;
         end
         else
-          if LastPlainText = EditPlainText.Text then
+          if FLastEncryptedPlainText = EditPlainText.Text then
           begin
             TextPassed.Visible := true;
             TextFailed.Visible := false;
           end
           else
           begin
-            TextPassed.Visible := false; //true;
-            TextFailed.Visible := true; //false;
+            TextPassed.Visible := false;
+            TextFailed.Visible := true;
           end;
       end
       else
@@ -458,6 +462,7 @@ begin
 
           OutputBuffer := (Cipher as TDECFormattedCipher).EncodeBytes(InputBuffer);
           (Cipher as TDECFormattedCipher).Done;
+          FLastEncryptedPlainText := EditPlainText.Text;
         except
           On e:Exception do
             ShowMessage('Encryption failure:' + sLineBreak + e.Message,
