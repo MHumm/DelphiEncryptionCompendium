@@ -399,7 +399,10 @@ type
   /// <summary>
   ///   Conversion from/to UTF16 strings
   /// </summary>
-  TFormat_UTF16 = TFormat_BigEndian16;
+  TFormat_UTF16 = class(TFormat_BigEndian16)
+  public
+    class function Identity: Int64; override;
+  end;
 
   /// <summary>
   ///   Conversion from/to 32 bit big endian
@@ -2174,6 +2177,29 @@ begin
   result := true;
 end;
 
+{ TFormat_UTF16 }
+
+class function TFormat_UTF16.Identity: Int64;
+var
+  Signature: RawByteString;
+begin
+  {$IFNDEF DEC52_IDENTITY}
+    Signature := RawByteString(StringOfChar(#$5A, 256 - Length(ClassName)) +
+                               UpperCase(ClassName));
+    {$IFDEF HAVE_STR_LIKE_ARRAY}
+    Result := CRC32(IdentityBase, Signature[Low(Signature)],
+                    Length(Signature) * SizeOf(Signature[Low(Signature)]));
+    {$ELSE}
+    Result := CRC32(IdentityBase, Signature[1],
+                                  Length(Signature) * SizeOf(Signature[1]));
+    {$ENDIF}
+  {$ELSE}
+  Boom! We do not support the old identity sheme for this class.
+  Use TFormat_BigEndian16 if you need this. It is the same algorithm.
+  Result := 0;
+  {$ENDIF}
+end;
+
 initialization
   SetLength(ESCAPE_CodesL, 7);
   ESCAPE_CodesL[0] := $61;
@@ -2209,7 +2235,9 @@ initialization
     TFormat_BigEndian32.RegisterClass(TDECFormat.ClassList);
     TFormat_BigEndian64.RegisterClass(TDECFormat.ClassList);
     TFormat_UTF8.RegisterClass(TDECFormat.ClassList);
-//    TFormat_UTF16.RegisterClass(TDECFormat.ClassList);
+      {$IFNDEF DEC52_IDENTITY}
+      TFormat_UTF16.RegisterClass(TDECFormat.ClassList);
+      {$ENDIF}
     {$ENDIF}
   {$ENDIF}
 

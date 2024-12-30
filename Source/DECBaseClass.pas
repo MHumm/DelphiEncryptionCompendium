@@ -145,7 +145,7 @@ type
     ///
     ///   With this and all future versions we will keep backward compatibility.
     /// </summary>
-    class function Identity: Int64;
+    class function Identity: Int64; virtual;
     {$IFDEF X86ASM}
     /// <summary>
     ///   Override FreeInstance to fill allocated Object with zeros, that is
