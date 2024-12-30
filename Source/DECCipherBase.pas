@@ -854,6 +854,7 @@ type
     /// </summary>
     /// <param name="Data">The data from which padding will be removed.</param>
     /// <param name="BlockSize">The block size used for padding.</param>
+    /// <exception cref="EDECCipherException">Raised if the padding is invalid or missing.</exception>
     /// <returns>The original data without padding.</returns>
     class function RemovePadding(const Data: TBytes; BlockSize: integer): TBytes; override;
   end;
