@@ -153,7 +153,7 @@ type
     /// <param name="data">The padded byte raw byte string.</param>
     /// <returns>A new raw byte string with the padding removed. Raises an exception
     /// if the padding is invalid.</returns>
-    /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
+    /// <exception cref="EDECCipherException">Raised if the padding is invalid or missing.</exception>
     /// <remarks>
     /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
     /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
@@ -1408,21 +1408,8 @@ end;
 
 {$REGION 'PKCS#7 Padding'}
 function TDECFormattedCipher.AddPKCS7Padding(const Data: TBytes): TBytes;
-var
-  PadLength: Integer;
-  PadByte: Byte;
-  I: Integer;
 begin
-  PadLength := Context.BlockSize - (Length(Data) mod Context.BlockSize);
-  SetLength(Result, Length(Data) + PadLength);
-
-  if Length(Data) > 0 then
-    Move(Data[0], Result[0], Length(Data));
-
-  PadByte := Byte(PadLength);
-
-  for I := Length(Data) to High(Result) do
-    Result[I] := PadByte;
+  Result := TPKCS7Padding.AddPadding(Data, Context.BlockSize);
 end;
 
 function TDECFormattedCipher.AddPKCS7Padding(const Data: string): string;
@@ -1444,27 +1431,8 @@ begin
 end;
 
 function TDECFormattedCipher.RemovePKCS7Padding(const Data: TBytes): TBytes;
-var
-  PadLength: Integer;
-  I: Integer;
 begin
-  if Length(Data) = 0 then
-    Setlength(result, 0)
-  else
-  begin
-    PadLength := Data[High(Data)];
-    if (PadLength <= 0) or (PadLength > Context.BlockSize) then
-      raise EDECCipherException.Create('Invalid PKCS7 padding');
-
-    for I := Length(Data) - PadLength to High(Data) do
-      if Data[I] <> Byte(PadLength) then
-        raise EDECCipherException.Create('Invalid PKCS7 padding');
-
-    SetLength(Result, Length(Data) - PadLength);
-
-    if length(Result) > 0 then
-      Move(Data[0], Result[0], Length(Result));
-  end;
+  result := TPKCS7Padding.RemovePadding(Data, Context.BlockSize);
 end;
 
 function TDECFormattedCipher.RemovePKCS7Padding(const Data: string): string;
