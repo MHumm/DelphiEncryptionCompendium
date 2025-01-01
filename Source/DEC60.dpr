@@ -46,7 +46,8 @@ uses
   DECHashAuthentication in 'DECHashAuthentication.pas',
   DECHashBitBase in 'DECHashBitBase.pas',
   DECCipherModesGCM in 'DECCipherModesGCM.pas',
-  DECZIPHelper in 'DECZIPHelper.pas';
+  DECZIPHelper in 'DECZIPHelper.pas',
+  DECCipherPaddings in 'DECCipherPaddings.pas';
 
 begin
   try

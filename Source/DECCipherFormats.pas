@@ -780,7 +780,7 @@ type
 implementation
 
 uses
-  DECBaseClass;
+  DECBaseClass, DECCipherPaddings;
 
 function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 
