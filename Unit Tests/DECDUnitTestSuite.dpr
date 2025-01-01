@@ -39,7 +39,8 @@ uses
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
   TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
   TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
-  TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas';
+  TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas',
+  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas';
 
 {$R *.RES}
 
