@@ -63,7 +63,10 @@ type
     /// </param>
     /// <param name="IsEncode">
     ///   True for encoding, False for decoding
-    /// </remark>
+    /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding mode used is not implemented yet
+    /// </exception>
     procedure DoEncodeDecodeStream(const Source, Dest: TStream; DataSize: Int64;
                                    const CipherProc: TDECCipherCodeEvent;
                                    const OnProgress: TDECProgressEvent;
@@ -94,48 +97,6 @@ type
                                  const Proc: TDECCipherCodeEvent;
                                  const OnProgress: TDECProgressEvent;
                                  IsEncode: Boolean);
-    // <summary>
-    /// Removes PKCS#7 padding from a byte array.
-    /// </summary>
-    /// <param name="data">The padded byte array.</param>
-    /// <returns>A new byte array with the padding removed. Raises an exception
-    /// if the padding is invalid.</returns>
-    /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
-    /// <remarks>
-    /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
-    /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
-    /// count or if the pad count is greater than the block size.
-    /// <para>Call this method after decryption.</para>
-    /// </remarks>
-    function RemovePKCS7Padding(const Data: TBytes): TBytes; overload;
-    // <summary>
-    /// Removes PKCS#7 padding from a raw byte string.
-    /// </summary>
-    /// <param name="data">The padded byte raw byte string.</param>
-    /// <returns>A new raw byte string with the padding removed. Raises an exception
-    /// if the padding is invalid.</returns>
-    /// <exception cref="EDECCipherException">Raised if the padding is invalid or missing.</exception>
-    /// <remarks>
-    /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
-    /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
-    /// count or if the pad count is greater than the block size.
-    /// <para>Call this method after decryption.</para>
-    /// </remarks>
-    function RemovePKCS7Padding(const Data: RawByteString): RawByteString; overload;
-    // <summary>
-    /// Removes PKCS#7 padding from a string.
-    /// </summary>
-    /// <param name="data">The padded string.</param>
-    /// <returns>A new string with the padding removed. Raises an exception
-    /// if the padding is invalid.</returns>
-    /// <exception cref="EDECCipherException">Raised if the padding is invalid.</exception>
-    /// <remarks>
-    /// This function checks for valid PKCS#7 padding and raises an `EDECCipherException` exception
-    /// if the padding is incorrect. This includes cases where the final bytes do not match the pad
-    /// count or if the pad count is greater than the block size.
-    /// <para>Call this method after decryption.</para>
-    /// </remarks>
-    function RemovePKCS7Padding(const Data: string): string; overload;
   public
     /// <summary>
     ///   Encrypts the contents of a given byte array
@@ -743,6 +704,9 @@ implementation
 uses
   DECBaseClass, DECCipherPaddings;
 
+resourcestring
+  sPaddingModeNotImplemented = 'Padding mode not implemented';
+
 function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 
   function CipherEncodeBytes(const Source: TBytes): TBytes;
@@ -757,7 +721,8 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeBytes(TPKCS7Padding.AddPadding(Source, Context.BlockSize));
+    pmPKCS7: Result := CipherEncodeBytes(
+                         TPKCS7Padding.AddPadding(Source, Context.BlockSize));
     else
       Result := CipherEncodeBytes(Source);
   end;
@@ -779,7 +744,7 @@ begin
       DecodeGCM(@Source, @Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 
@@ -793,15 +758,15 @@ var
   outBuffer: TBytes;
   BufferSize, Bytes: Integer;
   Max, StartPos, Pos: Int64;
-  doPKCS7Padding, doAdjustBuffer, doStartOnlyPadding: Boolean;
+  doPadding, doAdjustBuffer, doStartOnlyPadding: Boolean;
 begin
   Pos := Source.Position;
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
 
-  Max      := Pos + DataSize;
-  StartPos := Pos;
-  doPKCS7Padding := false;
+  Max       := Pos + DataSize;
+  StartPos  := Pos;
+  doPadding := false;
   doStartOnlyPadding := (DataSize = 0) and IsEncode and (fPaddingMode > pmNone);
 
   if (DataSize > 0) or doStartOnlyPadding then
@@ -835,8 +800,8 @@ begin
           doAdjustBuffer := Bytes > DataSize;
           Bytes := DataSize;
           // Handle padding mode
-          doPKCS7Padding := FPaddingMode = pmPKCS7;
-          if doPKCS7Padding and doAdjustBuffer then
+          doPadding := FPaddingMode <> pmNone;
+          if doPadding and doAdjustBuffer then
             if IsEncode then
             begin
               ProtectBytes(Buffer);
@@ -852,7 +817,7 @@ begin
         if Bytes > 0 then
           Source.ReadBuffer(Buffer[0], Bytes);
 
-        if IsEncode and doPKCS7Padding then
+        if IsEncode and doPadding then
         begin
           Buffer := TPKCS7Padding.AddPadding(Buffer, Context.BlockSize);
           Bytes  := length(Buffer);
@@ -861,16 +826,21 @@ begin
 
         // The real encryption or decryption routine
         CipherProc(Buffer[0], outBuffer[0], Bytes);
-        if not IsEncode and doPKCS7Padding then
+        if not IsEncode and doPadding then
         begin
-          outBuffer := RemovePKCS7Padding(outBuffer);
+          case FPaddingMode of
+            pmPKCS7 : outBuffer := TPKCS7Padding.RemovePadding(outBuffer, Context.BlockSize);
+            else
+              raise EDECCipherException.CreateRes(@sPaddingModeNotImplemented);
+          end;
+
           Bytes := length(outBuffer);
         end;
         if Bytes > 0 then
           Dest.WriteBuffer(outBuffer[0], Bytes)
         else
           SetLength(outBuffer, 0);
-        if doPKCS7Padding then
+        if doPadding then
         begin
           DataSize := 0;
           Pos := Max;
@@ -1029,7 +999,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 
@@ -1050,7 +1020,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 
@@ -1069,7 +1039,8 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Forma
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: Result := CipherEncodeStringToBytes(
+                         TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         Result := CipherEncodeStringToBytes(Source, Format)
@@ -1102,7 +1073,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 {$ENDIF}
@@ -1163,7 +1134,8 @@ var
   Temp            : TBytes;
 begin
   case FPaddingMode of
-    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(
+                                  TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         EncryptedBuffer := CipherEncodeStringToBytes(Source)
@@ -1272,7 +1244,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 {$ENDIF}
@@ -1304,7 +1276,7 @@ begin
   else
     SetLength(Result, 0);
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 {$ENDIF}
@@ -1344,7 +1316,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
 
@@ -1368,33 +1340,8 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
-    pmPKCS7: Result := RemovePKCS7Padding(Result);
+    pmPKCS7: Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
   end;
 end;
-
-{$REGION 'PKCS#7 Padding'}
-function TDECFormattedCipher.RemovePKCS7Padding(const Data: TBytes): TBytes;
-begin
-  result := TPKCS7Padding.RemovePadding(Data, Context.BlockSize);
-end;
-
-function TDECFormattedCipher.RemovePKCS7Padding(const Data: string): string;
-var
-  Buf: TBytes;
-begin
-  Buf    := RemovePKCS7Padding(StringToBytes(Data));
-  Result := BytesToString(Buf);
-  ProtectBytes(Buf);
-end;
-
-function TDECFormattedCipher.RemovePKCS7Padding(const Data: RawByteString): RawByteString;
-var
-  Buf: TBytes;
-begin
-  Buf    := RemovePKCS7Padding(RawStringToBytes(Data));
-  Result := BytesToRawString(Buf);
-  ProtectBytes(Buf);
-end;
-{$ENDREGION}
 
 end.

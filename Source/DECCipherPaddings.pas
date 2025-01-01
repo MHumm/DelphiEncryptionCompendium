@@ -119,7 +119,8 @@ type
     /// <remarks>
     ///   This method is used to ensure the integrity and consistency of the padding.
     /// </remarks>
-    class function HasValidPadding(const Data: TBytes; BlockSize: integer): boolean; virtual; abstract;
+    class function HasValidPadding(const Data : TBytes;
+                                   BlockSize  : Integer): Boolean; virtual; abstract;
     /// <summary>
     ///   Removes padding from the specified data.
     /// </summary>
@@ -127,7 +128,7 @@ type
     ///   The data from which padding will be removed.
     /// </param>
     /// <param name="BlockSize">
-    ///   The block size used for padding.
+    ///   The block size in bytes used for padding.
     /// </param>
     /// <returns>
     ///   The original data without padding.
@@ -135,7 +136,62 @@ type
     /// <remarks>
     ///   This method assumes that the padding has already been validated.
     /// </remarks>
-    class function RemovePadding(const Data: TBytes; BlockSize: integer): TBytes; virtual; abstract;
+    class function RemovePadding(const Data : TBytes;
+                                 BlockSize  : Integer): TBytes; overload; virtual; abstract;
+    // <summary>
+    ///   Removes PKCS#7 padding from a raw byte string.
+    /// </summary>
+    /// <param name="data">
+    ///   The padded byte raw byte string.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in bytes used for padding.
+    /// </param>
+    /// <returns>
+    ///   A new raw byte string with the padding removed. Raises an exception
+    ///   if the padding is invalid.
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding is invalid or missing.
+    /// </exception>
+    /// <remarks>
+    ///   This function checks for valid PKCS#7 padding and raises an
+    ///   `EDECCipherException` exception if the padding is incorrect. This
+    ///   includes cases where the final bytes do not match the pad count or if
+    ///   the pad count is greater than the block size.
+    ///   <para>
+    ///     Call this method after decryption.
+    ///   </para>
+    /// </remarks>
+    class function RemovePadding(const Data : RawByteString;
+                                 BlockSize  : Integer): RawByteString; overload; virtual; abstract;
+    // <summary>
+    ///   Removes PKCS#7 padding from a string.
+    /// </summary>
+    /// <param name="data">
+    ///   The padded byte raw byte string.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in bytes used for padding.
+    /// </param>
+    /// <returns>
+    ///   A new raw byte string with the padding removed. Raises an exception
+    ///   if the padding is invalid.
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding is invalid or missing.
+    /// </exception>
+    /// <remarks>
+    ///   This function checks for valid PKCS#7 padding and raises an
+    ///   `EDECCipherException` exception if the padding is incorrect. This
+    ///   includes cases where the final bytes do not match the pad count or if
+    ///   the pad count is greater than the block size.
+    ///   <para>
+    ///     Call this method after decryption.
+    ///   </para>
+    /// </remarks>
+    class function RemovePadding(const Data : string;
+                                 BlockSize  : Integer): string; overload; virtual; abstract;
   end;
 
   /// <summary>
@@ -220,7 +276,8 @@ type
     /// <returns>
     ///   True if the padding is valid; otherwise, False.
     /// </returns>
-    class function HasValidPadding(const Data: TBytes; BlockSize: integer): boolean; override;
+    class function HasValidPadding(const Data : TBytes;
+                                   BlockSize  : Integer): Boolean; override;
     /// <summary>
     ///   Removes PKCS7 padding from the specified data.
     /// </summary>
@@ -236,7 +293,62 @@ type
     /// <returns>
     ///   The original data without padding.
     /// </returns>
-    class function RemovePadding(const Data: TBytes; BlockSize: integer): TBytes; override;
+    class function RemovePadding(const Data : TBytes;
+                                 BlockSize  : Integer): TBytes; override;
+    // <summary>
+    ///   Removes PKCS#7 padding from a raw byte string.
+    /// </summary>
+    /// <param name="data">
+    ///   The padded byte raw byte string.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in bytes used for padding.
+    /// </param>
+    /// <returns>
+    ///   A new raw byte string with the padding removed. Raises an exception
+    ///   if the padding is invalid.
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding is invalid or missing.
+    /// </exception>
+    /// <remarks>
+    ///   This function checks for valid PKCS#7 padding and raises an
+    ///   `EDECCipherException` exception if the padding is incorrect. This
+    ///   includes cases where the final bytes do not match the pad count or if
+    ///   the pad count is greater than the block size.
+    ///   <para>
+    ///     Call this method after decryption.
+    ///   </para>
+    /// </remarks>
+    class function RemovePadding(const Data : RawByteString;
+                                 BlockSize  : Integer): RawByteString; override;
+    // <summary>
+    ///   Removes PKCS#7 padding from a string.
+    /// </summary>
+    /// <param name="data">
+    ///   The padded byte raw byte string.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in bytes used for padding.
+    /// </param>
+    /// <returns>
+    ///   A new raw byte string with the padding removed. Raises an exception
+    ///   if the padding is invalid.
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding is invalid or missing.
+    /// </exception>
+    /// <remarks>
+    ///   This function checks for valid PKCS#7 padding and raises an
+    ///   `EDECCipherException` exception if the padding is incorrect. This
+    ///   includes cases where the final bytes do not match the pad count or if
+    ///   the pad count is greater than the block size.
+    ///   <para>
+    ///     Call this method after decryption.
+    ///   </para>
+    /// </remarks>
+    class function RemovePadding(const Data : string;
+                                 BlockSize  : Integer): string; override;
   end;
 
 implementation
@@ -294,6 +406,26 @@ begin
     if Data[I] <> Byte(PadLength) then
       exit(false);
   result := true;
+end;
+
+class function TPKCS7Padding.RemovePadding(const Data : string;
+                                           BlockSize  : Integer): string;
+var
+  Buf: TBytes;
+begin
+  Buf    := RemovePadding(StringToBytes(Data), BlockSize);
+  Result := BytesToString(Buf);
+  ProtectBytes(Buf);
+end;
+
+class function TPKCS7Padding.RemovePadding(const Data : RawByteString;
+                                           BlockSize  : Integer): RawByteString;
+var
+  Buf: TBytes;
+begin
+  Buf    := RemovePadding(RawStringToBytes(Data), BlockSize);
+  Result := BytesToRawString(Buf);
+  ProtectBytes(Buf);
 end;
 
 class function TPKCS7Padding.RemovePadding(const Data: TBytes; BlockSize: integer): TBytes;
