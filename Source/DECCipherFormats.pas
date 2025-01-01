@@ -95,45 +95,6 @@ type
                                  const OnProgress: TDECProgressEvent;
                                  IsEncode: Boolean);
     // <summary>
-    /// Adds PKCS#7 padding to a byte array.
-    /// </summary>
-    /// <param name="data">The byte array to which padding should be added.</param>
-    /// <returns>A new byte array with PKCS#7 padding applied.</returns>
-    /// <remarks>
-    /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
-    /// to the end of the data so that the total length is a multiple of the block size
-    /// Each padding byte contains the number of padding bytes added. For example,
-    /// if 5 bytes of padding are needed, each of the 5 padding bytes will have the value $5.
-    /// <para>Call this method before starting encryption.</para>
-    /// </remarks>
-    function AddPKCS7Padding(const Data: TBytes): TBytes; overload;
-    // <summary>
-    /// Adds PKCS#7 padding to a raw byte string.
-    /// </summary>
-    /// <param name="data">The raw byte string to which padding should be added.</param>
-    /// <returns>A new byte raw byte string with PKCS#7 padding applied.</returns>
-    /// <remarks>
-    /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
-    /// to the end of the data so that the total length is a multiple of the block size
-    /// Each padding byte contains the number of padding bytes added. For example,
-    /// if 5 bytes of padding are needed, each of the 5 padding bytes will have the value $5.
-    /// <para>Call this method before starting encryption.</para>
-    /// </remarks>
-    function AddPKCS7Padding(const Data: RawByteString): RawByteString; overload;
-    // <summary>
-    /// Adds PKCS#7 padding to a string.
-    /// </summary>
-    /// <param name="data">The string to which padding should be added.</param>
-    /// <returns>A new byte string with PKCS#7 padding applied.</returns>
-    /// <remarks>
-    /// PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds bytes
-    /// to the end of the data so that the total length is a multiple of the block size
-    /// Each padding byte contains the number of padding bytes added. For example,
-    /// if 5 bytes of padding are needed, each of the 5 padding bytes will have the value $5.
-    /// <para>Call this method before starting encryption.</para>
-    /// </remarks>
-    function AddPKCS7Padding(const Data: string): string; overload;
-    // <summary>
     /// Removes PKCS#7 padding from a byte array.
     /// </summary>
     /// <param name="data">The padded byte array.</param>
@@ -796,7 +757,7 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeBytes(AddPKCS7Padding(Source))
+    pmPKCS7: Result := CipherEncodeBytes(TPKCS7Padding.AddPadding(Source, Context.BlockSize));
     else
       Result := CipherEncodeBytes(Source);
   end;
@@ -893,7 +854,7 @@ begin
 
         if IsEncode and doPKCS7Padding then
         begin
-          Buffer := AddPKCS7Padding(Buffer);
+          Buffer := TPKCS7Padding.AddPadding(Buffer, Context.BlockSize);
           Bytes  := length(Buffer);
           SetLength(outBuffer, length(Buffer));
         end;
@@ -1001,7 +962,8 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: string;
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: Result := CipherEncodeStringToBytes(
+                         TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         Result := CipherEncodeStringToBytes(Source, Format)
@@ -1035,7 +997,8 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Fo
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: Result := CipherEncodeStringToBytes(
+                         TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         Result := CipherEncodeStringToBytes(Source, Format)
@@ -1159,7 +1122,8 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Forma
 
 begin
   case FPaddingMode of
-    pmPKCS7: Result := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: Result := CipherEncodeStringToBytes(
+                         TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         Result := CipherEncodeStringToBytes(Source, Format)
@@ -1236,7 +1200,8 @@ var
   EncryptedBuffer : TBytes;
 begin
   case FPaddingMode of
-    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(
+                                  TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
@@ -1271,7 +1236,8 @@ var
   Temp            : TBytes;
 begin
   case FPaddingMode of
-    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(AddPKCS7Padding(Source), Format)
+    pmPKCS7: EncryptedBuffer := CipherEncodeStringToBytes(
+                                  TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format)
     else
       if Length(Source) > 0 then
         EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
@@ -1407,29 +1373,6 @@ begin
 end;
 
 {$REGION 'PKCS#7 Padding'}
-function TDECFormattedCipher.AddPKCS7Padding(const Data: TBytes): TBytes;
-begin
-  Result := TPKCS7Padding.AddPadding(Data, Context.BlockSize);
-end;
-
-function TDECFormattedCipher.AddPKCS7Padding(const Data: string): string;
-var
-  Buf: TBytes;
-begin
-  Buf    := AddPKCS7Padding(StringToBytes(Data));
-  Result := BytesToString(Buf);
-  ProtectBytes(Buf);
-end;
-
-function TDECFormattedCipher.AddPKCS7Padding(const Data: RawByteString): RawByteString;
-var
-  Buf: TBytes;
-begin
-  Buf    := AddPKCS7Padding(RawStringToBytes(Data));
-  Result := BytesToRawString(Buf);
-  ProtectBytes(Buf);
-end;
-
 function TDECFormattedCipher.RemovePKCS7Padding(const Data: TBytes): TBytes;
 begin
   result := TPKCS7Padding.RemovePadding(Data, Context.BlockSize);

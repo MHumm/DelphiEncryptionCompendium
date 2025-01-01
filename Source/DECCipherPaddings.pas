@@ -53,7 +53,57 @@ type
     /// <remarks>
     ///   The specific method of padding depends on the implementation of the subclass.
     /// </remarks>
-    class function AddPadding(const Data: TBytes; BlockSize: integer): TBytes; virtual; abstract;
+    class function AddPadding(const Data : TBytes;
+                              BlockSize  : Integer): TBytes; overload; virtual; abstract;
+
+    // <summary>
+    ///   Adds PKCS#7 padding to a string.
+    /// </summary>
+    /// <param name="data">
+    ///   The string to which padding should be added.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   A new byte string with PKCS#7 padding applied.
+    /// </returns>
+    /// <remarks>
+    ///   PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds
+    ///   bytes to the end of the data so that the total length is a multiple of
+    ///   the block size. Each padding byte contains the number of padding bytes
+    ///   added. For example, if 5 bytes of padding are needed, each of the 5
+    ///   padding bytes will have the value $5.
+    /// <para>
+    ///   Call this method before starting encryption.
+    //  </para>
+    /// </remarks>
+    class function AddPadding(const Data : string;
+                              BlockSize  : Integer): string; overload; virtual; abstract;
+    // <summary>
+    ///   Adds PKCS#7 padding to a raw byte string.
+    /// </summary>
+    /// <param name="data">
+    ///   The raw byte string to which padding should be added.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   A new byte raw byte string with PKCS#7 padding applied.
+    /// </returns>
+    /// <remarks>
+    ///   PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds
+    ///   bytes to the end of the data so that the total length is a multiple of
+    ///   the block size. Each padding byte contains the number of padding bytes
+    ///   added. For example, if 5 bytes of padding are needed, each of the 5
+    ///   padding bytes will have the value $5.
+    /// <para>
+    ///   Call this method before starting encryption.
+    /// </para>
+    /// </remarks>
+    class function AddPadding(const Data : RawByteString;
+                              BlockSize  : Integer): RawByteString; overload; virtual; abstract;
     /// <summary>
     ///   Checks if the specified data contains valid padding.
     /// </summary>
@@ -103,12 +153,61 @@ type
     ///   The data to be padded.
     /// </param>
     /// <param name="BlockSize">
-    ///   The block size to align the data with.
+    ///   The block size in byte to align the data with.
     /// </param>
     /// <returns>
     ///   The padded data following the PKCS7 algorithm.
     /// </returns>
-    class function AddPadding(const Data: TBytes; BlockSize: integer): TBytes; override;
+    class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
+
+    // <summary>
+    ///   Adds PKCS#7 padding to a string.
+    /// </summary>
+    /// <param name="data">
+    ///   The string to which padding should be added.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   A new byte string with PKCS#7 padding applied.
+    /// </returns>
+    /// <remarks>
+    ///   PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds
+    ///   bytes to the end of the data so that the total length is a multiple of
+    ///   the block size. Each padding byte contains the number of padding bytes
+    ///   added. For example, if 5 bytes of padding are needed, each of the 5
+    ///   padding bytes will have the value $5.
+    /// <para>
+    ///   Call this method before starting encryption.
+    //  </para>
+    /// </remarks>
+    class function AddPadding(const Data: string; BlockSize: Integer): string; override;
+    // <summary>
+    ///   Adds PKCS#7 padding to a raw byte string.
+    /// </summary>
+    /// <param name="data">
+    ///   The raw byte string to which padding should be added.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   A new byte raw byte string with PKCS#7 padding applied.
+    /// </returns>
+    /// <remarks>
+    ///   PKCS#7 padding, as defined in RFC 5652 (which updates RFC 2315), adds
+    ///   bytes to the end of the data so that the total length is a multiple of
+    ///   the block size. Each padding byte contains the number of padding bytes
+    ///   added. For example, if 5 bytes of padding are needed, each of the 5
+    ///   padding bytes will have the value $5.
+    /// <para>
+    ///   Call this method before starting encryption.
+    /// </para>
+    /// </remarks>
+    class function AddPadding(const Data : RawByteString;
+                              BlockSize  : Integer): RawByteString; override;
+
     /// <summary>
     ///   Validates if the specified data contains valid PKCS7 padding.
     /// </summary>
@@ -142,9 +241,12 @@ type
 
 implementation
 
+uses
+  DECUtil;
+
 { TPKCS7Padding }
 
-class function TPKCS7Padding.AddPadding(const Data: TBytes; BlockSize: integer): TBytes;
+class function TPKCS7Padding.AddPadding(const Data: TBytes; BlockSize: Integer): TBytes;
 var
   PadLength: Integer;
   PadByte: Byte;
@@ -159,6 +261,24 @@ begin
     Result[I] := PadByte;
 end;
 
+class function TPKCS7Padding.AddPadding(const Data: string; BlockSize: Integer): string;
+var
+  Buf: TBytes;
+begin
+  Buf    := AddPadding(StringToBytes(Data), BlockSize);
+  Result := BytesToString(Buf);
+  ProtectBytes(Buf);
+end;
+
+class function TPKCS7Padding.AddPadding(const Data : RawByteString;
+                                        BlockSize  : Integer): RawByteString;
+var
+  Buf: TBytes;
+begin
+  Buf    := AddPadding(RawStringToBytes(Data), BlockSize);
+  Result := BytesToRawString(Buf);
+  ProtectBytes(Buf);
+end;
 
 class function TPKCS7Padding.HasValidPadding(const Data: TBytes; BlockSize: integer): boolean;
 var
