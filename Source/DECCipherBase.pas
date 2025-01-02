@@ -60,7 +60,7 @@ type
   ///   Padding used to fill the last incomplete block of a block encryption
   ///   algorithm. To be expanded in a future version
   /// </summary>
-  TPaddingMode = (pmNone, pmPKCS7);
+  TPaddingMode = (pmNone, pmPKCS7, pmANSI_X9_23);
 
   /// <summary>
   ///   Record containing meta data about a certain cipher
