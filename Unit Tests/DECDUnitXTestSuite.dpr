@@ -37,7 +37,8 @@ uses
   TestDECRandom in 'Tests\TestDECRandom.pas',
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
   TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
-  TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas';
+  TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
+  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas';
 
 function IsTestInsightRunning: Boolean;
 {$IFDEF TESTINSIGHT}
