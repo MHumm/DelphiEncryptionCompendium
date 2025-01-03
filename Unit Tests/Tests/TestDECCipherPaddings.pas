@@ -46,6 +46,19 @@ type
 //    procedure TestGetClassList;
   end;
 
+  // Test methods for class TANSI_X9_23Padding
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTANSI_X9_23Padding = class(TTestCase)
+  strict private
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+  end;
+
+
+//pmANSI_X9_23 {, pmISO10126, pmISO7816
+
 implementation
 
 { TestTDECPKCS7Padding }
@@ -66,7 +79,8 @@ initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECPKCS7Padding);
+  TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding);
   {$ELSE}
-  RegisterTests('DECCipherPaddings', [TestTDECPKCS7Padding.Suite]);
+  RegisterTests('DECCipherPaddings', [TestTDECPKCS7Padding.Suite, TestTANSI_X9_23Padding.Suite]);
   {$ENDIF}
 end.

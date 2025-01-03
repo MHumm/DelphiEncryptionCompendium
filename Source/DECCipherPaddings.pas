@@ -385,6 +385,11 @@ type
   end;
 
   /// <summary>
+  ///   PKCS#5 is a subset of the PKCS#7 padding algorithm.
+  /// </summary>
+  TPKCS5Padding = class(TPKCS7Padding);
+
+  /// <summary>
   ///   Implementation of the ANSI X9.23 padding algorithm.
   /// </summary>
   /// <remarks>
