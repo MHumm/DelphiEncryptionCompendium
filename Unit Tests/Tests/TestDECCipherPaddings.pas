@@ -33,13 +33,19 @@ uses
   DECCIpherPaddings;
 
 type
+  /// <summary>
+  ///   Base class for all padding test classes which contains code to load the
+  ///  test data
+  ///  </summary>
+  TestTPaddingBase = class(TTestCase)
+  strict protected
+  end;
+
   // Test methods for class TPKCS7Padding
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTDECPKCS7Padding = class(TTestCase)
+  TestTDECPKCS7Padding = class(TestTPaddingBase)
   strict private
   public
-    procedure SetUp; override;
-    procedure TearDown; override;
   published
 //    procedure TestClassByName;
 //    procedure TestClassByIdentity;
@@ -48,32 +54,17 @@ type
 
   // Test methods for class TANSI_X9_23Padding
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTANSI_X9_23Padding = class(TTestCase)
+  TestTANSI_X9_23Padding = class(TestTPaddingBase)
   strict private
   public
-    procedure SetUp; override;
-    procedure TearDown; override;
   published
   end;
 
 
-//pmANSI_X9_23 {, pmISO10126, pmISO7816
+// {, pmISO10126, pmISO7816
 
 implementation
 
-{ TestTDECPKCS7Padding }
-
-procedure TestTDECPKCS7Padding.SetUp;
-begin
-  inherited;
-
-end;
-
-procedure TestTDECPKCS7Padding.TearDown;
-begin
-  inherited;
-
-end;
 
 initialization
   // Register any test cases with the test runner

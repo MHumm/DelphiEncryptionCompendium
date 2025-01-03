@@ -61,7 +61,7 @@ type
   ///   algorithm.
   /// </summary>
   /// <remark>
-  ///   Try to avoid pmPKCS5 as this is a subset of pmPKCS7 anyway and replaced
+  ///   Try to avoid pmPKCS5, as this is a subset of pmPKCS7 anyway and replaced
   ///   by that one
   /// </remark>
   TPaddingMode = (pmNone, pmPKCS5, pmPKCS7, pmANSI_X9_23 {, pmISO10126, pmISO7816});
