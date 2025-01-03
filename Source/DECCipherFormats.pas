@@ -702,10 +702,15 @@ type
 implementation
 
 uses
+  {$IFDEF FPC}
+  TypInfo,
+  {$ELSE}
+  System.TypInfo,
+  {$ENDIF}
   DECBaseClass, DECCipherPaddings;
 
 resourcestring
-  sPaddingModeNotImplemented = 'Padding mode not implemented';
+  sPaddingModeNotImplemented = 'Padding mode %0:s not implemented';
 
 function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
 
@@ -748,7 +753,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 
@@ -758,11 +766,13 @@ procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
                                                    const OnProgress: TDECProgressEvent;
                                                    IsEncode: Boolean);
 var
-  Buffer: TBytes;
-  outBuffer: TBytes;
-  BufferSize, Bytes: Integer;
-  Max, StartPos, Pos: Int64;
-  doPadding, doAdjustBuffer, doStartOnlyPadding: Boolean;
+  Buffer             : TBytes;
+  outBuffer          : TBytes;
+  BufferSize, Bytes  : Integer;
+  Max, StartPos, Pos : Int64;
+  doPadding,
+  doAdjustBuffer,
+  doStartOnlyPadding : Boolean;
 begin
   Pos := Source.Position;
   if DataSize < 0 then
@@ -836,8 +846,9 @@ begin
             pmPKCS7      : outBuffer := TPKCS7Padding.RemovePadding(outBuffer, Context.BlockSize);
             pmANSI_X9_23 : outBuffer := TANSI_X9_23_Padding.RemovePadding(outBuffer, Context.BlockSize);
             else
-{ TODO : Exception verbessern im dem Typ ausgegeben wird }
-              raise EDECCipherException.CreateRes(@sPaddingModeNotImplemented);
+              raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                                     [GetEnumName(TypeInfo(TPaddingMode),
+                                                        Integer(FPaddingMode))]);
           end;
 
           Bytes := length(outBuffer);
@@ -1011,7 +1022,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 
@@ -1034,7 +1048,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 
@@ -1091,7 +1108,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 {$ENDIF}
@@ -1274,7 +1294,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    { TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 {$ENDIF}
@@ -1308,7 +1331,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 {$ENDIF}
@@ -1350,7 +1376,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 
@@ -1376,7 +1405,10 @@ begin
   case FPaddingMode of
     pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-{ TODO : Add else with exception }
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
   end;
 end;
 
