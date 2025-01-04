@@ -208,10 +208,14 @@ type
     /// <param name="PaddingLength">
     ///   The length of the padding in byte.
     /// </param>
+    /// <param name="IsLastPaddingByte">
+    ///   True if the last padding byte is filled
+    /// </param>
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer): UInt8; virtual; abstract;
+    class function GetPaddingByte(PaddingLength : Integer;
+      IsLastPaddingByte: boolean): UInt8; virtual; abstract;
   public
     /// <summary>
     ///   Adds padding to the specified data, depending on the padding byte
@@ -246,6 +250,7 @@ type
     ///   Call this method before starting encryption.
     /// </remarks>
     class function AddPadding(const Data: string; BlockSize: Integer): string; override;
+
     // <summary>
     ///   Adds padding to the specified raw byte string, depending on the padding
     ///   byte returned by GetPaddingByte.
@@ -265,6 +270,7 @@ type
     /// </remarks>
     class function AddPadding(const Data : RawByteString;
                               BlockSize  : Integer): RawByteString; override;
+
     /// <summary>
     ///   Validates if the specified data contains valid padding as defined by
     ///   GetPaddingByte.
@@ -388,10 +394,14 @@ type
     /// <param name="PaddingLength">
     ///   The length of the padding in byte.
     /// </param>
+    /// <param name="IsLastPaddingByte">
+    ///   True if the last padding byte is filled
+    /// </param>
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer): UInt8; override;
+    class function GetPaddingByte(PaddingLength : Integer;
+      IsLastPaddingByte: boolean): UInt8; override;
   end;
 
   /// <summary>
@@ -417,9 +427,9 @@ type
   /// <remarks>
   ///   ANSI X9.23 padding is a standard algorithm used in symmetric cryptosystems
   ///   like AES and is a close relative to PKCS#7.
-  ///   ANSI X9.23 padding ads #0 (instead as #PadLength like PKCS#7)
-  ///   bytes to the end of the data so that the total length is a multiple of
-  ///   the block size.
+  ///   ANSI X9.23 padding ads #0 (instead as #PadLength like PKCS#7) for all
+  ///   padding positions except the last which contains #PadLength identically
+  ///   to PKCS#7.
   /// <para>
   ///   Call this method before starting encryption.
   //  </para>
@@ -442,16 +452,60 @@ type
     /// <param name="PaddingLength">
     ///   The length of the padding in byte.
     /// </param>
+    /// <param name="IsLastPaddingByte">
+    ///   True if the last padding byte is filled
+    /// </param>
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer): UInt8; override;
+    class function GetPaddingByte(PaddingLength : Integer;
+      IsLastPaddingByte: boolean): UInt8; override;
+  public
+    /// <summary>
+    ///   Validates if the specified data contains valid padding as defined by
+    ///   GetPaddingByte.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be checked.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The expected block size.
+    /// </param>
+    /// <returns>
+    ///   True if the padding is valid; otherwise, False.
+    /// </returns>
+    /// <remarks>
+    ///   ANSI X9.23 padding standard algorithm does not specify padding bytes
+    ///   values except the last byte. That is why only the last byte is checked
+    ///   here.
+    /// </returns>
+    class function HasValidPadding(const Data : TBytes;
+      BlockSize  : Integer): Boolean; override;
+  end;
+
+  // ISO 10126 is smilar to ANSI X9.23 padding, but it uses a random padding
+  // instead #0. This can provide some security advantages because the clear
+  // text of the pad is less predictable than using #0.
+  TISO10126Padding = class(TANSI_X9_23_Padding)
+    /// <summary>
+    ///   Retrieves the padding character used to fill up the last block(s).
+    /// </summary>
+    /// <param name="PaddingLength">
+    ///   The length of the padding in byte.
+    /// </param>
+    /// <param name="IsLastPaddingByte">
+    ///   True if the last padding byte is filled
+    /// </param>    /// <returns>
+    ///   The byte value used as padding
+    /// </returns>
+    class function GetPaddingByte(PaddingLength : Integer;
+      IsLastPaddingByte: boolean): UInt8; override;
   end;
 
 implementation
 
 uses
-  DECUtil;
+  DECUtil, DECRandom;
 
 resourcestring
   sInvalidPadding = 'Invalid %0:s padding';
@@ -463,7 +517,6 @@ class function TFixedBytePadding.AddPadding(const Data : TBytes;
                                             BlockSize  : Integer): TBytes;
 var
   PadLength: Integer;
-  PadByte: Byte;
   I: Integer;
 begin
   if not IsBlockSizeValid(BlockSize) then
@@ -474,9 +527,8 @@ begin
   if Length(Data) > 0 then
     Move(Data[0], Result[0], Length(Data));
 
-  PadByte := GetPaddingByte(PadLength);
   for I := Length(Data) to High(Result) do
-    Result[I] := PadByte;
+    Result[I] := GetPaddingByte(PadLength, I = High(Result));
 end;
 
 class function TFixedBytePadding.AddPadding(const Data : string;
@@ -503,7 +555,6 @@ class function TFixedBytePadding.HasValidPadding(const Data : TBytes;
                                                  BlockSize  : Integer): Boolean;
 var
   PadLength : Integer;
-  PadByte   : UInt8;
   I         : Integer;
 begin
   if Length(Data) = 0 then
@@ -516,10 +567,8 @@ begin
   if (PadLength <= 0) or (PadLength > BlockSize) then
     exit(false);
 
-  PadByte := GetPaddingByte(PadLength);
-
   for I := Length(Data) - PadLength to High(Data) do
-    if (Data[I] <> PadByte) then
+    if (Data[I] <> GetPaddingByte(PadLength, I = High(Data))) then
       exit(false);
 
   Result := true;
@@ -566,7 +615,8 @@ begin
   result := (BlockSize > 0) and (BlockSize < 256);
 end;
 
-class function TPKCS7Padding.GetPaddingByte(PaddingLength: Integer): UInt8;
+class function TPKCS7Padding.GetPaddingByte(PaddingLength: Integer;
+  IsLastPaddingByte: boolean): UInt8;
 begin
   Result := Byte(PaddingLength);
 end;
@@ -585,9 +635,46 @@ begin
   result := BlockSize > 0;
 end;
 
-class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength: Integer): UInt8;
+class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength: Integer;
+  IsLastPaddingByte: boolean): UInt8;
 begin
-  Result := 0;
+  if IsLastPaddingByte then
+    Result := Byte(PaddingLength)
+  else
+    Result := 0;
+end;
+
+class function TANSI_X9_23_Padding.HasValidPadding(const Data: TBytes;
+  BlockSize: Integer): Boolean;
+var
+  PadLength : Integer;
+begin
+  if Length(Data) = 0 then
+    exit(false);
+
+  if not IsBlockSizeValid(BlockSize) then
+    exit(false);
+
+  PadLength := Data[High(Data)];
+  if (PadLength <= 0) or (PadLength > BlockSize) then
+    exit(false);
+
+  // check only last padding byte according to standard
+  if (Data[High(Data)] <> GetPaddingByte(PadLength, true)) then
+    exit(false);
+
+  Result := true;
+end;
+
+{ TISO10126Padding }
+
+class function TISO10126Padding.GetPaddingByte(PaddingLength: Integer;
+  IsLastPaddingByte: boolean): UInt8;
+begin
+  if IsLastPaddingByte then
+    Result := Byte(PaddingLength)
+  else
+    Result := RandomBytes(1)[0];
 end;
 
 end.
