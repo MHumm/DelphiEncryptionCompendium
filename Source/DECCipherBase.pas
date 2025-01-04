@@ -64,7 +64,7 @@ type
   ///   Try to avoid pmPKCS5, as this is a subset of pmPKCS7 anyway and replaced
   ///   by that one
   /// </remark>
-  TPaddingMode = (pmNone, pmPKCS5, pmPKCS7, pmANSI_X9_23 {, pmISO10126, pmISO7816});
+  TPaddingMode = (pmNone, pmPKCS5, pmPKCS7, pmANSI_X9_23 , pmISO10126, pmISO7816);
 
   /// <summary>
   ///   Record containing meta data about a certain cipher

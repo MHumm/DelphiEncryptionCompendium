@@ -817,6 +817,7 @@ begin
   SetLength(Result, Length(Data) + PadLength);
   if Length(Data) > 0 then
     Move(Data[0], Result[0], Length(Data));
+  I := Length(Data);
   Result[I] := $80;
   for I := succ(Length(Data)) to High(Result) do
     Result[I] := 0;
