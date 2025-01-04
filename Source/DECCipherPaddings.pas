@@ -475,7 +475,7 @@ type
     ///   The length of the block.
     /// </param>
     /// <returns>
-    ///   Length of padding. Can not zero when the DataSize is a multiply of
+    ///   Length of padding. Can be zero when the DataSize is a multiply of
     ///   the BlockSize.
     /// </returns>
     class function GetPadLength(DataSize, BlockSize: integer): integer; override;
@@ -545,6 +545,72 @@ type
     class function GetPaddingByte(PaddingLength : Integer;
       IsLastPaddingByte: boolean): UInt8; override;
   end;
+
+  TISO7816Padding = class(TFixedBytePadding)
+  strict protected
+    /// <summary>
+    ///   Calculated the length of the pad.
+    /// </summary>
+    /// <param name="DataSize">
+    ///   The length of the data.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The length of the block.
+    /// </param>
+    /// <returns>
+    ///   Length of padding. Can not zero when the DataSize is a multiply of
+    ///   the BlockSize.
+    /// </returns>
+    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+  public
+    /// <summary>
+    ///   Adds padding to the specified data, depending on the padding byte
+    ///   returned by GetPaddingByte.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be padded.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   The padded data following the algorithm implemented by the derrived class.
+    /// </returns>
+    class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
+
+    /// <summary>
+    ///   Validates if the specified data contains valid padding as defined by
+    ///   GetPaddingByte.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be checked.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The expected block size.
+    /// </param>
+    /// <returns>
+    ///   True if the padding is valid; otherwise, False.
+    /// </returns>
+    class function HasValidPadding(const Data : TBytes;
+                                   BlockSize  : Integer): Boolean; override;
+
+    /// <summary>
+    ///   Removes a fixed byte padding from the specified data.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data from which padding will be removed.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size used for padding.
+    /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Raised if the padding is invalid or missing.
+    /// </exception>
+    /// <returns>
+    ///   The original data without padding.
+    /// </returns>
+    class function RemovePadding(const Data : TBytes;
+                                 BlockSize  : Integer): TBytes; override;  end;
 
 implementation
 
@@ -705,9 +771,6 @@ class function TANSI_X9_23_Padding.HasValidPadding(const Data: TBytes;
 var
   PadLength : Integer;
 begin
-  if Length(Data) = 0 then
-    exit(false);
-
   if not IsBlockSizeValid(BlockSize) then
     exit(false);
 
@@ -731,6 +794,72 @@ begin
     Result := Byte(PaddingLength)
   else
     Result := RandomBytes(1)[0];
+end;
+
+{ TISO7816Padding }
+
+class function TISO7816Padding.GetPadLength(DataSize,
+  BlockSize: integer): integer;
+begin
+  result := DataSize mod BlockSize;
+end;
+
+class function TISO7816Padding.AddPadding(const Data: TBytes;
+  BlockSize: Integer): TBytes;
+var
+  PadLength: Integer;
+  I: Integer;
+begin
+  if not IsBlockSizeValid(BlockSize) then
+    raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
+      [ClassName, BlockSize]);
+  PadLength := GetPadLength(Length(Data), BlockSize);
+  SetLength(Result, Length(Data) + PadLength);
+  if Length(Data) > 0 then
+    Move(Data[0], Result[0], Length(Data));
+  Result[I] := $80;
+  for I := succ(Length(Data)) to High(Result) do
+    Result[I] := 0;
+end;
+
+class function TISO7816Padding.HasValidPadding(const Data: TBytes;
+  BlockSize: Integer): Boolean;
+var
+  I: Integer;
+begin
+  if not IsBlockSizeValid(BlockSize) then
+    exit(false);
+
+  if (Length(Data) = 0) or ((BlockSize > 0) and (Length(Data) mod BlockSize <> 0)) then
+    exit(false);
+
+  I := High(Data);
+  while (I > 0) and (Data[I] <> 0) do
+    dec(I);
+
+  if Data[I] <> $80 then
+    exit(false);
+
+  Result := true;
+end;
+
+class function TISO7816Padding.RemovePadding(const Data: TBytes;
+  BlockSize: Integer): TBytes;
+var
+  I: Integer;
+begin
+  if not HasValidPadding(Data, BlockSize) then
+    raise EDECCipherException.CreateResFmt(@sInvalidPadding, [ClassName]);
+
+  I := High(Data);
+  while (I > 0) and (Data[I] <> 0) do
+    dec(I);
+  if Data[I] <> $80 then
+    raise EDECCipherException.CreateResFmt(@sInvalidPadding, [ClassName]);
+
+  SetLength(Result, I);
+  if length(Result) > 0 then
+    Move(Data[0], Result[0], Length(Result));
 end;
 
 end.
