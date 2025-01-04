@@ -79,7 +79,7 @@ type
     //  </para>
     /// </remarks>
     class function AddPadding(const Data : string;
-                              BlockSize  : Integer): string; overload; virtual; abstract;
+                              BlockSize  : Integer): string; overload; virtual;
     // <summary>
     ///   Adds PKCS#7 padding to a raw byte string.
     /// </summary>
@@ -103,7 +103,7 @@ type
     /// </para>
     /// </remarks>
     class function AddPadding(const Data : RawByteString;
-                              BlockSize  : Integer): RawByteString; overload; virtual; abstract;
+                              BlockSize  : Integer): RawByteString; overload; virtual;
     /// <summary>
     ///   Checks if the specified data contains valid padding.
     /// </summary>
@@ -164,7 +164,7 @@ type
     ///   </para>
     /// </remarks>
     class function RemovePadding(const Data : RawByteString;
-                                 BlockSize  : Integer): RawByteString; overload; virtual; abstract;
+                                 BlockSize  : Integer): RawByteString; overload; virtual;
     // <summary>
     ///   Removes PKCS#7 padding from a string.
     /// </summary>
@@ -191,7 +191,7 @@ type
     ///   </para>
     /// </remarks>
     class function RemovePadding(const Data : string;
-                                 BlockSize  : Integer): string; overload; virtual; abstract;
+                                 BlockSize  : Integer): string; overload; virtual;
   end;
 
   /// <summary>
@@ -229,43 +229,6 @@ type
     /// </returns>
     class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
 
-    // <summary>
-    ///   Adds padding to the specified string, depending on the padding byte
-    ///   returned by GetPaddingByte.
-    /// </summary>
-    /// <param name="data">
-    ///   The string to which padding should be added.
-    /// </param>
-    /// <param name="BlockSize">
-    ///   The block size in byte to align the data with.
-    /// </param>
-    /// <returns>
-    ///   A new byte string with padding applied following the algorithm
-    ///   implemented by the derrived class.
-    /// </returns>
-    /// <remarks>
-    ///   Call this method before starting encryption.
-    /// </remarks>
-    class function AddPadding(const Data: string; BlockSize: Integer): string; override;
-    // <summary>
-    ///   Adds padding to the specified raw byte string, depending on the padding
-    ///   byte returned by GetPaddingByte.
-    /// </summary>
-    /// <param name="data">
-    ///   The raw byte string to which padding should be added.
-    /// </param>
-    /// <param name="BlockSize">
-    ///   The block size in byte to align the data with.
-    /// </param>
-    /// <returns>
-    ///   A new raw byte string with padding applied following the algorithm
-    ///   implemented by the derrived class.
-    /// </returns>
-    /// <remarks>
-    ///   Call this method before starting encryption.
-    /// </remarks>
-    class function AddPadding(const Data : RawByteString;
-                              BlockSize  : Integer): RawByteString; override;
     /// <summary>
     ///   Validates if the specified data contains valid padding as defined by
     ///   GetPaddingByte.
@@ -299,60 +262,6 @@ type
     /// </returns>
     class function RemovePadding(const Data : TBytes;
                                  BlockSize  : Integer): TBytes; override;
-    // <summary>
-    ///   Removes a fixed byte padding from a raw byte string.
-    /// </summary>
-    /// <param name="data">
-    ///   The padded byte raw byte string.
-    /// </param>
-    /// <param name="BlockSize">
-    ///   The block size in bytes used for padding.
-    /// </param>
-    /// <returns>
-    ///   A new raw byte string with the padding removed. Raises an exception
-    ///   if the padding is invalid.
-    /// </returns>
-    /// <exception cref="EDECCipherException">
-    ///   Raised if the padding is invalid or missing.
-    /// </exception>
-    /// <remarks>
-    ///   This function checks for valid a fixed byte padding (depending on the
-    ///   derrived class) and raises an `EDECCipherException` exception if the
-    ///   padding is incorrect. This includes cases where the final bytes do not
-    ///   match the pad count or if the pad count is greater than the block size.
-    ///   <para>
-    ///     Call this method after decryption.
-    ///   </para>
-    /// </remarks>
-    class function RemovePadding(const Data : RawByteString;
-                                 BlockSize  : Integer): RawByteString; override;
-    // <summary>
-    ///   Removes a fixed byte padding from a string.
-    /// </summary>
-    /// <param name="data">
-    ///   The padded byte raw byte string.
-    /// </param>
-    /// <param name="BlockSize">
-    ///   The block size in bytes used for padding.
-    /// </param>
-    /// <returns>
-    ///   A new raw byte string with the padding removed. Raises an exception
-    ///   if the padding is invalid.
-    /// </returns>
-    /// <exception cref="EDECCipherException">
-    ///   Raised if the padding is invalid or missing.
-    /// </exception>
-    /// <remarks>
-    ///   This function checks for valid a fixed byte padding (depending on the
-    ///   derrived class) and raises an `EDECCipherException` exception if the
-    ///   padding is incorrect. This includes cases where the final bytes do not
-    ///   match the pad count or if the pad count is greater than the block size.
-    ///   <para>
-    ///     Call this method after decryption.
-    ///   </para>
-    /// </remarks>
-    class function RemovePadding(const Data : string;
-                                 BlockSize  : Integer): string; override;
   end;
 
   /// <summary>
@@ -478,13 +387,66 @@ type
                                    BlockSize  : Integer): Boolean; override;
   end;
 
+  /// <summary>
+  ///   Implementation of ISO 10126 padding algorithm.
+  /// </summary>
+  TDECISO10126Padding = class(TPadding)
+  strict protected
+    /// <summary>
+    ///   The real implementation of the ISO 10126 padding algorithm.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to which to add the padding
+    /// </param>
+
+    class procedure DoPadding(var Data : TBytes;
+                              Start    : Integer); virtual;
+  public
+    /// <summary>
+    ///   Adds padding to the specified data to align it with the given block size.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be padded.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size to align the data with.
+    /// </param>
+    /// <returns>
+    ///   The padded data.
+    /// </returns>
+    /// <remarks>
+    ///   The specific method of padding depends on the implementation of the subclass.
+    /// </remarks>
+    class function AddPadding(const Data : TBytes;
+                              BlockSize  : Integer): TBytes; override;
+
+    /// <summary>
+    ///   Checks if the specified data contains valid padding.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be checked.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The expected block size.
+    /// </param>
+    /// <returns>
+    ///   True if the padding is valid; otherwise, False.
+    /// </returns>
+    /// <remarks>
+    ///   This method is used to ensure the integrity and consistency of the padding.
+    /// </remarks>
+    class function HasValidPadding(const Data : TBytes;
+                                   BlockSize  : Integer): Boolean; override;
+  end;
+
 implementation
 
 uses
   DECUtil;
 
 resourcestring
-  sInvalidPadding = 'Invalid %0:s padding';
+  sInvalidPadding                  = 'Invalid %0:s padding';
+  sInvalidISO10126PaddingOperation = 'Invalid ISO 10126 Padding operation';
 
 { TPKCS7Padding }
 
@@ -510,26 +472,6 @@ begin
   PadByte := GetPaddingByte(PadLength);
   for I := Length(Data) to High(Result) do
     Result[I] := PadByte;
-end;
-
-class function TFixedBytePadding.AddPadding(const Data : string;
-                                            BlockSize  : Integer): string;
-var
-  Buf: TBytes;
-begin
-  Buf    := AddPadding(StringToBytes(Data), BlockSize);
-  Result := BytesToString(Buf);
-  ProtectBytes(Buf);
-end;
-
-class function TFixedBytePadding.AddPadding(const Data : RawByteString;
-                                            BlockSize  : Integer): RawByteString;
-var
-  Buf: TBytes;
-begin
-  Buf    := AddPadding(RawStringToBytes(Data), BlockSize);
-  Result := BytesToRawString(Buf);
-  ProtectBytes(Buf);
 end;
 
 class function TFixedBytePadding.HasValidPadding(const Data : TBytes;
@@ -567,26 +509,6 @@ begin
   SetLength(Result, Length(Data) - PadLength);
   if length(Result) > 0 then
     Move(Data[0], Result[0], Length(Result));
-end;
-
-class function TFixedBytePadding.RemovePadding(const Data : RawByteString;
-                                               BlockSize  : Integer): RawByteString;
-var
-  Buf: TBytes;
-begin
-  Buf    := RemovePadding(RawStringToBytes(Data), BlockSize);
-  Result := BytesToRawString(Buf);
-  ProtectBytes(Buf);
-end;
-
-class function TFixedBytePadding.RemovePadding(const Data : string;
-                                               BlockSize  : Integer): string;
-var
-  Buf: TBytes;
-begin
-  Buf    := RemovePadding(StringToBytes(Data), BlockSize);
-  Result := BytesToString(Buf);
-  ProtectBytes(Buf);
 end;
 
 { TANSI_X9_23_Padding }
@@ -632,6 +554,104 @@ begin
 
   // do not check padding byte, as that one is random for this variant
   Result := true;
+end;
+
+{ TPadding }
+
+class function TPadding.AddPadding(const Data : string;
+                                   BlockSize  : Integer): string;
+var
+  Buf: TBytes;
+begin
+  Buf    := AddPadding(StringToBytes(Data), BlockSize);
+  Result := BytesToString(Buf);
+  ProtectBytes(Buf);
+end;
+
+class function TPadding.AddPadding(const Data : RawByteString;
+                                   BlockSize  : Integer): RawByteString;
+var
+  Buf: TBytes;
+begin
+  Buf    := AddPadding(RawStringToBytes(Data), BlockSize);
+  Result := BytesToRawString(Buf);
+  ProtectBytes(Buf);
+end;
+
+class function TPadding.RemovePadding(const Data : string;
+                                      BlockSize  : Integer): string;
+var
+  Buf: TBytes;
+begin
+  Buf    := RemovePadding(StringToBytes(Data), BlockSize);
+  Result := BytesToString(Buf);
+  ProtectBytes(Buf);
+end;
+
+class function TPadding.RemovePadding(const Data : RawByteString;
+                                      BlockSize  : Integer): RawByteString;
+var
+  Buf: TBytes;
+begin
+  Buf    := RemovePadding(RawStringToBytes(Data), BlockSize);
+  Result := BytesToRawString(Buf);
+  ProtectBytes(Buf);
+end;
+
+{ TDECISO10126Padding }
+
+class procedure TDECISO10126Padding.DoPadding(var Data: TBytes; Start: Integer);
+//var
+//  PadByte: Byte;
+begin
+//  PadByte := Length(Data) - Start;
+//
+//  if PadByte < 1 then
+//    raise EDECCipherException.CreateRes(@sInvalidISO10126PaddingOperation);
+//
+//  RandomBuffer(Data[Start], PadByte);
+//
+//  Data[High(Data)] := PadByte;
+end;
+
+//class function TDECISO10126Padding.AddPadding(const Data: TBytes; BlockSize, MinLength: Integer): TBytes;
+//var
+//  ResLength: Integer;
+//begin
+//  ResLength := CalculatePaddingLength(Length(Data), BlockSize, MinLength);
+//
+//  if (ResLength < 0) or (ResLength - Length(Data) > 255) then
+//    raise EDECCipherException.CreateRes(@sInvalidISO10126PaddingOperation);
+//
+//  SetLength(Result, ResLength);
+//
+//  if Length(Data) > 0 then
+//    Move(Data[0], Result[0], Length(Data));
+//
+//  DoPadding(Result, Length(Data));
+//end;
+
+class function TDECISO10126Padding.AddPadding(const Data : TBytes;
+                                              BlockSize  : Integer): TBytes;
+begin
+
+end;
+
+class function TDECISO10126Padding.HasValidPadding(const Data: TBytes; BlockSize: Integer): Boolean;
+var
+  PadLength: Integer;
+begin
+  Result := False;
+  if (Length(Data) = 0) or ((BlockSize > 0) and
+     (Length(Data) mod BlockSize <> 0)) then
+    Exit;
+
+  PadLength := Data[High(Data)];
+
+  if PadLength > Length(Data) then
+    Exit;
+
+  Result := True;
 end;
 
 end.
