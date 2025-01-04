@@ -60,6 +60,14 @@ type
   published
   end;
 
+  // Test methods for class TANSI_X9_23Padding_Legacy
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTANSI_X9_23Padding_Legacy = class(TestTPaddingBase)
+  strict private
+  public
+  published
+  end;
+
 
 // {, pmISO10126, pmISO7816
 
@@ -71,7 +79,10 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECPKCS7Padding);
   TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding);
+  TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding_Legacy);
   {$ELSE}
-  RegisterTests('DECCipherPaddings', [TestTDECPKCS7Padding.Suite, TestTANSI_X9_23Padding.Suite]);
+  RegisterTests('DECCipherPaddings', [TestTDECPKCS7Padding.Suite,
+                                      TestTANSI_X9_23Padding.Suite,
+                                      TestTANSI_X9_23Padding_Legacy.Suite]);
   {$ENDIF}
 end.

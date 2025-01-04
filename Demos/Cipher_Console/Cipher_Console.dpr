@@ -52,7 +52,8 @@ begin
       // Init our encryption, note that this is the German spelling of Password
       CipherKey := 'Passwort';
       // The IV should be different each time you encrypt/decrypt something. The
-      // decrypting party needs to know the IV as well of course.
+      // decrypting party needs to know the IV as well of course. A more thorough
+      // example for using IVs can befound in the Cipher_FMX example project.
       IV := #0#0#0#0#0#0#0#0;
       Cipher.Init(CipherKey, IV, 0);
       Cipher.Mode := cmCBCx;

@@ -390,7 +390,8 @@ type
   TPKCS5Padding = class(TPKCS7Padding);
 
   /// <summary>
-  ///   Implementation of the ANSI X9.23 padding algorithm.
+  ///   Implementation of the ANSI X9.23 padding algorithm. This is the more
+  ///   commonly used variant of this algorithm.
   /// </summary>
   /// <remarks>
   ///   ANSI X9.23 padding is a standard algorithm used in symmetric cryptosystems
@@ -414,6 +415,67 @@ type
     ///   The byte value used as as padding
     /// </returns>
     class function GetPaddingByte(PaddingLength : Integer): UInt8; override;
+  end;
+
+  /// <summary>
+  ///   Implementation of a ANSI X9.23 padding algorithm variant. Here the padding
+  ///   byte is a random value, which would be good, but is rarely used and a lot
+  ///   of ANSI X9.23 padding using software cannot deal with this. Recommendation
+  ///   is to use the TANSI_X9_23_Padding padding rather.
+  /// </summary>
+  /// <remarks>
+  ///   ANSI X9.23 padding is a standard algorithm used in symmetric cryptosystems
+  ///   like AES and is a close relative to PKCS#7.
+  ///   ANSI X9.23 padding ads #0 (instead as #PadLength like PKCS#7)
+  ///   bytes to the end of the data so that the total length is a multiple of
+  ///   the block size.
+  /// <para>
+  ///   Call this method before starting encryption.
+  //  </para>
+  /// </remarks>
+  TANSI_X9_23_Padding_Legacy = class(TFixedBytePadding)
+  strict protected
+    /// <summary>
+    ///   Retrieves the padding character used to fill up the last block(s).
+    /// </summary>
+    /// <param name="PaddingLength">
+    ///   The length of the padding in byte.
+    /// </param>
+    /// <returns>
+    ///   The byte value used as as padding
+    /// </returns>
+    class function GetPaddingByte(PaddingLength : Integer): UInt8; override;
+  public
+    /// <summary>
+    ///   Adds padding to the specified data, depending on the padding byte
+    ///   returned by GetPaddingByte.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be padded.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The block size in byte to align the data with.
+    /// </param>
+    /// <returns>
+    ///   The padded data following the algorithm implemented by the derrived class.
+    /// </returns>
+    class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
+
+    /// <summary>
+    ///   Validates if the specified data contains valid padding as defined by
+    ///   GetPaddingByte.
+    /// </summary>
+    /// <param name="Data">
+    ///   The data to be checked.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The expected block size.
+    /// </param>
+    /// <returns>
+    ///   True if the padding is valid; otherwise, False.
+    /// </returns>
+    class function HasValidPadding(const Data : TBytes;
+                                   BlockSize  : Integer): Boolean; override;
   end;
 
 implementation
@@ -532,6 +594,44 @@ end;
 class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength: Integer): UInt8;
 begin
   Result := 0;
+end;
+
+{ TANSI_X9_23_Padding_Legacy }
+
+class function TANSI_X9_23_Padding_Legacy.AddPadding(const Data : TBytes;
+                                                     BlockSize  : Integer): TBytes;
+var
+  PadLength: Integer;
+  I: Integer;
+begin
+  PadLength := BlockSize - (Length(Data) mod BlockSize);
+  SetLength(Result, Length(Data) + PadLength);
+  if Length(Data) > 0 then
+    Move(Data[0], Result[0], Length(Data));
+
+  for I := Length(Data) to High(Result) do
+    Result[I] := GetPaddingByte(PadLength);
+end;
+
+class function TANSI_X9_23_Padding_Legacy.GetPaddingByte(PaddingLength: Integer): UInt8;
+begin
+  Result := Random(256);
+end;
+
+class function TANSI_X9_23_Padding_Legacy.HasValidPadding(const Data : TBytes;
+                                                          BlockSize  : Integer): Boolean;
+var
+  PadLength : Integer;
+begin
+  if Length(Data) = 0 then
+    exit(false);
+
+  PadLength := Data[High(Data)];
+  if (PadLength <= 0) or (PadLength > BlockSize) then
+    exit(false);
+
+  // do not check padding byte, as that one is random for this variant
+  Result := true;
 end;
 
 end.
