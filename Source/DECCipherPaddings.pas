@@ -195,12 +195,26 @@ type
     ///   Check if block size is supported by the concerete padding algorithm.
     /// </summary>
     /// <param name="BlockSize">
-    ///   The length of the block size.
+    ///   The length of the block.
     /// </param>
     /// <returns>
     ///   True, if block size is expected otherwise false.
     /// </returns>
     class function IsBlockSizeValid(BlockSize: integer): boolean; virtual; abstract;
+
+    /// <summary>
+    ///   Calculated the length of the pad.
+    /// </summary>
+    /// <param name="DataSize">
+    ///   The length of the data.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The length of the block.
+    /// </param>
+    /// <returns>
+    ///   Length of padding.
+    /// </returns>
+    class function GetPadLength(DataSize, BlockSize: integer): integer; virtual; abstract;
 
     /// <summary>
     ///   Retrieves the padding character used to fill up the last block(s).
@@ -378,6 +392,21 @@ type
   TPKCS7Padding = class(TFixedBytePadding)
   strict protected
     /// <summary>
+    ///   Calculated the length of the pad.
+    /// </summary>
+    /// <param name="DataSize">
+    ///   The length of the data.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The length of the block.
+    /// </param>
+    /// <returns>
+    ///   Length of padding. Can not be zero. When the DataSize is a multiply of
+    ///   the BlockSize the method returns the BlockSize.
+    /// </returns>
+    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+
+    /// <summary>
     ///   Check if block size is supported by the concerete padding algorithm.
     /// </summary>
     /// <param name="BlockSize">
@@ -436,6 +465,21 @@ type
   /// </remarks>
   TANSI_X9_23_Padding = class(TFixedBytePadding)
   strict protected
+    /// <summary>
+    ///   Calculated the length of the pad.
+    /// </summary>
+    /// <param name="DataSize">
+    ///   The length of the data.
+    /// </param>
+    /// <param name="BlockSize">
+    ///   The length of the block.
+    /// </param>
+    /// <returns>
+    ///   Length of padding. Can not zero when the DataSize is a multiply of
+    ///   the BlockSize.
+    /// </returns>
+    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+
     /// <summary>
     ///   Check if block size is supported by the concerete padding algorithm.
     /// </summary>
@@ -522,7 +566,7 @@ begin
   if not IsBlockSizeValid(BlockSize) then
     raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
       [ClassName, BlockSize]);
-  PadLength := BlockSize - (Length(Data) mod BlockSize);
+  PadLength := GetPadLength(Length(Data), BlockSize);
   SetLength(Result, Length(Data) + PadLength);
   if Length(Data) > 0 then
     Move(Data[0], Result[0], Length(Data));
@@ -610,6 +654,12 @@ end;
 
 { TPKCS7Padding }
 
+class function TPKCS7Padding.GetPadLength(DataSize,
+  BlockSize: integer): integer;
+begin
+  result := BlockSize - (DataSize mod BlockSize);
+end;
+
 class function TPKCS7Padding.IsBlockSizeValid(BlockSize: integer): boolean;
 begin
   result := (BlockSize > 0) and (BlockSize < 256);
@@ -642,6 +692,12 @@ begin
     Result := Byte(PaddingLength)
   else
     Result := 0;
+end;
+
+class function TANSI_X9_23_Padding.GetPadLength(DataSize,
+  BlockSize: integer): integer;
+begin
+  result := DataSize mod BlockSize;
 end;
 
 class function TANSI_X9_23_Padding.HasValidPadding(const Data: TBytes;
