@@ -756,6 +756,7 @@ begin
       DecodeGCM(@Source, @Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -851,6 +852,7 @@ begin
         if not IsEncode and doPadding then
         begin
           case FPaddingMode of
+            pmNone: ;
             pmPKCS7,
             pmPKCS5      : outBuffer := TPKCS7Padding.RemovePadding(outBuffer, Context.BlockSize);
             pmANSI_X9_23 : outBuffer := TANSI_X9_23_Padding.RemovePadding(outBuffer, Context.BlockSize);
@@ -1043,6 +1045,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1073,6 +1076,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1141,6 +1145,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1351,6 +1356,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1391,6 +1397,7 @@ begin
   else
     SetLength(Result, 0);
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1439,6 +1446,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
@@ -1471,6 +1479,7 @@ begin
     SetLength(Result, 0);
 
   case FPaddingMode of
+    pmNone: ;
     pmPKCS7,
     pmPKCS5      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
     pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
