@@ -200,7 +200,7 @@ type
     /// <returns>
     ///   True, if block size is expected otherwise false.
     /// </returns>
-    class function IsBlockSizeValid(BlockSize: integer): boolean; virtual; abstract;
+    class function IsBlockSizeValid(BlockSize: Integer): Boolean; virtual; abstract;
 
     /// <summary>
     ///   Calculated the length of the pad.
@@ -214,7 +214,7 @@ type
     /// <returns>
     ///   Length of padding.
     /// </returns>
-    class function GetPadLength(DataSize, BlockSize: integer): integer; virtual; abstract;
+    class function GetPadLength(DataSize, BlockSize: Integer): Integer; virtual; abstract;
 
     /// <summary>
     ///   Retrieves the padding character used to fill up the last block(s).
@@ -228,8 +228,8 @@ type
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer;
-      IsLastPaddingByte: boolean): UInt8; virtual; abstract;
+    class function GetPaddingByte(PaddingLength     : Integer;
+                                  IsLastPaddingByte : Boolean): UInt8; virtual; abstract;
   public
     /// <summary>
     ///   Adds padding to the specified data, depending on the padding byte
@@ -244,7 +244,8 @@ type
     /// <returns>
     ///   The padded data following the algorithm implemented by the derrived class.
     /// </returns>
-    class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
+    class function AddPadding(const Data : TBytes;
+                              BlockSize  : Integer): TBytes; override;
 
     // <summary>
     ///   Adds padding to the specified string, depending on the padding byte
@@ -263,7 +264,8 @@ type
     /// <remarks>
     ///   Call this method before starting encryption.
     /// </remarks>
-    class function AddPadding(const Data: string; BlockSize: Integer): string; override;
+    class function AddPadding(const Data : string;
+                              BlockSize  : Integer): string; override;
 
     // <summary>
     ///   Adds padding to the specified raw byte string, depending on the padding
@@ -404,7 +406,7 @@ type
     ///   Length of padding. Can not be zero. When the DataSize is a multiply of
     ///   the BlockSize the method returns the BlockSize.
     /// </returns>
-    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+    class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
 
     /// <summary>
     ///   Check if block size is supported by the concerete padding algorithm.
@@ -415,7 +417,7 @@ type
     /// <returns>
     ///   True, if block size is in expected range of 1..255, otherwise false.
     /// </returns>
-    class function IsBlockSizeValid(BlockSize: integer): boolean; override;
+    class function IsBlockSizeValid(BlockSize: Integer): Boolean; override;
 
     /// <summary>
     ///   Retrieves the padding character used to fill up the last block(s).
@@ -429,8 +431,8 @@ type
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer;
-      IsLastPaddingByte: boolean): UInt8; override;
+    class function GetPaddingByte(PaddingLength     : Integer;
+                                  IsLastPaddingByte : Boolean): UInt8; override;
   end;
 
   /// <summary>
@@ -447,7 +449,7 @@ type
     /// <returns>
     ///   True, if block size is in expected range of 1..255, otherwise false.
     /// </returns>
-    class function IsBlockSizeValid(BlockSize: integer): boolean; override;
+    class function IsBlockSizeValid(BlockSize: Integer): Boolean; override;
   end;
 
   /// <summary>
@@ -478,7 +480,7 @@ type
     ///   Length of padding. Can be zero when the DataSize is a multiply of
     ///   the BlockSize.
     /// </returns>
-    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+    class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
 
     /// <summary>
     ///   Check if block size is supported by the concerete padding algorithm.
@@ -489,7 +491,7 @@ type
     /// <returns>
     ///   True, if block size is > 0, otherwise false.
     /// </returns>
-    class function IsBlockSizeValid(BlockSize: integer): boolean; override;
+    class function IsBlockSizeValid(BlockSize: Integer): Boolean; override;
     /// <summary>
     ///   Retrieves the padding character used to fill up the last block(s).
     /// </summary>
@@ -502,8 +504,8 @@ type
     /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer;
-      IsLastPaddingByte: boolean): UInt8; override;
+    class function GetPaddingByte(PaddingLength     : Integer;
+                                  IsLastPaddingByte : Boolean): UInt8; override;
   public
     /// <summary>
     ///   Validates if the specified data contains valid padding as defined by
@@ -524,7 +526,7 @@ type
     ///   here.
     /// </returns>
     class function HasValidPadding(const Data : TBytes;
-      BlockSize  : Integer): Boolean; override;
+                                   BlockSize  : Integer): Boolean; override;
   end;
 
   // ISO 10126 is smilar to ANSI X9.23 padding, but it uses a random padding
@@ -542,8 +544,8 @@ type
     /// </param>    /// <returns>
     ///   The byte value used as padding
     /// </returns>
-    class function GetPaddingByte(PaddingLength : Integer;
-      IsLastPaddingByte: boolean): UInt8; override;
+    class function GetPaddingByte(PaddingLength     : Integer;
+                                  IsLastPaddingByte : Boolean): UInt8; override;
   end;
 
   TISO7816Padding = class(TFixedBytePadding)
@@ -561,7 +563,7 @@ type
     ///   Length of padding. Can not zero when the DataSize is a multiply of
     ///   the BlockSize.
     /// </returns>
-    class function GetPadLength(DataSize, BlockSize: integer): integer; override;
+    class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
   public
     /// <summary>
     ///   Adds padding to the specified data, depending on the padding byte
@@ -576,7 +578,8 @@ type
     /// <returns>
     ///   The padded data following the algorithm implemented by the derrived class.
     /// </returns>
-    class function AddPadding(const Data: TBytes; BlockSize: Integer): TBytes; override;
+    class function AddPadding(const Data : TBytes;
+                              BlockSize  : Integer): TBytes; override;
 
     /// <summary>
     ///   Validates if the specified data contains valid padding as defined by
@@ -618,7 +621,7 @@ uses
   DECUtil, DECRandom;
 
 resourcestring
-  sInvalidPadding = 'Invalid %0:s padding';
+  sInvalidPadding                 = 'Invalid %0:s padding';
   sUnsupportedBlockSizeForPadding = 'Unsupported block size of %1:d for %0:s padding';
 
 { TFixedBytePadding }
@@ -632,7 +635,9 @@ begin
   if not IsBlockSizeValid(BlockSize) then
     raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
       [ClassName, BlockSize]);
+
   PadLength := GetPadLength(Length(Data), BlockSize);
+
   SetLength(Result, Length(Data) + PadLength);
   if Length(Data) > 0 then
     Move(Data[0], Result[0], Length(Data));
@@ -723,12 +728,12 @@ end;
 class function TPKCS7Padding.GetPadLength(DataSize,
   BlockSize: integer): integer;
 begin
-  result := BlockSize - (DataSize mod BlockSize);
+  Result := BlockSize - (DataSize mod BlockSize);
 end;
 
 class function TPKCS7Padding.IsBlockSizeValid(BlockSize: integer): boolean;
 begin
-  result := (BlockSize > 0) and (BlockSize < 256);
+  Result := (BlockSize > 0) and (BlockSize < 256);
 end;
 
 class function TPKCS7Padding.GetPaddingByte(PaddingLength: Integer;
@@ -741,14 +746,14 @@ end;
 
 class function TPKCS5Padding.IsBlockSizeValid(BlockSize: integer): boolean;
 begin
-  result := BlockSize = 8;
+  Result := BlockSize = 8;
 end;
 
 { TANSI_X9_23_Padding }
 
 class function TANSI_X9_23_Padding.IsBlockSizeValid(BlockSize: integer): boolean;
 begin
-  result := BlockSize > 0;
+  Result := BlockSize > 0;
 end;
 
 class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength: Integer;
@@ -763,7 +768,7 @@ end;
 class function TANSI_X9_23_Padding.GetPadLength(DataSize,
   BlockSize: integer): integer;
 begin
-  result := DataSize mod BlockSize;
+  Result := DataSize mod BlockSize;
 end;
 
 class function TANSI_X9_23_Padding.HasValidPadding(const Data: TBytes;
@@ -801,7 +806,7 @@ end;
 class function TISO7816Padding.GetPadLength(DataSize,
   BlockSize: integer): integer;
 begin
-  result := DataSize mod BlockSize;
+  Result := DataSize mod BlockSize;
 end;
 
 class function TISO7816Padding.AddPadding(const Data: TBytes;
@@ -813,10 +818,13 @@ begin
   if not IsBlockSizeValid(BlockSize) then
     raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
       [ClassName, BlockSize]);
+
   PadLength := GetPadLength(Length(Data), BlockSize);
+
   SetLength(Result, Length(Data) + PadLength);
   if Length(Data) > 0 then
     Move(Data[0], Result[0], Length(Data));
+
   I := Length(Data);
   Result[I] := $80;
   for I := succ(Length(Data)) to High(Result) do
