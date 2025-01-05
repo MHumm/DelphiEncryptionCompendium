@@ -228,6 +228,8 @@ type
     ///   This is the size of FData in byte
     /// </summary>
     FDataSize : Integer;
+  private
+    procedure SetPaddingMode(const Value: TPaddingMode);
   strict protected
     /// <summary>
     ///   Block chaining mode used to concatenate/connect blocks in a block cipher
@@ -329,6 +331,12 @@ type
     ///   Size of the key passed in bytes.
     /// </param>
     procedure DoInit(const Key; Size: Integer); virtual; abstract;
+
+    /// <summary>
+    ///   Assignes the right padding class to the class type field. Used only
+    ///   from DECCipherFormats downwards.
+    /// </summary>
+    procedure InitPaddingClass; virtual; abstract;
     /// <summary>
     ///   Allows to run code after the initialization vector has been initialized
     ///   inside the Init call, which is after DoInit has been called.
@@ -787,7 +795,7 @@ type
     /// </summary>
     property PaddingMode: TPaddingMode
       read   FPaddingMode
-      write  FPaddingMode;
+      write  SetPaddingMode;
   end;
 
 /// <summary>
@@ -914,8 +922,8 @@ begin
   else
     FAdditionalBufferBackup := nil;
 
-  FPaddingMode := pmNone;
-  FState       := csNew;
+  self.PaddingMode := pmNone;
+  FState           := csNew;
 
   SecureErase;
 end;
@@ -944,6 +952,12 @@ begin
     FMode := Value;
     InitMode;
   end;
+end;
+
+procedure TDECCipher.SetPaddingMode(const Value: TPaddingMode);
+begin
+  FPaddingMode := Value;
+  InitPaddingClass;
 end;
 
 procedure TDECCipher.CheckState(States: TCipherStates);
@@ -983,9 +997,10 @@ begin
   FState          := csNew;
   FInitVectorSize := IVectorSize;
 
+  // stream ciphers have no padding modes
   if (PaddingMode <> pmNone) and (ctStream in Context.CipherType) then
     raise EDECCipherException.CreateRes(@sInvalidUseOfPadding);
-  FPaddingMode    := PaddingMode;
+  self.PaddingMode := PaddingMode;
 
   SecureErase;
 

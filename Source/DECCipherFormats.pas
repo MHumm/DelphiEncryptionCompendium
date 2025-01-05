@@ -26,7 +26,7 @@ uses
   {$ELSE}
   System.SysUtils, System.Classes,
   {$ENDIF}
-  DECCipherBase, DECCipherModes,
+  DECCipherBase, DECCipherModes, DECCipherPaddings,
   DECUtil, DECTypes, DECFormatBase, DECCipherInterface;
 
 type
@@ -41,7 +41,14 @@ type
   ///   moved in order to keep the base cipher class small and clean.
   /// </summary>
   TDECFormattedCipher = class(TDECCipherModes, IDECCipher)
-  private
+  strict private
+    /// <summary>
+    ///   The static class assigned to this field via Init method or PaddingMode
+    ///   property is being used to add or remove paddings in order to simplyfy
+    ///   ading further padding shemes.
+    /// </summary>
+    FPaddingClass : TDECPaddingClass;
+
     /// <summary>
     ///   Encrypts or decrypts the data contained in a given stream
     /// </summary>
@@ -97,6 +104,11 @@ type
                                  const Proc: TDECCipherCodeEvent;
                                  const OnProgress: TDECProgressEvent;
                                  IsEncode: Boolean);
+  strict protected
+    /// <summary>
+    ///   Assignes the right padding class to the class type field.
+    /// </summary>
+    procedure InitPaddingClass; override;
   public
     /// <summary>
     ///   Encrypts the contents of a given byte array
@@ -707,7 +719,7 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECBaseClass, DECCipherPaddings;
+  DECBaseClass;
 
 resourcestring
   sPaddingModeNotImplemented = 'Padding mode %0:s not implemented';
@@ -725,20 +737,10 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
   end;
 
 begin
-  case FPaddingMode of
-    pmPKCS7      : Result := CipherEncodeBytes(
-                               TPKCS7Padding.AddPadding(Source, Context.BlockSize));
-    pmPKCS5      : Result := CipherEncodeBytes(
-                               TPKCS5Padding.AddPadding(Source, Context.BlockSize));
-    pmANSI_X9_23 : Result := CipherEncodeBytes(
-                               TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize));
-    pmISO10126   : Result := CipherEncodeBytes(
-                               TISO10126Padding.AddPadding(Source, Context.BlockSize));
-    pmISO7816    : Result := CipherEncodeBytes(
-                               TISO7816Padding.AddPadding(Source, Context.BlockSize));
-    else
-      Result := CipherEncodeBytes(Source);
-  end;
+  if not (FPaddingClass = nil) then
+    Result := CipherEncodeBytes(FPaddingClass.AddPadding(Source, Context.BlockSize))
+  else
+    Result := CipherEncodeBytes(Source);
 end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
@@ -756,18 +758,8 @@ begin
     if (FMode = cmGCM) then
       DecodeGCM(@Source, @Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingClass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 procedure TDECFormattedCipher.DoEncodeDecodeStream(const Source, Dest: TStream;
@@ -792,7 +784,7 @@ begin
   StartPos  := Pos;
   doPadding := false;
   doStartOnlyPadding := (DataSize = 0) and IsEncode and
-    (fPaddingMode in [pmPKCS5, pmPKCS7]);
+    (FPaddingMode in [pmPKCS5, pmPKCS7]);
 
   if (DataSize > 0) or doStartOnlyPadding then
   begin
@@ -844,17 +836,9 @@ begin
 
         if IsEncode and doPadding then
         begin
-          case FPaddingMode of
-            pmPKCS7      : Buffer := TPKCS7Padding.AddPadding(Buffer, Context.BlockSize);
-            pmPKCS5      : Buffer := TPKCS5Padding.AddPadding(Buffer, Context.BlockSize);
-            pmANSI_X9_23 : Buffer := TANSI_X9_23_Padding.AddPadding(Buffer, Context.BlockSize);
-            pmISO10126   : Buffer := TISO10126Padding.AddPadding(Buffer, Context.BlockSize);
-            pmISO7816    : Buffer := TISO7816Padding.AddPadding(Buffer, Context.BlockSize);
-            else
-              raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                                     [GetEnumName(TypeInfo(TPaddingMode),
-                                                        Integer(FPaddingMode))]);
-          end;
+          if not (FPaddingCLass = nil) then
+            Buffer := FPaddingClass.AddPadding(Buffer, Context.BlockSize);
+
           Bytes  := length(Buffer);
           SetLength(outBuffer, length(Buffer));
         end;
@@ -863,17 +847,8 @@ begin
         CipherProc(Buffer[0], outBuffer[0], Bytes);
         if not IsEncode and doPadding then
         begin
-          case FPaddingMode of
-            pmPKCS7      : outBuffer := TPKCS7Padding.RemovePadding(outBuffer, Context.BlockSize);
-            pmPKCS5      : outBuffer := TPKCS5Padding.RemovePadding(outBuffer, Context.BlockSize);
-            pmANSI_X9_23 : outBuffer := TANSI_X9_23_Padding.RemovePadding(outBuffer, Context.BlockSize);
-            pmISO10126   : outBuffer := TISO10126Padding.RemovePadding(outBuffer, Context.BlockSize);
-            pmISO7816    : outBuffer := TISO7816Padding.RemovePadding(outBuffer, Context.BlockSize);
-            else
-              raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                                     [GetEnumName(TypeInfo(TPaddingMode),
-                                                        Integer(FPaddingMode))]);
-          end;
+          if not (FPaddingCLass = nil) then
+            outBuffer := FPaddingCLass.RemovePadding(outBuffer, Context.BlockSize);
 
           Bytes := length(outBuffer);
         end;
@@ -972,31 +947,23 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: string;
   end;
 
 begin
-  case FPaddingMode of
-    pmPKCS7      : Result := CipherEncodeStringToBytes(
-                               TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : Result := CipherEncodeStringToBytes(
-                               TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : Result := CipherEncodeStringToBytes(
-                               TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : Result := CipherEncodeStringToBytes(
-                               TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : Result := CipherEncodeStringToBytes(
-                               TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingCLass = nil) then
+    Result := CipherEncodeStringToBytes(FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                        Format)
+  else
+    if Length(Source) > 0 then
+      Result := CipherEncodeStringToBytes(Source, Format)
     else
-      if Length(Source) > 0 then
-        Result := CipherEncodeStringToBytes(Source, Format)
-      else
-      begin
-        SetLength(Result, 0);
-        exit;
-      end;
-  end;
+    begin
+      SetLength(Result, 0);
+      exit;
+    end;
 
   Result := ValidFormat(Format).Encode(Result);
 end;
 
-function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
+function TDECFormattedCipher.EncodeStringToBytes(const Source : RawByteString;
+                                                 Format       : TDECFormatClass): TBytes;
 
   function CipherEncodeStringToBytes(const Source: RawByteString;
     Format: TDECFormatClass): TBytes;
@@ -1015,17 +982,9 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: RawByteString; Fo
   end;
 
 begin
-  case FPaddingMode of
-    pmPKCS7      : Result := CipherEncodeStringToBytes(
-                               TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : Result := CipherEncodeStringToBytes(
-                               TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : Result := CipherEncodeStringToBytes(
-                               TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : Result := CipherEncodeStringToBytes(
-                               TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : Result := CipherEncodeStringToBytes(
-                               TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingCLass = nil) then
+    Result := CipherEncodeStringToBytes(FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                        Format)
     else
       if Length(Source) > 0 then
         Result := CipherEncodeStringToBytes(Source, Format)
@@ -1034,7 +993,6 @@ begin
         SetLength(Result, 0);
         exit;
       end;
-  end;
 
   Result := ValidFormat(Format).Encode(Result);
 end;
@@ -1055,18 +1013,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingCLass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 function TDECFormattedCipher.DecodeStringToBytes(const Source: RawByteString; Format: TDECFormatClass): TBytes;
@@ -1085,18 +1033,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingCLass = nil) then
+    Result := FpaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 {$IFDEF ANSISTRINGSUPPORTED}
@@ -1113,26 +1051,17 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: AnsiString; Forma
   end;
 
 begin
-  case FPaddingMode of
-    pmPKCS7      : Result := CipherEncodeStringToBytes(
-                               TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : Result := CipherEncodeStringToBytes(
-                               TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : Result := := CipherEncodeStringToBytes(
-                               TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : Result := CipherEncodeStringToBytes(
-                               TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : Result := CipherEncodeStringToBytes(
-                               TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingCLass = nil) then
+    Result := CipherEncodeStringToBytes(FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                        Format);
+  else
+    if Length(Source) > 0 then
+      Result := CipherEncodeStringToBytes(Source, Format)
     else
-      if Length(Source) > 0 then
-        Result := CipherEncodeStringToBytes(Source, Format)
-      else
-      begin
-        SetLength(Result, 0);
-        exit;
-      end;
-  end;
+    begin
+      SetLength(Result, 0);
+      exit;
+    end;
 
   Result := ValidFormat(Format).Encode(Result);
 end;
@@ -1155,18 +1084,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingCLass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 {$ENDIF}
 
@@ -1184,26 +1103,17 @@ function TDECFormattedCipher.EncodeStringToBytes(const Source: WideString; Forma
   end;
 
 begin
-  case FPaddingMode of
-    pmPKCS7      : Result := CipherEncodeStringToBytes(
-                         TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : Result := CipherEncodeStringToBytes(
-                         TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : Result := CipherEncodeStringToBytes(
-                         TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : Result := CipherEncodeStringToBytes(
-                         TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : Result := CipherEncodeStringToBytes(
-                         TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingCLass = nil) then
+    Result := CipherEncodeStringToBytes(FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                        Format)
+  else
+    if Length(Source) > 0 then
+      Result := CipherEncodeStringToBytes(Source, Format)
     else
-      if Length(Source) > 0 then
-        Result := CipherEncodeStringToBytes(Source, Format)
-      else
-      begin
-        SetLength(Result, 0);
-        exit;
-      end;
-  end;
+    begin
+      SetLength(Result, 0);
+      exit;
+    end;
 
   Result := ValidFormat(Format).Encode(Result);
 end;
@@ -1213,6 +1123,23 @@ function TDECFormattedCipher.EncodeStringToString(const Source: WideString;
 begin
   result := WideString(EncodeStringToString(string(Source), Format));
 end;
+
+procedure TDECFormattedCipher.InitPaddingClass;
+begin
+  case FPaddingMode of
+    pmNone       : FPaddingClass := nil;
+    pmPKCS7      : FPaddingCLass := TPKCS7Padding;
+    pmPKCS5      : FPaddingCLass := TPKCS5Padding;
+    pmANSI_X9_23 : FPaddingCLass := TANSI_X9_23_Padding;
+    pmISO10126   : FPaddingCLass := TISO10126Padding;
+    pmISO7816    : FPaddingCLass := TISO7816Padding;
+    else
+      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                             [GetEnumName(TypeInfo(TPaddingMode),
+                                                Integer(FPaddingMode))]);
+  end;
+end;
+
 {$ENDIF}
 
 {$IFDEF ANSISTRINGSUPPORTED}
@@ -1233,23 +1160,14 @@ var
   EncryptedBuffer : TBytes;
   Temp            : TBytes;
 begin
-  case FPaddingMode of
-    pmPKCS7      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingClass = nil) then
+    EncryptedBuffer := CipherEncodeStringToBytes(
+                         TPaddingClass.AddPadding(Source, Context.BlockSize), Format)
+  else
+    if Length(Source) > 0 then
+      EncryptedBuffer := CipherEncodeStringToBytes(Source)
     else
-      if Length(Source) > 0 then
-        EncryptedBuffer := CipherEncodeStringToBytes(Source)
-      else
-        exit('');
-  end;
+      exit('');
 
   Temp := ValidFormat(Format).Encode(EncryptedBuffer);
   SetLength(Result, length(Temp));
@@ -1279,23 +1197,15 @@ function TDECFormattedCipher.EncodeStringToString(const Source: string;
 var
   EncryptedBuffer : TBytes;
 begin
-  case FPaddingMode of
-    pmPKCS7      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                       TPKCS7Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmPKCS5      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                       TPKCS5Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmANSI_X9_23 : EncryptedBuffer := CipherEncodeStringToBytes(
-                                       TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO10126   : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingClass = nil) then
+    EncryptedBuffer := CipherEncodeStringToBytes(
+                         FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                                  Format)
+  else
+    if Length(Source) > 0 then
+      EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
     else
-      if Length(Source) > 0 then
-        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
-      else
-        exit('');
-  end;
+      exit('');
 
   Result := StringOf(ValidFormat(Format).Encode(EncryptedBuffer));
 end;
@@ -1323,26 +1233,15 @@ var
   EncryptedBuffer : TBytes;
   Temp            : TBytes;
 begin
-  case FPaddingMode of
-    pmPKCS7      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TPKCS7Padding.AddPadding(Source, Context.BlockSize),
-                                                                 Format);
-    pmPKCS5      : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TPKCS5Padding.AddPadding(Source, Context.BlockSize),
-                                                                 Format);
-    pmANSI_X9_23 : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TANSI_X9_23_Padding.AddPadding(Source, Context.BlockSize),
-                                                                       Format);
-    pmISO10126   : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO10126Padding.AddPadding(Source, Context.BlockSize), Format);
-    pmISO7816    : EncryptedBuffer := CipherEncodeStringToBytes(
-                                        TISO7816Padding.AddPadding(Source, Context.BlockSize), Format);
+  if not (FPaddingClass = nil) then
+    EncryptedBuffer := CipherEncodeStringToBytes(
+                         FPaddingClass.AddPadding(Source, Context.BlockSize),
+                                                  Format)
+  else
+    if Length(Source) > 0 then
+      EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
     else
-      if Length(Source) > 0 then
-        EncryptedBuffer := CipherEncodeStringToBytes(Source, Format)
-      else
-        exit('');
-  end;
+      exit('');
 
   Temp := ValidFormat(Format).Encode(EncryptedBuffer);
   SetLength(Result, length(Temp));
@@ -1370,18 +1269,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingClass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 {$ENDIF}
 
@@ -1411,18 +1300,9 @@ begin
   end
   else
     SetLength(Result, 0);
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+
+  if not (FPaddingClass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 {$ENDIF}
 
@@ -1460,18 +1340,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingClass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 function TDECFormattedCipher.DecodeStringToString(const Source: string;
@@ -1493,18 +1363,8 @@ begin
   else
     SetLength(Result, 0);
 
-  case FPaddingMode of
-    pmNone       : ;
-    pmPKCS7      : Result := TPKCS7Padding.RemovePadding(Result, Context.BlockSize);
-    pmPKCS5      : Result := TPKCS5Padding.RemovePadding(Result, Context.BlockSize);
-    pmANSI_X9_23 : Result := TANSI_X9_23_Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO10126   : Result := TISO10126Padding.RemovePadding(Result, Context.BlockSize);
-    pmISO7816    : Result := TISO7816Padding.RemovePadding(Result, Context.BlockSize);
-    else
-      raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
-                                             [GetEnumName(TypeInfo(TPaddingMode),
-                                                Integer(FPaddingMode))]);
-  end;
+  if not (FPaddingClass = nil) then
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 end.

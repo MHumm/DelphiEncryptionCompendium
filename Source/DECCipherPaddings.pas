@@ -183,6 +183,12 @@ type
   end;
 
   /// <summary>
+  ///   Class type of the padding base class, relevant for the class registration
+  ///   and simplified use in DECipherFormsts.
+  /// </summary>
+  TDECPaddingClass = class of TPadding;
+
+  /// <summary>
   ///   Base class for the PKCS7 and ANSI X.923 algorithms, as they are quite similar.
   /// </summary>
   /// <remarks>
@@ -633,8 +639,8 @@ resourcestring
 class function TFixedBytePadding.AddPadding(const Data : TBytes;
                                             BlockSize  : Integer): TBytes;
 var
-  PadLength: Integer;
-  I: Integer;
+  PadLength : Integer;
+  I         : Integer;
 begin
   if not IsBlockSizeValid(BlockSize) then
     raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
@@ -735,33 +741,33 @@ begin
   Result := BlockSize - (DataSize mod BlockSize);
 end;
 
-class function TPKCS7Padding.IsBlockSizeValid(BlockSize: integer): boolean;
+class function TPKCS7Padding.IsBlockSizeValid(BlockSize: Integer): Boolean;
 begin
   Result := (BlockSize > 0) and (BlockSize < 256);
 end;
 
-class function TPKCS7Padding.GetPaddingByte(PaddingLength: Integer;
-  IsLastPaddingByte: boolean): UInt8;
+class function TPKCS7Padding.GetPaddingByte(PaddingLength     : Integer;
+                                            IsLastPaddingByte : Boolean): UInt8;
 begin
   Result := Byte(PaddingLength);
 end;
 
 { TPKCS5Padding }
 
-class function TPKCS5Padding.IsBlockSizeValid(BlockSize: integer): boolean;
+class function TPKCS5Padding.IsBlockSizeValid(BlockSize: Integer): Boolean;
 begin
   Result := BlockSize = 8;
 end;
 
 { TANSI_X9_23_Padding }
 
-class function TANSI_X9_23_Padding.IsBlockSizeValid(BlockSize: integer): boolean;
+class function TANSI_X9_23_Padding.IsBlockSizeValid(BlockSize: Integer): Boolean;
 begin
   Result := BlockSize > 0;
 end;
 
-class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength: Integer;
-  IsLastPaddingByte: boolean): UInt8;
+class function TANSI_X9_23_Padding.GetPaddingByte(PaddingLength     : Integer;
+                                                  IsLastPaddingByte : Boolean): UInt8;
 begin
   if IsLastPaddingByte then
     Result := Byte(PaddingLength)
@@ -770,13 +776,13 @@ begin
 end;
 
 class function TANSI_X9_23_Padding.GetPadLength(DataSize,
-  BlockSize: integer): integer;
+                                                BlockSize : Integer): Integer;
 begin
   Result := DataSize mod BlockSize;
 end;
 
-class function TANSI_X9_23_Padding.HasValidPadding(const Data: TBytes;
-  BlockSize: Integer): Boolean;
+class function TANSI_X9_23_Padding.HasValidPadding(const Data : TBytes;
+                                                   BlockSize  : Integer): Boolean;
 var
   PadLength : Integer;
 begin
@@ -796,8 +802,8 @@ end;
 
 { TISO10126Padding }
 
-class function TISO10126Padding.GetPaddingByte(PaddingLength: Integer;
-  IsLastPaddingByte: boolean): UInt8;
+class function TISO10126Padding.GetPaddingByte(PaddingLength     : Integer;
+                                               IsLastPaddingByte : Boolean): UInt8;
 begin
   if IsLastPaddingByte then
     Result := Byte(PaddingLength)
@@ -816,8 +822,8 @@ end;
 class function TISO7816Padding.AddPadding(const Data: TBytes;
   BlockSize: Integer): TBytes;
 var
-  PadLength: Integer;
-  I: Integer;
+  PadLength : Integer;
+  I         : Integer;
 begin
   if not IsBlockSizeValid(BlockSize) then
     raise EDECCipherException.CreateResFmt(@sUnsupportedBlockSizeForPadding,
@@ -835,8 +841,8 @@ begin
     Result[I] := 0;
 end;
 
-class function TISO7816Padding.HasValidPadding(const Data: TBytes;
-  BlockSize: Integer): Boolean;
+class function TISO7816Padding.HasValidPadding(const Data : TBytes;
+                                               BlockSize  : Integer): Boolean;
 var
   I: Integer;
 begin
@@ -856,8 +862,8 @@ begin
   Result := true;
 end;
 
-class function TISO7816Padding.RemovePadding(const Data: TBytes;
-  BlockSize: Integer): TBytes;
+class function TISO7816Padding.RemovePadding(const Data : TBytes;
+                                             BlockSize  : Integer): TBytes;
 var
   I: Integer;
 begin
