@@ -791,7 +791,8 @@ begin
   Max       := Pos + DataSize;
   StartPos  := Pos;
   doPadding := false;
-  doStartOnlyPadding := (DataSize = 0) and IsEncode and (fPaddingMode > pmNone);
+  doStartOnlyPadding := (DataSize = 0) and IsEncode and
+    (fPaddingMode in [pmPKCS5, pmPKCS7]);
 
   if (DataSize > 0) or doStartOnlyPadding then
   begin
@@ -843,7 +844,17 @@ begin
 
         if IsEncode and doPadding then
         begin
-          Buffer := TPKCS7Padding.AddPadding(Buffer, Context.BlockSize);
+          case FPaddingMode of
+            pmPKCS7      : Buffer := TPKCS7Padding.AddPadding(Buffer, Context.BlockSize);
+            pmPKCS5      : Buffer := TPKCS5Padding.AddPadding(Buffer, Context.BlockSize);
+            pmANSI_X9_23 : Buffer := TANSI_X9_23_Padding.AddPadding(Buffer, Context.BlockSize);
+            pmISO10126   : Buffer := TISO10126Padding.AddPadding(Buffer, Context.BlockSize);
+            pmISO7816    : Buffer := TISO7816Padding.AddPadding(Buffer, Context.BlockSize);
+            else
+              raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
+                                                     [GetEnumName(TypeInfo(TPaddingMode),
+                                                        Integer(FPaddingMode))]);
+          end;
           Bytes  := length(Buffer);
           SetLength(outBuffer, length(Buffer));
         end;
@@ -853,7 +864,6 @@ begin
         if not IsEncode and doPadding then
         begin
           case FPaddingMode of
-            pmNone       : ;
             pmPKCS7      : outBuffer := TPKCS7Padding.RemovePadding(outBuffer, Context.BlockSize);
             pmPKCS5      : outBuffer := TPKCS5Padding.RemovePadding(outBuffer, Context.BlockSize);
             pmANSI_X9_23 : outBuffer := TANSI_X9_23_Padding.RemovePadding(outBuffer, Context.BlockSize);
