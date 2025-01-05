@@ -203,16 +203,16 @@ type
     class function IsBlockSizeValid(BlockSize: Integer): Boolean; virtual; abstract;
 
     /// <summary>
-    ///   Calculated the length of the pad.
+    ///   Calculates the length of the padding.
     /// </summary>
     /// <param name="DataSize">
-    ///   The length of the data.
+    ///   The length of the data in bytes.
     /// </param>
     /// <param name="BlockSize">
-    ///   The length of the block.
+    ///   The length of the block in bytes.
     /// </param>
     /// <returns>
-    ///   Length of padding.
+    ///   Length of the padding in bytes.
     /// </returns>
     class function GetPadLength(DataSize, BlockSize: Integer): Integer; virtual; abstract;
 
@@ -387,14 +387,11 @@ type
   ///   the block size. Each padding byte contains the number of padding bytes
   ///   added. For example, if 5 bytes of padding are needed, each of the 5
   ///   padding bytes will have the value $5.
-  /// <para>
-  ///   Call this method before starting encryption.
-  //  </para>
   /// </remarks>
   TPKCS7Padding = class(TFixedBytePadding)
   strict protected
     /// <summary>
-    ///   Calculated the length of the pad.
+    ///   Calculated the length of the padding.
     /// </summary>
     /// <param name="DataSize">
     ///   The length of the data.
@@ -403,8 +400,8 @@ type
     ///   The length of the block.
     /// </param>
     /// <returns>
-    ///   Length of padding. Can not be zero. When the DataSize is a multiply of
-    ///   the BlockSize the method returns the BlockSize.
+    ///   Length of the padding. Can not be zero. When the DataSize is a multiply
+    ///   of the BlockSize the method returns the BlockSize.
     /// </returns>
     class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
 
@@ -436,7 +433,8 @@ type
   end;
 
   /// <summary>
-  ///   PKCS#5 is a subset of the PKCS#7 padding algorithm.
+  ///   PKCS#5 is a subset of the PKCS#7 padding algorithm. Better use PKCS#7
+  ///   where possible.
   /// </summary>
   TPKCS5Padding = class(TPKCS7Padding)
   strict protected
@@ -461,23 +459,20 @@ type
   ///   ANSI X9.23 padding ads #0 (instead as #PadLength like PKCS#7) for all
   ///   padding positions except the last which contains #PadLength identically
   ///   to PKCS#7.
-  /// <para>
-  ///   Call this method before starting encryption.
-  //  </para>
   /// </remarks>
   TANSI_X9_23_Padding = class(TFixedBytePadding)
   strict protected
     /// <summary>
-    ///   Calculated the length of the pad.
+    ///   Calculates the length of the pad.
     /// </summary>
     /// <param name="DataSize">
-    ///   The length of the data.
+    ///   The length of the data in byte.
     /// </param>
     /// <param name="BlockSize">
-    ///   The length of the block.
+    ///   The length of the block in byte.
     /// </param>
     /// <returns>
-    ///   Length of padding. Can be zero when the DataSize is a multiply of
+    ///   Length of the padding. Can be zero when the DataSize is a multiply of
     ///   the BlockSize.
     /// </returns>
     class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
@@ -529,10 +524,13 @@ type
                                    BlockSize  : Integer): Boolean; override;
   end;
 
-  // ISO 10126 is smilar to ANSI X9.23 padding, but it uses a random padding
-  // instead #0. This can provide some security advantages because the clear
-  // text of the pad is less predictable than using #0.
+  /// <summary>
+  ///   ISO 10126 is smilar to ANSI X9.23 padding, but it uses a random padding
+  ///   instead #0. This can provide some security advantages because the clear
+  ///   text of the pad is less predictable than using #0.
+  /// </summary>
   TISO10126Padding = class(TANSI_X9_23_Padding)
+  strict protected
     /// <summary>
     ///   Retrieves the padding character used to fill up the last block(s).
     /// </summary>
@@ -548,20 +546,25 @@ type
                                   IsLastPaddingByte : Boolean): UInt8; override;
   end;
 
+  /// <summary>
+  ///   This padding algorithm variant (defined in a series of standards for
+  ///   chip cards) marks the end of the data with #80 and fills the necessary
+  ///   padding with #0
+  /// </summary>
   TISO7816Padding = class(TFixedBytePadding)
   strict protected
     /// <summary>
-    ///   Calculated the length of the pad.
+    ///   Calculates the length of the padding.
     /// </summary>
     /// <param name="DataSize">
-    ///   The length of the data.
+    ///   The length of the data in bytes.
     /// </param>
     /// <param name="BlockSize">
-    ///   The length of the block.
+    ///   The length of the block in bytes.
     /// </param>
     /// <returns>
-    ///   Length of padding. Can not zero when the DataSize is a multiply of
-    ///   the BlockSize.
+    ///   Length of the padding in bytes. Can not be zero when the DataSize is a
+    ///   multiply of the BlockSize.
     /// </returns>
     class function GetPadLength(DataSize, BlockSize: Integer): Integer; override;
   public
@@ -613,7 +616,8 @@ type
     ///   The original data without padding.
     /// </returns>
     class function RemovePadding(const Data : TBytes;
-                                 BlockSize  : Integer): TBytes; override;  end;
+                                 BlockSize  : Integer): TBytes; override;
+  end;
 
 implementation
 
@@ -804,7 +808,7 @@ end;
 { TISO7816Padding }
 
 class function TISO7816Padding.GetPadLength(DataSize,
-  BlockSize: integer): integer;
+                                            BlockSize: Integer): Integer;
 begin
   Result := DataSize mod BlockSize;
 end;
