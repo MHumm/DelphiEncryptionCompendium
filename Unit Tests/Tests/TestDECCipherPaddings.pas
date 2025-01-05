@@ -247,8 +247,8 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECPKCS7Padding);
   TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding);
-  TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding_Legacy);
   {$ELSE}
-  RegisterTests('DECCipherPaddings', [TestTPKCS7Padding.Suite, TestTANSI_X9_23Padding.Suite]);
+  RegisterTests('DECCipherPaddings', [TestTPKCS7Padding.Suite,
+                                      TestTANSI_X9_23Padding.Suite]);
   {$ENDIF}
 end.
