@@ -71,16 +71,29 @@ type
   published
   end;
 
-  // Test methods for class TANSI_X9_23Padding_Legacy
+  // Test methods for class TPKCS5Padding
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TestTANSI_X9_23Padding_Legacy = class(TestTPaddingBase)
+  TestTPKCS5Padding = class(TestTPaddingBase)
   strict private
   public
   published
   end;
 
+  // Test methods for class TISO10126Padding
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTISO10126Padding = class(TestTPaddingBase)
+  strict private
+  public
+  published
+  end;
 
-// {, pmISO10126, pmISO7816
+  // Test methods for class TISO7816Padding
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTISO7816Padding = class(TestTPaddingBase)
+  strict private
+  public
+  published
+  end;
 
 implementation
 
@@ -247,8 +260,14 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTPKCS7Padding);
   TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding);
+  TDUnitX.RegisterTestFixture(TestTPKCS5Padding);
+  TDUnitX.RegisterTestFixture(TestTISO10126Padding);
+  TDUnitX.RegisterTestFixture(TestTISO7816Padding);
   {$ELSE}
   RegisterTests('DECCipherPaddings', [TestTPKCS7Padding.Suite,
-                                      TestTANSI_X9_23Padding.Suite]);
+                                      TestTANSI_X9_23Padding.Suite,
+                                      TestTPKCS5Padding.Suite,
+                                      TestTISO10126Padding.Suite,
+                                      TestTISO7816Padding.Suite]);
   {$ENDIF}
 end.

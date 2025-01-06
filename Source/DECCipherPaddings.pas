@@ -37,7 +37,7 @@ type
   ///   This abstract class defines the basic interfaces for adding, validating,
   ///   and removing padding.
   /// </remarks>
-  TPadding = class abstract
+  TPaddingBase = class abstract
     /// <summary>
     ///   Adds padding to the specified data to align it with the given block size.
     /// </summary>
@@ -186,7 +186,7 @@ type
   ///   Class type of the padding base class, relevant for the class registration
   ///   and simplified use in DECipherFormsts.
   /// </summary>
-  TDECPaddingClass = class of TPadding;
+  TDECPaddingClass = class of TPaddingBase;
 
   /// <summary>
   ///   Base class for the PKCS7 and ANSI X.923 algorithms, as they are quite similar.
@@ -195,7 +195,7 @@ type
   ///   PKCS7 padding is a standard algorithm used in symmetric cryptosystems like AES.
   ///   It appends the number of padding bytes as the value of the padding itself.
   /// </remarks>
-  TFixedBytePadding = class abstract(TPadding)
+  TFixedBytePadding = class abstract(TPaddingBase)
   strict protected
     /// <summary>
     ///   Check if block size is supported by the concerete padding algorithm.
