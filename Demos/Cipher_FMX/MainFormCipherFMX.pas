@@ -642,7 +642,7 @@ begin
 
   for PaddingMode := low(TPaddingMode) to high(TPaddingMode) do
     ComboBoxPaddingMode.Items.Add(System.TypInfo.GetEnumName(TypeInfo(TPaddingMode),
-                                                             Integer(PaddingMode)));
+                                  Integer(PaddingMode)));
 
   ComboBoxPaddingMode.ItemIndex := 0;
 end;
