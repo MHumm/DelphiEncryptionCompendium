@@ -35,14 +35,6 @@ uses
   {$ENDIF}
 
 type
-  {$IFNDEF FPC}
-    {$IF CompilerVersion <= 20}
-    // In D2009 NativeInt was not properly treated by the compiler under certain
-    // conditions. See: http://qc.embarcadero.com/wc/qcmain.aspx?d=71292
-    NativeInt = Integer;
-    {$IFEND}
-  {$ENDIF}
-
   /// <summary>
   ///   Replacement for PByteArray
   /// </summary>
