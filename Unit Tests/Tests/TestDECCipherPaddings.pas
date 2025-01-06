@@ -245,7 +245,7 @@ end;
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
-  TDUnitX.RegisterTestFixture(TestTDECPKCS7Padding);
+  TDUnitX.RegisterTestFixture(TestTPKCS7Padding);
   TDUnitX.RegisterTestFixture(TestTANSI_X9_23Padding);
   {$ELSE}
   RegisterTests('DECCipherPaddings', [TestTPKCS7Padding.Suite,
