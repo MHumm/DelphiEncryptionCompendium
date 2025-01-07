@@ -33,6 +33,9 @@ uses
   DECCipherPaddings, DECTypes, DECUtil;
 
 type
+  /// <summary>
+  ///   One single test vector
+  ///  </summary>
   TPaddingTestData = record
     InputData    : RawByteString;
     OutputData   : RawByteString;
@@ -41,7 +44,7 @@ type
 
   /// <summary>
   ///   Base class for all padding test classes which contains code to load the
-  ///  test data
+  ///   test data
   ///  </summary>
   TestTPaddingBase = class(TTestCase)
   strict protected
@@ -57,28 +60,36 @@ type
     procedure TestHasValidPadding_Bytes; virtual;
   end;
 
-  // Test methods for class TPKCS7Padding
+  /// <summary>
+  ///   Test methods for class TPKCS7Padding
+  ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTPKCS7Padding = class(TestTPaddingBase)
   public
     procedure SetUp; override;
   end;
 
-  // Test methods for class TPKCS5Padding
+  /// <summary>
+  ///   Test methods for class TPKCS5Padding
+  ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTPKCS5Padding = class(TestTPaddingBase)
   public
     procedure SetUp; override;
   end;
 
-  // Test methods for class TANSI_X9_23Padding
+  /// <summary>
+  ///   Test methods for class TANSI_X9_23Padding
+  ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTANSI_X9_23Padding = class(TestTPaddingBase)
   public
     procedure SetUp; override;
   end;
 
-  // Test methods for class TISO10126Padding
+  /// <summary>
+  ///   Test methods for class TISO10126Padding
+  ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTISO10126Padding = class(TestTPaddingBase)
   protected
@@ -90,7 +101,9 @@ type
     procedure TestAddPadding_Bytes; override;
   end;
 
-  // Test methods for class TISO7816Padding
+  /// <summary>
+  ///   Test methods for class TISO7816Padding
+  ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTISO7816Padding = class(TestTPaddingBase)
   public
@@ -103,106 +116,126 @@ implementation
 
 procedure TestTPaddingBase.TestAddPadding_RawByteString;
 var
-  I: integer;
-  Res: RawByteString;
+  I   : integer;
+  Res : RawByteString;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
       FValidTestData[I].BlockSize);
+
     CheckEquals(Res, FValidTestData[I].OutputData,
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
 end;
 
 procedure TestTPaddingBase.TestAddPadding_Bytes;
 var
-  I: integer;
-  Res: TBytes;
+  I   : integer;
+  Res : TBytes;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
       FValidTestData[I].BlockSize);
+
     CheckEquals(DECUtil.BytesToRawString(Res), FValidTestData[I].OutputData,
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
 end;
 
 procedure TestTPaddingBase.TestRemovePadding_RawByteString;
 var
-  I: integer;
-  Res: RawByteString;
+  I   : integer;
+  Res : RawByteString;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.RemovePadding(FValidTestData[I].OutputData,
       FValidTestData[I].BlockSize);
+
     CheckEquals(Res, FValidTestData[I].InputData,
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
+
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
     try
       FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
         FNegativeTestData[I].BlockSize);
+
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
     except
       on e: EDECCipherException do
         // expected
     end;
   end;
+
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
+
   if length(FValidRemoveTestData) > 0 then
   begin
     for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     begin
       Res := FPaddingClass.RemovePadding(FValidRemoveTestData[I].OutputData,
         FValidRemoveTestData[I].BlockSize);
+
       CheckEquals(Res, FValidRemoveTestData[I].InputData,
         'Valid test data set ' + I.ToString + ' failed');
     end;
+
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
   end;
 end;
 
 procedure TestTPaddingBase.TestRemovePadding_Bytes;
 var
-  I: integer;
-  Res: TBytes;
+  I   : integer;
+  Res : TBytes;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FValidTestData[I].OutputData),
       FValidTestData[I].BlockSize);
+
     CheckEquals(DECUtil.BytesToRawString(Res), FValidTestData[I].InputData,
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
+
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
     try
       FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
         FNegativeTestData[I].BlockSize);
+
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
     except
       on e: EDECCipherException do
         // expected
     end;
   end;
+
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
+
   if length(FValidRemoveTestData) > 0 then
   begin
     for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     begin
       Res := FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FValidRemoveTestData[I].OutputData),
         FValidRemoveTestData[I].BlockSize);
+
       CheckEquals(DECUtil.BytesToRawString(Res), FValidRemoveTestData[I].InputData,
         'Valid test data set ' + I.ToString + ' failed');
     end;
+
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
   end;
 end;
@@ -215,14 +248,17 @@ begin
     CheckTrue(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FValidTestData[I].OutputData),
       FValidTestData[I].BlockSize),
       'ValidTestData failed on ' + I.ToString);
+
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
     CheckFalse(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
       FNegativeTestData[I].BlockSize),
       'NegativeTestData failed on ' + I.ToString);
+
   for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     CheckTrue(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FValidRemoveTestData[I].OutputData),
       FValidRemoveTestData[I].BlockSize),
       'ValidRemoveTestData failed on ' + I.ToString);
+
   Status(length(FValidTestData).ToString + ' positive test pattern passed, ' +
     length(FNegativeTestData).ToString + ' negative test pattern passed, ' +
     length(FValidRemoveTestData).ToString);
@@ -666,42 +702,47 @@ function TestTISO10126Padding.RemoveRandomPadding(Res, Pattern: RawByteString): 
 var
   c: Integer;
 begin
-  result := '';
+  Result := '';
+
   for c := low(Pattern) to high(Pattern) do
     if Pattern[c] <> '?' then
-      result := result + Res[c];
+      Result := Result + Res[c];
 end;
 
 procedure TestTISO10126Padding.TestAddPadding_RawByteString;
 var
-  I: integer;
-  Res: RawByteString;
+  I   : integer;
+  Res : RawByteString;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
       FValidTestData[I].BlockSize);
+
     Res := RemoveRandomPadding(Res, FValidTestData[I].OutputData);
     CheckEquals(Res, RemoveRandomPadding(FValidTestData[I].OutputData,
       FValidTestData[I].OutputData),
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
 end;
 
 procedure TestTISO10126Padding.TestAddPadding_Bytes;
 var
-  I: integer;
-  Res: TBytes;
+  I   : integer;
+  Res : TBytes;
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
       FValidTestData[I].BlockSize);
+
     CheckEquals(RemoveRandomPadding(DECUtil.BytesToRawString(Res), FValidTestData[I].OutputData),
       RemoveRandomPadding(FValidTestData[I].OutputData, FValidTestData[I].OutputData),
       'Valid test data set ' + I.ToString + ' failed');
   end;
+
   Status(length(FValidTestData).ToString + ' test pattern passed');
 end;
 
