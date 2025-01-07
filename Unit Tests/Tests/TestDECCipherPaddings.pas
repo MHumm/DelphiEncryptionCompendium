@@ -55,8 +55,10 @@ type
   published
     procedure TestAddPadding_RawByteString; virtual;
     procedure TestRemovePadding_RawByteString; virtual;
+    procedure TestRemovePadding_RawByteStringExceptions; virtual;
     procedure TestAddPadding_Bytes; virtual;
     procedure TestRemovePadding_Bytes; virtual;
+    procedure TestRemovePadding_BytesExceptions; virtual;
     procedure TestHasValidPadding_Bytes; virtual;
   end;
 
@@ -93,7 +95,7 @@ type
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTISO10126Padding = class(TestTPaddingBase)
   protected
-    function RemoveRandomPadding(Res, Pattern: RawByteString): RawByteString;
+    function RemoveRandomPadding(const Res, Pattern: RawByteString): RawByteString;
   public
     procedure SetUp; override;
   published
@@ -167,22 +169,6 @@ begin
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
 
-  // Test that faulty data is detected and raises an exception
-  for I := Low(FNegativeTestData) to High(FNegativeTestData) do
-  begin
-    try
-      FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
-                                  FNegativeTestData[I].BlockSize);
-
-      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-    except
-      on e: EDECCipherException do
-        // expected
-    end;
-  end;
-
-  Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
-
   // Additional tests, if data is availale
   if length(FValidRemoveTestData) > 0 then
   begin
@@ -198,6 +184,27 @@ begin
 
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
   end;
+end;
+
+procedure TestTPaddingBase.TestRemovePadding_RawByteStringExceptions;
+var
+  I   : integer;
+begin
+  // Test that faulty data is detected and raises an exception
+  for I := Low(FNegativeTestData) to High(FNegativeTestData) do
+  begin
+    try
+      FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
+                                  FNegativeTestData[I].BlockSize);
+
+      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+    except
+      on e: EDECCipherException do
+        // expected
+    end;
+  end;
+
+  Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
 end;
 
 procedure TestTPaddingBase.TestRemovePadding_Bytes;
@@ -217,22 +224,6 @@ begin
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
 
-  // Test that faulty data is detected and raises an exception
-  for I := Low(FNegativeTestData) to High(FNegativeTestData) do
-  begin
-    try
-      FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
-                                  FNegativeTestData[I].BlockSize);
-
-      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-    except
-      on e: EDECCipherException do
-        // expected
-    end;
-  end;
-
-  Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
-
   // Additional tests, if data is availale
   if length(FValidRemoveTestData) > 0 then
   begin
@@ -248,6 +239,27 @@ begin
 
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
   end;
+end;
+
+procedure TestTPaddingBase.TestRemovePadding_BytesExceptions;
+var
+  I   : integer;
+begin
+  // Test that faulty data is detected and raises an exception
+  for I := Low(FNegativeTestData) to High(FNegativeTestData) do
+  begin
+    try
+      FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
+                                  FNegativeTestData[I].BlockSize);
+
+      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+    except
+      on e: EDECCipherException do
+        // expected
+    end;
+  end;
+
+  Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
 end;
 
 procedure TestTPaddingBase.TestHasValidPadding_Bytes;
@@ -708,7 +720,7 @@ begin
   FValidRemoveTestData[3].OutputData := '123456789ABCDEFGHI'#127#0#126#1#7#0#0#0#11#0#9#0#0#14;
 end;
 
-function TestTISO10126Padding.RemoveRandomPadding(Res, Pattern: RawByteString): RawByteString;
+function TestTISO10126Padding.RemoveRandomPadding(const Res, Pattern: RawByteString): RawByteString;
 var
   c: Integer;
 begin
