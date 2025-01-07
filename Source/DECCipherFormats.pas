@@ -784,7 +784,7 @@ begin
   StartPos  := Pos;
   doPadding := false;
   doStartOnlyPadding := (DataSize = 0) and IsEncode and
-    (FPaddingMode in [pmPKCS5, pmPKCS7]);
+    (FPaddingMode <> pmNone);
 
   if (DataSize > 0) or doStartOnlyPadding then
   begin
@@ -817,7 +817,7 @@ begin
           doAdjustBuffer := Bytes > DataSize;
           Bytes := DataSize;
           // Handle padding mode
-          doPadding := FPaddingMode <> pmNone;
+          doPadding := (FPaddingMode <> pmNone) and assigned(FPaddingCLass);
           if doPadding and doAdjustBuffer then
             if IsEncode then
             begin
@@ -836,9 +836,7 @@ begin
 
         if IsEncode and doPadding then
         begin
-          if not (FPaddingCLass = nil) then
-            Buffer := FPaddingClass.AddPadding(Buffer, Context.BlockSize);
-
+          Buffer := FPaddingClass.AddPadding(Buffer, Context.BlockSize);
           Bytes  := length(Buffer);
           SetLength(outBuffer, length(Buffer));
         end;
@@ -847,9 +845,7 @@ begin
         CipherProc(Buffer[0], outBuffer[0], Bytes);
         if not IsEncode and doPadding then
         begin
-          if not (FPaddingCLass = nil) then
-            outBuffer := FPaddingCLass.RemovePadding(outBuffer, Context.BlockSize);
-
+          outBuffer := FPaddingCLass.RemovePadding(outBuffer, Context.BlockSize);
           Bytes := length(outBuffer);
         end;
         if Bytes > 0 then
@@ -1034,7 +1030,7 @@ begin
     SetLength(Result, 0);
 
   if not (FPaddingCLass = nil) then
-    Result := FpaddingClass.RemovePadding(Result, Context.BlockSize);
+    Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
 end;
 
 {$IFDEF ANSISTRINGSUPPORTED}
