@@ -122,10 +122,11 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
-      FValidTestData[I].BlockSize);
+                                    FValidTestData[I].BlockSize);
 
-    CheckEquals(Res, FValidTestData[I].OutputData,
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(Res,
+                FValidTestData[I].OutputData,
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
@@ -139,10 +140,11 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
-      FValidTestData[I].BlockSize);
+                                    FValidTestData[I].BlockSize);
 
-    CheckEquals(DECUtil.BytesToRawString(Res), FValidTestData[I].OutputData,
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(DECUtil.BytesToRawString(Res),
+                FValidTestData[I].OutputData,
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
@@ -156,19 +158,21 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.RemovePadding(FValidTestData[I].OutputData,
-      FValidTestData[I].BlockSize);
+                                       FValidTestData[I].BlockSize);
 
-    CheckEquals(Res, FValidTestData[I].InputData,
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(Res,
+                FValidTestData[I].InputData,
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
 
+  // Test that faulty data is detected and raises an exception
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
     try
       FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
-        FNegativeTestData[I].BlockSize);
+                                  FNegativeTestData[I].BlockSize);
 
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
     except
@@ -179,15 +183,17 @@ begin
 
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
 
+  // Additional tests, if data is availale
   if length(FValidRemoveTestData) > 0 then
   begin
     for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     begin
       Res := FPaddingClass.RemovePadding(FValidRemoveTestData[I].OutputData,
-        FValidRemoveTestData[I].BlockSize);
+                                         FValidRemoveTestData[I].BlockSize);
 
-      CheckEquals(Res, FValidRemoveTestData[I].InputData,
-        'Valid test data set ' + I.ToString + ' failed');
+      CheckEquals(Res,
+                  FValidRemoveTestData[I].InputData,
+                  'Valid test data set ' + I.ToString + ' failed');
     end;
 
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
@@ -202,19 +208,21 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FValidTestData[I].OutputData),
-      FValidTestData[I].BlockSize);
+                                       FValidTestData[I].BlockSize);
 
-    CheckEquals(DECUtil.BytesToRawString(Res), FValidTestData[I].InputData,
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(DECUtil.BytesToRawString(Res),
+                FValidTestData[I].InputData,
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
 
+  // Test that faulty data is detected and raises an exception
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
     try
       FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
-        FNegativeTestData[I].BlockSize);
+                                  FNegativeTestData[I].BlockSize);
 
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
     except
@@ -225,15 +233,17 @@ begin
 
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
 
+  // Additional tests, if data is availale
   if length(FValidRemoveTestData) > 0 then
   begin
     for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     begin
       Res := FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FValidRemoveTestData[I].OutputData),
-        FValidRemoveTestData[I].BlockSize);
+                                         FValidRemoveTestData[I].BlockSize);
 
-      CheckEquals(DECUtil.BytesToRawString(Res), FValidRemoveTestData[I].InputData,
-        'Valid test data set ' + I.ToString + ' failed');
+      CheckEquals(DECUtil.BytesToRawString(Res),
+                  FValidRemoveTestData[I].InputData,
+                  'Valid test data set ' + I.ToString + ' failed');
     end;
 
     Status(length(FValidRemoveTestData).ToString + ' additional remove test pattern passed');
@@ -246,22 +256,22 @@ var
 begin
   for I := Low(FValidTestData) to High(FValidTestData) do
     CheckTrue(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FValidTestData[I].OutputData),
-      FValidTestData[I].BlockSize),
-      'ValidTestData failed on ' + I.ToString);
+              FValidTestData[I].BlockSize),
+              'ValidTestData failed on ' + I.ToString);
 
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
     CheckFalse(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
-      FNegativeTestData[I].BlockSize),
-      'NegativeTestData failed on ' + I.ToString);
+               FNegativeTestData[I].BlockSize),
+               'NegativeTestData failed on ' + I.ToString);
 
   for I := Low(FValidRemoveTestData) to High(FValidRemoveTestData) do
     CheckTrue(FPaddingClass.HasValidPadding(DECUtil.RawStringToBytes(FValidRemoveTestData[I].OutputData),
-      FValidRemoveTestData[I].BlockSize),
-      'ValidRemoveTestData failed on ' + I.ToString);
+              FValidRemoveTestData[I].BlockSize),
+              'ValidRemoveTestData failed on ' + I.ToString);
 
   Status(length(FValidTestData).ToString + ' positive test pattern passed, ' +
-    length(FNegativeTestData).ToString + ' negative test pattern passed, ' +
-    length(FValidRemoveTestData).ToString);
+         length(FNegativeTestData).ToString + ' negative test pattern passed, ' +
+         length(FValidRemoveTestData).ToString);
 end;
 
 { TestTDECPKCS7Padding }
@@ -717,12 +727,13 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
-      FValidTestData[I].BlockSize);
+                                    FValidTestData[I].BlockSize);
 
     Res := RemoveRandomPadding(Res, FValidTestData[I].OutputData);
-    CheckEquals(Res, RemoveRandomPadding(FValidTestData[I].OutputData,
-      FValidTestData[I].OutputData),
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(Res,
+                RemoveRandomPadding(FValidTestData[I].OutputData,
+                                    FValidTestData[I].OutputData),
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
@@ -736,11 +747,13 @@ begin
   for I := Low(FValidTestData) to High(FValidTestData) do
   begin
     Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
-      FValidTestData[I].BlockSize);
+                                    FValidTestData[I].BlockSize);
 
-    CheckEquals(RemoveRandomPadding(DECUtil.BytesToRawString(Res), FValidTestData[I].OutputData),
-      RemoveRandomPadding(FValidTestData[I].OutputData, FValidTestData[I].OutputData),
-      'Valid test data set ' + I.ToString + ' failed');
+    CheckEquals(RemoveRandomPadding(DECUtil.BytesToRawString(Res),
+                                    FValidTestData[I].OutputData),
+                RemoveRandomPadding(FValidTestData[I].OutputData,
+                                    FValidTestData[I].OutputData),
+                'Valid test data set ' + I.ToString + ' failed');
   end;
 
   Status(length(FValidTestData).ToString + ' test pattern passed');
