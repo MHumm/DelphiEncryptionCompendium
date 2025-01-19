@@ -608,7 +608,8 @@ begin
   a_tag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Source, Size), FE_K_Y0);
 
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+  if (FCalcAuthenticationTagLength > 0) then
+	Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 
   // Check for correct authentication result is in Done of DECCipherModes
   //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
@@ -646,7 +647,8 @@ begin
 
   AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest, Size), FE_K_Y0);
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+  if (FCalcAuthenticationTagLength > 0) then
+	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 end;
 
 function TGCM.EncodeT128(Value: T128): T128;
