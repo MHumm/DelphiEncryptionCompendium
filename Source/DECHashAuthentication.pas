@@ -1005,8 +1005,11 @@ begin
   Result := self.InheritsFrom(TDECPasswordHash);
 end;
 
-class function TDECHashAuthentication.KDFInternal(const Data; DataSize: Integer; const Seed;
-                             SeedSize, MaskSize: Integer; KDFType: TKDFType): TBytes;
+class function TDECHashAuthentication.KDFInternal(const Data;
+                                                  DataSize: Integer;
+                                                  const Seed;
+                                                  SeedSize, MaskSize: Integer;
+                                                  KDFType: TKDFType): TBytes;
 var
   I, n,
   Rounds, DigestBytes : Integer;
@@ -1129,7 +1132,7 @@ begin
   Assert(SeedSize >= 0);
   Assert(DigestSize > 0);
 
-  if (DataSize = 0) and (SeedSIze = 0) then
+  if (DataSize = 0) and (SeedSize = 0) then
     raise EDECHashException.CreateRes(@sEmptyKDFDataAndSeed);
 
   SetLength(Result, MaskSize);
@@ -1173,6 +1176,9 @@ class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes;
                                            MaskSize: Integer;
                                            Index: UInt32 = 1): TBytes;
 begin
+  if (Length(Data) = 0) and (Length(Seed) = 0) then
+    raise EDECHashException.CreateRes(@sEmptyKDFDataAndSeed);
+
   if (length(Seed) > 0) then
     Result := KDFx(Data[0], Length(Data), Seed[0], Length(Seed), MaskSize, Index)
   else
