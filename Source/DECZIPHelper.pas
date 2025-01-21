@@ -74,11 +74,11 @@ begin
     $6720 : Result := TCipher_Blowfish.Create;
     $6721 : Result := TCipher_Twofish.Create;
     $6801 : Result := TCipher_RC4.Create;
-    $FFFF : raise EDECClassNotRegisteredException.Create(Format(rUnknownZIPAlgorithmID,
-                                                                [AlgorithmID]));
+    $FFFF : raise EDECClassNotRegisteredException.CreateResFmt(@rUnknownZIPAlgorithmID,
+                                                               [AlgorithmID]);
     else
-      raise EDECClassNotRegisteredException.Create(Format(rUnknownZIPAlgorithmID,
-                                                          [AlgorithmID]));
+      raise EDECClassNotRegisteredException.CreateResFmt(@rUnknownZIPAlgorithmID,
+                                                         [AlgorithmID]);
   end;
 
   Result.Mode := cmCBCx; // as per ZIP documentation the only supported mode

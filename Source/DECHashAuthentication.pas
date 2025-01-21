@@ -307,6 +307,9 @@ type
     ///   Optional parameter: can be used to specify a different default value
     ///   for the index variable used in the algorithm.
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if DataSize and SeedSize are both 0
+    /// </exception>
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
@@ -333,6 +336,9 @@ type
     ///   Optional parameter: can be used to specify a different default value
     ///   for the index variable used in the algorithm.
     /// </param>
+    /// <exception cref="EDECHashException">
+    ///   Exception raised if DataSize and SeedSize are both 0
+    /// </exception>
     /// <returns>
     ///   Returns the new derrived key with the length specified in MaskSize.
     /// </returns>
@@ -981,6 +987,11 @@ resourcestring
   ///   Exception message used when no default class has been defined
   /// </summary>
   sAuthHashNoDefault    = 'No default authentication hash class has been registered';
+  /// <summary>
+  ///   Exception message used when KDF is being called and both data and seed
+  ///   are empty
+  /// </summary>
+  sEmptyKDFDataAndSeed  = 'Size of data and sees may not both be zero';
 
 var
   /// <summary>
@@ -1117,6 +1128,9 @@ begin
   Assert(DataSize >= 0);
   Assert(SeedSize >= 0);
   Assert(DigestSize > 0);
+
+  if (DataSize = 0) and (SeedSIze = 0) then
+    raise EDECHashException.CreateRes(@sEmptyKDFDataAndSeed);
 
   SetLength(Result, MaskSize);
   Index := SwapUInt32(Index);
@@ -1563,10 +1577,10 @@ end;
 procedure TDECPasswordHash.SetSalt(const Value: TBytes);
 begin
   if (Length(Value) > MaxSaltLength) then
-    raise EDECHashException.CreateFmt(sSaltValueTooLong, [MaxSaltLength]);
+    raise EDECHashException.CreateResFmt(@sSaltValueTooLong, [MaxSaltLength]);
 
   if (Length(Value) < MinSaltLength) then
-    raise EDECHashException.CreateFmt(sSaltValueTooShort, [MinSaltLength]);
+    raise EDECHashException.CreateResFmt(@sSaltValueTooShort, [MinSaltLength]);
 
   FSalt := Value;
 end;
