@@ -1176,7 +1176,7 @@ class function TDECHashAuthentication.KDFx(const Data, Seed: TBytes;
                                            MaskSize: Integer;
                                            Index: UInt32 = 1): TBytes;
 begin
-  if (Length(Data) = 0) and (Length(Seed) = 0) then
+  if (not Assigned(Data)) and (not Assigned(Seed)) then
     raise EDECHashException.CreateRes(@sEmptyKDFDataAndSeed);
 
   if (length(Seed) > 0) then
