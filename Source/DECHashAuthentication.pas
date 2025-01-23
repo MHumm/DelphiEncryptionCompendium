@@ -1152,11 +1152,13 @@ begin
 
       Count := SwapUInt32(SeedSize);
       HashInstance.Calc(Count, SizeOf(Count));
-      HashInstance.Calc(Seed, SeedSize);
+      if SeedSize > 0 then
+        HashInstance.Calc(Seed, SeedSize);
 
       Count := SwapUInt32(DataSize);
       HashInstance.Calc(Count, SizeOf(Count));
-      HashInstance.Calc(Data, DataSize);
+      if DataSize > 0 then
+        HashInstance.Calc(Data, DataSize);
 
       HashInstance.Done;
 
