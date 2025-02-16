@@ -216,9 +216,6 @@ procedure ProtectString(var Source: WideString); overload;
 ///   RawByteString with the same length as Source and all bytes copied over.
 ///   No conversion of any sort is being applied to the bytes.
 /// </returns>
-/// <remarks>
-///   This is a wrapper for StringOf of Sysutils
-/// </remarks>
 function BytesToRawString(const Source: TBytes): RawByteString; inline;
 
 /// <summary>
@@ -652,7 +649,9 @@ end;
 
 function BytesToRawString(const Source: TBytes): RawByteString;
 begin
-  result := RawByteString(StringOf(Source));
+  SetLength(Result, Length(Source));
+  if Length(Source) > 0 then
+    Move(Source[low(Source)], Result[low(Result)], Length(Source)); // Copy bytes directly
 end;
 
 function RawStringToBytes(const RawString: RawByteString): TBytes;
