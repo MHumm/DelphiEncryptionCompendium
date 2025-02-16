@@ -212,10 +212,6 @@ type
     /// </param>
     procedure StringToClipboard(const s: string);
     /// <summary>
-    ///   Returns the list of block chaining modes which do not have a filler byte
-    /// </summary>
-    function GetCipherModesWithoutFiller:TCipherModes;
-    /// <summary>
     ///   Fills the padding mode combobox with the available modes
     /// </summary>
     procedure InitPaddingModesCombo;
@@ -489,21 +485,12 @@ begin
 end;
 
 procedure TFormMain.ComboBoxChainingMethodChange(Sender: TObject);
-var
-  NeedsFiller: Boolean;
 begin
   // this on change handler is already called during form creation but at that
   // point the cipher algorithm combo may not have been fully initialized yet so
   // we must not update authentication status yet.
   if ComboBoxCipherAlgorithm.ItemIndex >= 0 then
     UpdateAuthenticationStatus;
-
-  // does the selected mode requiring padding?
-  // ECB mode doesn't need filler as we expect the user to enter completely
-  // filled blocks
-  NeedsFiller             := not (GetSelectedCipherMode in [cmGCM, cmECBx]);
-  LabelFillerByte.Enabled := NeedsFiller;
-  EditFiller.Enabled      := NeedsFiller;
 end;
 
 procedure TFormMain.ComboBoxKeyIVFormatChange(Sender: TObject);
@@ -629,11 +616,6 @@ begin
   Result.Mode := GetSelectedCipherMode;
 end;
 
-function TFormMain.GetCipherModesWithoutFiller: TCipherModes;
-begin
-  Result := [cmGCM, cmECBx];
-end;
-
 procedure TFormMain.InitPaddingModesCombo;
 var
   PaddingMode: TPaddingMode;
@@ -676,9 +658,9 @@ begin
     exit;
   end;
 
-  if EditKey.Text.IsEmpty or EditInitVector.Text.IsEmpty or
-     (EditFiller.Text.IsEmpty and
-      not (GetSelectedCipherMode in GetCipherModesWithoutFiller)) then
+  if EditKey.Text.IsEmpty or
+     (EditInitVector.Text.IsEmpty and
+      EditFiller.Text.IsEmpty) then
   begin
     ShowMessage('No key, initialization vector or filler byte given', TMsgDlgType.mtError);
     exit;
