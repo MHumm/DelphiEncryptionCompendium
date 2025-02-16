@@ -425,6 +425,12 @@ type
     procedure TestEncodeECBDataDoesNotMatchBlockSizeFailure;
     procedure TestDecodeECBDataDoesNotMatchBlockSizeFailureSmall;
     procedure TestDecodeECBDataDoesNotMatchBlockSizeFailure;
+
+    /// <summary>
+    ///   Test for GitHub issue 47: EncodeCBCx threw a range check failure for
+    ///   "block sizes > 32k"
+    /// </summary>
+    procedure TestEncodeCBCxFailure_47;
   end;
 
 implementation
@@ -866,6 +872,36 @@ end;
 procedure TestTDECCipherModes.TestEncodeCBCx;
 begin
   DoTestEncode(Data, TCipherMode.cmCBCx);
+end;
+
+procedure TestTDECCipherModes.TestEncodeCBCxFailure_47;
+var
+  Data      : TBytes;
+  EncrData  : TBytes;
+  AESCipher : TCipher_AES;
+  AESKey    : RawByteString;
+  IV        : RawByteString;
+  i         : Integer;
+begin
+  SetLength(Data, 256*1024);  // Size >32 KiB
+
+  for i := 0 to length(Data) - 1 do
+    Data[i] := UInt8(i);
+
+  IV     := '12345678';
+  AESKey := IV + IV;
+
+  AESCipher := TCipher_AES.Create;
+  try
+    AESCipher.Init(AESKey, IV, 0);  // Key and InitVector
+    AESCipher.Mode := cmCBCx;
+    EncrData       := AESCipher.EncodeBytes(Data);  // Before the fix there was
+                                                    // a range check error here!
+  finally
+    FreeAndNil(AESCipher);
+  end;
+
+  CheckEquals(256*1024, length(EncrData), 'Length of encrypted data is wrong');
 end;
 
 procedure TestTDECCipherModes.TestEncodeCTSx;
