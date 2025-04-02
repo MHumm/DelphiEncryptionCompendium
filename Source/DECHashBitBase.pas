@@ -92,7 +92,7 @@ begin
   // of message length is good enough then.
 
   if (Value > 7) then
-    raise EDECHashException.CreateFmt(rFinalByteLengthTooBig, [Value]);
+    raise EDECHashException.CreateResFmt(@rFinalByteLengthTooBig, [Value]);
 
   FFinalByteLength := Value;
 end;

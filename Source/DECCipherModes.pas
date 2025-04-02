@@ -1115,7 +1115,7 @@ begin
   begin
     if (length(FGCM.ExpectedAuthenticationTag) > 0) and
        (not IsEqual(FGCM.ExpectedAuthenticationTag, FGCM.CalculatedAuthenticationTag)) then
-      raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+      raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
   end;
 end;
 

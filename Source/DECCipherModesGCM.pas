@@ -613,7 +613,7 @@ begin
 
   // Check for correct authentication result is in Done of DECCipherModes
   //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
-  //    raise EDECCipherAuthenticationException.Create(sInvalidAuthenticationValue);
+  //    raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
 
   // In difference to the NIST recommendation we do not discard plaintext if
   // authentication failed to make data recovery possible. But since we throw

@@ -197,7 +197,11 @@ begin
       FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
                                   FNegativeTestData[I].BlockSize);
 
+      {$IFNDEF DUnitX}
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+      {$ELSE}
+      Assert.Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+      {$ENDIF}
     except
       on e: EDECCipherException do
         // expected
@@ -252,7 +256,11 @@ begin
       FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
                                   FNegativeTestData[I].BlockSize);
 
+      {$IFNDEF DUnitX}
       Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+      {$ELSE}
+      Assert.Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
+      {$ENDIF}
     except
       on e: EDECCipherException do
         // expected

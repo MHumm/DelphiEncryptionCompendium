@@ -187,6 +187,9 @@ type
 
     procedure InternalTest(KDFType: TKDFMGFAlgorithm);
     procedure InternalTestTBytes(KDFType: TKDFMGFAlgorithm);
+
+    procedure DoKDFXExceptionTest;
+    procedure DoKDFXExceptionTest2;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -199,6 +202,8 @@ type
     procedure TestKDF3TBytes;
     procedure TestKDFx;
     procedure TestKDFxTBytes;
+    procedure TestKDFxException;
+    procedure TestKDFxException2;
   end;
 
 implementation
@@ -244,6 +249,26 @@ begin
 end;
 
 { TestTHash_KDF }
+
+procedure TestTHash_KDF.DoKDFXExceptionTest;
+var
+  Data, Seed : TBytes;
+begin
+  SetLength(Data, 0);
+  SetLength(Seed, 0);
+
+  THash_SHA256.KDFx(Data, Length(Data), Seed, Length(Seed), 16, 0);
+end;
+
+procedure TestTHash_KDF.DoKDFXExceptionTest2;
+var
+  Data, Seed : TBytes;
+begin
+  SetLength(Data, 0);
+  SetLength(Seed, 0);
+
+  THash_SHA256.KDFx(Data, Seed, 16, 0);
+end;
 
 procedure TestTHash_KDF.InternalTest(KDFType: TKDFMGFAlgorithm);
 var
@@ -534,6 +559,16 @@ end;
 procedure TestTHash_KDF.TestKDFx;
 begin
   InternalTest(ktKDFx);
+end;
+
+procedure TestTHash_KDF.TestKDFxException;
+begin
+  CheckException(DoKDFXExceptionTest, EDECHashException, 'DataSize and SeedSize = 0 not detected');
+end;
+
+procedure TestTHash_KDF.TestKDFxException2;
+begin
+  CheckException(DoKDFXExceptionTest2, EDECHashException, 'DataSize and SeedSize = 0 not detected 2');
 end;
 
 procedure TestTHash_KDF.TestKDFxTBytes;

@@ -1881,7 +1881,7 @@ begin
     if d = 255 then
     begin
       if (Chr(pIn^) = '=') then break;
-      raise EDECFormatException.CreateFmt(sInvalidInputCharacter, [pIn^]);
+      raise EDECFormatException.CreateResFmt(@sInvalidInputCharacter, [pIn^]);
     end;
 
     c := (c shl 5) or d;

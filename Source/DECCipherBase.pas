@@ -1021,7 +1021,7 @@ begin
   if (IVectorSize > 0) then
     Move(IVector, OriginalInitVector[0], IVectorSize);
 
-  // GCM needs same treatment of empty IV even if IV specified
+  // GCM needs same treatment as empty IV even if IV specified
   if (IVectorSize = 0) or (FMode = cmGCM) then
   begin
     DoEncode(FInitializationVector, FInitializationVector, FBufferSize);
@@ -1092,7 +1092,7 @@ begin
   // GCM allows empty key as the authentication still works
   if (Length(Key) = 0) and (not (ctNull in Context.CipherType)) and
      (not (FMode = cmGCM)) and (Context.KeySize > 0) then
-    raise EDECCipherException.Create(sNoKeyMaterialGiven);
+    raise EDECCipherException.CreateRes(@sNoKeyMaterialGiven);
 
   if Length(IVector) > 0 then
     {$IF CompilerVersion >= 24.0}
