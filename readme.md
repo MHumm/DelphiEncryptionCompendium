@@ -28,7 +28,8 @@ A list of changes is available in the docs folder.
 ## What is the current status of this project?
 V6.0 was released shortly before Christmas 2020. Since then work continued
 by some users supplying code, reporting bugs (regressions) along with fixes
-and by adding SHA2-224 which was still missing.
+and by adding SHA2-224, which was still missing.
+Further new algorithms like SHA3 have been added meanwhile.
 Details about the changes and additions in V6.4.1 can be found in the 
 VersionHistory.pdf file in the docs subfolder of the development branch.
 
