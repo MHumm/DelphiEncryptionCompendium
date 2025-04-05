@@ -723,7 +723,7 @@ type
     ///   Exception raised if the length of the data passed as <c>Source</c>
     ///   is not a multiple of the algorithm's block size.
     /// </exception>
-    function DecodeBytes(const Source: TBytes; Format: TDECFormatClass): TBytes;
+    function DecodeBytes(const Source: TBytes; Format: TDECFormatClass = nil): TBytes;
 
     /// <summary>
     ///   Calculates a Cipher-based message authentication code (CMAC).
