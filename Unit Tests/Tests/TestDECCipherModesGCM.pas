@@ -628,7 +628,6 @@ var cipher : TCipher_AES128;
     ciphText : Array[0..3] of LongWord;
     key : Array[0..3] of LongWord;
     iv : Array[0..2] of LongWord;
-    i : integer;
     refCipherText : Array[0..3] of LongWord;
     refTag : Array[0..3] of LongWord;
     hea : TBytes;

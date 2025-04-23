@@ -306,7 +306,7 @@ type
     ///   Number of bytes to decrypt
     /// </param>
     procedure DecodeGCM(Source,
-                        Dest   : TBytes;
+                        Dest   : PUInt8Array;
                         Size   : Integer);
 
     /// <summary>
@@ -590,7 +590,7 @@ begin
   Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
 end;
 
-procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
+procedure TGCM.DecodeGCM(Source, Dest: PUInt8Array; Size: Integer);
 var
   i, j, BlockCount : UInt64;
   a_tag : T128;
@@ -603,14 +603,14 @@ begin
   for j := 1 to BlockCount do
   begin
     INCR(FY);
-    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
+    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
     inc(i, 16);
   end;
 
   if i < Size then
   begin
     INCR(FY);
-    XOR_ArrayWithT128(@Source[0], i, UInt64(Size)-i, EncodeT128(FY), @Dest[0]);
+    XOR_ArrayWithT128(@Source^[0], i, UInt64(Size)-i, EncodeT128(FY), @Dest^[0]);
   end;
 
   pDataToAuth := nil;
@@ -620,7 +620,8 @@ begin
   if Size > 0 then
      pSrc := @source[0];
 
-  a_tag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate), pSrc, Size), FE_K_Y0);
+  a_tag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate),
+                    pSrc, Size), FE_K_Y0);
 
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   if (FCalcAuthenticationTagLength > 0) then
