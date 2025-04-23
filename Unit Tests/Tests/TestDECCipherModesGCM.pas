@@ -241,6 +241,11 @@ type
     procedure TestGetStandardAuthenticationTagBitLengths;
     procedure TestGetExpectedAuthenticationResult;
     procedure TestSetExpectedAuthenticationResult;
+
+    /// <summary>
+    ///   Test for GitHub issue #86
+    /// </summary>
+    procedure TestEncodeConstData_86;
   end;
 
 
@@ -615,6 +620,88 @@ begin
     end;
   end;
 end;
+
+procedure TestTDECGCM.TestEncodeConstData_86;
+var cipher : TCipher_AES128;
+    tag : TBytes;
+    refPlainText : Array[0..3] of LongWord;
+    ciphText : Array[0..3] of LongWord;
+    key : Array[0..3] of LongWord;
+    iv : Array[0..2] of LongWord;
+    i : integer;
+    refCipherText : Array[0..3] of LongWord;
+    refTag : Array[0..3] of LongWord;
+    hea : TBytes;
+
+type
+  TUINT32Byte = Array[0..3] of Byte;
+  PUINT32Byte = ^TUINT32Byte;
+
+// test key/cipher text and IV from an ARM based platform
+const cAESKey : Array[0..3] of Longword = ($C939CC13, $397C1D37, $DE6AE0E1, $CB7C423C );
+      cAESIV : Array[0..2] of Longword = ($B3D8CC01, $7CBB89B3, $9E0F67E2);
+
+      cPlainText : Array[0..3] of LongWord = ($c3b3c41f, $113a31b7, $3d9a5cd4, $32103069 );
+      cCipherText : Array[0..3] of LongWord = ($93FE7D9E, $9BFD1034, $8A5606E5, $CAFA7354 );
+
+      cExpectedTag : Array[0..3] of LongWord = ($0032A1DC, $85F1C978, $6925A2E7, $1D8272DD);
+      cAESHea : Array[0..3] of LongWord = ( $24825602, $bd12a984, $e0092d3e, $448eda5f );
+
+function InvUINT32( value : UINT32 ) : UINT32;
+
+var v1, v2 : PUINT32Byte;
+begin
+     v1 := @value;
+     v2 := @Result;
+
+     v2^[3] := v1^[0];
+     v2^[2] := v1^[1];
+     v2^[1] := v1^[2];
+     v2^[0] := v1^[3];
+end;
+
+procedure InitKey;
+var i : integer;
+begin
+     for i := 0 to High(cAESKey) do
+         key[i] := InvUINT32(cAESKey[i]);
+
+     for i := 0 to High(cAESIV) do
+         iv[i] := InvUINT32(cAESIV[i]);
+
+     for i := 0 to High(refPlainText) do
+         refPlainText[i] := InvUINT32(cPlainText[i]);
+
+     for i := 0 to High(refCipherText) do
+         refCipherText[i] := InvUINT32(cCipherText[i]);
+
+     for i := 0 to High(cExpectedTag) do
+         refTag[i] := InvUINT32(cExpectedTag[i]);
+
+     SetLength(hea, sizeof(cAESHea));
+     for i := 0 to High(cExpectedTag) do
+         PLongWord(@hea[i*4])^ := InvUINT32(cAESHea[i]);
+end;
+
+begin
+    InitKey;
+    cipher := TCipher_AES128.Create;
+    try
+       cipher.Mode := cmGCM;
+       cipher.Init( key, sizeof(key), iv, sizeof(iv), 0 );
+       cipher.AuthenticationResultBitLength := 128;
+       cipher.DataToAuthenticate := hea;
+
+       cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+       tag := cipher.CalculatedAuthenticationResult;
+    finally
+           cipher.Free;
+    end;
+
+    Check( CompareMem(@refCipherText[0], @ciphText[0], sizeof(ciphText)), 'Cipher failed');
+    Check( CompareMem(@refTag[0], @tag[0], sizeof(refTag)), 'Tag failed');
+end;
+
 
 procedure TestTDECGCM.TestGetExpectedAuthenticationResult;
 var
