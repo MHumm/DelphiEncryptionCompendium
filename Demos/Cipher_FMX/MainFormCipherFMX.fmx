@@ -2,8 +2,8 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'FMX Cipher Demo'
-  ClientHeight = 910
-  ClientWidth = 402
+  ClientHeight = 908
+  ClientWidth = 404
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
@@ -13,13 +13,13 @@ object FormMain: TFormMain
   DesignerMasterStyle = 0
   object VertScrollBox1: TVertScrollBox
     Align = Client
-    Size.Width = 402.00000000000000000
-    Size.Height = 910.00000000000000000
+    Size.Width = 404.00000000000000000
+    Size.Height = 908.00000000000000000
     Size.PlatformDefault = False
     StyleLookup = 'scrollboxstyle'
     TabOrder = 6
-    Viewport.Width = 386.00000000000000000
-    Viewport.Height = 910.00000000000000000
+    Viewport.Width = 388.00000000000000000
+    Viewport.Height = 908.00000000000000000
     object LayoutTop: TLayout
       Size.Width = 400.00000000000000000
       Size.Height = 313.00000000000000000
