@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -1755,14 +1755,14 @@ procedure TestTHash_SHA3_Base.AddLastByteForCodeTest(var lDataRow    : IHashTest
                                                      SHA3InputVector : RawByteString;
                                                      LastByteLength  : UInt8);
 var
-  LastByteLen   : UInt8;
+//  LastByteLen   : UInt8;
   MsgWithFixup  : RawByteString;
 begin
-  MsgWithFixup            := AddLastByteForKeccakTest(SHA3InputVector, LastByteLen);
+  MsgWithFixup            := AddLastByteForKeccakTest(SHA3InputVector, LastByteLength); //LastByteLen);
   lDataRow.AddInputVector(MsgWithFixup);
-  lDataRow.FinalBitLength := LastByteLen;
+  lDataRow.FinalBitLength := LastByteLength; //LastByteLen;
 
-  THash_SHA3Base(FHash).FinalByteLength := LastByteLen;
+  THash_SHA3Base(FHash).FinalByteLength := LastByteLength; //LastByteLen;
 
   lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), FHash);

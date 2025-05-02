@@ -733,7 +733,7 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
       Encode(Source[0], Result[0], Length(Source))
     else
       if (FMode = cmGCM) then
-        EncodeGCM(@Source, @Result, 0);
+        EncodeGCM(@Source[0], @Result[0], 0);
   end;
 
 begin

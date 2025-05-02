@@ -839,22 +839,11 @@ begin
 end;
 
 procedure TDECCipherModes.EncodeGCM(Source, Dest: PUInt8Array; Size: Integer);
-var
-  PlainText,
-  CipherText : TBytes;
 begin
-  if (Size > 0) then
-  begin
-    PlainText  := TBytes(@Source^);
-    CipherText := TBytes(@Dest^);
-  end
-  else
-  begin
-    SetLength(PlainText, 0);
-    SetLength(CipherText, 0);
-  end;
+  if (Size < 0) then
+    Size := 0;
 
-  FGCM.EncodeGCM(PlainText, CipherText, Size);
+  FGCM.EncodeGCM(Source, Dest, Size);
 end;
 
 {$IFDEF DEC3_CMCTS}
@@ -939,22 +928,25 @@ begin
 end;
 
 procedure TDECCipherModes.DecodeGCM(Source, Dest: PUInt8Array; Size: Integer);
-var
-  PlainText,
-  CipherText : TBytes;
+//var
+//  PlainText,
+//  CipherText : TBytes;
 begin
-  if (Size > 0) then
-  begin
-    PlainText  := TBytes(@Source^);
-    CipherText := TBytes(@Dest^);
-  end
-  else
-  begin
-    SetLength(PlainText, 0);
-    SetLength(CipherText, 0);
-  end;
+//  if (Size > 0) then
+//  begin
+//    PlainText  := TBytes(@Source^);
+//    CipherText := TBytes(@Dest^);
+//  end
+//  else
+//  begin
+//    SetLength(PlainText, 0);
+//    SetLength(CipherText, 0);
+//  end;
 
-  FGCM.DecodeGCM(PlainText, CipherText, Size);
+  if (Size < 0) then
+    Size := 0;
+
+  FGCM.DecodeGCM(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PUInt8Array; Size: Integer);
