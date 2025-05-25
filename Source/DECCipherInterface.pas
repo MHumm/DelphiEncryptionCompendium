@@ -26,6 +26,8 @@ uses
   {$ENDIF}
   DECTypes, DECCipherBase, DECFormatBase;
 
+{$I DECOptions.inc}
+
 type
   /// <summary>
   ///   Common interface for all ciphers. Some ciphers may have additional
