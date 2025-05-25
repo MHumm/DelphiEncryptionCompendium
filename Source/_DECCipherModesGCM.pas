@@ -26,8 +26,7 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECTypes,
-  DECAuthenticatedCipherModesBase;
+  DECTypes;
 
 type
   /// <summary>
@@ -49,10 +48,27 @@ type
   P16ByteArray = ^T16ByteArray;
 
   /// <summary>
+  ///   A methopd of this type needs to be supplied for encrypting or decrypting
+  ///   a block via this GCM algorithm. The method is implemented as a parameter,
+  ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
+  ///   be used for composition instead of inheritance.
+  /// </summary>
+  /// <param name="Source">
+  ///   Data to be encrypted
+  /// </param>
+  /// <param name="Dest">
+  ///   In this memory the encrypted result will be written
+  /// </param>
+  /// <param name="Size">
+  ///   Size of source in byte
+  /// </param>
+  TEncodeDecodeMethod = procedure(Source, Dest: Pointer; Size: Integer) of Object;
+
+  /// <summary>
   ///   Galois Counter Mode specific methods
   /// </summary>
-  TGCM = class(TAuthenticatedCipherModesBase)
-  strict private
+  TGCM = class(TObject)
+  private
     /// <summary>
     ///   Empty value?
     /// </summary>
@@ -74,6 +90,29 @@ type
     ///   Calculated in initialization
     /// </summary>
     FE_K_Y0   : T128;
+
+    /// <summary>
+    ///   The data which shall be authenticated in parallel to the encryption
+    /// </summary>
+    FDataToAuthenticate      : TBytes;
+    /// <summary>
+    ///   Length of the authentication tag to generate in byte
+    /// </summary>
+    FCalcAuthenticationTagLength : UInt32;
+    /// <summary>
+    ///   Generated authentication tag
+    /// </summary>
+    FCalcAuthenticationTag       : TBytes;
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished.
+    /// </summary>
+    FExpectedAuthenticationTag   : TBytes;
+
+    /// <summary>
+    ///   Reference to the encode method of the actual cipher used
+    /// </summary>
+    FEncryptionMethod        : TEncodeDecodeMethod;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -120,7 +159,8 @@ type
     /// <param name="Result">
     ///   Result of the XOR operation
     /// </param>
-    procedure XOR_ArrayWithT128(x: PUInt8Array; XIndex, Count: UInt64; y: T128; Result: PUInt8Array); inline;
+    procedure XOR_ArrayWithT128(const x: TBytes; XIndex, Count: UInt64; y: T128; var Result: TBytes); overload; //inline;
+    procedure XOR_ArrayWithT128(const x: PUInt8Array; XIndex, Count: UInt64; y: T128; Result: PUInt8Array); overload;
 
     /// <summary>
     ///   XORs all elements of the precalculated matrix with the value passed
@@ -175,14 +215,29 @@ type
     procedure INCR(var Y : T128);
 
     /// <summary>
+    ///   Defines the length of the resulting authentication value in bit.
+    /// </summary>
+    /// <param name="Value">
+    ///   Sets the length of Authenticaton_tag in bit, values as per specification
+    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
+    ///   may be 64 or 32 as well, but the use of these two tag lengths
+    ///   constrains the length of the input data and the lifetime of the key.
+    /// </param>
+    procedure SetAuthenticationTagLength(const Value: UInt32);
+    /// <summary>
+    ///   Returns the length of the calculated authehtication value in bit
+    /// </summary>
+    /// <returns>
+    ///   Length of the calculated authentication value in bit
+    /// </returns>
+    function GetAuthenticationTagBitLength: UInt32;
+
+    /// <summary>
     ///   Calculates the hash value
     /// </summary>
     /// <param name="AuthenticatedData">
     ///   Specifys the data for which an authentication value shall be
     ///   calculated. It is allowed to be nil.
-    /// </param>
-    /// <param name="AuthLen">
-    ///   Length of the data to authenticate in byte
     /// </param>
     /// <param name="Ciphertext">
     ///   Encrypted data used in the calculation
@@ -193,10 +248,27 @@ type
     /// <returns>
     ///   Calculated raw hash value which will later get returned as AuthenticatedTag
     /// </returns>
-    function CalcGaloisHash(AuthenticatedData : PUInt8Array;
-                            AuthLen           : Integer;
-                            Ciphertext        : PUInt8Array;
-                            CiphertextSize    : Integer): T128;
+    function CalcGaloisHash(AuthenticatedData, Ciphertext : TBytes; CiphertextSize:
+        Integer): T128; overload;
+
+    /// <summary>
+    ///   Calculates the hash value
+    /// </summary>
+    /// <param name="AuthenticatedData">
+    ///   Specifys the data for which an authentication value shall be
+    ///   calculated. It is allowed to be nil.
+    /// </param>
+    /// <param name="Ciphertext">
+    ///   Encrypted data used in the calculation
+    /// </param>
+    /// <param name="CiphertextSize">
+    ///   Length of the ciphertext in bytes. Use when reading part of array.
+    /// </param>
+    /// <returns>
+    ///   Calculated raw hash value which will later get returned as AuthenticatedTag
+    /// </returns>
+    function CalcGaloisHash(AuthenticatedData: TBytes; Ciphertext : PUInt8Array; CiphertextSize:
+        Integer): T128; overload;
 
     /// <summary>
     ///   Encrypts a T128 value using the encryption method specified on init
@@ -208,17 +280,6 @@ type
     ///   Encrypted value
     /// </returns>
     function EncodeT128(Value: T128): T128;
-  strict protected
-    /// <summary>
-    ///   Defines the length of the resulting authentication value in bit.
-    /// </summary>
-    /// <param name="Value">
-    ///   Sets the length of Authenticaton_tag in bit, values as per specification
-    ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
-    ///   may be 64 or 32 as well, but the use of these two tag lengths
-    ///   constrains the length of the input data and the lifetime of the key.
-    /// </param>
-    procedure SetAuthenticationTagLength(const Value: UInt32); override;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -231,7 +292,22 @@ type
     ///   Initialization vector
     /// </param>
     procedure Init(EncryptionMethod : TEncodeDecodeMethod;
-                   InitVector       : TBytes); override;
+                   InitVector       : TBytes);
+//    /// <summary>
+//    ///   Encodes a block of data using the supplied cipher
+//    /// </summary>
+//    /// <param name="Source">
+//    ///   Plain text to encrypt
+//    /// </param>
+//    /// <param name="Dest">
+//    ///   Ciphertext after encryption
+//    /// </param>
+//    /// <param name="Size">
+//    ///   Number of bytes to encrypt
+//    /// </param>
+//    procedure EncodeGCM(Source,
+//                        Dest   : TBytes;
+//                        Size   : Integer);
     /// <summary>
     ///   Encodes a block of data using the supplied cipher
     /// </summary>
@@ -244,9 +320,9 @@ type
     /// <param name="Size">
     ///   Number of bytes to encrypt
     /// </param>
-    procedure Encode(Source,
-                     Dest   : PUInt8Array;
-                     Size   : Integer); override;
+    procedure EncodeGCM(Source,
+                        Dest   : PUInt8Array;
+                        Size   : Integer);
     /// <summary>
     ///   Decodes a block of data using the supplied cipher
     /// </summary>
@@ -259,9 +335,9 @@ type
     /// <param name="Size">
     ///   Number of bytes to decrypt
     /// </param>
-    procedure Decode(Source,
-                     Dest   : PUInt8Array;
-                     Size   : Integer); override;
+    procedure DecodeGCM(Source,
+                        Dest   : TBytes;
+                        Size   : Integer);
 
     /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
@@ -270,7 +346,38 @@ type
     /// <returns>
     ///   List of bit lengths
     /// </returns>
-    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths; override;
+    function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+
+    /// <summary>
+    ///   The data which shall be authenticated in parallel to the encryption
+    /// </summary>
+    property DataToAuthenticate : TBytes
+      read   FDataToAuthenticate
+      write  FDataToAuthenticate;
+    /// <summary>
+    ///   Sets the length of AuthenticatonTag in bit, values as per official
+    ///   specification are: 128, 120, 112, 104, or 96 bit. For certain
+    ///   applications, they may be 64 or 32 as well, but the use of these two
+    ///   tag lengths constrains the length of the input data and the lifetime
+    ///   of the key.
+    /// </summary>
+    property AuthenticationTagBitLength : UInt32
+      read   GetAuthenticationTagBitLength
+      write  SetAuthenticationTagLength;
+    /// <summary>
+    ///   Calculated authentication value
+    /// </summary>
+    property CalculatedAuthenticationTag : TBytes
+      read   FCalcAuthenticationTag
+      write  FCalcAuthenticationTag;
+
+    /// <summary>
+    ///   Expected authentication tag value, will be compared with actual value
+    ///   when decryption finished.
+    /// </summary>
+    property ExpectedAuthenticationTag : TBytes
+      read   FExpectedAuthenticationTag
+      write  FExpectedAuthenticationTag;
   end;
 
 implementation
@@ -287,7 +394,20 @@ begin
   Result[1] := P128(x)^[1] xor y[1];
 end;
 
-procedure TGCM.XOR_ArrayWithT128(x: PUInt8Array; XIndex, Count: UInt64; y: T128; Result: PUInt8Array);
+procedure TGCM.XOR_ArrayWithT128(const x: TBytes; XIndex, Count: UInt64; y: T128; var Result: TBytes);
+var
+  i  : integer;
+  by : P16ByteArray;
+begin
+  by := @y[0];
+  for i := 0 to Count-1 do
+  begin
+    Result[XIndex] := x[XIndex] xor by[i];
+    inc(XIndex);
+  end;
+end;
+
+procedure TGCM.XOR_ArrayWithT128(const x: PUInt8Array; XIndex, Count: UInt64; y: T128; Result: PUInt8Array);
 var
   i  : integer;
   by : P16ByteArray;
@@ -434,7 +554,13 @@ var
   b    : ^Byte;
   OldH : T128;
 begin
-  inherited;
+  Assert(Assigned(EncryptionMethod), 'No encryption method specified');
+
+  // Clear calculated authentication value
+  if (Length(FCalcAuthenticationTag) > 0) then
+    FillChar(FCalcAuthenticationTag[0], Length(FCalcAuthenticationTag), #0);
+
+  FEncryptionMethod := EncryptionMethod;
 
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
@@ -455,13 +581,59 @@ begin
      b^ := 1;
   end
   else
-     FY := CalcGaloisHash(nil, 0, @InitVector[0], length(InitVector));
+     FY := CalcGaloisHash(nil, InitVector, length(InitVector));
 
   FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
 end;
 
-function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;
+function TGCM.CalcGaloisHash(AuthenticatedData, Ciphertext : TBytes;
   CiphertextSize: Integer): T128;
+var
+  AuthCipherLength : T128;
+  x : T128;
+  n : Uint64;
+
+  procedure encode(data : TBytes; dataSize: Integer);
+  var
+    i, mod_d, div_d, len_d : UInt64;
+    hdata : T128;
+  begin
+    len_d := dataSize;
+    if (len_d > 0) then
+    begin
+      n := 0;
+      div_d := len_d div 16;
+      if div_d > 0 then
+      begin
+        for i := 0 to div_d-1 do
+        begin
+          x := poly_mult_H(XOR_PointerWithT128(@data[n], x ));
+          inc(n, 16);
+        end;
+      end;
+
+      mod_d := len_d mod 16;
+      if mod_d > 0 then
+      begin
+        hdata := nullbytes;
+        Move(data[n], hdata[0], mod_d);
+        x := poly_mult_H(XOR_T128(hdata, x));
+      end;
+    end;
+  end;
+
+begin
+  x := nullbytes;
+  encode(AuthenticatedData, length(AuthenticatedData));
+  Assert(length(Ciphertext) >= CiphertextSize);
+  encode(Ciphertext, CiphertextSize);
+  SetAuthenticationCipherLength(AuthCipherLength, length(AuthenticatedData) shl 3, CiphertextSize shl 3);
+
+  Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
+end;
+
+function TGCM.CalcGaloisHash(AuthenticatedData: TBytes; Ciphertext : PUInt8Array;
+                             CiphertextSize: Integer): T128;
 var
   AuthCipherLength : T128;
   x : T128;
@@ -498,21 +670,20 @@ var
 
 begin
   x := nullbytes;
-  if AuthLen > 0 then
-     encode(@AuthenticatedData[0], AuthLen);
-  //Assert(length(Ciphertext) >= CiphertextSize);
+
+  if (length(AuthenticatedData) > 0) then
+    encode(@AuthenticatedData[0], length(AuthenticatedData));
+//  Assert(length(Ciphertext) >= CiphertextSize);
   encode(Ciphertext, CiphertextSize);
-  SetAuthenticationCipherLength(AuthCipherLength, AuthLen shl 3, CiphertextSize shl 3);
+  SetAuthenticationCipherLength(AuthCipherLength, length(AuthenticatedData) shl 3, CiphertextSize shl 3);
 
   Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
 end;
 
-procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
+procedure TGCM.DecodeGCM(Source, Dest: TBytes; Size: Integer);
 var
   i, j, BlockCount : UInt64;
   a_tag : T128;
-  pDataToAuth : PUInt8Array;
-  pSrc : PUInt8Array;
 begin
   i := 0;
   BlockCount := Size div 16;
@@ -520,25 +691,17 @@ begin
   for j := 1 to BlockCount do
   begin
     INCR(FY);
-    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
+    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
     inc(i, 16);
   end;
 
   if i < Size then
   begin
     INCR(FY);
-    XOR_ArrayWithT128(@Source^[0], i, UInt64(Size)-i, EncodeT128(FY), @Dest^[0]);
+    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  pSrc := nil;
-  if Size > 0 then
-     pSrc := @source[0];
-
-  a_tag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate),
-                    pSrc, Size), FE_K_Y0);
+  a_tag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Source, Size), FE_K_Y0);
 
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   if (FCalcAuthenticationTagLength > 0) then
@@ -555,11 +718,39 @@ begin
   //    SetLength(plaintext, 0); // NIST FAIL => pt=''
 end;
 
-procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
+//procedure TGCM.EncodeGCM(Source, Dest: TBytes; Size: Integer);
+//var
+//  i, j, div_len_plain : UInt64;
+//  AuthTag : T128;
+//begin
+//  i := 0;
+//  div_len_plain := Size div 16;
+//
+//  for j := 1 to div_len_plain do
+//  begin
+//    INCR(FY);
+//
+//    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
+//
+//    inc(i,16);
+//  end;
+//
+//  if i < Size then
+//  begin
+//    INCR(FY);
+//    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
+//  end;
+//
+//  AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest, Size), FE_K_Y0);
+//  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+//  if (FCalcAuthenticationTagLength > 0) then
+//  	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+//end;
+
+procedure TGCM.EncodeGCM(Source, Dest: PUInt8Array; Size: Integer);
 var
   i, j, div_len_plain : UInt64;
   AuthTag : T128;
-  pDataToAuth : PUInt8Array;
 begin
   i := 0;
   div_len_plain := Size div 16;
@@ -568,7 +759,7 @@ begin
   begin
     INCR(FY);
 
-    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
+    P128(@Dest[i])^ := XOR_PointerWithT128(@Source[i], EncodeT128(FY));
 
     inc(i,16);
   end;
@@ -579,10 +770,7 @@ begin
     XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
   end;
 
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  AuthTag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate), @Dest[0], Size), FE_K_Y0);
+  AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest, Size), FE_K_Y0);
   Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   if (FCalcAuthenticationTagLength > 0) then
   	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
@@ -591,6 +779,11 @@ end;
 function TGCM.EncodeT128(Value: T128): T128;
 begin
   FEncryptionMethod(@Value[0], @Result[0], 16);
+end;
+
+function TGCM.GetAuthenticationTagBitLength: UInt32;
+begin
+  Result := FCalcAuthenticationTagLength shl 3;
 end;
 
 function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;

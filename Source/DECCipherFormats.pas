@@ -733,7 +733,7 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
       Encode(Source[0], Result[0], Length(Source))
     else
       if (FMode = cmGCM) then
-        EncodeGCM(@Source[0], @Result[0], 0);
+        EncodeGCM(nil, nil, 0);
   end;
 
 begin
@@ -756,7 +756,7 @@ begin
   end
   else
     if (FMode = cmGCM) then
-      DecodeGCM(@Source, @Result, 0);
+      DecodeGCM(nil, nil, 0);
 
   if not (FPaddingClass = nil) then
     Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
@@ -784,7 +784,7 @@ begin
   StartPos  := Pos;
   doPadding := false;
   doStartOnlyPadding := (DataSize = 0) and IsEncode and
-    (FPaddingMode <> pmNone);
+                        (FPaddingMode <> pmNone);
 
   if (DataSize > 0) or doStartOnlyPadding then
   begin

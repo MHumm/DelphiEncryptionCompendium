@@ -29,100 +29,17 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  System.SysUtils, Generics.Collections, System.Math,
+  System.SysUtils,
+  Generics.Collections,
+  System.Math,
   DECBaseClass,
-  DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
+  DECCipherBase,
+  DECCipherModes,
+  DECCipherFormats,
+  DECCiphers,
+  AuthenticatedCiphersCommonTestData;
 
 type
-  /// <summary>
-  ///   Test data for one single GCM test, all in HexL
-  /// </summary>
-  TGCMSingleTestData = record
-    /// <summary>
-    ///   Encryption/decryption key
-    /// </summary>
-    CryptKey   : RawByteString;
-    /// <summary>
-    ///   Initialization vecotr
-    /// </summary>
-    InitVector : RawByteString;
-    /// <summary>
-    ///   Plain Text: text to be encrypted, given in HexL
-    /// </summary>
-    PT         : RawByteString;
-    /// <summary>
-    ///   Additional Authenticated Data: the data which shall be authenticated
-    ///   but not encrypted.
-    /// </summary>
-    AAD        : RawByteString;
-    /// <summary>
-    ///   Cipher Text: encrypted text, given in HexL
-    /// </summary>
-    CT         : RawByteString;
-    /// <summary>
-    ///   Calculated authenticated "tag" value
-    /// </summary>
-    TagResult  : RawByteString;
-    /// <summary>
-    ///   Used additional authenticated data for testing authentication failures.
-    ///   Only filled when present in test data file.
-    /// </summary>
-    ModifiedAAD: RawByteString;
-    /// <summary>
-    ///   Used ciphertext data for testing authentication failures.
-    ///   Only filled when present in test data file.
-    /// </summary>
-    ModifiedCT: RawByteString;
-
-    /// <summary>
-    ///   Sets all fields and array entries to default values
-    /// </summary>
-    procedure Clear;
-  end;
-
-  /// <summary>
-  ///   Test data for one single GCM test
-  /// </summary>
-  TGCMTestSetEntry = record
-    /// <summary>
-    ///   Length of the encryption/decryption key in bit, determines the
-    ///   algorithm used in case of AES (AES128, AES192, AES256)
-    /// </summary>
-    Keylen : UInt16;
-    /// <summary>
-    ///   Length of the initialization vector in bit
-    /// </summary>
-    IVlen  : UInt16;
-    /// <summary>
-    ///   Length of the ? in bit
-    /// </summary>
-    PTlen  : UInt16;
-    /// <summary>
-    ///   Length of the ? in bit
-    /// </summary>
-    AADlen : UInt16;
-    /// <summary>
-    ///   Length of the "tag" resulting from the authentication part in bit
-    /// </summary>
-    Taglen : UInt16;
-
-    /// <summary>
-    ///   The test data files provided contain 14 tests for the meta data
-    ///   specified above. This array holds the test data.
-    /// </summary>
-    TestData : array[0..14] of TGCMSingleTestData;
-
-    /// <summary>
-    ///   Sets all fields and array entries to default values
-    /// </summary>
-    procedure Clear;
-  end;
-
-  /// <summary>
-  ///   List of loaded GCM test vectors
-  /// </summary>
-  TGCMTestDataList = TList<TGCMTestSetEntry>;
-
   /// <summary>
   ///   Class for loading a GCM style test data file
   /// </summary>
@@ -164,7 +81,7 @@ type
     ///   the start of a new block has been detected in the method.
     /// </param>
     procedure ReadBlockMetaDataLine(const Line : string;
-                                    var Entry  : TGCMTestSetEntry;
+                                    var Entry  : TAuthenticatedCipherTestSetEntry;
                                     var Index  : Byte);
 
     /// <summary>
@@ -187,8 +104,8 @@ type
     ///   line will be ignored.
     /// </param>
     procedure ReadDataLine(const Line : string;
-                           var Entry  : TGCMTestSetEntry;
-                           TestData   : TGCMTestDataList;
+                           var Entry  : TAuthenticatedCipherTestSetEntry;
+                           TestData   : TAuthenticatedTestDataList;
                            var Index  : Byte);
   public
     /// <summary>
@@ -204,7 +121,7 @@ type
     /// <param name="AllowIncompleteEntries">
     ///   Use when loading data set with incomplete entries.
     /// </param>
-    procedure LoadFile(const FileName: string; TestData : TGCMTestDataList;
+    procedure LoadFile(const FileName: string; TestData : TAuthenticatedTestDataList;
         AllowIncompleteEntries: Boolean = False);
   end;
 
@@ -213,7 +130,7 @@ type
   TestTDECGCM = class(TTestCase)
   strict private
     FTestDataLoader : TGCMTestDataLoader;
-    FTestDataList   : TGCMTestDataList;
+    FTestDataList   : TAuthenticatedTestDataList;
     FCipherAES      : TCipher_AES;
 
     // Needed for passing data to and from DoTestDecodeFailure
@@ -256,36 +173,6 @@ uses
   DECTypes,
   DECFormat;
 
-{ TGCMTestSetEntry }
-
-procedure TGCMTestSetEntry.Clear;
-var
-  i : Integer;
-begin
-  Keylen := 0;
-  IVlen  := 0;
-  PTlen  := 0;
-  AADlen := 0;
-  Taglen := 0;
-
-  for i := Low(TestData) to High(TestData) do
-    TestData[i].Clear;
-end;
-
-{ TGCMSingleTestData }
-
-procedure TGCMSingleTestData.Clear;
-begin
-  CryptKey    := '';
-  InitVector  := '';
-  PT          := '';
-  AAD         := '';
-  CT          := '';
-  TagResult   := '';
-  ModifiedAAD := '';
-  ModifiedCT  := '';
-end;
-
 { TGCMTestDataLoader }
 
 function TGCMTestDataLoader.ExtractHexString(const Line: string): RawByteString;
@@ -318,17 +205,19 @@ begin
 end;
 
 procedure TGCMTestDataLoader.LoadFile(const FileName: string;
-  TestData : TGCMTestDataList; AllowIncompleteEntries: Boolean = False);
+  TestData : TAuthenticatedTestDataList; AllowIncompleteEntries: Boolean = False);
 var
   Reader : TStreamReader;
   Line   : string;
-  Entry  : TGCMTestSetEntry;
+  Entry  : TAuthenticatedCipherTestSetEntry;
   Index  : Byte;
 begin
   System.Assert(FileName <> '', 'No file to load specified');
   System.Assert(Assigned(TestData), 'Unassigned test data list given');
 
+  SetLength(Entry.TestData, 15);
   Entry.Clear;
+
   Index := 0;
   Reader := TStreamReader.Create(FileName, TEncoding.UTF8);
 
@@ -372,13 +261,14 @@ begin
 end;
 
 procedure TGCMTestDataLoader.ReadBlockMetaDataLine(const Line : string;
-                                                   var Entry  : TGCMTestSetEntry;
+                                                   var Entry  : TAuthenticatedCipherTestSetEntry;
                                                    var Index  : Byte);
 begin
   // Loading of the block metadata
   // Does a new block start?
   if (Pos('[keylen', Line) > 0) then
   begin
+    SetLength(Entry.TestData, 15);
     Entry.Clear;
     Index := 0;
 
@@ -395,8 +285,8 @@ begin
 end;
 
 procedure TGCMTestDataLoader.ReadDataLine(const Line : string;
-                                          var Entry  : TGCMTestSetEntry;
-                                          TestData   : TGCMTestDataList;
+                                          var Entry  : TAuthenticatedCipherTestSetEntry;
+                                          TestData   : TAuthenticatedTestDataList;
                                           var Index  : Byte);
 begin
   // Data entries do not contain [
@@ -446,7 +336,7 @@ begin
   inherited;
 
   FTestDataLoader := TGCMTestDataLoader.Create;
-  FTestDataList   := TGCMTestDataList.Create;
+  FTestDataList   := TAuthenticatedTestDataList.Create;
 
   FCipherAES      := TCipher_AES.Create;
   FCipherAES.Mode := TCipherMode.cmGCM;
@@ -463,7 +353,7 @@ end;
 
 procedure TestTDECGCM.TestDecode;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   DecryptData : TBytes;
 begin
@@ -525,7 +415,7 @@ end;
 
 procedure TestTDECGCM.TestDecodeAuthenticationFailure;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM128AuthenticationFailures.rsp', FTestDataList);
@@ -569,7 +459,7 @@ end;
 
 procedure TestTDECGCM.TestEncode;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   EncryptData : TBytes;
   EncrDataStr : string;
@@ -622,15 +512,16 @@ begin
 end;
 
 procedure TestTDECGCM.TestEncodeConstData_86;
-var cipher : TCipher_AES128;
-    tag : TBytes;
-    refPlainText : Array[0..3] of LongWord;
-    ciphText : Array[0..3] of LongWord;
-    key : Array[0..3] of LongWord;
-    iv : Array[0..2] of LongWord;
-    refCipherText : Array[0..3] of LongWord;
-    refTag : Array[0..3] of LongWord;
-    hea : TBytes;
+var
+  cipher : TCipher_AES128;
+  tag : TBytes;
+  refPlainText : Array[0..3] of LongWord;
+  ciphText : Array[0..3] of LongWord;
+  key : Array[0..3] of LongWord;
+  iv : Array[0..2] of LongWord;
+  refCipherText : Array[0..3] of LongWord;
+  refTag : Array[0..3] of LongWord;
+  hea : TBytes;
 
 type
   TUINT32Byte = Array[0..3] of Byte;
@@ -646,59 +537,60 @@ const cAESKey : Array[0..3] of Longword = ($C939CC13, $397C1D37, $DE6AE0E1, $CB7
       cExpectedTag : Array[0..3] of LongWord = ($0032A1DC, $85F1C978, $6925A2E7, $1D8272DD);
       cAESHea : Array[0..3] of LongWord = ( $24825602, $bd12a984, $e0092d3e, $448eda5f );
 
-function InvUINT32( value : UINT32 ) : UINT32;
+  function InvUINT32( value : UINT32 ) : UINT32;
+  var
+    v1, v2 : PUINT32Byte;
+  begin
+    v1 := @value;
+    v2 := @Result;
 
-var v1, v2 : PUINT32Byte;
+    v2^[3] := v1^[0];
+    v2^[2] := v1^[1];
+    v2^[1] := v1^[2];
+    v2^[0] := v1^[3];
+  end;
+
+  procedure InitKey;
+  var
+    i : Integer;
+  begin
+    for i := 0 to High(cAESKey) do
+      key[i] := InvUINT32(cAESKey[i]);
+
+    for i := 0 to High(cAESIV) do
+      iv[i] := InvUINT32(cAESIV[i]);
+
+    for i := 0 to High(refPlainText) do
+      refPlainText[i] := InvUINT32(cPlainText[i]);
+
+    for i := 0 to High(refCipherText) do
+      refCipherText[i] := InvUINT32(cCipherText[i]);
+
+    for i := 0 to High(cExpectedTag) do
+      refTag[i] := InvUINT32(cExpectedTag[i]);
+
+    SetLength(hea, sizeof(cAESHea));
+    for i := 0 to High(cExpectedTag) do
+      PLongWord(@hea[i*4])^ := InvUINT32(cAESHea[i]);
+  end;
+
 begin
-     v1 := @value;
-     v2 := @Result;
+  InitKey;
+  cipher := TCipher_AES128.Create;
+  try
+     cipher.Mode := cmGCM;
+     cipher.Init( key, sizeof(key), iv, sizeof(iv), 0 );
+     cipher.AuthenticationResultBitLength := 128;
+     cipher.DataToAuthenticate := hea;
 
-     v2^[3] := v1^[0];
-     v2^[2] := v1^[1];
-     v2^[1] := v1^[2];
-     v2^[0] := v1^[3];
-end;
+     cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+     tag := cipher.CalculatedAuthenticationResult;
+  finally
+         cipher.Free;
+  end;
 
-procedure InitKey;
-var i : integer;
-begin
-     for i := 0 to High(cAESKey) do
-         key[i] := InvUINT32(cAESKey[i]);
-
-     for i := 0 to High(cAESIV) do
-         iv[i] := InvUINT32(cAESIV[i]);
-
-     for i := 0 to High(refPlainText) do
-         refPlainText[i] := InvUINT32(cPlainText[i]);
-
-     for i := 0 to High(refCipherText) do
-         refCipherText[i] := InvUINT32(cCipherText[i]);
-
-     for i := 0 to High(cExpectedTag) do
-         refTag[i] := InvUINT32(cExpectedTag[i]);
-
-     SetLength(hea, sizeof(cAESHea));
-     for i := 0 to High(cExpectedTag) do
-         PLongWord(@hea[i*4])^ := InvUINT32(cAESHea[i]);
-end;
-
-begin
-    InitKey;
-    cipher := TCipher_AES128.Create;
-    try
-       cipher.Mode := cmGCM;
-       cipher.Init( key, sizeof(key), iv, sizeof(iv), 0 );
-       cipher.AuthenticationResultBitLength := 128;
-       cipher.DataToAuthenticate := hea;
-
-       cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
-       tag := cipher.CalculatedAuthenticationResult;
-    finally
-           cipher.Free;
-    end;
-
-    Check( CompareMem(@refCipherText[0], @ciphText[0], sizeof(ciphText)), 'Cipher failed');
-    Check( CompareMem(@refTag[0], @tag[0], sizeof(refTag)), 'Tag failed');
+  Check( CompareMem(@refCipherText[0], @ciphText[0], sizeof(ciphText)), 'Cipher failed');
+  Check( CompareMem(@refTag[0], @tag[0], sizeof(refTag)), 'Tag failed');
 end;
 
 
@@ -741,7 +633,7 @@ procedure TestTDECGCM.TestDecodeStream;
 var
   ctbStream: TBytesStream;
   ctBytes: TBytes;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   DecryptData : TBytes;
   ptbStream: TBytesStream;
@@ -831,7 +723,7 @@ procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
     aMaxChunkSize: Int64);
 var
   i           : Integer;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   curSetIndex: Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
@@ -870,7 +762,7 @@ var
   curChunkSize: Int64;
   dataLeftToEncode: Int64;
   ptBytes: TBytes;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   EncryptData : TBytes;
   ptbStream: TBytesStream;
 begin
@@ -896,6 +788,13 @@ begin
       // Apply chunking if needed
       if aMaxChunkSize > 0 then
         curChunkSize := Min(dataLeftToEncode, aMaxChunkSize);
+// Darf vermutlich so nicht sein, es darf vermutlich nur einen EncodeStream Aufruf
+// geben. Möglicherwiese ist das Padding wie es jetzt umgesetzt ist nicht ganz richtig,
+// da man sonst keinen dynamischen Stream haben kann. Gehört vermutlich ins Done,
+// aber das hat noch keinen Stream, braucht also eine überladene Variante mit
+// Outputstream als Parameter...
+// Zuerst test mal ohne Schleife testen. EncodeStream darf nicht anhand der Size
+// das "globale" Ende des Streams ermitteln, sonst nichts nachschiebbar.
       FCipherAES.EncodeStream(ptbStream, ctbStream, curChunkSize);
       Dec(dataLeftToEncode, curChunkSize);
     until (dataLeftToEncode = 0);
@@ -1003,7 +902,7 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECGCM);
   {$ELSE}
-  RegisterTest(TestTDECGCM.Suite);
+  RegisterTest('DEC authenticated cipher modes', TestTDECGCM.Suite);
   {$ENDIF}
 end.
 

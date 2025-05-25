@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{4117BDAD-9849-4F6E-8968-BB6B92C8AE7B}</ProjectGuid>
-        <ProjectVersion>20.2</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <MainSource>DECDUnitTestSuite.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -162,6 +162,9 @@
         <DCCReference Include="Tests\TestDECHashSHA3.pas"/>
         <DCCReference Include="Tests\TestDECCipherModesGCM.pas"/>
         <DCCReference Include="Tests\TestDECZIPHelper.pas"/>
+        <DCCReference Include="Tests\TestDECCipherPaddings.pas"/>
+        <DCCReference Include="Tests\TestDECCipherModesCCM.pas"/>
+        <DCCReference Include="Tests\AuthenticatedCiphersCommonTestData.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -223,7 +226,19 @@
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="..\Compiled\BIN_IDE22.0_Win32_Debug\DECDUnitTestSuite.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="..\Compiled\BIN_IDE23.0_Win32_Debug\DECDUnitTestSuite.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>DECDUnitTestSuite.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Tests\TestDefines.inc" Configuration="Debug" Class="ProjectFile"/>
+                <DeployFile LocalName="Tests\TestDefines.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
@@ -335,6 +350,16 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\values-v31</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStylesV35">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values-v35</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>res\values-v35</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

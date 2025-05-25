@@ -709,7 +709,7 @@ end;
 initialization
   // Register any test cases with the test runner
   {$IFNDEF DUnitX}
-  RegisterTest(TestTDECCipherFormats.Suite);
+  RegisterTest('DEC cipher formats', TestTDECCipherFormats.Suite);
   {$ELSE}
   TDUnitX.RegisterTestFixture(TestTDECCipherFormats);
   {$ENDIF}

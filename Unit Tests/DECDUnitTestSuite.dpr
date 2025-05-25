@@ -16,6 +16,7 @@ program DECDUnitTestSuite;
 {$ENDIF}
 
 uses
+//  FastMM4,
   Vcl.Forms,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,
@@ -40,7 +41,9 @@ uses
   TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
   TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
   TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas',
-  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas';
+  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas',
+  TestDECCipherModesCCM in 'Tests\TestDECCipherModesCCM.pas',
+  AuthenticatedCiphersCommonTestData in 'Tests\AuthenticatedCiphersCommonTestData.pas';
 
 {$R *.RES}
 

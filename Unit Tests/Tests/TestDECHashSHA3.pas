@@ -1755,14 +1755,13 @@ procedure TestTHash_SHA3_Base.AddLastByteForCodeTest(var lDataRow    : IHashTest
                                                      SHA3InputVector : RawByteString;
                                                      LastByteLength  : UInt8);
 var
-//  LastByteLen   : UInt8;
   MsgWithFixup  : RawByteString;
 begin
   MsgWithFixup            := AddLastByteForKeccakTest(SHA3InputVector, LastByteLength); //LastByteLen);
   lDataRow.AddInputVector(MsgWithFixup);
-  lDataRow.FinalBitLength := LastByteLength; //LastByteLen;
+  lDataRow.FinalBitLength := LastByteLength;
 
-  THash_SHA3Base(FHash).FinalByteLength := LastByteLength; //LastByteLen;
+  THash_SHA3Base(FHash).FinalByteLength := LastByteLength;
 
   lDataRow.ExpectedOutputUTFStrTest :=
             CalcUnicodeHash(string(TFormat_HexL.Encode(MsgWithFixup)), FHash);

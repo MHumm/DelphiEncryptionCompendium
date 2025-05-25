@@ -182,7 +182,8 @@ type
     cmCFS8,   // 8Bit CFS, double CFB
     cmCFSx,   // CFS on Blocksize bytes
     cmECBx,   // Electronic Code Book
-    cmGCM     // Galois Counter Mode
+    cmGCM,    // Galois Counter Mode
+    cmCCM     // Counter with CBC-MAC Mode
     {$IFDEF DEC3_CMCTS}
     ,cmCTS3   // double CBC, with less secure padding of truncated final block
               // for DEC 3.0 compatibility only (see DECOptions.inc)
@@ -228,7 +229,11 @@ type
     ///   This is the size of FData in byte
     /// </summary>
     FDataSize : Integer;
-  private
+
+    /// <summary>
+    ///   Sets the desired padding mode, means how block ciphers treat
+    ///   incompletely filled last blocks.
+    /// </summary>
     procedure SetPaddingMode(const Value: TPaddingMode);
   strict protected
     /// <summary>

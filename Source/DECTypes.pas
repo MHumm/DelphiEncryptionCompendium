@@ -54,6 +54,11 @@ type
   TUInt64Array = array[0..1023] of UInt64;
 
   /// <summary>
+  ///   AES works on 16 byte blocks, some others too
+  /// </summary>
+  TBlock16Byte = Array[0..15] of UInt8;
+
+  /// <summary>
   ///   Declared here because it is used by Blowfish cipher and BCrypt hash
   /// </summary>
   PBlowfish       = ^TBlowfishMatrix;

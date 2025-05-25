@@ -12,7 +12,7 @@ It contains algorithms for these categories:
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The current version 6.4.1 is compatible with Delphi XE2 - Delphi 12.3 Athens. 
+The last release version 6.4.1 is compatible with Delphi XE2 - Delphi 12.3 Athens. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
@@ -146,6 +146,7 @@ Modes ending on x have been invented by the original developer of DEC
 * CFS8
 * CFSx
 * GCM
+* CCM
 
 ## Contained key derivation algorithms:
 * KDF1

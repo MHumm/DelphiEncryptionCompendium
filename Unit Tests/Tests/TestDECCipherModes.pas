@@ -352,6 +352,12 @@ type
     /// <summary>
     ///   Method needed because CheckException only allows procedure methods and
     ///   not functions as parameter.
+    ///   Simply sets FCipher.Mode to CCM.
+    /// </summary>
+    procedure TestFailureSetCCMMode;
+    /// <summary>
+    ///   Method needed because CheckException only allows procedure methods and
+    ///   not functions as parameter.
     ///   Tries to encrypt data using ECB-mode but data is not a multiple of
     ///   the block size (length data > 1 block)
     /// </summary>
@@ -420,6 +426,7 @@ type
     procedure TestFailureSetExpectedAuthenticationTag;
     procedure TestFailureGetExpectedAuthenticationTag;
     procedure InitGCMBlocksizeNot128Failure;
+    procedure InitCCMBlocksizeNot128Failure;
     procedure InitGCMStreamCipherFailure;
     procedure TestEncodeECBDataDoesNotMatchBlockSizeFailureSmall;
     procedure TestEncodeECBDataDoesNotMatchBlockSizeFailure;
@@ -777,6 +784,16 @@ begin
   end;
 end;
 
+procedure TestTDECCipherModes.InitCCMBlocksizeNot128Failure;
+begin
+  FCipher := TCipher_Blowfish.Create;
+  try
+    CheckException(TestFailureSetCCMMode, EDECCipherException);
+  finally
+    FCipher.Free;
+  end;
+end;
+
 procedure TestTDECCipherModes.InitGCMStreamCipherFailure;
 begin
   FCipher := TCipher_RC4.Create;
@@ -812,6 +829,11 @@ end;
 procedure TestTDECCipherModes.TestFailureSetGCMMode;
 begin
   FCipher.Mode := TCipherMode.cmGCM;
+end;
+
+procedure TestTDECCipherModes.TestFailureSetCCMMode;
+begin
+  FCipher.Mode := TCipherMode.cmCCM;
 end;
 
 procedure TestTDECCipherModes.TestGetStandardAuthenticationTagBitLengths;
@@ -1009,6 +1031,6 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECCipherModes);
   {$ELSE}
-  RegisterTest(TestTDECCipherModes.Suite);
+  RegisterTest('DEC cipher modes', TestTDECCipherModes.Suite);
   {$ENDIF}
 end.
