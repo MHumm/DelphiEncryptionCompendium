@@ -16,7 +16,6 @@ program DECDUnitTestSuite;
 {$ENDIF}
 
 uses
-//  FastMM4,
   Vcl.Forms,
   {$IFDEF TESTINSIGHT}
   TestInsight.Client,
@@ -42,8 +41,36 @@ uses
   TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
   TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas',
   TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas',
+  DECBaseClass in '..\Source\DECBaseClass.pas',
+  DECCipherBase in '..\Source\DECCipherBase.pas',
+  DECCipherFormats in '..\Source\DECCipherFormats.pas',
+  DECCipherInterface in '..\Source\DECCipherInterface.pas',
   TestDECCipherModesCCM in 'Tests\TestDECCipherModesCCM.pas',
-  AuthenticatedCiphersCommonTestData in 'Tests\AuthenticatedCiphersCommonTestData.pas';
+  DECCipherModes in '..\Source\DECCipherModes.pas',
+  DECCipherPaddings in '..\Source\DECCipherPaddings.pas',
+  DECCiphers in '..\Source\DECCiphers.pas',
+  DECCRC in '..\Source\DECCRC.pas',
+  DECData in '..\Source\DECData.pas',
+  DECDataCipher in '..\Source\DECDataCipher.pas',
+  DECDataHash in '..\Source\DECDataHash.pas',
+  DECFormat in '..\Source\DECFormat.pas',
+  DECFormatBase in '..\Source\DECFormatBase.pas',
+  DECHash in '..\Source\DECHash.pas',
+  AuthenticatedCiphersCommonTestData in 'Tests\AuthenticatedCiphersCommonTestData.pas',
+  DECAuthenticatedCipherModesBase in '..\Source\DECAuthenticatedCipherModesBase.pas',
+  DECCipherModesCCM in '..\Source\DECCipherModesCCM.pas',
+  DECCipherModesPoly1305 in '..\Source\DECCipherModesPoly1305.pas',
+  DECHashAuthentication in '..\Source\DECHashAuthentication.pas',
+  DECHashBase in '..\Source\DECHashBase.pas',
+  DECHashBitBase in '..\Source\DECHashBitBase.pas',
+  DECHashInterface in '..\Source\DECHashInterface.pas',
+  DECRandom in '..\Source\DECRandom.pas',
+  DECTypes in '..\Source\DECTypes.pas',
+  DECUtil in '..\Source\DECUtil.pas',
+  DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas',
+  DECZIPHelper in '..\Source\DECZIPHelper.pas',
+  DECCipherModesGCM in '..\Source\DECCipherModesGCM.pas',
+  TESTDECChaChaPoly1305 in 'Tests\TESTDECChaChaPoly1305.pas';
 
 {$R *.RES}
 

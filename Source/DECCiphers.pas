@@ -20,8 +20,13 @@ interface
 
 {$INCLUDE DECOptions.inc}
 
-uses
-  DECCipherBase, DECCipherFormats, DECUtil, DECTypes;
+uses {$IFDEF FPC}
+  SysUtils,
+  {$ELSE}
+  System.SysUtils,
+  {$ENDIF}
+   DECCipherBase, DECCipherFormats, DECUtil, DECTypes, DECCipherMOdesPoly1305,
+   System.Types;
 
 type
   // Cipher Classes
@@ -200,6 +205,11 @@ type
   ///   Wrong old version from DEC 5.2. Use only for backwards compatibility!
   /// </summary>
   TCipher_XTEA_DEC52    = class;
+
+  /// <summary>
+  ///   ChaCha20 cipher.
+  /// </summary>
+  TCipher_ChaCha20    = class;
 
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
@@ -475,6 +485,65 @@ type
     procedure DoInit(const Key; Size: Integer); override;
   public
     class function Context: TCipherContext; override;
+  end;
+
+  TChaChaMode = (cmSpeed, cmBalance, cmSecure);  // number of rounds... (4, 12, 20) default is 20
+  TChaChaMtx = Array[0..15] of LongWord;
+  PChaChaMtx = ^TChaChaMtx;
+  TChaChaCpuMode = (cmPas, cmSSE, cmAVX);
+  TChaChaAVXMtx = Array[0..31] of LongWord;
+  PChaChaAVXMtx = ^TChaChaAVXMtx;
+
+  TCipher_ChaCha20 = class(TDECFormattedCipher)
+  private
+    type
+      TChaChaKey = Array[0..7] of LongWord;            // key - always 256 bit
+      TChaChaNonce = Array[0..1] of LongWord;           // nonce - 96 bit, one longword is the counter
+
+    type
+      // double the size -> two blocks at once
+      TChaChaEncodeBlkFunc = procedure(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register; {$IFDEF FPC} assembler; {$ENDIF}
+
+  private
+    fInpChaChaMTX : PChaChaMtx;
+    fOutChaChaMtx : PChaChaAVXMtx;
+
+    fChaChaBlkLen : integer;
+    fChaChaIdx : integer;
+    fChaChaMode : TChaChaMode;
+    fNumChaChaRounds : integer;
+    fFullBlockFunc : TChaChaEncodeBlkFunc;
+
+    procedure ChaChaQuarterRound( var a, b, c, d : LongWord );
+    procedure PasChaChaDoubleQuarterRound(mtx : PChaChaMtx);   // one column and row round
+
+    procedure InitChaChaBlk;
+    {$IFNDEF PUREPASCAL}
+    procedure SSEChaChaDoubleQuarterRound(mtx : PChaChaMtx); register; {$IFDEF FPC} assembler; {$ENDIF}
+    {$ENDIF}
+    procedure SetChaChaMode(const Value: TChaChaMode);
+  protected
+    procedure DoInit(const Key; Size: Integer); override;
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
+
+    // some internal test functions
+    function TestChaChaMtx( const expectedMtx : TChaChaMtx ) : boolean;
+  public
+    property ChaChaMode : TChaChaMode read fChaChaMode write SetChaChaMode;
+
+    procedure AfterConstruction; override;
+
+    /// <summary>
+    ///   Provides meta data about the cipher algorithm used like key size.
+    /// </summary>
+    class function Context: TCipherContext; override;
+
+    /// <summary>
+    ///   Set to true if the routine shall use SSE instructinos to build the chacha matrix
+    /// </summary>
+    class var CpuMode : TChaChaCpuMode;
   end;
 
   TCipher_Square = class(TDECFormattedCipher)
@@ -1020,11 +1089,6 @@ implementation
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 uses
-  {$IFDEF FPC}
-  SysUtils,
-  {$ELSE}
-  System.SysUtils,
-  {$ENDIF}
   DECData, DECDataCipher;
 
 { TCipher_Null }
@@ -6786,11 +6850,1018 @@ begin
   PUInt32Array(Dest)[1] := Y;
 end;
 
+{ TCipher_ChaCha20 }
+
+{$IFDEF FPC} {$ASMMODE intel} {$S-} {$ENDIF}
+
+{$IFDEF CPUX64}
+{$DEFINE x64}
+{$ENDIF}
+{$IFDEF cpux86_64}
+{$DEFINE x64}
+{$ENDIF}
+
+{$IFDEF CPU86}
+{$DEFINE x86}
+{$ENDIF}
+{$IFDEF CPUX86}
+{$DEFINE x86}
+{$ENDIF}
+
+{$IFDEF CPU386}
+{$DEFINE x86}
+{$ENDIF}
+
+
+{$IF defined(MRMATH_NOASM)}
+function rol(value: LongWord; Bits: Byte): LongWord;
+begin
+     Result := (value shl Bits) or (value shr (32 - bits));
+end;
+{$ELSE}
+function rol(value: LongWord; Bits: Byte): LongWord; assembler;
+{$IFDEF FPC}
+begin
+{$ENDIF}
+asm
+   {$IF defined(x64)}
+   mov eax, ecx;
+   mov cl, dl;
+   rol eax, cl;
+   {$ELSE}
+   xchg cl,dl
+   rol eax, cl
+   {$IFEND}
+end;
+{$IFDEF FPC}
+end;
+{$ENDIF}
+{$IFEND}
+
+procedure TCipher_ChaCha20.ChaChaQuarterRound(var a, b, c, d: LongWord);
+begin
+     // ###########################################
+     // ####
+     // a += b; d ^= a; d <<<= 16;
+     // c += d; b ^= c; b <<<= 12;
+     // a += b; d ^= a; d <<<= 8;
+     // c += d; b ^= c; b <<<= 7;
+     a := a + b;
+     d := d xor a;
+     d := rol(d, 16);
+
+     c := c + d;
+     b := b xor c;
+     b := rol(b, 12);
+
+     a := a + b;
+     d := d xor a;
+     d := rol(d, 8);
+
+     c := c + d;
+     b := b xor c;
+     b := rol(b, 7);
+end;
+
+
+class function TCipher_ChaCha20.Context: TCipherContext;
+begin
+  Result.KeySize                     := 256;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := 16;
+  Result.AdditionalBufferSize        := $40 + 3*sizeof(TChaChaMtx);
+  Result.NeedsAdditionalBufferBackup := False;
+  Result.MinRounds                   := 1;
+  Result.MaxRounds                   := 1;
+  Result.CipherType                  := [ctSymmetric, ctStream];
+end;
+
+
+procedure TCipher_ChaCha20.DoDecode(Source, Dest: Pointer; Size: Integer);
+begin
+     // should be the same
+     DoEncode( Source, Dest, size );
+end;
+
+procedure TCipher_ChaCha20.DoEncode(Source, Dest: Pointer; Size: Integer);
+var pChaCha : PByte;
+
+  procedure TryEncodeFullBlocks;
+  begin
+       // ###########################################
+       // #### Full block version ->
+       if fChaChaIdx = 0 then
+       begin
+            while size >= sizeof(TChaChaAVXMtx) do
+            begin
+                 fFullBlockFunc(fOutChaChaMtx, Source, Dest);
+
+                 inc(PByte(Source), sizeof(TChaChaAVXMtx));
+                 inc(PByte(Dest), sizeof(TChaChaAVXMtx));
+                 dec(size, sizeof(TChaChaAVXMtx));
+
+                 InitChaChaBlk;
+            end;
+       end;
+  end;
+begin
+     pChaCha := PByte(fOutChaChaMtx);
+     inc(pChaCha, fChaChaIdx);
+
+     TryEncodeFullBlocks;
+
+     // ###########################################
+     // #### Single byte version
+     while size > 0 do
+     begin
+          if fChaChaIdx = fChaChaBlkLen then
+          begin
+               InitChaChaBlk;
+               pChaCha := PByte(fOutChaChaMtx);
+
+               if size >= sizeof(TChaChaAVXMtx) then
+               begin
+                    TryEncodeFullBlocks;
+                    if size = 0 then
+                       break;
+               end;
+          end;
+
+          PByte(dest)^ := PByte(Source)^ xor pChaCha^;
+
+          inc(pChaCha);
+          inc(PByte(dest));
+          inc(PByte(source));
+          inc(fChaChaIdx);
+
+          dec(size);
+     end;
+end;
+
+procedure TCipher_ChaCha20.OnAfterInitVectorInitialization(
+  const OriginalInitVector: TBytes);
+var iv : TBytes;
+begin
+     if FInitVectorSize <> 12 then
+        raise Exception.Create('Nonce is not 96 bit.');
+
+     fInpChaChaMTX^[12] := 0;   // counter
+     Move( FInitializationVector^, fInpChaChaMTX^[13], 3*sizeof(longword));
+
+     // special care in case of poly1305:
+     if FMode = cmPoly1305 then
+     begin
+          // according to RFC7539 (chapter 2.6) we create the R and S (the IV vector) value as:
+          // block counter is 0 key and nonce (96 or 64 bits)
+          // build iv by applying the key/nonce pair on the first "block" which results
+          // in an 512bit vector -> use the first 256 bit as IV and discard the remaining one
+          // -> update the counter to 1 and setup the next block
+
+          SetLength(iv, 32);
+          FillChar(iv[0], 32, 0);
+
+          // init with count 0
+          fInpChaChaMTX^[12] := 0;
+          InitChaChaBlk;
+          DoEncode(@iv[0], @iv[0], Length(iv));
+
+          inherited OnAfterInitVectorInitialization( iv );
+
+          // dismiss the remaining block ->
+          // first block was for the polynom... increment block number for the rest
+          fChaChaIdx := sizeof(TChaChaMtx);
+
+          // setup complete -> We are ready to encrypt...
+     end
+     else
+         inherited;
+end;
+
+procedure TCipher_ChaCha20.DoInit(const Key; Size: Integer);
+// from chacha-prng.h
+const cChaChaConst : Array[0..15] of AnsiChar = 'expand 32-byte k';
+
+function AlignPtr32( A : Pointer ) : Pointer;
+begin
+     Result := A;
+     if (NativeUint(A) and $1F) <> 0 then
+        Result := Pointer( NativeUint(Result) + $20 - NativeUint(Result) and $1F );
+end;
+
+begin
+     inherited;
+
+     if size <> 32 then
+        raise Exception.Create('Given ChaCha key size is not 256 bit');
+
+     // allocate for the AVX case -> 2 cha cha matrices at once
+     fInpChaChaMtx := AlignPtr32(FAdditionalBuffer);
+     fOutChaChaMTX := PChaChaAVXMtx( fInpChaChaMtx );
+     inc(PByte(fOutChaChaMTX), sizeof(TChaChaMtx));
+
+     Move(cChaChaConst[0], fInpChaChaMTX^[0], sizeof(cChaChaConst));
+     Move(key, fInpChaChaMTX^[4], 32);
+
+     fChaChaBlkLen := sizeof(TChaChaAvxMtx);// 2*Length(fInpChaChaMTX^)*sizeof(fInpChaChaMTX^[0]);
+     fChaChaIdx := fChaChaBlkLen;
+end;
+
+procedure FullBlockPas(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register;
+var i, j : integer;
+begin
+     // xor the complete block
+     for i := 0 to 7 do
+     begin
+          j := i shl 2;
+          PChaChaAVXMtx(Dest)^[j + 0] := PChaChaAVXMtx(Source)^[j + 0] xor ChaChaMtx^[j + 0];
+          PChaChaAVXMtx(Dest)^[j + 1] := PChaChaAVXMtx(Source)^[j + 1] xor ChaChaMtx^[j + 1];
+          PChaChaAVXMtx(Dest)^[j + 2] := PChaChaAVXMtx(Source)^[j + 2] xor ChaChaMtx^[j + 2];
+          PChaChaAVXMtx(Dest)^[j + 3] := PChaChaAVXMtx(Source)^[j + 3] xor ChaChaMtx^[j + 3];
+     end;
+end;
+
+procedure TCipher_ChaCha20.SetChaChaMode(const Value: TChaChaMode);
+begin
+     fChaChaMode := Value;
+
+     // secure would be 20 rounds
+     case fChaChaMode of
+       cmSpeed: fNumChaChaRounds := 4;
+       cmBalance: fNumChaChaRounds := 6;
+       cmSecure: fNumChaChaRounds := 10;
+     end;
+end;
+
+// ###########################################
+// #### AVX chacha assembler code
+// ###########################################
+
+{$IFNDEF PUREPASCAL}
+
+{$IFDEF x86}
+
+procedure FullBlockSSE(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer);  register; {$IFDEF FPC}assembler;{$ENDIF}
+// eax = ChaChaMtx, edx = source, ecx = dest
+asm
+   movapd xmm0, [eax];
+   movupd xmm1, [edx];
+   xorpd xmm0, xmm1;
+   movupd [ecx], xmm0;
+
+   movapd xmm0, [eax + 16];
+   movupd xmm1, [edx + 16];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 16], xmm0;
+
+   movapd xmm0, [eax + 32];
+   movupd xmm1, [edx + 32];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 32], xmm0;
+
+   movapd xmm0, [eax + 48];
+   movupd xmm1, [edx + 48];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 48], xmm0;
+
+   movapd xmm0, [eax + 64];
+   movupd xmm1, [edx + 64];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 64], xmm0;
+
+   movapd xmm0, [eax + 80];
+   movupd xmm1, [edx + 80];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 80], xmm0;
+
+   movapd xmm0, [eax + 96];
+   movupd xmm1, [edx + 96];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 96], xmm0;
+
+   movapd xmm0, [eax + 112];
+   movupd xmm1, [edx + 112];
+   xorpd xmm0, xmm1;
+   movupd [ecx + 112], xmm0;
+end;
+
+procedure FullBlockAVX(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register; {$IFDEF FPC}assembler;{$ENDIF}
+// eax = ChaChaMtx, edx = source, ecx = dest
+asm
+   {$IFDEF AVXSUP}vmovapd ymm0, [eax];                                {$ELSE}db $C5,$FD,$28,$00;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [edx];                                {$ELSE}db $C5,$FD,$10,$0A;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [ecx], ymm0;                                {$ELSE}db $C5,$FD,$11,$01;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [eax + 32];                           {$ELSE}db $C5,$FD,$28,$40,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [edx + 32];                           {$ELSE}db $C5,$FD,$10,$4A,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [ecx + 32], ymm0;                           {$ELSE}db $C5,$FD,$11,$41,$20;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [eax + 64];                           {$ELSE}db $C5,$FD,$28,$40,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [edx + 64];                           {$ELSE}db $C5,$FD,$10,$4A,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [ecx + 64], ymm0;                           {$ELSE}db $C5,$FD,$11,$41,$40;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [eax + 96];                           {$ELSE}db $C5,$FD,$28,$40,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [edx + 96];                           {$ELSE}db $C5,$FD,$10,$4A,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [ecx + 96], ymm0;                           {$ELSE}db $C5,$FD,$11,$41,$60;{$ENDIF}
+
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+end;
+
+
+{$ENDIF}
+{$IFDEF x64}
+procedure FullBlockSSE(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer);
+// rcx = ChaChaMtx, rdx = source, r8 = dest
+asm
+   {$IFDEF UNIX}
+   // Linux uses a diffrent ABI -> copy over the registers so they meet with winABI
+   // The parameters are passed in the following order:
+   // RDI, RSI, RDX, RCX, r8, r9 -> mov to RCX, RDX, R8, R9, width and height
+   mov r8, rdx;
+   mov r9, rcx;
+   mov rcx, rdi;
+   mov rdx, rsi;
+   {$ENDIF}
+
+   movapd xmm0, [rcx];
+   movupd xmm1, [rdx];
+   xorpd xmm0, xmm1;
+   movupd [r8], xmm0;
+
+   movapd xmm0, [rcx + 16];
+   movupd xmm1, [rdx + 16];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 16], xmm0;
+
+   movapd xmm0, [rcx + 32];
+   movupd xmm1, [rdx + 32];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 32], xmm0;
+
+   movapd xmm0, [rcx + 48];
+   movupd xmm1, [rdx + 48];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 48], xmm0;
+
+   movapd xmm0, [rcx + 64];
+   movupd xmm1, [rdx + 64];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 64], xmm0;
+
+   movapd xmm0, [rcx + 80];
+   movupd xmm1, [rdx + 80];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 80], xmm0;
+
+   movapd xmm0, [rcx + 96];
+   movupd xmm1, [rdx + 96];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 96], xmm0;
+
+   movapd xmm0, [rcx + 112];
+   movupd xmm1, [rdx + 112];
+   xorpd xmm0, xmm1;
+   movupd [r8 + 112], xmm0;
+end;
+
+procedure FullBlockAVX(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer);
+// rcx = ChaChaMtx, rdx = source, r8 = dest
+asm
+   {$IFDEF UNIX}
+   // Linux uses a diffrent ABI -> copy over the registers so they meet with winABI
+   // The parameters are passed in the following order:
+   // RDI, RSI, RDX, RCX, r8, r9 -> mov to RCX, RDX, R8, R9, width and height
+   mov r8, rdx;
+   mov r9, rcx;
+   mov rcx, rdi;
+   mov rdx, rsi;
+   {$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [rcx];                                {$ELSE}db $C5,$FD,$28,$01;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [rdx];                                {$ELSE}db $C5,$FD,$10,$0A;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [r8], ymm0;                                 {$ELSE}db $C4,$C1,$7D,$11,$00;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [rcx + 32];                           {$ELSE}db $C5,$FD,$28,$41,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [rdx + 32];                           {$ELSE}db $C5,$FD,$10,$4A,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [r8 + 32], ymm0;                            {$ELSE}db $C4,$C1,$7D,$11,$40,$20;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [rcx + 64];                           {$ELSE}db $C5,$FD,$28,$41,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [rdx + 64];                           {$ELSE}db $C5,$FD,$10,$4A,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [r8 + 64], ymm0;                            {$ELSE}db $C4,$C1,$7D,$11,$40,$40;{$ENDIF}
+
+   {$IFDEF AVXSUP}vmovapd ymm0, [rcx + 96];                           {$ELSE}db $C5,$FD,$28,$41,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm1, [rdx + 96];                           {$ELSE}db $C5,$FD,$10,$4A,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vxorpd ymm0, ymm1, ymm0;                            {$ELSE}db $C5,$F5,$57,$C0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd [r8 + 96], ymm0;                            {$ELSE}db $C4,$C1,$7D,$11,$40,$60;{$ENDIF}
+
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+end;
+{$ENDIF}
+
+const cShuf16 : Array[0..31] of byte = (3, 0, 1, 2,
+                                        7, 4, 5, 6,
+                                        11, 8, 9, 10,
+                                        15, 12, 13, 14,
+                                        3, 0, 1, 2,
+                                        7, 4, 5, 6,
+                                        11, 8, 9, 10,
+                                        15, 12, 13, 14);
+
+{$IFDEF x86}
+
+procedure AVXChaChaDoubleQuarterRound( chachaMtx : PChaChaAVXMtx ); {$IFDEF FPC} assembler; {$ELSE} register; {$ENDIF}
+asm
+   lea ecx, cShuf16;
+   {$IFDEF AVXSUP}vmovdqu ymm5, [ecx];                                {$ELSE}db $C5,$FE,$6F,$29;{$ENDIF}
+
+   // move the matrix to xmm0 to xmm3
+   {$IFDEF AVXSUP}vmovdqa ymm0, [eax];                                {$ELSE}db $C5,$FD,$6F,$00;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm1, [eax + 32];                           {$ELSE}db $C5,$FD,$6F,$48,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm2, [eax + 64];                           {$ELSE}db $C5,$FD,$6F,$50,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm3, [eax + 96];                           {$ELSE}db $C5,$FD,$6F,$58,$60;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufhw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FE,$70,$DB,$B1;{$ENDIF} // 10 11 00 01
+   {$IFDEF AVXSUP}vpshuflw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FF,$70,$DB,$B1;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   // rotate is x << n | x >> 32 - n
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 12;                              {$ELSE}db $C5,$DD,$72,$F1,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 20;                              {$ELSE}db $C5,$F5,$72,$D1,$14;{$ENDIF} // 32 - 12
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufb ymm3, ymm3, ymm5;                           {$ELSE}db $C4,$E2,$65,$00,$DD;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 7;                               {$ELSE}db $C5,$DD,$72,$F1,$07;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 25;                              {$ELSE}db $C5,$F5,$72,$D1,$19;{$ENDIF} // 32 - 7
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v1 >>>= 32; v2 >>>= 64; v3 >>>= 96;
+
+   // palignr is actually a sse3 opcode but ok...
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm1;                                 {$ELSE}db $C5,$FD,$29,$CC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm1, ymm1, ymm4, 4;                       {$ELSE}db $C4,$E3,$75,$0F,$CC,$04;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm2;                                 {$ELSE}db $C5,$FD,$29,$D4;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm2, ymm2, ymm4, 8;                       {$ELSE}db $C4,$E3,$6D,$0F,$D4,$08;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm3;                                 {$ELSE}db $C5,$FD,$29,$DC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm3, ymm3, ymm4, 12;                      {$ELSE}db $C4,$E3,$65,$0F,$DC,$0C;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufhw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FE,$70,$DB,$B1;{$ENDIF} // 10 11 00 01
+   {$IFDEF AVXSUP}vpshuflw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FF,$70,$DB,$B1;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   // rotate is x << n | x >> 32 - n
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 12;                              {$ELSE}db $C5,$DD,$72,$F1,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 20;                              {$ELSE}db $C5,$F5,$72,$D1,$14;{$ENDIF} // 32 - 12
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufb ymm3, ymm3, ymm5;                           {$ELSE}db $C4,$E2,$65,$00,$DD;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 7;                               {$ELSE}db $C5,$DD,$72,$F1,$07;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 25;                              {$ELSE}db $C5,$F5,$72,$D1,$19;{$ENDIF} // 32 - 7
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v1 <<<= 32; v2 <<<= 64; v3 <<<= 96; Return
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm1;                                 {$ELSE}db $C5,$FD,$29,$CC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm1, ymm1, ymm4, 12;                      {$ELSE}db $C4,$E3,$75,$0F,$CC,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm2;                                 {$ELSE}db $C5,$FD,$29,$D4;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm2, ymm2, ymm4, 8;                       {$ELSE}db $C4,$E3,$6D,$0F,$D4,$08;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm3;                                 {$ELSE}db $C5,$FD,$29,$DC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm3, ymm3, ymm4, 4;                       {$ELSE}db $C4,$E3,$65,$0F,$DC,$04;{$ENDIF}
+
+   // move back
+   {$IFDEF AVXSUP}vmovdqa [eax], ymm0;                                {$ELSE}db $C5,$FD,$7F,$00;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 32], ymm1;                           {$ELSE}db $C5,$FD,$7F,$48,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 64], ymm2;                           {$ELSE}db $C5,$FD,$7F,$50,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 96], ymm3;                           {$ELSE}db $C5,$FD,$7F,$58,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+end;
+
+// realign the chacha matrix such that further access to it is linear
+procedure AVXRealingAndAddMtx( chaChaMtx : PChaChaAVXMtx; inpChaCha : PChaChaMtx ); {$IFDEF FPC} assembler; {$ELSE} register; {$ENDIF}
+asm
+   // store second matrix
+   {$IFDEF AVXSUP}vmovdqa xmm0, [eax + 16];                           {$ELSE}db $C5,$F9,$6F,$40,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm1, [eax + 48];                           {$ELSE}db $C5,$F9,$6F,$48,$30;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm2, [eax + 80];                           {$ELSE}db $C5,$F9,$6F,$50,$50;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm3, [eax + 112];                          {$ELSE}db $C5,$F9,$6F,$58,$70;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm0, xmm0, [edx];                           {$ELSE}db $C5,$F9,$FE,$02;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm1, xmm1, [edx + 16];                      {$ELSE}db $C5,$F1,$FE,$4A,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm2, xmm2, [edx + 32];                      {$ELSE}db $C5,$E9,$FE,$52,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm3, xmm3, [edx + 48];                      {$ELSE}db $C5,$E1,$FE,$5A,$30;{$ENDIF}
+
+   // move positions
+   {$IFDEF AVXSUP}vmovapd xmm5, [eax];                                {$ELSE}db $C5,$F9,$28,$28;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [edx];                           {$ELSE}db $C5,$D1,$FE,$2A;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax], xmm5;                                {$ELSE}db $C5,$F9,$7F,$28;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [eax + 32];                           {$ELSE}db $C5,$F9,$6F,$68,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [edx + 16];                      {$ELSE}db $C5,$D1,$FE,$6A,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 16], xmm5;                           {$ELSE}db $C5,$F9,$7F,$68,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [eax + 64];                           {$ELSE}db $C5,$F9,$6F,$68,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [edx + 32];                      {$ELSE}db $C5,$D1,$FE,$6A,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 32], xmm5;                           {$ELSE}db $C5,$F9,$7F,$68,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [eax + 96];                           {$ELSE}db $C5,$F9,$6F,$68,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [edx + 48];                      {$ELSE}db $C5,$D1,$FE,$6A,$30;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 48], xmm5;                           {$ELSE}db $C5,$F9,$7F,$68,$30;{$ENDIF}
+
+   // append second matrix
+   {$IFDEF AVXSUP}vmovdqa [eax + 64], xmm0;                           {$ELSE}db $C5,$F9,$7F,$40,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 80], xmm1;                           {$ELSE}db $C5,$F9,$7F,$48,$50;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 96], xmm2;                           {$ELSE}db $C5,$F9,$7F,$50,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [eax + 112], xmm3;                          {$ELSE}db $C5,$F9,$7F,$58,$70;{$ENDIF}
+
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+end;
+{$ENDIF}
+
+{$IFDEF x64}
+
+procedure AVXChaChaDoubleQuarterRound( chachaMtx : PChaChaAVXMtx );
+var dYMM4, dYMM5 : Array[0..4] of int64;
+{$IFDEF FPC}
+begin
+{$ENDIF}
+asm
+   {$IFDEF UNIX}
+   // Linux uses a diffrent ABI -> copy over the registers so they meet with winABI
+   // The parameters are passed in the following order:
+   // RDI, RSI, RDX, RCX, r8, r9 -> mov to RCX, RDX, R8, R9, width and height
+   // in our case only rdi to rcx
+   mov rcx, rdi;
+   {$ENDIF}
+   {$IFDEF x64}
+   {$IFDEF AVXSUP}vmovupd dYMM4, ymm4;                                {$ELSE}db $C5,$FD,$11,$65,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd dYMM5, ymm5;                                {$ELSE}db $C5,$FD,$11,$6D,$B8;{$ENDIF}
+
+   // 64bit version
+   lea rdx, [rip + cShuf16];
+   {$IFDEF AVXSUP}vmovdqu ymm5, [rdx];                                {$ELSE}db $C5,$FE,$6F,$2A;{$ENDIF}
+
+   // move the matrix to xmm0 to xmm3
+   {$IFDEF AVXSUP}vmovdqa ymm0, [rcx];                                {$ELSE}db $C5,$FD,$6F,$01;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm1, [rcx + 32];                           {$ELSE}db $C5,$FD,$6F,$49,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm2, [rcx + 64];                           {$ELSE}db $C5,$FD,$6F,$51,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa ymm3, [rcx + 96];                           {$ELSE}db $C5,$FD,$6F,$59,$60;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufhw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FE,$70,$DB,$B1;{$ENDIF} // 10 11 00 01
+   {$IFDEF AVXSUP}vpshuflw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FF,$70,$DB,$B1;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   // rotate is x << n | x >> 32 - n
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 12;                              {$ELSE}db $C5,$DD,$72,$F1,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 20;                              {$ELSE}db $C5,$F5,$72,$D1,$14;{$ENDIF} // 32 - 12
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufb ymm3, ymm3, ymm5;                           {$ELSE}db $C4,$E2,$65,$00,$DD;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 7;                               {$ELSE}db $C5,$DD,$72,$F1,$07;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 25;                              {$ELSE}db $C5,$F5,$72,$D1,$19;{$ENDIF} // 32 - 7
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v1 >>>= 32; v2 >>>= 64; v3 >>>= 96;
+
+   // palignr is actually a sse3 opcode but ok...
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm1;                                 {$ELSE}db $C5,$FD,$29,$CC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm1, ymm1, ymm4, 4;                       {$ELSE}db $C4,$E3,$75,$0F,$CC,$04;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm2;                                 {$ELSE}db $C5,$FD,$29,$D4;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm2, ymm2, ymm4, 8;                       {$ELSE}db $C4,$E3,$6D,$0F,$D4,$08;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm3;                                 {$ELSE}db $C5,$FD,$29,$DC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm3, ymm3, ymm4, 12;                      {$ELSE}db $C4,$E3,$65,$0F,$DC,$0C;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufhw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FE,$70,$DB,$B1;{$ENDIF} // 10 11 00 01
+   {$IFDEF AVXSUP}vpshuflw ymm3, ymm3, $B1;                           {$ELSE}db $C5,$FF,$70,$DB,$B1;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   // rotate is x << n | x >> 32 - n
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 12;                              {$ELSE}db $C5,$DD,$72,$F1,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 20;                              {$ELSE}db $C5,$F5,$72,$D1,$14;{$ENDIF} // 32 - 12
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   {$IFDEF AVXSUP}vpaddd ymm0, ymm0, ymm1;                            {$ELSE}db $C5,$FD,$FE,$C1;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm3, ymm3, ymm0;                             {$ELSE}db $C5,$E5,$EF,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vpshufb ymm3, ymm3, ymm5;                           {$ELSE}db $C4,$E2,$65,$00,$DD;{$ENDIF}
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   {$IFDEF AVXSUP}vpaddd ymm2, ymm2, ymm3;                            {$ELSE}db $C5,$ED,$FE,$D3;{$ENDIF}
+   {$IFDEF AVXSUP}vpxor ymm1, ymm1, ymm2;                             {$ELSE}db $C5,$F5,$EF,$CA;{$ENDIF}
+   {$IFDEF AVXSUP}vpslld ymm4, ymm1, 7;                               {$ELSE}db $C5,$DD,$72,$F1,$07;{$ENDIF}
+   {$IFDEF AVXSUP}vpsrld ymm1, ymm1, 25;                              {$ELSE}db $C5,$F5,$72,$D1,$19;{$ENDIF} // 32 - 7
+   {$IFDEF AVXSUP}vpor ymm1, ymm1, ymm4;                              {$ELSE}db $C5,$F5,$EB,$CC;{$ENDIF}
+
+   // v1 <<<= 32; v2 <<<= 64; v3 <<<= 96; Return
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm1;                                 {$ELSE}db $C5,$FD,$29,$CC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm1, ymm1, ymm4, 12;                      {$ELSE}db $C4,$E3,$75,$0F,$CC,$0C;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm2;                                 {$ELSE}db $C5,$FD,$29,$D4;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm2, ymm2, ymm4, 8;                       {$ELSE}db $C4,$E3,$6D,$0F,$D4,$08;{$ENDIF}
+   {$IFDEF AVXSUP}vmovapd ymm4, ymm3;                                 {$ELSE}db $C5,$FD,$29,$DC;{$ENDIF}
+   {$IFDEF AVXSUP}vpalignr ymm3, ymm3, ymm4, 4;                       {$ELSE}db $C4,$E3,$65,$0F,$DC,$04;{$ENDIF}
+
+   // move back
+   {$IFDEF AVXSUP}vmovdqa [rcx], ymm0;                                {$ELSE}db $C5,$FD,$7F,$01;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 32], ymm1;                           {$ELSE}db $C5,$FD,$7F,$49,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 64], ymm2;                           {$ELSE}db $C5,$FD,$7F,$51,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 96], ymm3;                           {$ELSE}db $C5,$FD,$7F,$59,$60;{$ENDIF}
+
+   // cleanup registers
+   {$IFDEF AVXSUP}vmovupd ymm4, dYMM4;                                {$ELSE}db $C5,$FD,$10,$65,$D8;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd ymm5, dYMM5;                                {$ELSE}db $C5,$FD,$10,$6D,$B8;{$ENDIF}
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+{$ENDIF}
+end;
+{$IFDEF FPC}
+end;
+{$ENDIF}
+
+// realign the chacha matrix such that further access to it is linear
+procedure AVXRealingAndAddMtx( chaChaMtx : PChaChaAVXMtx; inpChaCha : PChaChaMtx );
+var dXMM4, dXMM5 : Array[0..2] of Double;
+{$IFDEF FPC}
+begin
+{$ENDIF}
+asm
+   {$IFDEF UNIX}
+   // Linux uses a diffrent ABI -> copy over the registers so they meet with winABI
+   // The parameters are passed in the following order:
+   // RDI, RSI -> mov to RCX, RDX
+   mov rcx, rdi;
+   mov rdx, rsi;
+   {$ENDIF}
+   {$IFDEF AVXSUP}vmovupd dXMM4, xmm4;                                {$ELSE}db $C5,$F9,$11,$65,$E0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd dXMM5, xmm5;                                {$ELSE}db $C5,$F9,$11,$6D,$D0;{$ENDIF}
+
+   // store second matrix
+   {$IFDEF AVXSUP}vmovdqa xmm0, [rcx + 16];                           {$ELSE}db $C5,$F9,$6F,$41,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm1, [rcx + 48];                           {$ELSE}db $C5,$F9,$6F,$49,$30;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm2, [rcx + 80];                           {$ELSE}db $C5,$F9,$6F,$51,$50;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm3, [rcx + 112];                          {$ELSE}db $C5,$F9,$6F,$59,$70;{$ENDIF}
+
+   {$IFDEF AVXSUP}vpaddd xmm0, xmm0, [rdx];                           {$ELSE}db $C5,$F9,$FE,$02;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm1, xmm1, [rdx + 16];                      {$ELSE}db $C5,$F1,$FE,$4A,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm2, xmm2, [rdx + 32];                      {$ELSE}db $C5,$E9,$FE,$52,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm3, xmm3, [rdx + 48];                      {$ELSE}db $C5,$E1,$FE,$5A,$30;{$ENDIF}
+
+
+   // move positions
+   {$IFDEF AVXSUP}vmovapd xmm5, [rcx];                                {$ELSE}db $C5,$F9,$28,$29;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [rdx];                           {$ELSE}db $C5,$D1,$FE,$2A;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx], xmm5;                                {$ELSE}db $C5,$F9,$7F,$29;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [rcx + 32];                           {$ELSE}db $C5,$F9,$6F,$69,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [rdx + 16];                      {$ELSE}db $C5,$D1,$FE,$6A,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 16], xmm5;                           {$ELSE}db $C5,$F9,$7F,$69,$10;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [rcx + 64];                           {$ELSE}db $C5,$F9,$6F,$69,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [rdx + 32];                      {$ELSE}db $C5,$D1,$FE,$6A,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 32], xmm5;                           {$ELSE}db $C5,$F9,$7F,$69,$20;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa xmm5, [rcx + 96];                           {$ELSE}db $C5,$F9,$6F,$69,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vpaddd xmm5, xmm5, [rdx + 48];                      {$ELSE}db $C5,$D1,$FE,$6A,$30;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 48], xmm5;                           {$ELSE}db $C5,$F9,$7F,$69,$30;{$ENDIF}
+
+   // append second matrix
+   {$IFDEF AVXSUP}vmovdqa [rcx + 64], xmm0;                           {$ELSE}db $C5,$F9,$7F,$41,$40;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 80], xmm1;                           {$ELSE}db $C5,$F9,$7F,$49,$50;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 96], xmm2;                           {$ELSE}db $C5,$F9,$7F,$51,$60;{$ENDIF}
+   {$IFDEF AVXSUP}vmovdqa [rcx + 112], xmm3;                          {$ELSE}db $C5,$F9,$7F,$59,$70;{$ENDIF}
+
+   // cleanup registers
+   {$IFDEF AVXSUP}vmovupd xmm4, dXMM4;                                {$ELSE}db $C5,$F9,$10,$65,$E0;{$ENDIF}
+   {$IFDEF AVXSUP}vmovupd xmm5, dXMM5;                                {$ELSE}db $C5,$F9,$10,$6D,$D0;{$ENDIF}
+
+   {$IFDEF AVXSUP}vzeroupper;                                         {$ELSE}db $C5,$F8,$77;{$ENDIF}
+end;
+{$IFDEF FPC}
+end;
+{$ENDIF}
+
+{$ENDIF}
+
+{$ENDIF}
+
+procedure TCipher_ChaCha20.AfterConstruction;
+begin
+     inherited;
+
+     // default is poly1305!!
+     Mode := cmPoly1305;
+     SetChaChaMode( cmSecure );
+     {$IFDEF PUREPASCAL}
+     fFullBlockFunc := FullBlockPas;
+     {$ELSE}
+     case CpuMode of
+       cmSSE: fFullBlockFunc := FullBlockSSE;
+       cmAVX: fFullBlockFunc := FullBlockAVX;
+     else
+         fFullBlockFunc := FullBlockPas;
+     end;
+     {$ENDIF}
+end;
+
+
+// ###########################################
+// #### ChaChaBlock init
+// ###########################################
+procedure TCipher_ChaCha20.InitChaChaBlk;
+var i : integer;
+    m1, m2 : PChaChaMtx;
+begin
+     if fChaChaIdx >= fChaChaBlkLen then
+     begin
+          {$IFNDEF PUREPASCAL}
+          if CpuMode = cmAVX then
+          begin
+               // move the input matrix so we have nicely aligned memory for the quarter round
+               for i := 0 to 3 do
+               begin
+                    Move(fInpChaChaMtx^[4*i], fOutChaChaMtx^[8*i], 4*sizeof(LongWord));
+                    Move(fInpChaChaMtx^[4*i], fOutChaChaMtx^[8*i + 4], 4*sizeof(LongWord));
+               end;
+
+               // update index in the "second" matrix - this one is always odd so no further check
+               inc(fOutChaChaMtx^[3*8 + 4]);
+
+               for i := 0 to fNumChaChaRounds - 1 do
+                   AVXChaChaDoubleQuarterRound(fOutChaChaMtx);
+               // undo the alignment so both matrices are adjacent again (not intermittent as used for the rounds)
+               AVXRealingAndAddMtx(fOutChaChaMtx, fInpChaChaMTX);
+
+               // increment the one value that is off by one from the input matrix
+               inc(fOutChaChaMtx^[16 + 12]);
+
+               // increment input matrix by 2
+               inc(fInpChaChaMTX^[12], 2);
+          end
+          else
+          {$ENDIF}
+          begin
+               // ###########################################
+               // #### Create two chacha matrices in one go
+               m1 := PChaChaMtx(fOutChaChaMtx);
+               m2 := m1;
+               inc(m2);
+               Move(fInpChaChaMTX^, m1^, sizeof(TChaChaMtx));
+               Move(fInpChaChaMTX^, m2^, sizeof(TChaChaMtx));
+               inc(m2^[12]);
+
+               {$IFNDEF PUREPASCAL}
+               if cpuMode = cmSSE then
+               begin
+                    for i := 0 to fNumChaChaRounds - 1 do
+                    begin
+                         SSEChaChaDoubleQuarterRound(m1);
+                         SSEChaChaDoubleQuarterRound(m2);
+                    end;
+               end
+               else
+               {$ENDIF}
+               begin
+                    for i := 0 to fNumChaChaRounds - 1 do
+                    begin
+                         PasChaChaDoubleQuarterRound(m1);
+                         PasChaChaDoubleQuarterRound(m2);
+                    end;
+
+               end;
+               for i := 0 to High(fInpChaChaMTX^) do
+                   inc(m1^[i], fInpChaChaMTX^[i]);
+               inc(fInpChaChaMTX^[12]);
+               for i := 0 to High(fInpChaChaMTX^) do
+                   inc(m2^[i], fInpChaChaMTX^[i]);
+               inc(fInpChaChaMTX^[12]);
+          end;
+
+          fChaChaIdx := 0;
+
+          // is this here for xchacha?
+          if fInpChaChaMTX^[12] <= 1 then
+             raise Exception.Create('Counter overflow!');
+//             inc(fInpChaChaMTX^[13]);
+     end;
+end;
+
+procedure TCipher_ChaCha20.PasChaChaDoubleQuarterRound(mtx : PChaChaMtx);
+begin
+     ChaChaQuarterRound( mtx^[0], mtx^[4], mtx^[8], mtx^[12]);
+     ChaChaQuarterRound( mtx^[1], mtx^[5], mtx^[9], mtx^[13]);
+     ChaChaQuarterRound( mtx^[2], mtx^[6], mtx^[10], mtx^[14]);
+     ChaChaQuarterRound( mtx^[3], mtx^[7], mtx^[11], mtx^[15]);
+     ChaChaQuarterRound( mtx^[0], mtx^[5], mtx^[10], mtx^[15]);
+     ChaChaQuarterRound( mtx^[1], mtx^[6], mtx^[11], mtx^[12]);
+     ChaChaQuarterRound( mtx^[2], mtx^[7], mtx^[8], mtx^[13]);
+     ChaChaQuarterRound( mtx^[3], mtx^[4], mtx^[9], mtx^[14]);
+end;
+
+{$IFNDEF PUREPASCAL}
+
+(*
+// https://eprint.iacr.org/2013/759.pdf
+Algorithm 5: DOUBLEQUARTERROUND (optimized for 128-bit vectors)
+Input:  v0, v1, v2, v3 (state matrix as four 4x32-bit vectors, each vector includes one row)
+Output: v0, v1, v2, v3 (updated state matrix)
+Flow
+    v0 += v1; v3 ^= v0; v3 <<<= (16, 16, 16, 16);
+    v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+    v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+    v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+    v1 >>>= 32; v2 >>>= 64; v3 >>>= 96;
+    v0 += v1; v3 ^= v0; v3 <<<= (16, 16, 16, 16);
+    v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+    v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+    v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+    v1 <<<= 32; v2 <<<= 64; v3 <<<= 96; Return
+*)
+const cShuf8 : Array[0..15] of byte = (3, 0, 1, 2,
+                                       7, 4, 5, 6,
+                                       11, 8, 9, 10,
+                                       15, 12, 13, 14 );
+
+procedure TCipher_ChaCha20.SSEChaChaDoubleQuarterRound(mtx : PChaChaMtx);
+// 32Bit: ecx = self, edx = mtx
+// 64bit: rcx = self, rdx = mtx
+{$IFDEF x64}
+var dXMM4, dXMM5 : Array[0..1] of Int64;
+{$ENDIF}
+asm
+   {$IFDEF x64}
+   // rcx seems to have "self" as reference
+   {$IFDEF UNIX}
+   // Linux uses a diffrent ABI -> copy over the registers so they meet with winABI
+   // The parameters are passed in the following order:
+   // RDI, RSI, RDX, RCX, r8, r9 -> mov to RCX, RDX, R8, R9, width and height
+   // in our case only rdi to rcx
+   mov rdx, rsi;
+   {$ENDIF}
+   movupd dXMM4, xmm4;
+   movupd dXMM5, xmm5;
+
+   // 64bit version
+   movdqu xmm5, [rip + cShuf8];
+
+   // move the matrix to xmm0 to xmm3
+   movdqa xmm0, [rdx];
+   movdqa xmm1, [rdx + 16];
+   movdqa xmm2, [rdx + 32];
+   movdqa xmm3, [rdx + 48];
+   {$ELSE}
+   movdqu xmm5, cShuf8;
+
+   // move the matrix to xmm0 to xmm3
+   mov edx, mtx;
+   movdqa xmm0, [edx];
+   movdqa xmm1, [edx + 16];
+   movdqa xmm2, [edx + 32];
+   movdqa xmm3, [edx + 48];
+   {$ENDIF}
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   paddd xmm0, xmm1;
+   pxor xmm3, xmm0;
+   pshufhw xmm3, xmm3, $B1;  // 10 11 00 01
+   pshuflw xmm3, xmm3, $B1;
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   paddd xmm2, xmm3;
+   pxor xmm1, xmm2;
+   // rotate is x << n | x >> 32 - n
+   movapd xmm4, xmm1;
+   pslld xmm4, 12;
+   psrld xmm1, 20;  // 32 - 12
+   por xmm1, xmm4;
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   paddd xmm0, xmm1;
+   pxor xmm3, xmm0;
+   pshufb xmm3, xmm5;
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   paddd xmm2, xmm3;
+   pxor xmm1, xmm2;
+   movapd xmm4, xmm1;
+   pslld xmm4, 7;
+   psrld xmm1, 25;  // 32 - 7
+   por xmm1, xmm4;
+
+   // v1 >>>= 32; v2 >>>= 64; v3 >>>= 96;
+
+   // palignr is actually a sse3 opcode but ok...
+   movapd xmm4, xmm1;
+   palignr xmm1, xmm4, 4;
+   movapd xmm4, xmm2;
+   palignr xmm2, xmm4, 8;
+   movapd xmm4, xmm3;
+   palignr xmm3, xmm4, 12;
+
+
+   // v0 += v1; v3 ^= v0; v3 <<<= 16
+   paddd xmm0, xmm1;
+   pxor xmm3, xmm0;
+   pshufhw xmm3, xmm3, $B1;  // 10 11 00 01
+   pshuflw xmm3, xmm3, $B1;
+
+   // v2 += v3; v1 ^= v2; v1 <<<= (12, 12, 12, 12);
+   paddd xmm2, xmm3;
+   pxor xmm1, xmm2;
+   // rotate is x << n | x >> 32 - n
+   movapd xmm4, xmm1;
+   pslld xmm4, 12;
+   psrld xmm1, 20;  // 32 - 12
+   por xmm1, xmm4;
+
+   // v0 += v1; v3 ^= v0; v3 <<<= ( 8,  8,  8,  8);
+   paddd xmm0, xmm1;
+   pxor xmm3, xmm0;
+   pshufb xmm3, xmm5;
+
+   // v2 += v3; v1 ^= v2; v1 <<<= ( 7,  7,  7,  7);
+   paddd xmm2, xmm3;
+   pxor xmm1, xmm2;
+   movapd xmm4, xmm1;
+   pslld xmm4, 7;
+   psrld xmm1, 25;  // 32 - 7
+   por xmm1, xmm4;
+
+   // v1 <<<= 32; v2 <<<= 64; v3 <<<= 96; Return
+   movapd xmm4, xmm1;
+   palignr xmm1, xmm4, 12;
+   movapd xmm4, xmm2;
+   palignr xmm2, xmm4, 8;
+   movapd xmm4, xmm3;
+   palignr xmm3, xmm4, 4;
+
+   // move back
+   {$IFDEF x64}
+   movdqa [rdx], xmm0;
+   movdqa [rdx + 16], xmm1;
+   movdqa [rdx + 32], xmm2;
+   movdqa [rdx + 48], xmm3;
+
+   // cleanup registers
+   movupd xmm4, dXMM4;
+   movupd xmm5, dXMM5;
+   {$ELSE}
+   movdqa [edx], xmm0;
+   movdqa [edx + 16], xmm1;
+   movdqa [edx + 32], xmm2;
+   movdqa [edx + 48], xmm3;
+   {$ENDIF}
+end;
+
+{$ENDIF}
+
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
 {$IFDEF RESTORE_OVERFLOWCHECKS}{$Q+}{$ENDIF}
 
+function TCipher_ChaCha20.TestChaChaMtx(
+  const expectedMtx: TChaChaMtx): boolean;
+begin
+     Result := CompareMem(fOutChaChaMtx, @expectedMtx, sizeof(TChaChaMtx));
+end;
+
 initialization
   SetDefaultCipherClass(TCipher_Null);
+
+  TCipher_ChaCha20.CpuMode := cmPas;
 
   {$IFNDEF ManualRegisterCipherClasses}
   TCipher_Null.RegisterClass(TDECCipher.ClassList);

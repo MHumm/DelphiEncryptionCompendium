@@ -119,7 +119,7 @@
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
   {$DEFINE FMXTranslateableExceptions}
-{$ENDIF}
+{$IFEND} { TODO: convert to $ENDIF when raising minimum supported version to XE4+}
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
