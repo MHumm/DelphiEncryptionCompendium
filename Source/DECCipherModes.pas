@@ -26,9 +26,8 @@ uses
   {$ELSE}
   System.SysUtils,
   {$ENDIF}
-  DECTypes, DECCipherBase, DECCipherModesGCM, DECCipherModesCCM,
-  DECCipherModesPoly1305,
-  DECCipherInterface;
+  DECTypes, DECCipherBase,
+  DECCipherInterface, DECAuthenticatedCipherModesBase;
 
 type
   /// <summary>
@@ -140,29 +139,11 @@ type
     procedure SetExpectedAuthenticationResult(const Value: TBytes);
   strict protected
     /// <summary>
-    ///   Implementation of the Galois counter mode. Only created when gmGCM is
-    ///   set as mode.
+    ///   Implementation of the Galois counter mode, poly1305 or ccm. Only created if
+    ///   such a mode is selected
     /// </summary>
-    FGCM : TGCM;
-    /// <summary>
-    ///   Implementation of the Counter with CBC-MAC mode. Only created when
-    ///   gmCCM is set as mode.
-    /// </summary>
-    FCCM : TCCM;
-    /// <summary>
-    ///   Raises an EDECCipherException exception and provides the correct value
-    ///   for block size in that message
-    /// </summary>
-    /// <exception cref="EDECCipherException">
-    ///   Exception raised unconditionally.
-    /// </exception>
+    fAuthObj : TAuthenticatedCipherModesBase;
 
-
-    /// <summary>
-    ///   Implementation of the Pol1305 polynom. Only created when gmPoly1305 is
-    ///   set as mode.
-    /// </summary>
-    FPOLY1305 : TPoly1305;
 
     procedure ReportInvalidMessageLength(Cipher: TDECCipher);
     /// <summary>
@@ -253,21 +234,8 @@ type
     ///   Implemented in its own unit, but needed here to be callable even if
     ///   source length is 0.
     /// </summary>
-    procedure EncodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
+    procedure EncodeWithAuthObj(Source, Dest: PUInt8Array; Size: Integer); virtual;
 
-    /// <summary>
-    ///   Poly1305: encryption with addtional optional authentication.
-    ///   Implemented in its own unit and only usable with ChaCha20 (and maybe AES128) -
-    ///   Currently only one class overrides this method.
-    /// </summary>
-    procedure EncodePoly1305(Source, Dest: PUInt8Array; Size: Integer); virtual;
-
-	/// <summary>
-    ///   Counter with CBC-MAC Mode: encryption with addtional optional authentication.
-    ///   Implemented in its own unit, but needed here to be callable even if
-    ///   source length is 0.
-    /// </summary>
-    procedure EncodeCCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -351,21 +319,11 @@ type
     ///   inputstream into feedback register.
     /// </summary>
     procedure DecodeCTSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
-    /// <summary>
-    ///   Galois Counter Mode, details are implemented in DECCipherModesGCM
-    /// </summary>
-    procedure DecodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
 
-    /// <summary>
-    ///   Poly1305, details are implemented in DECCipherModesPoly1305.
-    ///   This routine needs to be overridden by successor classes.
-    /// </summary>
-    procedure DecodePoly1305(Source, Dest: PUInt8Array; Size: Integer); virtual;
-    
 	   /// <summary>
-    ///   Counter with CBC-MAC Mode, details are implemented in DECCipherModesCCM
+    ///   Decoding for gcm, poly1305 and ccm, details are implemented in special units.
     /// </summary>
-    procedure DecodeCCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
+    procedure DecodeWithAuthObj(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC
@@ -491,7 +449,10 @@ uses
   {$ELSE}
   System.TypInfo,
   {$ENDIF}
-  DECUtil;
+  DECUtil,
+  DECCipherModesGCM,
+  DECCipherModesCCM,
+  DECCipherModesPoly1305;
 
 resourcestring
   sInvalidMessageLength = 'Message length for mode %0:s must be a multiple of %1:d bytes';
@@ -515,36 +476,30 @@ end;
 
 procedure TDECCipherModes.SetDataToAuthenticate(const Value: TBytes);
 begin
-  case FMode of
-    cmGCM: FGCM.DataToAuthenticate := Value;
-    cmCCM: FCCM.DataToAuthenticate := Value;
-    cmPoly1305: FPOLY1305.DataToAuthenticate := Value;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         fAuthObj.DataToAuthenticate := Value
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
 end;
 
 procedure TDECCipherModes.SetExpectedAuthenticationResult(const Value: TBytes);
 begin
-  case FMode of
-    cmGCM: FGCM.ExpectedAuthenticationTag := Value;
-    cmCCM: FCCM.ExpectedAuthenticationTag := Value;
-    cmPoly1305: FPOLY1305.ExpectedAuthenticationTag := Value;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         fAuthObj.ExpectedAuthenticationTag := Value
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
 end;
 
 procedure TDECCipherModes.SetAuthenticationResultBitLength(
   const Value: Integer);
 begin
-  case FMode of
-    cmGCM: FGCM.AuthenticationTagBitLength := Value;
-    cmCCM: FCCM.AuthenticationTagBitLength := Value;
-    cmPoly1305: FPOLY1305.AuthenticationTagBitLength := Value;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         fAuthObj.AuthenticationTagBitLength := Value
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
 end;
 
 procedure TDECCipherModes.Encode(const Source; var Dest; DataSize: Integer);
@@ -564,9 +519,9 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   EncodeGCM(@Source, @Dest, DataSize);
-    cmPoly1305: EncodePoly1305(@Source, @Dest, DataSize);
-    cmCCM :   EncodeCCM(@Source, @Dest, DataSize);
+    cmGCM,
+    cmPoly1305,
+    cmCCM:    EncodeWithAuthObj(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -738,60 +693,50 @@ end;
 
 function TDECCipherModes.GetDataToAuthenticate: TBytes;
 begin
-  case FMode of
-    cmGCM: Result := FGCM.DataToAuthenticate;
-    cmCCM: Result := FCCM.DataToAuthenticate;
-    cmPoly1305: Result := FPOLY1305.DataToAuthenticate;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         Result := fAuthObj.DataToAuthenticate
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmPoly1305 or cCCM']);
 end;
 
 function TDECCipherModes.GetExpectedAuthenticationResult: TBytes;
 begin
-  case FMode of
-    cmGCM: Result := FGCM.ExpectedAuthenticationTag;
-    cmCCM: Result := FCCM.ExpectedAuthenticationTag;
-    cmPoly1305: REsult := FPOLY1305.ExpectedAuthenticationTag;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         Result := fAuthObj.ExpectedAuthenticationTag
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmPoly1305 or cmCCM']);
 end;
 
 function TDECCipherModes.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 begin
-  case FMode of
-    cmGCM: Result := FGCM.GetStandardAuthenticationTagBitLengths;
-    cmCCM: Result := FCCM.GetStandardAuthenticationTagBitLengths;
-    cmPoly1305: Result := FPOLY1305.GetStandardAuthenticationTagBitLengths;
-    else
-    begin
-      SetLength(Result, 1);
-      Result[0] := 0;
-    end;
-  end;
+     if Assigned(fAuthObj)
+     then
+         Result := fAuthObj.GetStandardAuthenticationTagBitLengths
+     else
+     begin
+          SetLength(Result, 1);
+          Result[0] := 0;
+     end;
 end;
 
 function TDECCipherModes.GetAuthenticationResultBitLength: Integer;
 begin
-  case FMode of
-    cmGCM: Result := FGCM.AuthenticationTagBitLength;
-    cmCCM: Result := FCCM.AuthenticationTagBitLength;
-    cmPoly1305: Result := FPOLY1305.AuthenticationTagBitLength;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         Result := fAuthObj.AuthenticationTagBitLength
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmPoly1305 or cmCCM']);
 end;
 
 function TDECCipherModes.GetCalcAuthenticatonResult: TBytes;
 begin
-  case FMode of
-    cmGCM: Result := FGCM.CalculatedAuthenticationTag;
-    cmCCM: Result := FCCM.CalculatedAuthenticationTag;
-    cmPoly1305: Result := FPOLY1305.CalculatedAuthenticationTag;
-    else
-      raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
-  end;
+     if Assigned(fAuthObj)
+     then
+         Result := fAuthObj.CalculatedAuthenticationTag
+     else
+         raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmPoly1305 or cmCCM']);
 end;
 
 procedure TDECCipherModes.InitMode;
@@ -800,15 +745,15 @@ begin
   begin
     if (Context.BlockSize = 16) then
     begin
-      case FMode of
-        cmGCM: FGCM := TGCM.Create;
-        cmCCM: FCCM := TCCM.Create;
-        cmPoly1305: FPOLY1305 := TPoly1305.Create;
+         case FMode of
+           cmGCM: fAuthObj := TGCM.Create;
+           cmCCM: fAuthObj := TCCM.Create;
+           cmPoly1305: fAuthObj := TPoly1305.Create;
       end;
     end
     else if Context.BlockSize < 16
     then
-        FPOLY1305 := TPoly1305.Create
+        fAuthObj := TPoly1305.Create
     else
       // GCM and CCM require a cipher with 128 bit block size
       raise EDECCipherException.CreateResFmt(@sInvalidBlockSize,
@@ -817,14 +762,8 @@ begin
   end
   else
   begin
-    if Assigned(FGCM) then
-      FreeAndNil(FGCM);
-
-    if Assigned(FCCM) then
-      FreeAndNil(FCCM);
-
-    if Assigned(FPOLY1305) then
-      FreeAndNil(FPOLY1305);
+       if Assigned(fAuthObj) then
+          FreeAndNil(fAuthObj);
   end;
 end;
 
@@ -918,28 +857,12 @@ begin
     FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeGCM(Source, Dest: PUInt8Array; Size: Integer);
+procedure TDECCipherModes.EncodeWithAuthObj(Source, Dest: PUInt8Array; Size: Integer);
 begin
   if (Size < 0) then
     Size := 0;
 
-  FGCM.Encode(Source, Dest, Size);
-end;
-
-procedure TDECCipherModes.EncodePoly1305(Source, Dest: PUInt8Array;
-  Size: Integer);
-begin
-     if size < 0 then
-        Size := 0;
-     FPOLY1305.Encode(Source, Dest, Size);
-end;
-
-procedure TDECCipherModes.EncodeCCM(Source, Dest: PUInt8Array; Size: Integer);
-begin
-  if (Size < 0) then
-    Size := 0;
-
-  FCCM.Encode(Source, Dest, Size);
+  fAuthObj.Encode(Source, Dest, Size);
 end;
 
 {$IFDEF DEC3_CMCTS}
@@ -984,9 +907,9 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   DecodeGCM(@Source, @Dest, DataSize);
-    cmPoly1305: DecodePoly1305(@Source, @Dest, DataSize);
-    cmCCM :   DecodeCCM(@Source, @Dest, DataSize);
+    cmGCM,
+    cmPoly1305,
+    cmCCM :   DecodeWithAuthObj(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -1025,20 +948,12 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeGCM(Source, Dest: PUInt8Array; Size: Integer);
+procedure TDECCipherModes.DecodeWithAuthObj(Source, Dest: PUInt8Array; Size: Integer);
 begin
   if (Size < 0) then
     Size := 0;
 
-  FGCM.Decode(Source, Dest, Size);
-end;
-
-procedure TDECCipherModes.DecodeCCM(Source, Dest: PUInt8Array; Size: Integer);
-begin
-  if (Size < 0) then
-    Size := 0;
-
-  FCCM.Decode(Source, Dest, Size);
+  fAuthObj.Decode(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PUInt8Array; Size: Integer);
@@ -1184,49 +1099,25 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodePoly1305(Source, Dest: PUInt8Array;
-  Size: Integer);
-begin
-    if (Size < 0) then
-      Size := 0;
-
-    FPOLY1305.Decode(Source, Dest, Size);
-end;
-
 destructor TDECCipherModes.Destroy;
 begin
-  FGCM.Free;
-  FCCM.Free;
-  FPOLY1305.Free;
+     fAuthObj.Free;
 
-  inherited;
+     inherited;
 end;
 
 procedure TDECCipherModes.Done;
 begin
   inherited;
 
-  case FMode of
-    cmGCM : begin
-              if (length(FGCM.ExpectedAuthenticationTag) > 0) and
-                 (not IsEqual(FGCM.ExpectedAuthenticationTag, FGCM.CalculatedAuthenticationTag)) then
-                raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
-            end;
+  if Assigned(fAuthObj) then
+  begin
+       fAuthObj.FinalizeAEAD;
 
-    cmCCM : begin
-              if (length(FCCM.ExpectedAuthenticationTag) > 0) and
-                 (not IsEqual(FCCM.ExpectedAuthenticationTag, FCCM.CalculatedAuthenticationTag)) then
-                raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
-            end;
-    cmPoly1305: begin
-                    // ###########################################
-                    // #### Now the time is here to create the tag...
-                    FPOLY1305.Finalize;
-
-                    if (length(FPOLY1305.ExpectedAuthenticationTag) > 0) and
-                       (not IsEqual(FPOLY1305.ExpectedAuthenticationTag, FPOLY1305.CalculatedAuthenticationTag)) then
-                            raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
-                 end;
+       if (length(fAuthObj.ExpectedAuthenticationTag) > 0) and
+          (not IsEqual(fAuthObj.ExpectedAuthenticationTag, fAuthObj.CalculatedAuthenticationTag))
+       then
+           raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
   end;
 end;
 
@@ -1234,11 +1125,8 @@ procedure TDECCipherModes.OnAfterInitVectorInitialization(const OriginalInitVect
 begin
   inherited;
 
-  case FMode of
-    cmGCM: FGCM.Init(self.DoEncode, OriginalInitVector);
-    cmCCM: FCCM.Init(self.DoEncode, OriginalInitVector);
-    cmPoly1305: FPOLY1305.Init(self.DoEncode, OriginalInitVector);
-  end;
+  if Assigned(fAuthObj) then
+     fAuthObj.Init(self.DoEncode, OriginalInitVector);
 end;
 
 procedure TDECCipherModes.DecodeCFSx(Source, Dest: PUInt8Array; Size: Integer);

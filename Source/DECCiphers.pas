@@ -6941,6 +6941,7 @@ procedure TCipher_ChaCha20.DoDecode(Source, Dest: Pointer; Size: Integer);
 begin
      // should be the same
      DoEncode( Source, Dest, size );
+     FState := csDecode;
 end;
 
 procedure TCipher_ChaCha20.DoEncode(Source, Dest: Pointer; Size: Integer);
@@ -6965,6 +6966,7 @@ var pChaCha : PByte;
        end;
   end;
 begin
+     FState := csEncode;
      pChaCha := PByte(fOutChaChaMtx);
      inc(pChaCha, fChaChaIdx);
 
@@ -7011,6 +7013,7 @@ begin
      // special care in case of poly1305:
      if FMode = cmPoly1305 then
      begin
+          FBufferSize := 0;
           // according to RFC7539 (chapter 2.6) we create the R and S (the IV vector) value as:
           // block counter is 0 key and nonce (96 or 64 bits)
           // build iv by applying the key/nonce pair on the first "block" which results

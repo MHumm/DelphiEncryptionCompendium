@@ -1013,7 +1013,7 @@ begin
   if (Size > Context.KeySize) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
 
-  if (FInitVectorSize > FBufferSize) and (not (FMode = cmGCM)) then
+  if (FInitVectorSize > FBufferSize) and (not (FMode in [cmGCM, cmPoly1305])) then
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);

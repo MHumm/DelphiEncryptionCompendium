@@ -59,6 +59,16 @@ type
   ///   Base class for authenticated cipher modes
   /// </summary>
   TAuthenticatedCipherModesBase = class(TObject)
+  private
+    /// <summary>
+    ///   Flag that indicates if the method has been initialized
+    /// </summary>
+    fAuthMethodInit : boolean;
+
+    /// <summary>
+    ///   Length of the processed buffer
+    /// </summary>
+    fEncDecLen : Int64;
   strict protected
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
@@ -99,6 +109,32 @@ type
     ///   Length of the calculated authentication value in bit
     /// </returns>
     function GetAuthenticationTagBitLength: UInt32; virtual;
+
+
+    /// <summary>
+    ///   Initialize the authentication procedure. This is a good place to initialize
+    ///   the data structures and initialize with the (unencrypted) authenticated buffer
+    /// </summary>
+    procedure InitAuth; virtual; abstract;
+
+    /// <summary>
+    ///   Updates the mac. Can be called multiple times!
+    /// </summary>
+    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer); virtual; abstract;
+
+    /// <summary>
+    ///   finalize the MAC - typically the processed buffer lengths are incorporated here.
+    /// </summary>
+    procedure FinalizeMAC( authLen, encDecBufSize : Int64 ); virtual; abstract;
+
+    /// <summary>
+    ///   Encoding/Decoding routine that is called in the Encode/Decode routine.
+    ///   This version simply calls the EncryptionMethod givin in the init call
+    /// </summary>
+    procedure LocEncodeDecode(Source, Dest: Pointer; Size: Integer); virtual;
+
+    procedure Burn; virtual; abstract;
+
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -127,7 +163,7 @@ type
     /// </param>
     procedure Encode(Source,
                      Dest   : PUInt8Array;
-                     Size   : Integer); virtual; abstract;
+                     Size   : Integer); virtual;
     /// <summary>
     ///   Decodes a block of data using the supplied cipher
     /// </summary>
@@ -142,7 +178,13 @@ type
     /// </param>
     procedure Decode(Source,
                      Dest   : PUInt8Array;
-                     Size   : Integer); virtual; abstract;
+                     Size   : Integer); virtual;
+
+    /// <summary>
+    ///   Call this function to calculate the final MAC - typically one updates the
+    ///   remaining buffer with buffer lengths.
+    /// </summary>
+    procedure FinalizeAEAD;
 
     /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
@@ -192,6 +234,48 @@ uses
 
 { TAuthenticatedCipherModesBase }
 
+procedure TAuthenticatedCipherModesBase.Decode(Source, Dest: PUInt8Array;
+  Size: Integer);
+begin
+     if not fAuthMethodInit then
+     begin
+          InitAuth;
+          fAuthMethodInit := True;
+     end;
+
+     UpdateWithEncDecBuf(Source, size);
+     LocEncodeDecode(Source, Dest, Size);
+     inc(fEncDecLen, Size);
+end;
+
+procedure TAuthenticatedCipherModesBase.Encode(Source, Dest: PUInt8Array;
+  Size: Integer);
+begin
+     if not fAuthMethodInit then
+     begin
+          InitAuth;
+          fAuthMethodInit := True;
+     end;
+
+     LocEncodeDecode(Source, Dest, Size);
+     UpdateWithEncDecBuf(Dest, size);
+     inc(fEncDecLen, Size);
+end;
+
+procedure TAuthenticatedCipherModesBase.FinalizeAEAD;
+begin
+     if not fAuthMethodInit then
+     begin
+          InitAuth;
+          fAuthMethodInit := True;
+     end;
+
+     SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+     FinalizeMAC(Length(FDataToAuthenticate), fEncDecLen);
+
+     Burn;
+end;
+
 function TAuthenticatedCipherModesBase.GetAuthenticationTagBitLength: UInt32;
 begin
   Result := FCalcAuthenticationTagLength shl 3;
@@ -219,6 +303,12 @@ begin
   end;
 
   FEncryptionMethod := EncryptionMethod;
+end;
+
+procedure TAuthenticatedCipherModesBase.LocEncodeDecode(Source, Dest: Pointer;
+  Size: Integer);
+begin
+     FEncryptionMethod(Source, Dest, Size);
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);

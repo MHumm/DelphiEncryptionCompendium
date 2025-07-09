@@ -112,6 +112,8 @@
         <DCC_DcuOutput>.\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcuOutput>
         <DCC_MapFile>3</DCC_MapFile>
         <Debugger_RunParams>/L /LL65535</Debugger_RunParams>
+        <DCC_Define>ASSEMBLER;$(DCC_Define)</DCC_Define>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -193,6 +195,7 @@
         <DCCReference Include="..\Source\DECZIPHelper.pas"/>
         <DCCReference Include="..\Source\DECCipherModesGCM.pas"/>
         <DCCReference Include="Tests\TESTDECChaChaPoly1305.pas"/>
+        <DCCReference Include="..\Source\poly1305dll.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -246,10 +249,8 @@
                     <Source Name="MainSource">DECDUnitTestSuite.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k280.bpl">Embarcadero C++Builder-Package für Office 2000-Server</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp280.bpl">Embarcadero C++Builder-Package für Office XP-Server</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp280.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">

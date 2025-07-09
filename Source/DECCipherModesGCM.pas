@@ -53,15 +53,36 @@ type
   /// </summary>
   TGCM = class(TAuthenticatedCipherModesBase)
   strict private
+    const cGCMBlkSize = 16;
+  strict private
     /// <summary>
     ///   Empty value?
     /// </summary>
     nullbytes : T128;
+
+    /// <summary>
+    ///   if flag is set no more encoding is allowed
+    /// </summary>
+    fIsLastBlock : boolean;
+
+    /// <summary>
+    ///   One reserve buffer for the GCM intermediate blocks
+    /// </summary>
+    FData : Array[0..cGCMBlkSize-1] of Byte;
+
+    /// <summary>
+    ///   Current index of non encoded fdata bytes
+    /// </summary>
+    FDataIdx : integer;
+
     /// <summary>
     ///   Table with precalculated values
     /// </summary>
     FM        : array[0..15,0..255] of T128;
 
+    /// <summary>
+    FGHash : T128;
+    
     /// <summary>
     ///   Required for creating the table and encryption at least
     /// </summary>
@@ -175,6 +196,11 @@ type
     procedure INCR(var Y : T128);
 
     /// <summary>
+    // ###########################################
+    // #### blocked version of GaloisHash functions
+    // ###########################################
+
+    /// <summary>
     ///   Calculates the hash value
     /// </summary>
     /// <param name="AuthenticatedData">
@@ -193,10 +219,18 @@ type
     /// <returns>
     ///   Calculated raw hash value which will later get returned as AuthenticatedTag
     /// </returns>
-    function CalcGaloisHash(AuthenticatedData : PUInt8Array;
-                            AuthLen           : Integer;
-                            Ciphertext        : PUInt8Array;
-                            CiphertextSize    : Integer): T128;
+    function CalcGaloisHash(AuthenticatedData: PUInt8Array; AuthLen: integer;
+      Ciphertext: PUInt8Array; CiphertextSize: Integer): T128;
+
+
+
+    /// <summary>
+    ///   Finalizes the Hash using the Authdata length and accumulated CipherText length.
+    /// </summary>
+    /// <returns>
+    ///   Calculated raw hash value which will later get returned as AuthenticatedTag
+    /// </returns>
+
 
     /// <summary>
     ///   Encrypts a T128 value using the encryption method specified on init
@@ -207,7 +241,7 @@ type
     /// <returns>
     ///   Encrypted value
     /// </returns>
-    function EncodeT128(Value: T128): T128;
+    function EncodeT128(Value: T128): T128; inline;
   strict protected
     /// <summary>
     ///   Defines the length of the resulting authentication value in bit.
@@ -219,6 +253,52 @@ type
     ///   constrains the length of the input data and the lifetime of the key.
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); override;
+
+
+    /// <summary>
+    ///   Finalizes the Poly1305 calculation
+    ///   The last block is padded and one additional block containing
+    ///   the processed length + the legnth processed AuthenticationBytes
+    ///   is created and fed into the polynom.
+    ///   After this call the MAC is valid.
+    /// </summary>
+    procedure FinalizeMAC( authLen, encDecBufLen : int64); override;
+
+    /// <summary>
+    ///   Initializes the Galois Hash function internal data and starts
+    ///   with the DataToAuthenticate field.
+    /// </summary>
+    procedure InitAuth; override;
+
+    /// <summary>
+    ///   Updates the hash with a given cipher text. Internally the ciphertext length
+    ///   field is also updated
+    /// </summary>
+    /// <param name="buf">
+    ///   Pointer the data that updates the hash.
+    /// </param>
+    /// <param name="size">
+    ///   Length of the buffer
+    /// </param>
+    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer); override;
+
+    /// <summary>
+    ///   Encoding/Decoding routine - For some methods it is sufficient to just call
+    ///   the given encoding routine (poly1305, chacha handles that internally) - some need to update the cipher (e.g. aes gcm)
+    /// </summary>
+    /// <param name="Source">
+    ///   Pointer the data that updates the hash.
+    /// </param>
+    /// <param name="Dest">
+    ///   Pointer the data that updates the hash.
+    /// </param>
+    /// <param name="size">
+    ///   Length of the buffer
+    /// </param>
+    procedure LocEncodeDecode(Source, Dest: Pointer; Size: Integer); override;
+
+
+    procedure Burn; override;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -233,37 +313,6 @@ type
     procedure Init(EncryptionMethod : TEncodeDecodeMethod;
                    InitVector       : TBytes); override;
     /// <summary>
-    ///   Encodes a block of data using the supplied cipher
-    /// </summary>
-    /// <param name="Source">
-    ///   Plain text to encrypt
-    /// </param>
-    /// <param name="Dest">
-    ///   Ciphertext after encryption
-    /// </param>
-    /// <param name="Size">
-    ///   Number of bytes to encrypt
-    /// </param>
-    procedure Encode(Source,
-                     Dest   : PUInt8Array;
-                     Size   : Integer); override;
-    /// <summary>
-    ///   Decodes a block of data using the supplied cipher
-    /// </summary>
-    /// <param name="Source">
-    ///   Encrypted ciphertext to decrypt
-    /// </param>
-    /// <param name="Dest">
-    ///   Plaintext after decryption
-    /// </param>
-    /// <param name="Size">
-    ///   Number of bytes to decrypt
-    /// </param>
-    procedure Decode(Source,
-                     Dest   : PUInt8Array;
-                     Size   : Integer); override;
-
-    /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
@@ -274,6 +323,14 @@ type
   end;
 
 implementation
+
+uses Math;
+
+function TGCM.EncodeT128(Value: T128): T128;
+begin
+  FEncryptionMethod(@Value[0], @Result[0], 16);
+end;
+
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -436,11 +493,13 @@ var
 begin
   inherited;
 
+  FEncryptionMethod := EncryptionMethod;
+
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
 
   OldH := FH;
-  EncryptionMethod(@Nullbytes[0], @FH[0], 16);
+  FEncryptionMethod(@Nullbytes[0], @FH[0], 16);
 
   // Only generate the table when not already generated
   if (OldH[0] <> FH[0]) or (OldH[1] <> FH[1]) then
@@ -458,6 +517,214 @@ begin
      FY := CalcGaloisHash(nil, 0, @InitVector[0], length(InitVector));
 
   FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
+end;
+
+procedure TGCM.InitAuth;
+begin
+     FillChar(fData, sizeof(fData), 0);
+     FDataIdx := 0;
+
+     FGHash := nullbytes;
+     if Length(FDataToAuthenticate) > 0 then
+        UpdateWithEncDecBuf(@FDataToAuthenticate[0], Length(FDataToAuthenticate));
+end;
+
+procedure TGCM.LocEncodeDecode(Source, Dest: Pointer; Size: Integer);
+var i, j : integer;
+    div_len_plain : integer;
+
+begin
+     if fIsLastBlock then
+        raise Exception.Create('Already last block processed. Call the encode only with a blocksize of 16 bytes');
+     i := 0;
+     div_len_plain := Size div 16;
+
+     for j := 1 to div_len_plain do
+     begin
+          INCR(FY);
+
+          P128(@PUInt8Array(Dest)^[i])^ := XOR_PointerWithT128(@PUInt8Array(Source)^[i], EncodeT128(FY));
+
+          inc(i,16);
+     end;
+
+     // is it the last block?
+     if i < Size then
+     begin
+          fIsLastBlock := True;
+          INCR(FY);
+          XOR_ArrayWithT128(Source, i, Size - i, EncodeT128(FY), Dest);
+    end;
+end;
+
+procedure TGCM.FinalizeMAC(authLen, encDecBufLen: int64);
+var res : T128;
+    AuthCipherLength : T128;
+    x : T128;
+begin
+     // last block:::
+     if FDataIdx > 0 then
+     begin
+          x := nullbytes;
+          Move(fData[0], x, FDataIdx);
+          FGHash := poly_mult_H(XOR_T128(x, FGHash));
+          fDataIdx := 0;
+     end;
+
+     // update hash with the lengths...
+     SetAuthenticationCipherLength(AuthCipherLength, authLen shl 3, encDecBufLen shl 3);
+     res := XOR_T128(poly_mult_H(XOR_T128(AuthCipherLength, FGHash)), FE_K_Y0);
+
+     // copy and burn
+     if Length(FCalcAuthenticationTag) > 0 then
+        Move(res, FCalcAuthenticationTag[0], Min(sizeof(res), length(FCalcAuthenticationTag)));
+     res := nullbytes;
+     FillChar(FData, sizeof(fData), 0);
+end;
+
+procedure TGCM.UpdateWithEncDecBuf(buf: PUInt8Array; Size: Integer);
+var i, div_d, len_d : integer;
+    n : integer;
+begin
+     n := 0;
+     if FDataIdx > 0 then
+     begin
+          if cGCMBlkSize - fDataIdx > Size then
+          begin
+               Move(buf^[0], fData[FDataIdx], size);
+               inc(FDataIdx, size);
+               exit;
+          end
+          else
+          begin
+               // encode one block
+               n := cGCMBlkSize - fDataIdx;
+               Move( buf^[0], fData[fDataIdx], n);
+               FGHash := poly_mult_H(XOR_PointerWithT128(@fData[0], FGHash ));
+               FDataIdx := 0;
+          end;
+
+     end;
+
+     len_d := size - n;
+     if (len_d > 0) then
+     begin
+          div_d := len_d div cGCMBlkSize;
+          if div_d > 0 then
+          begin
+               for i := 0 to div_d - 1 do
+               begin
+                    FGHash := poly_mult_H(XOR_PointerWithT128(@buf^[n], FGHash ));
+                    inc(n, cGCMBlkSize);
+               end;
+          end;
+     end;
+
+     if n < size then
+     begin
+          Move(buf^[n], fData[fDataIdx], size - n);
+          inc(FDataIdx, size - n);
+     end;
+end;
+
+(*
+procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
+var
+  i, j, div_len_plain : UInt64;
+  AuthTag : T128;
+  pDataToAuth : PUInt8Array;
+begin
+  i := 0;
+  div_len_plain := Size div 16;
+
+  for j := 1 to div_len_plain do
+  begin
+    INCR(FY);
+
+    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
+
+    inc(i,16);
+  end;
+
+  if i < Size then
+  begin
+    INCR(FY);
+    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
+  end;
+
+  pDataToAuth := nil;
+  if Length(DataToAuthenticate) > 0 then
+     pDataToAuth := @DataToAuthenticate[0];
+  AuthTag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate), @Dest[0], Size), FE_K_Y0);
+  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  if (FCalcAuthenticationTagLength > 0) then
+  	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+end;
+
+*)
+
+(*
+procedure TGCM.EncodeGCMBlk(Ciphertext, Dest  : PUInt8Array;
+                            CiphertextSize    : Integer;
+                            lastBlock: boolean);
+var
+  i, j, div_len_plain : integer;
+  AuthTag : T128;
+begin
+  // len = 0 -> first block. Init the hash
+  if FCipherLen = 0 then
+     BeginCalcGaloisHash;
+
+  if not lastBlock and (CiphertextSize mod 16 <> 0) then
+     raise Exception.Create('Only multiple of 16bytes are allowed in block mode');
+
+  i := 0;
+  div_len_plain := CiphertextSize div 16;
+
+  for j := 1 to div_len_plain do
+  begin
+    INCR(FY);
+
+    P128(@Dest^[i])^ := XOR_PointerWithT128(@Ciphertext^[i], EncodeT128(FY));
+
+    inc(i,16);
+  end;
+
+  if lastBlock then
+  begin
+    if i < CiphertextSize then
+    begin
+      INCR(FY);
+      XOR_ArrayWithT128(Ciphertext, i, CiphertextSize-i, EncodeT128(FY), Dest);
+    end;
+
+    UpdateGaloisHash(Dest, CiphertextSize);
+
+    //AuthTag := XOR_T128(CalcGaloisHash(DataToAuthenticate, Dest, Size), FE_K_Y0);
+    AuthTag := XOR_T128(FinishGaloisHash, FE_K_Y0);
+    Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+    if (FCalcAuthenticationTagLength > 0) then
+      Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+  end
+  else
+  begin
+       UpdateGaloisHash(Dest, CiphertextSize);
+  end;
+end;
+
+*)
+
+function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
+begin
+  SetLength(Result, 5);
+  Result := [96, 104, 112, 120, 128];
+end;
+
+procedure TGCM.Burn;
+begin
+     inherited;
+
+     FH := nullbytes;
 end;
 
 function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;
@@ -506,159 +773,5 @@ begin
 
   Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
 end;
-
-procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
-var
-  i, j, BlockCount : UInt64;
-  a_tag : T128;
-  pDataToAuth : PUInt8Array;
-  pSrc : PUInt8Array;
-begin
-  i := 0;
-  BlockCount := Size div 16;
-
-  for j := 1 to BlockCount do
-  begin
-    INCR(FY);
-    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
-    inc(i, 16);
-  end;
-
-  if i < Size then
-  begin
-    INCR(FY);
-    XOR_ArrayWithT128(@Source^[0], i, UInt64(Size)-i, EncodeT128(FY), @Dest^[0]);
-  end;
-
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  pSrc := nil;
-  if Size > 0 then
-     pSrc := @source[0];
-
-  a_tag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate),
-                    pSrc, Size), FE_K_Y0);
-
-  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  if (FCalcAuthenticationTagLength > 0) then
-  	Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
-
-  // Check for correct authentication result is in Done of DECCipherModes
-  //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
-  //    raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
-
-  // In difference to the NIST recommendation we do not discard plaintext if
-  // authentication failed to make data recovery possible. But since we throw
-  // an exception the user will get notified that there's something wrong
-  //  if not IsEqual(authenticaton_tag, ba_tag) then
-  //    SetLength(plaintext, 0); // NIST FAIL => pt=''
-end;
-
-procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
-var
-  i, j, div_len_plain : UInt64;
-  AuthTag : T128;
-  pDataToAuth : PUInt8Array;
-begin
-  i := 0;
-  div_len_plain := Size div 16;
-
-  for j := 1 to div_len_plain do
-  begin
-    INCR(FY);
-
-    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
-
-    inc(i,16);
-  end;
-
-  if i < Size then
-  begin
-    INCR(FY);
-    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
-  end;
-
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  AuthTag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate), @Dest[0], Size), FE_K_Y0);
-  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  if (FCalcAuthenticationTagLength > 0) then
-  	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
-end;
-
-function TGCM.EncodeT128(Value: T128): T128;
-begin
-  FEncryptionMethod(@Value[0], @Result[0], 16);
-end;
-
-function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
-begin
-  SetLength(Result, 5);
-  Result := [96, 104, 112, 120, 128];
-end;
-
-//
-//function decrypt( const key, IV : TBytes; out plaintext : TBytes; const authenticated_data,
-//ciphertext : TBytes; len_auth_tag : integer; const authenticaton_tag : TBytes ) : boolean;
-//var
-//    i, j, div_len_ciph, len_ciph : Uint64;
-//    a_tag, E_K_Y0, Y, H : T128;
-//    bY : array[0..15] of byte absolute Y[0];
-//    ba_Tag : TBytes;
-//
-//    function equal( const a, b : TBytes ):boolean;
-//    begin
-//      if length(a) <> length(b) then Result := false
-//      else
-//      Result := CompareMem( @a[0], @b[0], length(a) );
-//    end;
-//
-//begin
-//    len_auth_tag := len_auth_tag shr 3;
-//
-//    E_Init( key );
-//    H := E_Cipher( nullbytes );
-//    Table_M_8Bit(H);
-//
-//    len_ciph := length( ciphertext );
-//    SetLength( plaintext, len_ciph );
-//
-//    if length(IV) = 12 then
-//    begin
-//       Y[1] := 0;
-//       Move( IV[0], Y[0], 12 );
-//       bY[15] := 1;
-//    end
-//    else
-//       Y := CalcGaloisHash( H, nil, IV );
-//
-//    E_K_Y0 := E_Cipher( y );
-//
-//    i := 0;
-//    div_len_ciph := len_ciph div 16;
-//    for j := 1 to div_len_ciph do
-//    begin
-//      INCR( Y );
-//      P128(@plaintext[i])^ := XOR_128_n( @ciphertext[i], E_cipher( Y ) );
-//      inc(i,16);
-//    end;
-//
-//    if i < len_ciph then
-//    begin
-//      INCR( Y );
-//      XOR_128_n_l( ciphertext, i, len_ciph-i, E_cipher( Y ), plaintext );
-//    end;
-//
-//    a_tag := XOR_128( CalcGaloisHash( H, authenticated_data, ciphertext ), E_K_Y0 );
-//
-//    Setlength( ba_tag, len_auth_tag );
-//    Move( a_tag[0], ba_tag[0], len_auth_tag );
-//
-//    Result := equal( authenticaton_tag, ba_tag );
-//    if not Result then SetLength( plaintext, 0 ); // NIST FAIL => pt=''
-//end;
-//
 
 end.

@@ -25,7 +25,7 @@ type
   end;
 implementation
 
-uses DECCipherModesPoly1305, System.Diagnostics;
+uses DECCipherModesPoly1305, System.Diagnostics, poly1305dll;
 
 
 //// ###########################################
@@ -163,6 +163,7 @@ begin
      // test decode
      for cpuMode in [cmPas, cmSSE, cmAVX] do
      begin
+          TCipher_ChaCha20.CpuMode := cpuMode;
           chaCha := TCipher_ChaCha20.Create;
           try
              chaCha.Mode := cmECBx;
@@ -176,6 +177,9 @@ begin
           Check( CompareMem( @encBuf[0], @testDecode[0], Length(testDecode)), 'Dencoding failed');
      end;
 end;
+
+type
+  THackPly1305 = class(TPoly1305);
 
 procedure TestChaCha20Poly1305.TestPoly1305;
 const// cKey : Array of Byte = [$85, $d6, $be, $78, $57, $55, $6d, $33, $7f, $44, $52, $fe, $42, $d5, $06, $a8, $01, $0,
@@ -229,9 +233,9 @@ begin
 
      poly := TPoly1305.Create;
      try
-        poly.InitInternal(iv);
-        poly.UpdatePoly(@msg[0], Length(msg));
-        poly.Finalize;
+        THackPly1305(poly).InitInternal(iv);
+        THackPly1305(poly).UpdatePoly(@msg[0], Length(msg));
+        THackPly1305(poly).Finalize;
 
         calcTag := poly.CalculatedAuthenticationTag;
      finally
@@ -252,9 +256,9 @@ begin
 
      poly := TPoly1305.Create;
      try
-        poly.InitInternal(iv);
-        poly.UpdatePoly(@msg[0], Length(msg));
-        poly.Finalize;
+        THackPly1305(poly).InitInternal(iv);
+        THackPly1305(poly).UpdatePoly(@msg[0], Length(msg));
+        THackPly1305(poly).Finalize;
 
         calcTag := poly.CalculatedAuthenticationTag;
      finally
@@ -264,6 +268,7 @@ begin
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
 end;
+
 
 procedure TestChaCha20Poly1305.TestChaCha20_Poly1305_AEAD;
 const cMsg : AnsiString = 'Ladies and Gentlemen of the class of ''99: If I could offer you only one tip for the future, sunscreen would be it.';
@@ -303,6 +308,7 @@ begin
 
           chaCha := TCipher_ChaCha20.Create;
           try
+             chaCha.Mode := cmPoly1305;
              chaCha.DataToAuthenticate := cAAD;
              chaCha.Init(cKey, cNonce);
              encr := chaCha.EncodeBytes(msg);
@@ -324,6 +330,7 @@ begin
           // #### Test decode
           chaCha := TCipher_ChaCha20.Create;
           try
+             chaCha.Mode := cmPoly1305;
              chaCha.ExpectedAuthenticationResult := encrTag;
              chaCha.DataToAuthenticate := cAAD;
 

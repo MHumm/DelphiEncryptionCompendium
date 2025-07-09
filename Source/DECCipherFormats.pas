@@ -733,7 +733,7 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
       Encode(Source[0], Result[0], Length(Source))
     else
       if (FMode = cmGCM) then
-        EncodeGCM(nil, nil, 0);
+        EncodeWithAuthObj(nil, nil, 0);
   end;
 
 begin
@@ -745,18 +745,15 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-  Result := Source;
+  SetLength(Result, Length(Source));
 
   if Length(Result) > 0 then
   begin
-    if (FMode = cmGCM) then
-      SetLength(Result, Length(Source));
-
     Decode(Source[0], Result[0], Length(Source));
-  end
-  else
-    if (FMode = cmGCM) then
-      DecodeGCM(nil, nil, 0);
+  end;
+  //else
+    //if (FMode = cmGCM) then
+    //  DecodeGCM(nil, nil, 0);
 
   if not (FPaddingClass = nil) then
     Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
