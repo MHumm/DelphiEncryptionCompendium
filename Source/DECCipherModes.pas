@@ -1108,8 +1108,6 @@ end;
 
 procedure TDECCipherModes.Done;
 begin
-  inherited;
-
   if Assigned(fAuthObj) then
   begin
        fAuthObj.FinalizeAEAD;
@@ -1119,6 +1117,8 @@ begin
        then
            raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
   end;
+
+  inherited;
 end;
 
 procedure TDECCipherModes.OnAfterInitVectorInitialization(const OriginalInitVector: TBytes);

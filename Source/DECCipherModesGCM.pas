@@ -520,13 +520,25 @@ begin
 end;
 
 procedure TGCM.InitAuth;
+var authLen : integer;
 begin
+     inherited;
+
      FillChar(fData, sizeof(fData), 0);
      FDataIdx := 0;
 
      FGHash := nullbytes;
      if Length(FDataToAuthenticate) > 0 then
-        UpdateWithEncDecBuf(@FDataToAuthenticate[0], Length(FDataToAuthenticate));
+     begin
+          authLen := Length(FDataToAuthenticate);
+          UpdateWithEncDecBuf(@FDataToAuthenticate[0], authLen);
+          // this block needs to be padded if the authentication buffer is not a multiple of 16
+          authLen := 16 - (authLen mod 16);
+          if authLen <> 16 then
+             UpdateWithEncDecBuf(@nullbytes, authLen);
+     end;
+
+     fIsLastBlock := False;
 end;
 
 procedure TGCM.LocEncodeDecode(Source, Dest: Pointer; Size: Integer);
@@ -607,16 +619,13 @@ begin
      end;
 
      len_d := size - n;
-     if (len_d > 0) then
+     if (len_d >= cGCMBlkSize) then
      begin
           div_d := len_d div cGCMBlkSize;
-          if div_d > 0 then
+          for i := 0 to div_d - 1 do
           begin
-               for i := 0 to div_d - 1 do
-               begin
-                    FGHash := poly_mult_H(XOR_PointerWithT128(@buf^[n], FGHash ));
-                    inc(n, cGCMBlkSize);
-               end;
+               FGHash := poly_mult_H(XOR_PointerWithT128(@buf^[n], FGHash ));
+               inc(n, cGCMBlkSize);
           end;
      end;
 

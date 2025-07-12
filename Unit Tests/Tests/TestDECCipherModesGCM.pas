@@ -163,6 +163,7 @@ type
     ///   Test for GitHub issue #86
     /// </summary>
     procedure TestEncodeConstData_86;
+    procedure TestStreamGCM_87;
   end;
 
 
@@ -463,11 +464,13 @@ var
   i           : Integer;
   EncryptData : TBytes;
   EncrDataStr : string;
+  idx : integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
+  idx := 0;
   for TestDataSet in FTestDataList do
   begin
     for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
@@ -584,6 +587,7 @@ begin
      cipher.DataToAuthenticate := hea;
 
      cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+     cipher.Done;
      tag := cipher.CalculatedAuthenticationResult;
   finally
          cipher.Free;
@@ -895,6 +899,109 @@ begin
   FCipherAES.DataToAuthenticate := BytesOf(RawByteString('The quick brown fox jumped over the lazy dog'));
   CheckEquals(RawByteString('The quick brown fox jumped over the lazy dog'),
               RawByteString(StringOf(FCipherAES.DataToAuthenticate)));
+end;
+
+procedure TestTDECGCM.TestStreamGCM_87;
+// testing of https://github.com/MHumm/DelphiEncryptionCompendium/issues/87
+const cKey : Array[0..3] of LongWord = ( $55A46905, $AA23072B, $1309087f, $A5020869 );
+      cIV : Array[0..2] of LongWord = ($1, $2, $3 );
+
+var inp : TBytes;
+    inpStream : TMemoryStream;
+
+    cipher : TCipher_AES128;
+    outStream : TMemoryStream;
+    decodeStream : TMemoryStream;
+    out1, out2 : TBytes;
+    i : integer;
+    hea : TBytes;
+    tag2, tag1, tag3 : TBytes;
+begin
+     // needs to be larger than the default block size of 8192 (in EncodeStream)
+     SetLength(inp, 32768);
+
+     for i := 0 to Length(inp) - 1 do
+         inp[i] := i mod 255;
+
+     inpStream := TMemoryStream.Create;
+     inpStream.WriteBuffer(inp, Length(inp));
+
+     // ###########################################
+     // #### First run -> direct encoding
+     cipher := TCipher_AES128.Create;
+     try
+        cipher.Mode := cmGCM;
+        cipher.Init( cKey, sizeof(cKey), civ, sizeof(civ) );
+
+        cipher.AuthenticationResultBitLength := 128;
+        // some authenticatino data
+        hea := [1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        cipher.DataToAuthenticate := hea;
+
+        out1 := cipher.EncodeBytes(inp);
+
+        cipher.Done;
+        tag1 := cipher.CalculatedAuthenticationResult;
+     finally
+            cipher.Free;
+     end;
+
+
+     // ###########################################
+     // #### Second run -> stream
+     outStream := TMemoryStream.Create;
+     inpStream.Position := 0;
+     cipher := TCipher_AES128.Create;
+     try
+        cipher.Mode := cmGCM;
+        cipher.Init( cKey, sizeof(cKey), civ, sizeof(civ) );
+
+        cipher.AuthenticationResultBitLength := 128;
+        hea := [1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        cipher.DataToAuthenticate := hea;
+
+        cipher.EncodeStream(inpStream, outStream, inpStream.Size, nil);
+        cipher.Done;
+        tag2 := cipher.CalculatedAuthenticationResult;
+     finally
+            cipher.Free;
+     end;
+
+     outStream.Position := 0;
+     SetLength(out2, outStream.Size);
+     outStream.ReadBuffer(out2, outStream.Size);
+
+     Check( CompareMem(@out1[0], @out2[0], Length(out1) ), 'AES128 Encryption failed');
+     Check( CompareMem(@tag1[0], @tag2[0], Length(tag1) ), 'Authentication Result do not match');
+
+
+     // ###########################################
+     // #### Decode
+     decodeStream := TMemoryStream.Create;
+     inpStream.Position := 0;
+     outStream.Position := 0;
+     cipher := TCipher_AES128.Create;
+     try
+        cipher.Mode := cmGCM;
+        cipher.Init( cKey, sizeof(cKey), civ, sizeof(civ) );
+
+        cipher.AuthenticationResultBitLength := 128;
+        hea := [1, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        cipher.DataToAuthenticate := hea;
+
+        cipher.DecodeStream(outStream, decodeStream, outStream.Size, nil);
+        cipher.Done;
+        tag3 := cipher.CalculatedAuthenticationResult;
+     finally
+            cipher.Free;
+     end;
+
+     Check( CompareMem(@tag3[0], @tag2[0], Length(tag1) ), 'Authentication Result do not match');
+     Check( CompareMem( inpStream.Memory, decodeStream.Memory, inpStream.Size ), 'Decoding failed');
+
+     decodeStream.Free;
+     outStream.Free;
+     inpStream.Free;
 end;
 
 initialization

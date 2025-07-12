@@ -294,6 +294,7 @@ begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
   // Clear calculated authentication value
+  fAuthMethodInit := False;
   CalcAuthLength := Length(FCalcAuthenticationTag);
   if (CalcAuthLength > 0) then
   begin
@@ -302,6 +303,7 @@ begin
     FillChar(FCalcAuthenticationTag[0], CalcAuthLength, #0);
   end;
 
+  fEncDecLen := 0;
   FEncryptionMethod := EncryptionMethod;
 end;
 

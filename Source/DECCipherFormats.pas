@@ -730,10 +730,10 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
   begin
     SetLength(Result, Length(Source));
     if Length(Result) > 0 then
-      Encode(Source[0], Result[0], Length(Source))
-    else
-      if (FMode = cmGCM) then
-        EncodeWithAuthObj(nil, nil, 0);
+      Encode(Source[0], Result[0], Length(Source));
+    //else
+//      if (FMode = cmGCM) then
+//        EncodeWithAuthObj(nil, nil, 0);
   end;
 
 begin
