@@ -73,10 +73,12 @@
 // Automatically register all hash classes
 {.$DEFINE ManualRegisterHashClasses} (* default off *)
 
+{.$DEFINE ASSEMBLER}
+
 // if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM
 // in Delphi do not use Intel x86 ASM
-{$IFDEF FPC }
+{$IFNDEF FPC }
   {$IF defined(CPUX86_64) or defined(CPUAMD64) or defined(CPUIA64) }
     {$ifndef CPUX64}
         {$define CPUX64}

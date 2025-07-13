@@ -464,13 +464,11 @@ var
   i           : Integer;
   EncryptData : TBytes;
   EncrDataStr : string;
-  idx : integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV192.rsp', FTestDataList);
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256.rsp', FTestDataList);
 
-  idx := 0;
   for TestDataSet in FTestDataList do
   begin
     for i := Low(TestDataSet.TestData) to High(TestDataSet.TestData) do
