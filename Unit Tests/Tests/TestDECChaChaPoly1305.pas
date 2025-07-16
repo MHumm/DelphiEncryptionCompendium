@@ -22,6 +22,7 @@ type
     procedure TestChaCha20_Poly1305_AEAD;
     procedure TestChaChaEncodeDecodeSpeed;
 
+    procedure TestXChaCha_Poly1305_AEAD;
   end;
 implementation
 
@@ -267,6 +268,85 @@ begin
 
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
+end;
+
+
+procedure TestChaCha20Poly1305.TestXChaCha_Poly1305_AEAD;
+// is actually the same test vector as for chacha20_poly1305
+const cMsg : AnsiString = 'Ladies and Gentlemen of the class of ''99: If I could offer you only one tip for the future, sunscreen would be it.';
+      cAAD : TBytes = [$50, $51, $52, $53, $c0, $c1, $c2, $c3, $c4, $c5, $c6, $c7];
+
+      cKey : TBytes = [$80, $81, $82, $83, $84, $85, $86, $87, $88, $89, $8a, $8b, $8c, $8d, $8e, $8f,
+                       $90, $91, $92, $93, $94, $95, $96, $97, $98, $99, $9a, $9b, $9c, $9d, $9e, $9f];
+
+      cNonce : TBytes = [$40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $4a, $4b, $4c, $4d, $4e, $4f, $50, $51, $52, $53, $54, $55, $56, $57];
+
+      cTag : TBytes = [$c0, $87, $59, $24, $c1, $c7, $98, $79, $47, $de, $af, $d8, $78, $0a, $cf, $49];
+
+      cCipherText : TBytes = [$bd, $6d, $17, $9d, $3e, $83, $d4, $3b, $95, $76, $57, $94, $93, $c0, $e9, $39,
+                              $57, $2a, $17, $00, $25, $2b, $fa, $cc, $be, $d2, $90, $2c, $21, $39, $6c, $bb,
+                              $73, $1c, $7f, $1b, $0b, $4a, $a6, $44, $0b, $f3, $a8, $2f, $4e, $da, $7e, $39,
+                              $ae, $64, $c6, $70, $8c, $54, $c2, $16, $cb, $96, $b7, $2e, $12, $13, $b4, $52,
+                              $2f, $8c, $9b, $a4, $0d, $b5, $d9, $45, $b1, $1b, $69, $b9, $82, $c1, $bb, $9e,
+                              $3f, $3f, $ac, $2b, $c3, $69, $48, $8f, $76, $b2, $38, $35, $65, $d3, $ff, $f9,
+                              $21, $f9, $66, $4c, $97, $63, $7d, $a9, $76, $88, $12, $f6, $15, $c6, $8b, $13,
+                              $b5, $2e ];
+var chaCha : TCipher_XChaCha20;
+    msg : TBytes;
+    encr : TBytes;
+    encrTag : TBytes;
+    decr : TBytes;
+    decodeTag : TBytes;
+    cpuMode : TChaChaCpuMode;
+begin
+     for cpuMode in [cmPas, cmSSE, cmAVX] do
+     begin
+          TCipher_XChaCha20.CpuMode := cpuMode;
+
+          SetLength(msg, Length(cMsg));
+          Move( cMsg[1], msg[0], Length(msg));
+
+
+          chaCha := TCipher_XChaCha20.Create;
+          try
+             chaCha.Mode := cmPoly1305;
+             chaCha.DataToAuthenticate := cAAD;
+             chaCha.Init(cKey, cNonce);
+             encr := chaCha.EncodeBytes(msg);
+             chaCha.Done;
+
+             encrTag := chaCha.CalculatedAuthenticationResult;
+          finally
+                 chaCha.Free;
+          end;
+
+          Check( Length(cCipherText) = Length(encr), 'Encryption length is wrong');
+          Check( CompareMem( @cCipherText[0],  @encr[0], Length(encr) ), 'Encryption failed');
+
+
+          Check( Length(cTag) = Length(encrTag), 'Tag length is wrong');
+          Check( CompareMem( @encrTag[0], @cTag[0], Length(cTag)), 'Calculated Tag is wrong');
+
+          // ###########################################
+          // #### Test decode
+          chaCha := TCipher_XChaCha20.Create;
+          try
+             chaCha.Mode := cmPoly1305;
+             chaCha.ExpectedAuthenticationResult := encrTag;
+             chaCha.DataToAuthenticate := cAAD;
+
+             chaCha.Init(cKey, cNonce);
+             decr := chaCha.DecodeBytes(encr);
+             chaCha.Done;
+
+             decodeTag := chaCha.CalculatedAuthenticationResult
+          finally
+                 chaCha.Free;
+          end;
+
+          Check( Length(cTag) = Length(decodeTag), 'Tag length is wrong');
+          Check( CompareMem( @decodeTag[0], @cTag[0], Length(cTag)), 'Calculated Tag is wrong');
+     end;
 end;
 
 

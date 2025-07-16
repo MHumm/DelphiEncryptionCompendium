@@ -211,6 +211,11 @@ type
   /// </summary>
   TCipher_ChaCha20    = class;
 
+  /// <summary>
+  ///   XChaCha20 cipher
+  /// </summary>
+  TCipher_XChaCha20 = class;
+
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
   TSkipjackTab = array[0..255] of Byte;
@@ -504,7 +509,7 @@ type
       // double the size -> two blocks at once
       TChaChaEncodeBlkFunc = procedure(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register; {$IFDEF FPC} assembler; {$ENDIF}
 
-  private
+  protected
     fInpChaChaMTX : PChaChaMtx;
     fOutChaChaMtx : PChaChaAVXMtx;
 
@@ -544,6 +549,18 @@ type
     ///   Set to true if the routine shall use SSE instructinos to build the chacha matrix
     /// </summary>
     class var CpuMode : TChaChaCpuMode;
+  end;
+
+  // based on the draft: https://datatracker.ietf.org/doc/html/draft-arciszewski-xchacha-03
+  TCipher_XChaCha20 = class(TCipher_ChaCha20)
+  private
+    fHChaCha : Array[0..22] of LongWord;
+    fPHChaCha : PChaChaMtx;
+
+    procedure HChaCha( iv : TBytes );
+  protected
+    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
+  public
   end;
 
   TCipher_Square = class(TDECFormattedCipher)
@@ -7040,10 +7057,6 @@ begin
          inherited;
 end;
 
-procedure TCipher_ChaCha20.DoInit(const Key; Size: Integer);
-// from chacha-prng.h
-const cChaChaConst : Array[0..15] of AnsiChar = 'expand 32-byte k';
-
 function AlignPtr32( A : Pointer ) : Pointer;
 begin
      Result := A;
@@ -7051,6 +7064,10 @@ begin
         Result := Pointer( NativeUint(Result) + $20 - NativeUint(Result) and $1F );
 end;
 
+
+procedure TCipher_ChaCha20.DoInit(const Key; Size: Integer);
+// from chacha-prng.h
+const cChaChaConst : Array[0..15] of AnsiChar = 'expand 32-byte k';
 begin
      inherited;
 
@@ -7861,6 +7878,71 @@ begin
      Result := CompareMem(fOutChaChaMtx, @expectedMtx, sizeof(TChaChaMtx));
 end;
 
+
+{ TCipher_XChaCha20 }
+
+procedure TCipher_XChaCha20.HChaCha(iv: TBytes);
+var i : integer;
+begin
+     // inpmatrix is initialized with the original key
+     fPHChaCha := AlignPtr32( @fHChaCha[0] );
+     Move( fInpChaChaMTX^, fPHChaCha^, sizeof(fPHChaCha^));
+
+     // copy over the iv -> 128 bit
+     // create the HChaChaMatrix in fPHChaCha
+     Move(iv[0], fPHChaCha^[12], 4*sizeof(LongWord));
+
+     {$IFNDEF PUREPASCAL}
+     if cpuMode = cmSSE then
+     begin
+          for i := 0 to fNumChaChaRounds - 1 do
+              SSEChaChaDoubleQuarterRound(fPHChaCha);
+     end
+     else
+     {$ENDIF}
+     begin
+          for i := 0 to fNumChaChaRounds - 1 do
+              PasChaChaDoubleQuarterRound(fPHChaCha);
+     end;
+end;
+
+
+procedure TCipher_XChaCha20.OnAfterInitVectorInitialization(
+  const OriginalInitVector: TBytes);
+begin
+     // RFC point 2.3 and 2.3.1:
+
+     if length(OriginalInitVector) <> 24 then //192 div 8
+        raise Exception.Create('IV vector needs to be 192 bits long');
+
+     // update iv -> use the first 16 bytes!
+     HChaCha(OriginalInitVector);
+
+     // extract subkey -> overwrite key
+
+     // subkey is the first row and the last row!!
+     Move(fPHChaCha^[0], fInpChaChaMTX^[4], 4*sizeof(LongWord));
+     Move(fPHChaCha^[12], fInpChaChaMTX^[8], 4*sizeof(LongWord));
+
+     // update IV -> the last 8 bytes
+     Move(OriginalInitVector[16], FInitializationVector[4], 2*sizeof(LongWord));
+     PLongWord(@FInitializationVector[0])^ := 0;  // per definition the these bytes are zero
+
+     // truncate iv length
+     FInitVectorSize := 3*sizeof(longword);
+
+     // int chacha with these values
+     // note: the inherted routine may not overwrite the key part and needs
+     // to initialize the nonce with the "tampered" iv
+     inherited;
+
+     // restore the iv vector size
+     FInitVectorSize := 24;
+
+     // burn
+     FillChar(fHChaCha, sizeof(fHChaCha), 0);
+end;
+
 initialization
   SetDefaultCipherClass(TCipher_Null);
 
@@ -7894,6 +7976,9 @@ initialization
   TCipher_3Way.RegisterClass(TDECCipher.ClassList);
   TCipher_Cast128.RegisterClass(TDECCipher.ClassList);
   TCipher_Gost.RegisterClass(TDECCipher.ClassList);
+  TCipher_ChaCha20.RegisterClass(TDECCipher.ClassList);
+  TCipher_XChaCha20.RegisterClass(TDECCipher.ClassList);
+
 // Explicitely not registered, as this is an alias for Gost only
 //  TCipher_Magma.RegisterClass(TDECCipher.ClassList);
   TCipher_Misty.RegisterClass(TDECCipher.ClassList);
