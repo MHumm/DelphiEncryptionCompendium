@@ -26,7 +26,7 @@ type
   end;
 implementation
 
-uses DECCipherModesPoly1305, System.Diagnostics, poly1305dll;
+uses DECCipherModesPoly1305, System.Diagnostics;
 
 
 //// ###########################################
