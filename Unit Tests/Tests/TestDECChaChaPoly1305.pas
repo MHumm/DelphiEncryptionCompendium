@@ -40,6 +40,8 @@ type
     fTests : TTestEnumerator;
 
     function IterTests : TTestEnumerator;
+  public
+    destructor Destroy; override;
   published
     procedure TestPoly1305;
     procedure TestChaCha20_Poly1305_KeySetup;
@@ -50,8 +52,6 @@ type
     // test suite code
     procedure TestEncode;
     procedure TestDecode;
-
-    destructor Destroy; override;
   end;
 implementation
 
