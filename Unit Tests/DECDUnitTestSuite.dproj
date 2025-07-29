@@ -194,8 +194,7 @@
         <DCCReference Include="..\Source\DECUtilRawByteStringHelper.pas"/>
         <DCCReference Include="..\Source\DECZIPHelper.pas"/>
         <DCCReference Include="..\Source\DECCipherModesGCM.pas"/>
-        <DCCReference Include="Tests\TESTDECChaChaPoly1305.pas"/>
-        <DCCReference Include="..\Source\poly1305dll.pas"/>
+        <DCCReference Include="Tests\TestDECChaChaPoly1305.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

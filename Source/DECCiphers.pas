@@ -7022,7 +7022,7 @@ procedure TCipher_ChaCha20.OnAfterInitVectorInitialization(
 var iv : TBytes;
 begin
      if FInitVectorSize <> 12 then
-        raise Exception.Create('Nonce is not 96 bit.');
+        raise EDECException.Create('Nonce is not 96 bit.');
 
      fInpChaChaMTX^[12] := 0;   // counter
      Move( FInitializationVector^, fInpChaChaMTX^[13], 3*sizeof(longword));
@@ -7072,7 +7072,7 @@ begin
      inherited;
 
      if size <> 32 then
-        raise Exception.Create('Given ChaCha key size is not 256 bit');
+        raise EDECException.Create('Given ChaCha key size is not 256 bit');
 
      // allocate for the AVX case -> 2 cha cha matrices at once
      fInpChaChaMtx := AlignPtr32(FAdditionalBuffer);
@@ -7695,7 +7695,7 @@ begin
 
           // is this here for xchacha?
           if fInpChaChaMTX^[12] <= 1 then
-             raise Exception.Create('Counter overflow!');
+             raise EDECException.Create('Counter overflow!');
 //             inc(fInpChaChaMTX^[13]);
      end;
 end;
@@ -7913,7 +7913,7 @@ begin
      // RFC point 2.3 and 2.3.1:
 
      if length(OriginalInitVector) <> 24 then //192 div 8
-        raise Exception.Create('IV vector needs to be 192 bits long');
+        raise EDECException.Create('IV vector needs to be 192 bits long');
 
      // update iv -> use the first 16 bytes!
      HChaCha(OriginalInitVector);

@@ -8,7 +8,7 @@ uses {$IFDEF DUnitX}
      TestFramework,
      {$ENDIF}
      System.SysUtils, Generics.Collections, System.Math,
-     DECBaseClass,
+     DECBaseClass, System.JSON,
      DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
 
 
@@ -16,6 +16,30 @@ type
 // Testmethods for class TDECCipher
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestChaCha20Poly1305 = class(TTestCase)
+  private
+    type
+      TJsonTestCase = record
+        key : TBytes;
+        iv : TBytes;
+        msg : TBytes;
+        aad : TBytes;
+        tag : TBytes;
+        enc : TBytes;
+        isValid : boolean;
+      end;
+      TTestEnumerator = class(TEnumerable<TJsonTestCase>)
+      private
+        fTests : TList<TJsonTestCase>;
+      protected
+        function DoGetEnumerator: TEnumerator<TJsonTestCase>; override;
+      public
+        constructor Create(const aTestFile : string);
+        destructor Destroy; override;
+      end;
+  private
+    fTests : TTestEnumerator;
+
+    function IterTests : TTestEnumerator;
   published
     procedure TestPoly1305;
     procedure TestChaCha20_Poly1305_KeySetup;
@@ -23,32 +47,16 @@ type
     procedure TestChaChaEncodeDecodeSpeed;
 
     procedure TestXChaCha_Poly1305_AEAD;
+    // test suite code
+    procedure TestEncode;
+    procedure TestDecode;
+
+    destructor Destroy; override;
   end;
 implementation
 
-uses DECCipherModesPoly1305, System.Diagnostics;
-
-
-//// ###########################################
-//// #### OpenSSL reference implementation
-//// ###########################################
-//
-//
-//const POLY1305_KEY_SIZE = 32;
-//      POLY1305_DIGEST_SIZE = 16;
-//
-//type
-//  PPoly1305Ctx = PByte;
-//  TPoly1305Key = Array[0..POLY1305_KEY_SIZE-1] of byte;
-//  TPoly1305Mac = Array[0..POLY1305_DIGEST_SIZE-1] of byte;
-//  size_t = Integer;
-//
-//
-//function Poly1305_ctx_size : size_t; cdecl; external 'libcrypto-3.dll';
-//procedure Poly1305_Init(ctx : PPoly1305Ctx; const key : TPoly1305Key); cdecl; external 'libcrypto-3.dll';
-//procedure Poly1305_Update(ctx : PPoly1305Ctx; inp : PByte; len : size_t); cdecl; external 'libcrypto-3.dll';
-//procedure Poly1305_Final(ctx : PPoly1305Ctx; var mac : TPoly1305Mac); cdecl; external 'libcrypto-3.dll';
-
+uses DECCipherModesPoly1305, System.Diagnostics, classes, DECFormat, DECTypes,
+      System.JSON.Readers;
 
 
 // ###########################################
@@ -179,6 +187,88 @@ begin
      end;
 end;
 
+procedure TestChaCha20Poly1305.TestDecode;
+var aTest : TJsonTestCase;
+    chacha : TCipher_ChaCha20;
+    decode : TBytes;
+    isValid : boolean;
+begin
+     isValid := False; // satisfy compiler
+     for aTest in IterTests do
+     begin
+          try
+             chacha := TCipher_ChaCha20.Create;
+             try
+                chacha.DataToAuthenticate := aTest.aad;
+                chacha.ExpectedAuthenticationResult := aTest.tag;
+                chaCha.Init( aTest.key, aTest.iv );
+
+                decode := chaCha.DecodeBytes(aTest.enc);
+                chaCha.Done;
+                isValid := True;
+             finally
+                    chacha.Free;
+             end;
+
+             Check( Length(decode) = Length(aTest.msg), 'Decoding length test failed');
+             if Length(decode) <> 0 then
+                Check( Comparemem(@decode[0], @aTest.msg[0], Length(decode) ), 'Decoding failed' );
+          except
+                // tests marked as "invalid" (or not "valid") raise an exception
+                // -> the test does not fail if the result is different to "valid"
+                on E : EDECException do
+                begin
+                     isValid := False;
+                end;
+          else
+              raise;
+          end;
+
+          Check( not (isValid xor aTest.isValid), 'Test failed');
+     end;
+end;
+
+procedure TestChaCha20Poly1305.TestEncode;
+var aTest : TJsonTestCase;
+    chacha : TCipher_ChaCha20;
+    encode : TBytes;
+    isValid : boolean;
+begin
+     isValid := False; // satisfy compiler
+     for aTest in IterTests do
+     begin
+          try
+             chacha := TCipher_ChaCha20.Create;
+             try
+                chacha.DataToAuthenticate := aTest.aad;
+                chacha.ExpectedAuthenticationResult := aTest.tag;
+                chaCha.Init( aTest.key, aTest.iv );
+
+                encode := chaCha.EncodeBytes(aTest.msg);
+                chaCha.Done;
+                isValid := True;
+             finally
+                    chacha.Free;
+             end;
+
+             Check( Length(encode) = Length(aTest.enc), 'Decoding length test failed');
+             if Length(encode) <> 0 then
+                Check( Comparemem(@encode[0], @aTest.enc[0], Length(encode) ), 'Encoding failed' );
+          except
+                // tests marked as "invalid" (or not "valid") raise an exception
+                // -> the test does not fail if the result is different to "valid"
+                on E : EDECException do
+                begin
+                     isValid := False;
+                end;
+          else
+              raise;
+          end;
+
+          Check( not (isValid xor aTest.isValid), 'Test failed');
+     end;
+end;
+
 type
   THackPly1305 = class(TPoly1305);
 
@@ -271,6 +361,14 @@ begin
 end;
 
 
+function TestChaCha20Poly1305.IterTests: TTestEnumerator;
+begin
+     if not Assigned(fTests) then
+        fTests := TTestEnumerator.Create('..\..\Unit Tests\Data\chacha20_poly1305_test.json');
+
+     Result := fTests;
+end;
+
 procedure TestChaCha20Poly1305.TestXChaCha_Poly1305_AEAD;
 // is actually the same test vector as for chacha20_poly1305
 const cMsg : AnsiString = 'Ladies and Gentlemen of the class of ''99: If I could offer you only one tip for the future, sunscreen would be it.';
@@ -350,6 +448,13 @@ begin
 end;
 
 
+destructor TestChaCha20Poly1305.Destroy;
+begin
+     fTests.Free;
+
+     inherited;
+end;
+
 procedure TestChaCha20Poly1305.TestChaCha20_Poly1305_AEAD;
 const cMsg : AnsiString = 'Ladies and Gentlemen of the class of ''99: If I could offer you only one tip for the future, sunscreen would be it.';
       cAAD : TBytes = [$50, $51, $52, $53, $c0, $c1, $c2, $c3, $c4, $c5, $c6, $c7];
@@ -428,6 +533,63 @@ begin
      end;
 end;
 
+
+{ TestChaCha20Poly1305.TTestEnumerator }
+
+constructor TestChaCha20Poly1305.TTestEnumerator.Create(
+  const aTestFile: string);
+var groups : TJSONArray;
+    tests : TJsonValue;
+    aTest : TJsonValue;
+    testFile : TJSonObject;
+    testRec : TJsonTestCase;
+begin
+     inherited Create;
+
+     fTests := TList<TJsonTestCase>.Create;
+     with TSTringList.create do
+     try
+        Loadfromfile('..\..\Unit Tests\Data\chacha20_poly1305_test.json');
+        testFile := TJSONObject.ParseJSONValue(Text) as TJSONObject;
+     finally
+            Free;
+     end;
+
+     // ###########################################
+     // #### Build list of tests
+     try
+        groups := testFile.GetValue('testGroups') as TJsonArray;
+
+        for tests in groups do
+        begin
+             for aTest in ((tests as TJsonObject).GetValue('tests') as TJsonArray) do
+             begin
+                  testRec.aad := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('aad'))));
+                  testRec.iv := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('iv'))));
+                  testRec.key := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('key'))));
+                  testRec.msg := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('msg'))));
+                  testRec.tag := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('tag'))));
+                  testRec.Enc := BytesOf(TFormat_HexL.Decode(RawByteString(aTest.GetValue<string>('ct'))));
+                  testRec.isValid := SameText( aTest.GetValue<string>('result'), 'Valid');
+                  fTests.Add(testRec);
+             end;
+        end;
+     finally
+            testFile.Free;
+     end;
+end;
+
+destructor TestChaCha20Poly1305.TTestEnumerator.Destroy;
+begin
+     fTests.Free;
+
+     inherited;
+end;
+
+function TestChaCha20Poly1305.TTestEnumerator.DoGetEnumerator: TEnumerator<TJsonTestCase>;
+begin
+     Result := fTests.GetEnumerator;
+end;
 
 initialization
   // Register all test cases to be run

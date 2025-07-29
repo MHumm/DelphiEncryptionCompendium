@@ -146,7 +146,7 @@ implementation
 //         )
 function ConstTimeCarray32(a, b : UInt32 ) : UInt32; inline;
 begin
-     Result := (a xor ( (a xor b) or (a - b) xor b )) shr 31;
+     Result := (a xor ( (a xor b) or ((a - b) xor b))) shr 31;
 end;
 
 
@@ -230,7 +230,7 @@ var mac : TBlock16Byte;
 begin
      if fNum > 0 then
      begin
-          fData[fNum] := 1;
+          fData[fNum] := 1; // padbit..
           inc(fNum);
           while fNum < Length(fData) do
           begin
@@ -372,7 +372,7 @@ begin
 //          h4 += (u32)(d3 >> 32) + padbit;
           d0 := UInt64(h0) + U8ToU32(pData);
           h0 := UInt32(d0);
-          d1 := UInt64(h1) + d0 shr 32 + U8ToU32(@pData^[4]);
+          d1 := UInt64(h1) + d0 shr 32 + U8ToU32(@pData^[4]);     // the delphi compiler seems to be intelligent enough to replace the shift by accessing the high 4 bytes
           h1 := UInt32(d1);
           d2 := UInt64(h2) + d1 shr 32 + U8ToU32(@pData^[8]);
           h2 := UInt32(d2);
