@@ -216,6 +216,7 @@ constructor TPoly1305.Create;
 begin
      inherited Create;
 
+     FCalcAuthenticationTagLength := sizeof(TBlock16Byte);
      FH := @fPoly1305State[0];
      FR := @fPoly1305State[sizeof(THarr)];
 

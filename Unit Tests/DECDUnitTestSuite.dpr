@@ -70,7 +70,8 @@ uses
   DECUtilRawByteStringHelper in '..\Source\DECUtilRawByteStringHelper.pas',
   DECZIPHelper in '..\Source\DECZIPHelper.pas',
   DECCipherModesGCM in '..\Source\DECCipherModesGCM.pas',
-  TestDECChaChaPoly1305 in 'Tests\TestDECChaChaPoly1305.pas';
+  TestDECChaChaPoly1305 in 'Tests\TestDECChaChaPoly1305.pas',
+  DECCPUSupport in '..\Source\DECCPUSupport.pas';
 
 {$R *.RES}
 

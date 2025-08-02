@@ -1106,7 +1106,7 @@ implementation
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
 
 uses
-  DECData, DECDataCipher;
+  DECData, DECDataCipher, DECCPUSupport;
 
 { TCipher_Null }
 
@@ -7609,9 +7609,13 @@ begin
      {$IFDEF PUREPASCAL}
      fFullBlockFunc := FullBlockPas;
      {$ELSE}
+     fFullBlockFunc := FullBlockPas;
+
      case CpuMode of
-       cmSSE: fFullBlockFunc := FullBlockSSE;
-       cmAVX: fFullBlockFunc := FullBlockAVX;
+       cmSSE: if TDEC_CPUSupport.SSE3 then
+                 fFullBlockFunc := FullBlockSSE;
+       cmAVX: if TDEC_CPUSupport.AVX2 then
+                 fFullBlockFunc := FullBlockAVX;
      else
          fFullBlockFunc := FullBlockPas;
      end;
@@ -8000,6 +8004,17 @@ initialization
     TCipher_Shark_DEC52.RegisterClass(TDECCipher.ClassList);
     TCipher_XTEA_DEC52.RegisterClass(TDECCipher.ClassList);
     {$ENDIF}
+  {$ENDIF}
+
+  {$IFDEF CPUx86}
+  if TDEC_CPUSupport.AVX2
+  then
+      TCipher_ChaCha20.CpuMode := cmAVX
+  else if TDEC_CPUSupport.SSE3
+  then
+      TCipher_ChaCha20.CpuMode := cmSSE
+  else
+      TCipher_ChaCha20.CpuMode := cmPas;
   {$ENDIF}
 
 finalization
