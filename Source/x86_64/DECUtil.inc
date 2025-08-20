@@ -6,9 +6,8 @@
 {$define SwapUInt32_asm}
 function SwapUInt32(Source: UInt32): UInt32;
 asm
-    MOV   RAX, Source
-    BSWAP RAX
-    SHR   RAX, 32
+    MOV   EAX, Source
+    BSWAP EAX
 end;
 {$endif}
 

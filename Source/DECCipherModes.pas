@@ -751,7 +751,7 @@ begin
            cmPoly1305: fAuthObj := TPoly1305.Create;
       end;
     end
-    else if Context.BlockSize < 16
+    else if (Context.BlockSize < 16) and (TCipherMode.cmPoly1305 = FMode)
     then
         fAuthObj := TPoly1305.Create
     else
