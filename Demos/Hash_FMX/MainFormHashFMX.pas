@@ -136,6 +136,7 @@ var
   SaltFormatting       : TDECFormatClass;
   InputBuffer          : TBytes;
   OutputBuffer         : TBytes;
+  Salt                 : TBytes;
   ExtensibleInterf     : IDECHashExtensibleOutput;
   LastByteLengthInterf : IDECHashBitsized;
   RoundsInterf         : IDECHashRounds;
@@ -165,76 +166,83 @@ begin
   if ComboBoxHashFunction.ItemIndex >= 0 then
   begin
     // Find the class type of the selected hash class and create an instance of it
-   Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
-
-    if Supports(Hash.ClassType, IDECHashExtensibleOutput) then
-    begin
-      ExtensibleInterf := (Hash as IDECHashExtensibleOutput);
-      ExtensibleInterf.HashSize := EditHashLength.Text.ToInteger;
-    end
-    else
-      ExtensibleInterf := nil;
-
-    if Supports(Hash.ClassType, IDECHashBitsized) then
-    begin
-      LastByteLengthInterf := (Hash as IDECHashBitsized);
-      LastByteLengthInterf.FinalBitLength := EditLastByteBits.Text.ToInteger;
-    end
-    else
-      LastByteLengthInterf := nil;
-
-    if Supports(Hash.ClassType, IDECHashRounds) then
-    begin
-      RoundsInterf := (Hash as IDECHashRounds);
-      Rounds := EditRounds.Text.ToInteger;
-
-      // If value is not in range we don't dis´play any error message here
-      // because we already displayed one in OnChange of the edit, means when
-      // the edit lost focus. This if here is only to prevent that after closing
-      // the error message the user clicks the calc button again. In that case we
-      // simply skip calculation completely.
-      if (Rounds >= RoundsInterf.GetMinRounds) and
-         (Rounds <= RoundsInterf.GetMaxRounds) then
-        RoundsInterf.Rounds := EditRounds.Text.ToInteger
-      else
-        Exit;
-    end
-    else
-      RoundsInterf := nil;
-
-    // set the salt property
-    HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
-    if IsSaltablePasswordHash(HashClass) then
-    begin
-      if EditSalt.Text.IsEmpty then
-      begin
-        ShowErrorMessage('No salt value entered');
-        exit;
-      end;
-
-      if (ComboBoxSaltFormatting.ItemIndex >= 0) then
-        // Find the class type of the selected formatting class
-        SaltFormatting := TDECFormat.ClassByName(
-          ComboBoxSaltFormatting.Items[ComboBoxSaltFormatting.ItemIndex])
-      else
-      begin
-        ShowErrorMessage('No salt format selected');
-        exit;
-      end;
-
-      InputBuffer  := System.SysUtils.BytesOf(EditSalt.Text);
-      if InputFormatting.IsValid(InputBuffer) then
-        TDECPasswordHash(Hash).Salt := SaltFormatting.Decode(InputBuffer)
-      else
-        ShowErrorMessage('Salt has wrong format');
-    end;
-
-    // Set the BCrypt specific cost factor. Might be more generalized when
-    // further password hashes are added.
-    if (HashClass = THash_BCrypt) then
-      THash_BCrypt(Hash).Cost := EditCost.Text.ToInteger;
+    Hash := TDECHash.ClassByName(GetSelectedHashClassName).Create;
 
     try
+      if Supports(Hash.ClassType, IDECHashExtensibleOutput) then
+      begin
+        ExtensibleInterf := (Hash as IDECHashExtensibleOutput);
+        ExtensibleInterf.HashSize := EditHashLength.Text.ToInteger;
+      end
+      else
+        ExtensibleInterf := nil;
+
+      if Supports(Hash.ClassType, IDECHashBitsized) then
+      begin
+        LastByteLengthInterf := (Hash as IDECHashBitsized);
+        LastByteLengthInterf.FinalBitLength := EditLastByteBits.Text.ToInteger;
+      end
+      else
+        LastByteLengthInterf := nil;
+
+      if Supports(Hash.ClassType, IDECHashRounds) then
+      begin
+        RoundsInterf := (Hash as IDECHashRounds);
+        Rounds := EditRounds.Text.ToInteger;
+
+        // If value is not in range we don't display any error message here
+        // because we already displayed one in OnChange of the edit, means when
+        // the edit lost focus. This if here is only to prevent that after closing
+        // the error message the user clicks the calc button again. In that case we
+        // simply skip calculation completely.
+        if (Rounds >= RoundsInterf.GetMinRounds) and
+           (Rounds <= RoundsInterf.GetMaxRounds) then
+          RoundsInterf.Rounds := EditRounds.Text.ToInteger
+        else
+          Exit;
+      end
+      else
+        RoundsInterf := nil;
+
+      // set the salt property
+      HashClass := TDECHash.ClassByName(GetSelectedHashClassName);
+      if IsSaltablePasswordHash(HashClass) then
+      begin
+        if EditSalt.Text.IsEmpty then
+        begin
+          ShowErrorMessage('No salt value entered');
+          exit;
+        end;
+
+        if (ComboBoxSaltFormatting.ItemIndex >= 0) then
+          // Find the class type of the selected formatting class
+          SaltFormatting := TDECFormat.ClassByName(
+            ComboBoxSaltFormatting.Items[ComboBoxSaltFormatting.ItemIndex])
+        else
+        begin
+          ShowErrorMessage('No salt format selected');
+          exit;
+        end;
+
+        InputBuffer  := System.SysUtils.BytesOf(EditSalt.Text);
+        if InputFormatting.IsValid(InputBuffer) then
+        begin
+          Salt := SaltFormatting.Decode(InputBuffer);
+          if (length(Salt) >= TDECPasswordHash(Hash).MinSaltLength) and
+             (length(Salt) <= TDECPasswordHash(Hash).MaxSaltLength) then
+            TDECPasswordHash(Hash).Salt := Salt
+          else
+            Exit;
+        end
+        else
+          ShowErrorMessage('Salt has wrong format');
+      end;
+
+      // Set the BCrypt specific cost factor. Might be more generalized when
+      // further password hashes are added.
+      if (HashClass = THash_BCrypt) then
+        THash_BCrypt(Hash).Cost := EditCost.Text.ToInteger;
+
       InputBuffer  := System.SysUtils.BytesOf(EditInput.Text);
 
       if InputFormatting.IsValid(InputBuffer) then
@@ -363,7 +371,7 @@ end;
 
 function TFormMain.IsSaltablePasswordHash(HashClass: TDECHashClass): Boolean;
 var
-  Hash : TDECHash;
+  Hash    : TDECHash;
 begin
   Result := false;
 
