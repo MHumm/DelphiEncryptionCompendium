@@ -558,7 +558,7 @@ type
     class function Context: TCipherContext; override;
 
     /// <summary>
-    ///   Set to true if the routine shall use SSE instructinos to build the chacha matrix
+    ///   Defines either pure pascal code is used or specialized assembler routines for SSE, AVX
     /// </summary>
     class var CpuMode : TChaChaCpuMode;
   end;

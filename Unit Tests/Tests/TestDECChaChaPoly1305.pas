@@ -47,8 +47,10 @@ type
     procedure TestChaCha20_Poly1305_KeySetup;
     procedure TestChaCha20_Poly1305_AEAD;
     procedure TestChaChaEncodeDecodeSpeed;
+    procedure TestChaChaPoly1305EncodeDecodeSpeed;
 
     procedure TestXChaCha_Poly1305_AEAD;
+
     // test suite code
     procedure TestEncode;
     procedure TestDecode;
@@ -56,7 +58,7 @@ type
 implementation
 
 uses DECCipherModesPoly1305, System.Diagnostics, classes, DECFormat, DECTypes,
-      System.JSON.Readers;
+     System.JSON.Readers;
 
 
 // ###########################################
@@ -184,6 +186,117 @@ begin
           end;
 
           Check( CompareMem( @encBuf[0], @testDecode[0], Length(testDecode)), 'Dencoding failed');
+     end;
+end;
+
+procedure TestChaCha20Poly1305.TestChaChaPoly1305EncodeDecodeSpeed;
+var startStop : TStopWatch;
+    encBuf : TBytes;
+    decBuf_pas, decBuf_SSe, decBuf_AVX, testDecode : TBytes;
+    i : Integer;
+    chaCha : TCipher_ChaCha20;
+    cpuMode : TChaChaCpuMode;
+    polyCPUMode : TPoly1305CpuMode;
+    tags : Array[pmPas..pmAVX] of TBytes;
+
+const cKey : TBytes = [$80, $81, $82, $83, $84, $85, $86, $87, $88, $89, $8a, $8b, $8c, $8d, $8e, $8f,
+                       $90, $91, $92, $93, $94, $95, $96, $97, $98, $99, $9a, $9b, $9c, $9d, $9e, $9f];
+
+      cNonce : TBytes = [$07, $00, $00, $00, $40, $43, $41, $43, $44, $45, $46, $47];
+
+function EncodeBuf( var dest : TBytes ) : TBytes;
+var i : integer;
+begin
+     for i := 0 to 3 do
+     begin
+          chaCha := TCipher_ChaCha20.Create;
+          try
+             chaCha.Mode := cmPoly1305;
+             chaCha.Init(cKey, cNonce);
+
+             dest := chaCha.EncodeBytes(encBuf);
+             chaCha.Done;
+
+             Result := chaCha.CalculatedAuthenticationResult;
+          finally
+                 chaCha.Free;
+          end;
+     end;
+
+end;
+
+var tag : TBytes;
+
+begin
+     SetLength(encBuf, 10000000);
+
+     for i := 0 to Length(encBuf) - 1 do
+          encBuf[i] := Byte(Random(255));
+
+
+     SetLength(decBuf_pas, Length(encBuf));
+     SetLength(decBuf_sse, Length(encBuf));
+     SetLength(decBuf_avx, Length(encBuf));
+     SetLength(testDecode, Length(encBuf));
+
+     // ###########################################
+     // #### Perform encryption of all 3 types
+     for polyCPUMode in [pmPas, pmAVX] do
+     begin
+          TPoly1305.CpuMode := polyCPUMode;
+
+          case polyCPUMode of
+           pmPas: Status('POLY1305 Pascal mode');
+           pmAVX: Status('POLY1305 AVX mode');
+          end;
+
+          //
+          TCipher_ChaCha20.CpuMode := cmPas;
+          startStop.Reset;
+          startStop.Start;
+          tags[polyCPUMode] := EncodeBuf( decbuf_pas );
+          startStop.Stop;
+          Status( Format( 'Pas Encoding took %dms', [startStop.ElapsedMilliseconds]));
+
+          TCipher_ChaCha20.CpuMode := cmSSE;
+          startStop.Reset;
+          startStop.Start;
+          tag := EncodeBuf( decbuf_sse );
+          startStop.Stop;
+          Status( Format( 'SSE Encoding took %dms', [startStop.ElapsedMilliseconds]));
+
+          Check(CompareMem( @tag[0], @tags[polyCPUMode][0], Length(tag)), 'Tag calculation failed');
+
+          TCipher_ChaCha20.CpuMode := cmAVX;
+          startStop.Reset;
+          startStop.Start;
+          tag := EncodeBuf( decbuf_avx );
+          startStop.Stop;
+          Status( Format( 'AVX Encoding took %dms', [startStop.ElapsedMilliseconds]));
+          Check(CompareMem( @tag[0], @tags[polyCPUMode][0], Length(tag)), 'Tag calculation failed');
+
+          Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'SSE encoding failed');
+          Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'avx encoding failed');
+     end;
+
+     Check(CompareMem( @tags[pmAVX][0], @tags[pmPas][0], Length(tags[pmPas])), 'AVX, PAS Tag calculation failed');
+
+     // test decode
+     for cpuMode in [cmPas, cmSSE, cmAVX] do
+     begin
+          TCipher_ChaCha20.CpuMode := cpuMode;
+          chaCha := TCipher_ChaCha20.Create;
+          try
+             chaCha.Mode := cmPoly1305;
+             chaCha.Init(cKey, cNonce);
+
+             testDecode := chaCha.DecodeBytes(decbuf_sse);
+             chaCha.Done;
+          finally
+                 chaCha.Free;
+          end;
+
+          Check( CompareMem( @encBuf[0], @testDecode[0], Length(testDecode)), 'Decoding failed');
      end;
 end;
 
@@ -322,6 +435,7 @@ begin
      Move(cMsg1[0], msg[0], Length(msg));
      //InvData( @msg[0], Length(msg));
 
+     TPOly1305.CpuMode := pmPas;
      poly := TPoly1305.Create;
      try
         THackPly1305(poly).InitInternal(iv);
@@ -354,6 +468,31 @@ begin
         calcTag := poly.CalculatedAuthenticationTag;
      finally
             poly.Free;
+     end;
+
+     Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
+     Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
+
+     // ###########################################
+     // #### third test
+     FillChar(iv[0], Length(iv), 0);
+     Move( cR[0], iv[0], Length(cr));
+     Move( cS[0], iv[16], Length(cS1));
+
+     SetLength(msg, length(cMsg));
+     Move(cMsg[1], msg[0], Length(msg));
+
+     TPoly1305.CpuMode := pmAVX;
+     poly := TPoly1305.Create;
+     try
+        THackPly1305(poly).InitInternal(iv);
+        THackPly1305(poly).UpdatePolyAVX(@msg[0], Length(msg));
+        THackPly1305(poly).FinalizeAVX;
+
+        calcTag := poly.CalculatedAuthenticationTag;
+     finally
+            poly.Free;
+            TPoly1305.CpuMode := pmPas;
      end;
 
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
@@ -401,6 +540,12 @@ begin
      begin
           TCipher_XChaCha20.CpuMode := cpuMode;
 
+          if cpuMode = cmPas
+          then
+              TPoly1305.CpuMode := pmPas
+          else
+              TPoly1305.CpuMode := pmAVX;
+
           SetLength(msg, Length(cMsg));
           Move( cMsg[1], msg[0], Length(msg));
 
@@ -445,6 +590,8 @@ begin
           Check( Length(cTag) = Length(decodeTag), 'Tag length is wrong');
           Check( CompareMem( @decodeTag[0], @cTag[0], Length(cTag)), 'Calculated Tag is wrong');
      end;
+
+     TPoly1305.CpuMode := pmPas
 end;
 
 
@@ -486,6 +633,11 @@ begin
      for cpuMode in [cmPas, cmSSE, cmAVX] do
      begin
           TCipher_ChaCha20.CpuMode := cpuMode;
+          if cpuMode = cmPas
+          then
+              TPoly1305.CpuMode := pmPas
+          else
+              TPoly1305.CpuMode := pmAVX;
 
           SetLength(msg, Length(cMsg));
           Move( cMsg[1], msg[0], Length(msg));
