@@ -179,7 +179,9 @@ type
 
 implementation
 
-{$R-}{$Q-}
+{$R-}
+
+uses DECCPUSupport;{$Q-}
 
 const cMask26 : uint64 = $3ffffff;
       cShl24 : uint64 = $1000000;
@@ -1236,5 +1238,12 @@ procedure TPoly1305.UpdateWithEncDecBuf(buf: PUInt8Array; Size: Integer);
 begin
      fPolyBlkFunc(PByteArray(buf), size);
 end;
+
+initialization
+  if TDEC_CPUSupport.AVX2
+  then
+      TPoly1305.CpuMode := pmAVX
+  else
+      TPoly1305.CpuMode := pmPas;
 
 end.
