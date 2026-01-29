@@ -183,7 +183,8 @@ type
     cmCFSx,   // CFS on Blocksize bytes
     cmECBx,   // Electronic Code Book
     cmGCM,    // Galois Counter Mode
-    cmCCM     // Counter with CBC-MAC Mode
+    cmCCM,    // Counter with CBC-MAC Mode
+    cmPoly1305 // Poly1305 for ChaCha
     {$IFDEF DEC3_CMCTS}
     ,cmCTS3   // double CBC, with less secure padding of truncated final block
               // for DEC 3.0 compatibility only (see DECOptions.inc)
@@ -1012,7 +1013,7 @@ begin
   if (Size > Context.KeySize) and (not (ctNull in Context.CipherType)) then
     raise EDECCipherException.CreateRes(@sKeyMaterialTooLarge);
 
-  if (FInitVectorSize > FBufferSize) and (not (FMode = cmGCM)) then
+  if (FInitVectorSize > FBufferSize) and (not (FMode in [cmGCM, cmPoly1305])) then
     raise EDECCipherException.CreateRes(@sIVMaterialTooLarge);
 
   DoInit(Key, Size);

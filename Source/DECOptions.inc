@@ -73,29 +73,39 @@
 // Automatically register all hash classes
 {.$DEFINE ManualRegisterHashClasses} (* default off *)
 
+{$DEFINE ASSEMBLER}
+
 // if the compiler does not support assembler turn usage off and even if restrict
 // it to Windows, as those non Windows platforms which actually do support ASM
 // in Delphi do not use Intel x86 ASM
-{$IFDEF FPC }
+{$IFNDEF FPC }
   {$IF defined(CPUX86_64) or defined(CPUAMD64) or defined(CPUIA64) }
     {$ifndef CPUX64}
         {$define CPUX64}
     {$endif}
-  {$else}{$if defined(CPU386) or defined(CPUI386) }
+  {$IFEND}
+
+  {$if defined(CPU386) or defined(CPUI386) }
       {$ifndef CPUX32}
           {$define CPUX32}
       {$endif}
-  {$ELSE}
-      {$IFNDEF ASSEMBLER }
-        {$DEFINE NO_ASM} (* default ON *)
-      {$ELSE}
-        {$IFDEF WINDOWS}
-          {.$DEFINE NO_ASM} (* default OFF *)
-        {$ELSE}
-          {$DEFINE NO_ASM} (* default ON *)
-        {$ENDIF}
-      {$ENDIF}
-  {$ENDIF}{$endif}
+  {$IFEND}
+
+  {$IFNDEF ASSEMBLER}
+    {$DEFINE NO_ASM}
+  {$ENDIF}
+  {$IFDEF UNIX}
+    {$DEFINE NO_ASM}
+  {$ENDIF}
+  //    {$IFNDEF ASSEMBLER }
+//        {$DEFINE NO_ASM} (* default ON *)
+//      {$ELSE}
+//        {$IFDEF WINDOWS}
+//          {.$DEFINE NO_ASM} (* default OFF *)
+//        {$ELSE}
+//          {$DEFINE NO_ASM} (* default ON *)
+//        {$ENDIF}
+//      {$ENDIF}
 {$ELSE}
   // Turn ASM off for FPC as we do not know enough about ASM support on FPC
   {$DEFINE NO_ASM}
@@ -119,7 +129,7 @@
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
   {$DEFINE FMXTranslateableExceptions}
-{$ENDIF}
+{$IFEND} { TODO: convert to $ENDIF when raising minimum supported version to XE4+}
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
@@ -193,16 +203,16 @@
 
 {$IFNDEF PUREPASCAL}
   // ignored by FPC (already in PurePascal mode as defined in FPC block above)
+  {$DEFINE PUREPASCAL}
   {$IFDEF CPUX86}
     {$DEFINE X86ASM}
-  {$ELSE !CPUX86}
-    {$IFDEF CPUX64}
-      {$DEFINE X64ASM}
-    {$ELSE !CPUX64}
-      {$DEFINE PUREPASCAL}
-    {$ENDIF !CPUX64}
+    {$UNDEF PUREPASCAL}
   {$ENDIF}
-{$ENDIF !PUREPASCAL}
+  {$IFDEF CPUX64}
+    {$DEFINE X64ASM}
+    {$UNDEF PUREPASCAL}
+  {$ENDIF}
+{$ENDIF}
 
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder

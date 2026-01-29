@@ -78,6 +78,15 @@ type
     ///   are: 32, 48, 64, 80, 96, 112, 128
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); override;
+
+    // ###########################################
+    // #### Empty routines - just to satisfy the interface
+    procedure InitAuth; override;
+    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer); override;
+    procedure LocEncodeDecode(Source, Dest: Pointer; Size: Integer); override;
+    procedure FinalizeMAC( authLen, encDecBufSize : Int64 ); override;
+
+    procedure Burn; override;
   public
     /// <summary>
     ///   Savely clear any buffers
@@ -394,6 +403,37 @@ begin
   inherited;
 
   FOrigInitVector := InitVector;
+end;
+
+
+procedure TCCM.UpdateWithEncDecBuf(buf: PUInt8Array; Size: Integer);
+begin
+  inherited;
+
+end;
+
+procedure TCCM.InitAuth;
+begin
+  inherited;
+
+end;
+
+procedure TCCM.LocEncodeDecode(Source, Dest: Pointer; Size: Integer);
+begin
+  inherited;
+
+end;
+
+procedure TCCM.Burn;
+begin
+  inherited;
+
+end;
+
+procedure TCCM.FinalizeMAC(authLen, encDecBufSize: Int64);
+begin
+  inherited;
+
 end;
 
 end.

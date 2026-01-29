@@ -49,7 +49,9 @@ uses
   DECZIPHelper in 'DECZIPHelper.pas',
   DECCipherPaddings in 'DECCipherPaddings.pas',
   DECCipherModesCCM in 'DECCipherModesCCM.pas',
-  DECAuthenticatedCipherModesBase in 'DECAuthenticatedCipherModesBase.pas';
+  DECAuthenticatedCipherModesBase in 'DECAuthenticatedCipherModesBase.pas',
+  DECCipherModesPoly1305 in 'DECCipherModesPoly1305.pas',
+  DECCPUSupport in 'DECCPUSupport.pas';
 
 begin
   try

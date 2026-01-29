@@ -281,6 +281,17 @@ function StringToBytes(const Str: string): TBytes; inline;
 /// </returns>
 function IsEqual(const a, b : TBytes ):Boolean;
 
+/// <summary>
+///   Returns the 32Byte aligned address of pointer A
+/// </summary>
+/// /// <param name="A">
+///   Pointer to input memory block
+/// </param>
+/// /// <returns>
+///   Returns the fir
+/// </returns>
+function AlignPtr32( A : Pointer ) : Pointer;
+
 implementation
 
 uses
@@ -679,5 +690,13 @@ begin
     else
       Result := true;
 end;
+
+function AlignPtr32( A : Pointer ) : Pointer;
+begin
+     Result := A;
+     if (NativeUint(A) and $1F) <> 0 then
+        Result := Pointer( NativeUint(Result) + $20 - NativeUint(Result) and $1F );
+end;
+
 
 end.
