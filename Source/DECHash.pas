@@ -1548,11 +1548,14 @@ procedure THash_MD2.DoDone;
 var
   Remain: Integer;
 begin
-  Remain := FBufferSize - FBufferIndex;
-  FillChar(FBuffer[FBufferIndex], Remain, Remain);
-  DoTransform(Pointer(FBuffer));
-  Move(FDigest[48], FBuffer^, FBufferSize);
-  DoTransform(Pointer(FBuffer));
+  if Assigned(FBuffer) then
+  begin
+    Remain := FBufferSize - FBufferIndex;
+    FillChar(FBuffer[FBufferIndex], Remain, Remain);
+    DoTransform(Pointer(FBuffer));
+    Move(FDigest[48], FBuffer^, FBufferSize);
+    DoTransform(Pointer(FBuffer));
+  end;
 end;
 
 function THash_MD2.Digest: PUInt8Array;
@@ -1592,17 +1595,21 @@ begin
     RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $80;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 8 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 8 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    Move(FCount, FBuffer[FBufferSize - 8], 8);
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  Move(FCount, FBuffer[FBufferSize - 8], 8);
-  DoTransform(Pointer(FBuffer));
 end;
 
 function THashBaseMD4.Digest: PUInt8Array;
@@ -2777,19 +2784,23 @@ begin
     RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $80;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 8 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 8 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
+    PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
+    SwapUInt32Buffer(FDigest, FDigest, SizeOf(FDigest) div 4);
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
-  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
-  DoTransform(Pointer(FBuffer));
-  SwapUInt32Buffer(FDigest, FDigest, SizeOf(FDigest) div 4);
 end;
 
 class function THash_SHA0.DigestSize: UInt32;
@@ -2965,21 +2976,26 @@ procedure THash_SHA384.DoDone;
 begin
   if FPaddingByte = 0 then
     FPaddingByte := $80;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 16 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 16 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    SwapUInt32Buffer(FCount, FCount, 4);
+    PUInt32(@FBuffer[FBufferSize - 16])^ := FCount[3];
+    PUInt32(@FBuffer[FBufferSize - 12])^ := FCount[2];
+    PUInt32(@FBuffer[FBufferSize -  8])^ := FCount[1];
+    PUInt32(@FBuffer[FBufferSize -  4])^ := FCount[0];
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  SwapUInt32Buffer(FCount, FCount, 4);
-  PUInt32(@FBuffer[FBufferSize - 16])^ := FCount[3];
-  PUInt32(@FBuffer[FBufferSize - 12])^ := FCount[2];
-  PUInt32(@FBuffer[FBufferSize -  8])^ := FCount[1];
-  PUInt32(@FBuffer[FBufferSize -  4])^ := FCount[0];
-  DoTransform(Pointer(FBuffer));
+
   SwapInt64Buffer(FDigest, FDigest, SizeOf(FDigest) div 8);
 end;
 
@@ -3293,19 +3309,23 @@ begin
     RaiseHashOverflowError;
   if FPaddingByte = 0 then
     FPaddingByte := $01;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 10 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 10 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex - 10, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex - 10, 0);
+    T := (DigestSize shl 9) or (UInt32(FRounds) shl 3) or 1;
+    Move(T, FBuffer[FBufferSize - 10], SizeOf(T));
+    Move(FCount, FBuffer[FBufferSize - 8], 8);
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex - 10, 0);
-  T := (DigestSize shl 9) or (UInt32(FRounds) shl 3) or 1;
-  Move(T, FBuffer[FBufferSize - 10], SizeOf(T));
-  Move(FCount, FBuffer[FBufferSize - 8], 8);
-  DoTransform(Pointer(FBuffer));
 
   case DigestSize of
     16: begin
@@ -4099,18 +4119,22 @@ var
 begin
   if FPaddingByte = 0 then
     FPaddingByte := $80;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 32 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 32 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    for I := 31 downto 0 do
+      FBuffer[63 - I] := PByteArray(@FCount)[I];
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  for I := 31 downto 0 do
-    FBuffer[63 - I] := PByteArray(@FCount)[I];
-  DoTransform(Pointer(FBuffer));
 end;
 
 function THashBaseWhirlpool.Digest: PUInt8Array;
@@ -4258,18 +4282,22 @@ var
 begin
   if FPaddingByte = 0 then
     FPaddingByte := $80;
-  FBuffer[FBufferIndex] := FPaddingByte;
-  Inc(FBufferIndex);
-  if FBufferIndex > FBufferSize - 8 then
+
+  if Assigned(FBuffer) then
   begin
+    FBuffer[FBufferIndex] := FPaddingByte;
+    Inc(FBufferIndex);
+    if FBufferIndex > FBufferSize - 8 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    for I := 7 downto 0 do
+      FBuffer[15 - I] := PByteArray(@FCount[0])[I];
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  for I := 7 downto 0 do
-    FBuffer[15 - I] := PByteArray(@FCount[0])[I];
-  DoTransform(Pointer(FBuffer));
 end;
 
 function THash_Square.Digest: PUInt8Array;
@@ -4319,16 +4347,20 @@ end;
 
 procedure THashBaseSnefru.DoDone;
 begin
-  if FBufferIndex > 0 then
+  if Assigned(FBuffer) then
   begin
+    if FBufferIndex > 0 then
+    begin
+      FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+      DoTransform(Pointer(FBuffer));
+      FBufferIndex := 0;
+    end;
     FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
+    PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
+    PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
     DoTransform(Pointer(FBuffer));
-    FBufferIndex := 0;
   end;
-  FillChar(FBuffer[FBufferIndex], FBufferSize - FBufferIndex, 0);
-  PUInt32(@FBuffer[FBufferSize - 8])^ := SwapUInt32(FCount[1]);
-  PUInt32(@FBuffer[FBufferSize - 4])^ := SwapUInt32(FCount[0]);
-  DoTransform(Pointer(FBuffer));
+
   SwapUInt32Buffer(FDigest, FDigest, 8);
 end;
 
