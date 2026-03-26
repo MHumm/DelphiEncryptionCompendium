@@ -666,7 +666,7 @@ type
     /// </summary>
     /// <returns>
     ///   If the algorithm on which this is being used is a Crypt/BSD compatible
-    ///   password hash algorithm the ID is returned otherwise an empty string.
+    ///   password hash algorithm the ID is returned, otherwise an empty string.
     /// </returns>
     class function GetCryptID:string; virtual;
 

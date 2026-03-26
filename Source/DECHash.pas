@@ -1174,7 +1174,7 @@ type
 
       var
         /// <summary>
-        ///   The calculated hash value
+        ///   The calculated hash value.
         ///   Should have been 192 bit = 24 byte, but original author's
         ///   imnplementation had a flaw not returning the last byte, which has
         ///   been kept instead of fixing it. Thus DigestSize returns 23 instead
@@ -1262,8 +1262,18 @@ type
     function SplitTestVector(const Vector     : string;
                              var SplittedData : TBCryptBSDData):Boolean;
   strict protected
+    /// <summary>
+    ///   Prepares internal data structures etc.
+    /// </summary>
     procedure DoInit; override;
+    /// <summary>
+    ///   Empty on purpose, as bcrypt needs to know the input length. Thus
+    ///   calculation is done directly in method Calc.
+    /// </summary>
     procedure DoTransform(Buffer: PUInt32Array); override;
+    /// <summary>
+    ///   Remove any sensitive data from memory
+    /// </summary>
     procedure DoDone; override;
 
     {$Region CryptFormat}
@@ -1409,8 +1419,17 @@ type
     /// </exception>
     procedure Calc(const Data; DataSize: Integer); override;
 
+    /// <summary>
+    ///   Returns the calculated hash
+    /// </summary>
     function Digest: PUInt8Array; override;
+    /// <summary>
+    ///   Returns the length of the calculated hash in byte
+    /// </summary>
     class function DigestSize: UInt32; override;
+    /// <summary>
+    ///   Size of the blocks to be processed in bytes
+    /// </summary>
     class function BlockSize: UInt32; override;
 
     /// <summary>
