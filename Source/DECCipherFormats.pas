@@ -1124,11 +1124,11 @@ procedure TDECFormattedCipher.InitPaddingClass;
 begin
   case FPaddingMode of
     pmNone       : FPaddingClass := nil;
-    pmPKCS7      : FPaddingCLass := TPKCS7Padding;
-    pmPKCS5      : FPaddingCLass := TPKCS5Padding;
-    pmANSI_X9_23 : FPaddingCLass := TANSI_X9_23_Padding;
-    pmISO10126   : FPaddingCLass := TISO10126Padding;
-    pmISO7816    : FPaddingCLass := TISO7816Padding;
+    pmPKCS7      : FPaddingClass := TPKCS7Padding;
+    pmPKCS5      : FPaddingClass := TPKCS5Padding;
+    pmANSI_X9_23 : FPaddingClass := TANSI_X9_23_Padding;
+    pmISO10126   : FPaddingClass := TISO10126Padding;
+    pmISO7816    : FPaddingClass := TISO7816Padding;
     else
       raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
                                              [GetEnumName(TypeInfo(TPaddingMode),
