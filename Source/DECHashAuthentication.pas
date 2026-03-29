@@ -305,7 +305,9 @@ type
     /// </param>
     /// <param name="Index">
     ///   Optional parameter: can be used to specify a different default value
-    ///   for the index variable used in the algorithm.
+    ///   for the index variable used in the algorithm. The value of index is
+    ///   being hashed for each processed byte to further modify the state of
+    ///   the hash algorithm instance internally used.
     /// </param>
     /// <exception cref="EDECHashException">
     ///   Exception raised if DataSize and SeedSize are both 0
@@ -334,7 +336,9 @@ type
     /// </param>
     /// <param name="Index">
     ///   Optional parameter: can be used to specify a different default value
-    ///   for the index variable used in the algorithm.
+    ///   for the index variable used in the algorithm. The value of index is
+    ///   being hashed for each processed byte to further modify the state of
+    ///   the hash algorithm instance internally used.
     /// </param>
     /// <exception cref="EDECHashException">
     ///   Exception raised if DataSize and SeedSize are both 0
@@ -367,8 +371,10 @@ type
     ///   Size of the returned mask in bytes
     /// </param>
     /// <param name="Index">
-    ///   Looks like this is a salt applied to each byte of output data?
-{ TODO : Clarify this parameter }
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm. The value of index is
+    ///   being hashed for each processed byte to further modify the state of
+    ///   the hash algorithm instance internally used.
     /// </param>
     /// <returns>
     ///   Mask such that one cannot determine the data which had been given to
@@ -395,8 +401,10 @@ type
     ///   Size of the returned mask in bytes
     /// </param>
     /// <param name="Index">
-    ///   Looks like this is a salt applied to each byte of output data?
-{ TODO : Clarify this parameter }
+    ///   Optional parameter: can be used to specify a different default value
+    ///   for the index variable used in the algorithm. The value of index is
+    ///   being hashed for each processed byte to further modify the state of
+    ///   the hash algorithm instance internally used.
     /// </param>
     /// <returns>
     ///   Mask such that one cannot determine the data which had been given to
