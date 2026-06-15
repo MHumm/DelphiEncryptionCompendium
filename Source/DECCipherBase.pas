@@ -1251,7 +1251,11 @@ end;
 
 function TDECCipher.CalcMACBytes(Format: TDECFormatClass): TBytes;
 begin
+  {$IFNDEF FPC}
   Result := System.SysUtils.BytesOf(CalcMAC);
+  {$ELSE}
+  Result := BytesOf(CalcMAC);
+  {$ENDIF}
 end;
 
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}

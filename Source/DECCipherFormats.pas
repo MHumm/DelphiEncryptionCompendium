@@ -45,7 +45,7 @@ type
     /// <summary>
     ///   The static class assigned to this field via Init method or PaddingMode
     ///   property is being used to add or remove paddings in order to simplyfy
-    ///   ading further padding shemes.
+    ///   adding further padding shemes.
     /// </summary>
     FPaddingClass : TDECPaddingClass;
 

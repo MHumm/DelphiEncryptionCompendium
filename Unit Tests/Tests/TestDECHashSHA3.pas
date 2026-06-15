@@ -650,9 +650,16 @@ end;
 function TestTHash_SHA3_Base.CalcUnicodeHash(TestData : string;
                                              HashInst : TDECHashAuthentication): RawByteString;
 begin
+  {$IFNDEF FPC}
   Result := BytesToRawString(TFormat_HEXL.Encode(
                System.SysUtils.BytesOf(HashInst.CalcString(
                  string(TFormat_HexL.Decode(RawByteString(TestData)))))));
+  {$ELSE}
+  Result := BytesToRawString(TFormat_HEXL.Encode(
+               BytesOf(HashInst.CalcString(
+                 string(TFormat_HexL.Decode(RawByteString(TestData)))))));
+
+  {$ENDIF}
 end;
 
 { TestTHash_SHA3_224 }
