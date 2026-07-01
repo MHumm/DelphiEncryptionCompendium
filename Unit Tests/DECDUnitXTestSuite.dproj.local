@@ -24,6 +24,7 @@
     <File Path="Tests\TestDECCipherFormats.pas"/>
     <File Path="Tests\TestDECCipherModes.pas"/>
     <File Path="Tests\TestDECCipherModesGCM.pas"/>
+    <File Path="Tests\TestDECCipherPaddings.pas"/>
     <File Path="Tests\TestDECCRC.pas"/>
     <File Path="Tests\TestDECFormat.pas"/>
     <File Path="Tests\TestDECFormatBase.pas"/>
