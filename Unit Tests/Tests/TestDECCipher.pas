@@ -107,6 +107,28 @@ type
 
     procedure DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
     procedure DoTestDecodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
+
+    /// <summary>
+    ///   Tests automatic init vector generation
+    /// </summary>
+    /// <param name="ACipher">
+    ///   Cipher instance to test with
+    /// </param>
+    procedure DoTestSetAutomaticIV(ACipher : TDECCipher);
+
+    /// <summary>
+    ///   Calculates the shannon entropy of the byte array. AI generated.
+    /// </summary>
+    /// <param name="ABytes">
+    ///   Byte array on which to calculate the entropy
+    /// </param>
+    /// <returns>
+    ///   Shannon entropy
+    ///   8.0 = perfect distribution
+    ///   7.0 = plausibly random
+    ///   <5.0 = very suspicious
+    /// </returns>
+    function ShannonEntropy(const ABytes: TBytes): Double;
   end;
 
   // Testmethods for class TDECCipher
@@ -133,6 +155,7 @@ type
     procedure TestInitWideStringInitVector;
     procedure TestInitWideStringNoInitVector;
     procedure TestMACWrongMode;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethoden for Klasse TCipher_Null
@@ -4222,6 +4245,29 @@ begin
   end;
 end;
 
+procedure TCipherBasis.DoTestSetAutomaticIV(ACipher : TDECCipher);
+var
+  IV1, IV2 : TBytes;
+  Entrophy : Double;
+begin
+  ACipher.SetAutomaticInitVector;
+  CheckEquals(ACipher.Context.BlockSize, ACipher.InitVectorSize, 'Invalid init-vector size');
+
+  // check that two successive runs create divverent IVs
+  SetLength(IV1, ACipher.InitVectorSize);
+  Move(ACipher.InitVector^, IV1[0], ACipher.InitVectorSize);
+
+  ACipher.SetAutomaticInitVector;
+
+  SetLength(IV2, ACipher.InitVectorSize);
+  Move(ACipher.InitVector^, IV2[0], ACipher.InitVectorSize);
+
+  CheckNotEquals(true, System.SysUtils.CompareMem(@IV1[0], @IV2[0], Length(IV1)));
+
+  Entrophy := ShannonEntropy(IV1);
+  CheckEquals(true, Entrophy > 7.0, 'Not enough entropy. ' + Entrophy.ToString);
+end;
+
 procedure TCipherBasis.DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc;
   DoneProc: TDoneProc);
 var
@@ -4308,6 +4354,28 @@ procedure TCipherBasis.LimitKeyLength(var Key: RawByteString; KeySize: Integer);
 begin
   if Length(Key) > KeySize then
     Delete(Key, KeySize + 1, length(Key));
+end;
+
+function TCipherBasis.ShannonEntropy(const ABytes: TBytes): Double;
+var
+  freq: array[0..255] of Double;
+  b: Byte;
+  p: Double;
+  i: Integer;
+begin
+  Result := 0;
+  for i := 0 to Length(freq)-1 do
+    freq[i] := 0;
+
+  for b in ABytes do
+    freq[b] := freq[b] + 1;
+
+  for i := 0 to 255 do
+  begin
+    p := freq[i] / Length(ABytes);
+    if p > 0 then
+      Result := Result - p * Ln(p) / Ln(2);
+  end;
 end;
 
 { TestTDECCipher }
@@ -4464,6 +4532,11 @@ end;
 procedure TestTDECCipher.TestMACWrongMode;
 begin
   CheckException(DoInitMACWrongModeException, EDECException);
+end;
+
+procedure TestTDECCipher.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher);
 end;
 
 procedure TestTDECCipher.TestValidCipherSetDefaultCipherClass;

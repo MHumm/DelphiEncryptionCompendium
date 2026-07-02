@@ -955,32 +955,16 @@ end;
 
 procedure TDECCipher.SetAutomaticInitVector;
 var
-  SysTime : Int64;
   IVIdx   : Integer;
-  RestCnt : Integer;
 begin
-  // Testen!!!!!!!!
-  // Testen!!!!!!!!
-  // Testen!!!!!!!!
-
   if not (ctStream in Context.CipherType) and (Context.BlockSize > 1) then
   begin
     IVIdx := 0;
 
     while (IVIdx < FBufferSize) do
     begin
-      SysTime := RandomSystemTime;
-
-      if (IVIdx < FBufferSize-SizeOf(SysTime)) then
-      begin
-        Move(SysTime, FInitializationVector[IVIdx], SizeOf(SysTime));
-        inc(IVIdx, SizeOf(SysTime));
-      end
-      else
-      begin
-        RestCnt := FBufferSize-SizeOf(SysTime);
-        Move(SysTime, FInitializationVector[IVIdx], RestCnt);
-      end;
+      FInitializationVector[IVIdx] := Random(256);
+      inc(IVIdx);
     end;
   end;
 end;
