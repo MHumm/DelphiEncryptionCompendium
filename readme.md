@@ -6,19 +6,20 @@ It contains algorithms for these categories:
 
 * Ciphers: encryption/decryption of data
 * Hashes: "cryptographic checksums"
+* Password hashes: bcrypt
 * Key derivation algorithms like Kdf1-Kdf3 and pbkdf2
 * HMAC message authentication
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The last release version 6.4.1 is compatible with Delphi XE2 - Delphi 12.3 Athens. 
+The last release version 6.4.1 is compatible with Delphi XE7 - Delphi 13.1 Florence. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
 FPC compatible version already.
 
-If you need support for older Delphi versions use version 5.2, which is compatible 
+If you need support for older Delphi versions use version 5.2. This is compatible 
 with Delphi 7-2007 at least but lacks some hash implementations, HMAC and KDF 
 improvements. While V5.2 can be made compatible with newer Delphi versions with
 small modifications we strongly recommend to better adapt your code to use the
@@ -34,8 +35,8 @@ Details about the changes and additions in V6.4.1 can be found in the
 VersionHistory.pdf file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
-The FMX based demos are even available via Google play as "DEC cipher demo" and
-"DEC hash demo".
+The FMX based demos were even available via Google play as "DEC cipher demo" and
+"DEC hash demo". Due to some key issue they are no longer installable at the moment.
 
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of DEC V6.4.1 you will find further files with information about 
@@ -97,6 +98,7 @@ vectors provided by NIST are used for the unit tests.
 * Snefru128  
 * Snefru256  
 * Sapphire   
+* BCrypt
 
 ## Contained cipher algorithms
 * Null

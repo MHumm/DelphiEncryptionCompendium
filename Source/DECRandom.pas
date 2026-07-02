@@ -35,21 +35,6 @@ uses
   DECHashBase, DECHash;
 
 /// <summary>
-///   Create a seed for the random number generator from system time and
-///   PerformanceCounter.
-/// </summary>
-/// <remarks>
-///   Avoid initializing the seed using this fuction if you can as it is not
-///   really secure. Use RandomBuffer instead and provide user generated input
-///   as Buffer value but ensure that this is not uniform e.g. not a buffer only
-///   containing $00 all over or something like this.
-/// </remarks>
-/// <returns>
-///   Created seed value
-/// </returns>
-function RandomSystemTime: Int64;
-
-/// <summary>
 ///   Fills the provided buffer with random values. If the DoRandomBuffer
 ///   variable is assigned (which is usually the case because DoBuffer is
 ///   assigned to it in initialization of this unit) the hash based algorithm
@@ -178,20 +163,7 @@ var
 implementation
 
 uses
-  {$IFDEF DELPHI_2010_UP}
-    System.Diagnostics
-  {$ELSE}
-    {$IFDEF FPC}
-      {$IFDEF MSWINDOWS}
-      Windows
-      {$ELSE}
-      LclIntf
-      {$ENDIF}
-    {$ELSE}
-    Winapi.Windows
-    {$ENDIF}
-  {$ENDIF}
-  ;
+  DECUtil;
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
 {$IFOPT R+}{$DEFINE RESTORE_RANGECHECKS}{$R-}{$ENDIF}
@@ -222,40 +194,6 @@ var
   /// </summary>
   FRndSeed: Cardinal = 0;
 
-function RandomSystemTime: Int64;
-type
-  TInt64Rec = packed record
-    Lo, Hi: UInt32;
-  end;
-var
-  {$IF defined(MSWINDOWS) and not defined(DELPHI_2010_UP)}
-  SysTime: TSystemTime;
-  {$ELSE}
-  Hour, Minute, Second, Milliseconds: Word;
-  {$IFEND}
-  Counter: TInt64Rec;
-  Time: Cardinal;
-begin
-  {$IF defined(MSWINDOWS) and not defined(DELPHI_2010_UP)}
-  GetSystemTime(SysTime);
-  Time := ((Cardinal(SysTime.wHour) * 60 + SysTime.wMinute) * 60 + SysTime.wSecond) * 1000 + SysTime.wMilliseconds;
-  QueryPerformanceCounter(Int64(Counter));
-  {$ELSE}
-  DecodeTime(Now, Hour, Minute, Second, Milliseconds);
-  Time := ((Cardinal(Hour) * 60 + Minute) * 60 + Second) * 1000 + Milliseconds;
-    {$IFDEF DELPHI_2010_UP}
-    Int64(Counter) := TStopWatch.GetTimeStamp; // uses System.Diagnostics
-    {$ELSE}
-      {$IFDEF FPC}
-      Int64(Counter) := LclIntf.GetTickCount * 10000 {TicksPerMillisecond}; // uses LclIntf
-      {$ENDIF}
-    {$ENDIF}
-  {$IFEND}
-
-  Result := Time + Counter.Hi;
-  Inc(Result, Ord(Result < Time)); // add "carry flag"
-  Inc(Result, Counter.Lo);
-end;
 
 /// <summary>
 ///   Simplistic algorithm for filling a buffer with random numbers. This

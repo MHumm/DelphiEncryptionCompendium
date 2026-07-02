@@ -45,7 +45,7 @@ type
     /// <summary>
     ///   The static class assigned to this field via Init method or PaddingMode
     ///   property is being used to add or remove paddings in order to simplyfy
-    ///   ading further padding shemes.
+    ///   adding further padding shemes.
     /// </summary>
     FPaddingClass : TDECPaddingClass;
 
@@ -328,7 +328,7 @@ type
                                   Format: TDECFormatClass = nil): string; overload;
 
     /// <summary>
-    ///   Encrypts the contents of the passed unicode string
+    ///   Encrypts the contents of the passed RawByteString
     /// </summary>
     /// <param name="Source">
     ///   String to encrypt. When block chaining mode ECBx

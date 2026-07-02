@@ -125,7 +125,7 @@ type
   ///   csDecode : Decoding was started, and more chunks can be decoded, but not encoded
   /// </para>
   /// <para>
-  ///   csPadded : trough En/Decoding the messagechunks are padded, no more chunks can
+  ///   csPadded : through En/Decoding the messagechunks are padded, no more chunks can
   ///                   be processed, the cipher is blocked
   /// </para>
   /// <para>
@@ -610,6 +610,12 @@ type
     {$ENDIF}
 
     /// <summary>
+    ///   Sets a random value for the init vector. Must be called after Init
+    ///   and is a superflous call for stream ciphers
+    /// </summary>
+    procedure SetAutomaticInitVector;
+
+    /// <summary>
     ///   Properly finishes the cryptographic operation. It needs to be called
     ///   at the end of encrypting or decrypting data. It does NOT remove the
     ///   keys from RAM (this will be done in the destruction only).
@@ -947,6 +953,38 @@ begin
   inherited Destroy;
 end;
 
+procedure TDECCipher.SetAutomaticInitVector;
+var
+  SysTime : Int64;
+  IVIdx   : Integer;
+  RestCnt : Integer;
+begin
+  // Testen!!!!!!!!
+  // Testen!!!!!!!!
+  // Testen!!!!!!!!
+
+  if not (ctStream in Context.CipherType) and (Context.BlockSize > 1) then
+  begin
+    IVIdx := 0;
+
+    while (IVIdx < FBufferSize) do
+    begin
+      SysTime := RandomSystemTime;
+
+      if (IVIdx < FBufferSize-SizeOf(SysTime)) then
+      begin
+        Move(SysTime, FInitializationVector[IVIdx], SizeOf(SysTime));
+        inc(IVIdx, SizeOf(SysTime));
+      end
+      else
+      begin
+        RestCnt := FBufferSize-SizeOf(SysTime);
+        Move(SysTime, FInitializationVector[IVIdx], RestCnt);
+      end;
+    end;
+  end;
+end;
+
 procedure TDECCipher.SetMode(Value: TCipherMode);
 begin
   if Value <> FMode then
@@ -1242,7 +1280,9 @@ end;
 
 function TDECCipher.CalcMAC(Format: TDECFormatClass): RawByteString;
 begin
-  Done; { TODO: This might be considered as unwanted side effect. Maybe we should instead raise an Exception if State is not csDone instead? This would also "teach" the user to don't forget to call "Done". }
+  Done; { TODO: This might be considered as unwanted side effect. Maybe we should
+          instead raise an Exception if State is not csDone instead? This would
+          also "teach" the user to don't forget to call "Done". }
   if FMode in [cmECBx] then
     raise EDECException.CreateRes(@sInvalidMACMode)
   else
