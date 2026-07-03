@@ -409,6 +409,11 @@ type
     ///   List of registered DEC classes. Key is the Identity of the class.
     /// </summary>
     class var ClassList : TDECClassList;
+    /// <summary>
+    ///   When true Randomize has already been called. Needed for lazy
+    ///   initialization within SetAutomaticInitVector
+    /// </summary>
+    class var RandomizeCalled : Boolean;
 
     /// <summary>
     ///   Tries to find a class type by its name
@@ -955,17 +960,34 @@ end;
 
 procedure TDECCipher.SetAutomaticInitVector;
 var
-  IVIdx   : Integer;
+  IVIdx : Integer;
+  Buf   : TBytes;
+  Entrophy : Double;
 begin
   if not (ctStream in Context.CipherType) and (Context.BlockSize > 1) then
   begin
-    IVIdx := 0;
-
-    while (IVIdx < FBufferSize) do
+    if not RandomizeCalled then
     begin
-      FInitializationVector[IVIdx] := Random(256);
-      inc(IVIdx);
+      Randomize;
+      RandomizeCalled := true;
     end;
+
+    SetLength(Buf, FBufferSize);
+
+    repeat
+      IVIdx := 0;
+
+      while (IVIdx < FBufferSize) do
+      begin
+        //FInitializationVector[IVIdx] := Random(256);
+        Buf[IVIdx] := Random(256);
+        inc(IVIdx);
+      end;
+
+      Entrophy := ShannonEntropy(Buf);
+    until (Entrophy >= 3.5) or ((FBufferSize < 16) and (Entrophy >= 3));
+
+    Move(Buf[0], FInitializationVector[0], FBufferSize);
   end;
 end;
 
@@ -1312,7 +1334,8 @@ initialization
   AddModuleUnloadProc(ModuleUnload);
   {$ENDIF DELPHIORBCB}
 
-  TDECCipher.ClassList := TDECClassList.Create;
+  TDECCipher.ClassList       := TDECClassList.Create;
+  TDECCipher.RandomizeCalled := false;
 
 finalization
   // Ensure no further instances of classes registered in the registraiotn list

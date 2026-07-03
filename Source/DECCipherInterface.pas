@@ -599,6 +599,12 @@ type
     {$ENDIF}
 
     /// <summary>
+    ///   Sets a random value for the init vector. Must be called after Init
+    ///   and is a superflous call for stream ciphers
+    /// </summary>
+    procedure SetAutomaticInitVector;
+
+    /// <summary>
     ///   Returns the currently set cipher block mode, means how blocks are
     ///   linked to each other in order to avoid certain attacks.
     /// </summary>
