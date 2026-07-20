@@ -979,7 +979,6 @@ begin
 
       while (IVIdx < FBufferSize) do
       begin
-        //FInitializationVector[IVIdx] := Random(256);
         Buf[IVIdx] := Random(256);
         inc(IVIdx);
       end;

@@ -3140,7 +3140,7 @@ begin
   begin
     T := C and (E xor D) xor G and A xor F and B xor E;
     T := (T shr 7 or T shl 25) + (H shr 11 or H shl 21) + Buffer[I];
-	H := G; G := F; F := E; E := D; D := C; C := B; B := A; A := T;
+	  H := G; G := F; F := E; E := D; D := C; C := B; B := A; A := T;
   end;
 
   for I := 0 to 31 do
