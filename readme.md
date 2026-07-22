@@ -58,6 +58,11 @@ need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
 We're talking at block chaining mode tests for the ciphers specifically.
 
+DUnitX (`Unit Tests/DECDUnitXTestSuite`) is the preferred / authoritative runner;
+the classic DUnit suite remains for comparison until a later removal. Both currently
+share the same known product/test failures (Keccak and GCM chunked stream); see
+`Docs/plans/dunitx-parity-log.md` and `Docs/Cleanup-Roadmap.md` §2.
+
 In DEC 6.2 the unit tests for the hash classes were looked at and where not already 
 used original test data vectors (as far as we could find them - for most we could) 
 have been added to improve test coverage. V6.3 added further synthesized tests for 

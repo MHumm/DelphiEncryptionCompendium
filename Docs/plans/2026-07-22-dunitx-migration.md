@@ -1,6 +1,6 @@
 # DUnit → DUnitX Migration Plan
 
-> **For agentic workers:** Implement task-by-task on branch `Cleanup_OM-DUnitX-migration`. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Implement task-by-task on branch `Cleanup_OM-DUnitX-migration`. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make DUnitX the complete, authoritative unit-test runner for DEC while temporarily keeping the classic DUnit suite for parity comparison.
 
@@ -9,7 +9,9 @@
 **Tech Stack:** Delphi DUnitX (`DUnitX.TestFramework`, console + NUnit XML logger), existing DUnit (`TestFramework`, GUI/Text runners), shared test units under `Unit Tests/Tests/`.
 
 **Branch:** `Cleanup_OM-DUnitX-migration` (from `Cleanup_OM`)  
-**PR target (later):** `Cleanup_OM` → eventually `development`
+**PR target (later):** `Cleanup_OM` → eventually `development`  
+
+**Status (2026-07-22):** Tasks 1–7 complete. DUnitX has full unit coverage (incl. CCM/ZIP), hardened DPR, and **fail-set parity** with DUnit (12 shared Keccak/GCM failures; 0 DUnitX-only). DUnit retained for comparison. See `Docs/plans/dunitx-parity-log.md`.
 
 ## Global Constraints
 
@@ -267,35 +269,35 @@ Bringing the dpr to this shape is part of **Tasks 2–5** (define ownership, uni
 
 **Files:** none (measurement only), or add `Docs/plans/dunitx-parity-log.md` if useful
 
-- [ ] **Step 1: Confirm branch**
+- [x] **Step 1: Confirm branch**
 
 ```bash
 git branch --show-current
 # expect: Cleanup_OM-DUnitX-migration
 ```
 
-- [ ] **Step 2: Build DUnit suite (Win32 Debug preferred)**
+- [x] **Step 2: Build DUnit suite (Win32 Debug preferred)**
 
 Use project `Unit Tests/DECDUnitTestSuite.dproj` with Delphi MSBuild / IDE / `DelphiBuildDPROJ.ps1` if available in environment.
 
 Expected: successful compile.
 
-- [ ] **Step 3: Run DUnit suite**
+- [x] **Step 3: Run DUnit suite**
 
 Prefer console: define `CONSOLE_TESTRUNNER` if needed, or run GUI and export results.
 
 Record: total tests, failures, errors, ignored.
 
-- [ ] **Step 4: Build DUnitX suite as-is (before fixes)**
+- [x] **Step 4: Build DUnitX suite as-is (before fixes)**
 
 `Unit Tests/DECDUnitXTestSuite.dproj` — ensure `DUnitX` is defined in the project (dproj already has `DUnitX;DEBUG` etc.).  
 Also ensure `TestDefines.inc` define is **on** for DUnitX builds (today default is **off** — see Task 2).
 
-- [ ] **Step 5: Run DUnitX suite as-is**
+- [x] **Step 5: Run DUnitX suite as-is**
 
 Record baseline. Expect possible missing CCM/ZIP coverage even if green.
 
-- [ ] **Step 6: Commit only if you added a parity log file; otherwise no commit**
+- [x] **Step 6: Commit only if you added a parity log file; otherwise no commit**
 
 ---
 
@@ -308,7 +310,7 @@ Record baseline. Expect possible missing CCM/ZIP coverage even if green.
 - Modify: `Unit Tests/DECDUnitXTestSuite.dpr` (comments)
 - Verify: `Unit Tests/DECDUnitTestSuite.dproj` has **no** `DUnitX` in `DCC_Define`
 
-- [ ] **Step 1: Document the switch in `TestDefines.inc`**
+- [x] **Step 1: Document the switch in `TestDefines.inc`**
 
 Keep default **off** so opening test units under the DUnit project still compiles as DUnit. Rely on **project-level** `DCC_Define=DUnitX` for the DUnitX project (already present in dproj). Update the comment to say:
 
@@ -322,17 +324,17 @@ Keep default **off** so opening test units under the DUnit project still compile
 {.$DEFINE DUnitX}
 ```
 
-- [ ] **Step 2: Verify DUnitX dproj defines `DUnitX` for all configs used**
+- [x] **Step 2: Verify DUnitX dproj defines `DUnitX` for all configs used**
 
 Debug/Release (and GUI if present) must include `DUnitX` in `DCC_Define`.
 
-- [ ] **Step 3: Verify DUnit dproj does not define `DUnitX`**
+- [x] **Step 3: Verify DUnit dproj does not define `DUnitX`**
 
-- [ ] **Step 4: Rebuild both projects**
+- [x] **Step 4: Rebuild both projects**
 
 Expected: both compile.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "Unit Tests/Tests/TestDefines.inc" "Unit Tests/DECDUnitXTestSuite.dpr"
@@ -348,7 +350,7 @@ git commit -m "Clarify DUnit vs DUnitX define ownership for dual-suite builds."
 - Modify: `Unit Tests/DECDUnitXTestSuite.dproj` (units + ensure `DUnitX` on all configs used for this suite)
 - Verify: `TestDECCipherModesCCM.pas`, `TestDECZIPHelper.pas`, `AuthenticatedCiphersCommonTestData.pas` already have dual-stack `IFDEF` registration
 
-- [ ] **Step 1: Add to `DECDUnitXTestSuite.dpr` uses clause** (order flexible; keep near related units):
+- [x] **Step 1: Add to `DECDUnitXTestSuite.dpr` uses clause** (order flexible; keep near related units):
 
 ```pascal
   TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
@@ -360,7 +362,7 @@ git commit -m "Clarify DUnit vs DUnitX define ownership for dual-suite builds."
 
 (Adjust if some lines already exist — avoid duplicates.)
 
-- [ ] **Step 2: Align runner bootstrap with §0.6 target shape**
+- [x] **Step 2: Align runner bootstrap with §0.6 target shape**
 
 Required in this task (not deferred):
 
@@ -374,21 +376,21 @@ Required in this task (not deferred):
 
 Keep: `CheckCommandLine`, NUnit XML logger, non-zero exit on `not AllPassed`, DUnit suite untouched.
 
-- [ ] **Step 3: Add the same units to `DECDUnitXTestSuite.dproj`**
+- [x] **Step 3: Add the same units to `DECDUnitXTestSuite.dproj`**
 
 Prefer IDE “add unit” or careful `DCCReference` entries matching existing style. Ensure `DCC_Define` includes `DUnitX` for Debug/Release (and TestInsight if that config builds the same sources).
 
-- [ ] **Step 4: Confirm CCM/ZIP units register fixtures under `{$IFDEF DUnitX}`**
+- [x] **Step 4: Confirm CCM/ZIP units register fixtures under `{$IFDEF DUnitX}`**
 
 Each should call `TDUnitX.RegisterTestFixture(...)` in `initialization`.
 
-- [ ] **Step 5: Build + run DUnitX**
+- [x] **Step 5: Build + run DUnitX**
 
 Expected: CCM and ZIP tests appear and run; process exit code non-zero on failure.
 
-- [ ] **Step 6: Run DUnit again (sanity — should be unchanged)**
+- [x] **Step 6: Run DUnit again (sanity — should be unchanged)**
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add "Unit Tests/DECDUnitXTestSuite.dpr" "Unit Tests/DECDUnitXTestSuite.dproj"
@@ -401,7 +403,7 @@ git commit -m "Complete DUnitX suite units and align DPR with DUnitX best practi
 
 **Files:** all `Unit Tests/Tests/Test*.pas` with fixtures
 
-- [ ] **Step 1: Inventory registration**
+- [x] **Step 1: Inventory registration**
 
 For each fixture unit, ensure:
 
@@ -410,15 +412,15 @@ For each fixture unit, ensure:
 | `{$IFDEF DUnitX}` | `[TestFixture]` on classes + `TDUnitX.RegisterTestFixture` (or documented RTTI-only discovery — currently suite uses both `UseRTTI := True` **and** explicit register; keep explicit register for consistency) |
 | `{$ELSE}` | `RegisterTest` / `RegisterTests` as today |
 
-- [ ] **Step 2: Fix any unit that only registers one side**
+- [x] **Step 2: Fix any unit that only registers one side**
 
 Known OK from audit: most units already dual-register. Re-check after CCM/ZIP inclusion.
 
-- [ ] **Step 3: `TestDECUtil` fixtures**
+- [x] **Step 3: `TestDECUtil` fixtures**
 
 Methods are not all named `Test*` (e.g. `ReverseBits32`) but are `published` — DUnit picks them up; DUnitX via `TTestCase` compatibility should too. Run suite and confirm counts roughly match.
 
-- [ ] **Step 4: Commit only if fixes were needed**
+- [x] **Step 4: Commit only if fixes were needed**
 
 ```bash
 git commit -m "Fix dual-stack test registration gaps for DUnitX parity."
@@ -430,11 +432,11 @@ git commit -m "Fix dual-stack test registration gaps for DUnitX parity."
 
 **Files:** optional log under `Docs/plans/`
 
-- [ ] **Step 1: Run full DUnit suite, capture output**
+- [x] **Step 1: Run full DUnit suite, capture output**
 
-- [ ] **Step 2: Run full DUnitX suite, capture console + NUnit XML**
+- [x] **Step 2: Run full DUnitX suite, capture console + NUnit XML**
 
-- [ ] **Step 3: Compare**
+- [x] **Step 3: Compare**
 
 | Check | Criterion |
 |---|---|
@@ -445,7 +447,7 @@ git commit -m "Fix dual-stack test registration gaps for DUnitX parity."
 
 Watch for **double execution** if both RTTI and `RegisterTestFixture` register the same class twice under DUnitX. If duplicates appear, set `runner.UseRTTI := False` **or** remove redundant registration — pick one strategy suite-wide (prefer **explicit RegisterTestFixture + UseRTTI False** for predictability).
 
-- [ ] **Step 4: Fix DUnitX runner if double-registration**
+- [x] **Step 4: Fix DUnitX runner if double-registration**
 
 In `DECDUnitXTestSuite.dpr`:
 
@@ -455,7 +457,7 @@ runner.UseRTTI := False; // fixtures registered explicitly in unit initializatio
 
 Re-run parity.
 
-- [ ] **Step 5: Commit runner tweak + any registration fixes**
+- [x] **Step 5: Commit runner tweak + any registration fixes**
 
 ```bash
 git commit -m "Stabilize DUnitX discovery to match DUnit fixture set."
@@ -467,11 +469,11 @@ git commit -m "Stabilize DUnitX discovery to match DUnit fixture set."
 
 Do **not** expand scope. Optional in same branch if parity is green:
 
-- [ ] Replace `Check(true)` in CCM IV success path with a real assertion or remove and rely on exception — **only** if still equivalent.
-- [ ] Delete clearly dead commented stream tests **or** leave with a single `// Deferred: multi-call CCM streams (AEAD roadmap)` note — do not implement streams here.
-- [ ] Ensure `TestDECCipherPaddings` does not need both `Fail` and `Assert.Fail` under the same `IFDEF` in a broken way (read both branches).
+- [x] Replace `Check(true)` in CCM IV success path with a real assertion or remove and rely on exception — **only** if still equivalent.
+- [x] Delete clearly dead commented stream tests **or** leave with a single `// Deferred: multi-call CCM streams (AEAD roadmap)` note — do not implement streams here.
+- [x] Ensure `TestDECCipherPaddings` does not need both `Fail` and `Assert.Fail` under the same `IFDEF` in a broken way (read both branches).
 
-- [ ] **Commit only if something landed**
+- [x] **Commit only if something landed**
 
 ```bash
 git commit -m "Minor test clarity fixes found during DUnitX parity review."
@@ -486,7 +488,7 @@ git commit -m "Minor test clarity fixes found during DUnitX parity review."
 - This plan: mark tasks done as work proceeds
 - Optional: short note in `readme.md` under “Has it been tested?”
 
-- [ ] **Step 1: Update Cleanup-Roadmap section 2**
+- [x] **Step 1: Update Cleanup-Roadmap section 2**
 
 State explicitly:
 
@@ -494,7 +496,7 @@ State explicitly:
 - DUnit suite remains until parity is trusted and a later PR removes it.
 - Link to `Docs/plans/2026-07-22-dunitx-migration.md`.
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add Docs/Cleanup-Roadmap.md Docs/plans/2026-07-22-dunitx-migration.md
