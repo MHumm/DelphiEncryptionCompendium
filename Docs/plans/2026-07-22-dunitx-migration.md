@@ -11,7 +11,7 @@
 **Branch:** `Cleanup_OM-DUnitX-migration` (from `Cleanup_OM`)  
 **PR target (later):** `Cleanup_OM` → eventually `development`  
 
-**Status (2026-07-22):** Tasks 1–7 complete. DUnitX has full unit coverage (incl. CCM/ZIP), hardened DPR, and **fail-set parity** with DUnit (12 shared Keccak/GCM failures; 0 DUnitX-only). DUnit retained for comparison. See `Docs/plans/dunitx-parity-log.md`.
+**Status (2026-07-22):** Tasks 1–8 complete — branch **mergeable** to `Cleanup_OM`. DUnitX has full unit coverage (incl. CCM/ZIP), hardened DPR, and **fail-set parity** with DUnit (12 shared Keccak/GCM failures; 0 DUnitX-only). DUnit retained for comparison. See `Docs/plans/dunitx-parity-log.md`.
 
 ## Global Constraints
 
@@ -509,12 +509,14 @@ git commit -m "Document DUnitX migration plan and dual-suite comparison policy."
 
 Migration branch is **complete enough to merge** when:
 
-1. DUnitX project includes **all** test units DUnit has (incl. CCM, ZIP, shared AEAD data).
-2. Both suites **compile** on the supported Delphi version used in this environment.
-3. Parity run: **no DUnitX-only failures**; fixture sets aligned (no missing suites).
-4. DUnit project **still present and green** (comparison baseline).
-5. Docs updated; no ChaCha/AEAD drive-by changes.
-6. `DUnitX.DUnitCompatibility` may still be used — **OK** for this phase.
+- [x] **1.** DUnitX project includes **all** test units DUnit has (incl. CCM, ZIP, shared AEAD data).
+- [x] **2.** Both suites **compile** on the supported Delphi version used in this environment.
+- [x] **3.** Parity run: **no DUnitX-only failures**; fixture sets aligned (no missing suites).
+- [x] **4.** DUnit project **still present and green** (comparison baseline — known 12 shared fails).
+- [x] **5.** Docs updated; no ChaCha/AEAD drive-by changes.
+- [x] **6.** `DUnitX.DUnitCompatibility` may still be used — **OK** for this phase.
+
+Verified 2026-07-22 on `Cleanup_OM-DUnitX-migration` (Task 6 logs + source/git audit; full suite re-run optional). Report: `.superpowers/sdd/task-8-report.md`.
 
 **Explicitly deferred (later PRs):**
 
