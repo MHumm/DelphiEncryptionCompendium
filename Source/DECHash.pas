@@ -341,9 +341,13 @@ type
                      end;
 
       /// <summary>
-      ///   Buffer type
+      ///   View type for sponge Absorb over an arbitrary-length message.
+      ///   Must not be limited to 64 KiB: with {$R+} enabled for the SHA3 block,
+      ///   indexing past 65535 raised ERangeError (GitHub issue #94 —
+      ///   HashBenchmark / 1 MiB Keccak). The bound is only for typing; Absorb
+      ///   never allocates a TBABytes instance.
       /// </summary>
-      TBABytes = array[0..65535] of UInt8;
+      TBABytes = array[0..High(Integer) div SizeOf(UInt8) - 1] of UInt8;
       /// <summary>
       ///   Pointer to a buffer
       /// </summary>
