@@ -3,9 +3,9 @@
 {.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;
 
-// In order to run DEC Unit tests via DUnitX framework the $DEFINE DUnitX define
-// in TestDefines.inc must be enabled, as it makes all the unit test units DUnitX
-// compatible
+// DUnitX is enabled by this project's DCC_Define (Debug/Release/GUI/…), not by
+// uncommenting TestDefines.inc — leaving the inc define off keeps DECDUnitTestSuite
+// on classic DUnit when the same test units are opened/built under that project.
 {$INCLUDE Tests\TestDefines.inc}
 
 {$IFNDEF GUI}
