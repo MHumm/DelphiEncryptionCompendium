@@ -208,3 +208,12 @@ After non-published virtual hooks for ISO10126 padding compare and BCrypt `Expec
 | DUnitX Debug | **1473** | **12** | **0** |
 
 Fail-sets match (12 shared Keccak/GCM). Count gap 37 = remaining redundant hash-leaf `TestIsPasswordHash` redeclares (no longer fail).
+
+### Decision: leave remaining hash-leaf redeclares as-is
+
+**Accepted (2026-07-22):** Do **not** remove the ~37 non-password hash leaf
+`TestIsPasswordHash` redeclares. They only inflate the DUnitX case count
+(base RTTI + leaf re-publish); both invocations pass with the same meaning as
+the base (`IsPasswordHash = False`). Fail-set parity is already achieved; no
+product or migration defect remains. Optional hygiene only — explicitly out of
+scope unless someone wants exact count parity later.
