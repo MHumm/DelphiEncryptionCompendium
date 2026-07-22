@@ -127,13 +127,135 @@ While both runners exist:
 
 ---
 
+## 0.6 DUnitX project (`.dpr`) best-practice audit
+
+Reference implementation: official **VSoftTechnologies/DUnitX** examples  
+[`Examples/DUnitXExamples_D12Athens.dpr`](https://github.com/VSoftTechnologies/DUnitX/blob/master/Examples/DUnitXExamples_D12Athens.dpr) /  
+[`Examples/DUnitXExamples_D13.dpr`](https://github.com/VSoftTechnologies/DUnitX/blob/master/Examples/DUnitXExamples_D13.dpr)  
+(plus framework notes on `{$STRONGLINKTYPES ON}` + manual `RegisterTestFixture` in `DUnitX.Examples.General.pas`).
+
+### Checklist: current `DECDUnitXTestSuite.dpr` vs best practice
+
+| Topic | Best practice (official / CI-ready) | DEC today | Verdict |
+|---|---|---|---|
+| **Console app type** | `{$IFNDEF TESTINSIGHT}{$APPTYPE CONSOLE}{$ENDIF}` | Same idea, wrapped in extra `{$IFNDEF GUI}` | OK; GUI path half-dead |
+| **`{$STRONGLINKTYPES ON}`** | Required so RTTI/link keeps fixtures when using attributes/RTTI | Present | **OK** |
+| **Command line** | `TDUnitX.CheckCommandLine` before run | Present | **OK** |
+| **Runner** | `runner := TDUnitX.CreateRunner` | Present | **OK** |
+| **UseRTTI** | `True` **or** explicit register only — not both without care | `UseRTTI := True` **and** units call `RegisterTestFixture` | **Risk of double registration** → prefer **one** strategy (plan Task 5: explicit + `UseRTTI := False`) |
+| **FailsOnNoAsserts** | Examples leave `False`; quality gate often wants `True` | `False` | Keep `False` until parity; later enable |
+| **Exit code** | Must set non-zero on failure for CI | Sets `ExitCode := EXIT_ERRORS` if `not results.AllPassed` | **Better than official sample** (sample often omits this) |
+| **Exception path exit code** | Unhandled exception should fail process | `except` only `Writeln` — **ExitCode often stays 0** | **Gap** |
+| **Console logger** | Honour `TDUnitX.Options.ConsoleMode` (Off / Quiet / full); Quiet flag from mode | Always `TDUnitXConsoleLogger.Create(true)` | **Gap** — ignores CLI/options |
+| **NUnit XML logger** | Official: only under `{$IFDEF CI}`; always-on XML is also fine for local+CI | Always on via `TDUnitX.Options.XMLOutputFile` | Acceptable; document path |
+| **JUnit XML** | Optional (`DUnitX.Loggers.XML.JUnit`) for some CI | Not used | Optional later |
+| **CI behaviour** | `{$IFDEF CI}`: `ConsoleMode := Off`, no pause, XML on | Only `{$IFNDEF CI}` pause block; no CI console off | **Partial** |
+| **Interactive pause** | Official sets `ExitBehavior := Pause` when not CI | Only pauses if already Pause | **Weaker interactive UX** |
+| **TestInsight** | `{$IFDEF TESTINSIGHT}` → `TestInsight.DUnitX.RunRegisteredTests` (unit in uses) | Runtime probe `IsTestInsightRunning` + `TestInsight.Client`; compile path incomplete without defines | **Legacy pattern** — modernise to official ifdef |
+| **IDE safety** | Comment: *keep comment here to protect the following conditional from being removed by the IDE when adding a unit* before `{$IFNDEF TESTINSIGHT} var` | Missing | **Gap** (Delphi 12+ known to mangle dpr) |
+| **Memory leaks** | `ReportMemoryLeaksOnShutdown := True` common for test exes | Not in DUnitX dpr (DUnit suite has it) | **Gap** (nice-to-have) |
+| **Timing** | Optional `TStopWatch` around `Execute` | Absent | Optional |
+| **Dead GUI scaffolding** | Single console (+ TestInsight) is enough | Top `GUI`/`MobileGUI` defines, commented GUI runner, dproj configs GUI/MobileGUI | **Noise** — remove or finish, don’t leave half |
+| **Complete uses list** | Every fixture unit + support units | Missing CCM, ZIP, AEAD common data | **Critical gap** (Task 3) |
+| **`TestDefines.inc`** | Project `DCC_Define=DUnitX` is source of truth | File says “must enable define in inc” (outdated comment) | **Docs/define ownership** (Task 2) |
+| **dproj `DUnitX` define** | All configs that run this suite | Debug/Release have `DUnitX`; GUI config may not | **Verify every config** |
+
+### Target shape for `DECDUnitXTestSuite.dpr` (migration target)
+
+Minimal structure aligned with DUnitX D13 example **plus** DEC needs (exit code, always-on XML optional, full unit list):
+
+```pascal
+program DECDUnitXTestSuite;
+
+{$IFNDEF TESTINSIGHT}
+{$APPTYPE CONSOLE}
+{$ENDIF}
+{$STRONGLINKTYPES ON}
+
+uses
+  System.SysUtils,
+  {$IFDEF TESTINSIGHT}
+  TestInsight.DUnitX,
+  {$ENDIF}
+  DUnitX.Loggers.Console,
+  DUnitX.Loggers.Xml.NUnit,
+  DUnitX.TestFramework,
+  // ... all TestDEC* units + AuthenticatedCiphersCommonTestData ...
+  ;
+
+{ keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
+{$IFNDEF TESTINSIGHT}
+var
+  runner: ITestRunner;
+  results: IRunResults;
+  logger: ITestLogger;
+  nunitLogger: ITestLogger;
+{$ENDIF}
+begin
+{$IFDEF TESTINSIGHT}
+  TestInsight.DUnitX.RunRegisteredTests;
+{$ELSE}
+  try
+    ReportMemoryLeaksOnShutdown := True;
+    TDUnitX.CheckCommandLine;
+
+    runner := TDUnitX.CreateRunner;
+    // Fixtures register in unit initialization — avoid double discovery:
+    runner.UseRTTI := False;
+    runner.FailsOnNoAsserts := False; // True after parity period
+
+    {$IFDEF CI}
+    TDUnitX.Options.ConsoleMode := TDunitXConsoleMode.Off;
+    {$ELSE}
+    // TDUnitX.Options.ExitBehavior := TDUnitXExitBehavior.Pause; // optional interactive
+    {$ENDIF}
+
+    if TDUnitX.Options.ConsoleMode <> TDunitXConsoleMode.Off then
+    begin
+      logger := TDUnitXConsoleLogger.Create(
+        TDUnitX.Options.ConsoleMode = TDunitXConsoleMode.Quiet);
+      runner.AddLogger(logger);
+    end;
+
+    // NUnit XML for CI and local regression comparison
+    nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
+    runner.AddLogger(nunitLogger);
+
+    results := runner.Execute;
+    if not results.AllPassed then
+      System.ExitCode := EXIT_ERRORS;
+
+    {$IFNDEF CI}
+    if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
+    begin
+      System.Write('Done.. press <Enter> key to quit.');
+      System.Readln;
+    end;
+    {$ENDIF}
+  except
+    on E: Exception do
+    begin
+      System.Writeln(E.ClassName, ': ', E.Message);
+      System.ExitCode := 1;
+    end;
+  end;
+{$ENDIF}
+end.
+```
+
+### Implementation note
+
+Bringing the dpr to this shape is part of **Tasks 2–5** (define ownership, unit list, registration/UseRTTI, parity). Do not rewrite the dpr in isolation without re-running both suites for comparison.
+
+---
+
 ## File map (what will change)
 
 | Path | Action |
 |---|---|
 | `Unit Tests/Tests/TestDefines.inc` | Document dual use; keep `DUnitX` define for DUnitX builds |
-| `Unit Tests/DECDUnitXTestSuite.dpr` | Add missing units; ensure include/define story is reliable |
-| `Unit Tests/DECDUnitXTestSuite.dproj` | Mirror unit list / search paths / `DUnitX` define |
+| `Unit Tests/DECDUnitXTestSuite.dpr` | Add missing units; align with §0.6 best-practice target shape |
+| `Unit Tests/DECDUnitXTestSuite.dproj` | Mirror unit list / search paths / `DUnitX` define on **all** suite configs |
 | `Unit Tests/DECDUnitTestSuite.dpr` / `.dproj` | **Keep**; only touch if registration/shared unit needs both |
 | `Unit Tests/Tests/*.pas` | Ensure every fixture registers under both `IFDEF` branches; remove dead dual bugs only |
 | `Docs/Cleanup-Roadmap.md` | Link to this plan; note “DUnit retained for comparison” |
@@ -219,11 +341,11 @@ git commit -m "Clarify DUnit vs DUnitX define ownership for dual-suite builds."
 
 ---
 
-## Task 3: Close the DUnitX project gap (CCM, ZIP, shared data)
+## Task 3: Close the DUnitX project gap + harden the `.dpr` (best practice)
 
 **Files:**
-- Modify: `Unit Tests/DECDUnitXTestSuite.dpr`
-- Modify: `Unit Tests/DECDUnitXTestSuite.dproj` (add units the IDE/MSBuild need)
+- Modify: `Unit Tests/DECDUnitXTestSuite.dpr` (unit list **and** §0.6 runner shape)
+- Modify: `Unit Tests/DECDUnitXTestSuite.dproj` (units + ensure `DUnitX` on all configs used for this suite)
 - Verify: `TestDECCipherModesCCM.pas`, `TestDECZIPHelper.pas`, `AuthenticatedCiphersCommonTestData.pas` already have dual-stack `IFDEF` registration
 
 - [ ] **Step 1: Add to `DECDUnitXTestSuite.dpr` uses clause** (order flexible; keep near related units):
@@ -238,25 +360,39 @@ git commit -m "Clarify DUnit vs DUnitX define ownership for dual-suite builds."
 
 (Adjust if some lines already exist — avoid duplicates.)
 
-- [ ] **Step 2: Add the same units to `DECDUnitXTestSuite.dproj`**
+- [ ] **Step 2: Align runner bootstrap with §0.6 target shape**
 
-Prefer IDE “add unit” or careful `DCCReference` entries matching existing style.
+Required in this task (not deferred):
 
-- [ ] **Step 3: Confirm CCM/ZIP units register fixtures under `{$IFDEF DUnitX}`**
+1. IDE protection comment before conditional `var` block  
+2. `UseRTTI := False` if fixtures use explicit `RegisterTestFixture` (confirm after Task 4) — if Task 4 not done yet, set after registration audit; default recommendation: **False + explicit**  
+3. Console logger respects `TDUnitX.Options.ConsoleMode`  
+4. `except` sets `System.ExitCode := 1`  
+5. `ReportMemoryLeaksOnShutdown := True`  
+6. Remove or quarantine dead GUI/`MobileGUI` scaffolding in the dpr (commented GUI runner, unused top defines)  
+7. Modern TestInsight path: `TestInsight.DUnitX.RunRegisteredTests` under `{$IFDEF TESTINSIGHT}` (drop runtime `IsTestInsightRunning` if it conflicts)
+
+Keep: `CheckCommandLine`, NUnit XML logger, non-zero exit on `not AllPassed`, DUnit suite untouched.
+
+- [ ] **Step 3: Add the same units to `DECDUnitXTestSuite.dproj`**
+
+Prefer IDE “add unit” or careful `DCCReference` entries matching existing style. Ensure `DCC_Define` includes `DUnitX` for Debug/Release (and TestInsight if that config builds the same sources).
+
+- [ ] **Step 4: Confirm CCM/ZIP units register fixtures under `{$IFDEF DUnitX}`**
 
 Each should call `TDUnitX.RegisterTestFixture(...)` in `initialization`.
 
-- [ ] **Step 4: Build + run DUnitX**
+- [ ] **Step 5: Build + run DUnitX**
 
-Expected: CCM and ZIP tests appear and run.
+Expected: CCM and ZIP tests appear and run; process exit code non-zero on failure.
 
-- [ ] **Step 5: Run DUnit again (sanity — should be unchanged)**
+- [ ] **Step 6: Run DUnit again (sanity — should be unchanged)**
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 git add "Unit Tests/DECDUnitXTestSuite.dpr" "Unit Tests/DECDUnitXTestSuite.dproj"
-git commit -m "Include CCM, ZIP helper, and AEAD test data in DUnitX suite."
+git commit -m "Complete DUnitX suite units and align DPR with DUnitX best practices."
 ```
 
 ---
