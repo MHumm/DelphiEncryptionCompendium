@@ -52,11 +52,20 @@ type
     FValidTestData: TArray<TPaddingTestData>;
     FNegativeTestData: TArray<TPaddingTestData>;
     FValidRemoveTestData: TArray<TPaddingTestData>;
+    /// <summary>
+    ///   Normalize add-padding output for equality checks. Default is identity.
+    ///   ISO 10126 overrides to strip random pad bytes marked as '?' in the pattern.
+    /// </summary>
+    /// <remarks>
+    ///   Keep comparison logic here (not as published test overrides) so DUnitX does
+    ///   not double-discover base + leaf published methods of the same name.
+    /// </remarks>
+    function NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString; virtual;
   published
-    procedure TestAddPadding_RawByteString; virtual;
+    procedure TestAddPadding_RawByteString;
     procedure TestRemovePadding_RawByteString; virtual;
     procedure TestRemovePadding_RawByteStringExceptions; virtual;
-    procedure TestAddPadding_Bytes; virtual;
+    procedure TestAddPadding_Bytes;
     procedure TestRemovePadding_Bytes; virtual;
     procedure TestRemovePadding_BytesExceptions; virtual;
     procedure TestHasValidPadding_Bytes; virtual;
@@ -94,13 +103,11 @@ type
   ///  </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTISO10126Padding = class(TestTPaddingBase)
-  protected
+  strict protected
     function RemoveRandomPadding(const Res, Pattern: RawByteString): RawByteString;
+    function NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString; override;
   public
     procedure SetUp; override;
-  published
-    procedure TestAddPadding_RawByteString; override;
-    procedure TestAddPadding_Bytes; override;
   end;
 
   /// <summary>
@@ -116,6 +123,12 @@ implementation
 
 { TestTPaddingBase }
 
+function TestTPaddingBase.NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString;
+begin
+  // Default: exact match (APattern is used by ISO 10126 to mask random pad bytes)
+  Result := AValue;
+end;
+
 procedure TestTPaddingBase.TestAddPadding_RawByteString;
 var
   I   : integer;
@@ -126,8 +139,9 @@ begin
     Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
                                     FValidTestData[I].BlockSize);
 
-    CheckEquals(Res,
-                FValidTestData[I].OutputData,
+    CheckEquals(NormalizeAddPaddingResult(Res, FValidTestData[I].OutputData),
+                NormalizeAddPaddingResult(FValidTestData[I].OutputData,
+                                          FValidTestData[I].OutputData),
                 'Valid test data set ' + I.ToString + ' failed');
   end;
 
@@ -144,8 +158,10 @@ begin
     Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
                                     FValidTestData[I].BlockSize);
 
-    CheckEquals(DECUtil.BytesToRawString(Res),
-                FValidTestData[I].OutputData,
+    CheckEquals(NormalizeAddPaddingResult(DECUtil.BytesToRawString(Res),
+                                          FValidTestData[I].OutputData),
+                NormalizeAddPaddingResult(FValidTestData[I].OutputData,
+                                          FValidTestData[I].OutputData),
                 'Valid test data set ' + I.ToString + ' failed');
   end;
 
@@ -739,44 +755,10 @@ begin
       Result := Result + Res[c];
 end;
 
-procedure TestTISO10126Padding.TestAddPadding_RawByteString;
-var
-  I   : integer;
-  Res : RawByteString;
+function TestTISO10126Padding.NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString;
 begin
-  for I := Low(FValidTestData) to High(FValidTestData) do
-  begin
-    Res := FPaddingClass.AddPadding(FValidTestData[I].InputData,
-                                    FValidTestData[I].BlockSize);
-
-    Res := RemoveRandomPadding(Res, FValidTestData[I].OutputData);
-    CheckEquals(Res,
-                RemoveRandomPadding(FValidTestData[I].OutputData,
-                                    FValidTestData[I].OutputData),
-                'Valid test data set ' + I.ToString + ' failed');
-  end;
-
-  Status(length(FValidTestData).ToString + ' test pattern passed');
-end;
-
-procedure TestTISO10126Padding.TestAddPadding_Bytes;
-var
-  I   : integer;
-  Res : TBytes;
-begin
-  for I := Low(FValidTestData) to High(FValidTestData) do
-  begin
-    Res := FPaddingClass.AddPadding(DECUtil.RawStringToBytes(FValidTestData[I].InputData),
-                                    FValidTestData[I].BlockSize);
-
-    CheckEquals(RemoveRandomPadding(DECUtil.BytesToRawString(Res),
-                                    FValidTestData[I].OutputData),
-                RemoveRandomPadding(FValidTestData[I].OutputData,
-                                    FValidTestData[I].OutputData),
-                'Valid test data set ' + I.ToString + ' failed');
-  end;
-
-  Status(length(FValidTestData).ToString + ' test pattern passed');
+  // ISO 10126 fills pad bytes with random data; expected patterns use '?' as wildcards
+  Result := RemoveRandomPadding(AValue, APattern);
 end;
 
 { TestTISO7816Padding }
