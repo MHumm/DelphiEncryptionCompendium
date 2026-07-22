@@ -2043,13 +2043,16 @@ end;
 
 procedure TestTHash_Keccak_224.TestCalcBufferLargeMessage;
 const
+  // Larger than cMaxBytesPerRound (64 KiB) in THash_SHA3Base.Calc so the
+  // multi-round DataPtr walk is exercised (regression for PBABytes Inc scaling).
   cSize = 1024 * 1024; // same as HashBenchmark_FMX cBufferSize
+  cIncrementalChunk = 4096; // each Init/Calc piece stays single-round
   // PyCryptodome Crypto.Hash.keccak, digest_bits=224, over 0..255 repeating
   cExpectedHex: RawByteString =
     '7746d1b9b33662006e83d88443fc956ee1e01b8d058b8227a9d1e66b';
 var
-  Buf, DigestBuf, DigestBytes: TBytes;
-  i, n: Integer;
+  Buf, DigestBuf, DigestBytes, DigestIncremental: TBytes;
+  i, n, Offset, Take: Integer;
   Hex: RawByteString;
 begin
   SetLength(Buf, cSize);
@@ -2062,14 +2065,33 @@ begin
       n := 0;
   end;
 
-  // Correct untyped-const usage (no extra @) — must not raise ERangeError
+  // One-shot paths (internal multi-round Absorb walk for 1 MiB)
   DigestBuf := FHash.CalcBuffer(Buf[0], Length(Buf));
   DigestBytes := FHash.CalcBytes(Buf);
+
+  // Incremental reference: many small Calc calls, each single-round only
+  FHash.Init;
+  Offset := 0;
+  while Offset < cSize do
+  begin
+    Take := cIncrementalChunk;
+    if Offset + Take > cSize then
+      Take := cSize - Offset;
+    FHash.Calc(Buf[Offset], Take);
+    Inc(Offset, Take);
+  end;
+  FHash.Done;
+  DigestIncremental := FHash.DigestAsBytes;
 
   CheckEquals(Length(DigestBuf), Length(DigestBytes),
               'CalcBuffer and CalcBytes digest lengths must match');
   CheckTrue(CompareMem(@DigestBuf[0], @DigestBytes[0], Length(DigestBuf)),
             'CalcBuffer and CalcBytes digests must match for 1 MiB input');
+  CheckEquals(Length(DigestBuf), Length(DigestIncremental),
+              'One-shot and incremental digest lengths must match');
+  CheckTrue(CompareMem(@DigestBuf[0], @DigestIncremental[0], Length(DigestBuf)),
+            'Multi-round one-shot Calc must match incremental small-chunk Calc '+
+            '(catches wrong DataPtr byte advance)');
 
   Hex := BytesToRawString(TFormat_HEXL.Encode(DigestBuf));
   CheckEquals(string(cExpectedHex), string(Hex),
