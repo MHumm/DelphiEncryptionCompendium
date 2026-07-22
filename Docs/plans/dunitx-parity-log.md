@@ -195,3 +195,16 @@ No runner source tweak was required in Task 5.
 - **DUnitX-only** failures today are the ISO10126×2 + BCrypt `TestIsPasswordHash` trio, explained by redeclared published methods. Fix that discovery pattern before calling pass/fail parity complete.
 - Count: expect DUnitX ≥ DUnit; residual +40 is the redeclared-method effect, not missing tests.
 - Keep cleaning shared `__Demos` test DCUs when alternating runners.
+
+---
+
+## Task 6 run (2026-07-22) — DUnitX-only failures fixed
+
+After non-published virtual hooks for ISO10126 padding compare and BCrypt `ExpectedIsPasswordHash` (see Task 6 report):
+
+| Suite | Found/Run | Failed | DUnitX-only fails |
+|---|---:|---:|---:|
+| DUnit Console | 1436 | **12** | — |
+| DUnitX Debug | **1473** | **12** | **0** |
+
+Fail-sets match (12 shared Keccak/GCM). Count gap 37 = remaining redundant hash-leaf `TestIsPasswordHash` redeclares (no longer fail).
