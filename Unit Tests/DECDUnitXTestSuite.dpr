@@ -1,25 +1,20 @@
-{$UNDEF GUI}
-{.$DEFINE GUI}
-{.$DEFINE MobileGUI}
-program DECDUnitXTestSuite;
+﻿program DECDUnitXTestSuite;
 
-// DUnitX is enabled by this project's DCC_Define (Debug/Release/GUI/…), not by
+// DUnitX is enabled by this project's DCC_Define (Debug/Release/…), not by
 // uncommenting TestDefines.inc — leaving the inc define off keeps DECDUnitTestSuite
 // on classic DUnit when the same test units are opened/built under that project.
 {$INCLUDE Tests\TestDefines.inc}
 
-{$IFNDEF GUI}
-  {$IFNDEF TESTINSIGHT}
-    {$APPTYPE CONSOLE}
-  {$ENDIF}
+{$IFNDEF TESTINSIGHT}
+{$APPTYPE CONSOLE}
 {$ENDIF}
-
 {$STRONGLINKTYPES ON}
+
 uses
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
-  TestInsight.Client,
-  {$ENDIF }
+  TestInsight.DUnitX,
+  {$ENDIF}
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.TestFramework,
@@ -38,79 +33,64 @@ uses
   TestDECHashMAC in 'Tests\TestDECHashMAC.pas',
   TestDECHashSHA3 in 'Tests\TestDECHashSHA3.pas',
   TestDECCipherModesGCM in 'Tests\TestDECCipherModesGCM.pas',
-  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas';
+  TestDECCipherModesCCM in 'Tests\TestDECCipherModesCCM.pas',
+  TestDECCipherPaddings in 'Tests\TestDECCipherPaddings.pas',
+  TestDECZIPHelper in 'Tests\TestDECZIPHelper.pas',
+  AuthenticatedCiphersCommonTestData in 'Tests\AuthenticatedCiphersCommonTestData.pas';
 
-function IsTestInsightRunning: Boolean;
-{$IFDEF TESTINSIGHT}
+{ keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
+{$IFNDEF TESTINSIGHT}
 var
-  client: ITestInsightClient;
-begin
-  client := TTestInsightRestClient.Create;
-  client.StartedTesting(0);
-  Result := not client.HasError;
-end;
-{$ELSE}
-begin
-  result := false;
-end;
+  runner: ITestRunner;
+  results: IRunResults;
+  logger: ITestLogger;
+  nunitLogger: ITestLogger;
 {$ENDIF}
-
-var
-  runner : ITestRunner;
-  results : IRunResults;
-  logger : ITestLogger;
-  nunitLogger : ITestLogger;
 begin
-
-//{$IFDEF GUI}
-// // DUnitX.Loggers.GUIX.GUIXTestRunner.Run.Execute;
-////  DUnitX.Loggers.GUIX.GUIXTestRunner.Run;
-//  DUnitX.Loggers.GUI.VCL.Run;
-//  exit;
-//{$ENDIF}
-
+{$IFDEF TESTINSIGHT}
+  TestInsight.DUnitX.RunRegisteredTests;
+{$ELSE}
   try
-    if IsTestInsightRunning then
-      {$IFDEF TESTINSIGHT}
-      TestInsight.DUnitX.RunRegisteredTests
-      {$ENDIF}
-    else
+    ReportMemoryLeaksOnShutdown := True;
+    TDUnitX.CheckCommandLine;
+
+    runner := TDUnitX.CreateRunner;
+    // Fixtures register in unit initialization — avoid double discovery:
+    runner.UseRTTI := False;
+    runner.FailsOnNoAsserts := False; // True after parity period
+
+    {$IFDEF CI}
+    TDUnitX.Options.ConsoleMode := TDunitXConsoleMode.Off;
+    {$ENDIF}
+
+    if TDUnitX.Options.ConsoleMode <> TDunitXConsoleMode.Off then
     begin
-      //Check command line options, will exit if invalid
-      TDUnitX.CheckCommandLine;
-      //Create the test runner
-      runner := TDUnitX.CreateRunner;
-      //Tell the runner to use RTTI to find Fixtures
-      runner.UseRTTI := True;
-      //tell the runner how we will log things
-      //Log to the console window
-//      {$IFDEF GUI}
-//      logger := TGUIXTestRunner.Create(nil);
-//      {$ELSE}
-      logger := TDUnitXConsoleLogger.Create(true);
-//      {$ENDIF}
+      logger := TDUnitXConsoleLogger.Create(
+        TDUnitX.Options.ConsoleMode = TDunitXConsoleMode.Quiet);
       runner.AddLogger(logger);
-      //Generate an NUnit compatible XML File
-      nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
-      runner.AddLogger(nunitLogger);
-      runner.FailsOnNoAsserts := False; //When true, Assertions must be made during tests;
-
-      //Run tests
-      results := runner.Execute;
-      if not results.AllPassed then
-        System.ExitCode := EXIT_ERRORS;
-
-      {$IFNDEF CI}
-      //We don't want this happening when running under CI.
-      if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
-      begin
-        System.Write('Done.. press <Enter> key to quit.');
-        System.Readln;
-      end;
-      {$ENDIF}
     end;
+
+    // NUnit XML for CI and local regression comparison
+    nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
+    runner.AddLogger(nunitLogger);
+
+    results := runner.Execute;
+    if not results.AllPassed then
+      System.ExitCode := EXIT_ERRORS;
+
+    {$IFNDEF CI}
+    if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
+    begin
+      System.Write('Done.. press <Enter> key to quit.');
+      System.Readln;
+    end;
+    {$ENDIF}
   except
     on E: Exception do
+    begin
       System.Writeln(E.ClassName, ': ', E.Message);
+      System.ExitCode := 1;
+    end;
   end;
+{$ENDIF}
 end.
