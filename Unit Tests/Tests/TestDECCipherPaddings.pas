@@ -757,6 +757,13 @@ end;
 
 function TestTISO10126Padding.NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString;
 begin
+  // Length must match first: masking only looks at Pattern indices and would
+  // truncate a longer result or read past a shorter one, hiding real failures.
+  if Length(AValue) <> Length(APattern) then
+  begin
+    Result := AValue;
+    Exit;
+  end;
   // ISO 10126 fills pad bytes with random data; expected patterns use '?' as wildcards
   Result := RemoveRandomPadding(AValue, APattern);
 end;

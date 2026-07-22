@@ -169,6 +169,10 @@
     <PropertyGroup Condition="'$(Cfg_5)'!=''">
         <DCC_Define>MobileGUI;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_6)'!=''">
+        <!-- Required for DECDUnitXTestSuite.dpr {$IFDEF TESTINSIGHT} path -->
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_6_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
