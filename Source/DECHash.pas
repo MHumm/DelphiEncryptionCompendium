@@ -5135,7 +5135,7 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
-  DataPtr   : PBABytes;
+  DataPtr   : PByte;
   RoundSize : UInt32;
 const
   // Maximum number of bytes one can process in one round
@@ -5144,7 +5144,9 @@ begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    DataPtr := PBABytes(@Data);
+    // Byte-addressed pointer: Inc(DataPtr, n) must advance n bytes.
+    // PBABytes (= ^TBABytes) would scale Inc by SizeOf(TBABytes) (~2 GiB view).
+    DataPtr := @Data;
 
     while (UInt32(DataSize) > 0) do
     begin
@@ -5152,7 +5154,7 @@ begin
       if (RoundSize > MaxRoundSize) then
         RoundSize := MaxRoundSize;
 
-      Absorb(DataPtr, RoundSize * 8);
+      Absorb(PBABytes(DataPtr), RoundSize * 8);
       Dec(DataSize, RoundSize);
       Inc(DataPtr, RoundSize);
     end;
