@@ -33,6 +33,7 @@ uses
   Generics.Collections,
   System.Math,
   DECBaseClass,
+  DECTypes,
   DECCipherBase,
   DECCipherModes,
   DECCipherFormats,
@@ -136,6 +137,10 @@ type
     // Needed for passing data to and from DoTestDecodeFailure
     FDecryptedData  : TBytes;
     FCipherText     : TBytes;
+    /// <summary>
+    ///   Scratch PT for post-Done Encode/Decode exception helpers
+    /// </summary>
+    FLifecycleScratch : TBytes;
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestDecodeFailure;
@@ -145,6 +150,11 @@ type
     procedure DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
         ATag: RawByteString; ATagBits: Integer;
         const AChunkSizes: array of Integer);
+    procedure DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
+    procedure DoEncodeAfterDone;
+    procedure DoDecodeAfterDone;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -164,6 +174,22 @@ type
     ///   Same vector with uneven chunks (7 + 25) to exercise GHASH partial blocks.
     /// </summary>
     procedure TestEncodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Same vector; multi-chunk decrypt with expected-tag verification.
+    /// </summary>
+    procedure TestDecodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Done twice must leave CalculatedAuthenticationResult unchanged.
+    /// </summary>
+    procedure TestDoneIdempotent;
+    /// <summary>
+    ///   Encode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestEncodeAfterDoneRejected;
+    /// <summary>
+    ///   Decode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestDecodeAfterDoneRejected;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
@@ -181,7 +207,6 @@ implementation
 
 uses
   System.Classes,
-  DECTypes,
   DECFormat;
 
 { TGCMTestDataLoader }
@@ -805,6 +830,132 @@ begin
     '7870d9117f54811a346970f1de090c41',
     128,
     [7, 25]);
+end;
+
+procedure TestTDECGCM.DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ctBytes, DecryptData, EmptyAAD: TBytes;
+  ctbStream, ptbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ctBytes := TFormat_HexL.Decode(BytesOf(ACT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+  FCipherAES.ExpectedAuthenticationResult :=
+    TFormat_HexL.Decode(BytesOf(ATag));
+
+  ctbStream := TBytesStream.Create(ctBytes);
+  ptbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ctBytes),
+                'Chunk list exceeds ciphertext length');
+      FCipherAES.DecodeStream(ctbStream, ptbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ctBytes), offset, 'Chunk sizes must cover full CT');
+    FCipherAES.Done;
+    DecryptData := ptbStream.Bytes;
+    SetLength(DecryptData, ptbStream.Size);
+  finally
+    ctbStream.Free;
+    ptbStream.Free;
+  end;
+
+  CheckEquals(string(APT), StringOf(TFormat_HexL.Encode(DecryptData)),
+              'Plaintext mismatch for multi-chunk decode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk decode');
+end;
+
+procedure TestTDECGCM.TestDecodeStreamMultiChunkUneven;
+begin
+  DoDecodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [7, 25]);
+end;
+
+procedure TestTDECGCM.TestDoneIdempotent;
+var
+  Tag1, Tag2: TBytes;
+begin
+  DoEncodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [7, 25]);
+  Tag1 := Copy(FCipherAES.CalculatedAuthenticationResult);
+  FCipherAES.Done;
+  Tag2 := FCipherAES.CalculatedAuthenticationResult;
+  CheckTrue(IsEqual(Tag1, Tag2),
+            'Second Done must not change CalculatedAuthenticationResult');
+end;
+
+procedure TestTDECGCM.DoEncodeAfterDone;
+begin
+  FCipherAES.EncodeBytes(FLifecycleScratch);
+end;
+
+procedure TestTDECGCM.DoDecodeAfterDone;
+begin
+  FCipherAES.DecodeBytes(FLifecycleScratch);
+end;
+
+procedure TestTDECGCM.TestEncodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [16, 16]);
+  SetLength(FLifecycleScratch, 16);
+  FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $A5);
+  CheckException(DoEncodeAfterDone, EDECCipherException,
+                 'Encode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.TestDecodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [16, 16]);
+  SetLength(FLifecycleScratch, 16);
+  FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $5A);
+  CheckException(DoDecodeAfterDone, EDECCipherException,
+                 'Decode after Done must raise EDECCipherException');
 end;
 
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const

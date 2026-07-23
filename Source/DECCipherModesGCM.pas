@@ -104,6 +104,11 @@ type
     ///   Number of unused bytes remaining in FKeystream (0..15)
     /// </summary>
     FKeystreamRemain      : Integer;
+    /// <summary>
+    ///   True after Done has materialized the authentication tag.
+    ///   Prevents double-finalization and post-Done GHASH/CTR updates.
+    /// </summary>
+    FFinalized            : Boolean;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -317,6 +322,8 @@ type
     /// <summary>
     ///   Finishes GHASH and materializes CalculatedAuthenticationTag.
     ///   Must be called after the last Encode/Decode (cipher Done does this).
+    ///   Idempotent: a second call leaves the tag unchanged.
+    ///   After finalization, Encode/Decode raise until Init is called again.
     /// </summary>
     procedure Done;
 
@@ -331,6 +338,10 @@ type
   end;
 
 implementation
+
+resourcestring
+  sGCMAlreadyFinalized =
+    'GCM authentication already finalized; call Init before further Encode/Decode';
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -506,6 +517,7 @@ begin
   FKeystreamRemain := 0;
   FKeystream[0] := 0;
   FKeystream[1] := 0;
+  FFinalized := False;
 
   OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
@@ -614,7 +626,10 @@ end;
 
 procedure TGCM.Done;
 begin
+  if FFinalized then
+    Exit;
   FinalizeAuthenticationTag;
+  FFinalized := True;
 end;
 
 function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;
@@ -710,6 +725,9 @@ end;
 
 procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
 begin
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
+
   // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
   EnsureAuthDataHashed;
 
@@ -728,6 +746,9 @@ end;
 
 procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
 begin
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
+
   // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
   EnsureAuthDataHashed;
 
