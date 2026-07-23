@@ -39,10 +39,14 @@ The FMX based demos were even available via Google play as "DEC cipher demo" and
 "DEC hash demo". Due to some key issue they are no longer installable at the moment.
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.4.1 you will find further files with information about 
+In the root folder of the repository you will find further files with information about
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
-Also take the time to read DEC64.pdf in the *Docs* folder and look at the demos 
-provided in the *Demos* subfolder.
+
+**Coding style (single source of truth for new code):**  
+[`Docs/StyleGuide.md`](Docs/StyleGuide.md) — naming, formatting, headers, FPC/Delphi rules, tests, and PR expectations.  
+Existing sources are not mass-reformatted; new and rewritten code is expected to follow the guide.
+
+Also take the time to read *DEC65.pdf* (or the version shipped with your release) in the *Docs* folder for API documentation and how to extend algorithms, and look at the demos in the *Demos* subfolder.
 
 ## Has it been tested?
 DEC 5.2 came with some "arcane" test program testing the algoithms implemented
