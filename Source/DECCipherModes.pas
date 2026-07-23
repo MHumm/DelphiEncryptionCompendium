@@ -1149,6 +1149,9 @@ begin
 
   case FMode of
     cmGCM : begin
+              // Finalize multi-call GHASH + tag before optional ExpectedTag check
+              if Assigned(FGCM) then
+                FGCM.Done;
               if (length(FGCM.ExpectedAuthenticationTag) > 0) and
                  (not IsEqual(FGCM.ExpectedAuthenticationTag, FGCM.CalculatedAuthenticationTag)) then
                 raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);

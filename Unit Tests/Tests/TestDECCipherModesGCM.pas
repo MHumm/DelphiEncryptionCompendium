@@ -142,6 +142,9 @@ type
     procedure DoTestEncodeStream_LoadAndTestCAVSData(const aMaxChunkSize: Int64);
     procedure DoTestEncodeStream_TestSingleSet(const aSetIndex, aDataIndex:
         Integer; const aMaxChunkSize: Int64 = -1);
+    procedure DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -153,6 +156,14 @@ type
     procedure TestEncodeStream;
     procedure TestEncodeLargeStream;
     procedure TestEncodeStreamChunked;
+    /// <summary>
+    ///   CAVS set 105 (first 2-block PT) with two equal 16-byte EncodeStream calls.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkTwoBlocks;
+    /// <summary>
+    ///   Same vector with uneven chunks (7 + 25) to exercise GHASH partial blocks.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkUneven;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
@@ -398,7 +409,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -497,7 +508,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   EncrDataStr);
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
@@ -584,6 +595,8 @@ begin
      cipher.DataToAuthenticate := hea;
 
      cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+     // Tag is finalized in Done (multi-call GHASH); required before reading the tag
+     cipher.Done;
      tag := cipher.CalculatedAuthenticationResult;
   finally
          cipher.Free;
@@ -691,7 +704,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -717,6 +730,81 @@ begin
   // Use cipher block size as max chunk size
   DoTestEncodeStream_LoadAndTestCAVSData(
     Max(FCipherAES.Context.BlockSize, FCipherAES.Context.BufferSize));
+end;
+
+procedure TestTDECGCM.DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ptBytes, EncryptData, EmptyAAD: TBytes;
+  ptbStream, ctbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(APT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+
+  ptbStream := TBytesStream.Create(ptBytes);
+  ctbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ptBytes),
+                'Chunk list exceeds plaintext length');
+      FCipherAES.EncodeStream(ptbStream, ctbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ptBytes), offset, 'Chunk sizes must cover full PT');
+    FCipherAES.Done;
+    EncryptData := ctbStream.Bytes;
+    SetLength(EncryptData, ctbStream.Size);
+  finally
+    ptbStream.Free;
+    ctbStream.Free;
+  end;
+
+  CheckEquals(string(ACT), StringOf(TFormat_HexL.Encode(EncryptData)),
+              'Ciphertext mismatch for multi-chunk encode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk encode');
+end;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkTwoBlocks;
+begin
+  // NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 â€” 32-byte PT
+  DoEncodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [16, 16]);
+end;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkUneven;
+begin
+  // Same CAVS vector; GHASH must carry a partial block between calls
+  DoEncodeStreamChunkList(
+    '9971071059abc009e4f2bd69869db338',
+    '07a9a95ea3821e9c13c63251',
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
+    '',
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
+    '7870d9117f54811a346970f1de090c41',
+    128,
+    [7, 25]);
 end;
 
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
@@ -789,9 +877,9 @@ begin
       if aMaxChunkSize > 0 then
         curChunkSize := Min(dataLeftToEncode, aMaxChunkSize);
 // Darf vermutlich so nicht sein, es darf vermutlich nur einen EncodeStream Aufruf
-// geben. Möglicherwiese ist das Padding wie es jetzt umgesetzt ist nicht ganz richtig,
-// da man sonst keinen dynamischen Stream haben kann. Gehört vermutlich ins Done,
-// aber das hat noch keinen Stream, braucht also eine überladene Variante mit
+// geben. Mï¿½glicherwiese ist das Padding wie es jetzt umgesetzt ist nicht ganz richtig,
+// da man sonst keinen dynamischen Stream haben kann. Gehï¿½rt vermutlich ins Done,
+// aber das hat noch keinen Stream, braucht also eine ï¿½berladene Variante mit
 // Outputstream als Parameter...
 // Zuerst test mal ohne Schleife testen. EncodeStream darf nicht anhand der Size
 // das "globale" Ende des Streams ermitteln, sonst nichts nachschiebbar.
@@ -821,7 +909,7 @@ begin
               string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
               StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-  // Additional Authentication Data prüfen
+  // Additional Authentication Data prï¿½fen
   CheckEquals(string(TestDataSet.TestData[aDataIndex].TagResult),
                      StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
               'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +
