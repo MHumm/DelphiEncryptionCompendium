@@ -804,31 +804,35 @@ begin
               'Authentication tag mismatch for multi-chunk encode');
 end;
 
+// NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 — 32-byte PT.
+// Shared by multi-chunk encode/decode and Done-lifecycle regression tests.
+const
+  cCAVS_MultiChunkKey  : RawByteString = '9971071059abc009e4f2bd69869db338';
+  cCAVS_MultiChunkIV   : RawByteString = '07a9a95ea3821e9c13c63251';
+  cCAVS_MultiChunkPT   : RawByteString =
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983';
+  cCAVS_MultiChunkAAD  : RawByteString = '';
+  cCAVS_MultiChunkCT   : RawByteString =
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01';
+  cCAVS_MultiChunkTag  : RawByteString = '7870d9117f54811a346970f1de090c41';
+  cCAVS_MultiChunkTagBits = 128;
+
 procedure TestTDECGCM.TestEncodeStreamMultiChunkTwoBlocks;
 begin
-  // NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 — 32-byte PT
   DoEncodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [16, 16]);
 end;
 
 procedure TestTDECGCM.TestEncodeStreamMultiChunkUneven;
 begin
-  // Same CAVS vector; GHASH must carry a partial block between calls
+  // GHASH must carry a partial block between calls
   DoEncodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [7, 25]);
 end;
 
@@ -884,13 +888,9 @@ end;
 procedure TestTDECGCM.TestDecodeStreamMultiChunkUneven;
 begin
   DoDecodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [7, 25]);
 end;
 
@@ -899,13 +899,9 @@ var
   Tag1, Tag2: TBytes;
 begin
   DoEncodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [7, 25]);
   Tag1 := Copy(FCipherAES.CalculatedAuthenticationResult);
   FCipherAES.Done;
@@ -927,13 +923,9 @@ end;
 procedure TestTDECGCM.TestEncodeAfterDoneRejected;
 begin
   DoEncodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [16, 16]);
   SetLength(FLifecycleScratch, 16);
   FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $A5);
@@ -944,13 +936,9 @@ end;
 procedure TestTDECGCM.TestDecodeAfterDoneRejected;
 begin
   DoEncodeStreamChunkList(
-    '9971071059abc009e4f2bd69869db338',
-    '07a9a95ea3821e9c13c63251',
-    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983',
-    '',
-    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01',
-    '7870d9117f54811a346970f1de090c41',
-    128,
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
     [16, 16]);
   SetLength(FLifecycleScratch, 16);
   FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $5A);
