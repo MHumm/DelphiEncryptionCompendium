@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -74,6 +74,41 @@ type
     ///   Calculated in initialization
     /// </summary>
     FE_K_Y0   : T128;
+
+    /// <summary>
+    ///   Running GHASH state (NIST "X"). Allows multi-call Encode/Decode.
+    ///   Tag is finalized only in Done — see Cleanup-Roadmap §3.1 (Option A).
+    /// </summary>
+    FX                    : T128;
+    /// <summary>
+    ///   Incomplete 16-byte GHASH block carried across Encode/Decode calls
+    /// </summary>
+    FGHASHPartial         : array[0..15] of Byte;
+    /// <summary>
+    ///   Number of valid bytes in FGHASHPartial (0..15)
+    /// </summary>
+    FGHASHPartialLen      : Integer;
+    /// <summary>
+    ///   Total ciphertext bytes processed since Init (for length block)
+    /// </summary>
+    FTotalCiphertextBytes : UInt64;
+    /// <summary>
+    ///   True after AAD has been absorbed into FX (and padded to 16 bytes)
+    /// </summary>
+    FAuthDataHashed       : Boolean;
+    /// <summary>
+    ///   Leftover keystream from an incomplete CTR block (multi-call Encode/Decode)
+    /// </summary>
+    FKeystream            : T128;
+    /// <summary>
+    ///   Number of unused bytes remaining in FKeystream (0..15)
+    /// </summary>
+    FKeystreamRemain      : Integer;
+    /// <summary>
+    ///   True after Done has materialized the authentication tag.
+    ///   Prevents double-finalization and post-Done GHASH/CTR updates.
+    /// </summary>
+    FFinalized            : Boolean;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -199,6 +234,27 @@ type
                             CiphertextSize    : Integer): T128;
 
     /// <summary>
+    ///   Feeds data into the running GHASH state FX (supports partial blocks).
+    /// </summary>
+    procedure GHASHUpdate(Data: PUInt8Array; DataSize: Integer);
+    /// <summary>
+    ///   Pads any incomplete GHASH block with zeros and multiplies into FX.
+    /// </summary>
+    procedure GHASHPadPartial;
+    /// <summary>
+    ///   Ensures AAD has been GHASH'd and padded once before ciphertext bytes.
+    /// </summary>
+    procedure EnsureAuthDataHashed;
+    /// <summary>
+    ///   Completes GHASH (length block) and writes CalculatedAuthenticationTag.
+    /// </summary>
+    procedure FinalizeAuthenticationTag;
+    /// <summary>
+    ///   GCM-CTR keystream XOR with multi-call partial-block carry.
+    /// </summary>
+    procedure ApplyCTR(Source, Dest: PUInt8Array; Size: Integer);
+
+    /// <summary>
     ///   Encrypts a T128 value using the encryption method specified on init
     /// </summary>
     /// <param name="Value">
@@ -264,6 +320,14 @@ type
                      Size   : Integer); override;
 
     /// <summary>
+    ///   Finishes GHASH and materializes CalculatedAuthenticationTag.
+    ///   Must be called after the last Encode/Decode (cipher Done does this).
+    ///   Idempotent: a second call leaves the tag unchanged.
+    ///   After finalization, Encode/Decode raise until Init is called again.
+    /// </summary>
+    procedure Done; override;
+
+    /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
@@ -274,6 +338,10 @@ type
   end;
 
 implementation
+
+resourcestring
+  sGCMAlreadyFinalized =
+    'GCM authentication already finalized; call Init before further Encode/Decode';
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -439,6 +507,18 @@ begin
   Nullbytes[0] := 0;
   Nullbytes[1] := 0;
 
+  // Streaming GHASH + CTR state for multi-call Encode/Decode (Option A)
+  FX[0] := 0;
+  FX[1] := 0;
+  FGHASHPartialLen := 0;
+  FillChar(FGHASHPartial[0], SizeOf(FGHASHPartial), 0);
+  FTotalCiphertextBytes := 0;
+  FAuthDataHashed := False;
+  FKeystreamRemain := 0;
+  FKeystream[0] := 0;
+  FKeystream[1] := 0;
+  FFinalized := False;
+
   OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
 
@@ -455,9 +535,101 @@ begin
      b^ := 1;
   end
   else
+     // One-shot GHASH over IV only (does not use streaming FX)
      FY := CalcGaloisHash(nil, 0, @InitVector[0], length(InitVector));
 
   FEncryptionMethod(@FY[0], @FE_K_Y0[0], 16);
+end;
+
+procedure TGCM.GHASHUpdate(Data: PUInt8Array; DataSize: Integer);
+var
+  Offset, Take : Integer;
+begin
+  if (DataSize <= 0) or (Data = nil) then
+    Exit;
+
+  Offset := 0;
+
+  if FGHASHPartialLen > 0 then
+  begin
+    Take := 16 - FGHASHPartialLen;
+    if Take > DataSize then
+      Take := DataSize;
+    Move(Data^[Offset], FGHASHPartial[FGHASHPartialLen], Take);
+    Inc(FGHASHPartialLen, Take);
+    Inc(Offset, Take);
+    if FGHASHPartialLen = 16 then
+    begin
+      FX := poly_mult_H(XOR_PointerWithT128(@FGHASHPartial[0], FX));
+      FGHASHPartialLen := 0;
+    end;
+  end;
+
+  while Offset + 16 <= DataSize do
+  begin
+    FX := poly_mult_H(XOR_PointerWithT128(@Data^[Offset], FX));
+    Inc(Offset, 16);
+  end;
+
+  if Offset < DataSize then
+  begin
+    FGHASHPartialLen := DataSize - Offset;
+    Move(Data^[Offset], FGHASHPartial[0], FGHASHPartialLen);
+  end;
+end;
+
+procedure TGCM.GHASHPadPartial;
+var
+  Block : T128;
+begin
+  if FGHASHPartialLen > 0 then
+  begin
+    Block := nullbytes;
+    Move(FGHASHPartial[0], Block[0], FGHASHPartialLen);
+    FX := poly_mult_H(XOR_T128(Block, FX));
+    FGHASHPartialLen := 0;
+  end;
+end;
+
+procedure TGCM.EnsureAuthDataHashed;
+begin
+  if FAuthDataHashed then
+    Exit;
+
+  if Length(DataToAuthenticate) > 0 then
+    GHASHUpdate(@DataToAuthenticate[0], Length(DataToAuthenticate));
+  // Pad AAD to 16-byte boundary before ciphertext (NIST GHASH layout)
+  GHASHPadPartial;
+  FAuthDataHashed := True;
+end;
+
+procedure TGCM.FinalizeAuthenticationTag;
+var
+  AuthTag            : T128;
+  AuthCipherLength   : T128;
+  AuthLen            : Integer;
+begin
+  EnsureAuthDataHashed;
+  // Pad incomplete ciphertext block
+  GHASHPadPartial;
+
+  AuthLen := Length(DataToAuthenticate);
+  SetAuthenticationCipherLength(AuthCipherLength, UInt64(AuthLen) shl 3,
+                                FTotalCiphertextBytes shl 3);
+  FX := poly_mult_H(XOR_T128(AuthCipherLength, FX));
+  AuthTag := XOR_T128(FX, FE_K_Y0);
+
+  SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  if (FCalcAuthenticationTagLength > 0) then
+    Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+end;
+
+procedure TGCM.Done;
+begin
+  if FFinalized then
+    Exit;
+  FinalizeAuthenticationTag;
+  FFinalized := True;
 end;
 
 function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;
@@ -507,85 +679,90 @@ begin
   Result := poly_mult_H(XOR_T128(AuthCipherLength, x));
 end;
 
-procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
+procedure TGCM.ApplyCTR(Source, Dest: PUInt8Array; Size: Integer);
 var
-  i, j, BlockCount : UInt64;
-  a_tag : T128;
-  pDataToAuth : PUInt8Array;
-  pSrc : PUInt8Array;
+  i, Take : Integer;
+  KSBytes : P16ByteArray;
 begin
-  i := 0;
-  BlockCount := Size div 16;
+  if Size <= 0 then
+    Exit;
 
-  for j := 1 to BlockCount do
+  i := 0;
+  // Drain leftover keystream from a previous partial block
+  if FKeystreamRemain > 0 then
+  begin
+    KSBytes := @FKeystream[0];
+    Take := FKeystreamRemain;
+    if Take > Size then
+      Take := Size;
+    XOR_ArrayWithT128(Source, i, Take, FKeystream, Dest);
+    // Shift remaining keystream left so index 0 is next unused byte
+    if Take < FKeystreamRemain then
+      Move(KSBytes^[Take], KSBytes^[0], FKeystreamRemain - Take);
+    Dec(FKeystreamRemain, Take);
+    Inc(i, Take);
+  end;
+
+  while i + 16 <= Size do
   begin
     INCR(FY);
     P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
-    inc(i, 16);
+    Inc(i, 16);
   end;
 
   if i < Size then
   begin
     INCR(FY);
-    XOR_ArrayWithT128(@Source^[0], i, UInt64(Size)-i, EncodeT128(FY), @Dest^[0]);
+    FKeystream := EncodeT128(FY);
+    Take := Size - i;
+    XOR_ArrayWithT128(Source, i, Take, FKeystream, Dest);
+    // Keep unused tail of this keystream block for the next call
+    Move(P16ByteArray(@FKeystream[0])^[Take], P16ByteArray(@FKeystream[0])^[0], 16 - Take);
+    // Clear used prefix is unnecessary; only FKeystreamRemain matters
+    FKeystreamRemain := 16 - Take;
+  end;
+end;
+
+procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
+begin
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
+
+  // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
+  EnsureAuthDataHashed;
+
+  if Size < 0 then
+    Size := 0;
+
+  // GHASH over ciphertext before CTR (Source is ciphertext)
+  if Size > 0 then
+  begin
+    GHASHUpdate(Source, Size);
+    Inc(FTotalCiphertextBytes, UInt64(Size));
   end;
 
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  pSrc := nil;
-  if Size > 0 then
-     pSrc := @source[0];
-
-  a_tag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate),
-                    pSrc, Size), FE_K_Y0);
-
-  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  if (FCalcAuthenticationTagLength > 0) then
-  	Move(a_tag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
-
-  // Check for correct authentication result is in Done of DECCipherModes
-  //  if not IsEqual(FExpectedAuthenticationTag, FCalcAuthenticationTag) then
-  //    raise EDECCipherAuthenticationException.CreateRes(@sInvalidAuthenticationValue);
-
-  // In difference to the NIST recommendation we do not discard plaintext if
-  // authentication failed to make data recovery possible. But since we throw
-  // an exception the user will get notified that there's something wrong
-  //  if not IsEqual(authenticaton_tag, ba_tag) then
-  //    SetLength(plaintext, 0); // NIST FAIL => pt=''
+  ApplyCTR(Source, Dest, Size);
 end;
 
 procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
-var
-  i, j, div_len_plain : UInt64;
-  AuthTag : T128;
-  pDataToAuth : PUInt8Array;
 begin
-  i := 0;
-  div_len_plain := Size div 16;
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
 
-  for j := 1 to div_len_plain do
+  // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
+  EnsureAuthDataHashed;
+
+  if Size < 0 then
+    Size := 0;
+
+  ApplyCTR(Source, Dest, Size);
+
+  // GHASH over ciphertext produced in Dest
+  if Size > 0 then
   begin
-    INCR(FY);
-
-    P128(@Dest^[i])^ := XOR_PointerWithT128(@Source^[i], EncodeT128(FY));
-
-    inc(i,16);
+    GHASHUpdate(Dest, Size);
+    Inc(FTotalCiphertextBytes, UInt64(Size));
   end;
-
-  if i < Size then
-  begin
-    INCR(FY);
-    XOR_ArrayWithT128(Source, i, UInt64(Size)-i, EncodeT128(FY), Dest);
-  end;
-
-  pDataToAuth := nil;
-  if Length(DataToAuthenticate) > 0 then
-     pDataToAuth := @DataToAuthenticate[0];
-  AuthTag := XOR_T128(CalcGaloisHash(pDataToAuth, Length(DataToAuthenticate), @Dest[0], Size), FE_K_Y0);
-  Setlength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-  if (FCalcAuthenticationTagLength > 0) then
-  	Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
 end;
 
 function TGCM.EncodeT128(Value: T128): T128;

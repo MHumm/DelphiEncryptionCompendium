@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -40,9 +40,9 @@ type
 
   /// <summary>
   ///   A method of this type needs to be supplied for encrypting or decrypting
-  ///   a block via this GCM algorithm. The method is implemented as a parameter,
-  ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
-  ///   be used for composition instead of inheritance.
+  ///   a block via an authenticated cipher mode. The method is implemented as a
+  ///   parameter to allow composition instead of inheritance (e.g. TGCM/TCCM
+  ///   hold a reference to the underlying block cipher's encode method).
   /// </summary>
   /// <param name="Source">
   ///   Data to be encrypted
@@ -56,8 +56,24 @@ type
   TEncodeDecodeMethod = procedure(Source, Dest: Pointer; Size: Integer) of Object;
 
   /// <summary>
-  ///   Base class for authenticated cipher modes
+  ///   Base class for authenticated cipher modes (GCM, CCM, future AEAD modes).
   /// </summary>
+  /// <remarks>
+  ///   Lifecycle for multi-call capable modes (e.g. GCM):
+  ///   <para>
+  ///     Init → set AAD / tag length / expected tag → Encode/Decode* → Done →
+  ///     read CalculatedAuthenticationTag.
+  ///   </para>
+  ///   <para>
+  ///     Done must be called before the calculated authentication tag is valid
+  ///     for multi-call streams. Done is idempotent. After Done, further
+  ///     Encode/Decode raises until Init is called again.
+  ///   </para>
+  ///   <para>
+  ///     CCM remains one-shot (single Encode/Decode with full message length);
+  ///     Done still verifies ExpectedAuthenticationTag when set.
+  ///   </para>
+  /// </remarks>
   TAuthenticatedCipherModesBase = class(TObject)
   strict protected
     /// <summary>
@@ -93,7 +109,7 @@ type
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); virtual;
     /// <summary>
-    ///   Returns the length of the calculated authehtication value in bit
+    ///   Returns the length of the calculated authentication value in bit
     /// </summary>
     /// <returns>
     ///   Length of the calculated authentication value in bit
@@ -114,7 +130,8 @@ type
                    InitVector       : TBytes); virtual;
 
     /// <summary>
-    ///   Encodes a block of data using the supplied cipher
+    ///   Encodes a block of data using the supplied cipher. May be called
+    ///   multiple times for modes that support streaming (e.g. GCM).
     /// </summary>
     /// <param name="Source">
     ///   Plain text to encrypt
@@ -129,7 +146,8 @@ type
                      Dest   : PUInt8Array;
                      Size   : Integer); virtual; abstract;
     /// <summary>
-    ///   Decodes a block of data using the supplied cipher
+    ///   Decodes a block of data using the supplied cipher. May be called
+    ///   multiple times for modes that support streaming (e.g. GCM).
     /// </summary>
     /// <param name="Source">
     ///   Encrypted ciphertext to decrypt
@@ -143,6 +161,13 @@ type
     procedure Decode(Source,
                      Dest   : PUInt8Array;
                      Size   : Integer); virtual; abstract;
+
+    /// <summary>
+    ///   Finalizes the authentication tag after all Encode/Decode calls.
+    ///   Idempotent. Default implementation is a no-op (suitable for modes that
+    ///   already compute the tag inside Encode/Decode, e.g. CCM).
+    /// </summary>
+    procedure Done; virtual;
 
     /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
@@ -170,7 +195,8 @@ type
       read   GetAuthenticationTagBitLength
       write  SetAuthenticationTagLength;
     /// <summary>
-    ///   Calculated authentication value
+    ///   Calculated authentication value. For multi-call modes this is only
+    ///   complete after Done has been called.
     /// </summary>
     property CalculatedAuthenticationTag : TBytes
       read   FCalcAuthenticationTag
@@ -219,6 +245,12 @@ begin
   end;
 
   FEncryptionMethod := EncryptionMethod;
+end;
+
+procedure TAuthenticatedCipherModesBase.Done;
+begin
+  // Default: no deferred finalization (CCM computes the tag in Encode/Decode).
+  // Streaming modes such as GCM override this to materialize the tag.
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);
