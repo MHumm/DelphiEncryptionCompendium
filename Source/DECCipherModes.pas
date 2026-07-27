@@ -859,13 +859,19 @@ begin
   if (Size < 0) then
     Size := 0;
 
+  // Dispatch through FAuthObj (TGCM when Mode=cmGCM). Independent of EncodeCCM
+  // so a subclass override of one entry point does not affect the other.
   FAuthObj.Encode(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.EncodeCCM(Source, Dest: PUInt8Array; Size: Integer);
 begin
-  // Same dispatch path as EncodeGCM; name kept for protected-API compatibility
-  EncodeGCM(Source, Dest, Size);
+  if (Size < 0) then
+    Size := 0;
+
+  // Same FAuthObj.Encode body as EncodeGCM, but a separate protected entry so
+  // overriding EncodeGCM does not change CCM behaviour (and vice versa).
+  FAuthObj.Encode(Source, Dest, Size);
 end;
 
 {$IFDEF DEC3_CMCTS}
@@ -955,13 +961,17 @@ begin
   if (Size < 0) then
     Size := 0;
 
+  // Independent of DecodeCCM — see EncodeGCM/EncodeCCM.
   FAuthObj.Decode(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCCM(Source, Dest: PUInt8Array; Size: Integer);
 begin
-  // Same dispatch path as DecodeGCM; name kept for protected-API compatibility
-  DecodeGCM(Source, Dest, Size);
+  if (Size < 0) then
+    Size := 0;
+
+  // Separate protected entry from DecodeGCM; same FAuthObj.Decode body.
+  FAuthObj.Decode(Source, Dest, Size);
 end;
 
 procedure TDECCipherModes.DecodeCFB8(Source, Dest: PUInt8Array; Size: Integer);

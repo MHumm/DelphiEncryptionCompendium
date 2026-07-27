@@ -109,6 +109,11 @@ type
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); virtual;
     /// <summary>
+    ///   Assigns additional authenticated data (AAD). Modes may override to
+    ///   reject changes after AAD has already been absorbed into the MAC state.
+    /// </summary>
+    procedure SetDataToAuthenticate(const Value: TBytes); virtual;
+    /// <summary>
     ///   Returns the length of the calculated authentication value in bit
     /// </summary>
     /// <returns>
@@ -183,7 +188,7 @@ type
     /// </summary>
     property DataToAuthenticate : TBytes
       read   FDataToAuthenticate
-      write  FDataToAuthenticate;
+      write  SetDataToAuthenticate;
     /// <summary>
     ///   Sets the length of AuthenticatonTag in bit, values as per official
     ///   specification are: 128, 120, 112, 104, or 96 bit. For certain
@@ -257,6 +262,11 @@ procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: 
 begin
   FCalcAuthenticationTagLength := Value shr 3;
   SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+end;
+
+procedure TAuthenticatedCipherModesBase.SetDataToAuthenticate(const Value: TBytes);
+begin
+  FDataToAuthenticate := Value;
 end;
 
 end.
