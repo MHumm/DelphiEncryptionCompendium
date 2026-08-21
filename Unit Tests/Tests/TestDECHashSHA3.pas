@@ -147,7 +147,7 @@ type
     /// <returns>
     ///   The input vector with added padding
     /// </returns>
-{ TODO : Namen überlegen zu ändern, im Kommentar Keccak drin lassen }
+{ TODO : Consider renaming; keep Keccak mentioned in the comment }
     function AddLastByteForKeccakTest(SHA3InputVector    : RawByteString;
                                       var LastByteLength : UInt8): RawByteString; virtual;
 
@@ -688,7 +688,7 @@ begin
   FTestFileNames.Add('..\..\Unit Tests\Data\SHA3_224LongMsg.rsp');
   // SourceEnd
 
-// Für Unittests für CalcStream verschoben Start
+// Moved for CalcStream unit tests - start
   // Source https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //        and-Guidelines/documents/examples/SHA3-224_Msg5.pdf
   lDataRow := FTestData.AddRow;
@@ -708,7 +708,7 @@ begin
                                        '14ce743c5641cebe';
   lDataRow.AddInputVector(#$53#$58#$7B#$19);
   lDataRow.FinalBitLength := 6;
-// Für Unittests für CalcStream verschoben Ende
+// Moved for CalcStream unit tests - end
 
   // Source: https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-
   //         and-Guidelines/documents/examples/SHA3-224_1600.pdf
@@ -1780,16 +1780,16 @@ var
   lastbyte : UInt8;
 begin
   case NumBitsOfLastByteUsed of
-  0 : begin // ist ok
+  0 : begin // OK
         SHA3InputVector       := SHA3InputVector + chr($02);
         NumBitsOfLastByteUsed := 2;
       end;
   1..6 :
       begin
         lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
-        // in lastbyte 0 an stelle fblSHA3 einfügen:
+        // insert 0 into lastbyte at position fblSHA3:
         lastbyte := lastbyte and (( 1 shl NumBitsOfLastByteUsed ) xor $FF);
-        // in lastbyte 1 an stelle fblSHA3+1 einfügen:
+        // insert 1 into lastbyte at position fblSHA3+1:
         lastbyte := lastbyte or BYTE( 1 shl (NumBitsOfLastByteUsed + 1));
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
         if NumBitsOfLastByteUsed < 6 then
@@ -1797,12 +1797,11 @@ begin
         else
           NumBitsOfLastByteUsed := 0;
       end;
-  7 : begin // ist ok
-        // 0 anhängen - es könnte sein, dass in mSHA3 eine 1 steht
-        // wenn man sicher ist, dass dies nie der Fall ist, dann kann
-        // man auf die vier Zeilen verzichten
+  7 : begin // OK
+        // append 0 - there might be a 1 in mSHA3;
+        // if you are sure that never happens, these four lines can be omitted
         lastbyte := UInt8(SHA3InputVector[High(SHA3InputVector)]);
-        lastbyte := lastbyte and $7F; // evt vorhandene 1 an vorderster Stelle löschen
+        lastbyte := lastbyte and $7F; // clear any existing 1 in the highest bit
         SHA3InputVector[High(SHA3InputVector)] := Ansichar(lastbyte);
 
         SHA3InputVector := SHA3InputVector + chr($01);

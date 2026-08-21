@@ -1,4 +1,4 @@
-program ProgressDemoVCL;
+﻿program ProgressDemoVCL;
 
 uses
   Vcl.Forms,
