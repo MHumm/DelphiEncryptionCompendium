@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -53,6 +53,10 @@ type
     FNegativeTestData: TArray<TPaddingTestData>;
     FValidRemoveTestData: TArray<TPaddingTestData>;
     /// <summary>
+    ///   Current negative vector for DoRemovePadding*Raises helpers.
+    /// </summary>
+    FExceptionTestData: TPaddingTestData;
+    /// <summary>
     ///   Normalize add-padding output for equality checks. Default is identity.
     ///   ISO 10126 overrides to strip random pad bytes marked as '?' in the pattern.
     /// </summary>
@@ -61,6 +65,14 @@ type
     ///   not double-discover base + leaf published methods of the same name.
     /// </remarks>
     function NormalizeAddPaddingResult(const AValue, APattern: RawByteString): RawByteString; virtual;
+    /// <summary>
+    ///   Calls RemovePadding(RawByteString) with FExceptionTestData for WillRaise/CheckException.
+    /// </summary>
+    procedure DoRemovePaddingRawByteStringRaises;
+    /// <summary>
+    ///   Calls RemovePadding(TBytes) with FExceptionTestData for WillRaise/CheckException.
+    /// </summary>
+    procedure DoRemovePaddingBytesRaises;
   published
     procedure TestAddPadding_RawByteString;
     procedure TestRemovePadding_RawByteString; virtual;
@@ -202,6 +214,18 @@ begin
   end;
 end;
 
+procedure TestTPaddingBase.DoRemovePaddingRawByteStringRaises;
+begin
+  FPaddingClass.RemovePadding(FExceptionTestData.OutputData,
+                              FExceptionTestData.BlockSize);
+end;
+
+procedure TestTPaddingBase.DoRemovePaddingBytesRaises;
+begin
+  FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FExceptionTestData.OutputData),
+                              FExceptionTestData.BlockSize);
+end;
+
 procedure TestTPaddingBase.TestRemovePadding_RawByteStringExceptions;
 var
   I   : integer;
@@ -209,19 +233,12 @@ begin
   // Test that faulty data is detected and raises an exception
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
-    try
-      FPaddingClass.RemovePadding(FNegativeTestData[I].OutputData,
-                                  FNegativeTestData[I].BlockSize);
-
-      {$IFNDEF DUnitX}
-      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-      {$ELSE}
-      Assert.Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-      {$ENDIF}
-    except
-      on e: EDECCipherException do
-        // expected
-    end;
+    FExceptionTestData := FNegativeTestData[I];
+    {$IFDEF DUnitX}
+    Assert.WillRaise(DoRemovePaddingRawByteStringRaises, EDECCipherException);
+    {$ELSE}
+    CheckException(DoRemovePaddingRawByteStringRaises, EDECCipherException);
+    {$ENDIF}
   end;
 
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');
@@ -268,19 +285,12 @@ begin
   // Test that faulty data is detected and raises an exception
   for I := Low(FNegativeTestData) to High(FNegativeTestData) do
   begin
-    try
-      FPaddingClass.RemovePadding(DECUtil.RawStringToBytes(FNegativeTestData[I].OutputData),
-                                  FNegativeTestData[I].BlockSize);
-
-      {$IFNDEF DUnitX}
-      Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-      {$ELSE}
-      Assert.Fail('Remove padding should return an exception for NegativeTestData[' + I.ToString + ']');
-      {$ENDIF}
-    except
-      on e: EDECCipherException do
-        // expected
-    end;
+    FExceptionTestData := FNegativeTestData[I];
+    {$IFDEF DUnitX}
+    Assert.WillRaise(DoRemovePaddingBytesRaises, EDECCipherException);
+    {$ELSE}
+    CheckException(DoRemovePaddingBytesRaises, EDECCipherException);
+    {$ENDIF}
   end;
 
   Status(length(FNegativeTestData).ToString + ' negative test pattern passed');

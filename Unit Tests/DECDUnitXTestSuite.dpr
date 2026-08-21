@@ -1,8 +1,9 @@
 ﻿program DECDUnitXTestSuite;
 
-// DUnitX is enabled by this project's DCC_Define (Debug/Release/…), not by
-// uncommenting TestDefines.inc — leaving the inc define off keeps DECDUnitTestSuite
-// on classic DUnit when the same test units are opened/built under that project.
+// DUnitX is turned on by this project's compiler defines in the .dproj
+// (Debug/Release/TestInsight), not by defining it in TestDefines.inc.
+// The .inc must stay without DUnitX so that when the same test units are
+// compiled inside DECDUnitTestSuite they still use classic DUnit.
 {$INCLUDE Tests\TestDefines.inc}
 
 {$IFNDEF TESTINSIGHT}
