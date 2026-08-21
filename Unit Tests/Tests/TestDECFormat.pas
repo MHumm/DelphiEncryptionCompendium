@@ -3039,6 +3039,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian16);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian32);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian64);
+  TDUnitX.RegisterTestFixture(TestTFormat_UTF8);
   TDUnitX.RegisterTestFixture(TestTFormat_UTF16);
   {$ELSE}
   RegisterTests('DECFormat', [//TestTFormat,
@@ -3054,6 +3055,7 @@ initialization
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,
+                              TestTFormat_BigEndian64.Suite,
                               TestTFormat_UTF8.Suite,
                               TestTFormat_UTF16.Suite]);
   {$ENDIF}

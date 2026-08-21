@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -77,8 +77,7 @@ type
     procedure TestInitFailureIVTooLong;
     procedure TestInitFailureIVTooShort;
     procedure TestEncodeStream;
-//    procedure TestEncodeLargeStream;
-//    procedure TestEncodeStreamChunked;
+    // Deferred: multi-call CCM streams (AEAD roadmap)
     procedure TestGetDataToAuthenticate;
     procedure TestSetDataToAuthenticate;
     procedure TestSetAuthenticationBitLengths;
@@ -197,7 +196,7 @@ begin
                     string(TestData.CT) + ' Act. PT: ' +
                     StringOf(TFormat_HexL.Encode(DecryptData)));
 
-        // Additional Authentication Data prüfen
+        // Verify additional authentication data
         CheckEquals(string(TestData.TagResult),
                            StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                     'Authentication tag wrong for key ' +
@@ -254,13 +253,16 @@ var
 begin
   Key := [1, 2, 3, 4, 5, 6, 7, 8];
 
+  // Legal CCM nonce lengths are 7..13; Init raising would fail the test
   for i := 7 to 13 do
   begin
     SetLength(IV, i);
     FillChar(IV[0], length(IV), $FF);
 
     FCipherAES.Init(Key, IV, $FF, pmNone);
-    Check(true);
+    // Real assertion: Init must leave the cipher in CCM mode (no exception = length accepted)
+    Check(FCipherAES.Mode = TCipherMode.cmCCM,
+          'Mode must remain CCM after Init with IV length ' + i.ToString);
   end;
 end;
 
@@ -315,7 +317,7 @@ begin
                   string(TestData.CT) + ' Act.: ' +
                   EncrDataStr);
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestData.TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
@@ -419,7 +421,7 @@ begin
                   string(TestData.CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestData.TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -444,13 +446,6 @@ begin
   FCipherAES.AuthenticationResultBitLength := FTestBitLength;
 end;
 
-//procedure TestTDECCCM.TestEncodeStreamChunked;
-//begin
-//  // Use cipher block size as max chunk size
-//  DoTestEncodeStream_LoadAndTestCAVSData(
-//    Max(FCipherAES.Context.BlockSize, FCipherAES.Context.BufferSize));
-//end;
-//
 procedure TestTDECCCM.DoTestEncodeStream_LoadAndTestCAVSData(const
     aMaxChunkSize: Int64);
 var
@@ -463,21 +458,9 @@ begin
     DoTestEncodeStream_TestSingleSet(curSetIndex, 0, aMaxChunkSize);
   end;
 end;
-//
-//procedure TestTDECCCM.TestEncodeLargeStream;
-//begin
-//  // There is only one record in test data set atm, so need to allow
-//  // incomplete load
-//  FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV256_large.rsp',
-//    FTestDataList, True);
-//  Status('Encode large stream using chunking');
-//  CheckEquals(8192, StreamBufferSize, 'Might need to update data set to have enough data!');
-//{ TODO : Auskommentierten Code entfernen }
-////  Assert(StreamBufferSize = 8192, 'Might need to update data set to have enough data!');
-//  DoTestEncodeStream_TestSingleSet(0, 0, StreamBufferSize);
-//  Status('Encode large stream without chunking');
-//  DoTestEncodeStream_TestSingleSet(0, 0, -1);
-//end;
+
+// Deferred: multi-call CCM streams (AEAD roadmap) â€” former TestEncodeStreamChunked /
+// TestEncodeLargeStream bodies intentionally not re-enabled here.
 
 procedure TestTDECCCM.DoTestEncodeStream_TestSingleSet(const aSetIndex,
     aDataIndex: Integer; const aMaxChunkSize: Int64 = -1);
@@ -540,7 +523,7 @@ begin
                 string(TestData.AAD) + ' Act.: ' +
                 StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-    // Additional Authentication Data prüfen
+    // Verify additional authentication data
     CheckEquals(string(TestData.TagResult),
                        StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                 'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +

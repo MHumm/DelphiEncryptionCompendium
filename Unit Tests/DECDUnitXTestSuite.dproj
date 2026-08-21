@@ -169,6 +169,10 @@
     <PropertyGroup Condition="'$(Cfg_5)'!=''">
         <DCC_Define>MobileGUI;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_6)'!=''">
+        <!-- Required for DECDUnitXTestSuite.dpr {$IFDEF TESTINSIGHT} path -->
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_6_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
@@ -197,7 +201,10 @@
         <DCCReference Include="Tests\TestDECHashMAC.pas"/>
         <DCCReference Include="Tests\TestDECHashSHA3.pas"/>
         <DCCReference Include="Tests\TestDECCipherModesGCM.pas"/>
+        <DCCReference Include="Tests\TestDECCipherModesCCM.pas"/>
         <DCCReference Include="Tests\TestDECCipherPaddings.pas"/>
+        <DCCReference Include="Tests\TestDECZIPHelper.pas"/>
+        <DCCReference Include="Tests\AuthenticatedCiphersCommonTestData.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

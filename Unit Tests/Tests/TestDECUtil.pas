@@ -33,6 +33,7 @@ uses
   DECUtil;
 
 type
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestBitTwiddling = class(TTestCase)
   published
     procedure ReverseBits32;
@@ -45,6 +46,7 @@ type
     procedure XORBuffers;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestBufferProtection = class(TTestCase)
   published
     procedure ProtectBuffer;
@@ -70,6 +72,7 @@ type
     procedure BytesToString_StringToBytes;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestIsEqual = class(TTestCase)
   published
     procedure IsEqualsNormal;
@@ -77,6 +80,7 @@ type
     procedure IsEqualsZeroLength;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestMist = class(TTestCase)
   published
     procedure TestShannonEntropy;
