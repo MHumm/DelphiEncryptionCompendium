@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -57,7 +57,7 @@ type
     /// </summary>
     OutputHex       : RawByteString;
     /// <summary>
-    ///   Init Vektor für den ersten Test
+    ///   Init vector for the first test
     /// </summary>
     InitVector      : RawByteString;
     /// <summary>
@@ -94,7 +94,7 @@ type
   TTestFunction = procedure(Source, Dest: PUInt8Array; Size: Integer) of object;
 
   /// <summary>
-  ///   Testmethoden für Klasse TDECCipherModes
+  ///   Test methods for class TDECCipherModes
   /// </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherModes = class(TTestCase)

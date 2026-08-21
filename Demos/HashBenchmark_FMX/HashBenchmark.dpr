@@ -1,4 +1,4 @@
-program HashBenchmark;
+﻿program HashBenchmark;
 
 uses
   System.StartUpCopy,

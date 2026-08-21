@@ -1,4 +1,4 @@
-
+﻿
 {$define SwapUInt32_asm}
 function SwapUInt32(Source: UInt32): UInt32;
 begin

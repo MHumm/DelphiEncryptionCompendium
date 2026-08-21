@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -3966,7 +3966,7 @@ begin
 //  lDataRow.ExpectedOutputUTFStrTest := 'aa0cc954d757d7ac7779ca3342334ca471abd47d5952ac91ed837ecd5b16922b';
 //  lDataRow.AddInputVector(TFormat_HEXL.Decode('002911b8f4046c0d18be467367847de24ae13b513d6c1b7e2cd6267d72ae641d'));
 //
-////  // jeweils mit dem benachbarten Byte getauscht: 11223344 -> 22114433
+////  // each swapped with the adjacent byte: 11223344 -> 22114433
 ////  lDataRow.AddInputVector(TFormat_HEXL.Decode('2900b81104f40d6cbe1873468467e27de14a513b6c3d7e1bd62c7d26ae721d64'));
 //
 //  lDataRow := FTestData.AddRow;

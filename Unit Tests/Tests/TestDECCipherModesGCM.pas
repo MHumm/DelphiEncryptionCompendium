@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -398,7 +398,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -497,7 +497,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   EncrDataStr);
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
@@ -691,7 +691,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -788,13 +788,12 @@ begin
       // Apply chunking if needed
       if aMaxChunkSize > 0 then
         curChunkSize := Min(dataLeftToEncode, aMaxChunkSize);
-// Darf vermutlich so nicht sein, es darf vermutlich nur einen EncodeStream Aufruf
-// geben. Möglicherwiese ist das Padding wie es jetzt umgesetzt ist nicht ganz richtig,
-// da man sonst keinen dynamischen Stream haben kann. Gehört vermutlich ins Done,
-// aber das hat noch keinen Stream, braucht also eine überladene Variante mit
-// Outputstream als Parameter...
-// Zuerst test mal ohne Schleife testen. EncodeStream darf nicht anhand der Size
-// das "globale" Ende des Streams ermitteln, sonst nichts nachschiebbar.
+// This is probably wrong; there should likely be only one EncodeStream call.
+// Possibly the current padding approach is not quite right, otherwise a dynamic
+// stream would not be possible. That probably belongs in Done, but Done has no
+// stream yet, so an overloaded variant with an output stream parameter is needed...
+// First try testing without the loop. EncodeStream must not infer the "global"
+// end of the stream from Size, otherwise nothing can be appended later.
       FCipherAES.EncodeStream(ptbStream, ctbStream, curChunkSize);
       Dec(dataLeftToEncode, curChunkSize);
     until (dataLeftToEncode = 0);
@@ -821,7 +820,7 @@ begin
               string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
               StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-  // Additional Authentication Data prüfen
+  // Verify additional authentication data
   CheckEquals(string(TestDataSet.TestData[aDataIndex].TagResult),
                      StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
               'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +

@@ -1,4 +1,4 @@
-{$UNDEF GUI}
+﻿{$UNDEF GUI}
 {.$DEFINE GUI}
 {.$DEFINE MobileGUI}
 program DECDUnitXTestSuite;

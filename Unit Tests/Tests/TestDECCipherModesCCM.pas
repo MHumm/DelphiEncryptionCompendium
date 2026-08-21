@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -197,7 +197,7 @@ begin
                     string(TestData.CT) + ' Act. PT: ' +
                     StringOf(TFormat_HexL.Encode(DecryptData)));
 
-        // Additional Authentication Data prüfen
+        // Verify additional authentication data
         CheckEquals(string(TestData.TagResult),
                            StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                     'Authentication tag wrong for key ' +
@@ -315,7 +315,7 @@ begin
                   string(TestData.CT) + ' Act.: ' +
                   EncrDataStr);
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestData.TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
@@ -419,7 +419,7 @@ begin
                   string(TestData.CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Verify additional authentication data
       CheckEquals(string(TestData.TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -540,7 +540,7 @@ begin
                 string(TestData.AAD) + ' Act.: ' +
                 StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-    // Additional Authentication Data prüfen
+    // Verify additional authentication data
     CheckEquals(string(TestData.TagResult),
                        StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                 'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +

@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -6581,7 +6581,7 @@ begin
 //    {$IFDEF DELPHIORBCB}
 //    if ATab < AMin then
 //    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde}
+{ TODO : Verify this is still correct after ATab was changed to PByte}
   if PByte(ATab) < AMin then
 //    {$ENDIF !DELPHIORBCB}
     ATab := AMax;

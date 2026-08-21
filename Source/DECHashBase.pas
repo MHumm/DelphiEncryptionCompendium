@@ -489,13 +489,13 @@ end;
 procedure TDECHash.Increment8(var Value; Add: UInt32);
 // Value := Value + 8 * Add
 // Value is array[0..7] of UInt32
-{ TODO -oNormanNG -cCodeReview : !!Unbedingt noch einmal pr�fen, ob das wirklich so alles stimmt!!
-Mein Versuch der Umsetzung von Increment8 in ASM.
-Die Implementierung zuvor hat immer Zugriffsverletzungen ausgel�st.
-Vermutung: die alte Implementierung lag urspr�nglich ausserhalb der Klasse und wurde sp�ter
-in die Klasse verschoben. Dabei ver�ndert sich aber die Nutzung der Register, da zus�tzlich
-der SELF-Parameter in EAX �bergeben wird. Beim Schreiben nach auf Value wurde dann in die Instanz (Self)
-geschrieben -> peng
+{ TODO -oNormanNG -cCodeReview : !!Must double-check once more that this is really all correct!!
+My attempt at implementing Increment8 in ASM.
+The previous implementation always caused access violations.
+Hypothesis: the old implementation originally lived outside the class and was later
+moved into the class. That changes register usage, because the SELF parameter is
+additionally passed in EAX. Writes intended for Value then went into the instance (Self)
+instead -> bang
 }
 {$IF defined(X86ASM) or defined(X64ASM)}
   {$IFDEF X86ASM}
@@ -508,7 +508,7 @@ geschrieben -> peng
   register; // redundant but informative
   asm
       LEA EAX,[ECX*8]              //                      EAX := ADD * 8
-      SHR ECX,29                   //                      29bit nach rechts schieben, 3bit beiben stehen
+      SHR ECX,29                   //                      shift 29 bits right, 3 bits remain
       ADD [EDX].DWord[00],EAX      // add [edx], eax       TData(Value)[00] := TData(Value)[00] + EAX
       ADC [EDX].DWord[04],ECX      // adc [edx+$04], ecx   TData(Value)[04] := TData(Value)[04] + ECX + Carry
       ADC [EDX].DWord[08],0        // adc [edx+$08], 0     TData(Value)[08] := TData(Value)[08] + 0 + Carry
