@@ -349,12 +349,6 @@ begin
   CheckEquals(true, IsEqual(Exp, Act), 'Data length = 0');
 end;
 
-//procedure TestTDECCCM.DoTestDecodeFailure;
-//begin
-//  FDecryptedData := FCipherAES.DecodeBytes(FCipherText);
-//  FCipherAES.Done;
-//end;
-
 function TestTDECCCM.IsEqual(const a, b : TBytes):Boolean;
 begin
   if (length(a) <> length(b)) then
@@ -368,12 +362,12 @@ end;
 
 procedure TestTDECCCM.TestDecodeStream;
 var
-  ctbStream: TBytesStream;
-  ctBytes: TBytes;
+  ctbStream   : TBytesStream;
+  ctBytes     : TBytes;
   TestDataSet : TAuthenticatedCipherTestSetEntry;
   TestData    : TSingleAuthenticatedTestData;
   DecryptData : TBytes;
-  ptbStream: TBytesStream;
+  ptbStream   : TBytesStream;
 begin
   for TestDataSet in FTestDataList do
   begin

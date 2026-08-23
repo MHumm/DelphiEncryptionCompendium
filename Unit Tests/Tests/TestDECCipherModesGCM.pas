@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -138,9 +138,9 @@ type
     FDecryptedData  : TBytes;
     FCipherText     : TBytes;
     /// <summary>
-    ///   Scratch PT for post-Done Encode/Decode exception helpers
+    ///   Plain text test data for post-Done Encode/Decode exception helpers
     /// </summary>
-    FLifecycleScratch : TBytes;
+    FCallAfterDoneData : TBytes;
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestDecodeFailure;
@@ -167,7 +167,7 @@ type
     procedure TestEncodeLargeStream;
     procedure TestEncodeStreamChunked;
     /// <summary>
-    ///   CAVS set 105 (first 2-block PT) with two equal 16-byte EncodeStream calls.
+    ///   CAVS set 105 (first 2-block plain text) with two equal 16-byte EncodeStream calls.
     /// </summary>
     procedure TestEncodeStreamMultiChunkTwoBlocks;
     /// <summary>
@@ -183,11 +183,11 @@ type
     /// </summary>
     procedure TestDoneIdempotent;
     /// <summary>
-    ///   Encode after Done must raise until Init is called again.
+    ///   Encode after Done must raise an exception until Init is called again.
     /// </summary>
     procedure TestEncodeAfterDoneRejected;
     /// <summary>
-    ///   Decode after Done must raise until Init is called again.
+    ///   Decode after Done must raise an exception until Init is called again.
     /// </summary>
     procedure TestDecodeAfterDoneRejected;
     procedure TestSetGetDataToAuthenticate;
@@ -912,12 +912,12 @@ end;
 
 procedure TestTDECGCM.DoEncodeAfterDone;
 begin
-  FCipherAES.EncodeBytes(FLifecycleScratch);
+  FCipherAES.EncodeBytes(FCallAfterDoneData);
 end;
 
 procedure TestTDECGCM.DoDecodeAfterDone;
 begin
-  FCipherAES.DecodeBytes(FLifecycleScratch);
+  FCipherAES.DecodeBytes(FCallAfterDoneData);
 end;
 
 procedure TestTDECGCM.TestEncodeAfterDoneRejected;
@@ -927,8 +927,8 @@ begin
     cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
     cCAVS_MultiChunkTagBits,
     [16, 16]);
-  SetLength(FLifecycleScratch, 16);
-  FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $A5);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $A5);
   CheckException(DoEncodeAfterDone, EDECCipherException,
                  'Encode after Done must raise EDECCipherException');
 end;
@@ -940,8 +940,8 @@ begin
     cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
     cCAVS_MultiChunkTagBits,
     [16, 16]);
-  SetLength(FLifecycleScratch, 16);
-  FillChar(FLifecycleScratch[0], Length(FLifecycleScratch), $5A);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $5A);
   CheckException(DoDecodeAfterDone, EDECCipherException,
                  'Decode after Done must raise EDECCipherException');
 end;
