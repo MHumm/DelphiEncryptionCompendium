@@ -568,10 +568,6 @@ begin
 
         if (Len > 0) then
         begin
-//          AddLastByteForCodeTest(lDataRow,
-//                                 TFormat_HexL.Decode(RawByteString(msg)),
-//                                 FinalByteLen);
-
           MsgWithFixup := AddLastByteForKeccakTest(
                                     TFormat_HexL.Decode(RawByteString(msg)),
                                     FinalByteLen);
@@ -610,17 +606,6 @@ begin
           lDataRow.ExpectedOutput            := RawByteString(s1);
           HashLength                         := Length(RawByteString(s1)) div 2;
           lDataRow.HashResultByteLength      := HashLength;
-//
-//          // Shake can caculate unicode test data only after hash length is known
-//          THash_ShakeBase(HashInst).HashSize := HashLength;
-////
-//          if (Len > 0) then
-////U := CalcUnicodeHash(msg, HashInst)
-//////            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash(msg, HashInst)
-//          else
-////U := CalcUnicodeHash('', HashInst);
-//////            lDataRow.ExpectedOutputUTFStrTest  := CalcUnicodeHash('', HashInst);
-////NewContents.Add('MDuni = ' + string(U));
         end
         else
           // md from the SHA3 ones
@@ -1798,15 +1783,15 @@ begin
   // Pure Keccak (FIPS 202 "raw" sponge / Ethereum-style): no SHA3 domain suffix.
   // Digests verified with PyCryptodome Crypto.Hash.keccak.
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput := AEmptyDigest;
-  lDataRow.ExpectedOutputUTFStrTest := AEmptyDigest;
   lDataRow.AddInputVector('');
-  lDataRow.FinalBitLength := 0;
+  lDataRow.ExpectedOutput           := AEmptyDigest;
+  lDataRow.ExpectedOutputUTFStrTest := AEmptyDigest;
+  lDataRow.FinalBitLength           := 0;
 
   lDataRow := FTestData.AddRow;
-  lDataRow.ExpectedOutput := AAbcDigest;
   lDataRow.AddInputVector(RawByteString('abc'));
-  lDataRow.FinalBitLength := 0;
+  lDataRow.ExpectedOutput               := AAbcDigest;
+  lDataRow.FinalBitLength               := 0;
   THash_SHA3Base(FHash).FinalByteLength := 0;
   lDataRow.ExpectedOutputUTFStrTest :=
     CalcUnicodeHash(string(TFormat_HexL.Encode(RawByteString('abc'))),
