@@ -364,6 +364,11 @@ type
     procedure TestIdentity;
     procedure TestFinalByteLength;
     procedure TestFinalByteLengthOverflow;
+    /// <summary>
+    ///   Regression for GitHub #94: Absorb must accept messages larger than
+    ///   64 KiB under range checks (HashBenchmark uses 1 MiB).
+    /// </summary>
+    procedure TestCalcBufferLargeMessage;
   end;
 
   // Test methods for class THash_Keccak_256
@@ -1938,6 +1943,63 @@ end;
 procedure TestTHash_Keccak_224.TestIsPasswordHash;
 begin
   CheckNotEquals(true, FHash.IsPasswordHash);
+end;
+
+procedure TestTHash_Keccak_224.TestCalcBufferLargeMessage;
+const
+  // Larger than cMaxBytesPerRound (64 KiB) in THash_SHA3Base.Calc so the
+  // multi-round DataPtr walk is exercised (regression for PBABytes Inc scaling).
+  cSize = 1024 * 1024; // same as HashBenchmark_FMX cBufferSize
+  cIncrementalChunk = 4096; // each Init/Calc piece stays single-round
+  // PyCryptodome Crypto.Hash.keccak, digest_bits=224, over 0..255 repeating
+  cExpectedHex: RawByteString =
+    '7746d1b9b33662006e83d88443fc956ee1e01b8d058b8227a9d1e66b';
+var
+  Buf, DigestBuf, DigestBytes, DigestIncremental: TBytes;
+  i, n, Offset, Take: Integer;
+  Hex: RawByteString;
+begin
+  SetLength(Buf, cSize);
+  n := 0;
+  for i := 0 to cSize - 1 do
+  begin
+    Buf[i] := n;
+    Inc(n);
+    if n > 255 then
+      n := 0;
+  end;
+
+  // One-shot paths (internal multi-round Absorb walk for 1 MiB)
+  DigestBuf := FHash.CalcBuffer(Buf[0], Length(Buf));
+  DigestBytes := FHash.CalcBytes(Buf);
+
+  // Incremental reference: many small Calc calls, each single-round only
+  FHash.Init;
+  Offset := 0;
+  while Offset < cSize do
+  begin
+    Take := cIncrementalChunk;
+    if Offset + Take > cSize then
+      Take := cSize - Offset;
+    FHash.Calc(Buf[Offset], Take);
+    Inc(Offset, Take);
+  end;
+  FHash.Done;
+  DigestIncremental := FHash.DigestAsBytes;
+
+  CheckEquals(Length(DigestBuf), Length(DigestBytes),
+              'CalcBuffer and CalcBytes digest lengths must match');
+  CheckTrue(CompareMem(@DigestBuf[0], @DigestBytes[0], Length(DigestBuf)),
+            'CalcBuffer and CalcBytes digests must match for 1 MiB input');
+  CheckEquals(Length(DigestBuf), Length(DigestIncremental),
+              'One-shot and incremental digest lengths must match');
+  CheckTrue(CompareMem(@DigestBuf[0], @DigestIncremental[0], Length(DigestBuf)),
+            'Multi-round one-shot Calc must match incremental small-chunk Calc '+
+            '(catches wrong DataPtr byte advance)');
+
+  Hex := BytesToRawString(TFormat_HEXL.Encode(DigestBuf));
+  CheckEquals(string(cExpectedHex), string(Hex),
+              'Keccak-224 of 1 MiB (0..255 pattern) must match known digest');
 end;
 
 { TestTHash_Keccak_256 }
