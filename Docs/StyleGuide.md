@@ -16,7 +16,9 @@ If this file and any older note disagree (e.g. historical wording in `DEC65.pdf`
 ## 1. Scope and enforcement
 
 1. **Existing code** may keep historical style. Do not drive-by reformat unrelated lines in a feature PR.
-2. **New code** (new units, new types, new methods, substantial rewrites, donor re-lands such as ChaCha) **must** follow this guide. Reviewers should request fixes before merge.
+2. **New code** must follow this guide. This includes new units, new types, new methods, substantial rewrites, and code that comes in through pull requests (“donor” code). Reviewers should request fixes before merge.
+
+   Example: when we later take ChaCha20/Poly1305 from PR #90, clean it up to match this guide (naming, structure, docs). Do not copy the donor style as-is.
 3. Prefer matching a neighbouring routine in the same unit when the local historic style is still consistent *and* this guide is silent — but **naming, docs, headers, FPC/Delphi uses, and tests** always follow this guide for new work.
 4. Submodules / third-party trees are out of scope.
 
@@ -80,7 +82,7 @@ uses
 | Delphi `interface` uses | Prefer **namespaced** RTL units (`System.SysUtils`, …) |
 | FPC | Non-namespaced counterparts via `{$IFDEF FPC}` as above |
 | `implementation` uses | **No** unit namespace prefixes (FPC) — same IFDEF pattern as existing units |
-| Non-portable code | Wrap in `{$IFDEF}` so FPC (or unsupported platforms) do not see it |
+| Non-portable code | Wrap in `{$IFDEF}` so FPC (or unsupported platforms) do not see it. Turn project-specific defines (class registration, ASM, and similar) on or off in **`DECOptions.inc`**. That is the central place for such switches. |
 
 ### 3.4 Encoding and line endings
 
@@ -105,7 +107,8 @@ Aligned with modern Delphi practice (and the [Delphi Style Guide EN](https://git
 | Line length | Soft max **~120** characters; break long parameter lists and expressions readably |
 | `begin` / `end` | On their **own** lines |
 | Statements | One statement per line |
-| Simple branches | `begin`/`end` preferred; bare `Exit` / `raise` / `Continue` / `Break` may stay single-line |
+| Simple branches | Prefer `begin`/`end` even for a **single** statement. Bare `Exit` / `raise` / `Continue` / `Break` may stay without `begin`/`end`. |
+| `with` | **Do not use** `with` |
 | Comments | `//` line · `{ … }` block · `///` XML docs · `(* … *)` for temporarily disabled code |
 | Compiler directives | `{$IFDEF …}` style, uppercase directives; nest carefully |
 
@@ -122,7 +125,11 @@ begin
 end;
 ```
 
-Avoid `with`. Prefer `FreeAndNil` over `.Free` when releasing owned objects. No empty `except` blocks unless a short comment explains a deliberate swallow (e.g. finalization / logging must not raise).
+Always write `begin`/`end` around the `if` body, even when there is only one statement (`Process(AValue)` above). Several people maintain DEC, so clarity matters more than a short listing. A common late bug is to add a second line and forget `begin`/`end`; then only the first line is inside the `if`.
+
+Bare `Exit`, `raise`, `Continue`, and `Break` may stay without `begin`/`end` (see the `raise` line above).
+
+**Do not use `with`.** Prefer `FreeAndNil` over `.Free` when releasing owned objects. No empty `except` blocks unless a short comment explains a deliberate swallow (e.g. finalization / logging must not raise).
 
 ---
 
@@ -137,11 +144,14 @@ Avoid `with`. Prefer `FreeAndNil` over `.Free` when releasing owned objects. No 
 | Class | `T` | `TCipher_AES`, `TDECHash` |
 | Interface | `I` | `IDECHash` |
 | Record | `T` | `TBlock16Byte` |
+| Type alias | `T` (recommended) | `TIndex = Integer` |
 | Exception | `E` | `EDECException`, `EDECCipherException` |
 | Enum type | `T` | `TCipherMode` |
 | Pointer to type | `P` | `PBlock16Byte` (when used) |
 
 Cipher / hash algorithm classes keep DEC’s established patterns: `TCipher_…`, `THash_…`, `TFormat_…`.
+
+Type aliases: prefer a `T` prefix (`TIndex = Integer`). This is a **recommendation**, not a must. Leave `T` off only when the alias is meant to look like a Delphi language or RTL name (for example string-style names where `T` would look odd).
 
 ### 5.2 Variables and parameters
 
@@ -155,16 +165,24 @@ Cipher / hash algorithm classes keep DEC’s established patterns: `TCipher_…`
 
 **Do not** use lowercase `f` / `l` field prefixes on new code (`fInp…` style is rejected in review).
 
-Record **public fields** have **no** `F` prefix (they are part of the value layout).
+**Public fields**
+
+For **new** code, avoid public fields on **classes**. Use properties instead.
+
+This is not a hard ban: older DEC classes may keep public fields until that type is rewritten.
+
+If a type needs many public fields, prefer a **record**, or rethink the design. On records, public fields are the normal value layout (no `F` prefix).
 
 ### 5.3 Constants
 
 | Kind | Prefix | Example |
 |---|---|---|
 | General | `c` | `cBlockSize` |
-| String constant | `sc` | `scInvalidNonce` |
+| String constant | `s` | `sInvalidNonce` |
 | Resource string | `rs` | `rsErrorMessage` |
 | System / build | `ALL_CAPS` | rare; prefer DEC existing patterns |
+
+String constants use `s` plus the rest of the name, as existing DEC code already does (`sInvalidNonce`, `sHashNotInitialized`). Names like `sCipher…` are `s` + the word Cipher, not a special `sc` prefix.
 
 ### 5.4 Methods
 
@@ -194,7 +212,8 @@ Do not invent a second parallel prefix style (`pmPas`) on new scoped enums. Exis
 Use XML doc comments (`///`) on **new public** API:
 
 - Minimum: `<summary>` on public types, methods, and properties.
-- Preferred: `<param>`, `<returns>`, `<exception>`, `<remarks>` where non-obvious.
+- Document **all** parameters with `<param>` (one for each parameter, even if the name seems obvious).
+- Also add `<returns>`, `<exception>`, `<remarks>` where they help.
 
 ```pascal
 /// <summary>
@@ -202,6 +221,9 @@ Use XML doc comments (`///`) on **new public** API:
 /// </summary>
 /// <param name="AKey">
 ///   Symmetric key bytes; length must match Context.KeySize.
+/// </param>
+/// <param name="AInitVector">
+///   Nonce or initialization vector (IV). Size depends on the cipher and mode.
 /// </param>
 procedure Init(const AKey: TBytes; const AInitVector: TBytes); overload;
 ```
@@ -249,8 +271,9 @@ Explain **what** and **why**, not trivial restatements of the identifier. Securi
 
 - [ ] Apache header + `{$INCLUDE DECOptions.inc}` on new units  
 - [ ] Delphi/FPC `uses` IFDEFs correct; no namespaced units in `implementation`  
-- [ ] Naming: `T`/`E`/`I`, `F`/`L`/`A`, no `f` fields  
-- [ ] `///` docs on new public API  
+- [ ] Naming: `T`/`E`/`I` (type aliases: `T` recommended), `F`/`L`/`A`, string constants `s…`, no `f` fields  
+- [ ] `///` docs on new public API, with `<param>` for **every** parameter  
+- [ ] No `with`; `begin`/`end` even for a single statement (except bare `Exit`/`raise`/`Continue`/`Break`)  
 - [ ] 2-space indent, readable line breaks  
 - [ ] Unit tests with cited vectors  
 - [ ] `RegisterClass` where required  
@@ -274,4 +297,5 @@ When `DEC65.pdf` is next regenerated, §3.7.1 should be reduced to a short parag
 
 ---
 
-*Initial version for DEC · 2026-07-23 · docs-only; no source reformatting required by adopting this guide.*
+*Initial version for DEC · 2026-07-23 · docs-only; no source reformatting required by adopting this guide.*  
+*Revised 2026-09-08 · PR #101 review: donor/PR wording, `begin`/`end`, `DECOptions.inc`, no `with`, type aliases, public fields, string constants `s…`, XML `<param>` for all parameters.*

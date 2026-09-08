@@ -11,7 +11,7 @@ main contact listed in `NOTICE.txt`.
 
 Please read it before writing or reviewing code. In short:
 
-- **New and rewritten code** must follow the style guide (naming, headers, FPC/Delphi `uses`, docs, tests).
+- **New and rewritten code** must follow the style guide (naming, headers, FPC/Delphi `uses`, docs, tests), including code that comes in through pull requests (“donor” code).
 - **Existing sources** are not required to be mass-reformatted; do not mix drive-by style rewrites into feature PRs.
 - Algorithm extension how-to (where to plug in a cipher, mode, hash, …) remains in **`Docs/DEC65.pdf` §3.7.2 and following**.
 
