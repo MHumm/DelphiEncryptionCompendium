@@ -173,6 +173,25 @@ This is not a hard ban: older DEC classes may keep public fields until that type
 
 If a type needs many public fields, prefer a **record**, or rethink the design. On records, public fields are the normal value layout (no `F` prefix).
 
+**Parameter guards**
+
+Non-optional object-reference or pointer parameters must be checked at the start of the routine. Prefer a **hard** check that stays in Release builds (`SysUtils`):
+
+```pascal
+if not Assigned(AParam) then
+  raise EArgumentNilException.Create('AParam');
+```
+
+Do **not** use `Assert(Assigned(...))` for this. Asserts are typically compiled out in Release (`{$C-}`). That is too weak for a crypto library: we want robustness and to avoid nil paths.
+
+Treat non-optional interface parameters the same way (`Assigned` / nil check).
+
+This rule does **not** apply to `TBytes` or other dynamic arrays (empty and nil are different). Do not require `Assigned` on `TBytes`.
+
+Ordinary value parameters: do **not** hard-require range Asserts or checks in this guide. Caller contracts and docs are enough unless the API has a clear invariant.
+
+Like the rest of this guide, the rule applies to **new** code. Historical code need not be mass-rewritten.
+
 ### 5.3 Constants
 
 | Kind | Prefix | Example |
@@ -274,6 +293,7 @@ Explain **what** and **why**, not trivial restatements of the identifier. Securi
 - [ ] Naming: `T`/`E`/`I` (type aliases: `T` recommended), `F`/`L`/`A`, string constants `s…`, no `f` fields  
 - [ ] `///` docs on new public API, with `<param>` for **every** parameter  
 - [ ] No `with`; `begin`/`end` even for a single statement (except bare `Exit`/`raise`/`Continue`/`Break`)  
+- [ ] Non-optional object / pointer / interface parameters: hard nil check (`Assigned`), not `Assert`  
 - [ ] 2-space indent, readable line breaks  
 - [ ] Unit tests with cited vectors  
 - [ ] `RegisterClass` where required  
@@ -298,4 +318,5 @@ When `DEC65.pdf` is next regenerated, §3.7.1 should be reduced to a short parag
 ---
 
 *Initial version for DEC · 2026-07-23 · docs-only; no source reformatting required by adopting this guide.*  
-*Revised 2026-09-08 · PR #101 review: donor/PR wording, `begin`/`end`, `DECOptions.inc`, no `with`, type aliases, public fields, string constants `s…`, XML `<param>` for all parameters.*
+*Revised 2026-09-08 · PR #101 review: donor/PR wording, `begin`/`end`, `DECOptions.inc`, no `with`, type aliases, public fields, string constants `s…`, XML `<param>` for all parameters.*  
+*Revised 2026-09-09 · PR #101: parameter guards — hard nil checks for non-optional object/pointer/interface parameters (not `Assert`).*
