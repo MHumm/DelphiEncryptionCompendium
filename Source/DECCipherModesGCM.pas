@@ -99,11 +99,11 @@ type
     /// <summary>
     ///   Leftover keystream from an incomplete CTR block (multi-call Encode/Decode)
     /// </summary>
-    FKeystream            : T128;
+    FKeystreamLeftover    : T128;
     /// <summary>
     ///   Number of unused bytes remaining in FKeystream (0..15)
     /// </summary>
-    FKeystreamRemain      : Integer;
+    FKeystreamRemainLen   : Integer;
     /// <summary>
     ///   True after Done has materialized the authentication tag.
     ///   Prevents double-finalization and post-Done GHASH/CTR updates.
@@ -242,7 +242,7 @@ type
     /// </summary>
     procedure GHASHPadPartial;
     /// <summary>
-    ///   Ensures AAD has been GHASH'd and padded once before ciphertext bytes.
+    ///   Ensures AAD has been GHASH'd and padded once before processidng ciphertext bytes.
     /// </summary>
     procedure EnsureAuthDataHashed;
     /// <summary>
@@ -532,16 +532,16 @@ begin
   Nullbytes[1] := 0;
 
   // Streaming GHASH + CTR state for multi-call Encode/Decode (Option A)
-  FX[0] := 0;
-  FX[1] := 0;
-  FGHASHPartialLen := 0;
   FillChar(FGHASHPartial[0], SizeOf(FGHASHPartial), 0);
+  FX[0]                 := 0;
+  FX[1]                 := 0;
+  FGHASHPartialLen      := 0;
   FTotalCiphertextBytes := 0;
-  FAuthDataHashed := False;
-  FKeystreamRemain := 0;
-  FKeystream[0] := 0;
-  FKeystream[1] := 0;
-  FFinalized := False;
+  FAuthDataHashed       := False;
+  FKeystreamRemainLen   := 0;
+  FKeystreamLeftover[0] := 0;
+  FKeystreamLeftover[1] := 0;
+  FFinalized            := False;
 
   OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
@@ -719,17 +719,17 @@ begin
 
   i := 0;
   // Drain leftover keystream from a previous partial block
-  if FKeystreamRemain > 0 then
+  if (FKeystreamRemainLen > 0) then
   begin
-    KSBytes := @FKeystream[0];
-    Take := FKeystreamRemain;
+    KSBytes := @FKeystreamLeftover[0];
+    Take := FKeystreamRemainLen;
     if Take > Size then
       Take := Size;
-    XOR_ArrayWithT128(Source, i, Take, FKeystream, Dest);
+    XOR_ArrayWithT128(Source, i, Take, FKeystreamLeftover, Dest);
     // Shift remaining keystream left so index 0 is next unused byte
-    if Take < FKeystreamRemain then
-      Move(KSBytes^[Take], KSBytes^[0], FKeystreamRemain - Take);
-    Dec(FKeystreamRemain, Take);
+    if (Take < FKeystreamRemainLen) then
+      Move(KSBytes^[Take], KSBytes^[0], FKeystreamRemainLen - Take);
+    Dec(FKeystreamRemainLen, Take);
     Inc(i, Take);
   end;
 
@@ -743,13 +743,15 @@ begin
   if i < Size then
   begin
     INCR(FY);
-    FKeystream := EncodeT128(FY);
+    FKeystreamLeftover := EncodeT128(FY);
     Take := Size - i;
-    XOR_ArrayWithT128(Source, i, Take, FKeystream, Dest);
+    XOR_ArrayWithT128(Source, i, Take, FKeystreamLeftover, Dest);
     // Keep unused tail of this keystream block for the next call
-    Move(P16ByteArray(@FKeystream[0])^[Take], P16ByteArray(@FKeystream[0])^[0], 16 - Take);
+    Move(P16ByteArray(@FKeystreamLeftover[0])^[Take],
+         P16ByteArray(@FKeystreamLeftover[0])^[0],
+         16 - Take);
     // Clear used prefix is unnecessary; only FKeystreamRemain matters
-    FKeystreamRemain := 16 - Take;
+    FKeystreamRemainLen := 16 - Take;
   end;
 end;
 

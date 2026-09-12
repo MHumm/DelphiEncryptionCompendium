@@ -39,10 +39,14 @@ The FMX based demos were even available via Google play as "DEC cipher demo" and
 "DEC hash demo". Due to some key issue they are no longer installable at the moment.
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.4.1 you will find further files with information about 
+In the root folder of the repository you will find further files with information about
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
-Also take the time to read DEC64.pdf in the *Docs* folder and look at the demos 
-provided in the *Demos* subfolder.
+
+**Coding style (single source of truth for new code):**  
+[`Docs/StyleGuide.md`](Docs/StyleGuide.md) — naming, formatting, headers, FPC/Delphi rules, tests, and PR expectations.  
+Existing sources are not mass-reformatted; new and rewritten code is expected to follow the guide.
+
+Also take the time to read *DEC65.pdf* (or the version shipped with your release) in the *Docs* folder for API documentation and how to extend algorithms, and look at the demos in the *Demos* subfolder.
 
 ## Has it been tested?
 DEC 5.2 came with some "arcane" test program testing the algoithms implemented
@@ -57,6 +61,11 @@ they are empty sceletons at this point in time waiting to be filled in. We first
 need to work out how to implement these tests and maybe look for test data.
 Why don't you help out by researching useful test data for those few tests?
 We're talking at block chaining mode tests for the ciphers specifically.
+
+DUnitX (`Unit Tests/DECDUnitXTestSuite`) is the preferred / authoritative runner;
+the classic DUnit suite remains for comparison until a later removal. Both currently
+share the same known product/test failures (Keccak and GCM chunked stream); see
+`Docs/plans/dunitx-parity-log.md` and `Docs/Cleanup-Roadmap.md` §2.
 
 In DEC 6.2 the unit tests for the hash classes were looked at and where not already 
 used original test data vectors (as far as we could find them - for most we could) 
