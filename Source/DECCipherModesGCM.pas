@@ -242,7 +242,7 @@ type
     /// </summary>
     procedure GHASHPadPartial;
     /// <summary>
-    ///   Ensures AAD has been GHASH'd and padded once before processidng ciphertext bytes.
+    ///   Ensures AAD has been GHASH'd and padded once before processing ciphertext bytes.
     /// </summary>
     procedure EnsureAuthDataHashed;
     /// <summary>
@@ -273,6 +273,7 @@ type
     ///   are: 128, 120, 112, 104, or 96 bit. For certain applications, they
     ///   may be 64 or 32 as well, but the use of these two tag lengths
     ///   constrains the length of the input data and the lifetime of the key.
+    ///   Must be 1..128; longer values would over-read the 16-byte GHASH tag.
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); override;
   public
