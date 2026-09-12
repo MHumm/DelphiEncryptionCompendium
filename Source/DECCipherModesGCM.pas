@@ -276,6 +276,11 @@ type
     ///   Must be 1..128; longer values would over-read the 16-byte GHASH tag.
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); override;
+    /// <summary>
+    ///   Rejects AAD assignment once GHASH has absorbed DataToAuthenticate
+    ///   (after the first Encode/Decode) or after Done has finalized the tag.
+    /// </summary>
+    procedure SetDataToAuthenticate(const Value: TBytes); override;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -326,7 +331,7 @@ type
     ///   Idempotent: a second call leaves the tag unchanged.
     ///   After finalization, Encode/Decode raise until Init is called again.
     /// </summary>
-    procedure Done;
+    procedure Done; override;
 
     /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
@@ -343,6 +348,10 @@ implementation
 resourcestring
   sGCMAlreadyFinalized =
     'GCM authentication already finalized; call Init before further Encode/Decode';
+  sGCMAADLocked =
+    'GCM DataToAuthenticate cannot be changed after Encode/Decode has started or after Done';
+  sGCMAuthTagLength =
+    'GCM AuthenticationTagBitLength must be between 1 and 128 bits';
 
 function TGCM.XOR_T128(const x, y : T128): T128;
 begin
@@ -469,8 +478,22 @@ end;
 
 procedure TGCM.SetAuthenticationTagLength(const Value: UInt32);
 begin
-  FCalcAuthenticationTagLength := Value shr 3;
-  SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  // AuthTag is always a 16-byte (128-bit) GHASH result; longer bit lengths
+  // would over-read that buffer when materializing FCalcAuthenticationTag.
+  if (Value = 0) or (Value > 128) then
+    raise EDECAuthLengthException.CreateRes(@sGCMAuthTagLength);
+
+  inherited SetAuthenticationTagLength(Value);
+end;
+
+procedure TGCM.SetDataToAuthenticate(const Value: TBytes);
+begin
+  // Once AAD is in FX (or the tag is finalized), changing DataToAuthenticate
+  // would desync Length(AAD) in the GHASH length block from the absorbed AAD.
+  if FAuthDataHashed or FFinalized then
+    raise EDECCipherException.CreateRes(@sGCMAADLocked);
+
+  inherited SetDataToAuthenticate(Value);
 end;
 
 procedure TGCM.INCR(var Y : T128);
@@ -604,14 +627,6 @@ begin
   FAuthDataHashed := True;
 end;
 
-procedure TGCM.Done;
-begin
-  if FFinalized then
-    Exit;
-  FinalizeAuthenticationTag;
-  FFinalized := True;
-end;
-
 procedure TGCM.FinalizeAuthenticationTag;
 var
   AuthTag            : T128;
@@ -623,15 +638,28 @@ begin
   GHASHPadPartial;
 
   AuthLen := Length(DataToAuthenticate);
-  SetAuthenticationCipherLength(AuthCipherLength,
-                                UInt64(AuthLen) shl 3,
+  SetAuthenticationCipherLength(AuthCipherLength, UInt64(AuthLen) shl 3,
                                 FTotalCiphertextBytes shl 3);
   FX := poly_mult_H(XOR_T128(AuthCipherLength, FX));
   AuthTag := XOR_T128(FX, FE_K_Y0);
 
+  // Defensive: never copy more than the 16-byte GHASH tag.
   SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
   if (FCalcAuthenticationTagLength > 0) then
-    Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+  begin
+    if FCalcAuthenticationTagLength > SizeOf(AuthTag) then
+      Move(AuthTag[0], FCalcAuthenticationTag[0], SizeOf(AuthTag))
+    else
+      Move(AuthTag[0], FCalcAuthenticationTag[0], FCalcAuthenticationTagLength);
+  end;
+end;
+
+procedure TGCM.Done;
+begin
+  if FFinalized then
+    Exit;
+  FinalizeAuthenticationTag;
+  FFinalized := True;
 end;
 
 function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;

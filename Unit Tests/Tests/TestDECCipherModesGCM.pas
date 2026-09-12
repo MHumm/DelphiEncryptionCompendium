@@ -34,6 +34,7 @@ uses
   System.Math,
   DECBaseClass,
   DECTypes,
+  DECAuthenticatedCipherModesBase,
   DECCipherBase,
   DECCipherModes,
   DECCipherFormats,
@@ -155,6 +156,8 @@ type
         const AChunkSizes: array of Integer);
     procedure DoEncodeAfterDone;
     procedure DoDecodeAfterDone;
+    procedure DoChangeAADAfterEncode;
+    procedure DoSetAuthTagBitLengthTooLong;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -183,13 +186,21 @@ type
     /// </summary>
     procedure TestDoneIdempotent;
     /// <summary>
-    ///   Encode after Done must raise an exception until Init is called again.
+    ///   Encode after Done must raise until Init is called again.
     /// </summary>
     procedure TestEncodeAfterDoneRejected;
     /// <summary>
-    ///   Decode after Done must raise an exception until Init is called again.
+    ///   Decode after Done must raise until Init is called again.
     /// </summary>
     procedure TestDecodeAfterDoneRejected;
+    /// <summary>
+    ///   Changing DataToAuthenticate after Encode has started must raise.
+    /// </summary>
+    procedure TestAADChangeAfterEncodeRejected;
+    /// <summary>
+    ///   AuthenticationResultBitLength &gt; 128 must raise (tag buffer is 16 bytes).
+    /// </summary>
+    procedure TestAuthTagBitLengthTooLongRejected;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
@@ -946,6 +957,39 @@ begin
                  'Decode after Done must raise EDECCipherException');
 end;
 
+procedure TestTDECGCM.DoChangeAADAfterEncode;
+begin
+  FCipherAES.DataToAuthenticate := BytesOf(RawByteString('changed-aad'));
+end;
+
+procedure TestTDECGCM.TestAADChangeAfterEncodeRejected;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf('aabbccdd'));
+  // First Encode absorbs AAD into GHASH — subsequent AAD assignment must fail
+  FCipherAES.EncodeBytes(Copy(ptBytes, 0, 16));
+  CheckException(DoChangeAADAfterEncode, EDECCipherException,
+                 'Changing DataToAuthenticate after Encode must raise');
+end;
+
+procedure TestTDECGCM.DoSetAuthTagBitLengthTooLong;
+begin
+  FCipherAES.AuthenticationResultBitLength := 256;
+end;
+
+procedure TestTDECGCM.TestAuthTagBitLengthTooLongRejected;
+begin
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  CheckException(DoSetAuthTagBitLengthTooLong, EDECAuthLengthException,
+                 'AuthenticationResultBitLength > 128 must raise EDECAuthLengthException');
+end;
+
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
     aMaxChunkSize: Int64);
 var
@@ -1106,11 +1150,12 @@ end;
 
 procedure TestTDECGCM.TestSetGetAuthenticationBitLength;
 begin
+  // NIST SP 800-38D: tag length is at most 128 bit (truncated GHASH result)
   FCipherAES.AuthenticationResultBitLength := 128;
   CheckEquals(128, FCipherAES.AuthenticationResultBitLength);
 
-  FCipherAES.AuthenticationResultBitLength := 192;
-  CheckEquals(192, FCipherAES.AuthenticationResultBitLength);
+  FCipherAES.AuthenticationResultBitLength := 96;
+  CheckEquals(96, FCipherAES.AuthenticationResultBitLength);
 end;
 
 procedure TestTDECGCM.TestSetGetDataToAuthenticate;
