@@ -780,6 +780,11 @@ begin
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
 
+  if Assigned(FAuthObj) then
+  begin
+    FAuthObj.DeclarePayloadLength(UInt64(DataSize));
+  end;
+
   Max       := Pos + DataSize;
   StartPos  := Pos;
   doPadding := false;

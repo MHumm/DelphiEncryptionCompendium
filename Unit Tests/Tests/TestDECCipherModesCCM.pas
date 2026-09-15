@@ -79,7 +79,6 @@ type
     procedure TestInitFailureIVTooLong;
     procedure TestInitFailureIVTooShort;
     procedure TestEncodeStream;
-    // Deferred: multi-call CCM streams (AEAD roadmap)
     procedure TestGetDataToAuthenticate;
     procedure TestSetDataToAuthenticate;
     procedure TestSetAuthenticationBitLengths;
@@ -99,6 +98,27 @@ type
     ///   Done twice must leave CalculatedAuthenticationResult unchanged.
     /// </summary>
     procedure TestDoneIdempotent;
+    /// <summary>
+    ///   CCM reports SupportsAuthenticatedMultiChunk = True.
+    /// </summary>
+    procedure TestSupportsAuthenticatedMultiChunk;
+    /// <summary>
+    ///   RFC 3610 packet 1 encoded as 8+15 byte chunks with declared length.
+    /// </summary>
+    procedure TestEncodeMultiChunkUneven;
+    /// <summary>
+    ///   RFC 3610 packet 1 decoded as 7+16 byte chunks with declared length.
+    /// </summary>
+    procedure TestDecodeMultiChunkUneven;
+    /// <summary>
+    ///   EncodeStream of the full RFC vector with a small stream buffer so
+    ///   Encode is called several times internally.
+    /// </summary>
+    procedure TestEncodeStreamInternalChunks;
+    /// <summary>
+    ///   Several EncodeStream calls covering the message after declaring length.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunk;
   end;
 
 
@@ -495,6 +515,7 @@ begin
     FCipherAES.AuthenticationResultBitLength := TestDataSet.Taglen;
     FCipherAES.DataToAuthenticate            := TFormat_HexL.Decode(
                                                   BytesOf(TestData.AAD));
+    FCipherAES.AuthenticatedPayloadLength := UInt64(Length(ptBytes));
 
     ptbStream := TBytesStream.Create(ptBytes);
     ctbStream := TBytesStream.Create;
@@ -852,6 +873,97 @@ begin
   Tag2 := FCipherAES.CalculatedAuthenticationResult;
   CheckTrue(IsEqual(Tag1, Tag2),
             'Second Done must not change CalculatedAuthenticationResult');
+end;
+
+procedure TestTDECCCM.TestSupportsAuthenticatedMultiChunk;
+begin
+  CheckTrue(FCipherAES.SupportsAuthenticatedMultiChunk,
+            'CCM must report multi-chunk support (declared payload length)');
+end;
+
+procedure TestTDECCCM.TestEncodeMultiChunkUneven;
+var
+  TestData: TSingleAuthenticatedTestData;
+  PT, CT, Chunk, AllCT: TBytes;
+begin
+  // RFC 3610 Packet 1 (already in FTestDataList[0]): 23-byte PT, 64-bit tag
+  TestData := FTestDataList[0].TestData[0];
+  PT := TFormat_HexL.Decode(BytesOf(TestData.PT));
+  CheckEquals(23, Length(PT), 'RFC 3610 packet 1 PT is 23 bytes');
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.AuthenticatedPayloadLength := UInt64(Length(PT));
+
+  Chunk := FCipherAES.EncodeBytes(Copy(PT, 0, 8));
+  SetLength(AllCT, Length(Chunk));
+  if Length(Chunk) > 0 then
+    Move(Chunk[0], AllCT[0], Length(Chunk));
+  Chunk := FCipherAES.EncodeBytes(Copy(PT, 8, 15));
+  SetLength(AllCT, Length(AllCT) + Length(Chunk));
+  if Length(Chunk) > 0 then
+    Move(Chunk[0], AllCT[Length(AllCT) - Length(Chunk)], Length(Chunk));
+  FCipherAES.Done;
+
+  CheckEquals(string(TestData.CT), StringOf(TFormat_HexL.Encode(AllCT)),
+              'Ciphertext mismatch for CCM multi-chunk 8+15');
+  CheckEquals(string(TestData.TagResult),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Tag mismatch for CCM multi-chunk 8+15');
+end;
+
+procedure TestTDECCCM.TestDecodeMultiChunkUneven;
+var
+  TestData: TSingleAuthenticatedTestData;
+  CT, PT, Chunk, AllPT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  CT := TFormat_HexL.Decode(BytesOf(TestData.CT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.ExpectedAuthenticationResult :=
+    TFormat_HexL.Decode(BytesOf(TestData.TagResult));
+  FCipherAES.AuthenticatedPayloadLength := UInt64(Length(CT));
+
+  Chunk := FCipherAES.DecodeBytes(Copy(CT, 0, 7));
+  SetLength(AllPT, Length(Chunk));
+  if Length(Chunk) > 0 then
+    Move(Chunk[0], AllPT[0], Length(Chunk));
+  Chunk := FCipherAES.DecodeBytes(Copy(CT, 7, 16));
+  SetLength(AllPT, Length(AllPT) + Length(Chunk));
+  if Length(Chunk) > 0 then
+    Move(Chunk[0], AllPT[Length(AllPT) - Length(Chunk)], Length(Chunk));
+  FCipherAES.Done;
+
+  CheckEquals(string(TestData.PT), StringOf(TFormat_HexL.Encode(AllPT)),
+              'Plaintext mismatch for CCM multi-chunk decode 7+16');
+end;
+
+procedure TestTDECCCM.TestEncodeStreamInternalChunks;
+var
+  SavedBufferSize: Integer;
+begin
+  // StreamBufferSize is rounded up to the AES block size (16), so a 23-byte
+  // RFC vector is processed as 16+7 — still two Encode calls inside one stream.
+  SavedBufferSize := StreamBufferSize;
+  StreamBufferSize := 8;
+  try
+    DoTestEncodeStream_TestSingleSet(0, 0, -1);
+  finally
+    StreamBufferSize := SavedBufferSize;
+  end;
+end;
+
+procedure TestTDECCCM.TestEncodeStreamMultiChunk;
+begin
+  DoTestEncodeStream_TestSingleSet(0, 0, 8);
 end;
 
 initialization

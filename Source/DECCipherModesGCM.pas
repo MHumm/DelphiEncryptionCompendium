@@ -336,6 +336,15 @@ type
     ///   List of bit lengths
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths; override;
+
+    /// <summary>
+    ///   GCM is an online AEAD: Encode/Decode may be called multiple times
+    ///   without declaring the payload length in advance.
+    /// </summary>
+    /// <returns>
+    ///   True
+    /// </returns>
+    function SupportsMultiChunk: Boolean; override;
   end;
 
 implementation
@@ -797,6 +806,11 @@ function TGCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 begin
   SetLength(Result, 5);
   Result := [96, 104, 112, 120, 128];
+end;
+
+function TGCM.SupportsMultiChunk: Boolean;
+begin
+  Result := True;
 end;
 
 //
