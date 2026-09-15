@@ -104,11 +104,6 @@ type
     ///   Number of unused bytes remaining in FKeystream (0..15)
     /// </summary>
     FKeystreamRemainLen   : Integer;
-    /// <summary>
-    ///   True after Done has materialized the authentication tag.
-    ///   Prevents double-finalization and post-Done GHASH/CTR updates.
-    /// </summary>
-    FFinalized            : Boolean;
 
     /// <summary>
     ///   XOR implementation for unsigned 128 bit numbers
@@ -346,8 +341,6 @@ type
 implementation
 
 resourcestring
-  sGCMAlreadyFinalized =
-    'GCM authentication already finalized; call Init before further Encode/Decode';
   sGCMAADLocked =
     'GCM DataToAuthenticate cannot be changed after Encode/Decode has started or after Done';
   sGCMAuthTagLength =
@@ -541,7 +534,6 @@ begin
   FKeystreamRemainLen   := 0;
   FKeystreamLeftover[0] := 0;
   FKeystreamLeftover[1] := 0;
-  FFinalized            := False;
 
   OldH := FH;
   EncryptionMethod(@Nullbytes[0], @FH[0], 16);
@@ -658,8 +650,9 @@ procedure TGCM.Done;
 begin
   if FFinalized then
     Exit;
+
   FinalizeAuthenticationTag;
-  FFinalized := True;
+  inherited;
 end;
 
 function TGCM.CalcGaloisHash(AuthenticatedData : PUInt8Array; AuthLen : integer; Ciphertext : PUInt8Array;
@@ -757,8 +750,7 @@ end;
 
 procedure TGCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
 begin
-  if FFinalized then
-    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
+  CheckNotFinalized;
 
   // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
   EnsureAuthDataHashed;
@@ -778,8 +770,7 @@ end;
 
 procedure TGCM.Encode(Source, Dest: PUInt8Array; Size: Integer);
 begin
-  if FFinalized then
-    raise EDECCipherException.CreateRes(@sGCMAlreadyFinalized);
+  CheckNotFinalized;
 
   // AAD into GHASH once; tag finalized in Done (supports multi-call streams)
   EnsureAuthDataHashed;

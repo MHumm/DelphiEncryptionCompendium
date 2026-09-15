@@ -158,6 +158,7 @@ type
     procedure DoDecodeAfterDone;
     procedure DoChangeAADAfterEncode;
     procedure DoSetAuthTagBitLengthTooLong;
+    procedure DoReadTagBeforeDone;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -197,6 +198,10 @@ type
     ///   Changing DataToAuthenticate after Encode has started must raise.
     /// </summary>
     procedure TestAADChangeAfterEncodeRejected;
+    /// <summary>
+    ///   Reading CalculatedAuthenticationResult before Done must raise.
+    /// </summary>
+    procedure TestCalculatedAuthenticationResultBeforeDoneRaises;
     /// <summary>
     ///   AuthenticationResultBitLength &gt; 128 must raise (tag buffer is 16 bytes).
     /// </summary>
@@ -919,6 +924,27 @@ begin
   Tag2 := FCipherAES.CalculatedAuthenticationResult;
   CheckTrue(IsEqual(Tag1, Tag2),
             'Second Done must not change CalculatedAuthenticationResult');
+end;
+
+procedure TestTDECGCM.DoReadTagBeforeDone;
+var
+  Tag: TBytes;
+begin
+  Tag := FCipherAES.CalculatedAuthenticationResult;
+end;
+
+procedure TestTDECGCM.TestCalculatedAuthenticationResultBeforeDoneRaises;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkAAD));
+  FCipherAES.EncodeBytes(ptBytes);
+  CheckException(DoReadTagBeforeDone, EDECCipherException,
+                 'CalculatedAuthenticationResult before Done must raise EDECCipherException');
 end;
 
 procedure TestTDECGCM.DoEncodeAfterDone;

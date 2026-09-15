@@ -56,6 +56,8 @@ type
     procedure DoTestInitFailureIVTooShort;
     procedure DoTestRFC3610(EncodeTest: Boolean);
     procedure DoTestAuthenticationBitLengthWrong;
+    procedure DoReadTagBeforeDone;
+    procedure DoEncodeAfterDone;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -85,6 +87,18 @@ type
     procedure TestGetStandardAuthenticationTagBitLengths;
     procedure TestGetExpectedAuthenticationResult;
     procedure TestSetExpectedAuthenticationResult;
+    /// <summary>
+    ///   Reading CalculatedAuthenticationResult before Done must raise.
+    /// </summary>
+    procedure TestCalculatedAuthenticationResultBeforeDoneRaises;
+    /// <summary>
+    ///   Encode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestEncodeAfterDoneRejected;
+    /// <summary>
+    ///   Done twice must leave CalculatedAuthenticationResult unchanged.
+    /// </summary>
+    procedure TestDoneIdempotent;
   end;
 
 
@@ -760,6 +774,7 @@ begin
             CheckEquals(true, CompareMem(@buf,@DecodeBuf,plen), 'Plaintext wrong');
           end;
 
+          CipherAES.Done;
           TagResult := CipherAES.CalculatedAuthenticationResult;
 
           // Test the generated tag
@@ -770,6 +785,73 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TestTDECCCM.DoReadTagBeforeDone;
+var
+  Tag: TBytes;
+begin
+  Tag := FCipherAES.CalculatedAuthenticationResult;
+end;
+
+procedure TestTDECCCM.DoEncodeAfterDone;
+var
+  Data: TBytes;
+begin
+  SetLength(Data, 4);
+  FillChar(Data[0], Length(Data), $A5);
+  FCipherAES.EncodeBytes(Data);
+end;
+
+procedure TestTDECCCM.TestCalculatedAuthenticationResultBeforeDoneRaises;
+var
+  TestData: TSingleAuthenticatedTestData;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.EncodeBytes(TFormat_HexL.Decode(BytesOf(TestData.PT)));
+  CheckException(DoReadTagBeforeDone, EDECCipherException,
+                 'CalculatedAuthenticationResult before Done must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestEncodeAfterDoneRejected;
+var
+  TestData: TSingleAuthenticatedTestData;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.EncodeBytes(TFormat_HexL.Decode(BytesOf(TestData.PT)));
+  FCipherAES.Done;
+  CheckException(DoEncodeAfterDone, EDECCipherException,
+                 'Encode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestDoneIdempotent;
+var
+  TestData: TSingleAuthenticatedTestData;
+  Tag1, Tag2: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.EncodeBytes(TFormat_HexL.Decode(BytesOf(TestData.PT)));
+  FCipherAES.Done;
+  Tag1 := Copy(FCipherAES.CalculatedAuthenticationResult);
+  FCipherAES.Done;
+  Tag2 := FCipherAES.CalculatedAuthenticationResult;
+  CheckTrue(IsEqual(Tag1, Tag2),
+            'Second Done must not change CalculatedAuthenticationResult');
 end;
 
 initialization

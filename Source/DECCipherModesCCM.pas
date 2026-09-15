@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -51,6 +51,19 @@ type
     ///   Init vector which is modified during processing
     /// </summary>
     FInitVector                  : TBlock16Byte;
+    /// <summary>
+    ///   CBC-MAC state after Encode/Decode; the authentication tag is derived
+    ///   from this in Done (S_0 XOR T), not inside Encode/Decode.
+    /// </summary>
+    FMacBlock                   : TBlock16Byte;
+    /// <summary>
+    ///   L parameter (octets of the length field) used to restore CTR_0 in Done
+    /// </summary>
+    FLengthFieldOctets          : UInt16;
+    /// <summary>
+    ///   True after Encode/Decode has produced a CBC-MAC state for Done
+    /// </summary>
+    FMacReady                   : Boolean;
 
     /// <summary>
     ///   Encodes or decodes a block of data using the supplied cipher
@@ -69,6 +82,11 @@ type
     ///   When true it is encrypting data, else it is descrypting data
     /// </param>
     procedure EncodeDecode(Source, Dest: PUInt8Array; Size: Integer; Encode: Boolean);
+    /// <summary>
+    ///   Derives CalculatedAuthenticationTag from FMacBlock (S_0 XOR T).
+    ///   Called from Done after Encode/Decode have finished the CBC-MAC.
+    /// </summary>
+    procedure FinalizeAuthenticationTag;
   strict protected
     /// <summary>
     ///   Defines the length of the resulting authentication value in bit.
@@ -128,6 +146,14 @@ type
                      Size   : Integer); override;
 
     /// <summary>
+    ///   Materializes CalculatedAuthenticationTag from the CBC-MAC state.
+    ///   Must be called after the last Encode/Decode (cipher Done does this).
+    ///   Idempotent: a second call leaves the tag unchanged.
+    ///   After finalization, Encode/Decode raise until Init is called again.
+    /// </summary>
+    procedure Done; override;
+
+    /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
@@ -165,6 +191,7 @@ begin
     ProtectBytes(FOrigInitVector);
 
   ProtectBuffer(FInitVector,                   SizeOf(FInitVector));
+  ProtectBuffer(FMacBlock,                   SizeOf(FMacBlock));
   ProtectBytes(FCalcAuthenticationTag);
   ProtectBytes(FExpectedAuthenticationTag);
 
@@ -181,9 +208,6 @@ procedure TCCM.EncodeDecode(Source, Dest: PUInt8Array;
                             Encode: Boolean);
 var
   ecc         : TBlock16Byte; // encrypted counter
-  FixedTagBuf : TBlock16Byte; // during calculation buffer of authentication tag
-                              // might need to be bigger than then one specified
-                              // by the user
   len         : Int32;
   k, L        : UInt16;
   b           : UInt8;
@@ -211,6 +235,8 @@ var
   end;
 
 begin
+  CheckNotFinalized;
+
   if (Size > 0) and
      ((not Assigned(Source)) or (not Assigned(Dest))) then
     raise EDECCipherException.Create(sInvalidSourcePointer);
@@ -234,6 +260,7 @@ begin
 
   // Force Length(FInitVector) + L = 15. Since nLen <= 13, L is at least 2
   L := 15 - InitVectLen;
+  FLengthFieldOctets := L;
 
   // compose B_0 = Flags | Nonce N | l(m)
   // octet 0: Flags = 64*HdrPresent | 8*((tLen-2) div 2 | (L-1)
@@ -354,15 +381,10 @@ begin
     FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
   end;
 
-  // setup counter for the tag (zero the count)
-  for k := 15 downto 16-L do
-    FInitVector[k] := 0;
-
-  FEncryptionMethod(@FInitVector[0], @ecc[0], Length(ecc));
-
-  // store the TAG/Authentication result value
-  XORBuffers(Buf[0], ecc[0],  16, FixedTagBuf);
-  Move(FixedTagBuf[0], FCalcAuthenticationTag[0], length(FCalcAuthenticationTag));
+  // Keep CBC-MAC state for Done; do not materialize the tag here so CCM
+  // shares the Init → Encode/Decode* → Done → tag lifecycle with GCM.
+  Move(Buf[0], FMacBlock[0], SizeOf(FMacBlock));
+  FMacReady := True;
 
   ProtectBuffer(Buf, SizeOf(Buf));
 end;
@@ -394,6 +416,48 @@ begin
   inherited;
 
   FOrigInitVector := InitVector;
+  FMacReady := False;
+  FLengthFieldOctets := 0;
+end;
+
+procedure TCCM.FinalizeAuthenticationTag;
+var
+  ecc         : TBlock16Byte;
+  FixedTagBuf : TBlock16Byte;
+  k           : UInt16;
+begin
+  // Restore CTR_0 (zero the count) and encrypt to get S_0, then tag = T XOR S_0.
+  // See RFC 3610 §2.6 / NIST SP 800-38C: authentication tag is not part of Encode.
+  for k := 15 downto 16 - FLengthFieldOctets do
+  begin
+    FInitVector[k] := 0;
+  end;
+
+  FEncryptionMethod(@FInitVector[0], @ecc[0], Length(ecc));
+
+  XORBuffers(FMacBlock[0], ecc[0], 16, FixedTagBuf);
+  if (Length(FCalcAuthenticationTag) > 0) then
+  begin
+    Move(FixedTagBuf[0], FCalcAuthenticationTag[0], Length(FCalcAuthenticationTag));
+  end;
+
+  ProtectBuffer(ecc, SizeOf(ecc));
+  ProtectBuffer(FixedTagBuf, SizeOf(FixedTagBuf));
+end;
+
+procedure TCCM.Done;
+begin
+  if FFinalized then
+    Exit;
+
+  if not FMacReady then
+  begin
+    // Empty payload / AAD-only: format B_0 with l(m)=0 and process AAD.
+    EncodeDecode(nil, nil, 0, True);
+  end;
+
+  FinalizeAuthenticationTag;
+  inherited;
 end;
 
 end.

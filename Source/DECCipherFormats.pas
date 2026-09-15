@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -732,8 +732,8 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
     if Length(Result) > 0 then
       Encode(Source[0], Result[0], Length(Source))
     else
-      if (FMode = cmGCM) then
-        EncodeGCM(nil, nil, 0);
+      if (FMode = cmGCM) or (FMode = cmCCM) then
+        EncodeAuthenticated(nil, nil, 0);
   end;
 
 begin
@@ -755,8 +755,8 @@ begin
     Decode(Source[0], Result[0], Length(Source));
   end
   else
-    if (FMode = cmGCM) then
-      DecodeGCM(nil, nil, 0);
+    if (FMode = cmGCM) or (FMode = cmCCM) then
+      DecodeAuthenticated(nil, nil, 0);
 
   if not (FPaddingClass = nil) then
     Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
