@@ -103,13 +103,6 @@ type
     FEncryptionMethod            : TEncodeDecodeMethod;
 
     /// <summary>
-    ///   True after Done has materialized the authentication tag. Reading
-    ///   CalculatedAuthenticationTag before this is set raises. Encode/Decode
-    ///   after finalization also raises until Init is called again.
-    /// </summary>
-    FFinalized                  : Boolean;
-
-    /// <summary>
     ///   Defines the length of the resulting authentication value in bit.
     /// </summary>
     /// <param name="Value">
