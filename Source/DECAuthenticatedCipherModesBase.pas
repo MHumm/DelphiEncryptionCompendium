@@ -59,19 +59,21 @@ type
   ///   Base class for authenticated cipher modes (GCM, CCM, future AEAD modes).
   /// </summary>
   /// <remarks>
-  ///   Lifecycle for multi-call capable modes (e.g. GCM):
+  ///   Lifecycle for authenticated modes (GCM, CCM):
   ///   <para>
   ///     Init → set AAD / tag length / expected tag → Encode/Decode* → Done →
   ///     read CalculatedAuthenticationTag.
   ///   </para>
   ///   <para>
-  ///     Done must be called before the calculated authentication tag is valid
-  ///     for multi-call streams. Done is idempotent. After Done, further
-  ///     Encode/Decode raises until Init is called again.
+  ///     Done must be called before CalculatedAuthenticationTag may be read.
+  ///     Reading the tag before Done raises EDECCipherException. Done is
+  ///     idempotent. After Done, further Encode/Decode raises until Init is
+  ///     called again.
   ///   </para>
   ///   <para>
-  ///     CCM remains one-shot (single Encode/Decode with full message length);
-  ///     Done still verifies ExpectedAuthenticationTag when set.
+  ///     GCM supports multi-call Encode/Decode. CCM currently remains one-shot
+  ///     (single Encode/Decode with the full message length); the tag is still
+  ///     materialized in Done so both modes share the same lifecycle.
   ///   </para>
   /// </remarks>
   TAuthenticatedCipherModesBase = class(TObject)
@@ -101,6 +103,13 @@ type
     FEncryptionMethod            : TEncodeDecodeMethod;
 
     /// <summary>
+    ///   True after Done has materialized the authentication tag. Reading
+    ///   CalculatedAuthenticationTag before this is set raises. Encode/Decode
+    ///   after finalization also raises until Init is called again.
+    /// </summary>
+    FFinalized                  : Boolean;
+
+    /// <summary>
     ///   Defines the length of the resulting authentication value in bit.
     /// </summary>
     /// <param name="Value">
@@ -120,6 +129,24 @@ type
     ///   Length of the calculated authentication value in bit
     /// </returns>
     function GetAuthenticationTagBitLength: UInt32; virtual;
+    /// <summary>
+    ///   Returns the calculated authentication tag. Raises if Done has not
+    ///   been called yet.
+    /// </summary>
+    /// <returns>
+    ///   Calculated authentication tag bytes
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the tag is read before Done.
+    /// </exception>
+    function GetCalculatedAuthenticationTag: TBytes; virtual;
+    /// <summary>
+    ///   Raises EDECCipherException when Encode/Decode is attempted after Done.
+    /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the mode has already been finalized.
+    /// </exception>
+    procedure CheckNotFinalized;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -169,8 +196,9 @@ type
 
     /// <summary>
     ///   Finalizes the authentication tag after all Encode/Decode calls.
-    ///   Idempotent. Default implementation is a no-op (suitable for modes that
-    ///   already compute the tag inside Encode/Decode, e.g. CCM).
+    ///   Idempotent. Marks the tag as readable via CalculatedAuthenticationTag.
+    ///   Concrete modes that defer tag computation (GCM, CCM) override this
+    ///   to materialize the tag before calling inherited.
     /// </summary>
     procedure Done; virtual;
 
@@ -179,7 +207,8 @@ type
     ///   the official specification of the standard.
     /// </summary>
     /// <returns>
-    ///   List of bit lengths
+    ///   List of bit lengths prescribed by the mode specification. If the
+    ///   mode does not prescribe any tag lengths, an empty array is returned.
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths; virtual;
 
@@ -200,11 +229,15 @@ type
       read   GetAuthenticationTagBitLength
       write  SetAuthenticationTagLength;
     /// <summary>
-    ///   Calculated authentication value. For multi-call modes this is only
-    ///   complete after Done has been called.
+    ///   Calculated authentication value. Valid only after Done has been
+    ///   called. Reading this property before Done raises EDECCipherException
+    ///   so callers follow the Init → Encode/Decode* → Done → tag lifecycle.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the property is read before Done.
+    /// </exception>
     property CalculatedAuthenticationTag : TBytes
-      read   FCalcAuthenticationTag
+      read   GetCalculatedAuthenticationTag
       write  FCalcAuthenticationTag;
 
     /// <summary>
@@ -221,6 +254,12 @@ implementation
 uses
   DECUtil;
 
+resourcestring
+  sAuthenticationTagNotFinalized =
+    'Calculated authentication tag is not available before Done has been called';
+  sAuthenticatedModeAlreadyFinalized =
+    'Authenticated cipher mode already finalized; call Init before further Encode/Decode';
+
 { TAuthenticatedCipherModesBase }
 
 function TAuthenticatedCipherModesBase.GetAuthenticationTagBitLength: UInt32;
@@ -228,8 +267,25 @@ begin
   Result := FCalcAuthenticationTagLength shl 3;
 end;
 
+function TAuthenticatedCipherModesBase.GetCalculatedAuthenticationTag: TBytes;
+begin
+  if not FFinalized then
+    raise EDECCipherException.CreateRes(@sAuthenticationTagNotFinalized);
+
+  Result := FCalcAuthenticationTag;
+end;
+
+procedure TAuthenticatedCipherModesBase.CheckNotFinalized;
+begin
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sAuthenticatedModeAlreadyFinalized);
+end;
+
 function TAuthenticatedCipherModesBase.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 begin
+  // No prescribed lengths at this abstraction: return an empty array rather
+  // than a dummy 0-entry so callers can distinguish "none specified" from a
+  // specified length of 0 bits.
   SetLength(Result, 0);
 end;
 
@@ -250,12 +306,12 @@ begin
   end;
 
   FEncryptionMethod := EncryptionMethod;
+  FFinalized := False;
 end;
 
 procedure TAuthenticatedCipherModesBase.Done;
 begin
-  // Default: no deferred finalization (CCM computes the tag in Encode/Decode).
-  // Streaming modes such as GCM override this to materialize the tag.
+  FFinalized := True;
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);

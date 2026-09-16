@@ -81,11 +81,12 @@ type
     /// </summary>
     /// <returns>
     ///   Result of the authentication. Raises an EDECCipherException if this is
-    ///   called for a cipher mode not supporting authentication.
+    ///   called for a cipher mode not supporting authentication, or if Done
+    ///   has not been called yet.
     /// </returns>
     /// <exception cref="EDECCipherException">
     ///   Exception raised if called for a cipher mode not supporting
-    ///   authentication.
+    ///   authentication, or if the tag is read before Done.
     /// </exception>
     function  GetCalcAuthenticatonResult: TBytes;
     /// <summary>
@@ -235,16 +236,20 @@ type
     /// </summary>
     procedure EncodeCTSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
-    ///   Authenticated encryption via FAuthObj (GCM, CCM). Kept as EncodeGCM for
-    ///   protected-API compatibility; dispatches to the active auth mode object.
+    ///   Authenticated encryption via FAuthObj (GCM, CCM, future AEAD modes).
+    ///   Replaces the former protected EncodeGCM / EncodeCCM entry points.
     ///   Callable even if source length is 0 (AAD-only / empty PT).
     /// </summary>
-    procedure EncodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
-    /// <summary>
-    ///   Authenticated encryption via FAuthObj. Alias retained for protected-API
-    ///   compatibility with code that overrode EncodeCCM.
-    /// </summary>
-    procedure EncodeCCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
+    /// <param name="Source">
+    ///   Plain text to encrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Ciphertext after encryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to encrypt
+    /// </param>
+    procedure EncodeAuthenticated(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC, with
@@ -329,15 +334,19 @@ type
     /// </summary>
     procedure DecodeCTSx(Source, Dest: PUInt8Array; Size: Integer); virtual;
     /// <summary>
-    ///   Authenticated decryption via FAuthObj (GCM, CCM). Kept as DecodeGCM for
-    ///   protected-API compatibility.
+    ///   Authenticated decryption via FAuthObj (GCM, CCM, future AEAD modes).
+    ///   Replaces the former protected DecodeGCM / DecodeCCM entry points.
     /// </summary>
-    procedure DecodeGCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
-    /// <summary>
-    ///   Authenticated decryption via FAuthObj. Alias retained for protected-API
-    ///   compatibility with code that overrode DecodeCCM.
-    /// </summary>
-    procedure DecodeCCM(Source, Dest: PUInt8Array; Size: Integer); virtual;
+    /// <param name="Source">
+    ///   Encrypted ciphertext to decrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Plaintext after decryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to decrypt
+    /// </param>
+    procedure DecodeAuthenticated(Source, Dest: PUInt8Array; Size: Integer); virtual;
     {$IFDEF DEC3_CMCTS}
     /// <summary>
     ///   double CBC
@@ -401,8 +410,10 @@ type
     ///   specified by the official specification of the standard.
     /// </summary>
     /// <returns>
-    ///   List of bit lengths. If the cipher mode used is not an authenticated
-    ///   one, the array will just contain a single value of 0.
+    ///   List of bit lengths prescribed by the authenticated mode. If the
+    ///   cipher mode used is not an authenticated one, the array will just
+    ///   contain a single value of 0. If an authenticated mode does not
+    ///   prescribe tag lengths, an empty array is returned.
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
 
@@ -430,12 +441,13 @@ type
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it. This property contains the generated
-    ///   authentication tag. Raises an EDECCipherException if this is
-    ///   called for a cipher mode not supporting authentication.
+    ///   authentication tag. Call Done before reading it; reading the tag
+    ///   before Done raises EDECCipherException. Raises an EDECCipherException
+    ///   if this is called for a cipher mode not supporting authentication.
     /// </summary>
     /// <exception cref="EDECCipherException">
     ///   Exception raised if called for a cipher mode not supporting
-    ///   authentication.
+    ///   authentication, or if the tag is read before Done.
     /// </exception>
     property CalculatedAuthenticationResult  : TBytes
       read   GetCalcAuthenticatonResult;
@@ -528,8 +540,8 @@ begin
     cmOFBx:   EncodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   EncodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   EncodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   EncodeGCM(@Source, @Dest, DataSize);
-    cmCCM :   EncodeCCM(@Source, @Dest, DataSize);
+    cmGCM :   EncodeAuthenticated(@Source, @Dest, DataSize);
+    cmCCM :   EncodeAuthenticated(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -854,23 +866,14 @@ begin
     FState := csEncode;
 end;
 
-procedure TDECCipherModes.EncodeGCM(Source, Dest: PUInt8Array; Size: Integer);
+procedure TDECCipherModes.EncodeAuthenticated(Source, Dest: PUInt8Array; Size: Integer);
 begin
+  if not Assigned(FAuthObj) then
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
+
   if (Size < 0) then
     Size := 0;
 
-  // Dispatch through FAuthObj (TGCM when Mode=cmGCM). Independent of EncodeCCM
-  // so a subclass override of one entry point does not affect the other.
-  FAuthObj.Encode(Source, Dest, Size);
-end;
-
-procedure TDECCipherModes.EncodeCCM(Source, Dest: PUInt8Array; Size: Integer);
-begin
-  if (Size < 0) then
-    Size := 0;
-
-  // Same FAuthObj.Encode body as EncodeGCM, but a separate protected entry so
-  // overriding EncodeGCM does not change CCM behaviour (and vice versa).
   FAuthObj.Encode(Source, Dest, Size);
 end;
 
@@ -916,8 +919,8 @@ begin
     cmOFBx:   DecodeOFBx(@Source, @Dest, DataSize);
     cmCFS8:   DecodeCFS8(@Source, @Dest, DataSize);
     cmCFSx:   DecodeCFSx(@Source, @Dest, DataSize);
-    cmGCM :   DecodeGCM(@Source, @Dest, DataSize);
-    cmCCM :   DecodeCCM(@Source, @Dest, DataSize);
+    cmGCM :   DecodeAuthenticated(@Source, @Dest, DataSize);
+    cmCCM :   DecodeAuthenticated(@Source, @Dest, DataSize);
   end;
 end;
 
@@ -956,21 +959,14 @@ begin
   end;
 end;
 
-procedure TDECCipherModes.DecodeGCM(Source, Dest: PUInt8Array; Size: Integer);
+procedure TDECCipherModes.DecodeAuthenticated(Source, Dest: PUInt8Array; Size: Integer);
 begin
+  if not Assigned(FAuthObj) then
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
+
   if (Size < 0) then
     Size := 0;
 
-  // Independent of DecodeCCM — see EncodeGCM/EncodeCCM.
-  FAuthObj.Decode(Source, Dest, Size);
-end;
-
-procedure TDECCipherModes.DecodeCCM(Source, Dest: PUInt8Array; Size: Integer);
-begin
-  if (Size < 0) then
-    Size := 0;
-
-  // Separate protected entry from DecodeGCM; same FAuthObj.Decode body.
   FAuthObj.Decode(Source, Dest, Size);
 end;
 
@@ -1130,8 +1126,8 @@ begin
 
   if Assigned(FAuthObj) then
   begin
-    // Finalize multi-call authentication (GCM) before optional ExpectedTag check.
-    // CCM Done is a no-op on the mode object (tag already computed in Encode/Decode).
+    // Finalize authentication (GCM GHASH / CCM CBC-MAC tag) before optional
+    // ExpectedTag check. Both modes materialize the tag in FAuthObj.Done.
     FAuthObj.Done;
 
     if (Length(FAuthObj.ExpectedAuthenticationTag) > 0) and
