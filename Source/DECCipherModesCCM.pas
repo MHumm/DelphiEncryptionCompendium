@@ -52,19 +52,70 @@ type
     /// </summary>
     FInitVector                  : TBlock16Byte;
     /// <summary>
-    ///   CBC-MAC state after Encode/Decode; the authentication tag is derived
-    ///   from this in Done (S_0 XOR T), not inside Encode/Decode.
+    ///   CBC-MAC state; the authentication tag is derived from this in Done
     /// </summary>
     FMacBlock                   : TBlock16Byte;
+    /// <summary>
+    ///   Number of payload bytes already XORed into FMacBlock since the last AES
+    /// </summary>
+    FMacFill                    : Integer;
+    /// <summary>
+    ///   Leftover CTR keystream for unaligned multi-chunk Encode/Decode
+    /// </summary>
+    FKeystream                  : TBlock16Byte;
+    /// <summary>
+    ///   Next unused index in FKeystream
+    /// </summary>
+    FKeystreamOffset             : Integer;
+    /// <summary>
+    ///   Unused leftover keystream bytes (0..15)
+    /// </summary>
+    FKeystreamRemain             : Integer;
     /// <summary>
     ///   L parameter (octets of the length field) used to restore CTR_0 in Done
     /// </summary>
     FLengthFieldOctets          : UInt16;
     /// <summary>
-    ///   True after Encode/Decode has produced a CBC-MAC state for Done
+    ///   Total payload length in bytes (known before B_0 is formatted)
     /// </summary>
-    FMacReady                   : Boolean;
+    FExpectedPayloadLength       : UInt64;
+    /// <summary>
+    ///   Payload bytes processed since Start
+    /// </summary>
+    FPayloadProcessed            : UInt64;
+    /// <summary>
+    ///   True after DeclarePayloadLength or after the first Encode/Decode
+    ///   has taken Size as the total (one-shot)
+    /// </summary>
+    FPayloadLengthDeclared       : Boolean;
+    /// <summary>
+    ///   True after B_0, AAD and CTR have been set up
+    /// </summary>
+    FStarted                    : Boolean;
 
+    /// <summary>
+    ///   Increments the CCM counter in the last L octets of CTR
+    /// </summary>
+    /// <param name="ACTR">
+    ///   Counter block to increment in place
+    /// </param>
+    procedure IncCTR(var ACTR: TBlock16Byte);
+    /// <summary>
+    ///   Formats B_0 and AAD, then sets up CTR. Total payload length must
+    ///   already be known (declared or taken from the first call's Size).
+    /// </summary>
+    /// <param name="ATotalLength">
+    ///   Total payload length l(m) encoded in B_0
+    /// </param>
+    procedure Start(const ATotalLength: UInt64);
+    /// <summary>
+    ///   Starts processing on the first Encode/Decode if not already started
+    /// </summary>
+    /// <param name="AChunkSize">
+    ///   Size of this Encode/Decode call; used as the total when no length
+    ///   was declared
+    /// </param>
+    procedure EnsureStarted(AChunkSize: Integer);
     /// <summary>
     ///   Encodes or decodes a block of data using the supplied cipher
     /// </summary>
@@ -96,6 +147,13 @@ type
     ///   are: 32, 48, 64, 80, 96, 112, 128
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); override;
+    /// <summary>
+    ///   Rejects AAD assignment after Encode/Decode has started or after Done
+    /// </summary>
+    /// <param name="Value">
+    ///   Additional authenticated data
+    /// </param>
+    procedure SetDataToAuthenticate(const Value: TBytes); override;
   public
     /// <summary>
     ///   Savely clear any buffers
@@ -161,6 +219,31 @@ type
     ///   List of bit lengths
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths; override;
+
+    /// <summary>
+    ///   CCM can process several Encode/Decode chunks when the total payload
+    ///   length is known (DeclarePayloadLength or one-shot Size). CCM is not
+    ///   an online AEAD: B_0 encodes l(m). See RFC 3610 §1 / NIST SP 800-38C.
+    /// </summary>
+    /// <returns>
+    ///   True
+    /// </returns>
+    function SupportsMultiChunk: Boolean; override;
+    /// <summary>
+    ///   Declares the total payload length in bytes before the first
+    ///   Encode/Decode. Ignored if a length is already set or processing started.
+    /// </summary>
+    /// <param name="AByteLength">
+    ///   Total plaintext/ciphertext length in bytes
+    /// </param>
+    procedure DeclarePayloadLength(const AByteLength: UInt64); override;
+    /// <summary>
+    ///   Returns the payload length declared for this CCM instance
+    /// </summary>
+    /// <returns>
+    ///   Declared payload length in bytes
+    /// </returns>
+    function GetDeclaredPayloadLength: UInt64; override;
   end;
 
 implementation
@@ -179,6 +262,12 @@ resourcestring
   ///   Exception raised when a size but no source data pointer was passed
   /// </summary>
   sInvalidSourcePointer = 'No source data pointer passed';
+  sCCMPayloadTooLong =
+    'CCM payload exceeds the declared length';
+  sCCMIncompletePayload =
+    'CCM payload is shorter than the declared length';
+  sCCMAADLocked =
+    'CCM DataToAuthenticate cannot be changed after Encode/Decode has started or after Done';
 
 procedure TCCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
 begin
@@ -190,8 +279,9 @@ begin
   if (Length(FOrigInitVector) > 0) then
     ProtectBytes(FOrigInitVector);
 
-  ProtectBuffer(FInitVector,                   SizeOf(FInitVector));
-  ProtectBuffer(FMacBlock,                   SizeOf(FMacBlock));
+  ProtectBuffer(FInitVector, SizeOf(FInitVector));
+  ProtectBuffer(FMacBlock, SizeOf(FMacBlock));
+  ProtectBuffer(FKeystream, SizeOf(FKeystream));
   ProtectBytes(FCalcAuthenticationTag);
   ProtectBytes(FExpectedAuthenticationTag);
 
@@ -203,190 +293,267 @@ begin
   EncodeDecode(Source, Dest, Size, true);
 end;
 
-procedure TCCM.EncodeDecode(Source, Dest: PUInt8Array;
-                            Size: Integer;
-                            Encode: Boolean);
+procedure TCCM.IncCTR(var ACTR: TBlock16Byte);
 var
-  ecc         : TBlock16Byte; // encrypted counter
-  len         : Int32;
-  k, L        : UInt16;
-  b           : UInt8;
-  pb          : PByte;
-  AuthDataLen : Integer; // Length of data to authenticate in bytes
-  InitVectLen : Integer; // Length of the init vector in bytes
-
-  Buf         : TBlock16Byte;
-
-  // Increment CTR[15]..CTR[16-L]
-  procedure IncCTR(var CTR: TBlock16Byte);
-  var
-    j: integer;
+  j: Integer;
+begin
+  for j := 15 downto 16 - FLengthFieldOctets do
   begin
-    for j := 15 downto 16-L do
+    if (ACTR[j] = $FF) then
+      ACTR[j] := 0
+    else
     begin
-      if (CTR[j] = $FF) then
-        CTR[j] := 0
-      else
-      begin
-        inc(CTR[j]);
-        exit;
-      end;
+      Inc(ACTR[j]);
+      Exit;
     end;
   end;
+end;
 
+procedure TCCM.DeclarePayloadLength(const AByteLength: UInt64);
 begin
   CheckNotFinalized;
 
-  if (Size > 0) and
-     ((not Assigned(Source)) or (not Assigned(Dest))) then
-    raise EDECCipherException.Create(sInvalidSourcePointer);
+  if FStarted or FPayloadLengthDeclared then
+    Exit;
 
+  FExpectedPayloadLength := AByteLength;
+  FPayloadLengthDeclared := True;
+end;
+
+function TCCM.SupportsMultiChunk: Boolean;
+begin
+  Result := True;
+end;
+
+function TCCM.GetDeclaredPayloadLength: UInt64;
+begin
+  Result := FExpectedPayloadLength;
+end;
+
+procedure TCCM.SetDataToAuthenticate(const Value: TBytes);
+begin
+  if FStarted or FFinalized then
+    raise EDECCipherException.CreateRes(@sCCMAADLocked);
+
+  inherited SetDataToAuthenticate(Value);
+end;
+
+procedure TCCM.Start(const ATotalLength: UInt64);
+var
+  len         : UInt64;
+  AADPos      : Integer;
+  k, L        : UInt16;
+  b           : UInt8;
+  pb          : PByte;
+  AuthDataLen : Integer;
+  InitVectLen : Integer;
+  Buf         : TBlock16Byte;
+begin
   AuthDataLen := Length(FDataToAuthenticate);
   InitVectLen := Length(FOrigInitVector);
 
-  // calculate L value = max(number of bytes needed for sLen, 15-nLen)
-  len := Size;
+  // L = bytes needed for l(m), then force nLen + L = 15 (RFC 3610 §2.1)
+  len := ATotalLength;
   L := 0;
   while (len > 0) do
   begin
-    inc(L);
+    Inc(L);
     len := len shr 8;
   end;
 
-  // Length of nonce (= init vector) is InitVectLen
   if (InitVectLen + L > 15) then
     raise EDECNonceLengthException.CreateFmt(sWrongNonceLengthDetailed,
-                                             [InitVectLen + L]);
+                                           [InitVectLen + L]);
 
-  // Force Length(FInitVector) + L = 15. Since nLen <= 13, L is at least 2
   L := 15 - InitVectLen;
   FLengthFieldOctets := L;
-
-  // compose B_0 = Flags | Nonce N | l(m)
-  // octet 0: Flags = 64*HdrPresent | 8*((tLen-2) div 2 | (L-1)
 
   if (AuthDataLen > 0) then
     b := 64
   else
     b := 0;
 
-  // Typecast for L-1 possible, since L is at least 2, see comment above
-  Buf[0] := b or ((FCalcAuthenticationTagLength-2) shl 2) or UInt16(L-1);
-  // octets 1..15-L is nonce
-  pb := @FOrigInitvector[0];
-  for k := 1 to 15-L do
+  Buf[0] := b or ((FCalcAuthenticationTagLength - 2) shl 2) or UInt16(L - 1);
+  pb := @FOrigInitVector[0];
+  for k := 1 to 15 - L do
   begin
     Buf[k] := pb^;
-    inc(pb);
+    Inc(pb);
   end;
 
-  // octets 16-L .. 15: l(m)
-  len := Size;
+  len := ATotalLength;
   for k := 1 to L do
   begin
-    Buf[16-k] := len and $FF;
+    Buf[16 - k] := len and $FF;
     len := len shr 8;
   end;
 
   FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
 
-  // process header
   if (AuthDataLen > 0) then
   begin
-    // octets 0..1: encoding of hLen. Note: since we allow max $FEFF bytes
-    // only these two octets are used. Generally up to 10 octets are needed.
     Buf[0] := Buf[0] xor (AuthDataLen shr 8);
     Buf[1] := Buf[1] xor (AuthDataLen and $FF);
-    // now append the hdr data
-    len := 2;
-    pb  := @FDataToAuthenticate[0];
-    for k:= 1 to AuthDataLen do
+    AADPos := 2;
+    pb := @FDataToAuthenticate[0];
+    for k := 1 to AuthDataLen do
     begin
-      if (len = 16) then
+      if (AADPos = 16) then
       begin
         FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
-        len := 0;
+        AADPos := 0;
       end;
-      Buf[len] := Buf[len] xor pb^;
-      inc(len);
-      inc(pb);
+      Buf[AADPos] := Buf[AADPos] xor pb^;
+      Inc(AADPos);
+      Inc(pb);
     end;
 
-    if (len <> 0) then
+    if (AADPos <> 0) then
       FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
   end;
 
-  // setup the counter for source text processing
   pb := @FOrigInitVector[0];
-  FInitVector[0] := (L-1) and $FF;
+  FInitVector[0] := (L - 1) and $FF;
   for k := 1 to 15 do
   begin
-    if (k < 16-L) then
+    if (k < 16 - L) then
     begin
       FInitVector[k] := pb^;
-      inc(pb);
+      Inc(pb);
     end
     else
       FInitVector[k] := 0;
   end;
 
-  // process full source text blocks
-  while (Size >= 16) do
+  Move(Buf[0], FMacBlock[0], SizeOf(FMacBlock));
+  FMacFill := 0;
+  FKeystreamRemain := 0;
+  FKeystreamOffset := 0;
+  FPayloadProcessed := 0;
+  FStarted := True;
+
+  ProtectBuffer(Buf, SizeOf(Buf));
+end;
+
+procedure TCCM.EnsureStarted(AChunkSize: Integer);
+var
+  TotalLen: UInt64;
+begin
+  if FStarted then
+    Exit;
+
+  if FPayloadLengthDeclared then
+    TotalLen := FExpectedPayloadLength
+  else
+  begin
+    if AChunkSize < 0 then
+      TotalLen := 0
+    else
+      TotalLen := UInt64(AChunkSize);
+    FExpectedPayloadLength := TotalLen;
+    FPayloadLengthDeclared := True;
+  end;
+
+  Start(TotalLen);
+end;
+
+procedure TCCM.EncodeDecode(Source, Dest: PUInt8Array;
+                            Size: Integer;
+                            Encode: Boolean);
+var
+  ecc   : TBlock16Byte;
+  b     : UInt8;
+  pSrc  : PByte;
+  pDst  : PByte;
+
+  procedure AbsorbMacByte(const APlain: UInt8);
+  begin
+    FMacBlock[FMacFill] := FMacBlock[FMacFill] xor APlain;
+    Inc(FMacFill);
+    if FMacFill = 16 then
+    begin
+      FEncryptionMethod(@FMacBlock[0], @FMacBlock[0], SizeOf(FMacBlock));
+      FMacFill := 0;
+    end;
+  end;
+
+  function NextKeystreamByte: UInt8;
+  begin
+    if FKeystreamRemain = 0 then
+    begin
+      IncCTR(FInitVector);
+      FEncryptionMethod(@FInitVector[0], @FKeystream[0], SizeOf(FKeystream));
+      FKeystreamOffset := 0;
+      FKeystreamRemain := 16;
+    end;
+    Result := FKeystream[FKeystreamOffset];
+    Inc(FKeystreamOffset);
+    Dec(FKeystreamRemain);
+  end;
+begin
+  CheckNotFinalized;
+
+  if Size < 0 then
+  begin
+    Size := 0;
+  end;
+
+  if (Size > 0) and
+     ((not Assigned(Source)) or (not Assigned(Dest))) then
+    raise EDECCipherException.Create(sInvalidSourcePointer);
+
+  EnsureStarted(Size);
+
+  if (UInt64(Size) + FPayloadProcessed) > FExpectedPayloadLength then
+    raise EDECCipherException.CreateRes(@sCCMPayloadTooLong);
+
+  // Fast path: 16-byte aligned blocks with no leftover MAC/keystream
+  while (Size >= 16) and (FMacFill = 0) and (FKeystreamRemain = 0) do
   begin
     IncCTR(FInitVector);
-    FEncryptionMethod(@FInitVector[0], @ecc[0], Length(FInitVector));
+    FEncryptionMethod(@FInitVector[0], @ecc[0], SizeOf(ecc));
 
     if Encode then
     begin
-      XORBuffers(Source[0], Buf[0], 16, Buf[0]);
+      XORBuffers(Source[0], FMacBlock[0], 16, FMacBlock[0]);
       XORBuffers(Source[0], ecc[0], 16, Dest[0]);
     end
     else
     begin
       XORBuffers(Source[0], ecc[0], 16, Dest[0]);
-      XORBuffers(Dest[0],   Buf[0], 16, Buf[0]);
+      XORBuffers(Dest[0], FMacBlock[0], 16, FMacBlock[0]);
     end;
 
-    FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
+    FEncryptionMethod(@FMacBlock[0], @FMacBlock[0], SizeOf(FMacBlock));
 
-    inc(PByte(Source), cBlockSize);
-    inc(PByte(Dest),   cBlockSize);
-    dec(Size, cBlockSize);
+    Inc(PByte(Source), cBlockSize);
+    Inc(PByte(Dest), cBlockSize);
+    Dec(Size, cBlockSize);
+    Inc(FPayloadProcessed, 16);
   end;
 
-  if (Size > 0) then
+  pSrc := PByte(Source);
+  pDst := PByte(Dest);
+
+  while Size > 0 do
   begin
-    // handle remaining bytes of source text
-    IncCTR(FInitVector);
-
-    FEncryptionMethod(@FInitVector[0], @ecc[0], Length(ecc));
-
-    for k := 0 to UInt16(Size - 1) do
+    if Encode then
     begin
-      if Encode then
-      begin
-        b := PByte(Source)^;
-        PByte(Dest)^ := b xor ecc[k];
-      end
-      else
-      begin
-        b := PByte(Source)^ xor ecc[k];
-        PByte(Dest)^ := b;
-      end;
-      Buf[k] := Buf[k] xor b;
-      inc(PByte(Source));
-      inc(PByte(Dest));
+      b := pSrc^;
+      pDst^ := b xor NextKeystreamByte;
+      AbsorbMacByte(b);
+    end
+    else
+    begin
+      b := pSrc^ xor NextKeystreamByte;
+      pDst^ := b;
+      AbsorbMacByte(b);
     end;
-
-    FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
+    Inc(pSrc);
+    Inc(pDst);
+    Dec(Size);
+    Inc(FPayloadProcessed);
   end;
-
-  // Keep CBC-MAC state for Done; do not materialize the tag here so CCM
-  // shares the Init → Encode/Decode* → Done → tag lifecycle with GCM.
-  Move(Buf[0], FMacBlock[0], SizeOf(FMacBlock));
-  FMacReady := True;
-
-  ProtectBuffer(Buf, SizeOf(Buf));
 end;
 
 function TCCM.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
@@ -416,8 +583,14 @@ begin
   inherited;
 
   FOrigInitVector := InitVector;
-  FMacReady := False;
+  FStarted := False;
+  FPayloadLengthDeclared := False;
+  FExpectedPayloadLength := 0;
+  FPayloadProcessed := 0;
   FLengthFieldOctets := 0;
+  FMacFill := 0;
+  FKeystreamRemain := 0;
+  FKeystreamOffset := 0;
 end;
 
 procedure TCCM.FinalizeAuthenticationTag;
@@ -450,10 +623,21 @@ begin
   if FFinalized then
     Exit;
 
-  if not FMacReady then
+  if not FStarted then
   begin
     // Empty payload / AAD-only: format B_0 with l(m)=0 and process AAD.
-    EncodeDecode(nil, nil, 0, True);
+    EnsureStarted(0);
+  end;
+
+  if FPayloadProcessed < FExpectedPayloadLength then
+    raise EDECCipherException.CreateRes(@sCCMIncompletePayload);
+
+  // Last partial CBC-MAC block is padded with implicit zeros (already in
+  // the un-xored tail of FMacBlock) and encrypted here, not at chunk boundaries.
+  if FMacFill > 0 then
+  begin
+    FEncryptionMethod(@FMacBlock[0], @FMacBlock[0], SizeOf(FMacBlock));
+    FMacFill := 0;
   end;
 
   FinalizeAuthenticationTag;

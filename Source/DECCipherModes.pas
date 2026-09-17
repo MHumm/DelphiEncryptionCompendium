@@ -138,6 +138,20 @@ type
     ///   authentication.
     /// </exception>
     procedure SetExpectedAuthenticationResult(const Value: TBytes);
+    /// <summary>
+    ///   Returns the declared payload length for authenticated modes
+    /// </summary>
+    /// <returns>
+    ///   Declared payload length in bytes, or 0 if none / not applicable
+    /// </returns>
+    function GetAuthenticatedPayloadLength: UInt64;
+    /// <summary>
+    ///   Declares the total payload length for authenticated modes that need it
+    /// </summary>
+    /// <param name="Value">
+    ///   Total plaintext/ciphertext length in bytes
+    /// </param>
+    procedure SetAuthenticatedPayloadLength(const Value: UInt64);
   strict protected
     /// <summary>
     ///   Authenticated mode implementation (GCM, CCM, future AEAD modes).
@@ -416,6 +430,27 @@ type
     ///   prescribe tag lengths, an empty array is returned.
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
+
+    /// <summary>
+    ///   True when the current authenticated mode can process Encode/Decode
+    ///   in several calls before Done. GCM always can. CCM can when the total
+    ///   payload length is known in advance (set AuthenticatedPayloadLength, or
+    ///   a single Encode/Decode/EncodeStream that covers the whole message).
+    /// </summary>
+    /// <returns>
+    ///   True for GCM and CCM; False for non-authenticated modes
+    /// </returns>
+    function SupportsAuthenticatedMultiChunk: Boolean;
+
+    /// <summary>
+    ///   Total payload length in bytes for authenticated modes that need it
+    ///   before processing (CCM). Ignored by GCM. Set this before the first
+    ///   Encode/Decode when feeding CCM in several chunks. One EncodeStream
+    ///   of the full message sets it automatically from DataSize.
+    /// </summary>
+    property AuthenticatedPayloadLength: UInt64
+      read   GetAuthenticatedPayloadLength
+      write  SetAuthenticatedPayloadLength;
 
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
@@ -754,6 +789,30 @@ begin
     raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
 end;
 
+function TDECCipherModes.SupportsAuthenticatedMultiChunk: Boolean;
+begin
+  if Assigned(FAuthObj) then
+    Result := FAuthObj.SupportsMultiChunk
+  else
+    Result := False;
+end;
+
+function TDECCipherModes.GetAuthenticatedPayloadLength: UInt64;
+begin
+  if Assigned(FAuthObj) then
+    Result := FAuthObj.GetDeclaredPayloadLength
+  else
+    Result := 0;
+end;
+
+procedure TDECCipherModes.SetAuthenticatedPayloadLength(const Value: UInt64);
+begin
+  if Assigned(FAuthObj) then
+    FAuthObj.DeclarePayloadLength(Value)
+  else
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
+end;
+
 procedure TDECCipherModes.InitMode;
 begin
   // Always free previous auth object to avoid leaks on mode re-assignment
@@ -769,7 +828,18 @@ begin
       end;
     end
     else
-      // GCM and CCM require a cipher with 128 bit block size
+      // Keep the 128-bit block-size requirement for both GCM and CCM.
+      //
+      // GCM: NIST SP 800-38D requires a 128-bit block cipher. Do not weaken
+      // that AES-GCM safeguard.
+      //
+      // CCM: the original specification (Whiting, Housley, Ferguson, NIST
+      // submission "Counter with CBC-MAC (CCM)") is only defined for 128-bit
+      // block ciphers, such as AES. RFC 3610 §1 and NIST SP 800-38C repeat
+      // the same restriction. The original paper notes that the ideas can be
+      // extended to other block sizes, but "this will require further
+      // definitions" — so a 64-bit cipher (e.g. Blowfish) is not CCM as
+      // specified. We therefore do not special-case or loosen this check.
       raise EDECCipherException.CreateResFmt(@sInvalidBlockSize,
                                              [128, GetEnumName(TypeInfo(TCipherMode),
                                              Integer(FMode))]);

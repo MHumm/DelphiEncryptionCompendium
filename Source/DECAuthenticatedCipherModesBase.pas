@@ -71,9 +71,11 @@ type
   ///     called again.
   ///   </para>
   ///   <para>
-  ///     GCM supports multi-call Encode/Decode. CCM currently remains one-shot
-  ///     (single Encode/Decode with the full message length); the tag is still
-  ///     materialized in Done so both modes share the same lifecycle.
+  ///     GCM supports multi-call Encode/Decode without a pre-declared length.
+  ///     CCM can process several Encode/Decode chunks if the total payload
+  ///     length is known first (DeclarePayloadLength / one-shot Size).
+  ///     The authentication tag is materialized in Done so both modes share
+  ///     the same lifecycle.
   ///   </para>
   /// </remarks>
   TAuthenticatedCipherModesBase = class(TObject)
@@ -163,7 +165,8 @@ type
 
     /// <summary>
     ///   Encodes a block of data using the supplied cipher. May be called
-    ///   multiple times for modes that support streaming (e.g. GCM).
+    ///   multiple times for modes that support streaming (e.g. GCM, CCM
+    ///   with a declared payload length).
     /// </summary>
     /// <param name="Source">
     ///   Plain text to encrypt
@@ -179,7 +182,8 @@ type
                      Size   : Integer); virtual; abstract;
     /// <summary>
     ///   Decodes a block of data using the supplied cipher. May be called
-    ///   multiple times for modes that support streaming (e.g. GCM).
+    ///   multiple times for modes that support streaming (e.g. GCM, CCM
+    ///   with a declared payload length).
     /// </summary>
     /// <param name="Source">
     ///   Encrypted ciphertext to decrypt
@@ -201,6 +205,38 @@ type
     ///   to materialize the tag before calling inherited.
     /// </summary>
     procedure Done; virtual;
+
+    /// <summary>
+    ///   True when Encode/Decode may be called more than once before Done.
+    ///   GCM always supports this. CCM supports it when the total payload
+    ///   length is known in advance (CCM is not an online AEAD: B_0 encodes
+    ///   l(m); see RFC 3610 §1 and NIST SP 800-38C).
+    /// </summary>
+    /// <returns>
+    ///   True if the mode can process the payload in several Encode/Decode calls
+    /// </returns>
+    function SupportsMultiChunk: Boolean; virtual;
+
+    /// <summary>
+    ///   Declares the total payload length in bytes. Required by CCM before
+    ///   the first Encode/Decode when the message will be supplied in several
+    ///   chunks. Ignored by GCM. A later call is ignored once a length has
+    ///   been set or processing has started. One-shot Encode/Decode still
+    ///   works without this: the first call's Size is treated as the total.
+    /// </summary>
+    /// <param name="AByteLength">
+    ///   Total plaintext/ciphertext length in bytes (not including the tag)
+    /// </param>
+    procedure DeclarePayloadLength(const AByteLength: UInt64); virtual;
+
+    /// <summary>
+    ///   Returns the payload length last declared via DeclarePayloadLength or
+    ///   taken from a one-shot Encode/Decode. 0 if none.
+    /// </summary>
+    /// <returns>
+    ///   Declared payload length in bytes
+    /// </returns>
+    function GetDeclaredPayloadLength: UInt64; virtual;
 
     /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
@@ -312,6 +348,21 @@ end;
 procedure TAuthenticatedCipherModesBase.Done;
 begin
   FFinalized := True;
+end;
+
+function TAuthenticatedCipherModesBase.SupportsMultiChunk: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TAuthenticatedCipherModesBase.DeclarePayloadLength(const AByteLength: UInt64);
+begin
+  // Default: GCM and other online AEADs ignore a pre-declared length.
+end;
+
+function TAuthenticatedCipherModesBase.GetDeclaredPayloadLength: UInt64;
+begin
+  Result := 0;
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);

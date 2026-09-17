@@ -213,6 +213,10 @@ type
     procedure TestSetExpectedAuthenticationResult;
 
     /// <summary>
+    ///   GCM reports SupportsAuthenticatedMultiChunk = True.
+    /// </summary>
+    procedure TestSupportsAuthenticatedMultiChunk;
+    /// <summary>
     ///   Test for GitHub issue #86
     /// </summary>
     procedure TestEncodeConstData_86;
@@ -1140,6 +1144,12 @@ begin
   CheckEquals(112, BitLengths[2]);
   CheckEquals(120, BitLengths[3]);
   CheckEquals(128, BitLengths[4]);
+end;
+
+procedure TestTDECGCM.TestSupportsAuthenticatedMultiChunk;
+begin
+  CheckTrue(FCipherAES.SupportsAuthenticatedMultiChunk,
+            'GCM must report multi-chunk support');
 end;
 
 procedure TestTDECGCM.TestSetExpectedAuthenticationResult;
