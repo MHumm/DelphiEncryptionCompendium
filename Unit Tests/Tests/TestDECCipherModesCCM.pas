@@ -884,7 +884,7 @@ end;
 procedure TestTDECCCM.TestEncodeMultiChunkUneven;
 var
   TestData: TSingleAuthenticatedTestData;
-  PT, CT, Chunk, AllCT: TBytes;
+  PT, Chunk, AllCT: TBytes;
 begin
   // RFC 3610 Packet 1 (already in FTestDataList[0]): 23-byte PT, 64-bit tag
   TestData := FTestDataList[0].TestData[0];
@@ -918,7 +918,7 @@ end;
 procedure TestTDECCCM.TestDecodeMultiChunkUneven;
 var
   TestData: TSingleAuthenticatedTestData;
-  CT, PT, Chunk, AllPT: TBytes;
+  CT, Chunk, AllPT: TBytes;
 begin
   TestData := FTestDataList[0].TestData[0];
   CT := TFormat_HexL.Decode(BytesOf(TestData.CT));
