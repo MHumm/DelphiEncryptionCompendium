@@ -231,11 +231,17 @@ type
     function SupportsMultiChunk: Boolean; override;
     /// <summary>
     ///   Declares the total payload length in bytes before the first
-    ///   Encode/Decode. Ignored if a length is already set or processing started.
+    ///   Encode/Decode. Repeating the same length is idempotent. A different
+    ///   length, a call after Encode/Decode has started, or a call after Done
+    ///   raises EDECCipherException.
     /// </summary>
     /// <param name="AByteLength">
     ///   Total plaintext/ciphertext length in bytes
     /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Raised after Done, after processing has started, or when a different
+    ///   length is declared.
+    /// </exception>
     procedure DeclarePayloadLength(const AByteLength: UInt64); override;
     /// <summary>
     ///   Returns the payload length declared for this CCM instance
@@ -268,6 +274,10 @@ resourcestring
     'CCM payload is shorter than the declared length';
   sCCMAADLocked =
     'CCM DataToAuthenticate cannot be changed after Encode/Decode has started or after Done';
+  sCCMPayloadLengthAlreadyDeclared =
+    'CCM payload length already declared as a different value';
+  sCCMPayloadLengthLocked =
+    'CCM payload length cannot be declared after Encode/Decode has started';
 
 procedure TCCM.Decode(Source, Dest: PUInt8Array; Size: Integer);
 begin
@@ -313,8 +323,16 @@ procedure TCCM.DeclarePayloadLength(const AByteLength: UInt64);
 begin
   CheckNotFinalized;
 
-  if FStarted or FPayloadLengthDeclared then
+  if FStarted then
+    raise EDECCipherException.CreateRes(@sCCMPayloadLengthLocked);
+
+  if FPayloadLengthDeclared then
+  begin
+    if AByteLength <> FExpectedPayloadLength then
+      raise EDECCipherException.CreateRes(@sCCMPayloadLengthAlreadyDeclared);
+
     Exit;
+  end;
 
   FExpectedPayloadLength := AByteLength;
   FPayloadLengthDeclared := True;

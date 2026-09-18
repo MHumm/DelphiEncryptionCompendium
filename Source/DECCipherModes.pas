@@ -445,8 +445,10 @@ type
     /// <summary>
     ///   Total payload length in bytes for authenticated modes that need it
     ///   before processing (CCM). Ignored by GCM. Set this before the first
-    ///   Encode/Decode when feeding CCM in several chunks. One EncodeStream
-    ///   of the full message sets it automatically from DataSize.
+    ///   Encode/Decode when feeding CCM in several chunks. Repeating the same
+    ///   length is allowed; a different value, a set after Encode/Decode has
+    ///   started, or a set after Done raises EDECCipherException. One
+    ///   EncodeStream of the full message sets it automatically from DataSize.
     /// </summary>
     property AuthenticatedPayloadLength: UInt64
       read   GetAuthenticatedPayloadLength

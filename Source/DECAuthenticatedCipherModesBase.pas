@@ -220,9 +220,11 @@ type
     /// <summary>
     ///   Declares the total payload length in bytes. Required by CCM before
     ///   the first Encode/Decode when the message will be supplied in several
-    ///   chunks. Ignored by GCM. A later call is ignored once a length has
-    ///   been set or processing has started. One-shot Encode/Decode still
-    ///   works without this: the first call's Size is treated as the total.
+    ///   chunks. Ignored by GCM. For CCM, repeating the same length is
+    ///   idempotent; a different length, a call after Encode/Decode has
+    ///   started, or a call after Done raises EDECCipherException. One-shot
+    ///   Encode/Decode still works without this: the first call's Size is
+    ///   treated as the total.
     /// </summary>
     /// <param name="AByteLength">
     ///   Total plaintext/ciphertext length in bytes (not including the tag)

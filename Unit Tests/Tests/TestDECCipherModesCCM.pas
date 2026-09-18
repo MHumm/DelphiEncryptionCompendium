@@ -47,6 +47,7 @@ type
     FTestDataList  : TAuthenticatedTestDataList;
     FCipherAES     : TCipher_AES;
     FTestBitLength : Integer; // AuthenticationBitLength for test for wring lengths
+    FTestPayloadLength : UInt64; // payload length used by CheckException helpers
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestEncodeStream_LoadAndTestCAVSData(const aMaxChunkSize: Int64);
@@ -58,6 +59,7 @@ type
     procedure DoTestAuthenticationBitLengthWrong;
     procedure DoReadTagBeforeDone;
     procedure DoEncodeAfterDone;
+    procedure DoSetAuthenticatedPayloadLength;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -119,6 +121,26 @@ type
     ///   Several EncodeStream calls covering the message after declaring length.
     /// </summary>
     procedure TestEncodeStreamMultiChunk;
+    /// <summary>
+    ///   Re-declaring the same payload length is idempotent.
+    /// </summary>
+    procedure TestDeclarePayloadLengthIdempotent;
+    /// <summary>
+    ///   Re-declaring a different payload length must raise.
+    /// </summary>
+    procedure TestDeclarePayloadLengthDifferentRaises;
+    /// <summary>
+    ///   Declaring payload length after Encode has started must raise.
+    /// </summary>
+    procedure TestDeclarePayloadLengthAfterEncodeRaises;
+    /// <summary>
+    ///   Declaring payload length after Decode has started must raise.
+    /// </summary>
+    procedure TestDeclarePayloadLengthAfterDecodeRaises;
+    /// <summary>
+    ///   Declaring payload length after Done must raise via CheckNotFinalized.
+    /// </summary>
+    procedure TestDeclarePayloadLengthAfterDoneRaises;
   end;
 
 
@@ -964,6 +986,115 @@ end;
 procedure TestTDECCCM.TestEncodeStreamMultiChunk;
 begin
   DoTestEncodeStream_TestSingleSet(0, 0, 8);
+end;
+
+procedure TestTDECCCM.DoSetAuthenticatedPayloadLength;
+begin
+  FCipherAES.AuthenticatedPayloadLength := FTestPayloadLength;
+end;
+
+procedure TestTDECCCM.TestDeclarePayloadLengthIdempotent;
+var
+  TestData: TSingleAuthenticatedTestData;
+  PT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  PT := TFormat_HexL.Decode(BytesOf(TestData.PT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+
+  FCipherAES.AuthenticatedPayloadLength := UInt64(Length(PT));
+  FCipherAES.AuthenticatedPayloadLength := UInt64(Length(PT));
+
+  CheckEquals(Length(PT), Integer(FCipherAES.AuthenticatedPayloadLength),
+              'Re-declaring the same payload length must keep the declared value');
+end;
+
+procedure TestTDECCCM.TestDeclarePayloadLengthDifferentRaises;
+var
+  TestData: TSingleAuthenticatedTestData;
+  PT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  PT := TFormat_HexL.Decode(BytesOf(TestData.PT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+
+  FCipherAES.AuthenticatedPayloadLength := UInt64(Length(PT));
+  FTestPayloadLength := UInt64(Length(PT) + 1);
+  CheckException(DoSetAuthenticatedPayloadLength, EDECCipherException,
+                 'Re-declaring a different payload length must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestDeclarePayloadLengthAfterEncodeRaises;
+var
+  TestData: TSingleAuthenticatedTestData;
+  PT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  PT := TFormat_HexL.Decode(BytesOf(TestData.PT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.EncodeBytes(PT);
+
+  FTestPayloadLength := UInt64(Length(PT));
+  CheckException(DoSetAuthenticatedPayloadLength, EDECCipherException,
+                 'Declaring payload length after Encode has started must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestDeclarePayloadLengthAfterDecodeRaises;
+var
+  TestData: TSingleAuthenticatedTestData;
+  CT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  CT := TFormat_HexL.Decode(BytesOf(TestData.CT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.ExpectedAuthenticationResult :=
+    TFormat_HexL.Decode(BytesOf(TestData.TagResult));
+  FCipherAES.DecodeBytes(CT);
+
+  FTestPayloadLength := UInt64(Length(CT));
+  CheckException(DoSetAuthenticatedPayloadLength, EDECCipherException,
+                 'Declaring payload length after Decode has started must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestDeclarePayloadLengthAfterDoneRaises;
+var
+  TestData: TSingleAuthenticatedTestData;
+  PT: TBytes;
+begin
+  TestData := FTestDataList[0].TestData[0];
+  PT := TFormat_HexL.Decode(BytesOf(TestData.PT));
+
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(TestData.CryptKey)),
+                   BytesOf(TFormat_HexL.Decode(TestData.InitVector)),
+                   $FF);
+  FCipherAES.AuthenticationResultBitLength := FTestDataList[0].Taglen;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(TestData.AAD));
+  FCipherAES.EncodeBytes(PT);
+  FCipherAES.Done;
+
+  FTestPayloadLength := UInt64(Length(PT));
+  CheckException(DoSetAuthenticatedPayloadLength, EDECCipherException,
+                 'Declaring payload length after Done must raise EDECCipherException');
 end;
 
 initialization
