@@ -780,7 +780,10 @@ begin
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
 
-  if Assigned(FAuthObj) then
+  // One-shot authenticated streams declare DataSize as l(m) for CCM. Skip when
+  // a non-zero length is already set so multi-chunk EncodeStream can follow
+  // AuthenticatedPayloadLength without re-declaring the chunk size.
+  if Assigned(FAuthObj) and (FAuthObj.GetDeclaredPayloadLength = 0) then
   begin
     FAuthObj.DeclarePayloadLength(UInt64(DataSize));
   end;
