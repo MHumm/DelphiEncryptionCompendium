@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -57,7 +57,7 @@ type
     /// </summary>
     OutputHex       : RawByteString;
     /// <summary>
-    ///   Init Vektor für den ersten Test
+    ///   Init Vektor fÃ¼r den ersten Test
     /// </summary>
     InitVector      : RawByteString;
     /// <summary>
@@ -77,6 +77,11 @@ type
     ///   If it is a not authenticated mode the list only contains one entry "0"
     /// </summary>
     StdAuthTagBitLen: TStandardBitLengths;
+    /// <summary>
+    ///   If true this mode is an authenticated one which allows for feeding the
+    ///   data in several chunks instead of one go.
+    /// </summary>
+    SupportsAuthenticatedMultiChunk : Boolean;
   end;
 
   /// <summary>
@@ -94,7 +99,7 @@ type
   TTestFunction = procedure(Source, Dest: PUInt8Array; Size: Integer) of object;
 
   /// <summary>
-  ///   Testmethoden für Klasse TDECCipherModes
+  ///   Testmethoden fÃ¼r Klasse TDECCipherModes
   /// </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherModes = class(TTestCase)
@@ -102,7 +107,7 @@ type
     FCipher : TDECCipherModes;
 
     const
-      Data: array[1..27] of TTestEntry = ((Input:          'ABCDEFGHIJKLMNOPQRSTUVWX';
+      Data: array[1..27] of TTestEntry =((Input:           'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:          'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           TestClass:       TCipher_Null;
                                           Mode:            TCipherMode.cmECBx;
@@ -113,174 +118,199 @@ type
                                           TestClass: TCipher_Null;
                                           Mode:      TCipherMode.cmECBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '12345678';
                                           TestClass: TCipher_Null;
                                           Mode:      TCipherMode.cmECBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FE5A89A7A1F4BD29DFFADFCF2239E1F581106DA64C0AE704';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8F28FAD3D482CA51A680A4B35F479E95E0720EC2296C806C';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8E2AF9D7D184CD59';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FE604D3DF9C2AE3D7839AF5BDEE8FD9078544A1996EC4F1C';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8FD637FC449CF89F1E5EEBB66BED15C7F8C63B4481F74C5A';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EF08D6414063543';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFB8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FEAB3839BBA059FC1FECBF798CEF537803F10F15967E3ABD';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFS8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8F9661B53B06D611BA916562F4420DA4B6EFD550BF01DA2C';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFS8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EEA2F2F86159953';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFS8;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FED41297FD52669B4221F913AF978D77292C958B2A9E289A';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8FA661E3882411E33B5B826FD2E9F217484EF6EF4FF84FF2';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EA462E78D2216EB';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmOFBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FED41297FD52669B0DEC818A383ADA358E469BE634B7AFBC';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8FA661E3882411E3DB7258A29424D11F2BB6B4607D24D5DB';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EA462E78D2216EB';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input     : 'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output    : 'qsqwqsq'+#$7f+'89:;<=>/ikioikiw';
                                           InitVector: '01234567';
                                           TestClass : TCipher_NULL;
                                           Mode      : TCipherMode.cmCBCx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input     : '000000000000000000000000';
                                           Output    : '00000000' + #0#0#0#0#0#0#0#0 + '00000000';
                                           InitVector: #0#0#0#0#0#0#0#0;
                                           TestClass : TCipher_NULL;
                                           Mode      : TCipherMode.cmCBCx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input     : '000000000000000000000000';
                                           Output    : #0#1#2#3#4#5#6#7 + '01234567' + #0#1#2#3#4#5#6#7;
                                           InitVector: '01234567';
                                           TestClass : TCipher_NULL;
                                           Mode      : TCipherMode.cmCBCx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FD73DA2F279926A19A65EFA8EBA5EEB67A778C6CD73294F5';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCTSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '1D538CCCF38138A6BD4655272CC67443A0E32865EB422745';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCTSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EE274B893296F9E';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCTSx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     'ABCDEFGHIJKLMNOPQRSTUVWX';
                                           Output:    '';
                                           OutputHex: 'FED41297FD52669BF5361295F3BD937EF0644802ED92DC21';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '';
                                           OutputHex: '8FA661E3882411E35337C15BAE99B7CBDD988AC4FABB3368';
                                           TestClass: TCipher_1DES;
                                           Mode:      TCipherMode.cmCFBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '12345678';
                                           Output:    '';
                                           OutputHex: '8EA462E78D2216EB';
@@ -417,6 +447,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestIsAuthenticated;
+    procedure TestIsAuthenticatedMultiChunk;
     procedure TestGetStandardAuthenticationTagBitLengths;
     procedure TestFailureCallToDataToAuthehticateWrite;
     procedure TestFailureCallToDataToAuthehticateRead;
@@ -879,6 +910,27 @@ begin
 
       CheckEquals(true, Data[i].Mode = Cipher.Mode, 'Cipher mode not properly set');
       CheckEquals(Data[i].IsAuthenticated, Cipher.IsAuthenticated,
+                  'Wrong authentication mode for class: ' + Cipher.ClassName);
+    finally
+      Cipher.Free;
+    end;
+  end;
+end;
+
+procedure TestTDECCipherModes.TestIsAuthenticatedMultiChunk;
+var
+  i      : Integer;
+  Cipher : TDECCipherModes;
+begin
+  for i := Low(Data) to High(Data) do
+  begin
+    Cipher      := Data[i].TestClass.Create;
+
+    try
+      Cipher.Mode := Data[i].Mode;
+
+      CheckEquals(true, Data[i].Mode = Cipher.Mode, 'Cipher mode not properly set');
+      CheckEquals(Data[i].SupportsAuthenticatedMultiChunk, Cipher.SupportsAuthenticatedMultiChunk,
                   'Wrong authentication mode for class: ' + Cipher.ClassName);
     finally
       Cipher.Free;
