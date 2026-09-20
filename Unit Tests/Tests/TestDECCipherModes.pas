@@ -112,7 +112,8 @@ type
                                           TestClass:       TCipher_Null;
                                           Mode:            TCipherMode.cmECBx;
                                           IsAuthenticated: False;
-                                          StdAuthTagBitLen:[0]),
+                                          StdAuthTagBitLen:[0];
+                                          SupportsAuthenticatedMultiChunk : False),
                                          (Input:     '000000000000000000000000';
                                           Output:    '000000000000000000000000';
                                           TestClass: TCipher_Null;
