@@ -159,6 +159,31 @@
             <Form>FormMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="..\..\Source\DECCipherBase.pas"/>
+        <DCCReference Include="..\..\Source\DECBaseClass.pas"/>
+        <DCCReference Include="..\..\Source\DECFormatBase.pas"/>
+        <DCCReference Include="..\..\Source\DECTypes.pas"/>
+        <DCCReference Include="..\..\Source\DECCRC.pas"/>
+        <DCCReference Include="..\..\Source\DECUtil.pas"/>
+        <DCCReference Include="..\..\Source\DECUtilRawByteStringHelper.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherInterface.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherModes.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherModesCCM.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherModesGCM.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherPaddings.pas"/>
+        <DCCReference Include="..\..\Source\DECCiphers.pas"/>
+        <DCCReference Include="..\..\Source\DECAuthenticatedCipherModesBase.pas"/>
+        <DCCReference Include="..\..\Source\DECCipherFormats.pas"/>
+        <DCCReference Include="..\..\Source\DECRandom.pas"/>
+        <DCCReference Include="..\..\Source\DECHash.pas"/>
+        <DCCReference Include="..\..\Source\DECHashBase.pas"/>
+        <DCCReference Include="..\..\Source\DECDataHash.pas"/>
+        <DCCReference Include="..\..\Source\DECHashAuthentication.pas"/>
+        <DCCReference Include="..\..\Source\DECHashBitBase.pas"/>
+        <DCCReference Include="..\..\Source\DECHashInterface.pas"/>
+        <DCCReference Include="..\..\Source\DECFormat.pas"/>
+        <DCCReference Include="..\..\Source\DECData.pas"/>
+        <DCCReference Include="..\..\Source\DECDataCipher.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

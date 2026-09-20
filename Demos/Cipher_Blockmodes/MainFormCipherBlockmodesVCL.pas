@@ -137,7 +137,7 @@ implementation
 
 uses
   System.Types,
-  DecCiphers;
+  DECCiphers;
 
 {$R *.dfm}
 
