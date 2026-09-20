@@ -47,13 +47,16 @@ object FormMain: TFormMain
     Viewport.Height = 344.000000000000000000
     object StringColumn1: TStringColumn
       Header = 'Algorithm'
+      HeaderSettings.TextSettings.WordWrap = False
       ReadOnly = True
     end
     object StringColumn2: TStringColumn
       Header = 'Speed MB/s'
+      HeaderSettings.TextSettings.WordWrap = False
     end
     object StringColumn3: TStringColumn
       Header = 'Time (hh:mm:ss:ms)'
+      HeaderSettings.TextSettings.WordWrap = False
     end
   end
   object TimerBenchmark: TTimer

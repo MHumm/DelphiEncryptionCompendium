@@ -3004,21 +3004,21 @@ begin
   D2 := D1 xor P[3];
 
   PUInt32Array(Dest)[0] := (Rijndael_S[0, A2        and $FF]        or
-                          Rijndael_S[0, B2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, C2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, D2 shr 24        ] shl 24)     xor P[4];
+                            Rijndael_S[0, B2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, C2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, D2 shr 24        ] shl 24)     xor P[4];
   PUInt32Array(Dest)[1] := (Rijndael_S[0, B2        and $FF]        or
-                          Rijndael_S[0, C2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, D2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, A2 shr 24        ] shl 24)     xor P[5];
+                            Rijndael_S[0, C2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, D2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, A2 shr 24        ] shl 24)     xor P[5];
   PUInt32Array(Dest)[2] := (Rijndael_S[0, C2        and $FF]        or
-                          Rijndael_S[0, D2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, A2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, B2 shr 24        ] shl 24)     xor P[6];
+                            Rijndael_S[0, D2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, A2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, B2 shr 24        ] shl 24)     xor P[6];
   PUInt32Array(Dest)[3] := (Rijndael_S[0, D2        and $FF]        or
-                          Rijndael_S[0, A2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, B2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, C2 shr 24        ] shl 24)     xor P[7];
+                            Rijndael_S[0, A2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, B2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, C2 shr 24        ] shl 24)     xor P[7];
 end;
 
 procedure TCipher_Rijndael.DoDecode(Source, Dest: Pointer; Size: Integer);

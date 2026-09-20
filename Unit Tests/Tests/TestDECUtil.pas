@@ -33,6 +33,7 @@ uses
   DECUtil;
 
 type
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestBitTwiddling = class(TTestCase)
   published
     procedure ReverseBits32;
@@ -45,6 +46,7 @@ type
     procedure XORBuffers;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestBufferProtection = class(TTestCase)
   published
     procedure ProtectBuffer;
@@ -70,6 +72,7 @@ type
     procedure BytesToString_StringToBytes;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestIsEqual = class(TTestCase)
   published
     procedure IsEqualsNormal;
@@ -77,7 +80,16 @@ type
     procedure IsEqualsZeroLength;
   end;
 
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TTestMist = class(TTestCase)
+  published
+    procedure TestShannonEntropy;
+  end;
+
 implementation
+
+uses
+  System.Math;
 
 type
   TestRecUInt8 = record
@@ -668,15 +680,36 @@ begin
   CheckEquals(true, Result, 'a = b = length 0');
 end;
 
+{ TTestMist }
+
+procedure TTestMist.TestShannonEntropy;
+var
+  Entropy : Double;
+  Str     : RawByteString;
+begin
+  Str := 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ' +
+         'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  Entropy := ShannonEntropy(BytesOf(Str));
+  CheckEquals(true, System.Math.IsZero(Entropy, 0.1), 'No entrophy not detected');
+
+  Str := 'And this is a simple english text without much sense but with a lot ' +
+         'of letters and some words.';
+  Entropy := ShannonEntropy(BytesOf(Str));
+  CheckEquals(true, System.Math.SameValue(Entropy, 3.969, 0.1),
+              'English sentence entrophy wrong');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TTestBitTwiddling);
   TDUnitX.RegisterTestFixture(TTestBufferProtection);
   TDUnitX.RegisterTestFixture(TTestIsEqual);
+  TDUnitX.RegisterTestFixture(TTestMist);
   {$ELSE}
   RegisterTests('DECUtil', [TTestBitTwiddling.Suite,
                             TTestBufferProtection.Suite,
-                            TTestIsEqual.Suite]);
+                            TTestIsEqual.Suite,
+                            TTestMist.Suite]);
   {$ENDIF}
 end.

@@ -36,6 +36,7 @@ type
   /// <summary>
   ///   Test cases for the various helper functions
   /// </summary>
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestZIPHelpers = class(TTestCase)
   strict private
     /// <summary>

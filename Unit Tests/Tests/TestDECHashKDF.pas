@@ -279,9 +279,15 @@ begin
   begin
     if (TestData.Algorithm = KDFType) then
     begin
+      {$IFNDEF FPC}
       Data := System.SysUtils.BytesOf(TestData.InputData);
       Seed := System.SysUtils.BytesOf(TestData.SeedData);
       ExpResult := System.SysUtils.BytesOf(TestData.OutputData);
+      {$ELSE}
+      Data := BytesOf(TestData.InputData);
+      Seed := BytesOf(TestData.SeedData);
+      ExpResult := BytesOf(TestData.OutputData);
+      {$ENDIF}
 
       case KDFType of
         ktKDF1 : if (length(Seed) = 0) then
@@ -330,9 +336,15 @@ begin
   begin
     if (TestData.Algorithm = KDFType) then
     begin
+      {$IFNDEF FPC}
       Data := System.SysUtils.BytesOf(TestData.InputData);
       Seed := System.SysUtils.BytesOf(TestData.SeedData);
       ExpResult := System.SysUtils.BytesOf(TestData.OutputData);
+      {$ELSE}
+      Data := BytesOf(TestData.InputData);
+      Seed := BytesOf(TestData.SeedData);
+      ExpResult := BytesOf(TestData.OutputData);
+      {$ENDIF}
 
       if (KDFType = ktKDF1) then
         Result := TestData.HashClass.KDF1(Data, Seed, TestData.MaskSize);

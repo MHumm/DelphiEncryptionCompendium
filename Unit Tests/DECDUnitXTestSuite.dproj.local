@@ -24,6 +24,7 @@
     <File Path="Tests\TestDECCipherFormats.pas"/>
     <File Path="Tests\TestDECCipherModes.pas"/>
     <File Path="Tests\TestDECCipherModesGCM.pas"/>
+    <File Path="Tests\TestDECCipherPaddings.pas"/>
     <File Path="Tests\TestDECCRC.pas"/>
     <File Path="Tests\TestDECFormat.pas"/>
     <File Path="Tests\TestDECFormatBase.pas"/>
@@ -35,5 +36,8 @@
     <File Path="Tests\TestDECTestDataContainer.pas"/>
     <File Path="Tests\TestDECUtil.pas"/>
     <File Path="Tests\TestDefines.inc"/>
+    <File Path="Tests\AuthenticatedCiphersCommonTestData.pas"/>
+    <File Path="Tests\TestDECCipherModesCCM.pas"/>
+    <File Path="Tests\TestDECZIPHelper.pas"/>
   </ProjectSortOrder>
 </BorlandProject>

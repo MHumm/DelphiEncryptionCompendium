@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -25,6 +25,8 @@ uses
   System.SysUtils, System.Classes,
   {$ENDIF}
   DECTypes, DECCipherBase, DECFormatBase;
+
+{$I DECOptions.inc}
 
 type
   /// <summary>
@@ -597,6 +599,12 @@ type
     {$ENDIF}
 
     /// <summary>
+    ///   Sets a random value for the init vector. Must be called after Init
+    ///   and is a superflous call for stream ciphers
+    /// </summary>
+    procedure SetAutomaticInitVector;
+
+    /// <summary>
     ///   Returns the currently set cipher block mode, means how blocks are
     ///   linked to each other in order to avoid certain attacks.
     /// </summary>
@@ -657,11 +665,12 @@ type
     /// </summary>
     /// <returns>
     ///   Result of the authentication. Raises an EDECCipherException if this is
-    ///   called for a cipher mode not supporting authentication.
+    ///   called for a cipher mode not supporting authentication, or if Done
+    ///   has not been called yet.
     /// </returns>
     /// <exception cref="EDECCipherException">
     ///   Exception raised if called for a cipher mode not supporting
-    ///   authentication.
+    ///   authentication, or if the tag is read before Done.
     /// </exception>
     function  GetCalcAuthenticatonResult: TBytes;
     /// <summary>
@@ -697,8 +706,10 @@ type
     ///   the official specification of the standard.
     /// </summary>
     /// <returns>
-    ///   List of bit lengths. If the cipher mode used is not an authenticated
-    ///   one, the array will just contain a single value of 0.
+    ///   List of bit lengths prescribed by the authenticated mode. If the
+    ///   cipher mode used is not an authenticated one, the array will just
+    ///   contain a single value of 0. If an authenticated mode does not
+    ///   prescribe tag lengths, an empty array is returned.
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths;
 
@@ -748,12 +759,13 @@ type
     /// <summary>
     ///   Some block chaining modes have the ability to authenticate the message
     ///   in addition to encrypting it. This property contains the generated
-    ///   authentication tag. Raises an EDECCipherException if this is
-    ///   called for a cipher mode not supporting authentication.
+    ///   authentication tag. Call Done before reading it; reading the tag
+    ///   before Done raises EDECCipherException. Raises an EDECCipherException
+    ///   if this is called for a cipher mode not supporting authentication.
     /// </summary>
     /// <exception cref="EDECCipherException">
     ///   Exception raised if called for a cipher mode not supporting
-    ///   authentication.
+    ///   authentication, or if the tag is read before Done.
     /// </exception>
     property CalculatedAuthenticationResult  : TBytes
       read   GetCalcAuthenticatonResult;

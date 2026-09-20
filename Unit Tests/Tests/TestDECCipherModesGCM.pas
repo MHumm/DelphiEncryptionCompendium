@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -29,100 +29,19 @@ uses
   {$ELSE}
   TestFramework,
   {$ENDIF}
-  System.SysUtils, Generics.Collections, System.Math,
+  System.SysUtils,
+  Generics.Collections,
+  System.Math,
   DECBaseClass,
-  DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
+  DECTypes,
+  DECAuthenticatedCipherModesBase,
+  DECCipherBase,
+  DECCipherModes,
+  DECCipherFormats,
+  DECCiphers,
+  AuthenticatedCiphersCommonTestData;
 
 type
-  /// <summary>
-  ///   Test data for one single GCM test, all in HexL
-  /// </summary>
-  TGCMSingleTestData = record
-    /// <summary>
-    ///   Encryption/decryption key
-    /// </summary>
-    CryptKey   : RawByteString;
-    /// <summary>
-    ///   Initialization vecotr
-    /// </summary>
-    InitVector : RawByteString;
-    /// <summary>
-    ///   Plain Text: text to be encrypted, given in HexL
-    /// </summary>
-    PT         : RawByteString;
-    /// <summary>
-    ///   Additional Authenticated Data: the data which shall be authenticated
-    ///   but not encrypted.
-    /// </summary>
-    AAD        : RawByteString;
-    /// <summary>
-    ///   Cipher Text: encrypted text, given in HexL
-    /// </summary>
-    CT         : RawByteString;
-    /// <summary>
-    ///   Calculated authenticated "tag" value
-    /// </summary>
-    TagResult  : RawByteString;
-    /// <summary>
-    ///   Used additional authenticated data for testing authentication failures.
-    ///   Only filled when present in test data file.
-    /// </summary>
-    ModifiedAAD: RawByteString;
-    /// <summary>
-    ///   Used ciphertext data for testing authentication failures.
-    ///   Only filled when present in test data file.
-    /// </summary>
-    ModifiedCT: RawByteString;
-
-    /// <summary>
-    ///   Sets all fields and array entries to default values
-    /// </summary>
-    procedure Clear;
-  end;
-
-  /// <summary>
-  ///   Test data for one single GCM test
-  /// </summary>
-  TGCMTestSetEntry = record
-    /// <summary>
-    ///   Length of the encryption/decryption key in bit, determines the
-    ///   algorithm used in case of AES (AES128, AES192, AES256)
-    /// </summary>
-    Keylen : UInt16;
-    /// <summary>
-    ///   Length of the initialization vector in bit
-    /// </summary>
-    IVlen  : UInt16;
-    /// <summary>
-    ///   Length of the ? in bit
-    /// </summary>
-    PTlen  : UInt16;
-    /// <summary>
-    ///   Length of the ? in bit
-    /// </summary>
-    AADlen : UInt16;
-    /// <summary>
-    ///   Length of the "tag" resulting from the authentication part in bit
-    /// </summary>
-    Taglen : UInt16;
-
-    /// <summary>
-    ///   The test data files provided contain 14 tests for the meta data
-    ///   specified above. This array holds the test data.
-    /// </summary>
-    TestData : array[0..14] of TGCMSingleTestData;
-
-    /// <summary>
-    ///   Sets all fields and array entries to default values
-    /// </summary>
-    procedure Clear;
-  end;
-
-  /// <summary>
-  ///   List of loaded GCM test vectors
-  /// </summary>
-  TGCMTestDataList = TList<TGCMTestSetEntry>;
-
   /// <summary>
   ///   Class for loading a GCM style test data file
   /// </summary>
@@ -164,7 +83,7 @@ type
     ///   the start of a new block has been detected in the method.
     /// </param>
     procedure ReadBlockMetaDataLine(const Line : string;
-                                    var Entry  : TGCMTestSetEntry;
+                                    var Entry  : TAuthenticatedCipherTestSetEntry;
                                     var Index  : Byte);
 
     /// <summary>
@@ -187,8 +106,8 @@ type
     ///   line will be ignored.
     /// </param>
     procedure ReadDataLine(const Line : string;
-                           var Entry  : TGCMTestSetEntry;
-                           TestData   : TGCMTestDataList;
+                           var Entry  : TAuthenticatedCipherTestSetEntry;
+                           TestData   : TAuthenticatedTestDataList;
                            var Index  : Byte);
   public
     /// <summary>
@@ -204,7 +123,7 @@ type
     /// <param name="AllowIncompleteEntries">
     ///   Use when loading data set with incomplete entries.
     /// </param>
-    procedure LoadFile(const FileName: string; TestData : TGCMTestDataList;
+    procedure LoadFile(const FileName: string; TestData : TAuthenticatedTestDataList;
         AllowIncompleteEntries: Boolean = False);
   end;
 
@@ -213,18 +132,33 @@ type
   TestTDECGCM = class(TTestCase)
   strict private
     FTestDataLoader : TGCMTestDataLoader;
-    FTestDataList   : TGCMTestDataList;
+    FTestDataList   : TAuthenticatedTestDataList;
     FCipherAES      : TCipher_AES;
 
     // Needed for passing data to and from DoTestDecodeFailure
     FDecryptedData  : TBytes;
     FCipherText     : TBytes;
+    /// <summary>
+    ///   Plain text test data for post-Done Encode/Decode exception helpers
+    /// </summary>
+    FCallAfterDoneData : TBytes;
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestDecodeFailure;
     procedure DoTestEncodeStream_LoadAndTestCAVSData(const aMaxChunkSize: Int64);
     procedure DoTestEncodeStream_TestSingleSet(const aSetIndex, aDataIndex:
         Integer; const aMaxChunkSize: Int64 = -1);
+    procedure DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
+    procedure DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
+    procedure DoEncodeAfterDone;
+    procedure DoDecodeAfterDone;
+    procedure DoChangeAADAfterEncode;
+    procedure DoSetAuthTagBitLengthTooLong;
+    procedure DoReadTagBeforeDone;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -236,11 +170,56 @@ type
     procedure TestEncodeStream;
     procedure TestEncodeLargeStream;
     procedure TestEncodeStreamChunked;
+    /// <summary>
+    ///   CAVS set 105 (first 2-block plain text) with two equal 16-byte EncodeStream calls.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkTwoBlocks;
+    /// <summary>
+    ///   Same vector with uneven chunks (7 + 25) to exercise GHASH partial blocks.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Same vector; multi-chunk decrypt with expected-tag verification.
+    /// </summary>
+    procedure TestDecodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Done twice must leave CalculatedAuthenticationResult unchanged.
+    /// </summary>
+    procedure TestDoneIdempotent;
+    /// <summary>
+    ///   Encode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestEncodeAfterDoneRejected;
+    /// <summary>
+    ///   Decode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestDecodeAfterDoneRejected;
+    /// <summary>
+    ///   Changing DataToAuthenticate after Encode has started must raise.
+    /// </summary>
+    procedure TestAADChangeAfterEncodeRejected;
+    /// <summary>
+    ///   Reading CalculatedAuthenticationResult before Done must raise.
+    /// </summary>
+    procedure TestCalculatedAuthenticationResultBeforeDoneRaises;
+    /// <summary>
+    ///   AuthenticationResultBitLength &gt; 128 must raise (tag buffer is 16 bytes).
+    /// </summary>
+    procedure TestAuthTagBitLengthTooLongRejected;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
     procedure TestGetExpectedAuthenticationResult;
     procedure TestSetExpectedAuthenticationResult;
+
+    /// <summary>
+    ///   GCM reports SupportsAuthenticatedMultiChunk = True.
+    /// </summary>
+    procedure TestSupportsAuthenticatedMultiChunk;
+    /// <summary>
+    ///   Test for GitHub issue #86
+    /// </summary>
+    procedure TestEncodeConstData_86;
   end;
 
 
@@ -248,38 +227,7 @@ implementation
 
 uses
   System.Classes,
-  DECTypes,
   DECFormat;
-
-{ TGCMTestSetEntry }
-
-procedure TGCMTestSetEntry.Clear;
-var
-  i : Integer;
-begin
-  Keylen := 0;
-  IVlen  := 0;
-  PTlen  := 0;
-  AADlen := 0;
-  Taglen := 0;
-
-  for i := Low(TestData) to High(TestData) do
-    TestData[i].Clear;
-end;
-
-{ TGCMSingleTestData }
-
-procedure TGCMSingleTestData.Clear;
-begin
-  CryptKey    := '';
-  InitVector  := '';
-  PT          := '';
-  AAD         := '';
-  CT          := '';
-  TagResult   := '';
-  ModifiedAAD := '';
-  ModifiedCT  := '';
-end;
 
 { TGCMTestDataLoader }
 
@@ -313,17 +261,19 @@ begin
 end;
 
 procedure TGCMTestDataLoader.LoadFile(const FileName: string;
-  TestData : TGCMTestDataList; AllowIncompleteEntries: Boolean = False);
+  TestData : TAuthenticatedTestDataList; AllowIncompleteEntries: Boolean = False);
 var
   Reader : TStreamReader;
   Line   : string;
-  Entry  : TGCMTestSetEntry;
+  Entry  : TAuthenticatedCipherTestSetEntry;
   Index  : Byte;
 begin
   System.Assert(FileName <> '', 'No file to load specified');
   System.Assert(Assigned(TestData), 'Unassigned test data list given');
 
+  SetLength(Entry.TestData, 15);
   Entry.Clear;
+
   Index := 0;
   Reader := TStreamReader.Create(FileName, TEncoding.UTF8);
 
@@ -367,13 +317,14 @@ begin
 end;
 
 procedure TGCMTestDataLoader.ReadBlockMetaDataLine(const Line : string;
-                                                   var Entry  : TGCMTestSetEntry;
+                                                   var Entry  : TAuthenticatedCipherTestSetEntry;
                                                    var Index  : Byte);
 begin
   // Loading of the block metadata
   // Does a new block start?
   if (Pos('[keylen', Line) > 0) then
   begin
+    SetLength(Entry.TestData, 15);
     Entry.Clear;
     Index := 0;
 
@@ -390,8 +341,8 @@ begin
 end;
 
 procedure TGCMTestDataLoader.ReadDataLine(const Line : string;
-                                          var Entry  : TGCMTestSetEntry;
-                                          TestData   : TGCMTestDataList;
+                                          var Entry  : TAuthenticatedCipherTestSetEntry;
+                                          TestData   : TAuthenticatedTestDataList;
                                           var Index  : Byte);
 begin
   // Data entries do not contain [
@@ -441,7 +392,7 @@ begin
   inherited;
 
   FTestDataLoader := TGCMTestDataLoader.Create;
-  FTestDataList   := TGCMTestDataList.Create;
+  FTestDataList   := TAuthenticatedTestDataList.Create;
 
   FCipherAES      := TCipher_AES.Create;
   FCipherAES.Mode := TCipherMode.cmGCM;
@@ -458,7 +409,7 @@ end;
 
 procedure TestTDECGCM.TestDecode;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   DecryptData : TBytes;
 begin
@@ -503,7 +454,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -520,7 +471,7 @@ end;
 
 procedure TestTDECGCM.TestDecodeAuthenticationFailure;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\GCM128AuthenticationFailures.rsp', FTestDataList);
@@ -564,7 +515,7 @@ end;
 
 procedure TestTDECGCM.TestEncode;
 var
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   EncryptData : TBytes;
   EncrDataStr : string;
@@ -602,7 +553,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   EncrDataStr);
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for Key ' +
@@ -615,6 +566,91 @@ begin
     end;
   end;
 end;
+
+procedure TestTDECGCM.TestEncodeConstData_86;
+var
+  cipher : TCipher_AES128;
+  tag : TBytes;
+  refPlainText : Array[0..3] of LongWord;
+  ciphText : Array[0..3] of LongWord;
+  key : Array[0..3] of LongWord;
+  iv : Array[0..2] of LongWord;
+  refCipherText : Array[0..3] of LongWord;
+  refTag : Array[0..3] of LongWord;
+  hea : TBytes;
+
+type
+  TUINT32Byte = Array[0..3] of Byte;
+  PUINT32Byte = ^TUINT32Byte;
+
+// test key/cipher text and IV from an ARM based platform
+const cAESKey : Array[0..3] of Longword = ($C939CC13, $397C1D37, $DE6AE0E1, $CB7C423C );
+      cAESIV : Array[0..2] of Longword = ($B3D8CC01, $7CBB89B3, $9E0F67E2);
+
+      cPlainText : Array[0..3] of LongWord = ($c3b3c41f, $113a31b7, $3d9a5cd4, $32103069 );
+      cCipherText : Array[0..3] of LongWord = ($93FE7D9E, $9BFD1034, $8A5606E5, $CAFA7354 );
+
+      cExpectedTag : Array[0..3] of LongWord = ($0032A1DC, $85F1C978, $6925A2E7, $1D8272DD);
+      cAESHea : Array[0..3] of LongWord = ( $24825602, $bd12a984, $e0092d3e, $448eda5f );
+
+  function InvUINT32( value : UINT32 ) : UINT32;
+  var
+    v1, v2 : PUINT32Byte;
+  begin
+    v1 := @value;
+    v2 := @Result;
+
+    v2^[3] := v1^[0];
+    v2^[2] := v1^[1];
+    v2^[1] := v1^[2];
+    v2^[0] := v1^[3];
+  end;
+
+  procedure InitKey;
+  var
+    i : Integer;
+  begin
+    for i := 0 to High(cAESKey) do
+      key[i] := InvUINT32(cAESKey[i]);
+
+    for i := 0 to High(cAESIV) do
+      iv[i] := InvUINT32(cAESIV[i]);
+
+    for i := 0 to High(refPlainText) do
+      refPlainText[i] := InvUINT32(cPlainText[i]);
+
+    for i := 0 to High(refCipherText) do
+      refCipherText[i] := InvUINT32(cCipherText[i]);
+
+    for i := 0 to High(cExpectedTag) do
+      refTag[i] := InvUINT32(cExpectedTag[i]);
+
+    SetLength(hea, sizeof(cAESHea));
+    for i := 0 to High(cExpectedTag) do
+      PLongWord(@hea[i*4])^ := InvUINT32(cAESHea[i]);
+  end;
+
+begin
+  InitKey;
+  cipher := TCipher_AES128.Create;
+  try
+     cipher.Mode := cmGCM;
+     cipher.Init( key, sizeof(key), iv, sizeof(iv), 0 );
+     cipher.AuthenticationResultBitLength := 128;
+     cipher.DataToAuthenticate := hea;
+
+     cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+     // Tag is finalized in Done (multi-call GHASH); required before reading the tag
+     cipher.Done;
+     tag := cipher.CalculatedAuthenticationResult;
+  finally
+         cipher.Free;
+  end;
+
+  Check( CompareMem(@refCipherText[0], @ciphText[0], sizeof(ciphText)), 'Cipher failed');
+  Check( CompareMem(@refTag[0], @tag[0], sizeof(refTag)), 'Tag failed');
+end;
+
 
 procedure TestTDECGCM.TestGetExpectedAuthenticationResult;
 var
@@ -655,7 +691,7 @@ procedure TestTDECGCM.TestDecodeStream;
 var
   ctbStream: TBytesStream;
   ctBytes: TBytes;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   i           : Integer;
   DecryptData : TBytes;
   ptbStream: TBytesStream;
@@ -713,7 +749,7 @@ begin
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
 
-      // Additional Authentication Data prüfen
+      // Additional Authentication Data prï¿½fen
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
                   'Authentication tag wrong for key ' +
@@ -741,11 +777,254 @@ begin
     Max(FCipherAES.Context.BlockSize, FCipherAES.Context.BufferSize));
 end;
 
+procedure TestTDECGCM.DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ptBytes, EncryptData, EmptyAAD: TBytes;
+  ptbStream, ctbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(APT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+
+  ptbStream := TBytesStream.Create(ptBytes);
+  ctbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ptBytes),
+                'Chunk list exceeds plaintext length');
+      FCipherAES.EncodeStream(ptbStream, ctbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ptBytes), offset, 'Chunk sizes must cover full PT');
+    FCipherAES.Done;
+    EncryptData := ctbStream.Bytes;
+    SetLength(EncryptData, ctbStream.Size);
+  finally
+    ptbStream.Free;
+    ctbStream.Free;
+  end;
+
+  CheckEquals(string(ACT), StringOf(TFormat_HexL.Encode(EncryptData)),
+              'Ciphertext mismatch for multi-chunk encode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk encode');
+end;
+
+// NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 â€” 32-byte PT.
+// Shared by multi-chunk encode/decode and Done-lifecycle regression tests.
+const
+  cCAVS_MultiChunkKey  : RawByteString = '9971071059abc009e4f2bd69869db338';
+  cCAVS_MultiChunkIV   : RawByteString = '07a9a95ea3821e9c13c63251';
+  cCAVS_MultiChunkPT   : RawByteString =
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983';
+  cCAVS_MultiChunkAAD  : RawByteString = '';
+  cCAVS_MultiChunkCT   : RawByteString =
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01';
+  cCAVS_MultiChunkTag  : RawByteString = '7870d9117f54811a346970f1de090c41';
+  cCAVS_MultiChunkTagBits = 128;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkTwoBlocks;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+end;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkUneven;
+begin
+  // GHASH must carry a partial block between calls
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+end;
+
+procedure TestTDECGCM.DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ctBytes, DecryptData, EmptyAAD: TBytes;
+  ctbStream, ptbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ctBytes := TFormat_HexL.Decode(BytesOf(ACT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+  FCipherAES.ExpectedAuthenticationResult :=
+    TFormat_HexL.Decode(BytesOf(ATag));
+
+  ctbStream := TBytesStream.Create(ctBytes);
+  ptbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ctBytes),
+                'Chunk list exceeds ciphertext length');
+      FCipherAES.DecodeStream(ctbStream, ptbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ctBytes), offset, 'Chunk sizes must cover full CT');
+    FCipherAES.Done;
+    DecryptData := ptbStream.Bytes;
+    SetLength(DecryptData, ptbStream.Size);
+  finally
+    ctbStream.Free;
+    ptbStream.Free;
+  end;
+
+  CheckEquals(string(APT), StringOf(TFormat_HexL.Encode(DecryptData)),
+              'Plaintext mismatch for multi-chunk decode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk decode');
+end;
+
+procedure TestTDECGCM.TestDecodeStreamMultiChunkUneven;
+begin
+  DoDecodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+end;
+
+procedure TestTDECGCM.TestDoneIdempotent;
+var
+  Tag1, Tag2: TBytes;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+  Tag1 := Copy(FCipherAES.CalculatedAuthenticationResult);
+  FCipherAES.Done;
+  Tag2 := FCipherAES.CalculatedAuthenticationResult;
+  CheckTrue(IsEqual(Tag1, Tag2),
+            'Second Done must not change CalculatedAuthenticationResult');
+end;
+
+procedure TestTDECGCM.DoReadTagBeforeDone;
+var
+  Tag: TBytes;
+begin
+  Tag := FCipherAES.CalculatedAuthenticationResult;
+end;
+
+procedure TestTDECGCM.TestCalculatedAuthenticationResultBeforeDoneRaises;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkAAD));
+  FCipherAES.EncodeBytes(ptBytes);
+  CheckException(DoReadTagBeforeDone, EDECCipherException,
+                 'CalculatedAuthenticationResult before Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.DoEncodeAfterDone;
+begin
+  FCipherAES.EncodeBytes(FCallAfterDoneData);
+end;
+
+procedure TestTDECGCM.DoDecodeAfterDone;
+begin
+  FCipherAES.DecodeBytes(FCallAfterDoneData);
+end;
+
+procedure TestTDECGCM.TestEncodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $A5);
+  CheckException(DoEncodeAfterDone, EDECCipherException,
+                 'Encode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.TestDecodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $5A);
+  CheckException(DoDecodeAfterDone, EDECCipherException,
+                 'Decode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.DoChangeAADAfterEncode;
+begin
+  FCipherAES.DataToAuthenticate := BytesOf(RawByteString('changed-aad'));
+end;
+
+procedure TestTDECGCM.TestAADChangeAfterEncodeRejected;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf('aabbccdd'));
+  // First Encode absorbs AAD into GHASH â€” subsequent AAD assignment must fail
+  FCipherAES.EncodeBytes(Copy(ptBytes, 0, 16));
+  CheckException(DoChangeAADAfterEncode, EDECCipherException,
+                 'Changing DataToAuthenticate after Encode must raise');
+end;
+
+procedure TestTDECGCM.DoSetAuthTagBitLengthTooLong;
+begin
+  FCipherAES.AuthenticationResultBitLength := 256;
+end;
+
+procedure TestTDECGCM.TestAuthTagBitLengthTooLongRejected;
+begin
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  CheckException(DoSetAuthTagBitLengthTooLong, EDECAuthLengthException,
+                 'AuthenticationResultBitLength > 128 must raise EDECAuthLengthException');
+end;
+
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
     aMaxChunkSize: Int64);
 var
   i           : Integer;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   curSetIndex: Integer;
 begin
   FTestDataLoader.LoadFile('..\..\Unit Tests\Data\gcmEncryptExtIV128.rsp', FTestDataList);
@@ -784,7 +1063,7 @@ var
   curChunkSize: Int64;
   dataLeftToEncode: Int64;
   ptBytes: TBytes;
-  TestDataSet : TGCMTestSetEntry;
+  TestDataSet : TAuthenticatedCipherTestSetEntry;
   EncryptData : TBytes;
   ptbStream: TBytesStream;
 begin
@@ -810,6 +1089,13 @@ begin
       // Apply chunking if needed
       if aMaxChunkSize > 0 then
         curChunkSize := Min(dataLeftToEncode, aMaxChunkSize);
+// Darf vermutlich so nicht sein, es darf vermutlich nur einen EncodeStream Aufruf
+// geben. Mï¿½glicherwiese ist das Padding wie es jetzt umgesetzt ist nicht ganz richtig,
+// da man sonst keinen dynamischen Stream haben kann. Gehï¿½rt vermutlich ins Done,
+// aber das hat noch keinen Stream, braucht also eine ï¿½berladene Variante mit
+// Outputstream als Parameter...
+// Zuerst test mal ohne Schleife testen. EncodeStream darf nicht anhand der Size
+// das "globale" Ende des Streams ermitteln, sonst nichts nachschiebbar.
       FCipherAES.EncodeStream(ptbStream, ctbStream, curChunkSize);
       Dec(dataLeftToEncode, curChunkSize);
     until (dataLeftToEncode = 0);
@@ -836,7 +1122,7 @@ begin
               string(TestDataSet.TestData[aDataIndex].AAD) + ' Act.: ' +
               StringOf(TFormat_HexL.Encode(FCipherAES.DataToAuthenticate)));
 
-  // Additional Authentication Data prüfen
+  // Additional Authentication Data prï¿½fen
   CheckEquals(string(TestDataSet.TestData[aDataIndex].TagResult),
                      StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
               'Authentication tag wrong for Set ' + aSetIndex.ToString + ' and Data ' + aDataIndex.ToString +
@@ -858,6 +1144,12 @@ begin
   CheckEquals(112, BitLengths[2]);
   CheckEquals(120, BitLengths[3]);
   CheckEquals(128, BitLengths[4]);
+end;
+
+procedure TestTDECGCM.TestSupportsAuthenticatedMultiChunk;
+begin
+  CheckTrue(FCipherAES.SupportsAuthenticatedMultiChunk,
+            'GCM must report multi-chunk support');
 end;
 
 procedure TestTDECGCM.TestSetExpectedAuthenticationResult;
@@ -894,11 +1186,12 @@ end;
 
 procedure TestTDECGCM.TestSetGetAuthenticationBitLength;
 begin
+  // NIST SP 800-38D: tag length is at most 128 bit (truncated GHASH result)
   FCipherAES.AuthenticationResultBitLength := 128;
   CheckEquals(128, FCipherAES.AuthenticationResultBitLength);
 
-  FCipherAES.AuthenticationResultBitLength := 192;
-  CheckEquals(192, FCipherAES.AuthenticationResultBitLength);
+  FCipherAES.AuthenticationResultBitLength := 96;
+  CheckEquals(96, FCipherAES.AuthenticationResultBitLength);
 end;
 
 procedure TestTDECGCM.TestSetGetDataToAuthenticate;
@@ -917,7 +1210,7 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestTDECGCM);
   {$ELSE}
-  RegisterTest(TestTDECGCM.Suite);
+  RegisterTest('DEC authenticated cipher modes', TestTDECGCM.Suite);
   {$ENDIF}
 end.
 

@@ -125,7 +125,7 @@ type
   ///   csDecode : Decoding was started, and more chunks can be decoded, but not encoded
   /// </para>
   /// <para>
-  ///   csPadded : trough En/Decoding the messagechunks are padded, no more chunks can
+  ///   csPadded : through En/Decoding the messagechunks are padded, no more chunks can
   ///                   be processed, the cipher is blocked
   /// </para>
   /// <para>
@@ -182,7 +182,8 @@ type
     cmCFS8,   // 8Bit CFS, double CFB
     cmCFSx,   // CFS on Blocksize bytes
     cmECBx,   // Electronic Code Book
-    cmGCM     // Galois Counter Mode
+    cmGCM,    // Galois Counter Mode
+    cmCCM     // Counter with CBC-MAC Mode
     {$IFDEF DEC3_CMCTS}
     ,cmCTS3   // double CBC, with less secure padding of truncated final block
               // for DEC 3.0 compatibility only (see DECOptions.inc)
@@ -228,7 +229,11 @@ type
     ///   This is the size of FData in byte
     /// </summary>
     FDataSize : Integer;
-  private
+
+    /// <summary>
+    ///   Sets the desired padding mode, means how block ciphers treat
+    ///   incompletely filled last blocks.
+    /// </summary>
     procedure SetPaddingMode(const Value: TPaddingMode);
   strict protected
     /// <summary>
@@ -404,6 +409,11 @@ type
     ///   List of registered DEC classes. Key is the Identity of the class.
     /// </summary>
     class var ClassList : TDECClassList;
+    /// <summary>
+    ///   When true Randomize has already been called. Needed for lazy
+    ///   initialization within SetAutomaticInitVector
+    /// </summary>
+    class var RandomizeCalled : Boolean;
 
     /// <summary>
     ///   Tries to find a class type by its name
@@ -603,6 +613,12 @@ type
     procedure Init(const Key: WideString; const IVector: WideString = ''; IFiller: Byte = $FF;
       PaddingMode: TPaddingMode = pmNone); overload;
     {$ENDIF}
+
+    /// <summary>
+    ///   Sets a random value for the init vector. Must be called after Init
+    ///   and is a superflous call for stream ciphers
+    /// </summary>
+    procedure SetAutomaticInitVector;
 
     /// <summary>
     ///   Properly finishes the cryptographic operation. It needs to be called
@@ -942,6 +958,38 @@ begin
   inherited Destroy;
 end;
 
+procedure TDECCipher.SetAutomaticInitVector;
+var
+  IVIdx : Integer;
+  Buf   : TBytes;
+  Entrophy : Double;
+begin
+  if not (ctStream in Context.CipherType) and (Context.BlockSize > 1) then
+  begin
+    if not RandomizeCalled then
+    begin
+      Randomize;
+      RandomizeCalled := true;
+    end;
+
+    SetLength(Buf, FBufferSize);
+
+    repeat
+      IVIdx := 0;
+
+      while (IVIdx < FBufferSize) do
+      begin
+        Buf[IVIdx] := Random(256);
+        inc(IVIdx);
+      end;
+
+      Entrophy := ShannonEntropy(Buf);
+    until (Entrophy >= 3.5) or ((FBufferSize < 16) and (Entrophy >= 3));
+
+    Move(Buf[0], FInitializationVector[0], FBufferSize);
+  end;
+end;
+
 procedure TDECCipher.SetMode(Value: TCipherMode);
 begin
   if Value <> FMode then
@@ -1237,7 +1285,9 @@ end;
 
 function TDECCipher.CalcMAC(Format: TDECFormatClass): RawByteString;
 begin
-  Done; { TODO: This might be considered as unwanted side effect. Maybe we should instead raise an Exception if State is not csDone instead? This would also "teach" the user to don't forget to call "Done". }
+  Done; { TODO: This might be considered as unwanted side effect. Maybe we should
+          instead raise an Exception if State is not csDone instead? This would
+          also "teach" the user to don't forget to call "Done". }
   if FMode in [cmECBx] then
     raise EDECException.CreateRes(@sInvalidMACMode)
   else
@@ -1246,7 +1296,11 @@ end;
 
 function TDECCipher.CalcMACBytes(Format: TDECFormatClass): TBytes;
 begin
+  {$IFNDEF FPC}
   Result := System.SysUtils.BytesOf(CalcMAC);
+  {$ELSE}
+  Result := BytesOf(CalcMAC);
+  {$ENDIF}
 end;
 
 {$IFDEF RESTORE_RANGECHECKS}{$R+}{$ENDIF}
@@ -1279,7 +1333,8 @@ initialization
   AddModuleUnloadProc(ModuleUnload);
   {$ENDIF DELPHIORBCB}
 
-  TDECCipher.ClassList := TDECClassList.Create;
+  TDECCipher.ClassList       := TDECClassList.Create;
+  TDECCipher.RandomizeCalled := false;
 
 finalization
   // Ensure no further instances of classes registered in the registraiotn list

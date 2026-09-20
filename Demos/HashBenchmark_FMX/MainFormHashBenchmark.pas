@@ -264,7 +264,11 @@ begin
       if Hash.IsPasswordHash then
         TDECPasswordHash(Hash).Salt := Salt;
 
-      HashResult := Hash.CalcBuffer(@FBenchmarkBuffer[0], BufferSize);
+      // CalcBuffer(const Buffer; Size) already takes Buffer by reference.
+      // Do NOT write CalcBuffer(@FBenchmarkBuffer[0], …) — the extra @ makes
+      // the engine read from a stack temp (pointer-to-pointer), which caused
+      // intermittent OutOfRange/AVs in Absorb for large buffers (GitHub #94).
+      HashResult := Hash.CalcBuffer(FBenchmarkBuffer[0], BufferSize);
     end;
 
     FStopwatch.Stop;

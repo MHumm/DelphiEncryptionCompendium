@@ -2133,9 +2133,14 @@ begin
   p := Pointer(@Source);
   if p = nil then
     SetLength(Dest, 0)
-  else begin
+  else
+  begin
     SetString(Raw, PChar(@Source), Size div sizeof(Char));
+    {$IFNDEF FPC}
     Dest := System.SysUtils.BytesOf(UTF8Encode(Raw));
+    {$ELSE}
+    Dest := BytesOf(UTF8Encode(Raw));
+    {$ENDIF}
   end;
 end;
 

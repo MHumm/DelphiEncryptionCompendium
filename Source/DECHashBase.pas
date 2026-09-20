@@ -186,7 +186,9 @@ type
     /// <summary>
     ///   Frees dynamically allocated buffers in a way which safeguards agains
     ///   data stealing by other methods which afterwards might allocate this memory.
-    ///   Additionaly calls the algorithm spercific DoDone method.
+    ///   Additionaly calls the algorithm spercific DoDone method. Since this is
+    ///   automatically called in all public methods except Calc it should not
+    ///   be called by user code.
     /// </summary>
     procedure Done;
 

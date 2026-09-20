@@ -1027,7 +1027,7 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestCRC);
   {$ELSE}
-  RegisterTest(TestCRC.Suite);
+  RegisterTest('DEC CRC', TestCRC.Suite);
   {$ENDIF}
 end.
 
