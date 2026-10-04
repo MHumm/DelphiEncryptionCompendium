@@ -67,6 +67,21 @@
         <DCC_UnitSearchPath>.\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
         <DCC_DcpOutput>.\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcpOutput>
+        <SBOM_Enabled>True</SBOM_Enabled>
+        <SBOM_IncludeEvidence>True</SBOM_IncludeEvidence>
+        <SBOM_BsiProfile>True</SBOM_BsiProfile>
+        <SBOM_ReferenceModuleSboms>False</SBOM_ReferenceModuleSboms>
+        <SBOM_AutoOpen>True</SBOM_AutoOpen>
+        <SBOM_NameFromFileInfo>True</SBOM_NameFromFileInfo>
+        <SBOM_VersionFromFileInfo>True</SBOM_VersionFromFileInfo>
+        <SBOM_CopyrightFromFileInfo>True</SBOM_CopyrightFromFileInfo>
+        <SBOM_CompanyFromFileInfo>True</SBOM_CompanyFromFileInfo>
+        <SBOM_SupplierName>Team DEC</SBOM_SupplierName>
+        <SBOM_SupplierURLs>https://github.com/MHumm/DelphiEncryptionCompendium</SBOM_SupplierURLs>
+        <SBOM_SupplierContacts>Markus Humm=markus.humm@gmail.com</SBOM_SupplierContacts>
+        <SBOM_ManufacturerName>TeamDEC</SBOM_ManufacturerName>
+        <SBOM_ManufacturerURLs>https://github.com/MHumm/DelphiEncryptionCompendium</SBOM_ManufacturerURLs>
+        <SBOM_ManufacturerContacts>Markus Humm=markus.humm@gmail.com</SBOM_ManufacturerContacts>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <Android_SplashImage640>$(BDS)\bin\Artwork\Android\FM_SplashImage_640x480.png</Android_SplashImage640>
