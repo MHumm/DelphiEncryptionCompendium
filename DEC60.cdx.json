@@ -52,6 +52,7 @@
     "component": {
       "type": "application",
       "name": "DEC60",
+      "publisher": "Team DEC",	  
       "manufacturer": {
         "name": "Team DEC",
         "url": [
@@ -77,6 +78,14 @@
         ]
       },
       "bom-ref": "pkg:delphi/DEC60",
+      "licenses": [
+        {
+          "license": {
+            "name": "APL-2.0",
+            "acknowledgement": "declared"
+          }
+        }
+      ],	  
       "purl": "pkg:delphi/DEC60",
       "hashes": [
         {
