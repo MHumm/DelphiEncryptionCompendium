@@ -35,9 +35,14 @@
 // The original source file can be found here:
 // https://bitbucket.org/egrange/dwscript/src
 
+   // FPC saves non-volatile R12-R14 around the kernel. Delphi Win64 saves
+   // them with .PUSHNV on KeccakPermutationKernel so the prologue owns
+   // the unwind data.
+{$IFDEF FPC}
    push r12
    push r13
    push r14
+{$ENDIF}
    add rdx, 128
    add rcx, 128
    // Theta
@@ -312,7 +317,9 @@
    and   rax, [rcx+40]
    xor   rax, [rcx+64]
    mov   [rdx+64], rax
+{$IFDEF FPC}
    pop  r14
    pop  r13
    pop  r12
+{$ENDIF}
 

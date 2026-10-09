@@ -1694,6 +1694,11 @@ function IDEAMul(X, Y: UInt32): UInt32;
 {$IF defined(X86ASM) or defined(X64ASM)}
 asm
     {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+      .NOFRAME
+      // Leaf: the early RET below must not skip a compiler frame.
+      // Win64: X in ECX, Y in EDX, result in EAX.
+      {$ENDIF}
        MOV    EAX,ECX
     {$ENDIF X64ASM}
        AND    EAX,0FFFFh
@@ -1710,6 +1715,11 @@ asm
        RET
 @@1:   LEA    EAX,[EAX + EDX - 1]
        NEG    EAX
+    {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+       RET
+      {$ENDIF}
+    {$ENDIF}
 end;
 {$ELSE}
 begin

@@ -4946,11 +4946,20 @@ end;
 {$ELSE}
 // Must be procedural as otherwise the parameters get passed in different
 // CPU registers and the complete ASM code would have needed to be rewritten.
+// Win64 ABI: B in RCX, A in RDX, C in R8, which is what DECHash.sha3_x64.inc uses.
 procedure KeccakPermutationKernel(B, A, C : Pointer);
 asm
   {$IFDEF X86ASM}
     {$INCLUDE DECHash.sha3_mmx.inc}
   {$ELSE}
+    {$IFNDEF FPC}
+    .PUSHNV R12
+    .PUSHNV R13
+    .PUSHNV R14
+    // R12-R14 are non-volatile on Win64. .PUSHNV saves them in the prologue
+    // and restores them in the epilogue (unwind data). The include itself
+    // pushes those registers only for FPC.
+    {$ENDIF}
     {$INCLUDE DECHash.sha3_x64.inc}
   {$ENDIF}
 end;
