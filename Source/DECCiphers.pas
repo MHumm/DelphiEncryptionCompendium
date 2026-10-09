@@ -1014,6 +1014,22 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   end;
 
+/// <summary>
+///   IDEA multiplication modulo 65537. An operand of zero stands for 2^16,
+///   and a product of 2^16 is returned with low 16 bits zero.
+/// </summary>
+/// <param name="X">
+///   First factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <param name="Y">
+///   Second factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <returns>
+///   A value whose low 16 bits are (X * Y) mod 65537, using the zero
+///   encoding above. Higher bits are an intermediate of the reduction.
+/// </returns>
+function IDEAMul(X, Y: UInt32): UInt32;
+
 implementation
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}

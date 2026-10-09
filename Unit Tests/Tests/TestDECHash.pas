@@ -88,8 +88,23 @@ type
   public
     procedure SetUp; override;
     procedure TearDown; override;
+    /// <summary>
+    ///   Calls Increment8 on a counter that is already 2^256-1 so the
+    ///   final carry raises the hash overflow exception.
+    /// </summary>
+    procedure DoTestIncrement8Overflow;
   published  // special case: test for Increment8 method due to ASM fixes applied
     procedure TestIncrement8;
+    /// <summary>
+    ///   Carry out of dword 0 (2^32 bits), out of the low qword (2^64 bits),
+    ///   and across the remaining dwords. Expected dwords come from an
+    ///   independent 256-bit addition of 8*Add.
+    /// </summary>
+    procedure TestIncrement8CarryPropagation;
+    /// <summary>
+    ///   A counter of 2^256-1 plus 8 bits must raise EDECHashException.
+    /// </summary>
+    procedure TestIncrement8Overflow;
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
@@ -6083,14 +6098,133 @@ end;
 
 procedure THash_TestIncrement8.TestIncrement8;
 var
-  i, n : Integer;
+  LByte  : Integer;
+  LIndex : Integer;
+  LCounter : array[0..7] of UInt32;
 begin
-  for i := 1 to 255 do
+  // Increment8 always updates eight dwords (32 bytes).
+  for LByte := 1 to 255 do
   begin
-    n := i;
-    FHashIncr8.Increment8(n, 1);
-    CheckEquals(i + 8, n);
+    for LIndex := 0 to 7 do
+    begin
+      LCounter[LIndex] := 0;
+    end;
+    LCounter[0] := UInt32(LByte);
+
+    FHashIncr8.Increment8(LCounter, 1);
+
+    CheckEquals(LByte + 8, Integer(LCounter[0]));
+    for LIndex := 1 to 7 do
+    begin
+      CheckEquals(0, Integer(LCounter[LIndex]));
+    end;
   end;
+end;
+
+procedure THash_TestIncrement8.DoTestIncrement8Overflow;
+var
+  LCounter : array[0..7] of UInt32;
+begin
+  FillChar(LCounter, SizeOf(LCounter), $FF);
+  FHashIncr8.Increment8(LCounter, 1);
+end;
+
+procedure THash_TestIncrement8.TestIncrement8CarryPropagation;
+var
+  LCounter : array[0..7] of UInt32;
+
+  procedure ApplyAdd(AAdd: UInt32);
+  begin
+    FHashIncr8.Increment8(LCounter, AAdd);
+  end;
+
+  procedure CheckDwords(const AName: string; const AExpected: array of UInt32);
+  var
+    LIndex : Integer;
+  begin
+    for LIndex := 0 to 7 do
+    begin
+      CheckEquals(AExpected[LIndex], LCounter[LIndex],
+                  AName + ' dword ' + IntToStr(LIndex));
+    end;
+  end;
+
+  procedure ZeroCounter;
+  var
+    LIndex : Integer;
+  begin
+    for LIndex := 0 to 7 do
+    begin
+      LCounter[LIndex] := 0;
+    end;
+  end;
+
+begin
+  // Oracles below are 8*Add added to a 256-bit little-endian counter.
+  // They were calculated separately from Increment8 (x86 ADC, x64 ADC, and
+  // the Pascal fallback all have to match these constants).
+
+  // $FFFFFFFF + 8 carries into dword[1]: low dword becomes 7.
+  ZeroCounter;
+  LCounter[0] := High(UInt32);
+  ApplyAdd(1);
+  CheckDwords('near 2^32', [7, 1, 0, 0, 0, 0, 0, 0]);
+
+  // Both halves of the low qword are saturated. +8 must land in dword[2].
+  ZeroCounter;
+  LCounter[0] := High(UInt32);
+  LCounter[1] := High(UInt32);
+  ApplyAdd(1);
+  CheckDwords('near 2^64', [7, 0, 1, 0, 0, 0, 0, 0]);
+
+  // Add = $20000001, so 8*Add = $100000008. Together with the carry out of
+  // dword[0] the next dword becomes 2.
+  ZeroCounter;
+  LCounter[0] := High(UInt32);
+  ApplyAdd(UInt32($20000001));
+  CheckDwords('add above 2^29', [7, 2, 0, 0, 0, 0, 0, 0]);
+
+  // Carry crosses both the 2^64 and the 2^128 boundaries (dwords 2 and 4).
+  ZeroCounter;
+  LCounter[0] := High(UInt32);
+  LCounter[1] := High(UInt32);
+  LCounter[2] := High(UInt32);
+  LCounter[3] := High(UInt32);
+  LCounter[4] := High(UInt32);
+  ApplyAdd(1);
+  CheckDwords('carry into dword 5', [7, 0, 0, 0, 0, 1, 0, 0]);
+
+  // The top dword is saturated, but nothing carries into it.
+  ZeroCounter;
+  LCounter[7] := High(UInt32);
+  ApplyAdd(1);
+  CheckDwords('no false overflow', [8, 0, 0, 0, 0, 0, 0, High(UInt32)]);
+
+  // Carry reaches the last dword and fills it without wrapping the counter.
+  ZeroCounter;
+  LCounter[0] := High(UInt32);
+  LCounter[1] := High(UInt32);
+  LCounter[2] := High(UInt32);
+  LCounter[3] := High(UInt32);
+  LCounter[4] := High(UInt32);
+  LCounter[5] := High(UInt32);
+  LCounter[6] := High(UInt32);
+  LCounter[7] := High(UInt32) - 1;
+  ApplyAdd(1);
+  CheckDwords('carry fills top dword',
+              [7, 0, 0, 0, 0, 0, 0, High(UInt32)]);
+
+  // Largest byte count in one call, starting from zero: 8*$FFFFFFFF = $7FFFFFFF8.
+  ZeroCounter;
+  ApplyAdd(High(UInt32));
+  CheckDwords('max add from zero',
+              [UInt32($FFFFFFF8), 7, 0, 0, 0, 0, 0, 0]);
+end;
+
+procedure THash_TestIncrement8.TestIncrement8Overflow;
+begin
+  CheckException(DoTestIncrement8Overflow, EDECHashException,
+                 'Hash overflow was not raised');
 end;
 
 { THash_TestCPPBuilderExceptions }
