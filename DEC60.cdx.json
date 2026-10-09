@@ -63,7 +63,14 @@
             "name": "Markus Humm",
             "email": "markus.humm@gmail.com"
           }
-        ]
+        ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/MHumm/DelphiEncryptionCompendium",
+          "comment": "Main source code repository, master branch"
+        }
+      ]		
       },
       "supplier": {
         "name": "Team DEC",
