@@ -1,4 +1,4 @@
-program Cipher_FMX;
+﻿program Cipher_FMX;
 
 uses
   System.StartUpCopy,

@@ -57,7 +57,7 @@ type
     /// </summary>
     OutputHex       : RawByteString;
     /// <summary>
-    ///   Init Vektor für den ersten Test
+    ///   Init vector for the first test
     /// </summary>
     InitVector      : RawByteString;
     /// <summary>
@@ -99,7 +99,7 @@ type
   TTestFunction = procedure(Source, Dest: PUInt8Array; Size: Integer) of object;
 
   /// <summary>
-  ///   Testmethoden für Klasse TDECCipherModes
+  ///   Test methods for class TDECCipherModes
   /// </summary>
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTDECCipherModes = class(TTestCase)

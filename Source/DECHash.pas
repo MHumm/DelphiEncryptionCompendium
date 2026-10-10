@@ -132,7 +132,7 @@ type
   end;
 
   /// <summary>
-  ///   Do not confuse with the original RipeMD algorithm which ís being
+  ///   Do not confuse with the original RipeMD algorithm which is being
   ///   considered to be unsafe anyway. Considered to be broken due to the only
   ///   128 Bit long message digest result.
   /// </summary>

@@ -1,4 +1,4 @@
-program Hash_FMX;
+﻿program Hash_FMX;
 
 uses
   System.StartUpCopy,

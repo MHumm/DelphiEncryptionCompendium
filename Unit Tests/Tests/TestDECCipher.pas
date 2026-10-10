@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -144,7 +144,7 @@ type
     procedure TestSetAutomaticIV;
   end;
 
-  // Testmethoden for Klasse TCipher_Null
+  // Test methods for class TCipher_Null
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Null = class(TTestCase)
   strict private
@@ -1489,7 +1489,7 @@ begin
 end;
 
 procedure TestTCipher_Mars.TestClassByName;
-// ClassByName Tests for die restlichen Ciphers umsetzen!
+// ClassByName tests: implement for the remaining ciphers!
 var
   ReturnValue : TDECCipherClass;
 begin
@@ -4322,11 +4322,10 @@ var
   TempResultHex : RawByteString;
 begin
 { TODO :
-Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
-ja immer von einem bestimmten CipherModus ausgehen, und nicht die
-einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
-wir die bisherigen Vektoren testen können. Dann können wir die nötigen
-Daten synthetisieren. }
+The problem here is that we are testing at too low a level, because the existing
+test vectors always assume a specific cipher mode and not the individual
+DoEncode/DoDecode primitives. Those should be tested later, once we can run the
+existing vectors. Then we can synthesize the required data. }
   for Data in FTestData do
   begin
     InitProc(Data);
@@ -4347,11 +4346,10 @@ var
   TempResultHex : RawByteString;
 begin
 { TODO :
-Das Problem ist hier: dass wir zu low level testen, da die bisherigen Testvektoren
-ja immer von einem bestimmten CipherModus ausgehen, und nicht die
-einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
-wir die bisherigen Vektoren testen können. Dann können wir die nötigen
-Daten synthetisieren. }
+The problem here is that we are testing at too low a level, because the existing
+test vectors always assume a specific cipher mode and not the individual
+DoEncode/DoDecode primitives. Those should be tested later, once we can run the
+existing vectors. Then we can synthesize the required data. }
   for Data in FTestData do
   begin
     InitProc(Data);
