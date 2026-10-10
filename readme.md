@@ -4,7 +4,9 @@
 DEC is a library for Embarcadero Delphi, containing different cryptographic algorithms.
 It contains algorithms for these categories:
 
-* Ciphers: encryption/decryption of data
+* Ciphers: stream and block based encryption/decryption of data, including modes with 
+  Authenticated Encryption with Associated Data capabilities (AEAD) and
+  standard paddings like PKCS#7 
 * Hashes: "cryptographic checksums"
 * Password hashes: bcrypt
 * Key derivation algorithms like Kdf1-Kdf3 and pbkdf2
@@ -13,7 +15,7 @@ It contains algorithms for these categories:
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The last release version 6.4.1 is compatible with Delphi XE7 - Delphi 13.1 Florence. 
+The last release version 6.4.1 is compatible with Delphi XE7 - Delphi 13.2 Florence. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
@@ -46,7 +48,8 @@ this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 [`Docs/StyleGuide.md`](Docs/StyleGuide.md) — naming, formatting, headers, FPC/Delphi rules, tests, and PR expectations.  
 Existing sources are not mass-reformatted; new and rewritten code is expected to follow the guide.
 
-Also take the time to read *DEC65.pdf* (or the version shipped with your release) in the *Docs* folder for API documentation and how to extend algorithms, and look at the demos in the *Demos* subfolder.
+Also take the time to read *DEC65.pdf* (or the version shipped with your release) in the *Docs* folder 
+for API documentation and how to extend algorithms, and look at the demos in the *Demos* subfolder.
 
 ## Has it been tested?
 DEC 5.2 came with some "arcane" test program testing the algoithms implemented
@@ -56,16 +59,15 @@ tests.
 
 DEC 6.0 reworked these tests into DUnit and DUnitX tests. We also added some more 
 tests and with this replaced the "arcane" test program which used hard to understand 
-code. A few of the implemented unit tests may still fail, but this is simply because
-they are empty sceletons at this point in time waiting to be filled in. We first 
-need to work out how to implement these tests and maybe look for test data.
+code. All provided unit tests run without failures. We do have test vectors for all
+crypto algorithms used (public API), we might still lack a few for some code blocks 
+to test them in isolation, but that does not mean that the algorithm uses these blocks
+is not properly tested!
 Why don't you help out by researching useful test data for those few tests?
-We're talking at block chaining mode tests for the ciphers specifically.
+We're talking about block chaining mode tests for the ciphers specifically.
 
 DUnitX (`Unit Tests/DECDUnitXTestSuite`) is the preferred / authoritative runner;
-the classic DUnit suite remains for comparison until a later removal. Both currently
-share the same known product/test failures (Keccak and GCM chunked stream); see
-`Docs/plans/dunitx-parity-log.md` and `Docs/Cleanup-Roadmap.md` §2.
+the classic DUnit suite remains for comparison until a later removal. 
 
 In DEC 6.2 the unit tests for the hash classes were looked at and where not already 
 used original test data vectors (as far as we could find them - for most we could) 
@@ -168,6 +170,8 @@ Modes ending on x have been invented by the original developer of DEC
 
 ## Contained message authentication algorithms
 * HMAC
+* GCM mode for block ciphers
+* CCM mode for block ciphers
 
 ## Contained formattings
 * Copy
@@ -186,6 +190,8 @@ Modes ending on x have been invented by the original developer of DEC
 * BigEndian16
 * BigEndian32
 * BigEndian64
+* BCryptBSD
+* UTF8
 
 ## Contained CRCs
 * 8
