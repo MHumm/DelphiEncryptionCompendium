@@ -529,12 +529,22 @@ instead -> bang
   //   R8D = Value of "ADD"
   register; // redundant but informative
   asm
-    SHL R8, 3                      // R8 := Add * 8       the caller writes to R8D what automatically clears the high DWORD of R8
-    ADD QWORD PTR [RDX     ], R8   // add [rdx], r8       TData(Value)[00] := TData(Value)[00] + R8
-    ADD QWORD PTR [RDX +  8], 0    // add [rdx+$08], 0    TData(Value)[08] := TData(Value)[08] + 0 + Carry
-    ADD QWORD PTR [RDX + 16], 0    // add [rdx+$10], 0    TData(Value)[16] := TData(Value)[16] + 0 + Carry
-    ADD QWORD PTR [RDX + 24], 0    // add [rdx+$18], 0    TData(Value)[24] := TData(Value)[24] + 0 + Carry
-    JC RaiseHashOverflowError;
+    {$IFNDEF FPC}
+    .NOFRAME
+    {$ENDIF}
+    // Win64: RCX = Self, RDX = Value, R8D = Add (high dword of R8 is zero).
+    // .NOFRAME keeps this a leaf so the tail jump does not skip a frame.
+    // Self stays in RCX for RaiseHashOverflowError. ADC propagates the carry
+    // across the 4 qwords (the same 8 dwords as the Pascal fallback).
+    SHL R8, 3                      // R8 := Add * 8
+    ADD QWORD PTR [RDX], R8        // low qword += Add * 8 (dword[0] and dword[1])
+    ADC QWORD PTR [RDX + 8], 0     // propagate carry into dword[2] and dword[3]
+    ADC QWORD PTR [RDX + 16], 0    // propagate carry into dword[4] and dword[5]
+    ADC QWORD PTR [RDX + 24], 0    // propagate carry into dword[6] and dword[7]
+    JC RaiseHashOverflowError
+    {$IFNDEF FPC}
+    RET
+    {$ENDIF}
   end;
   {$ENDIF !X64ASM}
 {$ELSE PUREPASCAL}
