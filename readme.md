@@ -75,6 +75,11 @@ have been added to improve test coverage. V6.3 added further synthesized tests f
 some hash classes. For SHA3 and for the GCM block chaining method the original test
 vectors provided by NIST are used for the unit tests.
 
+## Is it available in GetIt?
+Well, yes and no. Embarcadero only allows a light version to be in GetIt, which contains
+all algorithms, except for the ciphers. This is due to US export controls regulation and
+the asociated paperwork for that one.
+
 ## Contained hash algorithms
 * MD2        
 * MD4        
@@ -93,6 +98,10 @@ vectors provided by NIST are used for the unit tests.
 * SHA3_256
 * SHA3_384
 * SHA3_512
+* Keccak_224
+* Keccak_256
+* Keccak_384
+* Keccak_512
 * Shake128
 * Shake256
 * Haval128   
