@@ -1,4 +1,4 @@
-{$ifdef FPC}
+﻿{$ifdef FPC}
 {$ASMMODE intel}
 {$endif}
 

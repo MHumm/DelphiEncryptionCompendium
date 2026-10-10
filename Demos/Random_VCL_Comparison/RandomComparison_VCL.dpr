@@ -1,4 +1,4 @@
-program RandomComparison_VCL;
+﻿program RandomComparison_VCL;
 
 uses
   Vcl.Forms,
