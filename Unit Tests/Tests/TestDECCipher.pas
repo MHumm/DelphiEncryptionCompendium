@@ -222,6 +222,12 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    /// <summary>
+    ///   IDEAMul operands 0 (meaning 2^16), 1 and $FFFF, plus products
+    ///   that wrap modulo 65537. Expected low 16 bits are that modular
+    ///   product, computed from the IDEA definition.
+    /// </summary>
+    procedure TestIDEAMul;
   end;
 
   // Testmethods for class TCipher_Cast256
@@ -1329,6 +1335,54 @@ var
 begin
   ReturnValue := FCipher_IDEA.ClassByName('TCipher_IDEA');
   CheckEquals(TCipher_IDEA, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_IDEA.TestIDEAMul;
+type
+  TIDEAMulCase = record
+    X       : UInt32;
+    Y       : UInt32;
+    Product : UInt32;
+  end;
+const
+  // Product is (X' * Y') mod 65537, where 0 stands for 2^16 and a
+  // mathematical result of 2^16 is stored as 0. Checked against that
+  // definition, including pairs whose 32-bit product exceeds 65537.
+  cCases: array[0..21] of TIDEAMulCase = (
+    (X: $0000; Y: $0000; Product: $0001),
+    (X: $0000; Y: $0001; Product: $0000),
+    (X: $0001; Y: $0000; Product: $0000),
+    (X: $0001; Y: $0001; Product: $0001),
+    (X: $0000; Y: $FFFF; Product: $0002),
+    (X: $FFFF; Y: $0000; Product: $0002),
+    (X: $FFFF; Y: $0001; Product: $FFFF),
+    (X: $0001; Y: $FFFF; Product: $FFFF),
+    (X: $FFFF; Y: $FFFF; Product: $0004),
+    (X: $0002; Y: $0003; Product: $0006),
+    (X: $8000; Y: $8000; Product: $C001),
+    (X: $8000; Y: $0002; Product: $0000),
+    (X: $FFFF; Y: $0002; Product: $FFFD),
+    (X: $1234; Y: $5678; Product: $FA3B),
+    (X: $0003; Y: $FFFF; Product: $FFFB),
+    (X: $7FFF; Y: $7FFF; Product: $C003),
+    (X: $0001; Y: $8000; Product: $8000),
+    (X: $FFFE; Y: $FFFE; Product: $0009),
+    (X: $0002; Y: $8001; Product: $0001),
+    (X: $0000; Y: $8000; Product: $8001),
+    (X: $1ABCD; Y: $0001; Product: $ABCD),
+    (X: $10000; Y: $10000; Product: $0001)
+  );
+var
+  LIndex   : Integer;
+  LProduct : UInt32;
+begin
+  for LIndex := Low(cCases) to High(cCases) do
+  begin
+    LProduct := IDEAMul(cCases[LIndex].X, cCases[LIndex].Y) and $FFFF;
+    CheckEquals(cCases[LIndex].Product, LProduct,
+                Format('IDEAMul($%x, $%x)',
+                       [cCases[LIndex].X, cCases[LIndex].Y]));
+  end;
 end;
 
 procedure TestTCipher_Cast256.Done;

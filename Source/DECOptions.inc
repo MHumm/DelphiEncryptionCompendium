@@ -73,9 +73,16 @@
 // Automatically register all hash classes
 {.$DEFINE ManualRegisterHashClasses} (* default off *)
 
-// if the compiler does not support assembler turn usage off and even if restrict
-// it to Windows, as those non Windows platforms which actually do support ASM
-// in Delphi do not use Intel x86 ASM
+// Assembler selection.
+// Delphi enables the Intel assembler only when ASSEMBLER is defined and the
+// target is Win32 (CPUX86) or Win64 (CPUX64 and MSWINDOWS). LLVM targets
+// (Android, iOS, macOS, Linux64, WinARM64EC) leave ASSEMBLER undefined, so
+// they stay on pure Pascal. CPUX64 without MSWINDOWS (Linux64, macOS x64)
+// stays on pure Pascal as well. Delphi's Windows symbol is MSWINDOWS.
+// FPC keeps the CPU switches in the FPC branch; that behaviour is unchanged.
+// Remove the dot from {.$DEFINE NO_ASM} below, or uncomment {$DEFINE NO_ASM}
+// in the Architecture section, to force pure Pascal on every target.
+{.$DEFINE NO_ASM} (* default off *)
 {$IFDEF FPC }
   {$IF defined(CPUX86_64) or defined(CPUAMD64) or defined(CPUIA64) }
     {$ifndef CPUX64}
@@ -97,8 +104,20 @@
       {$ENDIF}
   {$ENDIF}{$endif}
 {$ELSE}
-  // Turn ASM off for FPC as we do not know enough about ASM support on FPC
-  {$DEFINE NO_ASM}
+  // Delphi. See the comment above for which targets keep the assembler.
+  {$IFNDEF ASSEMBLER}
+    {$DEFINE NO_ASM}
+  {$ELSE}
+    {$IFNDEF CPUX86}
+      {$IFNDEF CPUX64}
+        {$DEFINE NO_ASM}
+      {$ELSE}
+        {$IFNDEF MSWINDOWS}
+          {$DEFINE NO_ASM}
+        {$ENDIF}
+      {$ENDIF}
+    {$ENDIF}
+  {$ENDIF}
 {$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
@@ -185,14 +204,16 @@
 //{$DEFINE NO_ASM}
 
 {$IFDEF NO_ASM}
-  // User config override (see top of this file)
+  // User override ({.$DEFINE NO_ASM} in the configuration section, or
+  // {$DEFINE NO_ASM} on the line above) or a platform with no Intel assembler.
   {$UNDEF X86ASM}
   {$UNDEF X64ASM}
   {$DEFINE PUREPASCAL}
 {$ENDIF}
 
 {$IFNDEF PUREPASCAL}
-  // ignored by FPC (already in PurePascal mode as defined in FPC block above)
+  // FPC i386 defines CPUX86. FPC x86_64 defines CPUX64 (also aliased above).
+  // Any other CPU reaches PUREPASCAL here.
   {$IFDEF CPUX86}
     {$DEFINE X86ASM}
   {$ELSE !CPUX86}

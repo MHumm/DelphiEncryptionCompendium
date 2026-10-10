@@ -43,6 +43,16 @@ type
     procedure SwapLongBuffer;
     procedure SwapInt64;
     procedure SwapInt64Buffer;
+    /// <summary>
+    ///   SwapUInt32 of values with the high bit set. Expected results are
+    ///   the byte-reversed constants.
+    /// </summary>
+    procedure SwapUInt32HighBits;
+    /// <summary>
+    ///   SwapInt64 of values with the high bit set. Expected results are
+    ///   the byte-reversed constants.
+    /// </summary>
+    procedure SwapInt64HighBits;
     procedure XORBuffers;
   end;
 
@@ -260,6 +270,84 @@ begin
 
   for i := Low(SwapInt64Array) to High(SwapInt64Array) do
     CheckEquals(SwapInt64Array[i].Result, DestBuf[i]);
+end;
+
+procedure TTestBitTwiddling.SwapUInt32HighBits;
+const
+  // Each result is the four input bytes in reverse order.
+  cCases: array[0..5] of TestRecCardinal = (
+    (Input: $80000000; Result: $00000080),
+    (Input: $FF00FF00; Result: $00FF00FF),
+    (Input: $01234567; Result: $67452301),
+    (Input: $80FF00FF; Result: $FF00FF80),
+    (Input: $00FF00FF; Result: $FF00FF00),
+    (Input: $F00FF00F; Result: $0FF00FF0)
+  );
+var
+  LIndex : Integer;
+begin
+  for LIndex := Low(cCases) to High(cCases) do
+  begin
+    CheckEquals(cCases[LIndex].Result,
+                DECUtil.SwapUInt32(cCases[LIndex].Input),
+                Format('SwapUInt32($%x)', [cCases[LIndex].Input]));
+  end;
+end;
+
+procedure TTestBitTwiddling.SwapInt64HighBits;
+var
+  LInput    : Int64;
+  LExpected : Int64;
+  LActual   : Int64;
+begin
+  // $0123456789ABCDEF reversed is $EFCDAB8967452301.
+  Int64Rec(LInput).Lo := $89ABCDEF;
+  Int64Rec(LInput).Hi := $01234567;
+  Int64Rec(LExpected).Lo := $67452301;
+  Int64Rec(LExpected).Hi := $EFCDAB89;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$0123456789ABCDEF');
+
+  // High bit only: $8000000000000000 reversed is $0000000000000080.
+  Int64Rec(LInput).Lo := $00000000;
+  Int64Rec(LInput).Hi := $80000000;
+  Int64Rec(LExpected).Lo := $00000080;
+  Int64Rec(LExpected).Hi := $00000000;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$8000000000000000');
+
+  // $8000000000000001 reversed is $0100000000000080.
+  Int64Rec(LInput).Lo := $00000001;
+  Int64Rec(LInput).Hi := $80000000;
+  Int64Rec(LExpected).Lo := $00000080;
+  Int64Rec(LExpected).Hi := $01000000;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$8000000000000001');
+
+  // $FF00FF00FF00FF00 reversed is $00FF00FF00FF00FF.
+  Int64Rec(LInput).Lo := $FF00FF00;
+  Int64Rec(LInput).Hi := $FF00FF00;
+  Int64Rec(LExpected).Lo := $00FF00FF;
+  Int64Rec(LExpected).Hi := $00FF00FF;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$FF00FF00FF00FF00');
+
+  // $FFFFFFFF00000000 reversed is $00000000FFFFFFFF.
+  Int64Rec(LInput).Lo := $00000000;
+  Int64Rec(LInput).Hi := $FFFFFFFF;
+  Int64Rec(LExpected).Lo := $FFFFFFFF;
+  Int64Rec(LExpected).Hi := $00000000;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$FFFFFFFF00000000');
+
+  // High bit clear in the top byte only: $7FFFFFFFFFFFFFFF reversed is
+  // $FFFFFFFFFFFFFF7F.
+  Int64Rec(LInput).Lo := $FFFFFFFF;
+  Int64Rec(LInput).Hi := $7FFFFFFF;
+  Int64Rec(LExpected).Lo := $FFFFFF7F;
+  Int64Rec(LExpected).Hi := $FFFFFFFF;
+  LActual := DECUtil.SwapInt64(LInput);
+  CheckEquals(LExpected, LActual, '$7FFFFFFFFFFFFFFF');
 end;
 
 procedure TTestBitTwiddling.XORBuffers;

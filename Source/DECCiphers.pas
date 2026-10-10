@@ -1014,6 +1014,22 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   end;
 
+/// <summary>
+///   IDEA multiplication modulo 65537. An operand of zero stands for 2^16,
+///   and a product of 2^16 is returned with low 16 bits zero.
+/// </summary>
+/// <param name="X">
+///   First factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <param name="Y">
+///   Second factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <returns>
+///   A value whose low 16 bits are (X * Y) mod 65537, using the zero
+///   encoding above. Higher bits are an intermediate of the reduction.
+/// </returns>
+function IDEAMul(X, Y: UInt32): UInt32;
+
 implementation
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
@@ -1694,6 +1710,11 @@ function IDEAMul(X, Y: UInt32): UInt32;
 {$IF defined(X86ASM) or defined(X64ASM)}
 asm
     {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+      .NOFRAME
+      // Leaf: the early RET below must not skip a compiler frame.
+      // Win64: X in ECX, Y in EDX, result in EAX.
+      {$ENDIF}
        MOV    EAX,ECX
     {$ENDIF X64ASM}
        AND    EAX,0FFFFh
@@ -1710,6 +1731,11 @@ asm
        RET
 @@1:   LEA    EAX,[EAX + EDX - 1]
        NEG    EAX
+    {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+       RET
+      {$ENDIF}
+    {$ENDIF}
 end;
 {$ELSE}
 begin
