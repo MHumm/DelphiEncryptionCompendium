@@ -217,7 +217,6 @@ var
   Iterations : UInt32;
   BufferSize : UInt32;
   Salt       : TBytes;
-  PwdHashBuf : TBytes;
 begin
   Hash := TDECHash.ClassByName(ClassName).Create;
 
@@ -233,8 +232,6 @@ begin
        (TDECPasswordHash(Hash).MaxPasswordLength < BufferSize) then
     begin
       BufferSize := TDECPasswordHash(Hash).MaxPasswordLength;
-      SetLength(PwdHashBuf, BufferSize);
-      Move(FBenchmarkBuffer[0], PwdHashBuf[0], BufferSize);
 
       // Since password hashes take quite long time to calculate limit that time
       // by limiting the number of iterations calculated but in such a way that
@@ -267,12 +264,11 @@ begin
       if Hash.IsPasswordHash then
         TDECPasswordHash(Hash).Salt := Salt;
 
-      if not Hash.IsPasswordHash then
-        HashResult := Hash.CalcBytes(FBenchmarkBuffer)
-      else
-        HashResult := Hash.CalcBytes(PwdHashBuf);
-// Former implementation, but this leads to crashes:
-//      HashResult := Hash.CalcBuffer(@FBenchmarkBuffer[0], BufferSize);
+      // CalcBuffer(const Buffer; Size) already takes Buffer by reference.
+      // Do NOT write CalcBuffer(@FBenchmarkBuffer[0], …) — the extra @ makes
+      // the engine read from a stack temp (pointer-to-pointer), which caused
+      // intermittent OutOfRange/AVs in Absorb for large buffers (GitHub #94).
+      HashResult := Hash.CalcBuffer(FBenchmarkBuffer[0], BufferSize);
     end;
 
     FStopwatch.Stop;

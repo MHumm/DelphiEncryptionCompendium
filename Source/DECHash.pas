@@ -341,9 +341,13 @@ type
                      end;
 
       /// <summary>
-      ///   Buffer type
+      ///   View type for sponge Absorb over an arbitrary-length message.
+      ///   Must not be limited to 64 KiB: with {$R+} enabled for the SHA3 block,
+      ///   indexing past 65535 raised ERangeError (GitHub issue #94 —
+      ///   HashBenchmark / 1 MiB Keccak). The bound is only for typing; Absorb
+      ///   never allocates a TBABytes instance.
       /// </summary>
-      TBABytes = array[0..65535] of UInt8;
+      TBABytes = array[0..High(Integer) div SizeOf(UInt8) - 1] of UInt8;
       /// <summary>
       ///   Pointer to a buffer
       /// </summary>
@@ -5131,24 +5135,28 @@ end;
 
 procedure THash_SHA3Base.Calc(const Data; DataSize: Integer);
 var
-  DataPtr   : PBABytes;
+  DataPtr   : PByte;
   RoundSize : UInt32;
 const
-  // Maximum number of bytes one can process in one round
-  MaxRoundSize = MaxInt div 8;
+  // Max bytes per Absorb round. Must keep RoundSize*8 within Int32 (Absorb bit
+  // length). Kept well below MaxInt/8 so multi-round walks are realistic for
+  // large messages (HashBenchmark 1 MiB). DataPtr must be PByte so Inc advances
+  // by bytes — PBABytes would scale by SizeOf(TBABytes) (GitHub #94 / CR).
+  cMaxBytesPerRound = 64 * 1024;
 begin
   // due to the way the inherited calc is constructed it must not be called here!
   if (DataSize > 0) then
   begin
-    DataPtr := PBABytes(@Data);
+    // Byte-addressed pointer: Inc(DataPtr, n) must advance n bytes.
+    DataPtr := @Data;
 
     while (UInt32(DataSize) > 0) do
     begin
       RoundSize := DataSize;
-      if (RoundSize > MaxRoundSize) then
-        RoundSize := MaxRoundSize;
+      if (RoundSize > cMaxBytesPerRound) then
+        RoundSize := cMaxBytesPerRound;
 
-      Absorb(DataPtr, RoundSize * 8);
+      Absorb(PBABytes(DataPtr), RoundSize * 8);
       Dec(DataSize, RoundSize);
       Inc(DataPtr, RoundSize);
     end;

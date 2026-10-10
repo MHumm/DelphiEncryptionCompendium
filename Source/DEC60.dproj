@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{34FB3EC0-D6C0-4F92-9FEE-3E0E87C91FC4}</ProjectGuid>
-        <ProjectVersion>20.4</ProjectVersion>
+        <ProjectVersion>20.5</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <MainSource>DEC60.dpr</MainSource>
         <Base>True</Base>
@@ -67,6 +67,21 @@
         <DCC_UnitSearchPath>.\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
         <DCC_DcpOutput>.\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcpOutput>
+        <SBOM_Enabled>True</SBOM_Enabled>
+        <SBOM_IncludeEvidence>True</SBOM_IncludeEvidence>
+        <SBOM_BsiProfile>True</SBOM_BsiProfile>
+        <SBOM_ReferenceModuleSboms>False</SBOM_ReferenceModuleSboms>
+        <SBOM_AutoOpen>True</SBOM_AutoOpen>
+        <SBOM_NameFromFileInfo>True</SBOM_NameFromFileInfo>
+        <SBOM_VersionFromFileInfo>True</SBOM_VersionFromFileInfo>
+        <SBOM_CopyrightFromFileInfo>True</SBOM_CopyrightFromFileInfo>
+        <SBOM_CompanyFromFileInfo>True</SBOM_CompanyFromFileInfo>
+        <SBOM_SupplierName>Team DEC</SBOM_SupplierName>
+        <SBOM_SupplierURLs>https://github.com/MHumm/DelphiEncryptionCompendium</SBOM_SupplierURLs>
+        <SBOM_SupplierContacts>Markus Humm=markus.humm@gmail.com</SBOM_SupplierContacts>
+        <SBOM_ManufacturerName>TeamDEC</SBOM_ManufacturerName>
+        <SBOM_ManufacturerURLs>https://github.com/MHumm/DelphiEncryptionCompendium</SBOM_ManufacturerURLs>
+        <SBOM_ManufacturerContacts>Markus Humm=markus.humm@gmail.com</SBOM_ManufacturerContacts>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <Android_SplashImage640>$(BDS)\bin\Artwork\Android\FM_SplashImage_640x480.png</Android_SplashImage640>
@@ -85,13 +100,13 @@
         <Android_NotificationIcon48>$(BDS)\bin\Artwork\Android\FM_NotificationIcon_48x48.png</Android_NotificationIcon48>
         <Android_NotificationIcon72>$(BDS)\bin\Artwork\Android\FM_NotificationIcon_72x72.png</Android_NotificationIcon72>
         <Android_NotificationIcon96>$(BDS)\bin\Artwork\Android\FM_NotificationIcon_96x96.png</Android_NotificationIcon96>
-        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=;minSdkVersion=23;targetSdkVersion=36</VerInfo_Keys>
+        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=;minSdkVersion=24;targetSdkVersion=36</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Android_LauncherIcon192>$(BDS)\bin\Artwork\Android\FM_LauncherIcon_192x192.png</Android_LauncherIcon192>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android64)'!=''">
-        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=;minSdkVersion=23;targetSdkVersion=36</VerInfo_Keys>
+        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=;minSdkVersion=24;targetSdkVersion=36</VerInfo_Keys>
         <BT_BuildType>Debug</BT_BuildType>
         <Base_Android>true</Base_Android>
         <CfgParent>Base</CfgParent>

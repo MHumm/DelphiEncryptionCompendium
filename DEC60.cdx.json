@@ -1,0 +1,165 @@
+﻿{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "serialNumber": "urn:uuid:fec825b7-fd21-4204-9e8b-ac480a53704f",
+  "metadata": {
+    "timestamp": "2026-10-04T16:35:23Z",
+    "lifecycles": [
+      {
+        "phase": "build"
+      }
+    ],
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "MSYS SBOM Plugin",
+          "publisher": "Maenken Systems",
+          "version": "1.0.1.95"
+        },
+        {
+          "type": "application",
+          "name": "Delphi 37.0",
+          "publisher": "Embarcadero Technologies"
+        }
+      ]
+    },
+    "manufacturer": {
+      "name": "TeamDEC",
+      "url": [
+        "https://github.com/MHumm/DelphiEncryptionCompendium"
+      ],
+      "contact": [
+        {
+          "name": "Markus Humm",
+          "email": "markus.humm@gmail.com"
+        }
+      ]
+    },
+    "supplier": {
+      "name": "Team DEC",
+      "url": [
+        "https://github.com/MHumm/DelphiEncryptionCompendium"
+      ],
+      "contact": [
+        {
+          "name": "Markus Humm",
+          "email": "markus.humm@gmail.com"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "name": "DEC60",
+      "publisher": "Team DEC",	  
+      "manufacturer": {
+        "name": "Team DEC",
+        "url": [
+          "https://github.com/MHumm/DelphiEncryptionCompendium"
+        ],
+        "contact": [
+          {
+            "name": "Markus Humm",
+            "email": "markus.humm@gmail.com"
+          }
+        ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/MHumm/DelphiEncryptionCompendium",
+          "comment": "Main source code repository, master branch"
+        }
+      ]		
+      },
+      "supplier": {
+        "name": "Team DEC",
+        "url": [
+          "https://github.com/MHumm/DelphiEncryptionCompendium"
+        ],
+        "contact": [
+          {
+            "name": "Markus Humm",
+            "email": "markus.humm@gmail.com"
+          }
+        ]
+      },
+      "bom-ref": "pkg:delphi/DEC60",
+      "licenses": [
+        {
+          "license": {
+            "name": "APL-2.0",
+            "acknowledgement": "declared"
+          }
+        }
+      ],	  
+      "purl": "pkg:delphi/DEC60",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d7d975e23aa0d90b6d419871088ff7e8f3339eaddb28bc2b98d98b38984a97e8"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "5ab58bd79d223d60cb7ab3e7d0b59ff786853e71ac87f37fe0812bd0f72eab32da734844ca0a0af24c07ef7a43af327dcb47ea83cc065cc41e57939059d630e2"
+        }
+      ],
+      "properties": [
+        {
+          "name": "bsi:component:executable",
+          "value": "executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60.exe"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "delphi.framework",
+        "value": "Delphi 37.0"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:radstudio/delphi/rtl@37.0.60952.8797",
+      "name": "Delphi RTL",
+      "version": "37.0.60952.8797",
+      "purl": "pkg:radstudio/delphi/rtl@37.0.60952.8797",
+      "licenses": [
+        {
+          "license": {
+            "name": "Proprietary",
+            "acknowledgement": "declared"
+          }
+        }
+      ],
+      "publisher": "Embarcadero Technologies",
+      "properties": [
+        {
+          "name": "bsi:component:effectiveLicence",
+          "value": "Proprietary"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:delphi/DEC60",
+      "dependsOn": [
+        "pkg:radstudio/delphi/rtl@37.0.60952.8797"
+      ]
+    }
+  ]
+}

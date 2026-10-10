@@ -732,8 +732,8 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
     if Length(Result) > 0 then
       Encode(Source[0], Result[0], Length(Source))
     else
-      if (FMode = cmGCM) then
-        EncodeGCM(nil, nil, 0);
+      if (FMode = cmGCM) or (FMode = cmCCM) then
+        EncodeAuthenticated(nil, nil, 0);
   end;
 
 begin
@@ -755,8 +755,8 @@ begin
     Decode(Source[0], Result[0], Length(Source));
   end
   else
-    if (FMode = cmGCM) then
-      DecodeGCM(nil, nil, 0);
+    if (FMode = cmGCM) or (FMode = cmCCM) then
+      DecodeAuthenticated(nil, nil, 0);
 
   if not (FPaddingClass = nil) then
     Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
@@ -779,6 +779,14 @@ begin
   Pos := Source.Position;
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
+
+  // One-shot authenticated streams declare DataSize as l(m) for CCM. Skip when
+  // a non-zero length is already set so multi-chunk EncodeStream can follow
+  // AuthenticatedPayloadLength without re-declaring the chunk size.
+  if Assigned(FAuthObj) and (FAuthObj.GetDeclaredPayloadLength = 0) then
+  begin
+    FAuthObj.DeclarePayloadLength(UInt64(DataSize));
+  end;
 
   Max       := Pos + DataSize;
   StartPos  := Pos;

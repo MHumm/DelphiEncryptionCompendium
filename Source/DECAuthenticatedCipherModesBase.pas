@@ -40,9 +40,9 @@ type
 
   /// <summary>
   ///   A method of this type needs to be supplied for encrypting or decrypting
-  ///   a block via this GCM algorithm. The method is implemented as a parameter,
-  ///   to avoid the need to bring TGCM in the inheritance chain. TGCM thus can
-  ///   be used for composition instead of inheritance.
+  ///   a block via an authenticated cipher mode. The method is implemented as a
+  ///   parameter to allow composition instead of inheritance (e.g. TGCM/TCCM
+  ///   hold a reference to the underlying block cipher's encode method).
   /// </summary>
   /// <param name="Source">
   ///   Data to be encrypted
@@ -56,8 +56,28 @@ type
   TEncodeDecodeMethod = procedure(Source, Dest: Pointer; Size: Integer) of Object;
 
   /// <summary>
-  ///   Base class for authenticated cipher modes
+  ///   Base class for authenticated cipher modes (GCM, CCM, future AEAD modes).
   /// </summary>
+  /// <remarks>
+  ///   Lifecycle for authenticated modes (GCM, CCM):
+  ///   <para>
+  ///     Init → set AAD / tag length / expected tag → Encode/Decode* → Done →
+  ///     read CalculatedAuthenticationTag.
+  ///   </para>
+  ///   <para>
+  ///     Done must be called before CalculatedAuthenticationTag may be read.
+  ///     Reading the tag before Done raises EDECCipherException. Done is
+  ///     idempotent. After Done, further Encode/Decode raises until Init is
+  ///     called again.
+  ///   </para>
+  ///   <para>
+  ///     GCM supports multi-call Encode/Decode without a pre-declared length.
+  ///     CCM can process several Encode/Decode chunks if the total payload
+  ///     length is known first (DeclarePayloadLength / one-shot Size).
+  ///     The authentication tag is materialized in Done so both modes share
+  ///     the same lifecycle.
+  ///   </para>
+  /// </remarks>
   TAuthenticatedCipherModesBase = class(TObject)
   strict protected
     /// <summary>
@@ -85,6 +105,13 @@ type
     FEncryptionMethod            : TEncodeDecodeMethod;
 
     /// <summary>
+    ///   True after Done has materialized the authentication tag. Reading
+    ///   CalculatedAuthenticationTag before this is set raises. Encode/Decode
+    ///   after finalization also raises until Init is called again.
+    /// </summary>
+    FFinalized                  : Boolean;
+
+    /// <summary>
     ///   Defines the length of the resulting authentication value in bit.
     /// </summary>
     /// <param name="Value">
@@ -93,12 +120,35 @@ type
     /// </param>
     procedure SetAuthenticationTagLength(const Value: UInt32); virtual;
     /// <summary>
-    ///   Returns the length of the calculated authehtication value in bit
+    ///   Assigns additional authenticated data (AAD). Modes may override to
+    ///   reject changes after AAD has already been absorbed into the MAC state.
+    /// </summary>
+    procedure SetDataToAuthenticate(const Value: TBytes); virtual;
+    /// <summary>
+    ///   Returns the length of the calculated authentication value in bit
     /// </summary>
     /// <returns>
     ///   Length of the calculated authentication value in bit
     /// </returns>
     function GetAuthenticationTagBitLength: UInt32; virtual;
+    /// <summary>
+    ///   Returns the calculated authentication tag. Raises if Done has not
+    ///   been called yet.
+    /// </summary>
+    /// <returns>
+    ///   Calculated authentication tag bytes
+    /// </returns>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the tag is read before Done.
+    /// </exception>
+    function GetCalculatedAuthenticationTag: TBytes; virtual;
+    /// <summary>
+    ///   Raises EDECCipherException when Encode/Decode is attempted after Done.
+    /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the mode has already been finalized.
+    /// </exception>
+    procedure CheckNotFinalized;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -114,7 +164,9 @@ type
                    InitVector       : TBytes); virtual;
 
     /// <summary>
-    ///   Encodes a block of data using the supplied cipher
+    ///   Encodes a block of data using the supplied cipher. May be called
+    ///   multiple times for modes that support streaming (e.g. GCM, CCM
+    ///   with a declared payload length).
     /// </summary>
     /// <param name="Source">
     ///   Plain text to encrypt
@@ -129,7 +181,9 @@ type
                      Dest   : PUInt8Array;
                      Size   : Integer); virtual; abstract;
     /// <summary>
-    ///   Decodes a block of data using the supplied cipher
+    ///   Decodes a block of data using the supplied cipher. May be called
+    ///   multiple times for modes that support streaming (e.g. GCM, CCM
+    ///   with a declared payload length).
     /// </summary>
     /// <param name="Source">
     ///   Encrypted ciphertext to decrypt
@@ -145,11 +199,54 @@ type
                      Size   : Integer); virtual; abstract;
 
     /// <summary>
+    ///   Finalizes the authentication tag after all Encode/Decode calls.
+    ///   Idempotent. Marks the tag as readable via CalculatedAuthenticationTag.
+    ///   Concrete modes that defer tag computation (GCM, CCM) override this
+    ///   to materialize the tag before calling inherited.
+    /// </summary>
+    procedure Done; virtual;
+
+    /// <summary>
+    ///   True when Encode/Decode may be called more than once before Done.
+    ///   GCM always supports this. CCM supports it when the total payload
+    ///   length is known in advance (CCM is not an online AEAD: B_0 encodes
+    ///   l(m); see RFC 3610 §1 and NIST SP 800-38C).
+    /// </summary>
+    /// <returns>
+    ///   True if the mode can process the payload in several Encode/Decode calls
+    /// </returns>
+    function SupportsMultiChunk: Boolean; virtual;
+
+    /// <summary>
+    ///   Declares the total payload length in bytes. Required by CCM before
+    ///   the first Encode/Decode when the message will be supplied in several
+    ///   chunks. Ignored by GCM. For CCM, repeating the same length is
+    ///   idempotent; a different length, a call after Encode/Decode has
+    ///   started, or a call after Done raises EDECCipherException. One-shot
+    ///   Encode/Decode still works without this: the first call's Size is
+    ///   treated as the total.
+    /// </summary>
+    /// <param name="AByteLength">
+    ///   Total plaintext/ciphertext length in bytes (not including the tag)
+    /// </param>
+    procedure DeclarePayloadLength(const AByteLength: UInt64); virtual;
+
+    /// <summary>
+    ///   Returns the payload length last declared via DeclarePayloadLength or
+    ///   taken from a one-shot Encode/Decode. 0 if none.
+    /// </summary>
+    /// <returns>
+    ///   Declared payload length in bytes
+    /// </returns>
+    function GetDeclaredPayloadLength: UInt64; virtual;
+
+    /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
     /// <returns>
-    ///   List of bit lengths
+    ///   List of bit lengths prescribed by the mode specification. If the
+    ///   mode does not prescribe any tag lengths, an empty array is returned.
     /// </returns>
     function GetStandardAuthenticationTagBitLengths:TStandardBitLengths; virtual;
 
@@ -158,7 +255,7 @@ type
     /// </summary>
     property DataToAuthenticate : TBytes
       read   FDataToAuthenticate
-      write  FDataToAuthenticate;
+      write  SetDataToAuthenticate;
     /// <summary>
     ///   Sets the length of AuthenticatonTag in bit, values as per official
     ///   specification are: 128, 120, 112, 104, or 96 bit. For certain
@@ -170,10 +267,15 @@ type
       read   GetAuthenticationTagBitLength
       write  SetAuthenticationTagLength;
     /// <summary>
-    ///   Calculated authentication value
+    ///   Calculated authentication value. Valid only after Done has been
+    ///   called. Reading this property before Done raises EDECCipherException
+    ///   so callers follow the Init → Encode/Decode* → Done → tag lifecycle.
     /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Raised when the property is read before Done.
+    /// </exception>
     property CalculatedAuthenticationTag : TBytes
-      read   FCalcAuthenticationTag
+      read   GetCalculatedAuthenticationTag
       write  FCalcAuthenticationTag;
 
     /// <summary>
@@ -190,6 +292,12 @@ implementation
 uses
   DECUtil;
 
+resourcestring
+  sAuthenticationTagNotFinalized =
+    'Calculated authentication tag is not available before Done has been called';
+  sAuthenticatedModeAlreadyFinalized =
+    'Authenticated cipher mode already finalized; call Init before further Encode/Decode';
+
 { TAuthenticatedCipherModesBase }
 
 function TAuthenticatedCipherModesBase.GetAuthenticationTagBitLength: UInt32;
@@ -197,8 +305,25 @@ begin
   Result := FCalcAuthenticationTagLength shl 3;
 end;
 
+function TAuthenticatedCipherModesBase.GetCalculatedAuthenticationTag: TBytes;
+begin
+  if not FFinalized then
+    raise EDECCipherException.CreateRes(@sAuthenticationTagNotFinalized);
+
+  Result := FCalcAuthenticationTag;
+end;
+
+procedure TAuthenticatedCipherModesBase.CheckNotFinalized;
+begin
+  if FFinalized then
+    raise EDECCipherException.CreateRes(@sAuthenticatedModeAlreadyFinalized);
+end;
+
 function TAuthenticatedCipherModesBase.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
 begin
+  // No prescribed lengths at this abstraction: return an empty array rather
+  // than a dummy 0-entry so callers can distinguish "none specified" from a
+  // specified length of 0 bits.
   SetLength(Result, 0);
 end;
 
@@ -219,12 +344,38 @@ begin
   end;
 
   FEncryptionMethod := EncryptionMethod;
+  FFinalized := False;
+end;
+
+procedure TAuthenticatedCipherModesBase.Done;
+begin
+  FFinalized := True;
+end;
+
+function TAuthenticatedCipherModesBase.SupportsMultiChunk: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TAuthenticatedCipherModesBase.DeclarePayloadLength(const AByteLength: UInt64);
+begin
+  // Default: GCM and other online AEADs ignore a pre-declared length.
+end;
+
+function TAuthenticatedCipherModesBase.GetDeclaredPayloadLength: UInt64;
+begin
+  Result := 0;
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);
 begin
   FCalcAuthenticationTagLength := Value shr 3;
   SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+end;
+
+procedure TAuthenticatedCipherModesBase.SetDataToAuthenticate(const Value: TBytes);
+begin
+  FDataToAuthenticate := Value;
 end;
 
 end.

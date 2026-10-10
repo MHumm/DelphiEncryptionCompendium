@@ -33,6 +33,8 @@ uses
   Generics.Collections,
   System.Math,
   DECBaseClass,
+  DECTypes,
+  DECAuthenticatedCipherModesBase,
   DECCipherBase,
   DECCipherModes,
   DECCipherFormats,
@@ -136,12 +138,27 @@ type
     // Needed for passing data to and from DoTestDecodeFailure
     FDecryptedData  : TBytes;
     FCipherText     : TBytes;
+    /// <summary>
+    ///   Plain text test data for post-Done Encode/Decode exception helpers
+    /// </summary>
+    FCallAfterDoneData : TBytes;
   private
     function IsEqual(const a, b: TBytes): Boolean;
     procedure DoTestDecodeFailure;
     procedure DoTestEncodeStream_LoadAndTestCAVSData(const aMaxChunkSize: Int64);
     procedure DoTestEncodeStream_TestSingleSet(const aSetIndex, aDataIndex:
         Integer; const aMaxChunkSize: Int64 = -1);
+    procedure DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
+    procedure DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+        ATag: RawByteString; ATagBits: Integer;
+        const AChunkSizes: array of Integer);
+    procedure DoEncodeAfterDone;
+    procedure DoDecodeAfterDone;
+    procedure DoChangeAADAfterEncode;
+    procedure DoSetAuthTagBitLengthTooLong;
+    procedure DoReadTagBeforeDone;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -153,12 +170,52 @@ type
     procedure TestEncodeStream;
     procedure TestEncodeLargeStream;
     procedure TestEncodeStreamChunked;
+    /// <summary>
+    ///   CAVS set 105 (first 2-block plain text) with two equal 16-byte EncodeStream calls.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkTwoBlocks;
+    /// <summary>
+    ///   Same vector with uneven chunks (7 + 25) to exercise GHASH partial blocks.
+    /// </summary>
+    procedure TestEncodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Same vector; multi-chunk decrypt with expected-tag verification.
+    /// </summary>
+    procedure TestDecodeStreamMultiChunkUneven;
+    /// <summary>
+    ///   Done twice must leave CalculatedAuthenticationResult unchanged.
+    /// </summary>
+    procedure TestDoneIdempotent;
+    /// <summary>
+    ///   Encode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestEncodeAfterDoneRejected;
+    /// <summary>
+    ///   Decode after Done must raise until Init is called again.
+    /// </summary>
+    procedure TestDecodeAfterDoneRejected;
+    /// <summary>
+    ///   Changing DataToAuthenticate after Encode has started must raise.
+    /// </summary>
+    procedure TestAADChangeAfterEncodeRejected;
+    /// <summary>
+    ///   Reading CalculatedAuthenticationResult before Done must raise.
+    /// </summary>
+    procedure TestCalculatedAuthenticationResultBeforeDoneRaises;
+    /// <summary>
+    ///   AuthenticationResultBitLength &gt; 128 must raise (tag buffer is 16 bytes).
+    /// </summary>
+    procedure TestAuthTagBitLengthTooLongRejected;
     procedure TestSetGetDataToAuthenticate;
     procedure TestSetGetAuthenticationBitLength;
     procedure TestGetStandardAuthenticationTagBitLengths;
     procedure TestGetExpectedAuthenticationResult;
     procedure TestSetExpectedAuthenticationResult;
 
+    /// <summary>
+    ///   GCM reports SupportsAuthenticatedMultiChunk = True.
+    /// </summary>
+    procedure TestSupportsAuthenticatedMultiChunk;
     /// <summary>
     ///   Test for GitHub issue #86
     /// </summary>
@@ -170,7 +227,6 @@ implementation
 
 uses
   System.Classes,
-  DECTypes,
   DECFormat;
 
 { TGCMTestDataLoader }
@@ -584,6 +640,8 @@ begin
      cipher.DataToAuthenticate := hea;
 
      cipher.Encode(refPlainText, ciphText, sizeof(refPlainText));
+     // Tag is finalized in Done (multi-call GHASH); required before reading the tag
+     cipher.Done;
      tag := cipher.CalculatedAuthenticationResult;
   finally
          cipher.Free;
@@ -690,7 +748,7 @@ begin
                   string(TestDataSet.TestData[i].AAD) + ' Exp.: ' +
                   string(TestDataSet.TestData[i].CT) + ' Act.: ' +
                   StringOf(TFormat_HexL.Encode(DecryptData)));
-
+                  
       // Verify additional authentication data
       CheckEquals(string(TestDataSet.TestData[i].TagResult),
                          StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
@@ -717,6 +775,249 @@ begin
   // Use cipher block size as max chunk size
   DoTestEncodeStream_LoadAndTestCAVSData(
     Max(FCipherAES.Context.BlockSize, FCipherAES.Context.BufferSize));
+end;
+
+procedure TestTDECGCM.DoEncodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ptBytes, EncryptData, EmptyAAD: TBytes;
+  ptbStream, ctbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(APT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+
+  ptbStream := TBytesStream.Create(ptBytes);
+  ctbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ptBytes),
+                'Chunk list exceeds plaintext length');
+      FCipherAES.EncodeStream(ptbStream, ctbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ptBytes), offset, 'Chunk sizes must cover full PT');
+    FCipherAES.Done;
+    EncryptData := ctbStream.Bytes;
+    SetLength(EncryptData, ctbStream.Size);
+  finally
+    ptbStream.Free;
+    ctbStream.Free;
+  end;
+
+  CheckEquals(string(ACT), StringOf(TFormat_HexL.Encode(EncryptData)),
+              'Ciphertext mismatch for multi-chunk encode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk encode');
+end;
+
+// NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 — 32-byte PT.
+// Shared by multi-chunk encode/decode and Done-lifecycle regression tests.
+const
+  cCAVS_MultiChunkKey  : RawByteString = '9971071059abc009e4f2bd69869db338';
+  cCAVS_MultiChunkIV   : RawByteString = '07a9a95ea3821e9c13c63251';
+  cCAVS_MultiChunkPT   : RawByteString =
+    'f54bc3501fed4f6f6dfb5ea80106df0bd836e6826225b75c0222f6e859b35983';
+  cCAVS_MultiChunkAAD  : RawByteString = '';
+  cCAVS_MultiChunkCT   : RawByteString =
+    '0556c159f84ef36cb1602b4526b12009c775611bffb64dc0d9ca9297cd2c6a01';
+  cCAVS_MultiChunkTag  : RawByteString = '7870d9117f54811a346970f1de090c41';
+  cCAVS_MultiChunkTagBits = 128;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkTwoBlocks;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+end;
+
+procedure TestTDECGCM.TestEncodeStreamMultiChunkUneven;
+begin
+  // GHASH must carry a partial block between calls
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+end;
+
+procedure TestTDECGCM.DoDecodeStreamChunkList(const AKey, AIV, APT, AAD, ACT,
+  ATag: RawByteString; ATagBits: Integer; const AChunkSizes: array of Integer);
+var
+  ctBytes, DecryptData, EmptyAAD: TBytes;
+  ctbStream, ptbStream: TBytesStream;
+  i, offset, n: Integer;
+begin
+  ctBytes := TFormat_HexL.Decode(BytesOf(ACT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(AKey)),
+                  BytesOf(TFormat_HexL.Decode(AIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := ATagBits;
+  if AAD <> '' then
+    FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(AAD))
+  else
+  begin
+    SetLength(EmptyAAD, 0);
+    FCipherAES.DataToAuthenticate := EmptyAAD;
+  end;
+  FCipherAES.ExpectedAuthenticationResult :=
+    TFormat_HexL.Decode(BytesOf(ATag));
+
+  ctbStream := TBytesStream.Create(ctBytes);
+  ptbStream := TBytesStream.Create;
+  try
+    offset := 0;
+    for i := Low(AChunkSizes) to High(AChunkSizes) do
+    begin
+      n := AChunkSizes[i];
+      CheckTrue(offset + n <= Length(ctBytes),
+                'Chunk list exceeds ciphertext length');
+      FCipherAES.DecodeStream(ctbStream, ptbStream, n);
+      Inc(offset, n);
+    end;
+    CheckEquals(Length(ctBytes), offset, 'Chunk sizes must cover full CT');
+    FCipherAES.Done;
+    DecryptData := ptbStream.Bytes;
+    SetLength(DecryptData, ptbStream.Size);
+  finally
+    ctbStream.Free;
+    ptbStream.Free;
+  end;
+
+  CheckEquals(string(APT), StringOf(TFormat_HexL.Encode(DecryptData)),
+              'Plaintext mismatch for multi-chunk decode');
+  CheckEquals(string(ATag),
+              StringOf(TFormat_HexL.Encode(FCipherAES.CalculatedAuthenticationResult)),
+              'Authentication tag mismatch for multi-chunk decode');
+end;
+
+procedure TestTDECGCM.TestDecodeStreamMultiChunkUneven;
+begin
+  DoDecodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+end;
+
+procedure TestTDECGCM.TestDoneIdempotent;
+var
+  Tag1, Tag2: TBytes;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [7, 25]);
+  Tag1 := Copy(FCipherAES.CalculatedAuthenticationResult);
+  FCipherAES.Done;
+  Tag2 := FCipherAES.CalculatedAuthenticationResult;
+  CheckTrue(IsEqual(Tag1, Tag2),
+            'Second Done must not change CalculatedAuthenticationResult');
+end;
+
+procedure TestTDECGCM.DoReadTagBeforeDone;
+var
+  Tag: TBytes;
+begin
+  Tag := FCipherAES.CalculatedAuthenticationResult;
+end;
+
+procedure TestTDECGCM.TestCalculatedAuthenticationResultBeforeDoneRaises;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkAAD));
+  FCipherAES.EncodeBytes(ptBytes);
+  CheckException(DoReadTagBeforeDone, EDECCipherException,
+                 'CalculatedAuthenticationResult before Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.DoEncodeAfterDone;
+begin
+  FCipherAES.EncodeBytes(FCallAfterDoneData);
+end;
+
+procedure TestTDECGCM.DoDecodeAfterDone;
+begin
+  FCipherAES.DecodeBytes(FCallAfterDoneData);
+end;
+
+procedure TestTDECGCM.TestEncodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $A5);
+  CheckException(DoEncodeAfterDone, EDECCipherException,
+                 'Encode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.TestDecodeAfterDoneRejected;
+begin
+  DoEncodeStreamChunkList(
+    cCAVS_MultiChunkKey, cCAVS_MultiChunkIV, cCAVS_MultiChunkPT,
+    cCAVS_MultiChunkAAD, cCAVS_MultiChunkCT, cCAVS_MultiChunkTag,
+    cCAVS_MultiChunkTagBits,
+    [16, 16]);
+  SetLength(FCallAfterDoneData, 16);
+  FillChar(FCallAfterDoneData[0], Length(FCallAfterDoneData), $5A);
+  CheckException(DoDecodeAfterDone, EDECCipherException,
+                 'Decode after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECGCM.DoChangeAADAfterEncode;
+begin
+  FCipherAES.DataToAuthenticate := BytesOf(RawByteString('changed-aad'));
+end;
+
+procedure TestTDECGCM.TestAADChangeAfterEncodeRejected;
+var
+  ptBytes: TBytes;
+begin
+  ptBytes := TFormat_HexL.Decode(BytesOf(cCAVS_MultiChunkPT));
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
+  FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf('aabbccdd'));
+  // First Encode absorbs AAD into GHASH — subsequent AAD assignment must fail
+  FCipherAES.EncodeBytes(Copy(ptBytes, 0, 16));
+  CheckException(DoChangeAADAfterEncode, EDECCipherException,
+                 'Changing DataToAuthenticate after Encode must raise');
+end;
+
+procedure TestTDECGCM.DoSetAuthTagBitLengthTooLong;
+begin
+  FCipherAES.AuthenticationResultBitLength := 256;
+end;
+
+procedure TestTDECGCM.TestAuthTagBitLengthTooLongRejected;
+begin
+  FCipherAES.Init(BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkKey)),
+                  BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
+  CheckException(DoSetAuthTagBitLengthTooLong, EDECAuthLengthException,
+                 'AuthenticationResultBitLength > 128 must raise EDECAuthLengthException');
 end;
 
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
@@ -844,6 +1145,12 @@ begin
   CheckEquals(128, BitLengths[4]);
 end;
 
+procedure TestTDECGCM.TestSupportsAuthenticatedMultiChunk;
+begin
+  CheckTrue(FCipherAES.SupportsAuthenticatedMultiChunk,
+            'GCM must report multi-chunk support');
+end;
+
 procedure TestTDECGCM.TestSetExpectedAuthenticationResult;
 var
   Exp, Act: TBytes;
@@ -878,11 +1185,12 @@ end;
 
 procedure TestTDECGCM.TestSetGetAuthenticationBitLength;
 begin
+  // NIST SP 800-38D: tag length is at most 128 bit (truncated GHASH result)
   FCipherAES.AuthenticationResultBitLength := 128;
   CheckEquals(128, FCipherAES.AuthenticationResultBitLength);
 
-  FCipherAES.AuthenticationResultBitLength := 192;
-  CheckEquals(192, FCipherAES.AuthenticationResultBitLength);
+  FCipherAES.AuthenticationResultBitLength := 96;
+  CheckEquals(96, FCipherAES.AuthenticationResultBitLength);
 end;
 
 procedure TestTDECGCM.TestSetGetDataToAuthenticate;

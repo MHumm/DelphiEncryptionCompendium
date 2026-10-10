@@ -177,6 +177,16 @@ type
     ///   be set in this class.
     /// </summary>
     procedure ConfigHashClass(HashClass: TDECHash; IdxTestData:Integer); virtual;
+    /// <summary>
+    ///   Expected value of <c>FHash.IsPasswordHash</c> for this fixture.
+    ///   Password-hash leaves (e.g. BCrypt) override to True.
+    /// </summary>
+    /// <remarks>
+    ///   Using a non-published virtual hook avoids redeclaring published
+    ///   <c>TestIsPasswordHash</c> on leaves, which DUnitX would run twice
+    ///   (base RTTI entry + leaf re-publish) and fail for password hashes.
+    /// </remarks>
+    function ExpectedIsPasswordHash: Boolean; virtual;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -724,6 +734,7 @@ type
     function SplitTestVector(const Vector: string):TBCryptBSDTestData;
   protected
     procedure ConfigHashClass(aHashClass: TDECHash; aIdxTestData:Integer); override;
+    function ExpectedIsPasswordHash: Boolean; override;
   public
     procedure SetUp; override;
     procedure DoTestCostFactorTooShortException;
@@ -735,7 +746,6 @@ type
   published
     procedure TestDigestSize;
     procedure TestBlockSize;
-    procedure TestIsPasswordHash;
     procedure TestClassByName;
     procedure TestIdentity;
     procedure TestMaximumSaltLength;
@@ -5576,9 +5586,14 @@ begin
   CheckEquals(0, FHash.PaddingByte, 'Default padding byte is wrong');
 end;
 
+function THash_TestBase.ExpectedIsPasswordHash: Boolean;
+begin
+  Result := False;
+end;
+
 procedure THash_TestBase.TestIsPasswordHash;
 begin
-  CheckEquals(false, FHash.IsPasswordHash);
+  CheckEquals(ExpectedIsPasswordHash, FHash.IsPasswordHash);
 end;
 
 procedure THash_TestBase.TestIsPasswordHashBase;
@@ -6453,9 +6468,9 @@ begin
   CheckEquals($9CA55338, FHash.Identity);
 end;
 
-procedure TestTHash_BCrypt.TestIsPasswordHash;
+function TestTHash_BCrypt.ExpectedIsPasswordHash: Boolean;
 begin
-  CheckEquals(true, FHash.IsPasswordHash);
+  Result := True;
 end;
 
 procedure TestTHash_BCrypt.TestIsValidPasswordFalseString;
