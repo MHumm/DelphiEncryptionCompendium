@@ -755,7 +755,8 @@ begin
   if Assigned(FAuthObj) then
     Result := FAuthObj.DataToAuthenticate
   else
-    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmCCM or cmPoly1035']);
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod,
+                                           ['cmGCM, cmCCM or cmPoly1035']);
 end;
 
 function TDECCipherModes.GetExpectedAuthenticationResult: TBytes;
@@ -763,7 +764,8 @@ begin
   if Assigned(FAuthObj) then
     Result := FAuthObj.ExpectedAuthenticationTag
   else
-    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmCCM or cmPoly1305']);
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod,
+                                           ['cmGCM, cmCCM or cmPoly1305']);
 end;
 
 function TDECCipherModes.GetStandardAuthenticationTagBitLengths: TStandardBitLengths;
@@ -782,7 +784,8 @@ begin
   if Assigned(FAuthObj) then
     Result := FAuthObj.AuthenticationTagBitLength
   else
-    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmCCM or cmPoly1305']);
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod,
+                                           ['cmGCM, cmCCM or cmPoly1305']);
 end;
 
 function TDECCipherModes.GetCalcAuthenticatonResult: TBytes;
@@ -790,7 +793,8 @@ begin
   if Assigned(FAuthObj) then
     Result := FAuthObj.CalculatedAuthenticationTag
   else
-    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM, cmCCM or cmPoly1305']);
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod,
+                                           ['cmGCM, cmCCM or cmPoly1305']);
 end;
 
 function TDECCipherModes.SupportsAuthenticatedMultiChunk: Boolean;
@@ -814,7 +818,8 @@ begin
   if Assigned(FAuthObj) then
     FAuthObj.DeclarePayloadLength(Value)
   else
-    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod, ['cmGCM or cmCCM']);
+    raise EDECCipherException.CreateResFmt(@sInvalidModeForMethod,
+                                           ['cmGCM, cmCCM or Poly1305']);
 end;
 
 procedure TDECCipherModes.InitMode;

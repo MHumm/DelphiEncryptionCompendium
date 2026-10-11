@@ -67,7 +67,7 @@
         <DCC_UnitSearchPath>.\..\Compiled\DCU_IDE$(ProductVersion)_$(Platform)_$(Config);$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_BplOutput>.\..\Compiled\BIN_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_BplOutput>
         <DCC_DcpOutput>.\..\Compiled\DCP_IDE$(ProductVersion)_$(Platform)_$(Config)</DCC_DcpOutput>
-        <SBOM_Enabled>True</SBOM_Enabled>
+        <SBOM_Enabled>False</SBOM_Enabled>
         <SBOM_IncludeEvidence>True</SBOM_IncludeEvidence>
         <SBOM_BsiProfile>True</SBOM_BsiProfile>
         <SBOM_ReferenceModuleSboms>False</SBOM_ReferenceModuleSboms>
@@ -157,6 +157,7 @@
         <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <Manifest_File>(Ohne)</Manifest_File>
         <DCC_AdditionalSwitches>-JL</DCC_AdditionalSwitches>
+        <DCC_MapFile>1</DCC_MapFile>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -194,6 +195,8 @@
         <DCCReference Include="DECCipherPaddings.pas"/>
         <DCCReference Include="DECCipherModesCCM.pas"/>
         <DCCReference Include="DECAuthenticatedCipherModesBase.pas"/>
+        <DCCReference Include="DECCipherModesPoly1305.pas"/>
+        <DCCReference Include="DECCPUSupport.pas"/>
         <None Include="DECHash.asm86.inc"/>
         <None Include="DECOptions.inc"/>
         <None Include="BuildAll.cmd"/>

@@ -75,6 +75,11 @@ type
 
   private
     /// <summary>
+    ///   Length of the processed buffer
+    /// </summary>
+    FEncDecLen : Int64;
+
+    /// <summary>
     ///   buffer for h and R and other precomputed values. The buffer is shared between
     ///   the pure pascal and the AVX implementation
     /// </summary>
@@ -149,11 +154,23 @@ type
     ///   is created and fed into the polynom.
     ///   After this call the MAC is valid.
     /// </summary>
-    procedure FinalizeMAC( authLen, encDecBufLen : int64); override;
-    procedure InitAuth; override;
-    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer); override;
+    procedure FinalizeMAC(authLen, encDecBufLen : int64);
+    /// <summary>
+    ///   Initialize the authentication data structures and initialize with the
+    ///   (unencrypted) authenticated buffer
+    /// </summary>
+    procedure InitAuth;
+    /// <summary>
+    ///   Updates the mac. Can be called multiple times!
+    /// </summary>
+    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer);
 
-    procedure Burn; override;
+    procedure Burn;
+
+    /// <summary>
+    ///   Materialize the authentication tag value
+    /// </summary>
+    procedure FinalizeAuthenticationTag;
   public
     /// <summary>
     ///   Defines either pure pascal code is used or specialized assembler routines utilizing AVX instructions
@@ -175,6 +192,45 @@ type
     /// </param>
     procedure Init(EncryptionMethod : TEncodeDecodeMethod;
                    InitVector       : TBytes); override;
+
+    /// <summary>
+    ///   Encodes a block of data using the supplied cipher
+    /// </summary>
+    /// <param name="Source">
+    ///   Plain text to encrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Ciphertext after encryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to encrypt
+    /// </param>
+    procedure Encode(Source,
+                     Dest   : PUInt8Array;
+                     Size   : Integer); override;
+    /// <summary>
+    ///   Decodes a block of data using the supplied cipher
+    /// </summary>
+    /// <param name="Source">
+    ///   Encrypted ciphertext to decrypt
+    /// </param>
+    /// <param name="Dest">
+    ///   Plaintext after decryption
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to decrypt
+    /// </param>
+    procedure Decode(Source,
+                     Dest   : PUInt8Array;
+                     Size   : Integer); override;
+
+    /// <summary>
+    ///   Finishes algorithm and materializes CalculatedAuthenticationTag.
+    ///   Must be called after the last Encode/Decode (cipher Done does this).
+    ///   Idempotent: a second call leaves the tag unchanged.
+    ///   After finalization, Encode/Decode raise until Init is called again.
+    /// </summary>
+    procedure Done; override;
   end;
 
 implementation
@@ -194,9 +250,7 @@ begin
      Result := (a xor ( (a xor b) or ((a - b) xor b))) shr 31;
 end;
 
-// ###########################################
-// #### AVX Assembler - and associated procedures
-// ###########################################
+// AVX Assembler - and associated procedures
 
 {$IFNDEF PUREPASCAL}
 
@@ -667,7 +721,6 @@ begin
                ((UInt32(pData^[3]) and $ff) shl 24);
 end;
 
-
 procedure TPoly1305.InitAuth;
 var aLen : integer;
     vec : TBytes;
@@ -694,13 +747,13 @@ end;
 
 procedure TPoly1305.Burn;
 begin
-     inherited;
+  inherited;
 
-     FillChar(fPoly1305State, sizeof(fPoly1305State), 0);
-     FillChar(FNonce, sizeof(FNonce), 0);
-     FillChar(fIV, sizeof(fIV), 0);
-     FillChar(fData, sizeof(fData), 0);
-     fNum := 0;
+  FillChar(FPoly1305State, SizeOf(FPoly1305State), 0);
+  FillChar(FNonce, sizeof(FNonce), 0);
+  FillChar(FIV, sizeof(FIV), 0);
+  FillChar(FData, sizeof(FData), 0);
+  FNum := 0;
 end;
 
 function AlignPtr64( A : Pointer ) : Pointer;
@@ -742,6 +795,42 @@ begin
      fPolyBlockSize := POLY1305_BLOCK_SIZE;
 end;
 
+procedure TPoly1305.Decode(Source, Dest: PUInt8Array; Size: Integer);
+begin
+  if not FAuthMethodInit then
+  begin
+    InitAuth;
+    FAuthMethodInit := True;
+  end;
+
+  UpdateWithEncDecBuf(Source, size);
+  LocEncodeDecode(Source, Dest, Size);
+  inc(FEncDecLen, Size);
+end;
+
+procedure TPoly1305.Done;
+begin
+  if FFinalized then
+    Exit;
+
+  FinalizeAuthenticationTag;
+
+  inherited;
+end;
+
+procedure TPoly1305.Encode(Source, Dest: PUInt8Array; Size: Integer);
+begin
+  if not FAuthMethodInit then
+  begin
+    InitAuth;
+    FAuthMethodInit := True;
+  end;
+
+  LocEncodeDecode(Source, Dest, Size);
+  UpdateWithEncDecBuf(Dest, size);
+  inc(fEncDecLen, Size);
+end;
+
 procedure TPoly1305.Finalize;
 var mac : TBlock16Byte;
 begin
@@ -768,6 +857,20 @@ begin
 end;
 
 {$IFNDEF PUREPASCAL}
+
+procedure TPoly1305.FinalizeAuthenticationTag;
+begin
+  if not FAuthMethodInit then
+  begin
+    InitAuth;
+    FAuthMethodInit := True;
+  end;
+
+  SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
+  FinalizeMAC(Length(FDataToAuthenticate), FEncDecLen);
+
+  Burn;
+end;
 
 procedure TPoly1305.FinalizeAVX;
 var mac : TBlock16Byte;
@@ -804,23 +907,25 @@ end;
 {$ENDIF}
 
 
-procedure TPoly1305.Init(EncryptionMethod: TEncodeDecodeMethod;
-  InitVector: TBytes);
+procedure TPoly1305.Init(EncryptionMethod : TEncodeDecodeMethod;
+                         InitVector       : TBytes);
 begin
-     inherited;
+  inherited;
 
-     // the poly1305 format needs to be initialized correctly from the outside!
-     // for chacha20 one needs to set initialize the chacha block with the key,
-     // 96bit nonce and counter to 0 -> the first 32bytes of that chacha scrambled block
-     // defines the iv
-     if Length(InitVector) <> ( Length(fIV) ) then
-        raise Exception.Create('The initVector must be 32Bytes long!');
+  // the poly1305 format needs to be initialized correctly from the outside!
+  // for chacha20 one needs to set initialize the chacha block with the key,
+  // 96bit nonce and counter to 0 -> the first 32bytes of that chacha scrambled block
+  // defines the iv
+  if Length(InitVector) <> ( Length(fIV) ) then
+    raise Exception.Create('The initVector must be 32Bytes long!');
 
-     // in this library this only works for chacha since it has an internal counter
-     // don't know how to deal with aes here...
-     // build the poly1305 iv from the first 256 bits
-     FillChar( fIV, sizeof(fIV), 0);
-     Move( initVector[0], fIV, Length(initVector));
+  // in this library this only works for chacha since it has an internal counter
+  // don't know how to deal with aes here...
+  // build the poly1305 iv from the first 256 bits
+  FillChar( fIV, sizeof(fIV), 0);
+  Move( initVector[0], fIV, Length(initVector));
+
+  FEncDecLen := 0;
 end;
 
 procedure TPoly1305.InitInternal(const InitVector: T32ByteArray);

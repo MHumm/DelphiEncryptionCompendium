@@ -209,12 +209,12 @@ type
   /// <summary>
   ///   ChaCha20 cipher.
   /// </summary>
-  TCipher_ChaCha20    = class;
+  TCipher_ChaCha20      = class;
 
   /// <summary>
   ///   XChaCha20 cipher
   /// </summary>
-  TCipher_XChaCha20 = class;
+  TCipher_XChaCha20     = class;
 
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;

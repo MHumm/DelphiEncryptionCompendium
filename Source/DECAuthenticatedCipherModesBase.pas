@@ -79,17 +79,11 @@ type
   ///   </para>
   /// </remarks>
   TAuthenticatedCipherModesBase = class(TObject)
-  private
+  strict protected
     /// <summary>
     ///   Set to true when the method has been initialized
     /// </summary>
-    FAuthMethodInit : boolean;
-
-    /// <summary>
-    ///   Length of the processed buffer
-    /// </summary>
-    FEncDecLen : Int64;
-  strict protected
+    FAuthMethodInit              : Boolean;
     /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
@@ -159,31 +153,12 @@ type
     ///   Raised when the mode has already been finalized.
     /// </exception>
     procedure CheckNotFinalized;
-    
-    /// <summary>
-    ///   Initialize the authentication procedure. This is a good place to initialize
-    ///   the data structures and initialize with the (unencrypted) authenticated buffer
-    /// </summary>
-    procedure InitAuth; virtual; abstract;
-
-    /// <summary>
-    ///   Updates the mac. Can be called multiple times!
-    /// </summary>
-    procedure UpdateWithEncDecBuf(buf : PUInt8Array; Size   : Integer); virtual; abstract;
-
-    /// <summary>
-    ///   finalize the MAC - typically the processed buffer lengths are incorporated here.
-    /// </summary>
-    procedure FinalizeMAC( authLen, encDecBufSize : Int64 ); virtual; abstract;
 
     /// <summary>
     ///   Encoding/Decoding routine that is called in the Encode/Decode routine.
     ///   This version simply calls the EncryptionMethod givin in the init call
     /// </summary>
     procedure LocEncodeDecode(Source, Dest: Pointer; Size: Integer); virtual;
-
-{ ToDo: Check purpose and comment it }
-    procedure Burn; virtual; abstract;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -276,12 +251,6 @@ type
     function GetDeclaredPayloadLength: UInt64; virtual;
 
     /// <summary>
-    ///   Call this function to calculate the final MAC - typically one updates the
-    ///   remaining buffer with buffer lengths.
-    /// </summary>
-    procedure FinalizeAEAD;
-
-    /// <summary>
     ///   Returns a list of authentication tag lengths explicitely specified by
     ///   the official specification of the standard.
     /// </summary>
@@ -341,48 +310,6 @@ resourcestring
 
 { TAuthenticatedCipherModesBase }
 
-procedure TAuthenticatedCipherModesBase.Decode(Source, Dest: PUInt8Array;
-  Size: Integer);
-begin
-     if not FAuthMethodInit then
-     begin
-          InitAuth;
-          FAuthMethodInit := True;
-     end;
-
-     UpdateWithEncDecBuf(Source, size);
-     LocEncodeDecode(Source, Dest, Size);
-     inc(fEncDecLen, Size);
-end;
-
-procedure TAuthenticatedCipherModesBase.Encode(Source, Dest: PUInt8Array;
-  Size: Integer);
-begin
-     if not FAuthMethodInit then
-     begin
-          InitAuth;
-          FAuthMethodInit := True;
-     end;
-
-     LocEncodeDecode(Source, Dest, Size);
-     UpdateWithEncDecBuf(Dest, size);
-     inc(fEncDecLen, Size);
-end;
-
-procedure TAuthenticatedCipherModesBase.FinalizeAEAD;
-begin
-     if not FAuthMethodInit then
-     begin
-          InitAuth;
-          FAuthMethodInit := True;
-     end;
-
-     SetLength(FCalcAuthenticationTag, FCalcAuthenticationTagLength);
-     FinalizeMAC(Length(FDataToAuthenticate), fEncDecLen);
-
-     Burn;
-end;
-
 function TAuthenticatedCipherModesBase.GetAuthenticationTagBitLength: UInt32;
 begin
   Result := FCalcAuthenticationTagLength shl 3;
@@ -427,7 +354,6 @@ begin
     FillChar(FCalcAuthenticationTag[0], CalcAuthLength, #0);
   end;
 
-  FEncDecLen := 0;
   FEncryptionMethod := EncryptionMethod;
   FFinalized := False;
 end;
