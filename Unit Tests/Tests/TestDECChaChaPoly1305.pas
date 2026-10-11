@@ -124,7 +124,7 @@ begin
 
              dest := chaCha.EncodeBytes(encBuf);
           finally
-                 chaCha.Free;
+             chaCha.Free;
           end;
      end;
 
@@ -135,7 +135,6 @@ begin
 
      for i := 0 to Length(encBuf) - 1 do
           encBuf[i] := Byte(Random(255));
-
 
      SetLength(decBuf_pas, Length(encBuf));
      SetLength(decBuf_sse, Length(encBuf));
@@ -170,7 +169,6 @@ begin
      Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'SSE encoding failed');
      Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'avx encoding failed');
 
-
      // test decode
      for cpuMode in [cmPas, cmSSE, cmAVX] do
      begin
@@ -182,7 +180,7 @@ begin
 
              testDecode := chaCha.DecodeBytes(decbuf_sse);
           finally
-                 chaCha.Free;
+            chaCha.Free;
           end;
 
           Check( CompareMem( @encBuf[0], @testDecode[0], Length(testDecode)), 'Dencoding failed');
@@ -406,22 +404,24 @@ var poly : TPoly1305;
     msg : TBytes;
     calcTag : TBytes;
    // ctx : PPoly1305Ctx;
-procedure InvData( data : PByte; len : integer );
-var tmp : byte;
-    pEnd : PByte;
-begin
-     pEnd := data;
-     inc(pEnd, len - 1);
-     while pEnd > data do
-     begin
-          tmp := pEnd^;
-          pEnd^ := data^;
-          data^ := tmp;
 
-          inc(data);
-          dec(pEnd);
-     end;
-end;
+  procedure InvData( data : PByte; len : integer );
+  var tmp : byte;
+      pEnd : PByte;
+  begin
+       pEnd := data;
+       inc(pEnd, len - 1);
+       while pEnd > data do
+       begin
+            tmp := pEnd^;
+            pEnd^ := data^;
+            data^ := tmp;
+
+            inc(data);
+            dec(pEnd);
+       end;
+  end;
+
 begin
      // test vector from https://datatracker.ietf.org/doc/html/rfc7539.html#page-15
      // RFC 7538
@@ -441,6 +441,7 @@ begin
         THackPly1305(poly).InitInternal(iv);
         THackPly1305(poly).UpdatePoly(@msg[0], Length(msg));
         THackPly1305(poly).Finalize;
+        THackPly1305(poly).Done;
 
         calcTag := poly.CalculatedAuthenticationTag;
      finally
