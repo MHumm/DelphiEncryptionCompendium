@@ -34,7 +34,7 @@ uses
 
 type
   /// <summary>
-  ///   Type needed for the EncodeBytes und DecodeBytes test data definition
+  ///   Type needed for the EncodeBytes and DecodeBytes test data definition
   /// </summary>
   TestRecRawByteString = record
     Input, Output: RawByteString;
@@ -172,14 +172,14 @@ type
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA);
          Output: 'xk3gh4jbjsklfyzkkf'),
         (Input:  RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA + #$55 + #$AA + #$55);
-         Output: 'xk3gh4jbjsklfyzkkpya')); // als letzter Buchstabe kommt manchmal oft ,u statt a heraus?
-                                           // scheint etwas zufällig? Was ist da faul?
-                                           // lt. DECTest.vec ist a richtig
+         Output: 'xk3gh4jbjsklfyzkkpya')); // sometimes the last letter comes out as ,u instead of a?
+                                           // seems somewhat random? What is wrong here?
+                                           // per DECTest.vec, a is correct
 
       cTestDataDecode : array[1..6] of TestRecRawByteString = (
         (Input:  '';
          Output: RawByteString('')),
-        (Input:  'xk3gh4jbjsklf'; // lt. alter DECTest.vec aber xk3gh4jbjsklf f statt y ???
+        (Input:  'xk3gh4jbjsklf'; // per old DECTest.vec but xk3gh4jbjsklf f instead of y ???
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55)),
         (Input:  'xk3gh4jbjsklfyc';
          Output: RawByteString('Test' + #10 +#9 + #$AA + #$55 + #$AA)),
@@ -1406,7 +1406,7 @@ end;
 procedure TestTFormat_Radix64.TestEncodeRawByteStringWithCharsPerLine;
 type
   /// <summary>
-  ///   Type needed for the EncodeBytes und DecodeBytes test data definition
+  ///   Type needed for the EncodeBytes and DecodeBytes test data definition
   /// </summary>
   TestRecCharsPerLine = record
     Input, Output: RawByteString;
@@ -3039,6 +3039,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian16);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian32);
   TDUnitX.RegisterTestFixture(TestTFormat_BigEndian64);
+  TDUnitX.RegisterTestFixture(TestTFormat_UTF8);
   TDUnitX.RegisterTestFixture(TestTFormat_UTF16);
   {$ELSE}
   RegisterTests('DECFormat', [//TestTFormat,
@@ -3054,6 +3055,7 @@ initialization
                               TestTFormat_ESCAPE.Suite,
                               TestTFormat_BigEndian16.Suite,
                               TestTFormat_BigEndian32.Suite,
+                              TestTFormat_BigEndian64.Suite,
                               TestTFormat_UTF8.Suite,
                               TestTFormat_UTF16.Suite]);
   {$ENDIF}

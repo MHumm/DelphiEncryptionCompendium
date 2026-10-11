@@ -282,6 +282,20 @@ function StringToBytes(const Str: string): TBytes; inline;
 function IsEqual(const a, b : TBytes ):Boolean;
 
 /// <summary>
+///   Calculates the shannon entropy of the byte array. AI generated.
+/// </summary>
+/// <param name="ABytes">
+///   Byte array on which to calculate the entropy
+/// </param>
+/// <returns>
+///   Shannon entropy
+///   8.0 = perfect distribution
+///   7.0 = plausibly random
+///   <5.0 = very suspicious
+/// </returns>
+function ShannonEntropy(const ABytes: TBytes): Double;
+
+/// <summary>
 ///   Returns the 32Byte aligned address of pointer A
 /// </summary>
 /// /// <param name="A">
@@ -295,7 +309,21 @@ function AlignPtr32( A : Pointer ) : Pointer;
 implementation
 
 uses
-  DECUtilRawByteStringHelper, DECTypes;
+  {$IFDEF DELPHI_2010_UP}
+    System.Diagnostics,
+  {$ELSE}
+    {$IFDEF FPC}
+      {$IFDEF MSWINDOWS}
+      Windows,
+      {$ELSE}
+      LclIntf,
+      {$ENDIF}
+    {$ELSE}
+    Winapi.Windows,
+    {$ENDIF}
+  {$ENDIF}
+  DECUtilRawByteStringHelper,
+  DECTypes;
 
 const
   // Bit Lookup Table - see 'Bit Twiddling Hacks' by Sean Eron Anderson
@@ -691,12 +719,33 @@ begin
       Result := true;
 end;
 
+function ShannonEntropy(const ABytes: TBytes): Double;
+var
+  freq: array[0..255] of Double;
+  b: Byte;
+  p: Double;
+  i: Integer;
+begin
+  Result := 0;
+  for i := 0 to Length(freq)-1 do
+    freq[i] := 0;
+
+  for b in ABytes do
+    freq[b] := freq[b] + 1;
+
+  for i := 0 to 255 do
+  begin
+    p := freq[i] / Length(ABytes);
+    if p > 0 then
+      Result := Result - p * Ln(p) / Ln(2);
+  end;
+end;
+
 function AlignPtr32( A : Pointer ) : Pointer;
 begin
      Result := A;
      if (NativeUint(A) and $1F) <> 0 then
         Result := Pointer( NativeUint(Result) + $20 - NativeUint(Result) and $1F );
 end;
-
 
 end.

@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -149,7 +149,7 @@ type
 ///   Structure whose fields shall be filled
 /// </param>
 /// <param name="Polynomial">
-///   CRC polynome, defining the algorithm
+///   CRC polynomial, defining the algorithm
 /// </param>
 /// <param name="Bits">
 ///   Size of the CRC value to be computed in bits. Needs to be at least 8
@@ -235,8 +235,7 @@ function CRCCode(var CRCDef: TCRCDef;
                  Size: UInt32 = $FFFFFFFF): UInt32; overload;
 
 { TODO :
-DUnitTests für die Callback-Methoden Varianten von CRCCode und CRCCalc
-schreiben }
+Write DUnit tests for the callback-method variants of CRCCode and CRCCalc }
 //
 //    CRCInit(CRC, CRC_32);                         // setup CRC data structure
 //    CRCCode(CRC, Data, SizeOf(Data));             // calcs CRC for "Data"
@@ -383,9 +382,9 @@ const
   // DD    $00004003, 16, $00000000, $00000000, -1   // CRC_16 reversed
   // DD    $00001005, 16, $00000000, $00000000, -1   // CRC_16 X25
 
-  // https://fenix.tecnico.ulisboa.pt/downloadFile/3779571246541/BasicCrd.pdf enthält
-  // eine beschreibung dieser BasicCard Smartcard incl. C-CRC Quellcode, aber die
-  // Polynome konnte ich so noch nicht überprüfen
+  // https://fenix.tecnico.ulisboa.pt/downloadFile/3779571246541/BasicCrd.pdf contains
+  // a description of this BasicCard smartcard incl. C CRC source code, but I have
+  // not been able to verify the polynomials that way yet
   // DD    $00000053, 16, $00000000, $00000000, -1   // BasicCard 16Bit CRC (sparse poly for Crypto MCU)
   // DD    $000000C5, 32, $00000000, $00000000, -1   // BasicCard 32Bit CRC
 

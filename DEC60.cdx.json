@@ -1,0 +1,72 @@
+﻿{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-10T16:07:07Z",
+    "lifecycles": [
+      {
+        "phase": "post-build"
+      }
+    ],
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "name": "MSYS SBOM Plugin",
+          "publisher": "Maenken Systems",
+          "version": "1.0.1.452"
+        },
+        {
+          "type": "application",
+          "name": "Delphi 37.0",
+          "publisher": "Embarcadero Technologies"
+        }
+      ]
+    },
+    "component": {
+      "type": "library",
+      "name": "DelphiEncryptionCompendium",
+      "version": "6.5",
+      "copyright": "© 2016-2026",
+      "description": "Library with cryptographic algorithms for Delphi and FPC",
+      "publisher": "Team DEC",
+      "purl": "pkg:github/DelphiEncryptionCompendium@6.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0",
+            "acknowledgement": "declared"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60.dpr"
+        },
+        {
+          "name": "bsi:component:effectiveLicence",
+          "value": "Apache-2.0"
+        }
+      ]
+    }
+  },
+  "components": [
+  ],
+  "dependencies": [
+  ],
+  "serialNumber": "urn:uuid:9b2e52b0-4831-45f5-81a7-d10e9cf2dc92"
+}

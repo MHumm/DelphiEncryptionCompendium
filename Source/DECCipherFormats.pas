@@ -45,7 +45,7 @@ type
     /// <summary>
     ///   The static class assigned to this field via Init method or PaddingMode
     ///   property is being used to add or remove paddings in order to simplyfy
-    ///   ading further padding shemes.
+    ///   adding further padding shemes.
     /// </summary>
     FPaddingClass : TDECPaddingClass;
 
@@ -328,7 +328,7 @@ type
                                   Format: TDECFormatClass = nil): string; overload;
 
     /// <summary>
-    ///   Encrypts the contents of the passed unicode string
+    ///   Encrypts the contents of the passed RawByteString
     /// </summary>
     /// <param name="Source">
     ///   String to encrypt. When block chaining mode ECBx
@@ -730,10 +730,10 @@ function TDECFormattedCipher.EncodeBytes(const Source: TBytes): TBytes;
   begin
     SetLength(Result, Length(Source));
     if Length(Result) > 0 then
-      Encode(Source[0], Result[0], Length(Source));
-    //else
-//      if (FMode = cmGCM) then
-//        EncodeWithAuthObj(nil, nil, 0);
+      Encode(Source[0], Result[0], Length(Source))
+    else
+      if (FMode = cmGCM) or (FMode = cmCCM) then
+        EncodeAuthenticated(nil, nil, 0);
   end;
 
 begin
@@ -745,15 +745,19 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-  SetLength(Result, Length(Source));
+  Result := Source;
 
   if Length(Result) > 0 then
   begin
+    if (FMode = cmGCM) then
+      SetLength(Result, Length(Source));
+
     Decode(Source[0], Result[0], Length(Source));
-  end;
-  //else
-    //if (FMode = cmGCM) then
-    //  DecodeGCM(nil, nil, 0);
+  end
+  else
+{ ToDO: Do we need to add cmPoly here? can we use [cm...,] syntax? }
+    if (FMode = cmGCM) or (FMode = cmCCM) then
+      DecodeAuthenticated(nil, nil, 0);
 
   if not (FPaddingClass = nil) then
     Result := FPaddingClass.RemovePadding(Result, Context.BlockSize);
@@ -776,6 +780,14 @@ begin
   Pos := Source.Position;
   if DataSize < 0 then
     DataSize := Source.Size - Pos;
+
+  // One-shot authenticated streams declare DataSize as l(m) for CCM. Skip when
+  // a non-zero length is already set so multi-chunk EncodeStream can follow
+  // AuthenticatedPayloadLength without re-declaring the chunk size.
+  if Assigned(FAuthObj) and (FAuthObj.GetDeclaredPayloadLength = 0) then
+  begin
+    FAuthObj.DeclarePayloadLength(UInt64(DataSize));
+  end;
 
   Max       := Pos + DataSize;
   StartPos  := Pos;
@@ -1121,11 +1133,11 @@ procedure TDECFormattedCipher.InitPaddingClass;
 begin
   case FPaddingMode of
     pmNone       : FPaddingClass := nil;
-    pmPKCS7      : FPaddingCLass := TPKCS7Padding;
-    pmPKCS5      : FPaddingCLass := TPKCS5Padding;
-    pmANSI_X9_23 : FPaddingCLass := TANSI_X9_23_Padding;
-    pmISO10126   : FPaddingCLass := TISO10126Padding;
-    pmISO7816    : FPaddingCLass := TISO7816Padding;
+    pmPKCS7      : FPaddingClass := TPKCS7Padding;
+    pmPKCS5      : FPaddingClass := TPKCS5Padding;
+    pmANSI_X9_23 : FPaddingClass := TANSI_X9_23_Padding;
+    pmISO10126   : FPaddingClass := TISO10126Padding;
+    pmISO7816    : FPaddingClass := TISO7816Padding;
     else
       raise EDECCipherException.CreateResFmt(@sPaddingModeNotImplemented,
                                              [GetEnumName(TypeInfo(TPaddingMode),

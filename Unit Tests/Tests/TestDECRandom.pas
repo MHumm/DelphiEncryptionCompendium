@@ -41,6 +41,7 @@ type
   ///   default ones afterwards, which should be done to enable repeated test
   ///   runs in the same session.
   /// </summary>
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TTestRandom = class(TTestCase)
   private
     RandomNumbers: TBytes;

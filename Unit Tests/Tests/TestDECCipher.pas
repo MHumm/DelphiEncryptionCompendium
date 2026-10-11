@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -107,6 +107,14 @@ type
 
     procedure DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
     procedure DoTestDecodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc; DoneProc: TDoneProc);
+
+    /// <summary>
+    ///   Tests automatic init vector generation
+    /// </summary>
+    /// <param name="ACipher">
+    ///   Cipher instance to test with
+    /// </param>
+    procedure DoTestSetAutomaticIV(ACipher : TDECCipher);
   end;
 
   // Testmethods for class TDECCipher
@@ -133,9 +141,10 @@ type
     procedure TestInitWideStringInitVector;
     procedure TestInitWideStringNoInitVector;
     procedure TestMACWrongMode;
+    procedure TestSetAutomaticIV;
   end;
 
-  // Testmethoden for Klasse TCipher_Null
+  // Test methods for class TCipher_Null
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_Null = class(TTestCase)
   strict private
@@ -166,6 +175,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Twofish
@@ -192,6 +202,7 @@ type
     procedure TestInitKeyTooLong;
     procedure TestInitVectorTooLong;
     procedure TestInitKey0;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_IDEA
@@ -211,6 +222,12 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    /// <summary>
+    ///   IDEAMul operands 0 (meaning 2^16), 1 and $FFFF, plus products
+    ///   that wrap modulo 65537. Expected low 16 bits are that modular
+    ///   product, computed from the IDEA definition.
+    /// </summary>
+    procedure TestIDEAMul;
   end;
 
   // Testmethods for class TCipher_Cast256
@@ -250,6 +267,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_RC4
@@ -291,6 +309,7 @@ type
     procedure TestMinRounds;
     procedure TestMaxRounds;
     procedure TestRounds;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_AES
@@ -310,6 +329,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_AES128
@@ -332,6 +352,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_AES192
@@ -354,6 +375,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_AES256
@@ -376,6 +398,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Rijndael which is an alias for AES as it's
@@ -398,6 +421,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Square
@@ -417,6 +441,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_SCOP
@@ -495,6 +520,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_2DES
@@ -514,6 +540,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_3DES
@@ -533,6 +560,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_2DDES
@@ -552,6 +580,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_3DDES
@@ -571,6 +600,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_3TDES
@@ -590,6 +620,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_3Way
@@ -609,6 +640,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Cast128
@@ -628,6 +660,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Gost
@@ -647,6 +680,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Magma, which is an alias for Ghost
@@ -668,6 +702,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Misty
@@ -687,6 +722,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_NewDES
@@ -706,6 +742,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Q128
@@ -725,6 +762,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_RC2
@@ -744,6 +782,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_RC5
@@ -766,6 +805,7 @@ type
     procedure TestMinRounds;
     procedure TestMaxRounds;
     procedure TestRounds;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_SAFER
@@ -788,6 +828,7 @@ type
     procedure TestMinRounds;
     procedure TestMaxRounds;
     procedure TestRounds;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Shark
@@ -807,6 +848,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Shark_DEC52
@@ -828,6 +870,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_Skipjack
@@ -847,6 +890,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_TEA
@@ -869,6 +913,7 @@ type
     procedure TestMinRounds;
     procedure TestMaxRounds;
     procedure TestRounds;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_XTEA
@@ -888,6 +933,7 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
   // Testmethods for class TCipher_XTEA_DEC52
@@ -909,9 +955,10 @@ type
     procedure TestEncode;
     procedure TestDecode;
     procedure TestClassByName;
+    procedure TestSetAutomaticIV;
   end;
 
-  // Testmethods for class TCipher_AES256
+  // Testmethods for class TCipher_AES256 with PKCS7 padding
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_AES256_CBC_PKCS7 = class(TCipherBasis)
   strict private
@@ -930,9 +977,13 @@ type
     procedure TestDecodeStringToString;
     procedure TestEncodeStream;
     procedure TestDecodeStream;
+    procedure TestSetAutomaticIV;
   end;
 
 implementation
+
+uses
+  DECUtil;
 
 const
   cZeroBlock8  = #$00#$00#$00#$00#$00#$00#$00#$00;
@@ -1050,6 +1101,11 @@ end;
 procedure TestTCipher_Blowfish.TestIdentity;
 begin
   CheckEquals($54E9A294, FCipher_Blowfish.Identity);
+end;
+
+procedure TestTCipher_Blowfish.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Blowfish);
 end;
 
 procedure TestTCipher_Blowfish.TestClassByName;
@@ -1170,6 +1226,11 @@ begin
   CheckException(DoTestInitVectorTooLong, EDECCipherException);
 end;
 
+procedure TestTCipher_Twofish.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Twofish);
+end;
+
 procedure TestTCipher_Twofish.DoTestInitKey0;
 var
   Key : TBytes;
@@ -1274,6 +1335,54 @@ var
 begin
   ReturnValue := FCipher_IDEA.ClassByName('TCipher_IDEA');
   CheckEquals(TCipher_IDEA, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_IDEA.TestIDEAMul;
+type
+  TIDEAMulCase = record
+    X       : UInt32;
+    Y       : UInt32;
+    Product : UInt32;
+  end;
+const
+  // Product is (X' * Y') mod 65537, where 0 stands for 2^16 and a
+  // mathematical result of 2^16 is stored as 0. Checked against that
+  // definition, including pairs whose 32-bit product exceeds 65537.
+  cCases: array[0..21] of TIDEAMulCase = (
+    (X: $0000; Y: $0000; Product: $0001),
+    (X: $0000; Y: $0001; Product: $0000),
+    (X: $0001; Y: $0000; Product: $0000),
+    (X: $0001; Y: $0001; Product: $0001),
+    (X: $0000; Y: $FFFF; Product: $0002),
+    (X: $FFFF; Y: $0000; Product: $0002),
+    (X: $FFFF; Y: $0001; Product: $FFFF),
+    (X: $0001; Y: $FFFF; Product: $FFFF),
+    (X: $FFFF; Y: $FFFF; Product: $0004),
+    (X: $0002; Y: $0003; Product: $0006),
+    (X: $8000; Y: $8000; Product: $C001),
+    (X: $8000; Y: $0002; Product: $0000),
+    (X: $FFFF; Y: $0002; Product: $FFFD),
+    (X: $1234; Y: $5678; Product: $FA3B),
+    (X: $0003; Y: $FFFF; Product: $FFFB),
+    (X: $7FFF; Y: $7FFF; Product: $C003),
+    (X: $0001; Y: $8000; Product: $8000),
+    (X: $FFFE; Y: $FFFE; Product: $0009),
+    (X: $0002; Y: $8001; Product: $0001),
+    (X: $0000; Y: $8000; Product: $8001),
+    (X: $1ABCD; Y: $0001; Product: $ABCD),
+    (X: $10000; Y: $10000; Product: $0001)
+  );
+var
+  LIndex   : Integer;
+  LProduct : UInt32;
+begin
+  for LIndex := Low(cCases) to High(cCases) do
+  begin
+    LProduct := IDEAMul(cCases[LIndex].X, cCases[LIndex].Y) and $FFFF;
+    CheckEquals(cCases[LIndex].Product, LProduct,
+                Format('IDEAMul($%x, $%x)',
+                       [cCases[LIndex].X, cCases[LIndex].Y]));
+  end;
 end;
 
 procedure TestTCipher_Cast256.Done;
@@ -1428,8 +1537,13 @@ begin
   CheckEquals($46AB51F5, FCipher_Mars.Identity);
 end;
 
+procedure TestTCipher_Mars.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Mars);
+end;
+
 procedure TestTCipher_Mars.TestClassByName;
-// ClassByName Tests for die restlichen Ciphers umsetzen!
+// ClassByName tests: implement for the remaining ciphers!
 var
   ReturnValue : TDECCipherClass;
 begin
@@ -1624,6 +1738,11 @@ begin
   CheckEquals(FCipher_RC6.Context.MaxRounds - 1, FCipher_RC6.Rounds);
 end;
 
+procedure TestTCipher_RC6.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_RC6);
+end;
+
 procedure TestTCipher_Square.Done;
 begin
   FCipher_Square.Done;
@@ -1702,6 +1821,11 @@ end;
 procedure TestTCipher_Square.TestIdentity;
 begin
   CheckEquals($2954C319, FCipher_Square.Identity);
+end;
+
+procedure TestTCipher_Square.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Square);
 end;
 
 procedure TestTCipher_SCOP.Done;
@@ -2162,6 +2286,11 @@ begin
   CheckEquals($640A08AC, FCipher_1DES.Identity);
 end;
 
+procedure TestTCipher_1DES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_1DES);
+end;
+
 procedure TestTCipher_2DES.Done;
 begin
   FCipher_2DES.Done;
@@ -2251,6 +2380,11 @@ begin
   CheckEquals($76BFA742, FCipher_2DES.Identity);
 end;
 
+procedure TestTCipher_2DES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_2DES);
+end;
+
 procedure TestTCipher_3DES.Done;
 begin
   FCipher_3DES.Done;
@@ -2329,6 +2463,11 @@ end;
 procedure TestTCipher_3DES.TestIdentity;
 begin
   CheckEquals($CE03C027, FCipher_3DES.Identity);
+end;
+
+procedure TestTCipher_3DES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_3DES);
 end;
 
 procedure TestTCipher_2DDES.Done;
@@ -2411,6 +2550,11 @@ begin
   CheckEquals($70C155BD, FCipher_2DDES.Identity);
 end;
 
+procedure TestTCipher_2DDES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_2DDES);
+end;
+
 procedure TestTCipher_3DDES.Done;
 begin
   FCipher_3DDES.Done;
@@ -2489,6 +2633,11 @@ end;
 procedure TestTCipher_3DDES.TestIdentity;
 begin
   CheckEquals($4DA17C0D, FCipher_3DDES.Identity);
+end;
+
+procedure TestTCipher_3DDES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_3DDES);
 end;
 
 procedure TestTCipher_3TDES.Done;
@@ -2571,6 +2720,11 @@ begin
   CheckEquals($1DB82B92, FCipher_3TDES.Identity);
 end;
 
+procedure TestTCipher_3TDES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_3TDES);
+end;
+
 procedure TestTCipher_3Way.Done;
 begin
   FCipher_3Way.Done;
@@ -2649,6 +2803,11 @@ end;
 procedure TestTCipher_3Way.TestIdentity;
 begin
   CheckEquals($54DAF114, FCipher_3Way.Identity);
+end;
+
+procedure TestTCipher_3Way.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_3Way);
 end;
 
 procedure TestTCipher_Cast128.Done;
@@ -2731,6 +2890,11 @@ begin
   CheckEquals($ED7D0785, FCipher_Cast128.Identity);
 end;
 
+procedure TestTCipher_Cast128.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Cast128);
+end;
+
 procedure TestTCipher_Gost.Done;
 begin
   FCipher_Gost.Done;
@@ -2809,6 +2973,11 @@ end;
 procedure TestTCipher_Gost.TestIdentity;
 begin
   CheckEquals($A4F73879, FCipher_Gost.Identity);
+end;
+
+procedure TestTCipher_Gost.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Gost);
 end;
 
 procedure TestTCipher_Magma.Done;
@@ -2898,6 +3067,11 @@ begin
   CheckEquals($5BB9788, FCipher_Magma.Identity);
 end;
 
+procedure TestTCipher_Magma.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Magma);
+end;
+
 procedure TestTCipher_Misty.Done;
 begin
   FCipher_Misty.Done;
@@ -2976,6 +3150,11 @@ end;
 procedure TestTCipher_Misty.TestIdentity;
 begin
   CheckEquals($534C8585, FCipher_Misty.Identity);
+end;
+
+procedure TestTCipher_Misty.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Misty);
 end;
 
 procedure TestTCipher_NewDES.Done;
@@ -3058,6 +3237,11 @@ begin
   CheckEquals($5EE9D8B9, FCipher_NewDES.Identity);
 end;
 
+procedure TestTCipher_NewDES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_NewDES);
+end;
+
 procedure TestTCipher_Q128.Done;
 begin
   FCipher_Q128.Done;
@@ -3138,6 +3322,11 @@ begin
   CheckEquals($B70802F5, FCipher_Q128.Identity);
 end;
 
+procedure TestTCipher_Q128.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Q128);
+end;
+
 procedure TestTCipher_RC2.Done;
 begin
   FCipher_RC2.Done;
@@ -3216,6 +3405,11 @@ end;
 procedure TestTCipher_RC2.TestIdentity;
 begin
   CheckEquals($9AC07A6F, FCipher_RC2.Identity);
+end;
+
+procedure TestTCipher_RC2.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_RC2);
 end;
 
 procedure TestTCipher_RC5.Done;
@@ -3345,6 +3539,11 @@ begin
   finally
     Cipher_RC5Rounds.Free;
   end;
+end;
+
+procedure TestTCipher_RC5.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_RC5);
 end;
 
 procedure TestTCipher_SAFER.Done;
@@ -3524,6 +3723,11 @@ begin
   end;
 end;
 
+procedure TestTCipher_SAFER.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_SAFER);
+end;
+
 procedure TestTCipher_Shark.Done;
 begin
   FCipher_Shark.Done;
@@ -3608,6 +3812,11 @@ end;
 procedure TestTCipher_Shark.TestIdentity;
 begin
   CheckEquals($8E616AD3, FCipher_Shark.Identity);
+end;
+
+procedure TestTCipher_Shark.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Shark);
 end;
 
 procedure TestTCipher_Shark_DEC52.Done;
@@ -3697,6 +3906,11 @@ begin
   CheckEquals($7901E07F, FCipher_Shark_DEC52.Identity);
 end;
 
+procedure TestTCipher_Shark_DEC52.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Shark_DEC52);
+end;
+
 procedure TestTCipher_Skipjack.Done;
 begin
   FCipher_Skipjack.Done;
@@ -3775,6 +3989,11 @@ end;
 procedure TestTCipher_Skipjack.TestIdentity;
 begin
   CheckEquals($D2283F49, FCipher_Skipjack.Identity);
+end;
+
+procedure TestTCipher_Skipjack.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Skipjack);
 end;
 
 procedure TestTCipher_TEA.Done;
@@ -3906,6 +4125,11 @@ begin
   end;
 end;
 
+procedure TestTCipher_TEA.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_TEA);
+end;
+
 procedure TestTCipher_XTEA.Done;
 begin
   FCipher_XTEA.Done;
@@ -4010,6 +4234,11 @@ begin
   CheckEquals($CDBB621D, FCipher_XTEA.Identity);
 end;
 
+procedure TestTCipher_XTEA.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_XTEA);
+end;
+
 procedure TestTCipher_XTEA_DEC52.Done;
 begin
   FCipher_XTEA_DEC52.Done;
@@ -4102,6 +4331,11 @@ begin
   CheckEquals($59A6BE1E, FCipher_XTEA_DEC52.Identity);
 end;
 
+procedure TestTCipher_XTEA_DEC52.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_XTEA_DEC52);
+end;
+
 { TCipherBasis }
 
 function TCipherBasis.ConvertHexVectorToBytes(Vector: string): TBytes;
@@ -4142,11 +4376,10 @@ var
   TempResultHex : RawByteString;
 begin
 { TODO :
-Das Problem ist hier: dass wir zu low level testen, da die bisherigen Textvektoren
-ja immer von einem bestimmten CipherModus ausgehen, und nicht die
-einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
-wir die bisherigen Vektoren testen können. Dann können wir die nötigen
-Daten synthetisieren. }
+The problem here is that we are testing at too low a level, because the existing
+test vectors always assume a specific cipher mode and not the individual
+DoEncode/DoDecode primitives. Those should be tested later, once we can run the
+existing vectors. Then we can synthesize the required data. }
   for Data in FTestData do
   begin
     InitProc(Data);
@@ -4167,11 +4400,10 @@ var
   TempResultHex : RawByteString;
 begin
 { TODO :
-Das Problem ist hier: dass wir zu low level testen, da die bisherigen Testvektoren
-ja immer von einem bestimmten CipherModus ausgehen, und nicht die
-einzelnen DoEncode/DoDecode primitive. Diese sind später zu testen, wenn
-wir die bisherigen Vektoren testen können. Dann können wir die nötigen
-Daten synthetisieren. }
+The problem here is that we are testing at too low a level, because the existing
+test vectors always assume a specific cipher mode and not the individual
+DoEncode/DoDecode primitives. Those should be tested later, once we can run the
+existing vectors. Then we can synthesize the required data. }
   for Data in FTestData do
   begin
     InitProc(Data);
@@ -4220,6 +4452,32 @@ begin
       TempResultHex := '';
     CheckEquals(Data.OutputData, TempResultHex);
   end;
+end;
+
+procedure TCipherBasis.DoTestSetAutomaticIV(ACipher : TDECCipher);
+var
+  IV1, IV2 : TBytes;
+  Entrophy : Double;
+begin
+  ACipher.SetAutomaticInitVector;
+  CheckEquals(ACipher.Context.BlockSize, ACipher.InitVectorSize, 'Invalid init-vector size');
+
+  // check that two successive runs create divverent IVs
+  SetLength(IV1, ACipher.InitVectorSize);
+  Move(ACipher.InitVector^, IV1[0], ACipher.InitVectorSize);
+
+  ACipher.SetAutomaticInitVector;
+
+  SetLength(IV2, ACipher.InitVectorSize);
+  Move(ACipher.InitVector^, IV2[0], ACipher.InitVectorSize);
+
+  CheckNotEquals(true, System.SysUtils.CompareMem(@IV1[0], @IV2[0], Length(IV1)));
+
+  Entrophy := ShannonEntropy(IV1); // > 7.0 would be really good
+  CheckEquals(true,
+              (Entrophy >= 3.5) or
+              ((ACipher.InitVectorSize < 16) and
+               (Entrophy >= 3.0)), 'Not enough entropy. Is: ' + Entrophy.ToString + ' should: > 3.5');
 end;
 
 procedure TCipherBasis.DoTestEncodeStream(EncodeProc: TEncodeDecodeStreamProc; InitProc: TInitProc;
@@ -4466,6 +4724,11 @@ begin
   CheckException(DoInitMACWrongModeException, EDECException);
 end;
 
+procedure TestTDECCipher.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher);
+end;
+
 procedure TestTDECCipher.TestValidCipherSetDefaultCipherClass;
 var
   result : Boolean;
@@ -4609,6 +4872,11 @@ begin
   CheckEquals($E84F910E, FCipher_AES.Identity);
 end;
 
+procedure TestTCipher_AES.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_AES);
+end;
+
 { TestTCipher_Rijndael }
 
 procedure TestTCipher_Rijndael.Done;
@@ -4695,6 +4963,11 @@ end;
 procedure TestTCipher_Rijndael.TestIdentity;
 begin
   CheckEquals($F8B830A5, FCipher_Rijndael.Identity);
+end;
+
+procedure TestTCipher_Rijndael.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_Rijndael);
 end;
 
 { TestTCipher_AES128 }
@@ -4828,6 +5101,11 @@ begin
   CheckException(DoTestTooLargeKey, EDECCipherException);
 end;
 
+procedure TestTCipher_AES128.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_AES);
+end;
+
 { TestTCipher_AES192 }
 
 procedure TestTCipher_AES192.Done;
@@ -4937,6 +5215,11 @@ end;
 procedure TestTCipher_AES192.TestInitializationTooLargeKey;
 begin
   CheckException(DoTestTooLargeKey, EDECCipherException);
+end;
+
+procedure TestTCipher_AES192.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_AES);
 end;
 
 { TestTCipher_AES256 }
@@ -5051,6 +5334,11 @@ begin
   CheckException(DoTestTooLargeKey, EDECCipherException);
 end;
 
+procedure TestTCipher_AES256.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_AES);
+end;
+
 { TestTCipher_AES256_CBC_PKCS7 }
 
 procedure TestTCipher_AES256_CBC_PKCS7.SetUp;
@@ -5136,6 +5424,11 @@ end;
 procedure TestTCipher_AES256_CBC_PKCS7.TestEncodeStringToString;
 begin
   DoTestEncodeString(FCipher_AES.EncodeStringToString, self.Init, self.Done);
+end;
+
+procedure TestTCipher_AES256_CBC_PKCS7.TestSetAutomaticIV;
+begin
+  DoTestSetAutomaticIV(FCipher_AES);
 end;
 
 procedure TestTCipher_AES256_CBC_PKCS7.TestDecodeStringToString;

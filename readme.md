@@ -4,21 +4,24 @@
 DEC is a library for Embarcadero Delphi, containing different cryptographic algorithms.
 It contains algorithms for these categories:
 
-* Ciphers: encryption/decryption of data
+* Ciphers: stream and block based encryption/decryption of data, including modes with 
+  Authenticated Encryption with Associated Data capabilities (AEAD) and
+  standard paddings like PKCS#7 
 * Hashes: "cryptographic checksums"
+* Password hashes: bcrypt
 * Key derivation algorithms like Kdf1-Kdf3 and pbkdf2
 * HMAC message authentication
 * A cryptographic pseudo random number generator
 * CRCs: non cryptographic checksums based on CRC algorithms
 
 ## Which Delphi versions are compatible?
-The last release version 6.4.1 is compatible with Delphi XE2 - Delphi 12.3 Athens. 
+The last release version 6.4.1 is compatible with Delphi XE7 - Delphi 13.2 Florence. 
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
 FPC compatible version already.
 
-If you need support for older Delphi versions use version 5.2, which is compatible 
+If you need support for older Delphi versions use version 5.2. This is compatible 
 with Delphi 7-2007 at least but lacks some hash implementations, HMAC and KDF 
 improvements. While V5.2 can be made compatible with newer Delphi versions with
 small modifications we strongly recommend to better adapt your code to use the
@@ -34,14 +37,19 @@ Details about the changes and additions in V6.4.1 can be found in the
 VersionHistory.pdf file in the docs subfolder of the development branch.
 
 In comparison to 5.2 we added some console, VCL and FMX based demo applications.
-The FMX based demos are even available via Google play as "DEC cipher demo" and
-"DEC hash demo".
+The FMX based demos were even available via Google play as "DEC cipher demo" and
+"DEC hash demo". Due to some key issue they are no longer installable at the moment.
 
 ## Where can I get further information? For example if I'd like to contribute?
-In the root folder of DEC V6.4.1 you will find further files with information about 
+In the root folder of the repository you will find further files with information about
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
-Also take the time to read DEC64.pdf in the *Docs* folder and look at the demos 
-provided in the *Demos* subfolder.
+
+**Coding style (single source of truth for new code):**  
+[`Docs/StyleGuide.md`](Docs/StyleGuide.md) — naming, formatting, headers, FPC/Delphi rules, tests, and PR expectations.  
+Existing sources are not mass-reformatted; new and rewritten code is expected to follow the guide.
+
+Also take the time to read *DEC65.pdf* (or the version shipped with your release) in the *Docs* folder 
+for API documentation and how to extend algorithms, and look at the demos in the *Demos* subfolder.
 
 ## Has it been tested?
 DEC 5.2 came with some "arcane" test program testing the algoithms implemented
@@ -51,17 +59,26 @@ tests.
 
 DEC 6.0 reworked these tests into DUnit and DUnitX tests. We also added some more 
 tests and with this replaced the "arcane" test program which used hard to understand 
-code. A few of the implemented unit tests may still fail, but this is simply because
-they are empty sceletons at this point in time waiting to be filled in. We first 
-need to work out how to implement these tests and maybe look for test data.
+code. All provided unit tests run without failures. We do have test vectors for all
+crypto algorithms used (public API), we might still lack a few for some code blocks 
+to test them in isolation, but that does not mean that the algorithm uses these blocks
+is not properly tested!
 Why don't you help out by researching useful test data for those few tests?
-We're talking at block chaining mode tests for the ciphers specifically.
+We're talking about block chaining mode tests for the ciphers specifically.
+
+DUnitX (`Unit Tests/DECDUnitXTestSuite`) is the preferred / authoritative runner;
+the classic DUnit suite remains for comparison until a later removal. 
 
 In DEC 6.2 the unit tests for the hash classes were looked at and where not already 
 used original test data vectors (as far as we could find them - for most we could) 
 have been added to improve test coverage. V6.3 added further synthesized tests for 
 some hash classes. For SHA3 and for the GCM block chaining method the original test
 vectors provided by NIST are used for the unit tests.
+
+## Is it available in GetIt?
+Well, yes and no. Embarcadero only allows a light version to be in GetIt, which contains
+all algorithms, except for the ciphers. This is due to US export controls regulation and
+the asociated paperwork for that one.
 
 ## Contained hash algorithms
 * MD2        
@@ -81,6 +98,10 @@ vectors provided by NIST are used for the unit tests.
 * SHA3_256
 * SHA3_384
 * SHA3_512
+* Keccak_224
+* Keccak_256
+* Keccak_384
+* Keccak_512
 * Shake128
 * Shake256
 * Haval128   
@@ -97,6 +118,7 @@ vectors provided by NIST are used for the unit tests.
 * Snefru128  
 * Snefru256  
 * Sapphire   
+* BCrypt
 
 ## Contained cipher algorithms
 * Null
@@ -157,6 +179,8 @@ Modes ending on x have been invented by the original developer of DEC
 
 ## Contained message authentication algorithms
 * HMAC
+* GCM mode for block ciphers
+* CCM mode for block ciphers
 
 ## Contained formattings
 * Copy
@@ -175,6 +199,8 @@ Modes ending on x have been invented by the original developer of DEC
 * BigEndian16
 * BigEndian32
 * BigEndian64
+* BCryptBSD
+* UTF8
 
 ## Contained CRCs
 * 8

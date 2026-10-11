@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -451,21 +451,21 @@ var
 begin
   // correct initializations
   CheckEquals(true, CRCSetup(CRCDef, 1234, 8, 5678, 9, true), '8 Bit setup failure');
-  CheckEquals(1234, CRCDef.Polynomial,  '8 Bit polynome setup failure');
+  CheckEquals(1234, CRCDef.Polynomial,  '8 Bit polynomial setup failure');
   CheckEquals(   8, CRCDef.Bits,        '8 Bit bit count setup failure');
   CheckEquals(5678, CRCDef.InitVector,  '8 Bit init vector setup failure');
   CheckEquals(   9, CRCDef.FinalVector, '8 Bit final vector setup failure');
   CheckEquals(true, CRCDef.Inverse,     '8 Bit inverse setup failure');
 
   CheckEquals(true, CRCSetup(CRCDef, 5678, 16, 1234, 99, false), '16 Bit setup failure');
-  CheckEquals(5678, CRCDef.Polynomial,  '16 Bit polynome setup failure');
+  CheckEquals(5678, CRCDef.Polynomial,  '16 Bit polynomial setup failure');
   CheckEquals(  16, CRCDef.Bits,        '16 Bit bit count setup failure');
   CheckEquals(1234, CRCDef.InitVector,  '16 Bit init vector setup failure');
   CheckEquals(  99, CRCDef.FinalVector, '16 Bit final vector setup failure');
   CheckEquals(false, CRCDef.Inverse,    '16 Bit inverse setup failure');
 
   CheckEquals(true, CRCSetup(CRCDef, 12341234, 32, 56785678, 99999999, true), '32 Bit setup failure');
-  CheckEquals(12341234, CRCDef.Polynomial,  '32 Bit polynome setup failure');
+  CheckEquals(12341234, CRCDef.Polynomial,  '32 Bit polynomial setup failure');
   CheckEquals(      32, CRCDef.Bits,        '32 Bit bit count setup failure');
   CheckEquals(56785678, CRCDef.InitVector,  '32 Bit init vector setup failure');
   CheckEquals(99999999, CRCDef.FinalVector, '32 Bit final vector setup failure');
@@ -765,7 +765,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,  CRCInit(CRCDef, CRC_15CAN), 'CRC_15CAN data not retrieved');
-  CheckEquals($4599, CRCDef.Polynomial,          'CRC_15CAN polynome wrong');
+  CheckEquals($4599, CRCDef.Polynomial,          'CRC_15CAN polynomial wrong');
   CheckEquals(15,    CRCDef.Bits,                'CRC_15CAN bit count wrong');
   CheckEquals($0,    CRCDef.InitVector,          'CRC_15CAN init vector wrong');
   CheckEquals(true,  CRCDef.Inverse,             'CRC_15CAN inverse Flag wrong');
@@ -776,7 +776,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,  CRCInit(CRCDef, CRC_8SMBUS), 'CRC_8SMBUS data not retrieved');
-  CheckEquals($7,    CRCDef.Polynomial,           'CRC_8SMBUS polynome wrong');
+  CheckEquals($7,    CRCDef.Polynomial,           'CRC_8SMBUS polynomial wrong');
   CheckEquals(8,     CRCDef.Bits,                 'CRC_8SMBUS bit count wrong');
   CheckEquals($0,    CRCDef.InitVector,           'CRC_8SMBUS init vector wrong');
   CheckEquals(false, CRCDef.Inverse,              'CRC_8SMBUS inverse Flag wrong');
@@ -787,7 +787,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true, CRCInit(CRCDef, CRC_8ATMHEC), 'CRC_8ATMHEC data not retrieved');
-  CheckEquals($7,   CRCDef.Polynomial,            'CRC_8ATMHEC polynome wrong');
+  CheckEquals($7,   CRCDef.Polynomial,            'CRC_8ATMHEC polynomial wrong');
   CheckEquals(8,    CRCDef.Bits,                  'CRC_8ATMHEC bit count wrong');
   CheckEquals($0,   CRCDef.InitVector,            'CRC_8ATMHEC init vector wrong');
   CheckEquals(true, CRCDef.Inverse,               'CRC_8ATMHEC inverse Flag wrong');
@@ -798,7 +798,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,       CRCInit(CRCDef, CRC_32ZMODEM), 'CRC_32ZMODEM data not retrieved');
-  CheckEquals($4C11DB7,   CRCDef.Polynomial,             'CRC_32ZMODEM polynome wrong');
+  CheckEquals($4C11DB7,   CRCDef.Polynomial,             'CRC_32ZMODEM polynomial wrong');
   CheckEquals(32,         CRCDef.Bits,                   'CRC_32ZMODEM bit count wrong');
   CheckEquals(4294967295, CRCDef.InitVector,             'CRC_32ZMODEM init vector wrong');
   CheckEquals(true,       CRCDef.Inverse,                'CRC_32ZMODEM inverse Flag wrong');
@@ -809,7 +809,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,       CRCInit(CRCDef, CRC_32CCITT), 'CRC_32CCITT data not retrieved');
-  CheckEquals($4C11DB7,   CRCDef.Polynomial,            'CRC_32CCITT polynome wrong');
+  CheckEquals($4C11DB7,   CRCDef.Polynomial,            'CRC_32CCITT polynomial wrong');
   CheckEquals(32,         CRCDef.Bits,                  'CRC_32CCITT bit count wrong');
   CheckEquals(4294967295, CRCDef.InitVector,            'CRC_32CCITT init vector wrong');
   CheckEquals(true,       CRCDef.Inverse,               'CRC_32CCITT inverse Flag wrong');
@@ -820,7 +820,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,       CRCInit(CRCDef, CRC_32), 'CRC_32 data not retrieved');
-  CheckEquals(2645627411, CRCDef.Polynomial,       'CRC_32 polynome wrong');
+  CheckEquals(2645627411, CRCDef.Polynomial,       'CRC_32 polynomial wrong');
   CheckEquals(32,         CRCDef.Bits,             'CRC_32 bit count wrong');
   CheckEquals(4294967295, CRCDef.InitVector,       'CRC_32 init vector wrong');
   CheckEquals(true,       CRCDef.Inverse,          'CRC_32 inverse Flag wrong');
@@ -831,7 +831,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,    CRCInit(CRCDef, CRC_24), 'CRC_24 data not retrieved');
-  CheckEquals($864CFB, CRCDef.Polynomial,       'CRC_24 polynome wrong');
+  CheckEquals($864CFB, CRCDef.Polynomial,       'CRC_24 polynomial wrong');
   CheckEquals(24,      CRCDef.Bits,             'CRC_24 bit count wrong');
   CheckEquals($B704CE, CRCDef.InitVector,       'CRC_24 init vector wrong');
   CheckEquals(false,   CRCDef.Inverse,          'CRC_24 inverse Flag wrong');
@@ -842,7 +842,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,  CRCInit(CRCDef, CRC_16ZMODEM), 'CRC_16ZMODEM data not retrieved');
-  CheckEquals($1021, CRCDef.Polynomial,             'CRC_16ZMODEM polynome wrong');
+  CheckEquals($1021, CRCDef.Polynomial,             'CRC_16ZMODEM polynomial wrong');
   CheckEquals(16,    CRCDef.Bits,                   'CRC_16ZMODEM bit count wrong');
   CheckEquals($0,    CRCDef.InitVector,             'CRC_16ZMODEM init vector wrong');
   CheckEquals(false, CRCDef.Inverse,                'CRC_16ZMODEM inverse Flag wrong');
@@ -853,7 +853,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,  CRCInit(CRCDef, CRC_16XMODEM), 'CRC_16XMODEM data not retrieved');
-  CheckEquals($8408, CRCDef.Polynomial,             'CRC_16XMODEM polynome wrong');
+  CheckEquals($8408, CRCDef.Polynomial,             'CRC_16XMODEM polynomial wrong');
   CheckEquals(16,    CRCDef.Bits,                   'CRC_16XMODEM bit count wrong');
   CheckEquals($0,    CRCDef.InitVector,             'CRC_16XMODEM init vector wrong');
   CheckEquals(true,  CRCDef.Inverse,                'CRC_16XMODEM inverse Flag wrong');
@@ -864,7 +864,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true,  CRCInit(CRCDef, CRC_16CCITT), 'CRC_16CCITT data not retrieved');
-  CheckEquals($1021, CRCDef.Polynomial,            'CRC_16CCITT polynome wrong');
+  CheckEquals($1021, CRCDef.Polynomial,            'CRC_16CCITT polynomial wrong');
   CheckEquals(16,    CRCDef.Bits,                  'CRC_16CCITT bit count wrong');
   CheckEquals($1D0F, CRCDef.InitVector,            'CRC_16CCITT init vector wrong');
   CheckEquals(false, CRCDef.Inverse,               'CRC_16CCITT inverse Flag wrong');
@@ -876,7 +876,7 @@ var
 begin
   // CRC_16 ARC;IBM;MODBUS RTU
   CheckEquals(true,  CRCInit(CRCDef, CRC_16), 'CRC_16 data not retrieved');
-  CheckEquals($8005, CRCDef.Polynomial,       'CRC_16 polynome wrong');
+  CheckEquals($8005, CRCDef.Polynomial,       'CRC_16 polynomial wrong');
   CheckEquals(16,    CRCDef.Bits,             'CRC_16 bit count wrong');
   CheckEquals($0,    CRCDef.InitVector,       'CRC_16 init vector wrong');
   CheckEquals(true,  CRCDef.Inverse,          'CRC_16 inverse Flag wrong');
@@ -887,7 +887,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true, CRCInit(CRCDef, CRC_12), 'CRC_12 data not retrieved');
-  CheckEquals($80F, CRCDef.Polynomial,       'CRC_12 polynome wrong');
+  CheckEquals($80F, CRCDef.Polynomial,       'CRC_12 polynomial wrong');
   CheckEquals(12,   CRCDef.Bits,             'CRC_12 bit count wrong');
   CheckEquals($0,   CRCDef.InitVector,       'CRC_12 init vector wrong');
   CheckEquals(true, CRCDef.Inverse,          'CRC_12 inverse Flag wrong');
@@ -898,7 +898,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true, CRCInit(CRCDef, CRC_10), 'CRC_10 data not retrieved');
-  CheckEquals($233, CRCDef.Polynomial,       'CRC_10 polynome wrong');
+  CheckEquals($233, CRCDef.Polynomial,       'CRC_10 polynomial wrong');
   CheckEquals(10,   CRCDef.Bits,             'CRC_10 bit count wrong');
   CheckEquals($0,   CRCDef.InitVector,       'CRC_10 init vector wrong');
   CheckEquals(true, CRCDef.Inverse,          'CRC_10 inverse Flag wrong');
@@ -909,7 +909,7 @@ var
   CRCDef : TCRCDef;
 begin
   CheckEquals(true, CRCInit(CRCDef, CRC_8), 'CRC_8 data not retrieved');
-  CheckEquals($D1,  CRCDef.Polynomial,      'CRC_8 polynome wrong');
+  CheckEquals($D1,  CRCDef.Polynomial,      'CRC_8 polynomial wrong');
   CheckEquals(8,    CRCDef.Bits,            'CRC_8 bit count wrong');
   CheckEquals($0,   CRCDef.InitVector,      'CRC_8 init vector wrong');
   CheckEquals(true, CRCDef.Inverse,         'CRC_8 inverse Flag wrong');
@@ -987,18 +987,18 @@ var
   CRCDef : TCRCDef;
   CRC    : UInt32;
 begin
-  // CRCDef initialisieren
+  // Initialize CRCDef
   // Poly: $00008005; Bits: 16; Init: $00000000; FInit: $00000000; Inverse: True
   CRCInit(CRCDef, CRC_16);
 
-  // Zwischenwert der CRC Berechnung vordefinieren, da ja nur CRCDone getestet
-  // werden soll. Mask ist bei CRC_16 = $FFFF
+  // Predefine intermediate CRC value since only CRCDone is under test.
+  // Mask for CRC_16 is $FFFF
   CRCDef.CRC := $AAAA;
 
   CRC := CRCDone(CRCDef);
 
-  CheckEquals($AAAA, CRC, 'falscher CRC Wert');
-  CheckEquals(CRCDef.InitVector, CRCDef.CRC, 'Falscher temporärer CRC Wert');
+  CheckEquals($AAAA, CRC, 'wrong CRC value');
+  CheckEquals(CRCDef.InitVector, CRCDef.CRC, 'wrong temporary CRC value');
 end;
 
 procedure TestCRC.TestCRCDoneFinalVectorFFFFFFFF;
@@ -1006,20 +1006,20 @@ var
   CRCDef : TCRCDef;
   CRC    : UInt32;
 begin
-  // CRCDef initialisieren
+  // Initialize CRCDef
   // Poly: $9DB11213; Bits: 32; Init: $FFFFFFFF; FInit: $FFFFFFFF; Inverse: True
   CRCInit(CRCDef, CRC_32);
 
-  // Zwischenwert der CRC Berechnung vordefinieren, da ja nur CRCDone getestet
-  // werden soll. Mask ist bei CRC_32 = $FFFFFFFF
+  // Predefine intermediate CRC value since only CRCDone is under test.
+  // Mask for CRC_32 is $FFFFFFFF
   CRCDef.CRC := $AAAAAAAA;
 
   CRC := CRCDone(CRCDef);
 
-  // durch den FinalVector $FFFFFFFF und das XOR im CRCDone findet eine
-  // Invertierung statt ($55555555 ist Invertierung von $AAAAAAAA
-  CheckEquals($55555555, CRC, 'falscher CRC Wert');
-  CheckEquals(CRCDef.InitVector, CRCDef.CRC, 'Falscher temporärer CRC Wert');
+  // FinalVector $FFFFFFFF and the XOR in CRCDone invert the value
+  // ($55555555 is the inversion of $AAAAAAAA
+  CheckEquals($55555555, CRC, 'wrong CRC value');
+  CheckEquals(CRCDef.InitVector, CRCDef.CRC, 'wrong temporary CRC value');
 end;
 
 initialization

@@ -73,42 +73,51 @@
 // Automatically register all hash classes
 {.$DEFINE ManualRegisterHashClasses} (* default off *)
 
-{$DEFINE ASSEMBLER}
-
-// if the compiler does not support assembler turn usage off and even if restrict
-// it to Windows, as those non Windows platforms which actually do support ASM
-// in Delphi do not use Intel x86 ASM
-{$IFNDEF FPC }
+// Assembler selection.
+// Delphi enables the Intel assembler only when ASSEMBLER is defined and the
+// target is Win32 (CPUX86) or Win64 (CPUX64 and MSWINDOWS). LLVM targets
+// (Android, iOS, macOS, Linux64, WinARM64EC) leave ASSEMBLER undefined, so
+// they stay on pure Pascal. CPUX64 without MSWINDOWS (Linux64, macOS x64)
+// stays on pure Pascal as well. Delphi's Windows symbol is MSWINDOWS.
+// FPC keeps the CPU switches in the FPC branch; that behaviour is unchanged.
+// Remove the dot from {.$DEFINE NO_ASM} below, or uncomment {$DEFINE NO_ASM}
+// in the Architecture section, to force pure Pascal on every target.
+{.$DEFINE NO_ASM} (* default off *)
+{$IFDEF FPC }
   {$IF defined(CPUX86_64) or defined(CPUAMD64) or defined(CPUIA64) }
     {$ifndef CPUX64}
         {$define CPUX64}
     {$endif}
-  {$IFEND}
-
-  {$if defined(CPU386) or defined(CPUI386) }
+  {$else}{$if defined(CPU386) or defined(CPUI386) }
       {$ifndef CPUX32}
           {$define CPUX32}
       {$endif}
-  {$IFEND}
-
+  {$ELSE}
+      {$IFNDEF ASSEMBLER }
+        {$DEFINE NO_ASM} (* default ON *)
+      {$ELSE}
+        {$IFDEF WINDOWS}
+          {.$DEFINE NO_ASM} (* default OFF *)
+        {$ELSE}
+          {$DEFINE NO_ASM} (* default ON *)
+        {$ENDIF}
+      {$ENDIF}
+  {$ENDIF}{$endif}
+{$ELSE}
+  // Delphi. See the comment above for which targets keep the assembler.
   {$IFNDEF ASSEMBLER}
     {$DEFINE NO_ASM}
+  {$ELSE}
+    {$IFNDEF CPUX86}
+      {$IFNDEF CPUX64}
+        {$DEFINE NO_ASM}
+      {$ELSE}
+        {$IFNDEF MSWINDOWS}
+          {$DEFINE NO_ASM}
+        {$ENDIF}
+      {$ENDIF}
+    {$ENDIF}
   {$ENDIF}
-  {$IFDEF UNIX}
-    {$DEFINE NO_ASM}
-  {$ENDIF}
-  //    {$IFNDEF ASSEMBLER }
-//        {$DEFINE NO_ASM} (* default ON *)
-//      {$ELSE}
-//        {$IFDEF WINDOWS}
-//          {.$DEFINE NO_ASM} (* default OFF *)
-//        {$ELSE}
-//          {$DEFINE NO_ASM} (* default ON *)
-//        {$ENDIF}
-//      {$ENDIF}
-{$ELSE}
-  // Turn ASM off for FPC as we do not know enough about ASM support on FPC
-  {$DEFINE NO_ASM}
 {$ENDIF}
 
 // Enable the following option to restore the *wrong* Identity behavior of
@@ -129,7 +138,7 @@
 /// </summary>
 {$IF DECLARED(FireMonkeyVersion)}
   {$DEFINE FMXTranslateableExceptions}
-{$IFEND} { TODO: convert to $ENDIF when raising minimum supported version to XE4+}
+{$ENDIF}
 //------------------------------------------------------------------------------
 // Do NOT change anything below!
 //------------------------------------------------------------------------------
@@ -195,24 +204,26 @@
 //{$DEFINE NO_ASM}
 
 {$IFDEF NO_ASM}
-  // User config override (see top of this file)
+  // User override ({.$DEFINE NO_ASM} in the configuration section, or
+  // {$DEFINE NO_ASM} on the line above) or a platform with no Intel assembler.
   {$UNDEF X86ASM}
   {$UNDEF X64ASM}
   {$DEFINE PUREPASCAL}
 {$ENDIF}
 
 {$IFNDEF PUREPASCAL}
-  // ignored by FPC (already in PurePascal mode as defined in FPC block above)
-  {$DEFINE PUREPASCAL}
+  // FPC i386 defines CPUX86. FPC x86_64 defines CPUX64 (also aliased above).
+  // Any other CPU reaches PUREPASCAL here.
   {$IFDEF CPUX86}
     {$DEFINE X86ASM}
-    {$UNDEF PUREPASCAL}
+  {$ELSE !CPUX86}
+    {$IFDEF CPUX64}
+      {$DEFINE X64ASM}
+    {$ELSE !CPUX64}
+      {$DEFINE PUREPASCAL}
+    {$ENDIF !CPUX64}
   {$ENDIF}
-  {$IFDEF CPUX64}
-    {$DEFINE X64ASM}
-    {$UNDEF PUREPASCAL}
-  {$ENDIF}
-{$ENDIF}
+{$ENDIF !PUREPASCAL}
 
 //------------------------------------------------------------------------------
 // Delphi and C++ Builder

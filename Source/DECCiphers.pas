@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -1112,6 +1112,22 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
   end;
 
+/// <summary>
+///   IDEA multiplication modulo 65537. An operand of zero stands for 2^16,
+///   and a product of 2^16 is returned with low 16 bits zero.
+/// </summary>
+/// <param name="X">
+///   First factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <param name="Y">
+///   Second factor. Bits above bit 15 are ignored. Zero means 2^16.
+/// </param>
+/// <returns>
+///   A value whose low 16 bits are (X * Y) mod 65537, using the zero
+///   encoding above. Higher bits are an intermediate of the reduction.
+/// </returns>
+function IDEAMul(X, Y: UInt32): UInt32;
+
 implementation
 
 {$IFOPT Q+}{$DEFINE RESTORE_OVERFLOWCHECKS}{$Q-}{$ENDIF}
@@ -1787,6 +1803,11 @@ function IDEAMul(X, Y: UInt32): UInt32;
 {$IF defined(X86ASM) or defined(X64ASM)}
 asm
     {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+      .NOFRAME
+      // Leaf: the early RET below must not skip a compiler frame.
+      // Win64: X in ECX, Y in EDX, result in EAX.
+      {$ENDIF}
        MOV    EAX,ECX
     {$ENDIF X64ASM}
        AND    EAX,0FFFFh
@@ -1803,6 +1824,11 @@ asm
        RET
 @@1:   LEA    EAX,[EAX + EDX - 1]
        NEG    EAX
+    {$IFDEF X64ASM}
+      {$IFNDEF FPC}
+       RET
+      {$ENDIF}
+    {$ENDIF}
 end;
 {$ELSE}
 begin
@@ -3685,21 +3711,21 @@ begin
   D2 := D1 xor P[3];
 
   PUInt32Array(Dest)[0] := (Rijndael_S[0, A2        and $FF]        or
-                          Rijndael_S[0, B2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, C2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, D2 shr 24        ] shl 24)     xor P[4];
+                            Rijndael_S[0, B2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, C2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, D2 shr 24        ] shl 24)     xor P[4];
   PUInt32Array(Dest)[1] := (Rijndael_S[0, B2        and $FF]        or
-                          Rijndael_S[0, C2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, D2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, A2 shr 24        ] shl 24)     xor P[5];
+                            Rijndael_S[0, C2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, D2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, A2 shr 24        ] shl 24)     xor P[5];
   PUInt32Array(Dest)[2] := (Rijndael_S[0, C2        and $FF]        or
-                          Rijndael_S[0, D2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, A2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, B2 shr 24        ] shl 24)     xor P[6];
+                            Rijndael_S[0, D2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, A2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, B2 shr 24        ] shl 24)     xor P[6];
   PUInt32Array(Dest)[3] := (Rijndael_S[0, D2        and $FF]        or
-                          Rijndael_S[0, A2 shr  8 and $FF] shl  8 or
-                          Rijndael_S[0, B2 shr 16 and $FF] shl 16 or
-                          Rijndael_S[0, C2 shr 24        ] shl 24)     xor P[7];
+                            Rijndael_S[0, A2 shr  8 and $FF] shl  8 or
+                            Rijndael_S[0, B2 shr 16 and $FF] shl 16 or
+                            Rijndael_S[0, C2 shr 24        ] shl 24)     xor P[7];
 end;
 
 procedure TCipher_Rijndael.DoDecode(Source, Dest: Pointer; Size: Integer);
@@ -7270,7 +7296,7 @@ begin
 //    {$IFDEF DELPHIORBCB}
 //    if ATab < AMin then
 //    {$ELSE !DELPHIORBCB}
-{ TODO : Prüfen ob so korrekt, da ATab auf PByte umgestellt wurde}
+{ TODO : Verify this is still correct after ATab was changed to PByte}
   if PByte(ATab) < AMin then
 //    {$ENDIF !DELPHIORBCB}
     ATab := AMax;

@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -36,6 +36,7 @@ type
   /// <summary>
   ///   Test cases for the various helper functions
   /// </summary>
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestZIPHelpers = class(TTestCase)
   strict private
     /// <summary>
