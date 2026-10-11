@@ -17,11 +17,10 @@
 
 /// <summary>
 ///   x86 and x64 CPU instruction support functions.
-///   this class only works for intel cpus - arm will result.
+///   This class only works for Intel/AMD cpus - ARM will result.
 ///   The functions defined here return true if the feature is availabe
 ///   for the cpu
 /// </summary>
-
 unit DECCPUSupport;
 
 interface
@@ -47,71 +46,74 @@ type
 implementation
 
 {$IFDEF CPUX64}
-{$DEFINE x64}
+  {$DEFINE x64}
 {$ENDIF}
 {$IFDEF cpux86_64}
-{$DEFINE x64}
+  {$DEFINE x64}
 {$ENDIF}
 
 {$IFDEF CPU86}
-{$DEFINE x86}
+  {$DEFINE x86}
 {$ENDIF}
 {$IFDEF CPUX86}
-{$DEFINE x86}
+  {$DEFINE x86}
 {$ENDIF}
 
 {$IFDEF CPU386}
-{$DEFINE x86}
+  {$DEFINE x86}
 {$ENDIF}
-
 
 {$IF Defined(x64) or Defined(x86)}
 {$WARN SYMBOL_PLATFORM OFF}
 procedure InitFlags;
-var reg : TCPUIDRec;
-    nids : LongWord;
+var
+  reg : TCPUIDRec;
+  nids : LongWord;
 begin
-     reg := GetCPUID(0, 0);
-     nids := reg.EAX;
+  // read maximum supported FunctionID
+  reg  := GetCPUID(0, 0);
+  nids := reg.EAX;
 
+  if nids >= 1 then
+  begin
+    // query flags to find out supported instruction sets
+    reg := GetCPUID(1, 0);
+    TDEC_CPUSupport.SSE   := (reg.EDX and (1 shl 25)) <> 0;
+    TDEC_CPUSupport.SSE2  := (reg.EDX and (1 shl 26)) <> 0;
+    TDEC_CPUSupport.SSE3  := (reg.ECX and (1 shl  9)) <> 0;
+    TDEC_CPUSupport.SSE41 := (reg.ECX and (1 shl 19)) <> 0;
+    TDEC_CPUSupport.SSE42 := (reg.ECX and (1 shl 20)) <> 0;
+    TDEC_CPUSupport.AES   := (reg.ECX and (1 shl 25)) <> 0;
 
-     if nids >= 1 then
-     begin
-          reg := GetCPUID(1, 0);
-          TDEC_CPUSupport.SSE := (reg.EDX and (1 shl 25)) <> 0;
-          TDEC_CPUSupport.SSE2 := (reg.EDX and (1 shl 26)) <> 0;
-          TDEC_CPUSupport.SSE3  := (reg.ECX and (1 shl 9)) <> 0;
-          TDEC_CPUSupport.SSE41  := (reg.ECX and (1 shl 19)) <> 0;
-          TDEC_CPUSupport.SSE42  := (reg.ECX and (1 shl 20)) <> 0;
-          TDEC_CPUSupport.AES := (reg.ECX and (1 shl 25)) <> 0;
+    TDEC_CPUSupport.AVX    := (reg.ECX and (1 shl 28)) <> 0;
+    TDEC_CPUSupport.RDRAND := (reg.ECX and (1 shl 30)) <> 0;
+  end;
 
-          TDEC_CPUSupport.AVX := (reg.ECX and (1 shl 28)) <> 0;
-          TDEC_CPUSupport.RDRAND := (reg.ECX and (1 shl 30)) <> 0;
-     end;
-
-     if nids >= 7 then
-     begin
-          reg := GetCPUID($7);
-          TDEC_CPUSupport.AVX2 := (reg.EBX and (1 shl 5)) <> 0;
-          TDEC_CPUSupport.RDSEED := (reg.EBX and (1 shl  18)) <> 0;
-     end;
+  if nids >= 7 then
+  begin
+    // query further flags to find out supported instruction sets
+    reg := GetCPUID($7);
+    TDEC_CPUSupport.AVX2   := (reg.EBX and (1 shl   5)) <> 0;
+    TDEC_CPUSupport.RDSEED := (reg.EBX and (1 shl  18)) <> 0;
+  end;
 end;
 {$ENDIF}
 
 initialization
-    TDEC_CPUSupport.AES := False;
-    TDEC_CPUSupport.AVX := False;
-    TDEC_CPUSupport.AVX2 := False;
+    TDEC_CPUSupport.AES    := False;
+    TDEC_CPUSupport.AVX    := False;
+    TDEC_CPUSupport.AVX2   := False;
 
-    TDEC_CPUSupport.SSE := False;
-    TDEC_CPUSupport.SSE2 := False;
-    TDEC_CPUSupport.SSE3 := False;
-    TDEC_CPUSupport.SSE41 := False;
-    TDEC_CPUSupport.SSE42 := False;
+    TDEC_CPUSupport.SSE    := False;
+    TDEC_CPUSupport.SSE2   := False;
+    TDEC_CPUSupport.SSE3   := False;
+    TDEC_CPUSupport.SSE41  := False;
+    TDEC_CPUSupport.SSE42  := False;
 
     TDEC_CPUSupport.RDRand := False;
     TDEC_CPUSupport.RDSeed := False;
-{$IF Defined(x64) or Defined(x86)}
+
+  {$IF Defined(x64) or Defined(x86)}
     InitFlags;
-{$IFEND}
+  {$IFEND}
 end.
