@@ -2,6 +2,8 @@ unit TestDECChaChaPoly1305;
 
 interface
 
+{$INCLUDE ..\..\Source\DECOptions.inc}
+
 uses {$IFDEF DUnitX}
      DUnitX.TestFramework,DUnitX.DUnitCompatibility,
      {$ELSE}
@@ -474,6 +476,8 @@ begin
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
 
+     {$IFNDEF PUREPASCAL}
+     // AVX variant only exists when assembler support is compiled in
      // ###########################################
      // #### third test
      FillChar(iv[0], Length(iv), 0);
@@ -498,6 +502,7 @@ begin
 
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
+     {$ENDIF}
 end;
 
 
