@@ -745,13 +745,13 @@ end;
 
 function TDECFormattedCipher.DecodeBytes(const Source: TBytes): TBytes;
 begin
-  Result := Source;
+  // Always decode into a new array. Result := Source would only share the
+  // reference, so decoding in place would overwrite the caller's Source.
+  Result := nil;
+  SetLength(Result, Length(Source));
 
   if Length(Result) > 0 then
   begin
-    if (FMode = cmGCM) then
-      SetLength(Result, Length(Source));
-
     Decode(Source[0], Result[0], Length(Source));
   end
   else

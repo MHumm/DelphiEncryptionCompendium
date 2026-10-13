@@ -98,6 +98,11 @@ type
   published
     procedure TestEncodeBytes;
     procedure TestDecodeBytes;
+    /// <summary>
+    ///   DecodeBytes must return a new array and leave the caller's Source
+    ///   array unchanged (regression: non-GCM modes decoded in place).
+    /// </summary>
+    procedure TestDecodeBytesKeepsSource;
 
     procedure TestEncodeStream;
     procedure TestDecodeStream;
@@ -323,6 +328,45 @@ begin
                 RawByteString(StringOf(result)),
                 'Failure in TestDecodeBytes ' + IntToStr(i));
   end;
+end;
+
+procedure TestTDECCipherFormats.TestDecodeBytesKeepsSource;
+var
+  Key, IV  : TBytes;
+  Source   : TBytes;
+  Original : TBytes;
+  Decoded  : TBytes;
+  Encoded  : TBytes;
+  i        : Integer;
+begin
+  Key := BytesOf(RawByteString('TCipher_Twofish'));
+  SetLength(IV, 16);
+  FillChar(IV[0], Length(IV), $A5);
+
+  SetLength(Source, 32);
+  for i := 0 to High(Source) do
+    Source[i] := Byte(i * 7 + 3);
+  Original := Copy(Source);
+
+  FCipherTwoFish.Mode := cmCBCx;
+  FCipherTwoFish.Init(Key, IV, $FF);
+  Decoded := FCipherTwoFish.DecodeBytes(Source);
+  FCipherTwoFish.Done;
+
+  CheckEquals(Length(Original), Length(Source), 'Source length changed');
+  Check(CompareMem(@Original[0], @Source[0], Length(Original)),
+            'DecodeBytes modified the caller''s Source array');
+  Check(Pointer(Decoded) <> Pointer(Source),
+            'DecodeBytes returned the Source array instead of a new one');
+
+  // Round trip: encoding the decoded data must give the original bytes back
+  FCipherTwoFish.Init(Key, IV, $FF);
+  Encoded := FCipherTwoFish.EncodeBytes(Decoded);
+  FCipherTwoFish.Done;
+
+  CheckEquals(Length(Original), Length(Encoded), 'Round trip length mismatch');
+  Check(CompareMem(@Original[0], @Encoded[0], Length(Original)),
+            'Round trip of DecodeBytes result failed');
 end;
 
 procedure TestTDECCipherFormats.TestDecodeRawByteStringToString;
