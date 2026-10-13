@@ -747,7 +747,7 @@ end;
 initialization
   // Register all test cases to be run
   {$IFDEF DUnitX}
-  TDUnitX.RegisterTestFixture(TPoly1305);
+  TDUnitX.RegisterTestFixture(TestChaCha20Poly1305);
   {$ELSE}
   RegisterTest(TestChaCha20Poly1305.Suite);
   {$ENDIF}
