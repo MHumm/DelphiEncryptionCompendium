@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -77,7 +77,7 @@ type
 
     /// <summary>
     ///   Running GHASH state (NIST "X"). Allows multi-call Encode/Decode.
-    ///   Tag is finalized only in Done — see Cleanup-Roadmap §3.1 (Option A).
+    ///   Tag is finalized only in Done â€” see Cleanup-Roadmap Â§3.1 (Option A).
     /// </summary>
     FX                    : T128;
     /// <summary>

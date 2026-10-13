@@ -1,4 +1,4 @@
-unit TestDECChaChaPoly1305;
+﻿unit TestDECChaChaPoly1305;
 
 interface
 

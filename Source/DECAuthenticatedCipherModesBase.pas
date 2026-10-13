@@ -1,4 +1,4 @@
-{*****************************************************************************
+﻿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -61,7 +61,7 @@ type
   /// <remarks>
   ///   Lifecycle for authenticated modes (GCM, CCM):
   ///   <para>
-  ///     Init ? set AAD / tag length / expected tag ? Encode/Decode* ? Done ?
+  ///     Init → set AAD / tag length / expected tag → Encode/Decode* → Done →
   ///     read CalculatedAuthenticationTag.
   ///   </para>
   ///   <para>
@@ -220,7 +220,7 @@ type
     ///   True when Encode/Decode may be called more than once before Done.
     ///   GCM always supports this. CCM supports it when the total payload
     ///   length is known in advance (CCM is not an online AEAD: B_0 encodes
-    ///   l(m); see RFC 3610 �1 and NIST SP 800-38C).
+    ///   l(m); see RFC 3610 §1 and NIST SP 800-38C).
     /// </summary>
     /// <returns>
     ///   True if the mode can process the payload in several Encode/Decode calls
@@ -279,7 +279,7 @@ type
     /// <summary>
     ///   Calculated authentication value. Valid only after Done has been
     ///   called. Reading this property before Done raises EDECCipherException
-    ///   so callers follow the Init ? Encode/Decode* ? Done ? tag lifecycle.
+    ///   so callers follow the Init → Encode/Decode* → Done → tag lifecycle.
     /// </summary>
     /// <exception cref="EDECCipherException">
     ///   Raised when the property is read before Done.
