@@ -1190,8 +1190,8 @@ begin
   FCipherAES.AuthenticationResultBitLength := 128;
   CheckEquals(128, FCipherAES.AuthenticationResultBitLength);
 
-  FCipherAES.AuthenticationResultBitLength := 192;
-  CheckEquals(192, FCipherAES.AuthenticationResultBitLength);
+  FCipherAES.AuthenticationResultBitLength := 96;
+  CheckEquals(96, FCipherAES.AuthenticationResultBitLength);
 end;
 
 procedure TestTDECGCM.TestSetGetDataToAuthenticate;
