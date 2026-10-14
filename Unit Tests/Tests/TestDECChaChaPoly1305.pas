@@ -2,6 +2,8 @@ unit TestDECChaChaPoly1305;
 
 interface
 
+{$INCLUDE ..\..\Source\DECOptions.inc}
+
 uses {$IFDEF DUnitX}
      DUnitX.TestFramework,DUnitX.DUnitCompatibility,
      {$ELSE}
@@ -167,7 +169,7 @@ begin
 
 
      Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'SSE encoding failed');
-     Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'avx encoding failed');
+     Check( CompareMem( @decbuf_pas[0], @decBuf_avx[0], Length(decBuf_avx)), 'avx encoding failed');
 
      // test decode
      for cpuMode in [cmPas, cmSSE, cmAVX] do
@@ -178,7 +180,8 @@ begin
              chaCha.Mode := cmECBx;
              chaCha.Init(cKey, cNonce);
 
-             testDecode := chaCha.DecodeBytes(decbuf_sse);
+             // Decode a copy: DecodeBytes may decode in place into its Source array
+             testDecode := chaCha.DecodeBytes(Copy(decbuf_sse));
           finally
             chaCha.Free;
           end;
@@ -274,7 +277,7 @@ begin
           Check(CompareMem( @tag[0], @tags[polyCPUMode][0], Length(tag)), 'Tag calculation failed');
 
           Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'SSE encoding failed');
-          Check( CompareMem( @decbuf_pas[0], @decBuf_sse[0], Length(decBuf_sse)), 'avx encoding failed');
+          Check( CompareMem( @decbuf_pas[0], @decBuf_avx[0], Length(decBuf_avx)), 'avx encoding failed');
      end;
 
      Check(CompareMem( @tags[pmAVX][0], @tags[pmPas][0], Length(tags[pmPas])), 'AVX, PAS Tag calculation failed');
@@ -288,7 +291,8 @@ begin
              chaCha.Mode := cmPoly1305;
              chaCha.Init(cKey, cNonce);
 
-             testDecode := chaCha.DecodeBytes(decbuf_sse);
+             // Decode a copy: DecodeBytes may decode in place into its Source array
+             testDecode := chaCha.DecodeBytes(Copy(decbuf_sse));
              chaCha.Done;
           finally
                  chaCha.Free;
@@ -381,7 +385,17 @@ begin
 end;
 
 type
-  THackPly1305 = class(TPoly1305);
+  THackPly1305 = class(TPoly1305)
+  public
+    // Tag bytes written by Finalize. Done must not be called here: it appends
+    // the AEAD length block, but RFC 7539 section 2.5 vectors are a bare MAC.
+    function RawAuthenticationTag: TBytes;
+  end;
+
+function THackPly1305.RawAuthenticationTag: TBytes;
+begin
+  Result := FCalcAuthenticationTag;
+end;
 
 procedure TestChaCha20Poly1305.TestPoly1305;
 const// cKey : Array of Byte = [$85, $d6, $be, $78, $57, $55, $6d, $33, $7f, $44, $52, $fe, $42, $d5, $06, $a8, $01, $0,
@@ -441,9 +455,8 @@ begin
         THackPly1305(poly).InitInternal(iv);
         THackPly1305(poly).UpdatePoly(@msg[0], Length(msg));
         THackPly1305(poly).Finalize;
-        THackPly1305(poly).Done;
 
-        calcTag := poly.CalculatedAuthenticationTag;
+        calcTag := THackPly1305(poly).RawAuthenticationTag;
      finally
             poly.Free;
      end;
@@ -466,7 +479,7 @@ begin
         THackPly1305(poly).UpdatePoly(@msg[0], Length(msg));
         THackPly1305(poly).Finalize;
 
-        calcTag := poly.CalculatedAuthenticationTag;
+        calcTag := THackPly1305(poly).RawAuthenticationTag;
      finally
             poly.Free;
      end;
@@ -474,6 +487,8 @@ begin
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
 
+     {$IFNDEF PUREPASCAL}
+     // AVX variant only exists when assembler support is compiled in
      // ###########################################
      // #### third test
      FillChar(iv[0], Length(iv), 0);
@@ -490,7 +505,7 @@ begin
         THackPly1305(poly).UpdatePolyAVX(@msg[0], Length(msg));
         THackPly1305(poly).FinalizeAVX;
 
-        calcTag := poly.CalculatedAuthenticationTag;
+        calcTag := THackPly1305(poly).RawAuthenticationTag;
      finally
             poly.Free;
             TPoly1305.CpuMode := pmPas;
@@ -498,6 +513,7 @@ begin
 
      Check(Length(cTag) = Length(calcTag), 'MAC length is wrong');
      Check( CompareMem(@cTag[0], @calcTag[0], Length(calcTag)), 'Polynom calculated tag does not match');
+     {$ENDIF}
 end;
 
 
@@ -747,7 +763,7 @@ end;
 initialization
   // Register all test cases to be run
   {$IFDEF DUnitX}
-  TDUnitX.RegisterTestFixture(TPoly1305);
+  TDUnitX.RegisterTestFixture(TestChaCha20Poly1305);
   {$ELSE}
   RegisterTest(TestChaCha20Poly1305.Suite);
   {$ENDIF}

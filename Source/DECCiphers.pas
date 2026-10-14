@@ -3501,7 +3501,8 @@ procedure TCipher_Rijndael.DoInit(const Key; Size: Integer);
 {$ENDREGION}
 
 {$IF defined(X86ASM) or defined(X64ASM)}
-var pBuf : PUInt32Array;
+var pBuf   : PUInt32Array;
+    KeyBuf : array[0..31] of Byte;
 {$IFEND}
 begin
   if Size <= 16 then
@@ -3516,11 +3517,18 @@ begin
   if UseAESAsm and TDEC_CPUSupport.AES then
   begin
        pBuf := AlignPtr32( FAdditionalBuffer );
-       case Size of
-         16: BuildAsmKey128(@key, PLongWord(pBuf));
-         24: BuildAsmKey196(@key, PLongWord(pBuf));
-         32: BuildAsmKey256(@key, PLongWord(pBuf));
+       // Zero pad the key to the AES key size selected by FRounds, like the
+       // pure Pascal key schedule does. Otherwise keys whose length is not
+       // exactly 16, 24 or 32 bytes leave the round keys uninitialized.
+       FillChar(KeyBuf, SizeOf(KeyBuf), 0);
+       Move(Key, KeyBuf, Size);
+       case FRounds of
+         10: BuildAsmKey128(@KeyBuf[0], PLongWord(pBuf));
+         12: BuildAsmKey196(@KeyBuf[0], PLongWord(pBuf));
+       else
+         BuildAsmKey256(@KeyBuf[0], PLongWord(pBuf));
        end;
+       ProtectBuffer(KeyBuf, SizeOf(KeyBuf));
 
        // build inverse decode key - utilize the aesimc opcode
        BuildASMDecodeKey( PLongWord(pBuf), @(pBuf^[Rijndael_Rounds*Rijndael_Blocks]), fRounds);

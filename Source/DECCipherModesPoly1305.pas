@@ -134,7 +134,9 @@ type
     /// </summary>
     procedure Poly1305Emit( var mac : TBlock16Byte; const nonce : TPoly1305Nonce );
     procedure PadAndFinalizePAS( authLen, encDecBufLen : int64);
+    {$IFNDEF PUREPASCAL}
     procedure PadAndFinalizeAVX(authLen, encDecBufLen: int64);
+    {$ENDIF}
   protected
     // ###########################################
     // #### Authentication block functions
@@ -856,8 +858,6 @@ begin
      FillChar(mac, sizeof(mac), 0);
 end;
 
-{$IFNDEF PUREPASCAL}
-
 procedure TPoly1305.FinalizeAuthenticationTag;
 begin
   if not FAuthMethodInit then
@@ -872,6 +872,7 @@ begin
   Burn;
 end;
 
+{$IFNDEF PUREPASCAL}
 procedure TPoly1305.FinalizeAVX;
 var mac : TBlock16Byte;
     t : TStateAVXArr;

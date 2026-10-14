@@ -1728,23 +1728,23 @@ begin
   end;
 
   SrcBuf := BytesOf(RawByteString('#$61'));
-  p := @SrcBuf;
+  p := @SrcBuf[0];
   CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 ');
   SrcBuf := BytesOf('(5&5S' + #$61 + '=`H)JE4`');
-  p := @SrcBuf;
+  p := @SrcBuf[0];
   CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 inbetween ');
   SrcBuf := BytesOf(#$61 + '(5&5S=`H)JE4`');
-  p := @SrcBuf;
+  p := @SrcBuf[0];
   CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the beginning ');
   SrcBuf := BytesOf('(5&5S=`H)JE4`' + #$61);
-  p := @SrcBuf;
+  p := @SrcBuf[0];
   CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)), 'Failure on char $61 at the end ');
 
   SetLength(SrcBuf, 1);
   for i := $61 to $FF do
   begin
     SrcBuf[0] := i;
-    p := @SrcBuf;
+    p := @SrcBuf[0];
     CheckEquals(false, TFormat_UU.IsValid(p^, length(SrcBuf)),
                 'Failure on char #' + IntToHex(i, 8) + ' ');
   end;
