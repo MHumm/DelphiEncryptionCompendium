@@ -504,18 +504,24 @@ type
     class function Context: TCipherContext; override;
   end;
 
-  TChaChaMode = (cmSpeed, cmBalance, cmSecure);  // number of rounds... (4, 12, 20) default is 20
+  /// <summary>
+  ///   Number of rounds... (4, 12, 20) default is 20
+  /// </summary>
+  TChaChaMode = (cmSpeed, cmBalance, cmSecure);
   TChaChaMtx = Array[0..15] of LongWord;
   PChaChaMtx = ^TChaChaMtx;
   TChaChaCpuMode = (cmPas, cmSSE, cmAVX);
   TChaChaAVXMtx = Array[0..31] of LongWord;
   PChaChaAVXMtx = ^TChaChaAVXMtx;
 
+  /// <summary>
+  ///   ChaCha20 cipher, a SalSa20 cipher with modified round function
+  /// </summary>
   TCipher_ChaCha20 = class(TDECFormattedCipher)
   private
     type
-      TChaChaKey = Array[0..7] of LongWord;            // key - always 256 bit
-      TChaChaNonce = Array[0..1] of LongWord;           // nonce - 96 bit, one longword is the counter
+      TChaChaKey   = Array[0..7] of LongWord;  // key - always 256 bit
+      TChaChaNonce = Array[0..1] of LongWord;  // nonce - 96 bit, one longword is the counter
 
     type
       // double the size -> two blocks at once
@@ -563,11 +569,14 @@ type
     class var CpuMode : TChaChaCpuMode;
   end;
 
-  // based on the draft: https://datatracker.ietf.org/doc/html/draft-arciszewski-xchacha-03
+  /// <summary>
+  ///   Variant of XChaCha20 with extended nonce
+  ///   based on the draft: https://datatracker.ietf.org/doc/html/draft-arciszewski-xchacha-03
+  /// </summary>
   TCipher_XChaCha20 = class(TCipher_ChaCha20)
   private
-    fHChaCha : Array[0..22] of LongWord;
-    fPHChaCha : PChaChaMtx;
+    FHChaCha  : Array[0..22] of LongWord;
+    FPHChaCha : PChaChaMtx;
 
     procedure HChaCha( iv : TBytes );
   protected
@@ -8498,30 +8507,29 @@ procedure TCipher_XChaCha20.HChaCha(iv: TBytes);
 var i : integer;
 begin
      // inpmatrix is initialized with the original key
-     fPHChaCha := AlignPtr32( @fHChaCha[0] );
-     Move( fInpChaChaMTX^, fPHChaCha^, sizeof(fPHChaCha^));
+     FPHChaCha := AlignPtr32( @FHChaCha[0] );
+     Move( fInpChaChaMTX^, FPHChaCha^, sizeof(FPHChaCha^));
 
      // copy over the iv -> 128 bit
-     // create the HChaChaMatrix in fPHChaCha
-     Move(iv[0], fPHChaCha^[12], 4*sizeof(LongWord));
+     // create the HChaChaMatrix in FPHChaCha
+     Move(iv[0], FPHChaCha^[12], 4*sizeof(LongWord));
 
      {$IFNDEF PUREPASCAL}
      if cpuMode = cmSSE then
      begin
           for i := 0 to fNumChaChaRounds - 1 do
-              SSEChaChaDoubleQuarterRound(fPHChaCha);
+              SSEChaChaDoubleQuarterRound(FPHChaCha);
      end
      else
      {$ENDIF}
      begin
           for i := 0 to fNumChaChaRounds - 1 do
-              PasChaChaDoubleQuarterRound(fPHChaCha);
+              PasChaChaDoubleQuarterRound(FPHChaCha);
      end;
 end;
 
 
-procedure TCipher_XChaCha20.OnAfterInitVectorInitialization(
-  const OriginalInitVector: TBytes);
+procedure TCipher_XChaCha20.OnAfterInitVectorInitialization(const OriginalInitVector: TBytes);
 begin
      // RFC point 2.3 and 2.3.1:
 
@@ -8534,8 +8542,8 @@ begin
      // extract subkey -> overwrite key
 
      // subkey is the first row and the last row!!
-     Move(fPHChaCha^[0], fInpChaChaMTX^[4], 4*sizeof(LongWord));
-     Move(fPHChaCha^[12], fInpChaChaMTX^[8], 4*sizeof(LongWord));
+     Move(FPHChaCha^[0], fInpChaChaMTX^[4], 4*sizeof(LongWord));
+     Move(FPHChaCha^[12], fInpChaChaMTX^[8], 4*sizeof(LongWord));
 
      // update IV -> the last 8 bytes
      Move(OriginalInitVector[16], FInitializationVector[4], 2*sizeof(LongWord));
@@ -8553,7 +8561,7 @@ begin
      FInitVectorSize := 24;
 
      // burn
-     FillChar(fHChaCha, sizeof(fHChaCha), 0);
+     FillChar(FHChaCha, sizeof(FHChaCha), 0);
 end;
 
 initialization
