@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -849,10 +849,10 @@ begin
       //
       // CCM: the original specification (Whiting, Housley, Ferguson, NIST
       // submission "Counter with CBC-MAC (CCM)") is only defined for 128-bit
-      // block ciphers, such as AES. RFC 3610 §1 and NIST SP 800-38C repeat
+      // block ciphers, such as AES. RFC 3610 Â§1 and NIST SP 800-38C repeat
       // the same restriction. The original paper notes that the ideas can be
       // extended to other block sizes, but "this will require further
-      // definitions" — so a 64-bit cipher (e.g. Blowfish) is not CCM as
+      // definitions" â€” so a 64-bit cipher (e.g. Blowfish) is not CCM as
       // specified. We therefore do not special-case or loosen this check.
       raise EDECCipherException.CreateResFmt(@sInvalidBlockSize,
                                              [128, GetEnumName(TypeInfo(TCipherMode),

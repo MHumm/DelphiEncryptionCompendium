@@ -1,4 +1,4 @@
-{*****************************************************************************
+ï»¿{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -825,7 +825,7 @@ begin
               'Authentication tag mismatch for multi-chunk encode');
 end;
 
-// NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 — 32-byte PT.
+// NIST gcmEncryptExtIV128: first PTlen=256 set (set 105), Count=0 â€” 32-byte PT.
 // Shared by multi-chunk encode/decode and Done-lifecycle regression tests.
 const
   cCAVS_MultiChunkKey  : RawByteString = '9971071059abc009e4f2bd69869db338';
@@ -1002,7 +1002,7 @@ begin
                   BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
   FCipherAES.AuthenticationResultBitLength := cCAVS_MultiChunkTagBits;
   FCipherAES.DataToAuthenticate := TFormat_HexL.Decode(BytesOf('aabbccdd'));
-  // First Encode absorbs AAD into GHASH — subsequent AAD assignment must fail
+  // First Encode absorbs AAD into GHASH â€” subsequent AAD assignment must fail
   FCipherAES.EncodeBytes(Copy(ptBytes, 0, 16));
   CheckException(DoChangeAADAfterEncode, EDECCipherException,
                  'Changing DataToAuthenticate after Encode must raise');

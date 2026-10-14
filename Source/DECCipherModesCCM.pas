@@ -1,4 +1,4 @@
-{*****************************************************************************
+๏ปฟ{*****************************************************************************
   The DEC team (see file NOTICE.txt) licenses this file
   to you under the Apache License, Version 2.0 (the
   "License"); you may not use this file except in compliance
@@ -223,7 +223,7 @@ type
     /// <summary>
     ///   CCM can process several Encode/Decode chunks when the total payload
     ///   length is known (DeclarePayloadLength or one-shot Size). CCM is not
-    ///   an online AEAD: B_0 encodes l(m). See RFC 3610 ง1 / NIST SP 800-38C.
+    ///   an online AEAD: B_0 encodes l(m). See RFC 3610 ยง1 / NIST SP 800-38C.
     /// </summary>
     /// <returns>
     ///   True
@@ -370,7 +370,7 @@ begin
   AuthDataLen := Length(FDataToAuthenticate);
   InitVectLen := Length(FOrigInitVector);
 
-  // L = bytes needed for l(m), then force nLen + L = 15 (RFC 3610 ง2.1)
+  // L = bytes needed for l(m), then force nLen + L = 15 (RFC 3610 ยง2.1)
   len := ATotalLength;
   L := 0;
   while (len > 0) do
@@ -622,7 +622,7 @@ var
   k           : UInt16;
 begin
   // Restore CTR_0 (zero the count) and encrypt to get S_0, then tag = T XOR S_0.
-  // See RFC 3610 ง2.6 / NIST SP 800-38C: authentication tag is not part of Encode.
+  // See RFC 3610 ยง2.6 / NIST SP 800-38C: authentication tag is not part of Encode.
   for k := 15 downto 16 - FLengthFieldOctets do
   begin
     FInitVector[k] := 0;
