@@ -26,21 +26,24 @@ unit DECCPUSupport;
 interface
 
 type
+  /// <summary>
+  ///   Determines various x86/AMD CPU capabilities
+  /// </summary>
   TDEC_CPUSupport = class(TObject)
   public
     // flags are set in initialization
-    class var AES : boolean;
-    class var AVX : boolean;
-    class var AVX2 : boolean;
+    class var AES    : Boolean;
+    class var AVX    : Boolean;
+    class var AVX2   : Boolean;
 
-    class var SSE : boolean;
-    class var SSE2 : boolean;
-    class var SSE3 : boolean;
-    class var SSE41 : boolean;
-    class var SSE42 : boolean;
+    class var SSE    : Boolean;
+    class var SSE2   : Boolean;
+    class var SSE3   : Boolean;
+    class var SSE41  : Boolean;
+    class var SSE42  : Boolean;
 
-    class var RDRand : boolean;
-    class var RDSeed : boolean;
+    class var RDRand : Boolean;
+    class var RDSeed : Boolean;
   end;
 
 implementation
@@ -65,9 +68,13 @@ implementation
 
 {$IF Defined(x64) or Defined(x86)}
 {$WARN SYMBOL_PLATFORM OFF}
+
+/// <summary>
+///   Inits all CPU feature flags with the real capabilities of the CPU
+/// </summary>
 procedure InitFlags;
 var
-  reg : TCPUIDRec;
+  reg  : TCPUIDRec;
   nids : LongWord;
 begin
   // read maximum supported FunctionID
@@ -100,18 +107,18 @@ end;
 {$ENDIF}
 
 initialization
-    TDEC_CPUSupport.AES    := False;
-    TDEC_CPUSupport.AVX    := False;
-    TDEC_CPUSupport.AVX2   := False;
+  TDEC_CPUSupport.AES    := False;
+  TDEC_CPUSupport.AVX    := False;
+  TDEC_CPUSupport.AVX2   := False;
 
-    TDEC_CPUSupport.SSE    := False;
-    TDEC_CPUSupport.SSE2   := False;
-    TDEC_CPUSupport.SSE3   := False;
-    TDEC_CPUSupport.SSE41  := False;
-    TDEC_CPUSupport.SSE42  := False;
+  TDEC_CPUSupport.SSE    := False;
+  TDEC_CPUSupport.SSE2   := False;
+  TDEC_CPUSupport.SSE3   := False;
+  TDEC_CPUSupport.SSE41  := False;
+  TDEC_CPUSupport.SSE42  := False;
 
-    TDEC_CPUSupport.RDRand := False;
-    TDEC_CPUSupport.RDSeed := False;
+  TDEC_CPUSupport.RDRand := False;
+  TDEC_CPUSupport.RDSeed := False;
 
   {$IF Defined(x64) or Defined(x86)}
     InitFlags;
