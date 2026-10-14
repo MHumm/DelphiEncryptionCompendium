@@ -90,6 +90,9 @@ type
   ///   Position within size in byte. For streams this may be a position
   ///   relative to the starting position for processing.
   /// </param>
+  /// <param name="State">
+  ///   Reason why this event has been called
+  /// </param>
   {$ifdef HAVE_LAMBDAS}
   TDECProgressEvent = reference to procedure(Size, Pos: Int64; State: TDECProgressState);
   {$else}

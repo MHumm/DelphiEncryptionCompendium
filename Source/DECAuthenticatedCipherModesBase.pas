@@ -81,6 +81,10 @@ type
   TAuthenticatedCipherModesBase = class(TObject)
   strict protected
     /// <summary>
+    ///   Set to true when the method has been initialized
+    /// </summary>
+    FAuthMethodInit              : Boolean;
+    /// <summary>
     ///   The data which shall be authenticated in parallel to the encryption
     /// </summary>
     FDataToAuthenticate          : TBytes;
@@ -149,6 +153,12 @@ type
     ///   Raised when the mode has already been finalized.
     /// </exception>
     procedure CheckNotFinalized;
+
+    /// <summary>
+    ///   Encoding/Decoding routine that is called in the Encode/Decode routine.
+    ///   This version simply calls the EncryptionMethod givin in the init call
+    /// </summary>
+    procedure LocEncodeDecode(Source, Dest: Pointer; Size: Integer); virtual;
   public
     /// <summary>
     ///   Should be called when starting encryption/decryption in order to
@@ -335,6 +345,7 @@ begin
   Assert(Assigned(EncryptionMethod), 'No encryption method specified');
 
   // Clear calculated authentication value
+  FAuthMethodInit := False;
   CalcAuthLength := Length(FCalcAuthenticationTag);
   if (CalcAuthLength > 0) then
   begin
@@ -365,6 +376,12 @@ end;
 function TAuthenticatedCipherModesBase.GetDeclaredPayloadLength: UInt64;
 begin
   Result := 0;
+end;
+
+procedure TAuthenticatedCipherModesBase.LocEncodeDecode(Source, Dest: Pointer;
+  Size: Integer);
+begin
+  FEncryptionMethod(Source, Dest, Size);
 end;
 
 procedure TAuthenticatedCipherModesBase.SetAuthenticationTagLength(const Value: UInt32);

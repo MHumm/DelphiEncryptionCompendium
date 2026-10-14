@@ -381,7 +381,7 @@ begin
 
   if (InitVectLen + L > 15) then
     raise EDECNonceLengthException.CreateFmt(sWrongNonceLengthDetailed,
-                                           [InitVectLen + L]);
+                                             [InitVectLen + L]);
 
   L := 15 - InitVectLen;
   FLengthFieldOctets := L;
@@ -408,8 +408,11 @@ begin
 
   FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
 
+  // process header
   if (AuthDataLen > 0) then
   begin
+    // octets 0..1: encoding of hLen. Note: since we allow max $FEFF bytes
+    // only these two octets are used. Generally up to 10 octets are needed.
     Buf[0] := Buf[0] xor (AuthDataLen shr 8);
     Buf[1] := Buf[1] xor (AuthDataLen and $FF);
     AADPos := 2;
@@ -430,6 +433,7 @@ begin
       FEncryptionMethod(@Buf[0], @Buf[0], Length(Buf));
   end;
 
+  // setup the counter for source text processing
   pb := @FOrigInitVector[0];
   FInitVector[0] := (L - 1) and $FF;
   for k := 1 to 15 do

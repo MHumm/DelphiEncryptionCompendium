@@ -755,6 +755,7 @@ begin
     Decode(Source[0], Result[0], Length(Source));
   end
   else
+{ ToDO: Do we need to add cmPoly here? can we use [cm...,] syntax? }
     if (FMode = cmGCM) or (FMode = cmCCM) then
       DecodeAuthenticated(nil, nil, 0);
 

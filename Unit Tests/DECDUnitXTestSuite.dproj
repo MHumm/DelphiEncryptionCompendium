@@ -204,6 +204,7 @@
         <DCCReference Include="Tests\TestDECCipherPaddings.pas"/>
         <DCCReference Include="Tests\TestDECZIPHelper.pas"/>
         <DCCReference Include="Tests\AuthenticatedCiphersCommonTestData.pas"/>
+        <DCCReference Include="Tests\TestDECChaChaPoly1305.pas"/>
         <None Include="Tests\TestDefines.inc"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

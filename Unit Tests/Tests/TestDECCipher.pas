@@ -4850,7 +4850,7 @@ begin
   CheckEquals(  32,  ReturnValue.KeySize);
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
-  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals( 512,  ReturnValue.AdditionalBufferSize);
   CheckEquals(   1,  ReturnValue.MinRounds);
   CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
@@ -4943,7 +4943,7 @@ begin
   CheckEquals(  32,  ReturnValue.KeySize);
   CheckEquals(  16,  ReturnValue.BlockSize);
   CheckEquals(  16,  ReturnValue.BufferSize);
-  CheckEquals( 480,  ReturnValue.AdditionalBufferSize);
+  CheckEquals( 512,  ReturnValue.AdditionalBufferSize);
   CheckEquals(   1,  ReturnValue.MinRounds);
   CheckEquals(   1,  ReturnValue.MaxRounds);
   CheckEquals(false, ReturnValue.NeedsAdditionalBufferBackup);
