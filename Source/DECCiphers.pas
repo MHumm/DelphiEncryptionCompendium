@@ -528,22 +528,28 @@ type
       TChaChaEncodeBlkFunc = procedure(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register; {$IFDEF FPC} assembler; {$ENDIF}
 
   protected
-    fInpChaChaMTX : PChaChaMtx;
-    fOutChaChaMtx : PChaChaAVXMtx;
+    FInpChaChaMTX    : PChaChaMtx;
+    FOutChaChaMtx    : PChaChaAVXMtx;
 
-    fChaChaBlkLen : integer;
-    fChaChaIdx : integer;
-    fChaChaMode : TChaChaMode;
-    fNumChaChaRounds : integer;
-    fFullBlockFunc : TChaChaEncodeBlkFunc;
+    FChaChaBlkLen    : Integer;
+    FChaChaIdx       : Integer;
+    FChaChaMode      : TChaChaMode;
+    FNumChaChaRounds : Integer;
+    FFullBlockFunc   : TChaChaEncodeBlkFunc;
 
-    procedure ChaChaQuarterRound( var a, b, c, d : LongWord );
-    procedure PasChaChaDoubleQuarterRound(mtx : PChaChaMtx);   // one column and row round
+    procedure ChaChaQuarterRound(var a, b, c, d : LongWord);
+    /// <summary>
+    ///   Round function for one column and row
+    /// </summary>
+    procedure PasChaChaDoubleQuarterRound(mtx : PChaChaMtx);
 
     procedure InitChaChaBlk;
     {$IFNDEF PUREPASCAL}
     procedure SSEChaChaDoubleQuarterRound(mtx : PChaChaMtx); register; {$IFDEF FPC} assembler; {$ENDIF}
     {$ENDIF}
+    /// <summary>
+    ///   Defines the number of rounds used
+    /// </summary>
     procedure SetChaChaMode(const Value: TChaChaMode);
   protected
     procedure DoInit(const Key; Size: Integer); override;
@@ -551,10 +557,17 @@ type
     procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
     procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
 
-    // some internal test functions
+    /// <summary>
+    ///   Some internal test functions
+    /// </summary>
     function TestChaChaMtx( const expectedMtx : TChaChaMtx ) : boolean;
   public
-    property ChaChaMode : TChaChaMode read fChaChaMode write SetChaChaMode;
+    /// <summary>
+    ///   Defines the number of rounds used
+    /// </summary>
+    property ChaChaMode : TChaChaMode
+      read   FChaChaMode
+      write  SetChaChaMode;
 
     procedure AfterConstruction; override;
 
@@ -564,7 +577,8 @@ type
     class function Context: TCipherContext; override;
 
     /// <summary>
-    ///   Defines either pure pascal code is used or specialized assembler routines for SSE, AVX
+    ///   Defines either pure pascal code is used or specialized assembler routines
+    ///   for SSE or AVX
     /// </summary>
     class var CpuMode : TChaChaCpuMode;
   end;
@@ -7598,11 +7612,11 @@ var pChaCha : PByte;
   begin
        // ###########################################
        // #### Full block version ->
-       if fChaChaIdx = 0 then
+       if FChaChaIdx = 0 then
        begin
             while size >= sizeof(TChaChaAVXMtx) do
             begin
-                 fFullBlockFunc(fOutChaChaMtx, Source, Dest);
+                 FFullBlockFunc(FOutChaChaMtx, Source, Dest);
 
                  inc(PByte(Source), sizeof(TChaChaAVXMtx));
                  inc(PByte(Dest), sizeof(TChaChaAVXMtx));
@@ -7614,8 +7628,8 @@ var pChaCha : PByte;
   end;
 begin
      FState := csEncode;
-     pChaCha := PByte(fOutChaChaMtx);
-     inc(pChaCha, fChaChaIdx);
+     pChaCha := PByte(FOutChaChaMtx);
+     inc(pChaCha, FChaChaIdx);
 
      TryEncodeFullBlocks;
 
@@ -7623,10 +7637,10 @@ begin
      // #### Single byte version
      while size > 0 do
      begin
-          if fChaChaIdx = fChaChaBlkLen then
+          if FChaChaIdx = FChaChaBlkLen then
           begin
                InitChaChaBlk;
-               pChaCha := PByte(fOutChaChaMtx);
+               pChaCha := PByte(FOutChaChaMtx);
 
                if size >= sizeof(TChaChaAVXMtx) then
                begin
@@ -7641,7 +7655,7 @@ begin
           inc(pChaCha);
           inc(PByte(dest));
           inc(PByte(source));
-          inc(fChaChaIdx);
+          inc(FChaChaIdx);
 
           dec(size);
      end;
@@ -7654,8 +7668,8 @@ begin
      if FInitVectorSize <> 12 then
         raise EDECException.Create('Nonce is not 96 bit.');
 
-     fInpChaChaMTX^[12] := 0;   // counter
-     Move( FInitializationVector^, fInpChaChaMTX^[13], 3*sizeof(longword));
+     FInpChaChaMTX^[12] := 0;   // counter
+     Move( FInitializationVector^, FInpChaChaMTX^[13], 3*sizeof(longword));
 
      // special care in case of poly1305:
      if FMode = cmPoly1305 then
@@ -7671,7 +7685,7 @@ begin
           FillChar(iv[0], 32, 0);
 
           // init with count 0
-          fInpChaChaMTX^[12] := 0;
+          FInpChaChaMTX^[12] := 0;
           InitChaChaBlk;
           DoEncode(@iv[0], @iv[0], Length(iv));
 
@@ -7679,7 +7693,7 @@ begin
 
           // dismiss the remaining block ->
           // first block was for the polynom... increment block number for the rest
-          fChaChaIdx := sizeof(TChaChaMtx);
+          FChaChaIdx := sizeof(TChaChaMtx);
 
           // setup complete -> We are ready to encrypt...
      end
@@ -7697,15 +7711,15 @@ begin
         raise EDECException.Create('Given ChaCha key size is not 256 bit');
 
      // allocate for the AVX case -> 2 cha cha matrices at once
-     fInpChaChaMtx := AlignPtr32(FAdditionalBuffer);
-     fOutChaChaMTX := PChaChaAVXMtx( fInpChaChaMtx );
-     inc(PByte(fOutChaChaMTX), sizeof(TChaChaMtx));
+     FInpChaChaMTX := AlignPtr32(FAdditionalBuffer);
+     FOutChaChaMtx := PChaChaAVXMtx( FInpChaChaMTX );
+     inc(PByte(FOutChaChaMtx), sizeof(TChaChaMtx));
 
-     Move(cChaChaConst[0], fInpChaChaMTX^[0], sizeof(cChaChaConst));
-     Move(key, fInpChaChaMTX^[4], 32);
+     Move(cChaChaConst[0], FInpChaChaMTX^[0], sizeof(cChaChaConst));
+     Move(key, FInpChaChaMTX^[4], 32);
 
-     fChaChaBlkLen := sizeof(TChaChaAvxMtx);// 2*Length(fInpChaChaMTX^)*sizeof(fInpChaChaMTX^[0]);
-     fChaChaIdx := fChaChaBlkLen;
+     FChaChaBlkLen := sizeof(TChaChaAvxMtx);// 2*Length(FInpChaChaMTX^)*sizeof(FInpChaChaMTX^[0]);
+     FChaChaIdx := FChaChaBlkLen;
 end;
 
 procedure FullBlockPas(ChaChaMtx : PChaChaAVXMtx; Source, Dest: Pointer); register;
@@ -7724,13 +7738,13 @@ end;
 
 procedure TCipher_ChaCha20.SetChaChaMode(const Value: TChaChaMode);
 begin
-     fChaChaMode := Value;
+     FChaChaMode := Value;
 
      // secure would be 20 rounds
-     case fChaChaMode of
-       cmSpeed: fNumChaChaRounds := 4;
-       cmBalance: fNumChaChaRounds := 6;
-       cmSecure: fNumChaChaRounds := 10;
+     case FChaChaMode of
+       cmSpeed: FNumChaChaRounds := 4;
+       cmBalance: FNumChaChaRounds := 6;
+       cmSecure: FNumChaChaRounds := 10;
      end;
 end;
 
@@ -8227,15 +8241,15 @@ begin
      Mode := cmPoly1305;
      SetChaChaMode( cmSecure );
      {$IFDEF PUREPASCAL}
-     fFullBlockFunc := FullBlockPas;
+     FFullBlockFunc := FullBlockPas;
      {$ELSE}
      case CpuMode of
        cmSSE: if TDEC_CPUSupport.SSE3 then
-                 fFullBlockFunc := FullBlockSSE;
+                 FFullBlockFunc := FullBlockSSE;
        cmAVX: if TDEC_CPUSupport.AVX2 then
-                 fFullBlockFunc := FullBlockAVX;
+                 FFullBlockFunc := FullBlockAVX;
      else
-         fFullBlockFunc := FullBlockPas;
+         FFullBlockFunc := FullBlockPas;
      end;
      {$ENDIF}
 end;
@@ -8248,7 +8262,7 @@ procedure TCipher_ChaCha20.InitChaChaBlk;
 var i : integer;
     m1, m2 : PChaChaMtx;
 begin
-     if fChaChaIdx >= fChaChaBlkLen then
+     if FChaChaIdx >= FChaChaBlkLen then
      begin
           {$IFNDEF PUREPASCAL}
           if CpuMode = cmAVX then
@@ -8256,40 +8270,40 @@ begin
                // move the input matrix so we have nicely aligned memory for the quarter round
                for i := 0 to 3 do
                begin
-                    Move(fInpChaChaMtx^[4*i], fOutChaChaMtx^[8*i], 4*sizeof(LongWord));
-                    Move(fInpChaChaMtx^[4*i], fOutChaChaMtx^[8*i + 4], 4*sizeof(LongWord));
+                    Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i], 4*sizeof(LongWord));
+                    Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i + 4], 4*sizeof(LongWord));
                end;
 
                // update index in the "second" matrix - this one is always odd so no further check
-               inc(fOutChaChaMtx^[3*8 + 4]);
+               inc(FOutChaChaMtx^[3*8 + 4]);
 
-               for i := 0 to fNumChaChaRounds - 1 do
-                   AVXChaChaDoubleQuarterRound(fOutChaChaMtx);
+               for i := 0 to FNumChaChaRounds - 1 do
+                   AVXChaChaDoubleQuarterRound(FOutChaChaMtx);
                // undo the alignment so both matrices are adjacent again (not intermittent as used for the rounds)
-               AVXRealingAndAddMtx(fOutChaChaMtx, fInpChaChaMTX);
+               AVXRealingAndAddMtx(FOutChaChaMtx, FInpChaChaMTX);
 
                // increment the one value that is off by one from the input matrix
-               inc(fOutChaChaMtx^[16 + 12]);
+               inc(FOutChaChaMtx^[16 + 12]);
 
                // increment input matrix by 2
-               inc(fInpChaChaMTX^[12], 2);
+               inc(FInpChaChaMTX^[12], 2);
           end
           else
           {$ENDIF}
           begin
                // ###########################################
                // #### Create two chacha matrices in one go
-               m1 := PChaChaMtx(fOutChaChaMtx);
+               m1 := PChaChaMtx(FOutChaChaMtx);
                m2 := m1;
                inc(m2);
-               Move(fInpChaChaMTX^, m1^, sizeof(TChaChaMtx));
-               Move(fInpChaChaMTX^, m2^, sizeof(TChaChaMtx));
+               Move(FInpChaChaMTX^, m1^, sizeof(TChaChaMtx));
+               Move(FInpChaChaMTX^, m2^, sizeof(TChaChaMtx));
                inc(m2^[12]);
 
                {$IFNDEF PUREPASCAL}
                if cpuMode = cmSSE then
                begin
-                    for i := 0 to fNumChaChaRounds - 1 do
+                    for i := 0 to FNumChaChaRounds - 1 do
                     begin
                          SSEChaChaDoubleQuarterRound(m1);
                          SSEChaChaDoubleQuarterRound(m2);
@@ -8298,27 +8312,27 @@ begin
                else
                {$ENDIF}
                begin
-                    for i := 0 to fNumChaChaRounds - 1 do
+                    for i := 0 to FNumChaChaRounds - 1 do
                     begin
                          PasChaChaDoubleQuarterRound(m1);
                          PasChaChaDoubleQuarterRound(m2);
                     end;
 
                end;
-               for i := 0 to High(fInpChaChaMTX^) do
-                   inc(m1^[i], fInpChaChaMTX^[i]);
-               inc(fInpChaChaMTX^[12]);
-               for i := 0 to High(fInpChaChaMTX^) do
-                   inc(m2^[i], fInpChaChaMTX^[i]);
-               inc(fInpChaChaMTX^[12]);
+               for i := 0 to High(FInpChaChaMTX^) do
+                   inc(m1^[i], FInpChaChaMTX^[i]);
+               inc(FInpChaChaMTX^[12]);
+               for i := 0 to High(FInpChaChaMTX^) do
+                   inc(m2^[i], FInpChaChaMTX^[i]);
+               inc(FInpChaChaMTX^[12]);
           end;
 
-          fChaChaIdx := 0;
+          FChaChaIdx := 0;
 
           // is this here for xchacha?
-          if fInpChaChaMTX^[12] <= 1 then
+          if FInpChaChaMTX^[12] <= 1 then
              raise EDECException.Create('Counter overflow!');
-//             inc(fInpChaChaMTX^[13]);
+//             inc(FInpChaChaMTX^[13]);
      end;
 end;
 
@@ -8497,7 +8511,7 @@ end;
 function TCipher_ChaCha20.TestChaChaMtx(
   const expectedMtx: TChaChaMtx): boolean;
 begin
-     Result := CompareMem(fOutChaChaMtx, @expectedMtx, sizeof(TChaChaMtx));
+     Result := CompareMem(FOutChaChaMtx, @expectedMtx, sizeof(TChaChaMtx));
 end;
 
 
@@ -8508,7 +8522,7 @@ var i : integer;
 begin
      // inpmatrix is initialized with the original key
      FPHChaCha := AlignPtr32( @FHChaCha[0] );
-     Move( fInpChaChaMTX^, FPHChaCha^, sizeof(FPHChaCha^));
+     Move( FInpChaChaMTX^, FPHChaCha^, sizeof(FPHChaCha^));
 
      // copy over the iv -> 128 bit
      // create the HChaChaMatrix in FPHChaCha
@@ -8517,13 +8531,13 @@ begin
      {$IFNDEF PUREPASCAL}
      if cpuMode = cmSSE then
      begin
-          for i := 0 to fNumChaChaRounds - 1 do
+          for i := 0 to FNumChaChaRounds - 1 do
               SSEChaChaDoubleQuarterRound(FPHChaCha);
      end
      else
      {$ENDIF}
      begin
-          for i := 0 to fNumChaChaRounds - 1 do
+          for i := 0 to FNumChaChaRounds - 1 do
               PasChaChaDoubleQuarterRound(FPHChaCha);
      end;
 end;
@@ -8542,8 +8556,8 @@ begin
      // extract subkey -> overwrite key
 
      // subkey is the first row and the last row!!
-     Move(FPHChaCha^[0], fInpChaChaMTX^[4], 4*sizeof(LongWord));
-     Move(FPHChaCha^[12], fInpChaChaMTX^[8], 4*sizeof(LongWord));
+     Move(FPHChaCha^[0], FInpChaChaMTX^[4], 4*sizeof(LongWord));
+     Move(FPHChaCha^[12], FInpChaChaMTX^[8], 4*sizeof(LongWord));
 
      // update IV -> the last 8 bytes
      Move(OriginalInitVector[16], FInitializationVector[4], 2*sizeof(LongWord));
