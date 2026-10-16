@@ -7663,13 +7663,13 @@ var
   iv : TBytes;
 begin
   if FInitVectorSize <> 12 then
-     raise EDECException.Create('Nonce is not 96 bit.');
+    raise EDECException.Create('Nonce is not 96 bit.');
 
   FInpChaChaMTX^[12] := 0;   // counter
-  Move( FInitializationVector^, FInpChaChaMTX^[13], 3*sizeof(longword));
+  Move(FInitializationVector^, FInpChaChaMTX^[13], 3*sizeof(longword));
 
   // special care in case of poly1305:
-  if FMode = cmPoly1305 then
+  if (FMode = cmPoly1305) then
   begin
     FBufferSize := 0;
     // according to RFC7539 (chapter 2.6) we create the R and S (the IV vector) value as:

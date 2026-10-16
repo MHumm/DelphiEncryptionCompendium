@@ -41,6 +41,7 @@ type
     fTests : TTestEnumerator;
 
     function IterTests : TTestEnumerator;
+    procedure DoTestBlockSizeNot16;
   public
     destructor Destroy; override;
   published
@@ -55,16 +56,21 @@ type
     // test suite code
     procedure TestEncode;
     procedure TestDecode;
+
+    /// <summary>
+    ///   This algorithm is only valid for ciphers with 16 byte block size
+    /// </summary>
+    procedure TestBlockSize16;
   end;
 implementation
 
-uses DECCipherModesPoly1305, System.Diagnostics, classes, DECFormat, DECTypes,
-     System.JSON.Readers;
-
-
-// ###########################################
-// ####
-// ###########################################
+uses
+  System.JSON.Readers,
+  System.Diagnostics,
+  System.Classes,
+  DECCipherModesPoly1305,
+  DECFormat,
+  DECTypes;
 
 { TestTDECGCM }
 type
@@ -757,6 +763,23 @@ end;
 function TestChaCha20Poly1305.TTestEnumerator.DoGetEnumerator: TEnumerator<TJsonTestCase>;
 begin
      Result := fTests.GetEnumerator;
+end;
+
+procedure TestChaCha20Poly1305.TestBlockSize16;
+begin
+  CheckException(DoTestBlockSizeNot16, EDECCipherException, 'Block size must be 16');
+end;
+
+procedure TestChaCha20Poly1305.DoTestBlockSizeNot16;
+var
+  XTEA : TCipher_XTEA;
+begin
+  XTEA := TCipher_XTEA.Create;
+  try
+    XTEA.Mode := cmGCM;
+  finally
+    XTEA.Free;
+  end;
 end;
 
 initialization

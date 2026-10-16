@@ -60,6 +60,7 @@ type
     procedure DoReadTagBeforeDone;
     procedure DoEncodeAfterDone;
     procedure DoSetAuthenticatedPayloadLength;
+    procedure DoTestBlockSizeNot16;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -141,6 +142,10 @@ type
     ///   Declaring payload length after Done must raise via CheckNotFinalized.
     /// </summary>
     procedure TestDeclarePayloadLengthAfterDoneRaises;
+    /// <summary>
+    ///   This algorithm is only valid for ciphers with 16 byte block size
+    /// </summary>
+    procedure TestBlockSize16;
   end;
 
 
@@ -1095,6 +1100,23 @@ begin
   FTestPayloadLength := UInt64(Length(PT));
   CheckException(DoSetAuthenticatedPayloadLength, EDECCipherException,
                  'Declaring payload length after Done must raise EDECCipherException');
+end;
+
+procedure TestTDECCCM.TestBlockSize16;
+begin
+  CheckException(DoTestBlockSizeNot16, EDECCipherException, 'Block size must be 16');
+end;
+
+procedure TestTDECCCM.DoTestBlockSizeNot16;
+var
+  XTEA : TCipher_XTEA;
+begin
+  XTEA := TCipher_XTEA.Create;
+  try
+    XTEA.Mode := cmGCM;
+  finally
+    XTEA.Free;
+  end;
 end;
 
 initialization

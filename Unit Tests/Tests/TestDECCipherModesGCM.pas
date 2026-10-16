@@ -159,6 +159,7 @@ type
     procedure DoChangeAADAfterEncode;
     procedure DoSetAuthTagBitLengthTooLong;
     procedure DoReadTagBeforeDone;
+    procedure DoTestBlockSizeNot16;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -221,6 +222,10 @@ type
     /// </summary>
     procedure TestEncodeConstData_86;
     procedure TestStreamGCM_87;
+    /// <summary>
+    ///   Test that this mode is only allowed for ciphers with 16 byte block size
+    /// </summary>
+    procedure TestBlockSize16;
   end;
 
 
@@ -1019,6 +1024,23 @@ begin
                   BytesOf(TFormat_HexL.Decode(cCAVS_MultiChunkIV)), $FF);
   CheckException(DoSetAuthTagBitLengthTooLong, EDECAuthLengthException,
                  'AuthenticationResultBitLength > 128 must raise EDECAuthLengthException');
+end;
+
+procedure TestTDECGCM.TestBlockSize16;
+begin
+  CheckException(DoTestBlockSizeNot16, EDECCipherException, 'Block size must be 16');
+end;
+
+procedure TestTDECGCM.DoTestBlockSizeNot16;
+var
+  XTEA : TCipher_XTEA;
+begin
+  XTEA := TCipher_XTEA.Create;
+  try
+    XTEA.Mode := cmGCM;
+  finally
+    XTEA.Free;
+  end;
 end;
 
 procedure TestTDECGCM.DoTestEncodeStream_LoadAndTestCAVSData(const
