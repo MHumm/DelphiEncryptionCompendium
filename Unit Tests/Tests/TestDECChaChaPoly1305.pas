@@ -4,18 +4,17 @@ interface
 
 {$INCLUDE ..\..\Source\DECOptions.inc}
 
-uses {$IFDEF DUnitX}
-     DUnitX.TestFramework,DUnitX.DUnitCompatibility,
-     {$ELSE}
-     TestFramework,
-     {$ENDIF}
-     System.SysUtils, Generics.Collections, System.Math,
-     DECBaseClass, System.JSON,
-     DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
-
+uses
+  {$IFDEF DUnitX}
+    DUnitX.TestFramework,DUnitX.DUnitCompatibility,
+  {$ELSE}
+    TestFramework,
+  {$ENDIF}
+    System.SysUtils, Generics.Collections, System.Math,
+    DECBaseClass, System.JSON,
+    DECCipherBase, DECCipherModes, DECCipherFormats, DECCiphers;
 
 type
-// Testmethods for class TDECCipher
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestChaCha20Poly1305 = class(TTestCase)
   private
@@ -765,7 +764,7 @@ initialization
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TestChaCha20Poly1305);
   {$ELSE}
-  RegisterTest(TestChaCha20Poly1305.Suite);
+  RegisterTest('DEC authenticated cipher modes', TestChaCha20Poly1305.Suite);
   {$ENDIF}
 
 end.

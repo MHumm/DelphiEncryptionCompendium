@@ -91,9 +91,24 @@ type
   end;
 
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
-  TTestMist = class(TTestCase)
+  TTestMisc = class(TTestCase)
   published
     procedure TestShannonEntropy;
+  end;
+
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TAlignPtr32Tests = class(TTestCase)
+  published
+    procedure TestAlignedPointer;
+    procedure TestUnalignedPointer;
+    procedure TestZeroPointer;
+    procedure TestAlreadyAlignedPointer;
+    procedure TestBoundaryConditions;
+    procedure TestVariousAlignmentValues;
+    procedure TestLargePointer;
+    procedure TestSmallPointer;
+    procedure TestNullPointer;
+    procedure TestEdgeCaseAlignment;
   end;
 
 implementation
@@ -768,9 +783,9 @@ begin
   CheckEquals(true, Result, 'a = b = length 0');
 end;
 
-{ TTestMist }
+{ TTestMisc }
 
-procedure TTestMist.TestShannonEntropy;
+procedure TTestMisc.TestShannonEntropy;
 var
   Entropy : Double;
   Str     : RawByteString;
@@ -787,17 +802,232 @@ begin
               'English sentence entrophy wrong');
 end;
 
+{ TAlignPtr32Tests }
+
+procedure TAlignPtr32Tests.TestAlignedPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test with one already aligned pointer (0x20 = 32 Bytes)
+  Ptr := Pointer($40); // 64 (divisible by 32)
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+
+  CheckEquals(Expected, Actual, 'Aligned pointer should remain unchanged');
+end;
+
+procedure TAlignPtr32Tests.TestUnalignedPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test with one unaligned pointer
+  Ptr := Pointer($45); // 69 (not divisible by 32)
+  Expected := Pointer($60); // Should be aligned to next 32-byte boundary
+  Actual := AlignPtr32(Ptr);
+
+  CheckEquals(Expected, Actual, 'Unaligned pointer should be aligned to 32-byte boundary');
+end;
+
+procedure TAlignPtr32Tests.TestZeroPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test with NULL-pointer
+  Ptr := nil;
+  Expected := nil;
+  Actual := AlignPtr32(Ptr);
+
+  CheckEquals(Expected, Actual, 'NULL pointer should remain NULL');
+end;
+
+procedure TAlignPtr32Tests.TestAlreadyAlignedPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test with diverse already aligned pointers
+  Ptr := Pointer($0);
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Zero pointer should remain unchanged');
+
+  Ptr := Pointer($20); // 32
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, '32-byte aligned pointer should remain unchanged');
+
+  Ptr := Pointer($40); // 64
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, '64-byte aligned pointer should remain unchanged');
+
+  Ptr := Pointer($100); // 256
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, '256-byte aligned pointer should remain unchanged');
+end;
+
+procedure TAlignPtr32Tests.TestBoundaryConditions;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test mit Grenzbedingungen
+  Ptr := Pointer($1F); // 31 (just below alignment boundary)
+  Expected := Pointer($20); // Should align to 32
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Pointer at boundary should be aligned');
+
+  Ptr := Pointer($20); // 32 (exactly on boundary)
+  Expected := Ptr;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Pointer exactly on boundary should remain unchanged');
+
+  Ptr := Pointer($3F); // 63 (just below next boundary)
+  Expected := Pointer($40); // Should align to 64
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Pointer just below boundary should be aligned');
+end;
+
+procedure TAlignPtr32Tests.TestVariousAlignmentValues;
+var
+  I: Integer;
+  Ptr: Pointer;
+  Actual: Pointer;
+begin
+  // Test with various values to check alignment
+  for I := 0 to 100 do
+  begin
+    Ptr := Pointer(I);
+    Actual := AlignPtr32(Ptr);
+
+    // Check that the result is aligned to 32-byte boundary
+    CheckTrue((NativeUint(Actual) and $1F) = 0,
+      Format('Pointer %d should be aligned to 32-byte boundary', [I]));
+
+    // If the original pointer was already aligned, it should remain unchanged
+    if (NativeUint(Ptr) and $1F) = 0 then
+    begin
+      CheckEquals(Ptr, Actual,
+        Format('Already aligned pointer %d should remain unchanged', [I]));
+    end;
+  end;
+end;
+
+procedure TAlignPtr32Tests.TestLargePointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test mit großem Pointer
+  Ptr := Pointer($10000000); // 268435456
+  Expected := Ptr; // Should be aligned (divisible by 32)
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Large aligned pointer should remain unchanged');
+
+  Ptr := Pointer($10000001); // 268435457
+  Expected := Pointer($10000020); // Should be aligned to next boundary
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Large unaligned pointer should be aligned');
+end;
+
+procedure TAlignPtr32Tests.TestSmallPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test mit kleinen Pointern
+  Ptr := Pointer($1);
+  Expected := Pointer($20); // Should align to 32
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Small pointer should be aligned');
+
+  Ptr := Pointer($1F);
+  Expected := Pointer($20); // Should align to 32
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Pointer at boundary should be aligned');
+
+  Ptr := Pointer($21);
+  Expected := Pointer($40); // Should align to next boundary
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Pointer just above boundary should be aligned');
+end;
+
+procedure TAlignPtr32Tests.TestNullPointer;
+var
+  Ptr: Pointer;
+  Expected: Pointer;
+  Actual: Pointer;
+begin
+  // Test with NULL-Pointer (double test)
+  Ptr := nil;
+  Expected := nil;
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'NULL pointer should remain NULL');
+
+  // Test with 0-pointer
+  Ptr := Pointer(0);
+  Expected := Pointer(0);
+  Actual := AlignPtr32(Ptr);
+  CheckEquals(Expected, Actual, 'Zero pointer should remain zero');
+end;
+
+procedure TAlignPtr32Tests.TestEdgeCaseAlignment;
+var
+  Ptr: Pointer;
+  Actual: Pointer;
+begin
+  // Test with special edge-cases
+  // Test with 1 byte
+  Ptr := Pointer($1);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue((NativeUint(Actual) and $1F) = 0, '1-byte pointer should be aligned');
+
+  // Test with 31 byte
+  Ptr := Pointer($1F);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue((NativeUint(Actual) and $1F) = 0, '31-byte pointer should be aligned');
+
+  // Test with 32 byte (already aligned)
+  Ptr := Pointer($20);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue((NativeUint(Actual) and $1F) = 0, '32-byte pointer should be aligned');
+
+  // Test with 33 byte
+  Ptr := Pointer($21);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue((NativeUint(Actual) and $1F) = 0, '33-byte pointer should be aligned');
+
+//  Test with maximum 32 bit value -> cannot work -> overflow!
+//  Do we need a test for this overflow?
+//  Ptr := Pointer($FFFFFFFF);
+//  Actual := AlignPtr32(Ptr);
+//  CheckTrue((NativeUint(Actual) and $1F) = 0, 'Large pointer should be aligned');
+end;
+
 initialization
   // Register any test cases with the test runner
   {$IFDEF DUnitX}
   TDUnitX.RegisterTestFixture(TTestBitTwiddling);
   TDUnitX.RegisterTestFixture(TTestBufferProtection);
   TDUnitX.RegisterTestFixture(TTestIsEqual);
-  TDUnitX.RegisterTestFixture(TTestMist);
+  TDUnitX.RegisterTestFixture(TTestMisc);
+  TDUnitX.RegisterTestFixture(TAlignPtr32Tests);
   {$ELSE}
   RegisterTests('DECUtil', [TTestBitTwiddling.Suite,
                             TTestBufferProtection.Suite,
                             TTestIsEqual.Suite,
-                            TTestMist.Suite]);
+                            TTestMisc.Suite,
+                            TAlignPtr32Tests.Suite]);
   {$ENDIF}
 end.
