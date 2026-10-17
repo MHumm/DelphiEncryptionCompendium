@@ -381,16 +381,19 @@ type
 
   TCipher_Rijndael = class(TDECFormattedCipher)
   protected
-
-          /// <summary>
-          ///    Blocksize in LongWords
-          /// </summary>
-    const Rijndael_Blocks =  4; // don't change this!
-          /// <summary>
-          ///    Maximum number of rounds allowed.
-          /// </summary>
-          Rijndael_Rounds = 14;
+    const
+      /// <summary>
+      ///   Blocksize in Cardinals
+      /// </summary>
+      Rijndael_Blocks =  4;
+      /// <summary>
+      ///   Maximum number of rounds allowed.
+      /// </summary>
+      Rijndael_Rounds = 14;
   private
+    /// <summary>
+    ///   Number of times the algorithm is applied to a data block
+    /// </summary>
     FRounds: Integer;
 
     /// <summary>
@@ -508,10 +511,10 @@ type
   ///   Number of rounds... (4, 12, 20) default is 20
   /// </summary>
   TChaChaMode = (cmSpeed, cmBalance, cmSecure);
-  TChaChaMtx = Array[0..15] of LongWord;
+  TChaChaMtx = Array[0..15] of UInt32;
   PChaChaMtx = ^TChaChaMtx;
   TChaChaCpuMode = (cmPas, cmSSE, cmAVX);
-  TChaChaAVXMtx = Array[0..31] of LongWord;
+  TChaChaAVXMtx = Array[0..31] of UInt32;
   PChaChaAVXMtx = ^TChaChaAVXMtx;
 
   /// <summary>
@@ -538,7 +541,7 @@ type
     FNumChaChaRounds : Integer;
     FFullBlockFunc   : TChaChaEncodeBlkFunc;
 
-    procedure ChaChaQuarterRound(var a, b, c, d : LongWord);
+    procedure ChaChaQuarterRound(var a, b, c, d : UInt32);
     /// <summary>
     ///   Round function for one column and row
     /// </summary>
@@ -590,7 +593,7 @@ type
   /// </summary>
   TCipher_XChaCha20 = class(TCipher_ChaCha20)
   private
-    FHChaCha  : Array[0..22] of LongWord;
+    FHChaCha  : Array[0..22] of UInt32;
     FPHChaCha : PChaChaMtx;
 
     procedure HChaCha( iv : TBytes );
@@ -2904,222 +2907,218 @@ end;
 
 {$IF defined(X86ASM) or defined(X64ASM)}
 
-// ###########################################
-// #### AES assembler functions
-// #### Routines are based on the intel whitepaper:
-// #### https://www.intel.com/content/dam/develop/external/us/en/documents/aes-wp-2012-09-22-v01-165683.pdf
-// ###########################################
+// AES assembler functions
+// Routines are based on the intel whitepaper:
+// https://www.intel.com/content/dam/develop/external/us/en/documents/aes-wp-2012-09-22-v01-165683.pdf
 
 // assumes registerd preloaded - use only in within BuildASMKey128
 procedure KeyExpand128; register;
 asm
-   pshufd xmm2, xmm2, $ff;
-   movapd xmm3, xmm1;
-   pslldq xmm3, $04;
-   pxor xmm1, xmm3;
-   movapd xmm3, xmm1;
-   pslldq xmm3, $04;
-   pxor xmm1, xmm3;
-   movapd xmm3, xmm1;
-   pslldq xmm3, $04;
-   pxor xmm1, xmm3;
-   pxor xmm1, xmm2;
-   {$IFDEF X64ASM}
-   movdqu [rdx], xmm1;
-   add rdx, $10;
-   {$ELSE}
-   movdqu [edx], xmm1;
-   add edx, $10;
-   {$ENDIF}
-
+  pshufd xmm2, xmm2, $ff;
+  movapd xmm3, xmm1;
+  pslldq xmm3, $04;
+  pxor xmm1, xmm3;
+  movapd xmm3, xmm1;
+  pslldq xmm3, $04;
+  pxor xmm1, xmm3;
+  movapd xmm3, xmm1;
+  pslldq xmm3, $04;
+  pxor xmm1, xmm3;
+  pxor xmm1, xmm2;
+  {$IFDEF X64ASM}
+  movdqu [rdx], xmm1;
+  add rdx, $10;
+  {$ELSE}
+  movdqu [edx], xmm1;
+  add edx, $10;
+  {$ENDIF}
 end;
 
-procedure BuildAsmKey128( key : PByte; dest : PLongWord ); register;
+procedure BuildAsmKey128(Key : PByte; dest : PUInt32); register;
 // eax : key, edx: dest
 // rcx : key, rdx : dest
 asm
-   xorpd xmm2, xmm2;
-   // key is 128bit
-   // 10 rounds to be filled
-   {$IFDEF X64ASM}
-   movdqu xmm1, [rcx];
-   movdqu [rdx], xmm1;
-   add rdx, 16;
-   {$ELSE}
-   movdqu xmm1, [eax];
-   movdqu [edx], xmm1;
-   add edx, 16;
-   {$ENDIF}
+  xorpd xmm2, xmm2;
+  // key is 128bit
+  // 10 rounds to be filled
+  {$IFDEF X64ASM}
+  movdqu xmm1, [rcx];
+  movdqu [rdx], xmm1;
+  add rdx, 16;
+  {$ELSE}
+  movdqu xmm1, [eax];
+  movdqu [edx], xmm1;
+  add edx, 16;
+  {$ENDIF}
 
-   aeskeygenassist xmm2, xmm1, $1;
-   call KeyExpand128;
-   aeskeygenassist xmm2, xmm1, $2;
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $4
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $8
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $10
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $20
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $40
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $80
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $1b
-   call KeyExpand128
-   aeskeygenassist xmm2, xmm1, $36
-   call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $1;
+  call KeyExpand128;
+  aeskeygenassist xmm2, xmm1, $2;
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $4
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $8
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $10
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $20
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $40
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $80
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $1b
+  call KeyExpand128
+  aeskeygenassist xmm2, xmm1, $36
+  call KeyExpand128
 end;
-
 
 // only call with BuildasmKey192 - it assumes preloaded registers xmm0, xmm1, xmm2
 // xmm3 is used for intermediate results
 procedure KeyExpand192; register;
 asm
-   pshufd xmm1, xmm1, $55;
-   movapd xmm3, xmm0;
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
+  pshufd xmm1, xmm1, $55;
+  movapd xmm3, xmm0;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
 
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
 
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
 
-   pxor xmm0, xmm1;
-   pshufd xmm1, xmm0, $FF;
+  pxor xmm0, xmm1;
+  pshufd xmm1, xmm0, $FF;
 
-   movapd xmm3, xmm2;
-   pslldq xmm3, $04;
+  movapd xmm3, xmm2;
+  pslldq xmm3, $04;
 
-   pxor xmm2, xmm3;
-   pxor xmm2, xmm1;
+  pxor xmm2, xmm3;
+  pxor xmm2, xmm1;
 end;
 
-procedure BuildAsmKey196( key : PByte; dest : PLongWord); register;
+procedure BuildAsmKey196(Key : PByte; dest : PUInt32); register;
 // eax: key, edx : dest
 // rcx: key, rdx : dest;
 asm
-   // load key
-   xorpd xmm2, xmm2;
+  // load key
+  xorpd xmm2, xmm2;
 
-   {$IFDEF X64ASM}
-   movupd xmm0, [rcx];
-   movsd xmm2, [rcx + 16];
-   movupd [rdx], xmm0;
-   {$ELSE}
-   movupd xmm0, [eax];
-   movsd xmm2, [eax + 16];
-   movupd [edx], xmm0;
-   {$ENDIF}
+  {$IFDEF X64ASM}
+  movupd xmm0, [rcx];
+  movsd xmm2, [rcx + 16];
+  movupd [rdx], xmm0;
+  {$ELSE}
+  movupd xmm0, [eax];
+  movsd xmm2, [eax + 16];
+  movupd [edx], xmm0;
+  {$ENDIF}
 
-   movapd xmm4, xmm2;
+  movapd xmm4, xmm2;
 
-   aeskeygenassist xmm1, xmm2, $01;
-   call KeyExpand192;
+  aeskeygenassist xmm1, xmm2, $01;
+  call KeyExpand192;
 
-   shufpd xmm4, xmm0, 0;
-   {$IFDEF X64ASM}
-   movupd [rdx + 16], xmm4;
-   {$ELSE}
-   movupd [edx + 16], xmm4;
-   {$ENDIF}
-   movapd xmm4, xmm0;
-   shufpd xmm4, xmm2, 1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 32], xmm4;
-   {$ELSE}
-   movupd [edx + 32], xmm4;
-   {$ENDIF}
+  shufpd xmm4, xmm0, 0;
+  {$IFDEF X64ASM}
+  movupd [rdx + 16], xmm4;
+  {$ELSE}
+  movupd [edx + 16], xmm4;
+  {$ENDIF}
+  movapd xmm4, xmm0;
+  shufpd xmm4, xmm2, 1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 32], xmm4;
+  {$ELSE}
+  movupd [edx + 32], xmm4;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $02;
-   call KeyExpand192;
-   {$IFDEF X64ASM}
-   movupd [rdx + 48], xmm0;
-   {$ELSE}
-   movupd [edx + 48], xmm0;
-   {$ENDIF}
-   movapd xmm4, xmm2;
-   aeskeygenassist xmm1, xmm2, $04;
-   call KeyExpand192;
-   shufpd xmm4, xmm0, 0;
-   {$IFDEF X64ASM}
-   movupd [rdx + 64], xmm4;
-   {$ELSE}
-   movupd [edx + 64], xmm4;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $02;
+  call KeyExpand192;
+  {$IFDEF X64ASM}
+  movupd [rdx + 48], xmm0;
+  {$ELSE}
+  movupd [edx + 48], xmm0;
+  {$ENDIF}
+  movapd xmm4, xmm2;
+  aeskeygenassist xmm1, xmm2, $04;
+  call KeyExpand192;
+  shufpd xmm4, xmm0, 0;
+  {$IFDEF X64ASM}
+  movupd [rdx + 64], xmm4;
+  {$ELSE}
+  movupd [edx + 64], xmm4;
+  {$ENDIF}
 
-   movapd xmm4, xmm0;
-   shufpd xmm4, xmm2, 1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 80], xmm4;
-   {$ELSE}
-   movupd [edx + 80], xmm4;
-   {$ENDIF}
+  movapd xmm4, xmm0;
+  shufpd xmm4, xmm2, 1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 80], xmm4;
+  {$ELSE}
+  movupd [edx + 80], xmm4;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $08;
-   call KeyExpand192;
-   {$IFDEF X64ASM}
-   movupd [rdx + 96], xmm0;
-   {$ELSE}
-   movupd [edx + 96], xmm0;
-   {$ENDIF}
-   movapd xmm4, xmm2;
+  aeskeygenassist xmm1, xmm2, $08;
+  call KeyExpand192;
+  {$IFDEF X64ASM}
+  movupd [rdx + 96], xmm0;
+  {$ELSE}
+  movupd [edx + 96], xmm0;
+  {$ENDIF}
+  movapd xmm4, xmm2;
 
-   aeskeygenassist xmm1, xmm2, $10;
-   call KeyExpand192;
-   shufpd xmm4, xmm0, 0;
-   {$IFDEF X64ASM}
-   movupd [rdx + 112], xmm4;
-   {$ELSE}
-   movupd [edx + 112], xmm4;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $10;
+  call KeyExpand192;
+  shufpd xmm4, xmm0, 0;
+  {$IFDEF X64ASM}
+  movupd [rdx + 112], xmm4;
+  {$ELSE}
+  movupd [edx + 112], xmm4;
+  {$ENDIF}
 
-   movapd xmm4, xmm0;
-   shufpd xmm4, xmm2, 1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 128], xmm4;
-   {$ELSE}
-   movupd [edx + 128], xmm4;
-   {$ENDIF}
+  movapd xmm4, xmm0;
+  shufpd xmm4, xmm2, 1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 128], xmm4;
+  {$ELSE}
+  movupd [edx + 128], xmm4;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $20;
-   call KeyExpand192;
-   {$IFDEF X64ASM}
-   movupd [rdx + 144], xmm0;
-   {$ELSE}
-   movupd [edx + 144], xmm0;
-   {$ENDIF}
-   movapd xmm4, xmm2;
+  aeskeygenassist xmm1, xmm2, $20;
+  call KeyExpand192;
+  {$IFDEF X64ASM}
+  movupd [rdx + 144], xmm0;
+  {$ELSE}
+  movupd [edx + 144], xmm0;
+  {$ENDIF}
+  movapd xmm4, xmm2;
 
-   aeskeygenassist xmm1, xmm2, $40;
-   call KeyExpand192;
+  aeskeygenassist xmm1, xmm2, $40;
+  call KeyExpand192;
 
-   shufpd xmm4, xmm0, 0;
-   {$IFDEF X64ASM}
-   movupd [rdx + 160], xmm4;
-   {$ELSE}
-   movupd [edx + 160], xmm4;
-   {$ENDIF}
+  shufpd xmm4, xmm0, 0;
+  {$IFDEF X64ASM}
+  movupd [rdx + 160], xmm4;
+  {$ELSE}
+  movupd [edx + 160], xmm4;
+  {$ENDIF}
 
-   movapd xmm4, xmm0;
-   shufpd xmm4, xmm2, 1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 176], xmm4;
-   {$ELSE}
-   movupd [edx + 176], xmm4;
-   {$ENDIF}
+  movapd xmm4, xmm0;
+  shufpd xmm4, xmm2, 1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 176], xmm4;
+  {$ELSE}
+  movupd [edx + 176], xmm4;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $80;
-   call KeyExpand192;
-   {$IFDEF X64ASM}
-   movupd [rdx + 192], xmm0;
-   {$ELSE}
-   movupd [edx + 192], xmm0;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $80;
+  call KeyExpand192;
+  {$IFDEF X64ASM}
+  movupd [rdx + 192], xmm0;
+  {$ELSE}
+  movupd [edx + 192], xmm0;
+  {$ENDIF}
 end;
 
 // for the 256 bit key expand functions we assume that xmm0 - xmm2 are
@@ -3127,307 +3126,304 @@ end;
 // xmm3 and xmm4 are used as intermediate registers
 procedure KeyExpand256_1; register;
 asm
-   pshufd xmm1, xmm1, $FF;
-   movapd xmm3, xmm0;
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
+  pshufd xmm1, xmm1, $FF;
+  movapd xmm3, xmm0;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
 
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
 
-   pslldq xmm3, $04;
-   pxor xmm0, xmm3;
-   pxor xmm0, xmm1;
+  pslldq xmm3, $04;
+  pxor xmm0, xmm3;
+  pxor xmm0, xmm1;
 end;
 
 // no parameter given here -> xmm01 to xmm3 represent temp1 to temp4
 procedure KeyExpand256_2; register;
 asm
-   aeskeygenassist xmm3, xmm0, $00;
-   pshufd xmm1, xmm3, $AA;
-   movapd xmm3, xmm2;
-   pslldq  xmm3, $04;
-   pxor xmm2, xmm3;
-   pslldq  xmm3, $04;
+  aeskeygenassist xmm3, xmm0, $00;
+  pshufd xmm1, xmm3, $AA;
+  movapd xmm3, xmm2;
+  pslldq  xmm3, $04;
+  pxor xmm2, xmm3;
+  pslldq  xmm3, $04;
 
-   pxor xmm2, xmm3;
-   pslldq  xmm3, $04;
+  pxor xmm2, xmm3;
+  pslldq  xmm3, $04;
 
-   pxor xmm2, xmm3;
-   pxor xmm2, xmm1;
+  pxor xmm2, xmm3;
+  pxor xmm2, xmm1;
 end;
 
-procedure BuildAsmKey256( key : PByte; dest : PLongWord); register;
+procedure BuildAsmKey256(Key : PByte; dest : PUInt32); register;
 asm
 // eax = key, edx = dest
 // rcx = key, rdx = dest
 
-   // load key
-   {$IFDEF X64ASM}
-   movupd xmm0, [rcx];
-   movupd xmm2, [rcx + 16];
+  // load key
+  {$IFDEF X64ASM}
+  movupd xmm0, [rcx];
+  movupd xmm2, [rcx + 16];
 
-   movupd [rdx], xmm0;
-   movupd [rdx + 16], xmm2;
+  movupd [rdx], xmm0;
+  movupd [rdx + 16], xmm2;
 
-   {$ELSE}
-   movupd xmm0, [eax];
-   movupd xmm2, [eax + 16];
+  {$ELSE}
+  movupd xmm0, [eax];
+  movupd xmm2, [eax + 16];
 
-   movupd [edx], xmm0;
-   movupd [edx + 16], xmm2;
-   {$ENDIF}
+  movupd [edx], xmm0;
+  movupd [edx + 16], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $1;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 32], xmm0;
-   {$ELSE}
-   movupd [edx + 32], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 48], xmm2;
-   {$ELSE}
-   movupd [edx + 48], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $1;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 32], xmm0;
+  {$ELSE}
+  movupd [edx + 32], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 48], xmm2;
+  {$ELSE}
+  movupd [edx + 48], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $2;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 64], xmm0;
-   {$ELSE}
-   movupd [edx + 64], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 80], xmm2;
-   {$ELSE}
-   movupd [edx + 80], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $2;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 64], xmm0;
+  {$ELSE}
+  movupd [edx + 64], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 80], xmm2;
+  {$ELSE}
+  movupd [edx + 80], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $4;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 96], xmm0;
-   {$ELSE}
-   movupd [edx + 96], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 112], xmm2;
-   {$ELSE}
-   movupd [edx + 112], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $4;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 96], xmm0;
+  {$ELSE}
+  movupd [edx + 96], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 112], xmm2;
+  {$ELSE}
+  movupd [edx + 112], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $8;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 128], xmm0;
-   {$ELSE}
-   movupd [edx + 128], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 144], xmm2;
-   {$ELSE}
-   movupd [edx + 144], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $8;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 128], xmm0;
+  {$ELSE}
+  movupd [edx + 128], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 144], xmm2;
+  {$ELSE}
+  movupd [edx + 144], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $10;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 160], xmm0;
-   {$ELSE}
-   movupd [edx + 160], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 176], xmm2;
-   {$ELSE}
-   movupd [edx + 176], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $10;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 160], xmm0;
+  {$ELSE}
+  movupd [edx + 160], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 176], xmm2;
+  {$ELSE}
+  movupd [edx + 176], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $20;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 192], xmm0;
-   {$ELSE}
-   movupd [edx + 192], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 208], xmm2;
-   {$ELSE}
-   movupd [edx + 208], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $20;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 192], xmm0;
+  {$ELSE}
+  movupd [edx + 192], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 208], xmm2;
+  {$ELSE}
+  movupd [edx + 208], xmm2;
+  {$ENDIF}
 
-   aeskeygenassist xmm1, xmm2, $40;
-   call KeyExpand256_1;
-   {$IFDEF X64ASM}
-   movupd [rdx + 224], xmm0;
-   {$ELSE}
-   movupd [edx + 224], xmm0;
-   {$ENDIF}
-   call KeyExpand256_2;
-   {$IFDEF X64ASM}
-   movupd [rdx + 240], xmm2;
-   {$ELSE}
-   movupd [edx + 240], xmm2;
-   {$ENDIF}
+  aeskeygenassist xmm1, xmm2, $40;
+  call KeyExpand256_1;
+  {$IFDEF X64ASM}
+  movupd [rdx + 224], xmm0;
+  {$ELSE}
+  movupd [edx + 224], xmm0;
+  {$ENDIF}
+  call KeyExpand256_2;
+  {$IFDEF X64ASM}
+  movupd [rdx + 240], xmm2;
+  {$ELSE}
+  movupd [edx + 240], xmm2;
+  {$ENDIF}
 end;
 
-procedure BuildASMDecodeKey( encodeKey : PLongWord; decodeKey : PLongWord; numRounds : integer); register;
+procedure BuildASMDecodeKey(encodeKey : PUInt32; decodeKey : PUInt32; numRounds : Integer); register;
 // eax = encodeKey, edx = decodeKey, ecx = numRounds
 // rcx = encodeKey, rdx = decodeKey, r8 = numRounds
 asm
 // store in reverse order for iterative access in the decode routine!
-   {$IFDEF X64ASM}
-   movdqu xmm0, [rcx];
-   lea rdx, [rdx + 8*r8];    // mult by 16 is not possible -> do it twice
-   lea rdx, [rdx + 8*r8];
-   movdqu [rdx], xmm0;
+  {$IFDEF X64ASM}
+  movdqu xmm0, [rcx];
+  lea rdx, [rdx + 8*r8];    // mult by 16 is not possible -> do it twice
+  lea rdx, [rdx + 8*r8];
+  movdqu [rdx], xmm0;
 
-   add rcx, 16;
-   sub rdx, 16;
-   dec r8d;
+  add rcx, 16;
+  sub rdx, 16;
+  dec r8d;
 
-   @decLoop:
-      movdqu xmm0, [rcx];
-      aesimc xmm0, xmm0;
-      movdqu [rdx], xmm0;
+  @decLoop:
+     movdqu xmm0, [rcx];
+     aesimc xmm0, xmm0;
+     movdqu [rdx], xmm0;
 
-      add rcx, 16;
-      sub rdx, 16;
-   dec r8d;
-   jg @decLoop;
+     add rcx, 16;
+     sub rdx, 16;
+  dec r8d;
+  jg @decLoop;
 
-   movdqu xmm0, [rcx];
-   movdqu [rdx], xmm0;
-   {$ELSE}
-   movdqu xmm0, [eax];
-   lea edx, [edx + 8*ecx];    // mult by 16 is not possible -> do it twice
-   lea edx, [edx + 8*ecx];
-   movdqu [edx], xmm0;
+  movdqu xmm0, [rcx];
+  movdqu [rdx], xmm0;
+  {$ELSE}
+  movdqu xmm0, [eax];
+  lea edx, [edx + 8*ecx];    // mult by 16 is not possible -> do it twice
+  lea edx, [edx + 8*ecx];
+  movdqu [edx], xmm0;
 
-   add eax, 16;
-   sub edx, 16;
-   dec ecx;
+  add eax, 16;
+  sub edx, 16;
+  dec ecx;
 
-   @decLoop:
-      movdqu xmm0, [eax];
-      aesimc xmm0, xmm0;
-      movdqu [edx], xmm0;
+  @decLoop:
+     movdqu xmm0, [eax];
+     aesimc xmm0, xmm0;
+     movdqu [edx], xmm0;
 
-      add eax, 16;
-      sub edx, 16;
+     add eax, 16;
+     sub edx, 16;
 
-   // decrement ecx and test
-   loop @decLoop;
+  // decrement ecx and test
+  loop @decLoop;
 
-   movdqu xmm0, [eax];
-   movdqu [edx], xmm0;
-   {$ENDIF}
+  movdqu xmm0, [eax];
+  movdqu [edx], xmm0;
+  {$ENDIF}
 end;
 
-
-// ###########################################
-// #### AES assembler encode/decode
-// ###########################################
+// AES assembler encode/decode
 
 {$REGION 'ASM encode/decode'}
-procedure AESEncode( Source, Dest : Pointer; numRounds : integer; key : PLongWord ); register;
+procedure AESEncode(Source, Dest : Pointer; numRounds : Integer; Key : PUInt32); register;
 asm
-   {$IFDEF X64ASM}
-   movupd xmm1, [rcx];
-   movdqa xmm2, [r9];
-   pxor xmm1, xmm2;
-   add r9, 16;
+  {$IFDEF X64ASM}
+  movupd xmm1, [rcx];
+  movdqa xmm2, [r9];
+  pxor xmm1, xmm2;
+  add r9, 16;
 
-   dec r8d;
+  dec r8d;
 
-   @aesloop:
-     movdqa xmm2, [r9];
-     aesenc xmm1, xmm2;
-     add r9, 16;
+  @aesloop:
+    movdqa xmm2, [r9];
+    aesenc xmm1, xmm2;
+    add r9, 16;
 
-     dec r8d;
-   jg @aesloop;
+    dec r8d;
+  jg @aesloop;
 
-   movdqa xmm2, [r9];
-   aesenclast xmm1, xmm2;
-   movupd [rdx], xmm1;
-   {$ELSE}
-   push edi;
+  movdqa xmm2, [r9];
+  aesenclast xmm1, xmm2;
+  movupd [rdx], xmm1;
+  {$ELSE}
+  push edi;
 
-   movupd xmm1, [eax];
-   mov edi, key;
-   movdqa xmm2, [edi];
-   pxor xmm1, xmm2;
-   add edi, 16;
+  movupd xmm1, [eax];
+  mov edi, key;
+  movdqa xmm2, [edi];
+  pxor xmm1, xmm2;
+  add edi, 16;
 
-   dec ecx;
+  dec ecx;
 
-   @aesloop:
-     movdqa xmm2, [edi];
-     aesenc xmm1, xmm2;
-     add edi, 16;
+  @aesloop:
+    movdqa xmm2, [edi];
+    aesenc xmm1, xmm2;
+    add edi, 16;
 
-     dec ecx;
-   jg @aesloop;
+    dec ecx;
+  jg @aesloop;
 
-   movdqa xmm2, [edi];
-   aesenclast xmm1, xmm2;
-   movupd [edx], xmm1;
-   pop edi;
-   {$ENDIF}
+  movdqa xmm2, [edi];
+  aesenclast xmm1, xmm2;
+  movupd [edx], xmm1;
+  pop edi;
+  {$ENDIF}
 end;
 
-procedure AESDecode( Source, Dest : Pointer; numRounds : integer; key : PLongWord ); register;
+procedure AESDecode(Source, Dest : Pointer; numRounds : Integer; Key : PUInt32); register;
 asm
-   {$IFDEF X64ASM}
-   movupd xmm1, [rcx];
-   movdqa xmm2, [r9];
-   pxor xmm1, xmm2;
-   add r9, 16;
+  {$IFDEF X64ASM}
+  movupd xmm1, [rcx];
+  movdqa xmm2, [r9];
+  pxor xmm1, xmm2;
+  add r9, 16;
 
-   dec r8d;
+  dec r8d;
 
-   @aesloop:
-     movdqa xmm2, [r9];
-     aesdec xmm1, xmm2;
-     add r9, 16;
+  @aesloop:
+    movdqa xmm2, [r9];
+    aesdec xmm1, xmm2;
+    add r9, 16;
 
-     dec r8d;
-   jg @aesloop;
+    dec r8d;
+  jg @aesloop;
 
-   movdqa xmm2, [r9];
-   aesdeclast xmm1, xmm2;
-   movupd [rdx], xmm1;
-   {$ELSE}
-   push edi;
+  movdqa xmm2, [r9];
+  aesdeclast xmm1, xmm2;
+  movupd [rdx], xmm1;
+  {$ELSE}
+  push edi;
 
-   movupd xmm1, [eax];
-   mov edi, key;
-   movdqa xmm2, [edi];
-   pxor xmm1, xmm2;
-   add edi, 16;
+  movupd xmm1, [eax];
+  mov edi, key;
+  movdqa xmm2, [edi];
+  pxor xmm1, xmm2;
+  add edi, 16;
 
-   dec ecx;
+  dec ecx;
 
-   @aesloop:
-     movdqa xmm2, [edi];
-     aesdec xmm1, xmm2;
-     add edi, 16;
+  @aesloop:
+    movdqa xmm2, [edi];
+    aesdec xmm1, xmm2;
+    add edi, 16;
 
-     dec ecx;
-   jg @aesloop;
+    dec ecx;
+  jg @aesloop;
 
-   movdqa xmm2, [edi];
-   aesdeclast xmm1, xmm2;
-   movupd [edx], xmm1;
-   pop edi;
-   {$ENDIF}
+  movdqa xmm2, [edi];
+  aesdeclast xmm1, xmm2;
+  movupd [edx], xmm1;
+  pop edi;
+  {$ENDIF}
 end;
 
 {$ENDREGION}
@@ -3547,24 +3543,24 @@ begin
        FillChar(KeyBuf, SizeOf(KeyBuf), 0);
        Move(Key, KeyBuf, Size);
        case FRounds of
-         10: BuildAsmKey128(@KeyBuf[0], PLongWord(pBuf));
-         12: BuildAsmKey196(@KeyBuf[0], PLongWord(pBuf));
+         10: BuildAsmKey128(@KeyBuf[0], PUInt32(pBuf));
+         12: BuildAsmKey196(@KeyBuf[0], PUInt32(pBuf));
        else
-         BuildAsmKey256(@KeyBuf[0], PLongWord(pBuf));
+         BuildAsmKey256(@KeyBuf[0], PUInt32(pBuf));
        end;
        ProtectBuffer(KeyBuf, SizeOf(KeyBuf));
 
        // build inverse decode key - utilize the aesimc opcode
-       BuildASMDecodeKey( PLongWord(pBuf), @(pBuf^[Rijndael_Rounds*Rijndael_Blocks]), fRounds);
+       BuildASMDecodeKey(PUInt32(pBuf), @(pBuf^[Rijndael_Rounds*Rijndael_Blocks]), FRounds);
   end
   else
   {$IFEND}
   begin
-       FillChar(FAdditionalBuffer^, 32, 0);
-       Move(Key, FAdditionalBuffer^, Size);
+    FillChar(FAdditionalBuffer^, 32, 0);
+    Move(Key, FAdditionalBuffer^, Size);
 
-       BuildEncodeKey(Size);
-       BuildDecodeKey;
+    BuildEncodeKey(Size);
+    BuildDecodeKey;
   end;
 
   inherited;
@@ -7536,12 +7532,12 @@ end;
 { TCipher_ChaCha20 }
 
 {$IFDEF PUREPASCAL}
-function rol(value: LongWord; Bits: Byte): LongWord;
+function rol(value: UInt32; Bits: Byte): UInt32;
 begin
   Result := (value shl Bits) or (value shr (32 - bits));
 end;
 {$ELSE}
-function rol(value: LongWord; Bits: Byte): LongWord; assembler;
+function rol(value: UInt32; Bits: Byte): UInt32; assembler;
   {$IFDEF FPC}
   begin
   {$ENDIF}
@@ -7560,7 +7556,7 @@ end;
   {$ENDIF}
 {$ENDIF}
 
-procedure TCipher_ChaCha20.ChaChaQuarterRound(var a, b, c, d: LongWord);
+procedure TCipher_ChaCha20.ChaChaQuarterRound(var a, b, c, d: UInt32);
 begin
   // a += b; d ^= a; d <<<= 16;
   // c += d; b ^= c; b <<<= 12;
@@ -7666,7 +7662,7 @@ begin
     raise EDECException.Create('Nonce is not 96 bit.');
 
   FInpChaChaMTX^[12] := 0;   // counter
-  Move(FInitializationVector^, FInpChaChaMTX^[13], 3*sizeof(longword));
+  Move(FInitializationVector^, FInpChaChaMTX^[13], 3 * SizeOf(UInt32));
 
   // special care in case of poly1305:
   if (FMode = cmPoly1305) then
@@ -8266,15 +8262,15 @@ begin
       // move the input matrix so we have nicely aligned memory for the quarter round
       for i := 0 to 3 do
       begin
-        Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i], 4*sizeof(LongWord));
-        Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i + 4], 4*sizeof(LongWord));
+        Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i], 4 * SizeOf(UInt32));
+        Move(FInpChaChaMTX^[4*i], FOutChaChaMtx^[8*i + 4], 4 * SizeOf(UInt32));
       end;
 
       // update index in the "second" matrix - this one is always odd so no further check
       inc(FOutChaChaMtx^[3*8 + 4]);
 
       for i := 0 to FNumChaChaRounds - 1 do
-         AVXChaChaDoubleQuarterRound(FOutChaChaMtx);
+        AVXChaChaDoubleQuarterRound(FOutChaChaMtx);
       // undo the alignment so both matrices are adjacent again (not intermittent as used for the rounds)
       AVXRealingAndAddMtx(FOutChaChaMtx, FInpChaChaMTX);
 
@@ -8521,7 +8517,7 @@ begin
 
   // copy over the iv -> 128 bit
   // create the HChaChaMatrix in FPHChaCha
-  Move(iv[0], FPHChaCha^[12], 4*sizeof(LongWord));
+  Move(iv[0], FPHChaCha^[12], SizeOf(TChaChaMtx) div 4);
 
   {$IFNDEF PUREPASCAL}
   if cpuMode = cmSSE then
@@ -8550,15 +8546,15 @@ begin
   // extract subkey -> overwrite key
 
   // subkey is the first row and the last row!!
-  Move(FPHChaCha^[0], FInpChaChaMTX^[4], 4*sizeof(LongWord));
-  Move(FPHChaCha^[12], FInpChaChaMTX^[8], 4*sizeof(LongWord));
+  Move(FPHChaCha^[ 0], FInpChaChaMTX^[4], 16);
+  Move(FPHChaCha^[12], FInpChaChaMTX^[8], 16);
 
   // update IV -> the last 8 bytes
-  Move(OriginalInitVector[16], FInitializationVector[4], 2*sizeof(LongWord));
-  PLongWord(@FInitializationVector[0])^ := 0;  // per definition the these bytes are zero
+  Move(OriginalInitVector[16], FInitializationVector[4], 2 * SizeOf(UInt32));
+  PUInt32(@FInitializationVector[0])^ := 0;  // per definition the these bytes are zero
 
   // truncate iv length
-  FInitVectorSize := 3*sizeof(longword);
+  FInitVectorSize := 3 * SizeOf(UInt32);
 
   // int chacha with these values
   // note: the inherted routine may not overwrite the key part and needs
