@@ -71,6 +71,7 @@ type
     procedure VertScrollBox1CalcContentBounds(Sender: TObject;
       var ContentBounds: TRectF);
     procedure EditCostChange(Sender: TObject);
+    procedure FormSafeAreaChanged(Sender: TObject; const AInsets: TRectF);
   private
     /// <summary>
     ///   Lists all available hash classes in the hash classes combo box
@@ -474,8 +475,19 @@ begin
   else
     LabelVersion.Text := format(LabelVersion.Text, ['']);
 
+  {$IFDEF ANDROID}
+    {$IF CompilerVersion >= 36.0}
+    OnSafeAreaChanged := FormSafeAreaChanged;
+    {$ENDIF}
+  {$ENDIF}
+
   InitHashCombo;
   InitFormatCombos;
+end;
+
+procedure TFormMain.FormSafeAreaChanged(Sender: TObject; const AInsets: TRectF);
+begin
+  Padding.Rect := AInsets;
 end;
 
 procedure TFormMain.InitFormatCombos;

@@ -101,6 +101,7 @@ type
     procedure ButtonCreateIVClick(Sender: TObject);
     procedure ComboBoxKeyIVFormatChange(Sender: TObject);
     procedure EditPlainCipherTextChangeTracking(Sender: TObject);
+    procedure FormSafeAreaChanged(Sender: TObject; const AInsets: TRectF);
   private
     /// <summary>
     ///   Add all registered formats to the combobox and select TFormat_Copy
@@ -641,6 +642,12 @@ begin
   else
     LabelVersion.Text := format(LabelVersion.Text, ['']);
 
+  {$IFDEF ANDROID}
+    {$IF CompilerVersion >= 36.0}
+    OnSafeAreaChanged := FormSafeAreaChanged;
+    {$ENDIF}
+  {$ENDIF}
+
   InitFormatCombos;
   InitCipherCombo;
   InitCipherModes;
@@ -652,6 +659,11 @@ begin
   LayoutCipherSettings.Width := self.Width - 20;
   LayoutAuthentication.Width := self.Width - 20;
   LayoutEncrypt.Width        := self.Width - 20;
+end;
+
+procedure TFormMain.FormSafeAreaChanged(Sender: TObject; const AInsets: TRectF);
+begin
+  Padding.Rect := AInsets;
 end;
 
 procedure TFormMain.FormShow(Sender: TObject);
@@ -854,6 +866,7 @@ begin
     Formats.Sort;
     ComboBoxPlainTextFormatting.Items.AddStrings(Formats);
     ComboBoxCipherTextFormatting.Items.AddStrings(Formats);
+    ComboBoxKeyIVFormat.Items.AddStrings(Formats);
 
     if Formats.Count > 0 then
     begin
@@ -867,13 +880,17 @@ begin
         ComboBoxPlainTextFormatting.ItemIndex  := 0;
         ComboBoxCipherTextFormatting.ItemIndex := 0;
       end;
+
+      // Format copy as default makes no sense for IV
+      if Formats.Count > 1 then
+        ComboBoxKeyIVFormat.ItemIndex := 1;
     end;
 
-    ComboBoxKeyIVFormat.Items.Clear;
-    ComboBoxKeyIVFormat.Items.Add(TFormat_HEX.ClassName);
-    ComboBoxKeyIVFormat.Items.Add(TFormat_HEXL.ClassName);
-    ComboBoxKeyIVFormat.Items.Add(TFormat_Base32.ClassName);
-    ComboBoxKeyIVFormat.Items.Add(TFormat_Base64.ClassName);
+//    ComboBoxKeyIVFormat.Items.Clear;
+//    ComboBoxKeyIVFormat.Items.Add(TFormat_HEX.ClassName);
+//    ComboBoxKeyIVFormat.Items.Add(TFormat_HEXL.ClassName);
+//    ComboBoxKeyIVFormat.Items.Add(TFormat_Base32.ClassName);
+//    ComboBoxKeyIVFormat.Items.Add(TFormat_Base64.ClassName);
     ComboBoxKeyIVFormat.ItemIndex := 1;
 
     FKeyAndIVFormatting           := TFormat_HEXL;
