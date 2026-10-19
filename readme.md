@@ -16,6 +16,7 @@ It contains algorithms for these categories:
 
 ## Which Delphi versions are compatible?
 The last release version 6.4.1 is compatible with Delphi XE7 - Delphi 13.2 Florence. 
+V6.5 is currently in development with good progress.
 When defining the NO_ASM define in DECOptions.inc it is compatible with all 
 platforms supported by Delphi! It might be compatible with FPC, but this has 
 not been focus and is not tested. The development branch contains a more
@@ -154,6 +155,8 @@ the asociated paperwork for that one.
 * TEA
 * XTEA
 * TEAN
+* ChaCha20
+* XChaCha20
 
 ## Contained block concatenating modes
 Modes ending on x have been invented by the original developer of DEC
@@ -169,6 +172,7 @@ Modes ending on x have been invented by the original developer of DEC
 * CFSx
 * GCM
 * CCM
+* Poly1305 (at the moment for ChaCha20/XChaCha20 only)
 
 ## Contained key derivation algorithms:
 * KDF1
@@ -181,6 +185,7 @@ Modes ending on x have been invented by the original developer of DEC
 * HMAC
 * GCM mode for block ciphers
 * CCM mode for block ciphers
+* Poly1305 (at the moment for ChaCha20/XChaCha20 only)
 
 ## Contained formattings
 * Copy
