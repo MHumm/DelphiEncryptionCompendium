@@ -431,7 +431,6 @@ type
 implementation
 
 uses
-  Winapi.Windows,
   DECFormat;
 
 { TestTHash_SHA3_Base }
