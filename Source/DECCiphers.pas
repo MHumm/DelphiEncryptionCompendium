@@ -8517,7 +8517,7 @@ begin
 
   // copy over the iv -> 128 bit
   // create the HChaChaMatrix in FPHChaCha
-  Move(iv[0], FPHChaCha^[12], SizeOf(TChaChaMtx) div 4);
+  Move(iv[0], FPHChaCha^[12], 4 * SizeOf(UInt32));
 
   {$IFNDEF PUREPASCAL}
   if cpuMode = cmSSE then

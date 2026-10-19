@@ -729,8 +729,7 @@ begin
             Free;
      end;
 
-     // ###########################################
-     // #### Build list of tests
+     // Build list of tests
      try
         groups := testFile.GetValue('testGroups') as TJsonArray;
 
