@@ -1,0 +1,1842 @@
+﻿{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:b7f09575-554a-496c-9782-a3655645e26e",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-24T19:08:35Z",
+    "component": {
+      "type": "library",
+      "name": "DEC60",
+      "version": "6.4.1",
+      "bom-ref": "DEC60",
+      "supplier": {
+        "name": "Team DEC",
+        "url": [
+          "https://github.com/MHumm/DelphiEncryptionCompendium"
+        ]
+      },
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "acknowledgement": "concluded"
+          }
+        },
+        {
+          "license": {
+            "id": "Apache-2.0",
+            "acknowledgement": "declared"
+          }
+        }
+      ],
+      "purl": "pkg:github/MHumm/DelphiEncryptionCompendium@6.4.1"
+    },
+    "manufacturer": {
+      "contact": [
+        {
+          "email": "markus.humm@gmail.com"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "net.developer-experts.dx-comply:document.profile",
+        "value": "library-source"
+      }
+    ],
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "author": "Olaf Monien",
+          "name": "DX.Comply",
+          "version": "2.0.2.0"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "file",
+      "name": "DEC60.dpr",
+      "version": "6.4.1",
+      "bom-ref": "comp-0",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f1664ece07ee15647d83f7598f871dae3109f8947bd6435daa78eb15d64054cf"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "7608700f5514e5fd6e927eac626c7e7bd95de2173624674be6bef93932ebde153bd8b8e02d4053a7d9642661ad7becb17bb326c87ee081ed931e1aa7578e6159"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "2349"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DEC60.dpr"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60.dpr"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DEC60.dproj",
+      "version": "6.4.1",
+      "bom-ref": "comp-1",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a545335e944bbe7a09ca0366a80f9488d15924c84a490fd2f7114bfecf4e6bca"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "d5dbeea747612bd130e890abd1930273174b7eca1e05a4a729a4a3d078c1fd9035996ae61aecf86898e1647d2a3cba8f69de7a74973506ab3d769bc0fc5331c9"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "71977"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DEC60.dproj"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60.dproj"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DEC60.res",
+      "version": "6.4.1",
+      "bom-ref": "comp-2",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "38ebc2f4514b2b0b23abe31ab38714b07a36e90dd8eeb5af43a400f7e5d52af0"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "d6b42d1988e2d9dd1dd155150eb9a47fa1c7daa26d37b61f89c729e4c0e0473bca21235e7f7119c6ff96d02268619171ce5bd7be5c6ea665666b0eec68cc7915"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "96"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DEC60.res"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60.res"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DEC60Lazarus.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-3",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5daf43590f3aa56566219554d14365cdaf8eee190f6f5ba04ea6c7c462436f29"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "d60cc5a3494647b0d5b60b13ebb33e360d4ecb0456eb04c031399d7b3633d11030f63737389ea3f9aafc846b9c677e4f66d7b8f084975388ed4edacc356d49f9"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "531"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DEC60Lazarus.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DEC60Lazarus.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECAuthenticatedCipherModesBase.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-4",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "129522d663baa4606ad3e48c1227064f29062a6edcdbda32b1ed87e8a72a61e5"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "456141617b3dd52afa51031aec1a7e8096793d7401c246a27767182f6ab55ad2cdf25d753372659761c81232c0358db756c2553a94df4b47dde124131f500751"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "14901"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECAuthenticatedCipherModesBase.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECAuthenticatedCipherModesBase.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECBaseClass.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-5",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1fdb54d620dd457b5e200b010afd33b9601140d5b5ca25b961a25237b4b9fb32"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "20d7aeeec5c7d50566c0b5a42963ba617b8e637c199b0094e995c1ba8bb2c9c6e21c840cd5c3731924b6fd961583346df709da224fd73c8083a457cf691cd615"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "12651"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECBaseClass.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECBaseClass.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherBase.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-6",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3acc082c05551b4b06e4c55371f80d9dcd022e9b603a90da2519bfdb459c5728"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "eb8ee65d48c990c31c64745ba55526a67235cc5ad305cab14e2f4491936f9be6f6174544944480b7922c910f8e71011915722ff18ed71b10bf618e27b5e9b9fc"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "52872"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherBase.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherBase.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherFormats.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-7",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "74d16e65540e9677e1cdf324620f5efaf3c038440ae75cf79996772f86995f34"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "40d1be81716e425e5b0c3103f4ad0e3db700e34384a1aa223d24689b15d7d630eb756a964c13d9b083ace9ac37fb500b410f2c0f888b2e2a2691fcce15bbc54d"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "54158"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherFormats.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherFormats.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherInterface.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-8",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "bc2d643d8670d570dcc8d740525f013879c98dea83a7aa47cce922f21d51b4ca"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "a011d519f4a93f682bc004fee8d92413a77fdc670616b0a84e0b8cbea44642e06f7a35508a670e5f3b5bb0d9f8683baab1799abde5cd92de31e71b4777437589"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "35519"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherInterface.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherInterface.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherModes.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-9",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "683385bb0ba8fa36a1bf3acc8e6e455aec314cbb5697f97cbc59b3e100c0cd06"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "897de1050fcaecb007646310d22de5cb15d78f76fdee3d4f7f8427741c5e69222b32c21dabf22e4d76f486a63d6a0c6b21991f4b56348c2ec02e33ad1588d22f"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "48438"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherModes.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherModes.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherModesCCM.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-10",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cc1a155d267e1f68f7b9424844aa74af04a981f1f998b805857a7db7efd8ee64"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "7c134fb89d0884979674923efd5030014b5d55590488f4ac7d6ca4fa462bb7264b224c129a978e11b501dfc924987666e9956f55b59a43940235b19311337e51"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "19935"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherModesCCM.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherModesCCM.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherModesGCM.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-11",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "6f3ca077f4c859eda707b461e2ff2dcebfa292f630cca20e8d43c5acfe84ab3c"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "1fe8b820006939ff4a894ce5fab74fca97c133f835826263a710c13b51b575a0a93a7295763b3f357de86064ef922cf0e393858dc1ee02bf64e35c80a4efe993"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "25397"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherModesGCM.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherModesGCM.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherModesPoly1305.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-12",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2e9ca57c3e9c40d6591e61d91ce74f9627d40bf8a54f1a85f6363d1c094ab880"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "4afe2aa6368f96d7280b8ee26bbc437a17d476d569483d063b07aaeaca18de14c8c8838cc24dbc42e10eff14d16ca93ef60f671b2c598c1822b9d7e5108b3aff"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "43162"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherModesPoly1305.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherModesPoly1305.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCipherPaddings.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-13",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b34376d92458163efdcfea431b4ce21f9a0174b3df73771a5373cace3ccfd318"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "2a9b494348f9ccff1412e872a57678fe6ffca1dff59861989fd6d8e4553e12a9803a50ddab64c5f8cbb5a47f1c434676fec8adca542e9ee3cb48e76c872abb10"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "29743"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCipherPaddings.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCipherPaddings.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCiphers.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-14",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "76d54e04ea232556adc1b0055df78d8a7045e6b8985d50a1c9b004aa238e3d5d"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "b8d92abfaf6980236e0e8bf4d9b8b547dbe1bc73bd99f0b4f565c00d0927d2c5a84426227d5e45a31b2b1abca8aebae697631968c294448a8091e0138c40084c"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "270742"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCiphers.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCiphers.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCPUSupport.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-15",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f705969b30843ff5d0b8014c114ffa8decca9f5018b1b98d8f6b5026aaafbba8"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "2be509e3fda90503af055a80ac189a8b3747864ebcb666d1ee237f258019cb02fd4fa3b28f94ebb350bb0052cd9b3473b978da1373084e34abb95d281ccd5255"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "3585"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCPUSupport.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCPUSupport.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECCRC.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-16",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7553cf505d2aceb7ab8f1c225ce71e75958f92fb0a9ca92cc523b8d73d321cd9"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "bdb742df2e8107eb8caeea482140967231992f1ffac16f68520a503f4750608a9db36018a29d86e6fefe7c90d4591779d66262155d081ef9753b9962463c23c9"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "26447"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECCRC.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECCRC.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECData.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-17",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7031e256e705fb89467edc56799ad4b1646af29a9d843660648c646d2751a552"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "e086b4438dae9cc7f3d471aabe00f030c068dead7ad826ccf53e020992ed19a6a2ae93cb5a76cb3ef7968839b1bec47e69499a283d044bd315965908277ea563"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "23673"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECData.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECData.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECDataCipher.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-18",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "8392532377190101b86d916c5bf593af2320707594b4becd8a6233f6c0fcc17c"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "1d2981bdb2e03ac4bcd998af70d439459690ca23e6a6ff42ba6f74b194b683c8d89d249db09868eb160cfc356ff0d1df74bb500e98c0d42f9ef0c6c3ad35bfc4"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "305620"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECDataCipher.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECDataCipher.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECDataHash.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-19",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4612b2c518f761bca0c846690f166debc38019c9353582bfb919d9f491fdd537"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "c8114a5cd299ce8a45494bd90cfd24a2451f58ca902026b09a7c090c88258d668a78c1926318404e716b5cc87cec587020c98eb1cdd4172ee4fd6be41f25957d"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "220682"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECDataHash.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECDataHash.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECFormat.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-20",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "a8232531e21fe817e199336be1981a40827855dab6a2d85dd71f76c957233135"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "65aba35bef586962a5ee9f40192565f95163b8d62286d0255d50690888b77789e8b611074495d5007a930ef82872fe60c04940641a2b9e04816a245996ea2622"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "58280"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECFormat.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECFormat.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECFormatBase.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-21",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "827c43a1b960c6ed7540a91fb595464ac69f0d4a8c1c49a1aa036d17233dd92d"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "e423783fe6c22bac7f96e7b61fc956312df3d00a3e5025d493afae6d04a1381aa7075d8bbae647ed9f552058c42a964fae9bc3451331e17447e581627a0a624d"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "22465"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECFormatBase.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECFormatBase.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHash.asm86.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-22",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d8741c35b476552a1ceed4eed065d74dc8cf9f390f6e835980554064d61c64cc"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "fdd50ff60654a0f49548b1e6a641b4628b6ccd9232f3205bc8a159326c036a3b00dbb8916619e1bb915c054976a2507aac0526a5b851570cf140c409497d338e"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "1078139"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHash.asm86.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHash.asm86.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHash.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-23",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "fa10ad3cbcb845bd8375450e6b377760ee922d754922b83348dbf5e1317af211"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "b4c1d97df4c382d894162c4eb9d7a6c63b741e926272f6f33949f16ef97ced8b1c98b669f3e5c3912add9183b4cc9e921e3f78fab8087502b0de8e8bc706c7bd"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "238384"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHash.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHash.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHash.sha3_mmx.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-24",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "dc77fa0c55bf695218dfbefc6180badbc05a5237d7445be87fc2badc309bf2bd"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "2ef82a48145438cc7057af6f590c540098c3bead41c8b81d0fd4428a68076fdee1f647036c3c8da3294b79f2248a88504947074dfa18cd5e79d3f5105bee0d88"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "9133"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHash.sha3_mmx.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHash.sha3_mmx.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHash.sha3_x64.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-25",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4dd8c530c8ce80d8bc47065f20c0125759633995c2bb5df48017fbe40c9552dd"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "ec2e845efe93e657c6130d00821088a50946634bbccceeef2c599574ee8577ab61170689cc3bdfdfdf730b6d570229b919cd833011460d09adb6f14537352f63"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "8371"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHash.sha3_x64.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHash.sha3_x64.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHashAuthentication.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-26",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5882ee60dbcd577e5eff88a5a01189f73b8ccb154c79d9c3926828fe8a916f3b"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "301daadf33d9e0acd5e1a60bb64644a422974de49fb40e7cf8c0f0df6fb95a4b29581b9868c93f2a95771c79adf17a69641faf32bf7aa94d44e9f9d0e10761a3"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "64973"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHashAuthentication.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHashAuthentication.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHashBase.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-27",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "14a1608ced8df606888baec89fbf3c1f1e03ec5d3d59e0489be9bf3e2e491ca5"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "6733dcc85f98ed387f9e4b7342571b68c060540c8f5ba641ddbacc749c00c943fc43520f2d5f30b6162d4c976ffe131a2c6662371b02451a217f3eb840eae1af"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "28327"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHashBase.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHashBase.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHashBitBase.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-28",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e2c86bf62a84c1529fe5e36a6b652bd3831e2ab93073caa7ff9cd454d70f9659"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "fc3eca1c2b1e861fd2e2e481568c09fbe1bd42d39aa3dc06f81c2565cab389fa6ab8b11fa3a01b738604b976773780ae38b2dc9e57e75babed538cd85347800f"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "3266"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHashBitBase.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHashBitBase.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECHashInterface.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-29",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b5ede07b113b05345488ae411032e98a886e70400f9c5fda1942565e6a6ba84d"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "19110e420990a5cdd7e90281bc8547ebc9777de542b8c953e361bcd1616b37e23d4f17075b59897706da529229ae49264a436ade34e02c3ee6e71e7f2b24eff8"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "20404"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECHashInterface.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECHashInterface.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECOptions.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-30",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "153f41c67924aef07aa8b8900e4c9f61fbda5c4489b6c07ad000a7f74b485a6f"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "4c60d1a898ba8e1f37168591be275cd016de2f45c47056006037badf854bde74da68db41582d351b0203319fb55081165dc2c26032a9e98691f9123333c1ad37"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "10086"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECOptions.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECOptions.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECRandom.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-31",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "97eb05b6e6c2fdce1271a28014f66d5b710fdfe132deb049bff3831ad3315791"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "11db3d0d868a4f4a247e5ced18ad2426325933405b94c73ad3fc4fc49539c1504e88ca5552a695be683cea7819744fb1e74283f30bd5f74de219f3d1c2d9b8bb"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "13914"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECRandom.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECRandom.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECTypes.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-32",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "04257f155c605676650bdbb18fe992a49df0a10bb28f6257615f0b3c9ea282dd"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "6dd2a437b0aeb69e0c9a379356f840ce1491f35319d27c198da05a55e4c5cea869cdc72bb9bacc9184e5477d987d882bb060861d386f56e7d4247072efef08f3"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "7222"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECTypes.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECTypes.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECUtil.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-33",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c0caab86207b624842c0c1413a61d580d9a36e79d72a4bbaddfac869e93851a5"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "bebe9e889235ff4e13fb28e4b1ffed71af2bb8e744468d7ef6e77cf3807a2806ae7fe3f250792d37dd53b8706e8597536b317cb83bc9d051826b398580f30e28"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "21337"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECUtil.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECUtil.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECUtilRawByteStringHelper.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-34",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b1ba6ab613afeb29c15e48a81b7dfad37da5a6719a694682938aa501f2ad253b"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "0621812fda9a83d575ab9b521e1d0f85c03dfeee02b9cc49b1c184009995b4b42d479ddb1ad1f14282520e6348d8be68f320fb33548f27ac5ca6d07ff3dccb60"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "3931"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECUtilRawByteStringHelper.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECUtilRawByteStringHelper.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "DECZIPHelper.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-35",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "1c72a4764d20aeb66f5224d9d99e0ef06b93c611f1015f6e887370c724dfb28b"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "4f9aff4a1d768a74c1ef11ce1db6a20d1a91f06d37d07d75dd52cceafe0500952e951b5ffbdbcc4c051e10d8483daec762171ae8e28687cc8f1765bac152935a"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "3485"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "DECZIPHelper.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECZIPHelper.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "fpc/dec.pas",
+      "version": "6.4.1",
+      "bom-ref": "comp-36",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5d537fa7d0d954ed9d999f62a2c9d2524ac18f7d2a41a14fb0c0eb559e0318b5"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "968b63328c2fdbf03ad3159691a6a620bb89aa4cec3dd3b5fba7eed602bfe4cb5248c4d04f8cb3a7414d0bfbabb9624421d90b824eb200c19ca7e20c1407c012"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "586"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "fpc/dec.pas"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "dec.pas"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "fpc/DECUtil.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-37",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9dd98ae3ad1108a5343cca682a545e4924dfa4a81e559b06c44200673f843c4f"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "796f91ce9f74064cba7fdeea6d66307c0fec4a78e26791d94e81852a150575f19a5165ed57469f822ba379d876ac2d7e2a30d6874c02aa4e11514495275026cf"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "249"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "fpc/DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "x86/DECUtil.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-38",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cafc3ca5018d767d93001a42552fbcf080af46a7514474cbfdaecd754dbb33a8"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "d353cd3d96e454cafefd670ddd7d028839b33eaaee81515613f13e3e8aae7bac6540a5e66f09f581661985b99acde6715dd9c541c45650f5a91f3a4494bd2360"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "407"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "x86/DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    },
+    {
+      "type": "file",
+      "name": "x86_64/DECUtil.inc",
+      "version": "6.4.1",
+      "bom-ref": "comp-39",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7894fcac985aaa407edec7f72c03d692644a7adfe31c7b05f0fbab546eb50a26"
+        },
+        {
+          "alg": "SHA-512",
+          "content": "d0d80af27d896e8018d5615d358e40a3453d29c20b171864f5a7fafa2f14d1115c7aad8122f1b942e10b4e0685b07dc47432d3bd8852457652e40d6908a7a976"
+        }
+      ],
+      "properties": [
+        {
+          "name": "file:size",
+          "value": "671"
+        },
+        {
+          "name": "net.developer-experts.dx-comply:relativePath",
+          "value": "x86_64/DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:filename",
+          "value": "DECUtil.inc"
+        },
+        {
+          "name": "bsi:component:executable",
+          "value": "non-executable"
+        },
+        {
+          "name": "bsi:component:archive",
+          "value": "no archive"
+        },
+        {
+          "name": "bsi:component:structured",
+          "value": "unstructured"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "DEC60",
+      "dependsOn": [
+        "comp-0",
+        "comp-1",
+        "comp-2",
+        "comp-3",
+        "comp-4",
+        "comp-5",
+        "comp-6",
+        "comp-7",
+        "comp-8",
+        "comp-9",
+        "comp-10",
+        "comp-11",
+        "comp-12",
+        "comp-13",
+        "comp-14",
+        "comp-15",
+        "comp-16",
+        "comp-17",
+        "comp-18",
+        "comp-19",
+        "comp-20",
+        "comp-21",
+        "comp-22",
+        "comp-23",
+        "comp-24",
+        "comp-25",
+        "comp-26",
+        "comp-27",
+        "comp-28",
+        "comp-29",
+        "comp-30",
+        "comp-31",
+        "comp-32",
+        "comp-33",
+        "comp-34",
+        "comp-35",
+        "comp-36",
+        "comp-37",
+        "comp-38",
+        "comp-39"
+      ]
+    }
+  ],
+  "compositions": [
+    {
+      "aggregate": "complete",
+      "dependencies": [
+        "comp-0",
+        "comp-1",
+        "comp-2",
+        "comp-3",
+        "comp-4",
+        "comp-5",
+        "comp-6",
+        "comp-7",
+        "comp-8",
+        "comp-9",
+        "comp-10",
+        "comp-11",
+        "comp-12",
+        "comp-13",
+        "comp-14",
+        "comp-15",
+        "comp-16",
+        "comp-17",
+        "comp-18",
+        "comp-19",
+        "comp-20",
+        "comp-21",
+        "comp-22",
+        "comp-23",
+        "comp-24",
+        "comp-25",
+        "comp-26",
+        "comp-27",
+        "comp-28",
+        "comp-29",
+        "comp-30",
+        "comp-31",
+        "comp-32",
+        "comp-33",
+        "comp-34",
+        "comp-35",
+        "comp-36",
+        "comp-37",
+        "comp-38",
+        "comp-39"
+      ]
+    },
+    {
+      "aggregate": "unknown",
+      "dependencies": [
+        "DEC60"
+      ]
+    }
+  ]
+}
