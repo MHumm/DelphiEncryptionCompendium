@@ -296,13 +296,15 @@ function IsEqual(const a, b : TBytes ):Boolean;
 function ShannonEntropy(const ABytes: TBytes): Double;
 
 /// <summary>
-///   Returns the 32 byte aligned address of pointer A
+///   Returns the 32 byte aligned address of pointer A.
 /// </summary>
 /// <param name="A">
 ///   Pointer to input memory block
 /// </param>
 /// <returns>
-///   Returns the fir
+///   Returns the aligned address.
+///   On 32 bit systems no addresses greater FFFFFFE0 are being returned.
+///   This does not matter as such high addresses are otherwise occupied already.
 /// </returns>
 function AlignPtr32(A : Pointer) : Pointer;
 
@@ -743,10 +745,12 @@ end;
 
 function AlignPtr32( A : Pointer ) : Pointer;
 begin
+  {$Q-} {$R-}
   Result := A;
 
   if (NativeUint(A) and $1F) <> 0 then
     Result := Pointer(NativeUint(Result) + $20 - NativeUint(Result) and $1F );
+  {$Q+} {$R+}
 end;
 
 end.

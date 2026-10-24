@@ -1008,11 +1008,20 @@ begin
   Actual := AlignPtr32(Ptr);
   CheckTrue((NativeUint(Actual) and $1F) = 0, '33-byte pointer should be aligned');
 
-//  Test with maximum 32 bit value -> cannot work -> overflow!
-//  Do we need a test for this overflow?
-//  Ptr := Pointer($FFFFFFFF);
-//  Actual := AlignPtr32(Ptr);
-//  CheckTrue((NativeUint(Actual) and $1F) = 0, 'Large pointer should be aligned');
+  // On 32 bit systems no addresses > FFFFFFE0 are returned. As overflow checks
+  // etc. are turned off  a test for the wrap around is implemented
+  {$IFDEF CPU32BITS}
+  Ptr := Pointer($FFFFFFE1);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue((NativeUint(Actual) and $1F) = 0, 'Large pointer should be aligned');
+  {$ENDIF}
+
+  // On 64 bit systems addresses > FFFFFFE0 are returned.
+  {$IFDEF CPU64BITS}
+  Ptr := Pointer($FFFFFFE1);
+  Actual := AlignPtr32(Ptr);
+  CheckTrue(NativeUint(Actual) = $100000000, 'No wrap around on 64 bit system allowed');
+  {$ENDIF}
 end;
 
 initialization
