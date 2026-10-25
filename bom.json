@@ -2,10 +2,10 @@
   "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:b7f09575-554a-496c-9782-a3655645e26e",
+  "serialNumber": "urn:uuid:871c8463-cc2d-4029-a1d0-fc2dd2681272",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-24T19:08:35Z",
+    "timestamp": "2026-10-25T09:19:41Z",
     "component": {
       "type": "library",
       "name": "DEC60",
@@ -1452,17 +1452,17 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c0caab86207b624842c0c1413a61d580d9a36e79d72a4bbaddfac869e93851a5"
+          "content": "6369ce47fc1c6845b7268bb9b545e99a4a6063f6758eeb98b7743066aca09926"
         },
         {
           "alg": "SHA-512",
-          "content": "bebe9e889235ff4e13fb28e4b1ffed71af2bb8e744468d7ef6e77cf3807a2806ae7fe3f250792d37dd53b8706e8597536b317cb83bc9d051826b398580f30e28"
+          "content": "7ef79ffbbab8b3386154fbeb398253c612708090081b6c294e6c59e83843b5680bfb37686bdf5ef23d57bca6c8dc5deeaacdc301672ee1e79e7269a66e34b237"
         }
       ],
       "properties": [
         {
           "name": "file:size",
-          "value": "21337"
+          "value": "21539"
         },
         {
           "name": "net.developer-experts.dx-comply:relativePath",
