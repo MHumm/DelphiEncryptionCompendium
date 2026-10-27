@@ -15,6 +15,7 @@
   under the License.
 *****************************************************************************}
 unit DECCipherInterface;
+{$INCLUDE DECOptions.inc}
 
 interface
 
