@@ -216,6 +216,11 @@ type
   /// </summary>
   TCipher_XChaCha20     = class;
 
+  /// <summary>
+  ///   Salsa20 stream cipher, the predecessor of ChaCha20
+  /// </summary>
+  TCipher_Salsa20       = class;
+
   // Definitions needed for Skipjack algorithm
   PSkipjackTab = ^TSkipjackTab;
   TSkipjackTab = array[0..255] of Byte;
@@ -600,6 +605,128 @@ type
   protected
     procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
   public
+  end;
+
+  /// <summary>
+  ///   Salsa20 stream cipher designed by Daniel J. Bernstein, the predecessor
+  ///   of ChaCha20 and part of the eSTREAM portfolio.
+  ///   Specification: https://cr.yp.to/snuffle/spec.pdf
+  /// </summary>
+  /// <remarks>
+  ///   The key must be either 128 or 256 bit long, 256 bit is recommended.
+  ///   The nonce is passed as init vector and must be exactly 64 bit long.
+  ///   There is no default for it: calling Init without an init vector raises
+  ///   an exception. Never use the same combination of key and nonce for more
+  ///   than one message, as this reveals the XOR of the plain texts.
+  ///
+  ///   Salsa20 is a pure stream cipher, it neither needs nor benefits from
+  ///   block chaining. The default mode is thus cmECBx, which for a stream
+  ///   cipher simply applies the key stream to the data. Salsa20 does not
+  ///   authenticate the data: combine it with a MAC if manipulations must be
+  ///   detected. The authenticated mode cmPoly1305 cannot be used, as it
+  ///   implements the ChaCha20 specific construction from RFC 8439.
+  ///
+  ///   The 64 bit block counter always starts at 0, so 2^70 byte can be
+  ///   processed with one combination of key and nonce. Calling Done sets the
+  ///   key stream back to its start.
+  /// </remarks>
+  TCipher_Salsa20 = class(TDECFormattedCipher)
+  private
+    /// <summary>
+    ///   Number of rounds applied by the Salsa20 core function
+    /// </summary>
+    FRounds: Integer;
+    /// <summary>
+    ///   Sets the number of rounds applied by the Salsa20 core function
+    /// </summary>
+    /// <param name="AValue">
+    ///   Number of rounds: 8, 12 or 20
+    /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if <c>AValue</c> is none of the supported values.
+    /// </exception>
+    procedure SetRounds(AValue: Integer);
+  protected
+    /// <summary>
+    ///   Rejects the authenticated mode cmPoly1305, all other modes are
+    ///   handled by the inherited implementation.
+    /// </summary>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the mode is cmPoly1305. The mode is set back to
+    ///   cmECBx in this case.
+    /// </exception>
+    procedure InitMode; override;
+    /// <summary>
+    ///   Initialize the key, based on the key passed in
+    /// </summary>
+    /// <param name="Key">
+    ///   Encryption/Decryption key to be used
+    /// </param>
+    /// <param name="Size">
+    ///   Size of the key passed in bytes, must be 16 or 32
+    /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if <c>Size</c> is neither 16 nor 32.
+    /// </exception>
+    procedure DoInit(const Key; Size: Integer); override;
+    /// <summary>
+    ///   Applies the key stream to the data passed in
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be encrypted
+    /// </param>
+    /// <param name="Dest">
+    ///   Buffer for the encrypted data, may be the same as <c>Source</c>
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to encrypt, there is no need for a multiple of the
+    ///   64 byte block size of the Salsa20 core function
+    /// </param>
+    procedure DoEncode(Source, Dest: Pointer; Size: Integer); override;
+    /// <summary>
+    ///   Applies the key stream to the data passed in, the same operation as
+    ///   DoEncode.
+    /// </summary>
+    /// <param name="Source">
+    ///   Data to be decrypted
+    /// </param>
+    /// <param name="Dest">
+    ///   Buffer for the decrypted data, may be the same as <c>Source</c>
+    /// </param>
+    /// <param name="Size">
+    ///   Number of bytes to decrypt
+    /// </param>
+    procedure DoDecode(Source, Dest: Pointer; Size: Integer); override;
+    /// <summary>
+    ///   Puts the nonce into the cipher state and sets the block counter and
+    ///   the key stream back to their start.
+    /// </summary>
+    /// <param name="OriginalInitVector">
+    ///   Init vector as passed to Init, used as nonce
+    /// </param>
+    /// <exception cref="EDECCipherException">
+    ///   Exception raised if the nonce is not exactly 64 bit long.
+    /// </exception>
+    procedure OnAfterInitVectorInitialization(const OriginalInitVector: TBytes); override;
+  public
+    /// <summary>
+    ///   Creates the cipher with 20 rounds and cmECBx as mode.
+    /// </summary>
+    constructor Create; override;
+    /// <summary>
+    ///   Provides meta data about the cipher algorithm used like key size.
+    /// </summary>
+    class function Context: TCipherContext; override;
+
+    /// <summary>
+    ///   Number of rounds: 20 (default, Salsa20/20), 12 (Salsa20/12, the
+    ///   variant selected for the eSTREAM portfolio) or 8 (Salsa20/8). Any
+    ///   other value raises an EDECCipherException. Use fewer than 20 rounds
+    ///   only if the other side requires it. Set the value before
+    ///   encrypting or decrypting data, changing it while a message is being
+    ///   processed sets the key stream back to its start.
+    /// </summary>
+    property Rounds: Integer read FRounds write SetRounds;
   end;
 
   TCipher_Square = class(TDECFormattedCipher)
@@ -8568,6 +8695,293 @@ begin
   FillChar(FHChaCha, sizeof(FHChaCha), 0);
 end;
 
+{ TCipher_Salsa20 }
+
+// The Salsa20 core function relies on modular 32 bit arithmetic
+{$Q-}{$R-}
+
+resourcestring
+  sSalsa20InvalidKeySize   = 'Salsa20 requires a key of 128 or 256 bit, but %0:d bit were given';
+  sSalsa20InvalidNonceSize = 'Salsa20 requires a nonce of 64 bit as init vector, but %0:d bit were given';
+  sSalsa20InvalidRounds    = 'Salsa20 supports 8, 12 or 20 rounds, but %0:d were requested';
+  sSalsa20InvalidMode      = 'Salsa20 cannot be used with the authenticated cipher mode cmPoly1305';
+
+const
+  /// <summary>
+  ///   Size of one block of key stream generated by the Salsa20 core function
+  /// </summary>
+  cSalsa20BlockSize = 64;
+  /// <summary>
+  ///   Size of the nonce in byte
+  /// </summary>
+  cSalsa20NonceSize = 8;
+  /// <summary>
+  ///   'expand 32-byte k': the constants for 256 bit keys as little endian words
+  /// </summary>
+  cSalsa20Sigma: array[0..3] of UInt32 = ($61707865, $3320646E, $79622D32, $6B206574);
+  /// <summary>
+  ///   'expand 16-byte k': the constants for 128 bit keys as little endian words
+  /// </summary>
+  cSalsa20Tau: array[0..3] of UInt32 = ($61707865, $3120646E, $79622D36, $6B206574);
+
+type
+  /// <summary>
+  ///   The 4x4 matrix of 32 bit words the Salsa20 core function operates on.
+  ///   Layout as defined in the specification:
+  ///   <code>
+  ///      0: constant   1: key        2: key        3: key
+  ///      4: key        5: constant   6: nonce      7: nonce
+  ///      8: counter    9: counter   10: constant  11: key
+  ///     12: key       13: key       14: key       15: constant
+  ///   </code>
+  /// </summary>
+  TSalsa20State = array[0..15] of UInt32;
+  PSalsa20State = ^TSalsa20State;
+
+  /// <summary>
+  ///   Complete working data of the cipher. It is located in FAdditionalBuffer,
+  ///   so it gets wiped and backuped/restored by the base class.
+  /// </summary>
+  TSalsa20Data = record
+    /// <summary>
+    ///   Input of the core function: constants, key, nonce and block counter
+    /// </summary>
+    Input     : TSalsa20State;
+    /// <summary>
+    ///   The current block of key stream
+    /// </summary>
+    KeyStream : array[0..cSalsa20BlockSize - 1] of Byte;
+    /// <summary>
+    ///   Number of bytes of KeyStream already used. If it equals
+    ///   cSalsa20BlockSize the next block needs to be generated first.
+    /// </summary>
+    Used      : Integer;
+  end;
+  PSalsa20Data = ^TSalsa20Data;
+
+function Salsa20RotateLeft(AValue: UInt32; AShift: Byte): UInt32; inline;
+begin
+  Result := (AValue shl AShift) or (AValue shr (32 - AShift));
+end;
+
+/// <summary>
+///   The quarterround function from the Salsa20 specification
+/// </summary>
+procedure Salsa20QuarterRound(var A, B, C, D: UInt32); inline;
+begin
+  B := B xor Salsa20RotateLeft(A + D, 7);
+  C := C xor Salsa20RotateLeft(B + A, 9);
+  D := D xor Salsa20RotateLeft(C + B, 13);
+  A := A xor Salsa20RotateLeft(D + C, 18);
+end;
+
+/// <summary>
+///   Generates the next block of key stream out of the input matrix and
+///   increments the 64 bit block counter.
+/// </summary>
+/// <param name="AData">
+///   Working data of the cipher
+/// </param>
+/// <param name="ARounds">
+///   Number of rounds to apply, must be even
+/// </param>
+/// <remarks>
+///   Words are read and written in the byte order of the CPU. Like the other
+///   DEC ciphers this requires a little endian CPU.
+/// </remarks>
+procedure Salsa20GenerateKeyStream(var AData: TSalsa20Data; ARounds: Integer);
+var
+  LState : TSalsa20State;
+  i      : Integer;
+begin
+  LState := AData.Input;
+
+  // one loop iteration is a doubleround: a columnround followed by a rowround
+  for i := 1 to ARounds div 2 do
+  begin
+    Salsa20QuarterRound(LState[ 0], LState[ 4], LState[ 8], LState[12]);
+    Salsa20QuarterRound(LState[ 5], LState[ 9], LState[13], LState[ 1]);
+    Salsa20QuarterRound(LState[10], LState[14], LState[ 2], LState[ 6]);
+    Salsa20QuarterRound(LState[15], LState[ 3], LState[ 7], LState[11]);
+
+    Salsa20QuarterRound(LState[ 0], LState[ 1], LState[ 2], LState[ 3]);
+    Salsa20QuarterRound(LState[ 5], LState[ 6], LState[ 7], LState[ 4]);
+    Salsa20QuarterRound(LState[10], LState[11], LState[ 8], LState[ 9]);
+    Salsa20QuarterRound(LState[15], LState[12], LState[13], LState[14]);
+  end;
+
+  for i := Low(LState) to High(LState) do
+  begin
+    PSalsa20State(@AData.KeyStream)^[i] := LState[i] + AData.Input[i];
+  end;
+
+  // the block counter occupies the words 8 (low) and 9 (high)
+  Inc(AData.Input[8]);
+  if AData.Input[8] = 0 then
+  begin
+    Inc(AData.Input[9]);
+  end;
+
+  AData.Used := 0;
+
+  // together with the key stream this would reveal the key
+  ProtectBuffer(LState, SizeOf(LState));
+end;
+
+constructor TCipher_Salsa20.Create;
+begin
+  inherited Create;
+
+  FRounds := 20;
+  // for a stream cipher this mode applies the key stream to the data as it is
+  Mode    := cmECBx;
+end;
+
+class function TCipher_Salsa20.Context: TCipherContext;
+begin
+  Result.KeySize                     := 32;
+  Result.BlockSize                   := 1;
+  Result.BufferSize                  := cSalsa20NonceSize;
+  Result.AdditionalBufferSize        := SizeOf(TSalsa20Data);
+  Result.NeedsAdditionalBufferBackup := True;
+  Result.MinRounds                   := 8;
+  Result.MaxRounds                   := 20;
+  Result.CipherType                  := [ctSymmetric, ctStream];
+end;
+
+procedure TCipher_Salsa20.SetRounds(AValue: Integer);
+begin
+  if (AValue <> 8) and (AValue <> 12) and (AValue <> 20) then
+    raise EDECCipherException.CreateResFmt(@sSalsa20InvalidRounds, [AValue]);
+
+  if not (FState in [csNew, csInitialized, csDone]) then
+  begin
+    Done;
+  end;
+
+  FRounds := AValue;
+end;
+
+procedure TCipher_Salsa20.InitMode;
+begin
+  if FMode = cmPoly1305 then
+  begin
+    // cmPoly1305 is the ChaCha20-Poly1305 construction from RFC 8439, which is
+    // not defined for Salsa20. Go back to the plain stream mode before raising
+    // the exception, so the instance does not stay in an unusable state.
+    FMode := cmECBx;
+    inherited InitMode;
+
+    raise EDECCipherException.CreateRes(@sSalsa20InvalidMode);
+  end;
+
+  inherited InitMode;
+end;
+
+procedure TCipher_Salsa20.DoInit(const Key; Size: Integer);
+var
+  LData : PSalsa20Data;
+begin
+  if (Size <> 16) and (Size <> 32) then
+    raise EDECCipherException.CreateResFmt(@sSalsa20InvalidKeySize, [Size * 8]);
+
+  LData := FAdditionalBuffer;
+
+  // the first half of the key is used for both key sizes
+  Move(Key, LData^.Input[1], 16);
+
+  if Size = 32 then
+  begin
+    Move(TByteArray(Key)[16], LData^.Input[11], 16);
+
+    LData^.Input[ 0] := cSalsa20Sigma[0];
+    LData^.Input[ 5] := cSalsa20Sigma[1];
+    LData^.Input[10] := cSalsa20Sigma[2];
+    LData^.Input[15] := cSalsa20Sigma[3];
+  end
+  else
+  begin
+    // a 128 bit key is used twice
+    Move(Key, LData^.Input[11], 16);
+
+    LData^.Input[ 0] := cSalsa20Tau[0];
+    LData^.Input[ 5] := cSalsa20Tau[1];
+    LData^.Input[10] := cSalsa20Tau[2];
+    LData^.Input[15] := cSalsa20Tau[3];
+  end;
+
+  // nonce and block counter, the nonce is set after the init vector is known
+  LData^.Input[6] := 0;
+  LData^.Input[7] := 0;
+  LData^.Input[8] := 0;
+  LData^.Input[9] := 0;
+
+  // no key stream available yet
+  LData^.Used := cSalsa20BlockSize;
+end;
+
+procedure TCipher_Salsa20.OnAfterInitVectorInitialization(const OriginalInitVector: TBytes);
+var
+  LData : PSalsa20Data;
+begin
+  if FInitVectorSize <> cSalsa20NonceSize then
+    raise EDECCipherException.CreateResFmt(@sSalsa20InvalidNonceSize, [FInitVectorSize * 8]);
+
+  LData := FAdditionalBuffer;
+
+  Move(FInitializationVector^, LData^.Input[6], cSalsa20NonceSize);
+  LData^.Input[8] := 0;
+  LData^.Input[9] := 0;
+  LData^.Used     := cSalsa20BlockSize;
+
+  // The backup taken by Init does not contain the nonce yet. Update it, so that
+  // Done restores the state the cipher has now.
+  Move(FAdditionalBuffer^, FAdditionalBufferBackup^, FAdditionalBufferSize);
+
+  inherited;
+end;
+
+procedure TCipher_Salsa20.DoEncode(Source, Dest: Pointer; Size: Integer);
+var
+  LData   : PSalsa20Data;
+  LSource : PByte;
+  LDest   : PByte;
+  LCount  : Integer;
+begin
+  LData   := FAdditionalBuffer;
+  LSource := Source;
+  LDest   := Dest;
+
+  while Size > 0 do
+  begin
+    if LData^.Used >= cSalsa20BlockSize then
+    begin
+      Salsa20GenerateKeyStream(LData^, FRounds);
+    end;
+
+    LCount := cSalsa20BlockSize - LData^.Used;
+    if LCount > Size then
+    begin
+      LCount := Size;
+    end;
+
+    XORBuffers(LSource^, LData^.KeyStream[LData^.Used], LCount, LDest^);
+
+    Inc(LSource, LCount);
+    Inc(LDest, LCount);
+    Inc(LData^.Used, LCount);
+    Dec(Size, LCount);
+  end;
+end;
+
+procedure TCipher_Salsa20.DoDecode(Source, Dest: Pointer; Size: Integer);
+begin
+  // a stream cipher decrypts by applying the same key stream again
+  DoEncode(Source, Dest, Size);
+end;
+
+{$Q+}{$R+}
+
 initialization
   SetDefaultCipherClass(TCipher_Null);
 
@@ -8603,6 +9017,7 @@ initialization
   TCipher_Gost.RegisterClass(TDECCipher.ClassList);
   TCipher_ChaCha20.RegisterClass(TDECCipher.ClassList);
   TCipher_XChaCha20.RegisterClass(TDECCipher.ClassList);
+  TCipher_Salsa20.RegisterClass(TDECCipher.ClassList);
 
 // Explicitely not registered, as this is an alias for Gost only
 //  TCipher_Magma.RegisterClass(TDECCipher.ClassList);

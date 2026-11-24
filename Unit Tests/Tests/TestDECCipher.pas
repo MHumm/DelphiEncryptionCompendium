@@ -958,6 +958,67 @@ type
     procedure TestSetAutomaticIV;
   end;
 
+  // Testmethods for class TCipher_Salsa20
+  {$IFDEF DUnitX} [TestFixture] {$ENDIF}
+  TestTCipher_Salsa20 = class(TCipherBasis)
+  strict private
+    FCipher_Salsa20: TCipher_Salsa20;
+
+    procedure Init(TestData: TCipherTestData);
+    procedure Done;
+
+    /// <summary>
+    ///   Returns a part of the key stream as lower case hex string
+    /// </summary>
+    /// <param name="AKey">
+    ///   Key in hex format, 128 or 256 bit
+    /// </param>
+    /// <param name="ANonce">
+    ///   Nonce in hex format, 64 bit
+    /// </param>
+    /// <param name="ARounds">
+    ///   Number of rounds: 8, 12 or 20
+    /// </param>
+    /// <param name="AOffset">
+    ///   Position of the first key stream byte to return
+    /// </param>
+    /// <param name="ASize">
+    ///   Number of key stream bytes to return
+    /// </param>
+    function  KeyStream(const AKey, ANonce: RawByteString;
+                        ARounds, AOffset, ASize: Integer): RawByteString;
+
+    procedure DoTestInitInvalidKeySize;
+    procedure DoTestInitNoNonce;
+    procedure DoTestInitNonceTooShort;
+    procedure DoTestInitNonceTooLong;
+    procedure DoTestInvalidRounds;
+    procedure DoTestPoly1305Mode;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestIdentity;
+    procedure TestContext;
+    procedure TestEncode;
+    procedure TestDecode;
+    procedure TestClassByName;
+    procedure TestDefaults;
+    procedure TestKeyStream128BitKey;
+    procedure TestKeyStream256BitKey;
+    procedure TestKeyStream12Rounds;
+    procedure TestKeyStream8Rounds;
+    procedure TestKeyStreamXorDigest;
+    procedure TestBlockCounterCarry;
+    procedure TestEncodeInChunks;
+    procedure TestDoneRestartsKeyStream;
+    procedure TestInitInvalidKeySize;
+    procedure TestInitNoNonce;
+    procedure TestInitInvalidNonceSize;
+    procedure TestInvalidRounds;
+    procedure TestPoly1305ModeNotSupported;
+  end;
+
   // Testmethods for class TCipher_AES256 with PKCS7 padding
   {$IFDEF DUnitX} [TestFixture] {$ENDIF}
   TestTCipher_AES256_CBC_PKCS7 = class(TCipherBasis)
@@ -5339,6 +5400,476 @@ begin
   DoTestSetAutomaticIV(FCipher_AES);
 end;
 
+{ TestTCipher_Salsa20 }
+
+// Sources of the test data used:
+//
+// eSTREAM/ECRYPT submission package of Salsa20 (D. J. Bernstein), files
+//   submissions/salsa20/full/verified.test-vectors               (20 rounds)
+//   submissions/salsa20/reduced/12-rounds/verified.test-vectors  (12 rounds)
+//   submissions/salsa20/reduced/8-rounds/verified.test-vectors   ( 8 rounds)
+// of http://www.ecrypt.eu.org/stream/svn/viewcvs.cgi/ecrypt/trunk/
+// That server is no longer available, the vectors were taken from the copy in
+// https://github.com/weidai11/cryptopp/blob/master/TestVectors/salsa.txt
+// This file is the source of the block counter test as well, which has been
+// created by the Crypto++ project with the ECRYPT reference implementation.
+//
+// The two vectors encrypting a text were created with PyCryptodome
+// (Crypto.Cipher.Salsa20). All vectors were additionally checked against an
+// implementation written directly from the specification,
+// https://cr.yp.to/snuffle/spec.pdf
+
+type
+  /// <summary>
+  ///   Gives the block counter test access to the block counter of the cipher,
+  ///   as 2^32 blocks (256 GiB) cannot be encrypted in a unit test.
+  /// </summary>
+  TCipher_Salsa20BlockCounterAccess = class(TCipher_Salsa20)
+  public
+    /// <summary>
+    ///   Sets the 64 bit block counter. Call after Init and before encrypting.
+    /// </summary>
+    /// <param name="ALow">
+    ///   Lower 32 bit of the block counter
+    /// </param>
+    /// <param name="AHigh">
+    ///   Upper 32 bit of the block counter
+    /// </param>
+    procedure SetBlockCounter(ALow, AHigh: UInt32);
+  end;
+
+procedure TCipher_Salsa20BlockCounterAccess.SetBlockCounter(ALow, AHigh: UInt32);
+begin
+  // The state matrix is located at the start of the additional buffer, its
+  // words 8 and 9 are the block counter
+  PUInt32Array(FAdditionalBuffer)^[8] := ALow;
+  PUInt32Array(FAdditionalBuffer)^[9] := AHigh;
+end;
+
+const
+  // eSTREAM Set 1, vector# 0
+  cSalsa20Key128    = '80000000000000000000000000000000';
+  // eSTREAM Set 3, vector#243
+  cSalsa20Key256    = 'F3F4F5F6F7F8F9FAFBFCFDFEFF000102030405060708090A0B0C0D0E0F101112';
+  cSalsa20NonceZero = '0000000000000000';
+
+  cSalsa20Text      = 'The quick brown fox jumps over the lazy dog. Franz jagt im ' +
+                      'komplett verwahrlosten Taxi quer durch Bayern.';
+
+procedure TestTCipher_Salsa20.Done;
+begin
+  FCipher_Salsa20.Done;
+end;
+
+procedure TestTCipher_Salsa20.Init(TestData: TCipherTestData);
+begin
+  FCipher_Salsa20.Mode := TestData.Mode;
+  FCipher_Salsa20.Init(BytesOf(TestData.Key),
+                       BytesOf(TestData.InitVector),
+                       TestData.Filler);
+end;
+
+function TestTCipher_Salsa20.KeyStream(const AKey, ANonce: RawByteString;
+  ARounds, AOffset, ASize: Integer): RawByteString;
+var
+  LZeros  : TBytes;
+  LResult : TBytes;
+begin
+  // newly allocated dynamic arrays are filled with zeros and encrypting zeros
+  // returns the key stream itself
+  SetLength(LZeros, AOffset + ASize);
+
+  FCipher_Salsa20.Rounds := ARounds;
+  FCipher_Salsa20.Init(BytesOf(TFormat_HEX.Decode(AKey)),
+                       BytesOf(TFormat_HEX.Decode(ANonce)));
+  LResult := FCipher_Salsa20.EncodeBytes(LZeros);
+  FCipher_Salsa20.Done;
+
+  CheckEquals(AOffset + ASize, Length(LResult), 'Wrong length of the encrypted data');
+  Result := TFormat_HEXL.Encode(LResult[AOffset], ASize);
+end;
+
+procedure TestTCipher_Salsa20.SetUp;
+begin
+  FCipher_Salsa20 := TCipher_Salsa20.Create;
+
+  SetLength(FTestData, 4);
+
+  // eSTREAM Set 1, vector# 0, stream[0..63]
+  FTestData[0].OutputData := '4dfa5e481da23ea09a31022050859936da52fcee218005164f267cb65f5cfd7f' +
+                             '2b4f97e0ff16924a52df269515110a07f9e460bc65ef95da58f740b7d1dbb0aa';
+  FTestData[0].InputData  := TFormat_HEX.Decode('0000000000000000000000000000000000000000000000000000000000000000' +
+                                                '0000000000000000000000000000000000000000000000000000000000000000');
+  FTestData[0].Key        := TFormat_HEX.Decode(cSalsa20Key128);
+  FTestData[0].InitVector := TFormat_HEX.Decode(cSalsa20NonceZero);
+  FTestData[0].Filler     := $FF;
+  FTestData[0].Mode       := cmECBx;
+
+  // eSTREAM Set 3, vector#243, stream[0..63]
+  FTestData[1].OutputData := 'b4c0afa503be7fc29a62058166d56f8f5d27dc246f75b9ad8760c8c39dfd8749' +
+                             '2d3b76d5d9637f009eada14458a52dfb09815337e72672681dddc24633750d83';
+  FTestData[1].InputData  := FTestData[0].InputData;
+  FTestData[1].Key        := TFormat_HEX.Decode(cSalsa20Key256);
+  FTestData[1].InitVector := TFormat_HEX.Decode(cSalsa20NonceZero);
+  FTestData[1].Filler     := $FF;
+  FTestData[1].Mode       := cmECBx;
+
+  // PyCryptodome, 256 bit key, 105 byte: one complete and one partial block
+  FTestData[2].OutputData := '79ee4386ff5175f11fbda59dc83c00c4de004f7ecf8b980c7e5c32357965fc48' +
+                             'b4e2482093679913082b6d6676df7430624f0483c07703ee1caf134aa1278cb0' +
+                             '6cdec0e3a654340dd32ed71f44bd2f49264217262070461a8cc3ead96949c428' +
+                             '23686c3f9428714dc9';
+  FTestData[2].InputData  := cSalsa20Text;
+  FTestData[2].Key        := TFormat_HEX.Decode('000102030405060708090A0B0C0D0E0F' +
+                                                '101112131415161718191A1B1C1D1E1F');
+  FTestData[2].InitVector := TFormat_HEX.Decode('0102030405060708');
+  FTestData[2].Filler     := $FF;
+  FTestData[2].Mode       := cmECBx;
+
+  // PyCryptodome, 128 bit key, same text and nonce
+  FTestData[3].OutputData := '72b649f4afe1b7912da227cc67b8cd93ca3dabdc1ec72c7a369c683dd7883a20' +
+                             '8252c2c5f262416124f64209aa79035997528b6cb74e44e02e28baeaf2adfad6' +
+                             'de5094a8ca512de48f4bb0986b6ddca07ede5eb26833123516a3dacc4a4cbf0a' +
+                             'cdbf7af60d34a4001d';
+  FTestData[3].InputData  := cSalsa20Text;
+  FTestData[3].Key        := TFormat_HEX.Decode('000102030405060708090A0B0C0D0E0F');
+  FTestData[3].InitVector := TFormat_HEX.Decode('0102030405060708');
+  FTestData[3].Filler     := $FF;
+  FTestData[3].Mode       := cmECBx;
+end;
+
+procedure TestTCipher_Salsa20.TearDown;
+begin
+  FCipher_Salsa20.Free;
+  FCipher_Salsa20 := nil;
+end;
+
+procedure TestTCipher_Salsa20.TestClassByName;
+var
+  ReturnValue : TDECCipherClass;
+begin
+  ReturnValue := FCipher_Salsa20.ClassByName('TCipher_Salsa20');
+  CheckEquals(TCipher_Salsa20, ReturnValue, 'Class is not registered');
+end;
+
+procedure TestTCipher_Salsa20.TestContext;
+var
+  ReturnValue: TCipherContext;
+begin
+  ReturnValue := FCipher_Salsa20.Context;
+
+  CheckEquals(  32,  ReturnValue.KeySize);
+  CheckEquals(   1,  ReturnValue.BlockSize);
+  CheckEquals(   8,  ReturnValue.BufferSize);
+  CheckEquals( 132,  ReturnValue.AdditionalBufferSize);
+  CheckEquals(   8,  ReturnValue.MinRounds);
+  CheckEquals(  20,  ReturnValue.MaxRounds);
+  CheckEquals(true,  ReturnValue.NeedsAdditionalBufferBackup);
+  CheckEquals(true,  [ctStream, ctSymmetric] = ReturnValue.CipherType);
+end;
+
+procedure TestTCipher_Salsa20.TestDecode;
+begin
+  DoTestDecode(FCipher_Salsa20.DecodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Salsa20.TestEncode;
+begin
+  DoTestEncode(FCipher_Salsa20.EncodeStringToBytes, self.Init, self.Done);
+end;
+
+procedure TestTCipher_Salsa20.TestIdentity;
+begin
+  CheckEquals($AFEE43C3, FCipher_Salsa20.Identity);
+end;
+
+procedure TestTCipher_Salsa20.TestDefaults;
+begin
+  CheckEquals(20, FCipher_Salsa20.Rounds, 'Wrong default number of rounds');
+  CheckEquals(Ord(cmECBx), Ord(FCipher_Salsa20.Mode), 'Wrong default mode');
+end;
+
+procedure TestTCipher_Salsa20.TestKeyStream128BitKey;
+begin
+  // eSTREAM Set 1, vector# 0: stream[192..255], stream[256..319], stream[448..511]
+  CheckEquals(RawByteString(
+              'da9c1581f429e0a00f7d67e23b730676783b262e8eb43a25f55fb90b3e753aef' +
+              '8c6713ec66c51881111593ccb3e8cb8f8de124080501eeeb389c4bcb6977cf95' +
+              '7d5789631eb4554400e1e025935dfa7b3e9039d61bdc58a8697d36815bf1985c' +
+              'efdf7ae112e5bb81e37ecf0616ce7147fc08a93a367e08631f23c03b00a8da2f'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 20, 192, 128));
+
+  CheckEquals(RawByteString(
+              'b375703739daced4dd4059fd71c3c47fc2f9939670fad4a46066adcc6a564578' +
+              '3308b90ffb72be04a6b147cbe38cc0c3b9267c296a92a7c69873f9f263be9703'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 20, 448, 64));
+end;
+
+procedure TestTCipher_Salsa20.TestKeyStream256BitKey;
+begin
+  // eSTREAM Set 3, vector#243: stream[192..255], stream[256..319], stream[448..511]
+  CheckEquals(RawByteString(
+              'dbba0683df48c335a9802eef0252256354c9f763c3fde19131a6bb7b85040624' +
+              'b1d6cd4bf66d16f7482236c8602a6d58505eedcca0b77aed574ab583115124b9' +
+              'f0c5f98bae05e019764ef6b65e0694a904cb9ec9c10c297b1ab1a6052365bb78' +
+              'e55d3c6cb9f06184ba7d425a92e7e987757fc5d9afd7082418dd64125ca6f2b6'),
+              KeyStream(cSalsa20Key256, cSalsa20NonceZero, 20, 192, 128));
+
+  CheckEquals(RawByteString(
+              '5a5fb5c8f0afea471f0318a4a2792f7aa5c67b6d6e0f0ddb79961c34e3a564ba' +
+              '2eece78d9aff45e510feab1030b102d39dfcecb77f5798f7d2793c0ab09c7a04'),
+              KeyStream(cSalsa20Key256, cSalsa20NonceZero, 20, 448, 64));
+end;
+
+procedure TestTCipher_Salsa20.TestKeyStream12Rounds;
+begin
+  // eSTREAM Salsa20/12 Set 1, vector# 0: stream[0..63] and stream[192..255]
+  CheckEquals(RawByteString(
+              'fc207dbfc76c5e1774961e7a5aad09069b2225ac1ce0fe7a0ce77003e7e5bdf8' +
+              'b31af821000813e6c56b8c1771d6ee7039b2fbd0a68e8ad70a3944b677937897'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 12, 0, 64));
+
+  CheckEquals(RawByteString(
+              '4b62a4881fa1af9560586510d5527ed48a51ecafa4deceebbddc10e9918d44ab' +
+              '26b10c0a31ed242f146c72940c6e9c3753f641da84e9f68b4f9e76b6c48ca5ac'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 12, 192, 64));
+end;
+
+procedure TestTCipher_Salsa20.TestKeyStream8Rounds;
+begin
+  // eSTREAM Salsa20/8 Set 1, vector# 0: stream[0..63] and stream[192..255]
+  CheckEquals(RawByteString(
+              'a9c9f888ab552a2d1bbff9f36bebeb337a8b4b107c75b63bae26cb9a235bba9d' +
+              '784f38befc3adf4cd3e266687ea7b9f09ba650ae81eac6063ae31ff12218ddc5'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 8, 0, 64));
+
+  CheckEquals(RawByteString(
+              'bb5b6bb2cc8b8a0222dccc1753ed4aeb23377accbd5d4c0b69a8a03bb115ef71' +
+              '871bc10559080aca7c68f0def32a80ddbaf497259bb76a3853a7183b51cc4b9f'),
+              KeyStream(cSalsa20Key128, cSalsa20NonceZero, 8, 192, 64));
+end;
+
+procedure TestTCipher_Salsa20.TestKeyStreamXorDigest;
+const
+  cDataSize = 131072;
+var
+  LData   : TBytes;
+  LResult : TBytes;
+  LDigest : array[0..63] of Byte;
+  i       : Integer;
+begin
+  // eSTREAM Set 6, vector# 3: a nonce other than zero and 2048 blocks of key
+  // stream, combined to the "xor-digest" defined by the eSTREAM test suite
+  SetLength(LData, cDataSize);
+
+  FCipher_Salsa20.Init(BytesOf(TFormat_HEX.Decode('0F62B5085BAE0154A7FA4DA0F34699EC' +
+                                                  '3F92E5388BDE3184D72A7DD02376C91C')),
+                       BytesOf(TFormat_HEX.Decode('288FF65DC42B92F9')));
+  LResult := FCipher_Salsa20.EncodeBytes(LData);
+  FCipher_Salsa20.Done;
+
+  CheckEquals(cDataSize, Length(LResult));
+
+  FillChar(LDigest, SizeOf(LDigest), 0);
+  for i := 0 to High(LResult) do
+  begin
+    LDigest[i mod 64] := LDigest[i mod 64] xor LResult[i];
+  end;
+
+  CheckEquals(RawByteString(
+              'e00ebccd70d69152725f9987982178a2e2e139c7bcbe04ca8a0e99e318d9ab76' +
+              'f988c8549f75add790ba4f81c176da653c1a043f11a958e169b6d2319f4eec1a'),
+              TFormat_HEXL.Encode(LDigest[0], SizeOf(LDigest)));
+end;
+
+procedure TestTCipher_Salsa20.TestBlockCounterCarry;
+var
+  LCipher : TCipher_Salsa20BlockCounterAccess;
+  LKey    : TBytes;
+  LNonce  : TBytes;
+  LData   : TBytes;
+  LResult : TBytes;
+begin
+  // Key and nonce consist of zeros only. The key stream starts with the last
+  // block before the lower 32 bit of the block counter overflow.
+  SetLength(LKey, 32);
+  SetLength(LNonce, 8);
+  SetLength(LData, 128);
+
+  LCipher := TCipher_Salsa20BlockCounterAccess.Create;
+  try
+    LCipher.Init(LKey, LNonce);
+    LCipher.SetBlockCounter($FFFFFFFF, 0);
+    LResult := LCipher.EncodeBytes(LData);
+  finally
+    LCipher.Free;
+  end;
+
+  CheckEquals(128, Length(LResult));
+
+  CheckEquals(RawByteString(
+              '59fc4dd73f4b7b28ce1b0ef562bab604824076898a800797b59902a99f312254' +
+              '5231e85b887ffa19f71f24aaf352dc6afe47281d8f546c9d419194479a369392'),
+              TFormat_HEXL.Encode(LResult[0], 64), 'Block $FFFFFFFF');
+
+  CheckEquals(RawByteString(
+              'b65fc777c4f950ec0274ff0ffbb0a6e3ededf78477e94945e87f26e3162bf6a1' +
+              '050933421833f249da1162db6e92a7678505190c80dc46350b81e831f974b28c'),
+              TFormat_HEXL.Encode(LResult[64], 64), 'Block $100000000');
+end;
+
+procedure TestTCipher_Salsa20.TestEncodeInChunks;
+const
+  // these add up to 300 and cut the data before, at and after the borders of
+  // the 64 byte key stream blocks
+  cChunkSizes : array[0..7] of Integer = (1, 62, 1, 64, 65, 7, 99, 1);
+var
+  LKey      : TBytes;
+  LNonce    : TBytes;
+  LData     : TBytes;
+  LExpected : TBytes;
+  LResult   : TBytes;
+  LPosition : Integer;
+  i         : Integer;
+begin
+  LKey   := BytesOf(TFormat_HEX.Decode(cSalsa20Key256));
+  LNonce := BytesOf(TFormat_HEX.Decode('0102030405060708'));
+
+  SetLength(LData, 300);
+  for i := 0 to High(LData) do
+  begin
+    LData[i] := Byte(i);
+  end;
+
+  FCipher_Salsa20.Init(LKey, LNonce);
+  LExpected := FCipher_Salsa20.EncodeBytes(LData);
+  FCipher_Salsa20.Done;
+
+  SetLength(LResult, Length(LData));
+  LPosition := 0;
+
+  FCipher_Salsa20.Init(LKey, LNonce);
+  for i := Low(cChunkSizes) to High(cChunkSizes) do
+  begin
+    FCipher_Salsa20.Encode(LData[LPosition], LResult[LPosition], cChunkSizes[i]);
+    Inc(LPosition, cChunkSizes[i]);
+  end;
+  FCipher_Salsa20.Done;
+
+  CheckEquals(Length(LData), LPosition, 'The chunk sizes do not match the data size');
+  CheckEquals(TFormat_HEXL.Encode(LExpected[0], Length(LExpected)),
+              TFormat_HEXL.Encode(LResult[0], Length(LResult)));
+end;
+
+procedure TestTCipher_Salsa20.TestDoneRestartsKeyStream;
+var
+  LData    : TBytes;
+  LFirst   : TBytes;
+  LSecond  : TBytes;
+  LDecoded : TBytes;
+begin
+  LData := BytesOf(RawByteString(cSalsa20Text));
+
+  FCipher_Salsa20.Init(BytesOf(TFormat_HEX.Decode(cSalsa20Key256)),
+                       BytesOf(TFormat_HEX.Decode('0102030405060708')));
+  LFirst := FCipher_Salsa20.EncodeBytes(LData);
+  FCipher_Salsa20.Done;
+
+  LSecond := FCipher_Salsa20.EncodeBytes(LData);
+  FCipher_Salsa20.Done;
+
+  LDecoded := FCipher_Salsa20.DecodeBytes(LFirst);
+  FCipher_Salsa20.Done;
+
+  CheckEquals(TFormat_HEXL.Encode(LFirst[0], Length(LFirst)),
+              TFormat_HEXL.Encode(LSecond[0], Length(LSecond)),
+              'Done did not set the key stream back to its start');
+  CheckEquals(TFormat_HEXL.Encode(LData[0], Length(LData)),
+              TFormat_HEXL.Encode(LDecoded[0], Length(LDecoded)),
+              'Decoding after Done failed');
+end;
+
+procedure TestTCipher_Salsa20.DoTestInitInvalidKeySize;
+var
+  LKey   : TBytes;
+  LNonce : TBytes;
+begin
+  // 192 bit is a valid size for other ciphers but not for Salsa20
+  SetLength(LKey, 24);
+  SetLength(LNonce, 8);
+  FCipher_Salsa20.Init(LKey, LNonce);
+end;
+
+procedure TestTCipher_Salsa20.DoTestInitNoNonce;
+var
+  LKey   : TBytes;
+  LNonce : TBytes;
+begin
+  SetLength(LKey, 32);
+  SetLength(LNonce, 0);
+  FCipher_Salsa20.Init(LKey, LNonce);
+end;
+
+procedure TestTCipher_Salsa20.DoTestInitNonceTooShort;
+var
+  LKey   : TBytes;
+  LNonce : TBytes;
+begin
+  SetLength(LKey, 32);
+  SetLength(LNonce, 7);
+  FCipher_Salsa20.Init(LKey, LNonce);
+end;
+
+procedure TestTCipher_Salsa20.DoTestInitNonceTooLong;
+var
+  LKey   : TBytes;
+  LNonce : TBytes;
+begin
+  // 96 bit is the size of the nonce of ChaCha20
+  SetLength(LKey, 32);
+  SetLength(LNonce, 12);
+  FCipher_Salsa20.Init(LKey, LNonce);
+end;
+
+procedure TestTCipher_Salsa20.DoTestInvalidRounds;
+begin
+  FCipher_Salsa20.Rounds := 10;
+end;
+
+procedure TestTCipher_Salsa20.DoTestPoly1305Mode;
+begin
+  FCipher_Salsa20.Mode := cmPoly1305;
+end;
+
+procedure TestTCipher_Salsa20.TestInitInvalidKeySize;
+begin
+  CheckException(DoTestInitInvalidKeySize, EDECCipherException);
+end;
+
+procedure TestTCipher_Salsa20.TestInitNoNonce;
+begin
+  CheckException(DoTestInitNoNonce, EDECCipherException);
+end;
+
+procedure TestTCipher_Salsa20.TestInitInvalidNonceSize;
+begin
+  CheckException(DoTestInitNonceTooShort, EDECCipherException);
+  CheckException(DoTestInitNonceTooLong, EDECCipherException);
+end;
+
+procedure TestTCipher_Salsa20.TestInvalidRounds;
+begin
+  CheckException(DoTestInvalidRounds, EDECCipherException);
+  CheckEquals(20, FCipher_Salsa20.Rounds, 'A rejected value must not change the rounds');
+end;
+
+procedure TestTCipher_Salsa20.TestPoly1305ModeNotSupported;
+begin
+  CheckException(DoTestPoly1305Mode, EDECCipherException);
+  CheckEquals(Ord(cmECBx), Ord(FCipher_Salsa20.Mode),
+              'The cipher has to stay in a usable mode');
+end;
+
 { TestTCipher_AES256_CBC_PKCS7 }
 
 procedure TestTCipher_AES256_CBC_PKCS7.SetUp;
@@ -5489,6 +6020,7 @@ initialization
   TDUnitX.RegisterTestFixture(TestTCipher_TEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA);
   TDUnitX.RegisterTestFixture(TestTCipher_XTEA_DEC52);
+  TDUnitX.RegisterTestFixture(TestTCipher_Salsa20);
   TDUnitX.RegisterTestFixture(TestTCipher_AES256_CBC_PKCS7);
   {$ELSE}
   RegisterTests('DECCipher', [TestTDECCipher.Suite,
@@ -5531,6 +6063,7 @@ initialization
                               TestTCipher_TEA.Suite,
                               TestTCipher_XTEA.Suite,
                               TestTCipher_XTEA_DEC52.Suite,
+                              TestTCipher_Salsa20.Suite,
                               TestTCipher_AES256_CBC_PKCS7.Suite]);
   {$ENDIF}
 end.
