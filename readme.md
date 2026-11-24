@@ -157,6 +157,7 @@ the asociated paperwork for that one.
 * TEAN
 * ChaCha20
 * XChaCha20
+* Salsa20
 
 ## Contained block concatenating modes
 Modes ending on x have been invented by the original developer of DEC
